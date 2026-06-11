@@ -139,7 +139,6 @@ function WalletPage() {
   });
   const withdrawalPaused = withdrawalEnabled === false;
   const withdrawCurrency = 'PHON' as const;
-  const withdrawFee = '0';
   const withdrawDestination = withdrawAddress.trim();
   const withdrawAmountValid = isPositiveDecimalInput(withdrawAmount);
   const canRequestWithdraw = Boolean(
@@ -175,6 +174,26 @@ function WalletPage() {
     }
   }, [activePhonKrwRate?.rate, depositAmount]);
   const showDepositRateFallback = Boolean(depositAmount && !depositPreviewPhon && (depositRateError || !activePhonKrwRate));
+
+  const withdrawKrwApprox = useMemo(() => {
+    try {
+      if (!withdrawAmountValid || !activePhonKrwRate?.rate) return null;
+      const rate = toDecimal(activePhonKrwRate.rate);
+      if (!rate.greaterThan(0)) return null;
+      return toFixed(toDecimal(withdrawAmount).mul(rate), 'KRW');
+    } catch {
+      return null;
+    }
+  }, [activePhonKrwRate?.rate, withdrawAmount, withdrawAmountValid]);
+
+  const withdrawAmountSummary = useMemo(() => {
+    if (!withdrawAmountValid) return withdrawAmount;
+    const phonAmount = `${formatMoney(withdrawAmount, withdrawCurrency)} ${withdrawCurrency}`;
+    if (!withdrawKrwApprox) return phonAmount;
+    return `${phonAmount} · ${t('wallet.withdraw.confirmKrwApprox', {
+      amount: formatMoney(withdrawKrwApprox, 'KRW'),
+    })}`;
+  }, [t, withdrawAmount, withdrawAmountValid, withdrawCurrency, withdrawKrwApprox]);
 
   const depositTimeline = useMemo((): StatusTimelineItem[] => {
     const dep = lastDeposit
@@ -646,21 +665,25 @@ function WalletPage() {
                 { label: t('wallet.withdraw.confirmCurrency'), value: withdrawCurrency },
                 {
                   label: t('wallet.withdraw.confirmAmount'),
-                  value: withdrawAmountValid
-                    ? `${formatMoney(withdrawAmount, withdrawCurrency)} ${withdrawCurrency}`
-                    : withdrawAmount,
+                  value: withdrawAmountSummary,
                 },
                 {
                   label: t('wallet.withdraw.confirmFee'),
-                  value: `${formatMoney(withdrawFee, withdrawCurrency)} ${withdrawCurrency}`,
+                  value: t('wallet.withdraw.confirmFeeAtProcessing'),
+                  wrap: true,
                 },
                 {
                   label: t('wallet.withdraw.confirmNet'),
-                  value: withdrawAmountValid
-                    ? `${formatMoney(withdrawAmount, withdrawCurrency)} ${withdrawCurrency}`
-                    : withdrawAmount,
+                  value: t('wallet.withdraw.confirmNetAtProcessing'),
+                  wrap: true,
                 },
-                { label: t('wallet.withdraw.confirmAddress'), value: withdrawDestination || '-' },
+                { label: t('wallet.withdraw.confirmAddress'), value: withdrawDestination || '-', wrap: true },
+                {
+                  label: t('wallet.withdraw.confirmWarningLabel'),
+                  value: t('wallet.withdraw.confirmIrreversibleWarning'),
+                  tone: 'danger',
+                  wrap: true,
+                },
               ]}
               confirmLabel={t('wallet.withdraw.confirmProceed')}
               cancelLabel={t('common.cancel')}

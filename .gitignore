@@ -9,9 +9,10 @@ playwright-report
 test-results
 *.tsbuildinfo
 .env
+.env.*
 .env.local
-.env.*.local
 !.env.example
+!.env.*.example
 .DS_Store
 Thumbs.db
 

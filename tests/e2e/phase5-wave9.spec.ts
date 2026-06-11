@@ -62,15 +62,32 @@ test.describe.serial('Wave 9.1 — deposits, withdrawals, gates', () => {
     await expect(page.getByTestId('wallet-withdraw-submit')).toBeDisabled();
   });
 
-  test('withdrawal request shows final confirmation summary before submit', async ({ page }) => {
+  test('withdrawal request shows final confirmation summary before submit', async ({ page }, testInfo) => {
     const auth = readAuth();
     const admin = adminClient();
+    let requestCount = 0;
 
     await admin.from('profiles').update({ kyc_tier: 'id_verified' }).eq('id', auth.userId);
     await admin
       .from('app_config')
       .update({ value: 'true' })
       .eq('key', 'feature_withdrawal_enabled');
+    await admin.from('exchange_rate_snapshots').insert({
+      base_currency: 'PHON',
+      quote_currency: 'KRW',
+      rate: '10.000000',
+      source: 'e2e',
+      is_active: true,
+    });
+
+    await page.route(/.*\/rest\/v1\/rpc\/rpc_request_withdrawal.*/, async (route) => {
+      requestCount += 1;
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ ok: true, withdrawal_id: crypto.randomUUID() }),
+      });
+    });
 
     await injectSession(page, auth.accessToken, auth.refreshToken);
     await page.goto('/wallet');
@@ -81,10 +98,30 @@ test.describe.serial('Wave 9.1 — deposits, withdrawals, gates', () => {
     await page.getByTestId('wallet-withdraw-submit').click();
 
     await expect(page.getByTestId('wallet-withdraw-confirm')).toBeVisible();
-    await expect(page.getByText(/25\.5(?:00000)? PHON/)).toHaveCount(2);
-    await expect(page.getByText(/0(?:\.000000)? PHON/)).toBeVisible();
+    expect(requestCount, 'opening confirmation must not emit withdrawal RPC').toBe(0);
+
+    await page.keyboard.press('Enter');
+    expect(requestCount, 'pressing Enter immediately after confirmation opens must not emit withdrawal RPC').toBe(0);
+
+    if (!(await page.getByTestId('wallet-withdraw-confirm').isVisible())) {
+      await page.getByTestId('wallet-withdraw-submit').click();
+      await expect(page.getByTestId('wallet-withdraw-confirm')).toBeVisible();
+    }
+
+    await expect(page.getByText(/25\.5(?:00000)? PHON/)).toBeVisible();
+    await expect(page.getByText(/약 255(?:\.000000)? KRW 상당/)).toBeVisible();
+    await expect(page.getByText('수수료는 처리 시점 기준으로 확정됩니다.')).toBeVisible();
+    await expect(page.getByText('실수령액은 수수료 확정 후 처리 시점 기준으로 정해집니다.')).toBeVisible();
+    await expect(page.getByText('출금은 전송 후 되돌릴 수 없습니다. 금액과 수령 주소를 반드시 확인하세요.')).toBeVisible();
     await expect(page.getByText('phonara-withdrawal-address-001')).toBeVisible();
+    await page.getByTestId('wallet-withdraw-confirm').screenshot({
+      path: testInfo.outputPath('withdrawal-confirmation.png'),
+    });
     await page.getByTestId('wallet-withdraw-cancel').click();
+    await expect(page.getByTestId('wallet-withdraw-confirm')).toBeHidden();
+    expect(requestCount, 'cancelling confirmation must not emit withdrawal RPC').toBe(0);
+    await expect(page.getByTestId('wallet-withdraw-amount')).toHaveValue('25.5');
+    await expect(page.getByTestId('wallet-withdraw-address')).toHaveValue('phonara-withdrawal-address-001');
 
     await admin
       .from('app_config')

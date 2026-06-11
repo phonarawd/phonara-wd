@@ -7,6 +7,31 @@ export type Json =
   | Json[]
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       admin_review_queue: {
@@ -369,6 +394,8 @@ export type Database = {
           entry_price: string
           equity_returned: string | null
           exit_price: string | null
+          first_breach_at: string | null
+          first_breach_tick_id: string | null
           id: string
           leverage: string
           liquidation_price: string
@@ -393,6 +420,8 @@ export type Database = {
           entry_price: string
           equity_returned?: string | null
           exit_price?: string | null
+          first_breach_at?: string | null
+          first_breach_tick_id?: string | null
           id?: string
           leverage: string
           liquidation_price: string
@@ -417,6 +446,8 @@ export type Database = {
           entry_price?: string
           equity_returned?: string | null
           exit_price?: string | null
+          first_breach_at?: string | null
+          first_breach_tick_id?: string | null
           id?: string
           leverage?: string
           liquidation_price?: string
@@ -436,6 +467,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "futures_positions_first_breach_tick_id_fkey"
+            columns: ["first_breach_tick_id"]
+            isOneToOne: false
+            referencedRelation: "price_ticks"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "futures_positions_market_fkey"
             columns: ["market"]
@@ -613,14 +651,14 @@ export type Database = {
           {
             foreignKeyName: "game_seed_reveals_round_id_fkey"
             columns: ["round_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "game_rounds"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "game_seed_reveals_round_id_fkey"
             columns: ["round_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "v_game_rounds_public"
             referencedColumns: ["id"]
           },
@@ -912,48 +950,6 @@ export type Database = {
           },
         ]
       }
-      oracle_prices: {
-        Row: {
-          price: string
-          symbol: string
-          updated_at: string
-        }
-        Insert: {
-          price: string
-          symbol: string
-          updated_at?: string
-        }
-        Update: {
-          price?: string
-          symbol?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      oracle_source_prices: {
-        Row: {
-          id: string
-          price: string
-          source_name: string
-          submitted_at: string
-          symbol: string
-        }
-        Insert: {
-          id?: string
-          price: string
-          source_name: string
-          submitted_at?: string
-          symbol: string
-        }
-        Update: {
-          id?: string
-          price?: string
-          source_name?: string
-          submitted_at?: string
-          symbol?: string
-        }
-        Relationships: []
-      }
       ops_alerts: {
         Row: {
           ack_reason: string | null
@@ -1034,6 +1030,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      oracle_prices: {
+        Row: {
+          price: string
+          symbol: string
+          updated_at: string
+        }
+        Insert: {
+          price: string
+          symbol: string
+          updated_at?: string
+        }
+        Update: {
+          price?: string
+          symbol?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      oracle_source_prices: {
+        Row: {
+          id: string
+          price: string
+          source_name: string
+          submitted_at: string
+          symbol: string
+        }
+        Insert: {
+          id?: string
+          price: string
+          source_name: string
+          submitted_at?: string
+          symbol: string
+        }
+        Update: {
+          id?: string
+          price?: string
+          source_name?: string
+          submitted_at?: string
+          symbol?: string
+        }
+        Relationships: []
       }
       position_ledger: {
         Row: {
@@ -1357,6 +1395,223 @@ export type Database = {
             columns: ["referrer_ledger_id"]
             isOneToOne: false
             referencedRelation: "wallet_ledger"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rg_block_events: {
+        Row: {
+          created_at: string
+          currency: Database["public"]["Enums"]["currency"] | null
+          domain: string | null
+          effective_end_at: string
+          effective_start_at: string
+          event_type: string
+          id: string
+          month_start: string | null
+          reason: string | null
+          related_entity_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency"] | null
+          domain?: string | null
+          effective_end_at: string
+          effective_start_at: string
+          event_type: string
+          id?: string
+          month_start?: string | null
+          reason?: string | null
+          related_entity_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency"] | null
+          domain?: string | null
+          effective_end_at?: string
+          effective_start_at?: string
+          event_type?: string
+          id?: string
+          month_start?: string | null
+          reason?: string | null
+          related_entity_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rg_block_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rg_exclusions: {
+        Row: {
+          created_at: string
+          excluded_until: string
+          id: string
+          min_release_at: string
+          reason: string | null
+          release_cooldown_until: string | null
+          release_reason: string | null
+          release_requested_at: string | null
+          release_requested_by: string | null
+          released_at: string | null
+          released_by: string | null
+          starts_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          excluded_until: string
+          id?: string
+          min_release_at: string
+          reason?: string | null
+          release_cooldown_until?: string | null
+          release_reason?: string | null
+          release_requested_at?: string | null
+          release_requested_by?: string | null
+          released_at?: string | null
+          released_by?: string | null
+          starts_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          excluded_until?: string
+          id?: string
+          min_release_at?: string
+          reason?: string | null
+          release_cooldown_until?: string | null
+          release_reason?: string | null
+          release_requested_at?: string | null
+          release_requested_by?: string | null
+          released_at?: string | null
+          released_by?: string | null
+          starts_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rg_exclusions_release_requested_by_fkey"
+            columns: ["release_requested_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rg_exclusions_released_by_fkey"
+            columns: ["released_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rg_exclusions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rg_loss_tracking: {
+        Row: {
+          currency: Database["public"]["Enums"]["currency"]
+          domain: string
+          id: string
+          month_start: string
+          net_loss: string
+          realized_loss: string
+          refreshed_at: string
+          unrealized_loss: string
+          user_id: string
+        }
+        Insert: {
+          currency: Database["public"]["Enums"]["currency"]
+          domain: string
+          id?: string
+          month_start: string
+          net_loss?: string
+          realized_loss?: string
+          refreshed_at?: string
+          unrealized_loss?: string
+          user_id: string
+        }
+        Update: {
+          currency?: Database["public"]["Enums"]["currency"]
+          domain?: string
+          id?: string
+          month_start?: string
+          net_loss?: string
+          realized_loss?: string
+          refreshed_at?: string
+          unrealized_loss?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rg_loss_tracking_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rg_user_limits: {
+        Row: {
+          created_at: string
+          currency: Database["public"]["Enums"]["currency"]
+          current_limit: string
+          domain: string | null
+          id: string
+          last_changed_at: string
+          limit_kind: string
+          pending_effective_at: string | null
+          pending_limit: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency: Database["public"]["Enums"]["currency"]
+          current_limit: string
+          domain?: string | null
+          id?: string
+          last_changed_at?: string
+          limit_kind: string
+          pending_effective_at?: string | null
+          pending_limit?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency"]
+          current_limit?: string
+          domain?: string | null
+          id?: string
+          last_changed_at?: string
+          limit_kind?: string
+          pending_effective_at?: string | null
+          pending_limit?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rg_user_limits_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2447,6 +2702,10 @@ export type Database = {
         Args: { p_default: number; p_key: string }
         Returns: number
       }
+      _apply_liquidation_buffer: {
+        Args: { p_mark: number; p_position_id: string }
+        Returns: boolean
+      }
       _apply_sanctions_hit: {
         Args: { p_details?: Json; p_user_id: string }
         Returns: undefined
@@ -2494,6 +2753,22 @@ export type Database = {
         Returns: undefined
       }
       _assert_price_fresh: { Args: { p_symbol: string }; Returns: number }
+      _assert_rg_deposit_allowed: {
+        Args: {
+          p_amount: number
+          p_currency: Database["public"]["Enums"]["currency"]
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      _assert_rg_domain_entry_allowed: {
+        Args: {
+          p_currency: Database["public"]["Enums"]["currency"]
+          p_domain: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       _assert_sanctions_screening: {
         Args: { p_user_id?: string }
         Returns: undefined
@@ -2503,6 +2778,10 @@ export type Database = {
         Returns: undefined
       }
       _assert_system_live: { Args: never; Returns: undefined }
+      _check_house_exposure_alert: {
+        Args: { p_symbol: string }
+        Returns: undefined
+      }
       _compute_oracle_median: { Args: { p_symbol: string }; Returns: number }
       _credit_krw_deposit_internal: {
         Args: { p_deposit_id: string; p_transfer_id: string }
@@ -2581,6 +2860,10 @@ export type Database = {
         }
         Returns: string
       }
+      _ensure_kyc_sanctions_screening_pending: {
+        Args: { p_trigger?: string; p_user_id: string }
+        Returns: undefined
+      }
       _fmt6: { Args: { v: number }; Returns: string }
       _game_float_stream: {
         Args: {
@@ -2646,9 +2929,21 @@ export type Database = {
         Returns: number
       }
       _is_admin: { Args: never; Returns: boolean }
+      _is_liquidation_breached: {
+        Args: {
+          p_liquidation_price: number
+          p_mark: number
+          p_side: Database["public"]["Enums"]["position_side"]
+        }
+        Returns: boolean
+      }
       _is_reward_issuance_reason: {
         Args: { p_reason_code: string }
         Returns: boolean
+      }
+      _liquidation_buffer_state: {
+        Args: { p_mark: number; p_position_id: string }
+        Returns: string
       }
       _lock_wallet_internal: {
         Args: {
@@ -2666,12 +2961,112 @@ export type Database = {
         Returns: number
       }
       _normalize_person_name: { Args: { p_name: string }; Returns: string }
+      _ops_build_health_snapshot: { Args: never; Returns: Json }
+      _ops_relative_age: {
+        Args: { p_at: string; p_now?: string }
+        Returns: string
+      }
       _plinko_multiplier: {
         Args: { p_bucket: number; p_risk: string; p_rows: number }
         Returns: number
       }
+      _recon_apply_halt: { Args: { p_run_at: string }; Returns: undefined }
+      _recon_log_row: {
+        Args: {
+          p_broken_count?: number
+          p_check_type: string
+          p_currency?: Database["public"]["Enums"]["currency"]
+          p_delta?: string
+          p_is_match: boolean
+          p_ledger_net?: string
+          p_run_at: string
+          p_wallet_sum?: string
+        }
+        Returns: undefined
+      }
+      _record_house_exposure_alert: {
+        Args: {
+          p_abs_net_exposure: string
+          p_long_exposure: string
+          p_net_exposure: string
+          p_short_exposure: string
+          p_symbol: string
+          p_threshold: string
+        }
+        Returns: undefined
+      }
+      _record_oracle_single_source_alert: {
+        Args: {
+          p_median: string
+          p_source_count: number
+          p_source_name: string
+          p_symbol: string
+        }
+        Returns: undefined
+      }
       _require_game_float: {
         Args: { p_floats: number[]; p_index: number }
+        Returns: number
+      }
+      _require_ledger_write_allowed: { Args: never; Returns: undefined }
+      _rg_commission_excluded: {
+        Args: {
+          p_at: string
+          p_currency: Database["public"]["Enums"]["currency"]
+          p_domain: string
+          p_user_id: string
+        }
+        Returns: boolean
+      }
+      _rg_config_numeric: {
+        Args: { p_default: string; p_key: string }
+        Returns: number
+      }
+      _rg_current_month_net_loss: {
+        Args: {
+          p_at?: string
+          p_currency: Database["public"]["Enums"]["currency"]
+          p_domain: string
+          p_user_id: string
+        }
+        Returns: number
+      }
+      _rg_month_start: { Args: { p_at?: string }; Returns: string }
+      _rg_operator_cap: {
+        Args: {
+          p_currency: Database["public"]["Enums"]["currency"]
+          p_domain: string
+          p_limit_kind: string
+        }
+        Returns: number
+      }
+      _rg_refresh_user_month_loss: {
+        Args: {
+          p_currency: Database["public"]["Enums"]["currency"]
+          p_domain: string
+          p_month_start?: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
+      _rg_self_exclusion_active: {
+        Args: { p_user_id: string }
+        Returns: boolean
+      }
+      _rg_trading_unrealized_loss: {
+        Args: {
+          p_currency: Database["public"]["Enums"]["currency"]
+          p_user_id: string
+        }
+        Returns: number
+      }
+      _rg_user_effective_limit: {
+        Args: {
+          p_currency: Database["public"]["Enums"]["currency"]
+          p_domain: string
+          p_limit_kind: string
+          p_user_id: string
+        }
         Returns: number
       }
       _roulette_roll_from_seed: {
@@ -2707,6 +3102,7 @@ export type Database = {
         }
         Returns: Json
       }
+      _sync_ops_alerts_from_health: { Args: never; Returns: Json }
       _try_match_krw_deposit: {
         Args: {
           p_amount_krw: string
@@ -2741,6 +3137,24 @@ export type Database = {
           p_user_id: string
         }
         Returns: string
+      }
+      rg_affiliate_commission_base: {
+        Args: { p_from: string; p_to: string }
+        Returns: {
+          currency: Database["public"]["Enums"]["currency"]
+          domain: string
+          gross_revenue: string
+          referred_id: string
+          referrer_id: string
+        }[]
+      }
+      rpc_ack_ops_alert: {
+        Args: { p_alert_id: string; p_reason: string }
+        Returns: Json
+      }
+      rpc_admin_release_self_exclusion: {
+        Args: { p_exclusion_id: string; p_reason: string }
+        Returns: Json
       }
       rpc_admin_void_game_bet: {
         Args: { p_bet_id: string; p_reason: string }
@@ -2805,20 +3219,11 @@ export type Database = {
         Args: { p_interval: string; p_limit?: number; p_symbol: string }
         Returns: Json
       }
-      rpc_get_ops_health: { Args: never; Returns: Json }
       rpc_get_ops_alerts: {
-        Args: { p_resolved_days?: number; p_statuses?: string[] | null }
+        Args: { p_resolved_days?: number; p_statuses?: string[] }
         Returns: Json
       }
-      rpc_ack_ops_alert: {
-        Args: { p_alert_id: string; p_reason: string }
-        Returns: Json
-      }
-      rpc_resolve_ops_alert: {
-        Args: { p_alert_id: string; p_reason: string }
-        Returns: Json
-      }
-      rpc_sync_ops_alerts_from_health: { Args: never; Returns: Json }
+      rpc_get_ops_health: { Args: never; Returns: Json }
       rpc_get_synthetic_book: {
         Args: { p_levels?: number; p_symbol: string }
         Returns: Json
@@ -2892,6 +3297,10 @@ export type Database = {
         Args: { p_reason: string; p_withdrawal_id: string }
         Returns: Json
       }
+      rpc_request_self_exclusion_release: {
+        Args: { p_exclusion_id: string; p_reason: string }
+        Returns: Json
+      }
       rpc_request_withdrawal: {
         Args: {
           p_amount: string
@@ -2904,6 +3313,10 @@ export type Database = {
       }
       rpc_resolve_admin_review_queue: {
         Args: { p_queue_id: string; p_reason: string }
+        Returns: Json
+      }
+      rpc_resolve_ops_alert: {
+        Args: { p_alert_id: string; p_reason: string }
         Returns: Json
       }
       rpc_resume_market: {
@@ -2946,6 +3359,19 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_set_rg_limit: {
+        Args: {
+          p_amount: string
+          p_currency: string
+          p_domain: string
+          p_limit_kind: string
+        }
+        Returns: Json
+      }
+      rpc_set_self_exclusion: {
+        Args: { p_excluded_until: string; p_reason?: string }
+        Returns: Json
+      }
       rpc_set_system_mode: {
         Args: { p_halt: boolean; p_readonly: boolean; p_reason: string }
         Returns: Json
@@ -2976,6 +3402,7 @@ export type Database = {
         Returns: Json
       }
       rpc_sweep_stale_game_bets: { Args: never; Returns: Json }
+      rpc_sync_ops_alerts_from_health: { Args: never; Returns: Json }
       rpc_unlock_wallet: {
         Args: {
           p_amount: string
@@ -3217,6 +3644,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       admin_role: ["owner", "finance", "risk", "support", "operator", "viewer"],
@@ -3280,3 +3710,4 @@ export const Constants = {
     },
   },
 } as const
+

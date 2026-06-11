@@ -10,6 +10,8 @@ export interface ConfirmRow {
   value: string;
   /** `danger` renders the value in the down/loss color (e.g. liquidation price). */
   tone?: 'default' | 'danger';
+  /** Allow long values such as wallet addresses or risk notes to wrap in full. */
+  wrap?: boolean;
 }
 
 export interface ConfirmDialogProps {
@@ -90,6 +92,9 @@ export const ConfirmDialog = forwardRef<HTMLDivElement, ConfirmDialogProps>(func
               <dd
                 className={cn(
                   'font-semibold tabular-nums',
+                  row.wrap
+                    ? 'max-w-[min(18rem,60vw)] whitespace-normal break-words text-right leading-snug'
+                    : 'whitespace-nowrap',
                   row.tone === 'danger' ? 'text-down' : 'text-fg',
                 )}
               >

@@ -2407,6 +2407,37 @@ phonara-gb/
   후속 단언 강화 후 `phase5_deposit_test.sql` 단일 파일 재실행 green.
 - **원격 변경**: 없음.
 
+### Withdrawal final confirmation UX (frontend only)
+- **무엇을**: [`apps/web/src/routes/wallet.tsx`](../apps/web/src/routes/wallet.tsx) 출금 플로우에
+  최종 확인 UX를 보강. 폼 제출은 기존처럼 즉시 RPC를 부르지 않고 확인 모달을 열며, 최종
+  `확인하고 출금` 액션에서만 기존 `handleWithdraw()` 경로와 `withdrawInFlightRef` 가드가 실행된다.
+- **어떻게**:
+  - 기존 입금 폼의 활성 환율 조회 `useQuery` 경로(`queryKey: ['exchange-rate','PHON','KRW','active']`,
+    `exchange_rate_snapshots` active PHON/KRW select)를 그대로 재사용해 출금 확인 금액에 PHON 주 표기와
+    KRW 보조 표기(`약 {amount} KRW 상당`)를 표시. 별도 rate query는 추가하지 않음.
+  - 서버가 출금 수수료/실수령액 preview를 반환하지 않는 현재 구조에서는 클라이언트 임의 수수료 계산을
+    제거하고 “처리 시점 기준” 안내 문구만 표시.
+  - [`packages/ui/src/components/confirm-dialog.tsx`](../packages/ui/src/components/confirm-dialog.tsx)에
+    `ConfirmRow.wrap` 옵션을 추가해 수신처 주소와 비가역 경고가 말줄임 없이 줄바꿈 표시되도록 함.
+  - [`packages/i18n/src/index.ts`](../packages/i18n/src/index.ts)에 ko/en 출금 확인 제목/버튼/수수료 안내/
+    비가역 경고/보조 KRW 문구를 동기 추가.
+  - [`tests/e2e/phase5-wave9.spec.ts`](../tests/e2e/phase5-wave9.spec.ts) 출금 경로를 확장:
+    확인 전 RPC 0회, 모달 직후 Enter 입력 RPC 0회, 금액/전체 주소/수수료 안내/비가역 경고 표시,
+    취소 시 RPC 0회와 입력값 유지, 최종 확인 연타 RPC 1회 유지.
+- **RED→GREEN**:
+  - RED 확장 직후 focused E2E 첫 실행은 `build:packages` 선행 단계의 기존 패키지 build 이슈로 테스트
+    본문 진입 전 중단. 원인 확인 후 변경 코드 구현을 진행.
+  - 최종 focused E2E는 로컬 Supabase secret env를 주입해 green: `phase5-wave9.spec.ts` 출금 확인 2건
+    2/2 passed.
+- **검증**:
+  - `bun run check:i18n` green.
+  - `bun run check:release` green.
+  - `bun run typecheck` green.
+  - `bun run lint` green.
+  - `bun run test:e2e -- tests/e2e/phase5-wave9.spec.ts -g "withdrawal request shows final confirmation summary before submit|withdrawal double confirm sends one RPC request"` green — 2/2 passed.
+  - 확인 화면 스크린샷: `test-results/e2e-phase5-wave9-Wave-9-1--660d1-ation-summary-before-submit-chromium/withdrawal-confirmation.png`.
+- **원격/SQL/RPC 변경**: 없음.
+
 ## 2026-06-12 — Ops Alert Queue + Ack
 
 ### 영속 운영 알림 inbox + Admin ack/resolve
@@ -4367,6 +4398,19 @@ phonara-gb/
 - **원인**: GitHub Actions `supabase db reset + SQL tests` job이 [`wallet_ledger_write_guard_test.sql`](../supabase/tests/wallet_ledger_write_guard_test.sql) Test 6에서 실패했다. 현재 schema에서는 `service_role` direct `wallet_ledger INSERT`가 table GRANT belt에서 먼저 `permission denied for table wallet_ledger`로 차단될 수 있는데, test는 trigger-level `ledger_write_not_allowed`만 허용해 실제로는 더 강한 차단을 실패로 판정했다.
 - **수정**: 제품 migration/RPC/GRANT는 변경하지 않았다. Test 6을 `service_role` 경로는 SQLSTATE `42501` grant denial 또는 `ledger_write_not_allowed` 둘 다 허용하도록 정렬했고, 같은 transaction에서 DB owner/privileged direct INSERT가 trigger guard의 `ledger_write_not_allowed`를 실제로 발생시키는 별도 단언을 추가했다. 즉 권한을 넓히지 않고 grant belt와 trigger guard를 각각 검증한다.
 - **검증**: reset 전 기존 local stack 상태로 `bun run test:sql`을 실행했을 때 unrelated stateful failures가 있었지만, 수정 대상 `wallet_ledger_write_guard_test.sql`은 PASS. CI fresh 조건으로 `supabase db reset; if ($LASTEXITCODE -eq 0) { bun run test:sql } else { exit $LASTEXITCODE }`를 실행해 `supabase db reset` green 및 SQL **31/31** green 확인. `bun run check:release` green, `ReadLints` 0. 리모트 apply 0.
+
+### 2026-06-12 Env ignore hardening (local)
+
+- **무엇을/어떻게**: GitHub에 환경 변수 파일이 올라가지 않도록 [`.gitignore`](../.gitignore)의 env 패턴을 확장했다. 기존 루트 `.env`, `.env.local`, `.env.*.local`에 더해 `.env.*` 전체를 ignore하고, 공유 가능한 템플릿은 `!.env.example`, `!.env.*.example`로 계속 허용한다.
+- **검증**: `git ls-files -- .env` 결과 추적 중인 `.env` 없음. `git check-ignore -v .env .env.local .env.production .env.staging apps/web/.env apps/web/.env.production apps/admin/.env apps/admin/.env.production`에서 모든 env 파일이 `.gitignore` 규칙에 의해 무시됨을 확인했다. 코드/DB 변경 없음, 리모트 apply 0.
+
+### 2026-06-12 Responsible Gambling foundation (local)
+
+- **무엇을/어떻게**: 신규 [`20260611000073_responsible_gambling.sql`](../supabase/migrations/20260611000073_responsible_gambling.sql)이 RG user limits, monthly loss tracking snapshot, self-exclusion history, RG block events를 추가했다. `rpc_set_rg_limit`는 operator cap(`app_config`) 이하만 허용하고 하향은 즉시, 상향은 24시간 cooldown pending으로 기록한다. `rpc_set_self_exclusion`, `rpc_request_self_exclusion_release`, `rpc_admin_release_self_exclusion`은 self-exclusion 시작/해제 요청/관리자 해제를 audit logged로 처리하며, support/admin release도 최소 24시간 lock 전에는 `rg_self_exclusion_min_lock`으로 거부한다.
+- **진입 가드와 경계**: 기존 settlement/ledger leg는 변경하지 않고 `pg_get_functiondef` patch 방식으로 `rpc_place_game_bet`, `rpc_open_futures_position`, `rpc_spot_market_buy/sell`, `rpc_create_krw_deposit_request`에 RG guard만 주입했다. Self-exclusion은 게임·트레이딩·신규 입금을 차단하지만 `rpc_close_futures_position` 같은 risk-reducing close 경로는 막지 않는다. Deposit guard는 deposit limit뿐 아니라 self-exclusion도 `rg_self_excluded`로 차단한다.
+- **월 순손실과 총판 집계**: `_rg_current_month_net_loss`는 game terminal bet의 `stake - payout`, trading position ledger fee/realized PnL, spot fee, 그리고 open futures position의 호출 시점 oracle mark 기준 unrealized loss를 합산한다. 미실현 손실은 `_assert_price_fresh`를 재사용하는 읽기 계산이며 원장·정산 row를 쓰지 않는다. `rg_affiliate_commission_base(p_from,p_to)`는 `system_account_ledger` 기반 game house/trading fee base를 `NOT _rg_commission_excluded(...)`로 집계 내부에서 배제한다. `loss_limit_reached` event는 해당 domain/currency/month 전체 window를 덮어 차단 직전 거래의 commission-base 우회를 막고, self-exclusion은 시작부터 release cooldown 종료까지의 overlap row를 배제한다.
+- **RED→GREEN/오류→수정**: [`responsible_gambling_test.sql`](../supabase/tests/responsible_gambling_test.sql)을 먼저 추가해 migration 전 `rpc_set_rg_limit` 부재로 RED를 확인했다. 첫 `supabase db reset`은 `rpc_place_game_bet` guard anchor가 최종 `pg_get_functiondef` 출력과 달라 `rg game guard anchor not found`로 실패했고, anchor를 settlement 직전 stable statement 기준으로 바꿔 clean reset을 통과시켰다. Supabase types 재생성은 Windows redirection 때문에 UTF-16처럼 저장되어 lint/unit이 "File appears to be binary"로 실패했고, UTF-8 write pipeline으로 재생성해 해결했다.
+- **게이트**: `supabase db reset` green(000001~000073), `bun run test:sql` **32/32** green, `supabase db lint --local --level error` 0 issue, MCP security advisor는 ERROR 없이 기존 authenticated SECURITY DEFINER WARN만 반환, `bun run check:i18n` green, `bun run check:release` green, `bun run typecheck` green, `bun run lint` green, `bun run test` green(142 passed / 1 skipped), `bunx playwright test tests/e2e/core-flow.spec.ts --project=chromium` green(3/3), `bunx playwright test tests/e2e/phase5-wave9.spec.ts --project=chromium` green(7/7), `bunx playwright test tests/e2e/casino.spec.ts --project=chromium` green(7/7), `bun run build` green(기존 large-chunk/PWA deprecation warnings only), `ReadLints` 0. 리모트 apply 0. §STOP 없음.
 
 ## 다음 단계 (S1 계속 + S2~S3 병행)
 
