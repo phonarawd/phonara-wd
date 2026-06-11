@@ -94,6 +94,45 @@ export type Database = {
           },
         ]
       }
+      affiliate_relationships: {
+        Row: {
+          child_id: string
+          created_at: string
+          id: string
+          parent_id: string
+          updated_at: string
+        }
+        Insert: {
+          child_id: string
+          created_at?: string
+          id?: string
+          parent_id: string
+          updated_at?: string
+        }
+        Update: {
+          child_id?: string
+          created_at?: string
+          id?: string
+          parent_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_relationships_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_relationships_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_config: {
         Row: {
           description: string
@@ -2698,6 +2737,10 @@ export type Database = {
       }
     }
     Functions: {
+      _affiliate_create_relationship: {
+        Args: { p_child_id: string; p_parent_id: string }
+        Returns: undefined
+      }
       _app_config_numeric: {
         Args: { p_default: number; p_key: string }
         Returns: number
@@ -3300,6 +3343,10 @@ export type Database = {
           p_locale?: string
           p_user_agent?: string
         }
+        Returns: Json
+      }
+      rpc_register_affiliate_relationship: {
+        Args: { p_parent_code: string }
         Returns: Json
       }
       rpc_register_referral: {

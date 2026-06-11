@@ -57,6 +57,16 @@ BEGIN
     'authenticated must SELECT price_change_audit (admin RLS)';
   ASSERT has_table_privilege('authenticated', 'public.market_sources', 'SELECT'),
     'authenticated must SELECT market_sources (admin RLS)';
+  ASSERT NOT has_table_privilege('anon', 'public.affiliate_relationships', 'SELECT'),
+    'anon must NOT SELECT affiliate_relationships';
+  ASSERT has_table_privilege('authenticated', 'public.affiliate_relationships', 'SELECT'),
+    'authenticated must SELECT affiliate_relationships (own-row RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.affiliate_relationships', 'INSERT'),
+    'authenticated must NOT INSERT affiliate_relationships directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.affiliate_relationships', 'UPDATE'),
+    'authenticated must NOT UPDATE affiliate_relationships directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.affiliate_relationships', 'DELETE'),
+    'authenticated must NOT DELETE affiliate_relationships directly';
 
   -- system account belt (000045)
   ASSERT NOT has_table_privilege('anon', 'public.system_accounts', 'INSERT'),
@@ -81,7 +91,7 @@ BEGIN
       AND c.relkind = 'r'
       AND c.relname IN (
         'app_config', 'profiles', 'wallets', 'spot_trades',
-        'price_change_audit', 'market_sources',
+        'price_change_audit', 'market_sources', 'affiliate_relationships',
         'system_accounts', 'system_account_ledger'
       )
       AND NOT c.relrowsecurity
