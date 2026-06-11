@@ -421,6 +421,56 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION _rg_try_refresh_user_month_loss(
+  p_user_id UUID,
+  p_domain TEXT,
+  p_currency currency,
+  p_month_start DATE DEFAULT _rg_month_start(NOW())
+)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+BEGIN
+  BEGIN
+    PERFORM _rg_refresh_user_month_loss(p_user_id, p_domain, p_currency, p_month_start);
+  EXCEPTION WHEN OTHERS THEN
+    -- RG refresh is an exclusion snapshot, not a settlement invariant. A refresh
+    -- failure must never roll back an otherwise valid money settlement; the next
+    -- settlement or the daily batch will retry the same idempotent window.
+    NULL;
+  END;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION _rg_refresh_all_user_month_losses(
+  p_month_start DATE DEFAULT _rg_month_start(NOW())
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  r RECORD;
+  v_scanned INT := 0;
+BEGIN
+  FOR r IN
+    SELECT DISTINCT user_id, domain, currency
+      FROM rg_user_limits
+     WHERE limit_kind = 'loss'
+       AND domain IN ('game', 'trading')
+       AND currency IN ('PHON', 'USDT')
+  LOOP
+    PERFORM _rg_try_refresh_user_month_loss(r.user_id, r.domain, r.currency, p_month_start);
+    v_scanned := v_scanned + 1;
+  END LOOP;
+
+  RETURN jsonb_build_object('scanned', v_scanned, 'month_start', p_month_start);
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION _assert_rg_domain_entry_allowed(
   p_user_id UUID,
   p_domain TEXT,
@@ -450,6 +500,9 @@ BEGIN
   v_limit := _rg_user_effective_limit(p_user_id, 'loss', p_domain, p_currency);
 
   IF v_loss >= v_limit THEN
+    -- Role split: entry guards provide real-time blocking, while successful
+    -- settlement refreshes persist RG block events used by commission aggregates.
+    -- Raising here intentionally performs no durable write.
     RAISE EXCEPTION 'rg_loss_limit_reached'
       USING DETAIL = format('domain=%s currency=%s loss=%s limit=%s', p_domain, p_currency, _fmt6(v_loss), _fmt6(v_limit));
   END IF;
@@ -769,8 +822,16 @@ REVOKE ALL ON FUNCTION _rg_self_exclusion_active(UUID) FROM PUBLIC, anon, authen
 REVOKE ALL ON FUNCTION _rg_trading_unrealized_loss(UUID, currency) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION _rg_current_month_net_loss(UUID, TEXT, currency, TIMESTAMPTZ) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION _rg_refresh_user_month_loss(UUID, TEXT, currency, DATE) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION _rg_try_refresh_user_month_loss(UUID, TEXT, currency, DATE) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION _rg_refresh_all_user_month_losses(DATE) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION _assert_rg_domain_entry_allowed(UUID, TEXT, currency) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION _assert_rg_deposit_allowed(UUID, currency, NUMERIC) FROM PUBLIC, anon, authenticated;
+
+SELECT cron.schedule(
+  'phonara_rg_daily_loss_refresh',
+  '15 2 * * *',
+  $$SELECT public._rg_refresh_all_user_month_losses();$$
+);
 
 -- ─── Entry guard injection ───────────────────────────────────────────────────
 DO $$
@@ -840,6 +901,58 @@ BEGIN
   IF p_client_request_id IS NOT NULL AND length(btrim(p_client_request_id)) > 0 THEN'
     );
     IF v_new = v_def THEN RAISE EXCEPTION 'rg deposit guard anchor not found'; END IF;
+    EXECUTE v_new;
+  END IF;
+
+  v_def := pg_get_functiondef('public.rpc_place_game_bet(uuid,text,text,jsonb,text,text,jsonb)'::regprocedure);
+  IF position('_rg_try_refresh_user_month_loss' IN v_def) = 0 THEN
+    v_new := replace(
+      v_def,
+      '  RETURN jsonb_build_object(',
+      '  PERFORM _rg_try_refresh_user_month_loss(v_user_id, ''game'', v_ccy);
+
+  RETURN jsonb_build_object('
+    );
+    IF v_new = v_def THEN RAISE EXCEPTION 'rg game refresh anchor not found'; END IF;
+    EXECUTE v_new;
+  END IF;
+
+  v_def := pg_get_functiondef('public._settle_futures_position(uuid,numeric,position_status,text)'::regprocedure);
+  IF position('_rg_try_refresh_user_month_loss' IN v_def) = 0 THEN
+    v_new := replace(
+      v_def,
+      '  RETURN jsonb_build_object(',
+      '  PERFORM _rg_try_refresh_user_month_loss(v_pos.user_id, ''trading'', v_pos.margin_currency);
+
+  RETURN jsonb_build_object('
+    );
+    IF v_new = v_def THEN RAISE EXCEPTION 'rg futures refresh anchor not found'; END IF;
+    EXECUTE v_new;
+  END IF;
+
+  v_def := pg_get_functiondef('public.rpc_spot_market_buy(text,text)'::regprocedure);
+  IF position('_rg_try_refresh_user_month_loss' IN v_def) = 0 THEN
+    v_new := replace(
+      v_def,
+      '  RETURN jsonb_build_object(''trade_id'', v_trade_id, ''side'', ''buy'', ''price'', _fmt6(v_price),',
+      '  PERFORM _rg_try_refresh_user_month_loss(v_user_id, ''trading'', ''PHON'');
+
+  RETURN jsonb_build_object(''trade_id'', v_trade_id, ''side'', ''buy'', ''price'', _fmt6(v_price),'
+    );
+    IF v_new = v_def THEN RAISE EXCEPTION 'rg spot buy refresh anchor not found'; END IF;
+    EXECUTE v_new;
+  END IF;
+
+  v_def := pg_get_functiondef('public.rpc_spot_market_sell(text,text)'::regprocedure);
+  IF position('_rg_try_refresh_user_month_loss' IN v_def) = 0 THEN
+    v_new := replace(
+      v_def,
+      '  RETURN jsonb_build_object(''trade_id'', v_trade_id, ''side'', ''sell'', ''price'', _fmt6(v_price),',
+      '  PERFORM _rg_try_refresh_user_month_loss(v_user_id, ''trading'', ''USDT'');
+
+  RETURN jsonb_build_object(''trade_id'', v_trade_id, ''side'', ''sell'', ''price'', _fmt6(v_price),'
+    );
+    IF v_new = v_def THEN RAISE EXCEPTION 'rg spot sell refresh anchor not found'; END IF;
     EXECUTE v_new;
   END IF;
 END;

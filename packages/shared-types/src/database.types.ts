@@ -3040,6 +3040,10 @@ export type Database = {
         }
         Returns: number
       }
+      _rg_refresh_all_user_month_losses: {
+        Args: { p_month_start?: string }
+        Returns: Json
+      }
       _rg_refresh_user_month_loss: {
         Args: {
           p_currency: Database["public"]["Enums"]["currency"]
@@ -3059,6 +3063,15 @@ export type Database = {
           p_user_id: string
         }
         Returns: number
+      }
+      _rg_try_refresh_user_month_loss: {
+        Args: {
+          p_currency: Database["public"]["Enums"]["currency"]
+          p_domain: string
+          p_month_start?: string
+          p_user_id: string
+        }
+        Returns: undefined
       }
       _rg_user_effective_limit: {
         Args: {

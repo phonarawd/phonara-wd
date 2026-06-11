@@ -71,6 +71,8 @@ DECLARE
   v_pos JSONB;
   v_msg TEXT;
   v_blocked BOOLEAN := FALSE;
+  v_batch JSONB;
+  v_month DATE := date_trunc('month', NOW())::DATE;
 BEGIN
   INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
   VALUES (v_uid, 'authenticated', 'authenticated',
@@ -122,8 +124,29 @@ BEGIN
 
   ASSERT v_blocked,
     format('open-position unrealized loss must block additional trading entry, got %s', COALESCE(v_msg, '<none>'));
+  ASSERT NOT EXISTS (
+    SELECT 1 FROM rg_block_events
+     WHERE user_id = v_uid
+       AND event_type = 'loss_limit_reached'
+       AND domain = 'trading'
+       AND currency = 'USDT'
+       AND month_start = v_month
+  ), 'entry guard raise alone must not be the durable RG event source';
 
-  RAISE NOTICE 'RG UNREALIZED LOSS OK — open futures loss is included in trading guard';
+  v_batch := _rg_refresh_all_user_month_losses(v_month);
+  ASSERT (v_batch->>'scanned')::INT >= 1, format('RG daily batch must scan at least this user, got %s', v_batch);
+  ASSERT EXISTS (
+    SELECT 1 FROM rg_block_events
+     WHERE user_id = v_uid
+       AND event_type = 'loss_limit_reached'
+       AND domain = 'trading'
+       AND currency = 'USDT'
+       AND month_start = v_month
+       AND effective_start_at = v_month::TIMESTAMPTZ
+       AND effective_end_at = (v_month + INTERVAL '1 month')::TIMESTAMPTZ
+  ), 'daily RG refresh batch must persist unrealized-loss limit events for aggregate exclusion';
+
+  RAISE NOTICE 'RG UNREALIZED LOSS OK — guard blocks immediately; daily refresh persists monthly block event';
 END;
 $$;
 ROLLBACK;
@@ -226,11 +249,12 @@ DECLARE
   v_referrer UUID := gen_random_uuid();
   v_referred UUID := gen_random_uuid();
   v_round UUID := gen_random_uuid();
-  v_bet UUID := gen_random_uuid();
-  v_tid UUID := gen_random_uuid();
-  v_before NUMERIC;
   v_after NUMERIC;
+  v_bet JSONB;
+  v_house NUMERIC;
   v_month DATE := date_trunc('month', NOW())::DATE;
+  v_msg TEXT;
+  v_blocked BOOLEAN := FALSE;
 BEGIN
   INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
   VALUES
@@ -239,49 +263,60 @@ BEGIN
   INSERT INTO referrals (referrer_id, referred_id)
   VALUES (v_referrer, v_referred);
 
+  PERFORM _credit_wallet_internal(v_referred, 'USDT', '1000.000000', 'rg_funding', 'rg-affiliate-usdt-' || v_referred::TEXT);
+  PERFORM _debit_system_account('house_liquidity_usdt', '1000.000000', 'rg_funding', v_referred, 'rg-affiliate-usdt-' || v_referred::TEXT, NULL);
+
+  INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
+  SELECT v_referred, doc_type::consent_doc_type, 'rg', TRUE
+    FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']::TEXT[]) AS doc_type;
+
+  UPDATE app_config SET value = 'false' WHERE key IN ('system_halt', 'system_readonly');
+  UPDATE app_config SET value = 'true'
+    WHERE key IN ('feature_game_enabled', 'feature_game_dice_enabled', 'consent_gate_enabled');
+
+  INSERT INTO rg_user_limits (
+    user_id, limit_kind, domain, currency, current_limit
+  ) VALUES (
+    v_referred, 'loss', 'game', 'USDT', '1.000000'
+  );
+
   INSERT INTO game_rounds (id, game, server_seed_hash, server_seed, status, result_payload, settled_at)
   VALUES (
     v_round,
     'dice',
     repeat('a', 64),
     repeat('b', 64),
-    'settled',
-    '{"roll":"90.00"}'::JSONB,
-    NOW()
+    'open',
+    NULL,
+    NULL
   );
-  INSERT INTO game_bets (
-    id, round_id, user_id, game, currency, stake, selection, client_seed,
-    result_payload, payout, status, idempotency_key, settled_at
-  ) VALUES (
-    v_bet, v_round, v_referred, 'dice', 'USDT', '100.000000',
-    '{"target":"50.00","direction":"over"}'::JSONB,
-    'rg-affiliate-seed',
-    '{"roll":"90.00"}'::JSONB,
-    '0.000000',
-    'lost',
-    'rg-affiliate-' || v_bet::TEXT,
-    NOW()
+
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_referred::TEXT)::TEXT, true);
+  v_bet := rpc_place_game_bet(
+    v_round, 'USDT', '100.000000',
+    '{"target":"100.00","direction":"under"}'::JSONB,
+    'rg-affiliate-seed', 'rg-affiliate-' || v_round::TEXT
   );
-  PERFORM _credit_system_account('game_house_usdt', '100.000000', 'game_house_settle', v_referred, v_bet::TEXT, v_tid);
+  ASSERT v_bet->>'status' = 'won', format('controlled dice bet should settle with tiny house GGR, got %s', v_bet);
 
-  SELECT COALESCE(SUM(gross_revenue::NUMERIC), 0) INTO v_before
-    FROM rg_affiliate_commission_base(v_month::TIMESTAMPTZ, (v_month + INTERVAL '1 month')::TIMESTAMPTZ)
-   WHERE referrer_id = v_referrer
-     AND referred_id = v_referred
-     AND domain = 'game'
-     AND currency = 'USDT';
+  SELECT COALESCE(SUM(amount::NUMERIC), 0) INTO v_house
+    FROM system_account_ledger
+   WHERE related_user_id = v_referred
+     AND account_code = 'game_house_usdt'
+     AND reason_code = 'game_house_settle';
+  ASSERT v_house = 1,
+    format('controlled dice settlement should create exactly 1 USDT GGR, got %s', v_house);
 
-  ASSERT v_before = 100,
-    format('affiliate base before RG block must include GGR, got %s', v_before);
-
-  INSERT INTO rg_block_events (
-    user_id, event_type, domain, currency, month_start,
-    effective_start_at, effective_end_at, reason
-  ) VALUES (
-    v_referred, 'loss_limit_reached', 'game', 'USDT', v_month,
-    v_month::TIMESTAMPTZ, (v_month + INTERVAL '1 month')::TIMESTAMPTZ,
-    'monthly exclusion'
-  );
+  ASSERT EXISTS (
+    SELECT 1 FROM rg_block_events
+     WHERE user_id = v_referred
+       AND event_type = 'loss_limit_reached'
+       AND domain = 'game'
+       AND currency = 'USDT'
+       AND month_start = v_month
+       AND effective_start_at = v_month::TIMESTAMPTZ
+       AND effective_end_at = (v_month + INTERVAL '1 month')::TIMESTAMPTZ
+  ), 'successful settlement refresh must persist a same-window loss_limit_reached block event';
 
   SELECT COALESCE(SUM(gross_revenue::NUMERIC), 0) INTO v_after
     FROM rg_affiliate_commission_base(v_month::TIMESTAMPTZ, (v_month + INTERVAL '1 month')::TIMESTAMPTZ)
@@ -291,9 +326,95 @@ BEGIN
      AND currency = 'USDT';
 
   ASSERT v_after = 0,
-    format('RG-blocked month must be excluded inside aggregate, got %s', v_after);
+    format('settlement-created RG block must exclude same-month GGR inside aggregate, got %s', v_after);
 
-  RAISE NOTICE 'RG AFFILIATE BASE OK — monthly loss-limit overlap excludes GGR inside aggregate';
+  INSERT INTO game_rounds (id, game, server_seed_hash, server_seed, status)
+  VALUES (gen_random_uuid(), 'dice', repeat('c', 64), repeat('d', 64), 'open')
+  RETURNING id INTO v_round;
+
+  BEGIN
+    PERFORM rpc_place_game_bet(
+      v_round, 'USDT', '1.000000',
+      '{"target":"100.00","direction":"under"}'::JSONB,
+      'rg-affiliate-seed-2', 'rg-affiliate-next-' || v_round::TEXT
+    );
+  EXCEPTION WHEN OTHERS THEN
+    GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
+    IF v_msg = 'rg_loss_limit_reached' THEN v_blocked := TRUE; END IF;
+  END;
+  ASSERT v_blocked,
+    format('entry guard must still block subsequent game entry after settlement-created event, got %s', COALESCE(v_msg, '<none>'));
+
+  RAISE NOTICE 'RG AFFILIATE BASE OK — settlement refresh records monthly block and aggregate excludes GGR';
+END;
+$$;
+ROLLBACK;
+
+-- ── 5. RG refresh failure is isolated from committed settlement ───────────────
+BEGIN;
+DO $$
+DECLARE
+  v_uid UUID := gen_random_uuid();
+  v_round UUID := gen_random_uuid();
+  v_bet JSONB;
+  v_bet_id UUID;
+  v_status TEXT;
+BEGIN
+  INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
+  VALUES (v_uid, 'authenticated', 'authenticated', 'rg_refresh_fail_' || v_uid::TEXT || '@test.local', NOW(), NOW());
+
+  PERFORM _credit_wallet_internal(v_uid, 'USDT', '1000.000000', 'rg_funding', 'rg-refresh-fail-usdt-' || v_uid::TEXT);
+  PERFORM _debit_system_account('house_liquidity_usdt', '1000.000000', 'rg_funding', v_uid, 'rg-refresh-fail-usdt-' || v_uid::TEXT, NULL);
+
+  INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
+  SELECT v_uid, doc_type::consent_doc_type, 'rg', TRUE
+    FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']::TEXT[]) AS doc_type;
+
+  UPDATE app_config SET value = 'false' WHERE key IN ('system_halt', 'system_readonly');
+  UPDATE app_config SET value = 'true'
+    WHERE key IN ('feature_game_enabled', 'feature_game_dice_enabled', 'consent_gate_enabled');
+
+  INSERT INTO rg_user_limits (
+    user_id, limit_kind, domain, currency, current_limit
+  ) VALUES (
+    v_uid, 'loss', 'game', 'USDT', '1.000000'
+  );
+
+  CREATE FUNCTION _test_rg_refresh_fail()
+  RETURNS TRIGGER
+  LANGUAGE plpgsql
+  AS $fn$
+  BEGIN
+    RAISE EXCEPTION 'forced_rg_refresh_failure';
+  END;
+  $fn$;
+
+  CREATE TRIGGER trg_test_rg_refresh_fail
+    BEFORE INSERT OR UPDATE ON rg_loss_tracking
+    FOR EACH ROW EXECUTE FUNCTION _test_rg_refresh_fail();
+
+  INSERT INTO game_rounds (id, game, server_seed_hash, server_seed, status)
+  VALUES (v_round, 'dice', repeat('e', 64), repeat('f', 64), 'open');
+
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
+  v_bet := rpc_place_game_bet(
+    v_round, 'USDT', '100.000000',
+    '{"target":"100.00","direction":"under"}'::JSONB,
+    'rg-refresh-fail-seed', 'rg-refresh-fail-' || v_round::TEXT
+  );
+  v_bet_id := (v_bet->>'bet_id')::UUID;
+
+  SELECT status INTO v_status FROM game_bets WHERE id = v_bet_id;
+  ASSERT v_status IN ('won', 'lost'),
+    format('settlement must commit even when RG refresh trigger fails, bet=%s status=%s', v_bet, COALESCE(v_status, '<missing>'));
+  ASSERT EXISTS (
+    SELECT 1 FROM system_account_ledger
+     WHERE related_user_id = v_uid
+       AND account_code = 'game_house_usdt'
+       AND reason_code = 'game_house_settle'
+  ), 'house settlement leg must commit even when RG refresh fails';
+
+  RAISE NOTICE 'RG REFRESH FAILURE ISOLATION OK — settlement commits while refresh failure is swallowed';
 END;
 $$;
 ROLLBACK;
