@@ -1,5 +1,6 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { loadRepoEnvFiles } from './lib/load-repo-env';
+
+loadRepoEnvFiles();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Supabase advisor gate (rules 00 / 10 / 25): the security advisor must be clean

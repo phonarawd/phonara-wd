@@ -1,3 +1,7 @@
+import { loadRepoEnvFiles } from './lib/load-repo-env';
+
+loadRepoEnvFiles();
+
 const requiredClientEnv = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY'] as const;
 
 const missing = requiredClientEnv.filter((key) => !process.env[key]);
