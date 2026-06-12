@@ -184,10 +184,6 @@ test('futures risk caps reject in browser without moving money', async ({ page }
 
   await freshenOracle(admin);
   await resetTradingRiskLimits(admin);
-  await admin
-    .from('futures_markets')
-    .update({ max_user_positions: 100, max_open_interest: '1.000000', max_leverage: '10' })
-    .eq('symbol', 'PHONUSDT-PERP');
 
   const before = await currencyTotals(admin);
   const { count: positionsBefore } = await admin
@@ -198,6 +194,13 @@ test('futures risk caps reject in browser without moving money', async ({ page }
   await injectSession(page, auth.accessToken, auth.refreshToken);
   await page.goto('/trade');
   await expect(page.getByTestId('futures-open')).toBeEnabled({ timeout: 15_000 });
+
+  // Load the UI with permissive metadata, then tighten the trusted server cap
+  // underneath it so the RPC rejection, not a hidden button, proves the guard.
+  await admin
+    .from('futures_markets')
+    .update({ max_user_positions: 100, max_open_interest: '1.000000', max_leverage: '10' })
+    .eq('symbol', 'PHONUSDT-PERP');
 
   await page.getByTestId('futures-open').click();
   await page.getByTestId('futures-open-confirm').click();

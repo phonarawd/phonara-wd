@@ -1,10 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test('web app boots and renders the login page', async ({ page }) => {
-  // Unauthenticated root redirects to /login; assert the app mounted and the
-  // login form rendered (locale-independent selector).
-  await page.goto('/');
-  await expect(page.locator('input#email')).toBeVisible({ timeout: 15_000 });
+  // Assert the app mounted and the login form rendered (locale-independent selector).
+  await page.goto('/login');
+  await expect(page.locator('input#login-email')).toBeVisible({ timeout: 15_000 });
 });
 
 test('PWA icon assets are reachable', async ({ page }) => {

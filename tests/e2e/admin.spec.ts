@@ -17,6 +17,7 @@ import {
   SUPABASE_URL,
   ANON_KEY,
   currencyTotals,
+  fundE2EWallet,
 } from './_helpers';
 import { createClient } from '@supabase/supabase-js';
 
@@ -167,7 +168,7 @@ test.describe('Admin Exception Queues (W9-R1)', () => {
       global: { headers: { Authorization: `Bearer ${auth.accessToken}` } },
     });
 
-    await ensureLedgerBackedFunding(auth.userId);
+    fundE2EWallet(auth.userId, { phon: '1000000.000000', usdt: '1000000.000000' });
     await dbAdmin.from('profiles').update({ kyc_tier: 'id_verified' }).eq('id', auth.userId);
     await dbAdmin.from('sanctions_screenings').insert({
       user_id: auth.userId,
@@ -179,6 +180,7 @@ test.describe('Admin Exception Queues (W9-R1)', () => {
     await dbAdmin.from('treasury_reserves').update({ real_balance: '999999999.000000' }).eq('currency', 'PHON');
     const { error: reconErr } = await dbAdmin.rpc('rpc_run_reconciliation');
     expect(reconErr, 'reconciliation before withdrawal should pass').toBeNull();
+    await dbAdmin.from('app_config').update({ value: 'false' }).in('key', ['system_halt', 'system_readonly']);
 
     const before = await currencyTotals(dbAdmin);
     const { data: requestData, error: requestErr } = await userClient.rpc('rpc_request_withdrawal', {
@@ -292,51 +294,3 @@ test.describe('Admin Exception Queues (W9-R1)', () => {
   });
 });
 
-async function ensureLedgerBackedFunding(userId: string): Promise<void> {
-  const dbAdmin = adminClient();
-  const { data: wallet, error: walletErr } = await dbAdmin
-    .from('wallets')
-    .select('id, phon_available, phon_locked, usdt_available, usdt_locked')
-    .eq('user_id', userId)
-    .single();
-  if (walletErr || !wallet) throw new Error(`wallet lookup failed: ${walletErr?.message ?? 'missing'}`);
-
-  const rows = [
-    {
-      currency: 'PHON',
-      amount: wallet.phon_available,
-      locked: wallet.phon_locked,
-      key: `e2e-initial-funding-phon-${userId}`,
-    },
-    {
-      currency: 'USDT',
-      amount: wallet.usdt_available,
-      locked: wallet.usdt_locked,
-      key: `e2e-initial-funding-usdt-${userId}`,
-    },
-  ] as const;
-
-  for (const row of rows) {
-    const { data: existing } = await dbAdmin
-      .from('wallet_ledger')
-      .select('id')
-      .eq('idempotency_key', row.key)
-      .maybeSingle();
-    if (existing) continue;
-
-    const { error } = await dbAdmin.from('wallet_ledger').insert({
-      wallet_id: wallet.id,
-      user_id: userId,
-      idempotency_key: row.key,
-      direction: 'credit',
-      currency: row.currency,
-      amount: row.amount,
-      available_before: '0.000000',
-      locked_before: '0.000000',
-      available_after: row.amount,
-      locked_after: row.locked,
-      reason_code: 'e2e_initial_funding',
-    });
-    if (error) throw new Error(`funding ledger insert failed: ${error.message}`);
-  }
-}

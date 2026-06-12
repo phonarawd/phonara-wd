@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
+  testMatch: ['e2e/**/*.spec.ts', 'smoke/**/*.spec.ts'],
   timeout: 60_000,
   fullyParallel: true,
   reporter: 'list',

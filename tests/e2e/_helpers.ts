@@ -3,7 +3,6 @@ import type { Page } from '@playwright/test';
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import Decimal from 'decimal.js';
 
 // E2E runs against the LOCAL Supabase stack (supabase start). The service-role
 // key must come from the local environment so no secret-shaped value is stored
@@ -11,12 +10,31 @@ import Decimal from 'decimal.js';
 export const SUPABASE_URL = process.env['VITE_SUPABASE_URL'] ?? 'http://127.0.0.1:54444';
 export const ANON_KEY =
   process.env['VITE_SUPABASE_ANON_KEY'] ?? 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
+
+function readLocalServiceKey(): string | undefined {
+  const result = spawnSync('supabase', ['status', '-o', 'env'], {
+    cwd: process.cwd(),
+    encoding: 'utf8',
+    shell: process.platform === 'win32',
+  });
+
+  if (result.status !== 0) return undefined;
+
+  const values = new Map<string, string>();
+  for (const line of result.stdout.split(/\r?\n/)) {
+    const match = line.match(/^([A-Z0-9_]+)=['"]?(.+?)['"]?$/);
+    if (match) values.set(match[1]!, match[2]!);
+  }
+
+  return values.get('SECRET_KEY') ?? values.get('SUPABASE_SERVICE_ROLE_KEY') ?? values.get('SERVICE_ROLE_KEY');
+}
+
 export const SERVICE_ROLE_KEY = (
-  process.env['SUPABASE_SERVICE_ROLE_KEY'] ?? process.env['SUPABASE_SECRET_KEY']
+  process.env['SUPABASE_SERVICE_ROLE_KEY'] ?? process.env['SUPABASE_SECRET_KEY'] ?? readLocalServiceKey()
 )?.replace(/^['"]|['"]$/g, '');
 
 if (!SERVICE_ROLE_KEY) {
-  throw new Error('SUPABASE_SERVICE_ROLE_KEY or SUPABASE_SECRET_KEY is required for E2E tests.');
+  throw new Error('A local Supabase service key is required for E2E tests.');
 }
 
 export const AUTH_FILE = join('tests', 'e2e', '.auth.json');
@@ -135,66 +153,100 @@ export async function injectBrowserSession(
   throw new Error(`setSession should succeed after retries: ${lastError}`);
 }
 
-interface WalletRow {
-  usdt_available: string;
-  usdt_locked: string;
-  phon_available: string;
-  phon_locked: string;
-}
-interface SystemAccountRow {
-  currency: string;
-  balance: string;
-}
-
-interface SupabaseResult<T> {
-  data: T | null;
-  error: { message: string } | null;
-}
-
-async function readWithRetry<T>(
-  label: string,
-  query: () => PromiseLike<SupabaseResult<T>>,
-): Promise<T> {
-  let lastError = 'query did not run';
-
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
-    const { data, error } = await query();
-    if (!error) return data as T;
-    lastError = error.message;
-    await new Promise<void>((resolve) => setTimeout(resolve, 250 * attempt));
-  }
-
-  throw new Error(`${label} failed: ${lastError}`);
-}
-
 /**
  * Global conservation totals: Σ(all user wallets) + Σ(system accounts) per
  * currency. The platform invariant (rule 30/25) is that these are unchanged by
  * any user money operation, since every leg nets to zero across user + system.
  */
-export async function currencyTotals(admin: SupabaseClient): Promise<{ USDT: string; PHON: string }> {
-  const wallets = await readWithRetry<WalletRow[]>('wallets read', () =>
-    admin.from('wallets').select('usdt_available, usdt_locked, phon_available, phon_locked'),
-  );
-  const sys = await readWithRetry<SystemAccountRow[]>('system_accounts read', () =>
-    admin.from('system_accounts').select('currency, balance'),
+export function currencyTotals(_admin: SupabaseClient): { USDT: string; PHON: string } {
+  void _admin;
+
+  const sql = `
+    WITH wallet_totals AS (
+      SELECT
+        COALESCE(SUM(usdt_available::numeric + usdt_locked::numeric), 0)::numeric AS usdt,
+        COALESCE(SUM(phon_available::numeric + phon_locked::numeric), 0)::numeric AS phon
+      FROM public.wallets
+    ),
+    system_totals AS (
+      SELECT
+        COALESCE(SUM(balance::numeric) FILTER (WHERE currency = 'USDT'), 0)::numeric AS usdt,
+        COALESCE(SUM(balance::numeric) FILTER (WHERE currency = 'PHON'), 0)::numeric AS phon
+      FROM public.system_accounts
+    )
+    SELECT
+      to_char(wallet_totals.usdt + system_totals.usdt, 'FM999999999999999999990.000000'),
+      to_char(wallet_totals.phon + system_totals.phon, 'FM999999999999999999990.000000')
+    FROM wallet_totals, system_totals;
+  `;
+  const result = spawnSync(
+    'docker',
+    [
+      'exec',
+      '-i',
+      'supabase_db_yocjhjsdwoijfdrehzoq',
+      'psql',
+      '-U',
+      'postgres',
+      '-d',
+      'postgres',
+      '-At',
+      '-v',
+      'ON_ERROR_STOP=1',
+      '-F',
+      ',',
+    ],
+    { input: sql, encoding: 'utf8' },
   );
 
-  let usdt = new Decimal(0);
-  let phon = new Decimal(0);
-  for (const w of wallets ?? []) {
-    usdt = usdt.plus(w.usdt_available).plus(w.usdt_locked);
-    phon = phon.plus(w.phon_available).plus(w.phon_locked);
+  if (result.status !== 0) {
+    throw new Error(result.stderr || result.stdout || 'currency totals SQL failed');
   }
-  for (const s of sys ?? []) {
-    if (s.currency === 'USDT') usdt = usdt.plus(s.balance);
-    if (s.currency === 'PHON') phon = phon.plus(s.balance);
+
+  const [usdt, phon] = result.stdout.trim().split(',');
+  if (!usdt || !phon) {
+    throw new Error('currency totals SQL returned no row');
   }
-  return { USDT: usdt.toFixed(6), PHON: phon.toFixed(6) };
+  return { USDT: usdt, PHON: phon };
 }
 
 function sqlLiteral(value: string): string {
   return `'${value.replaceAll("'", "''")}'`;
+}
+
+export function gameBetCount(userId: string): number {
+  const sql = `
+    SELECT COUNT(*)::int
+    FROM public.game_bets
+    WHERE user_id = ${sqlLiteral(userId)};
+  `;
+  const result = spawnSync(
+    'docker',
+    [
+      'exec',
+      '-i',
+      'supabase_db_yocjhjsdwoijfdrehzoq',
+      'psql',
+      '-U',
+      'postgres',
+      '-d',
+      'postgres',
+      '-At',
+      '-v',
+      'ON_ERROR_STOP=1',
+    ],
+    { input: sql, encoding: 'utf8' },
+  );
+
+  if (result.status !== 0) {
+    throw new Error(result.stderr || result.stdout || 'game bet count SQL failed');
+  }
+
+  const count = Number(result.stdout.trim());
+  if (!Number.isInteger(count)) {
+    throw new Error('game bet count SQL returned invalid output');
+  }
+  return count;
 }
 
 export function fundE2EWallet(
@@ -229,6 +281,8 @@ export function fundE2EWallet(
       '-d',
       'postgres',
       '-At',
+      '-v',
+      'ON_ERROR_STOP=1',
     ],
     { input: sql, encoding: 'utf8' },
   );

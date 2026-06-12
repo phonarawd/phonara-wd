@@ -3,6 +3,8 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { messages } from '../../packages/i18n/src/index.ts';
 import {
   adminClient,
+  fundE2EWallet,
+  gameBetCount,
   injectBrowserSession,
   readAuth,
   ANON_KEY,
@@ -28,6 +30,28 @@ function authedClient(auth: E2EAuth): SupabaseClient {
   });
 }
 
+async function resetCasinoCloseoutConfig(admin: SupabaseClient): Promise<void> {
+  await admin.from('app_config').update({ value: 'false' }).in('key', ['system_halt', 'system_readonly']);
+  await admin
+    .from('app_config')
+    .update({ value: 'true' })
+    .in('key', ['feature_game_enabled', 'feature_game_dice_enabled', 'consent_gate_enabled']);
+}
+
+async function withStepTimeout<T>(label: string, work: Promise<T>, timeoutMs = 20_000): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      work,
+      new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error(`${label} timed out`)), timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+}
+
 test.describe.configure({ mode: 'serial', timeout: 120_000 });
 
 test.describe('Wave 7 Phase 4 closeout', () => {
@@ -35,34 +59,42 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     const auth = readAuth();
     const admin = adminClient();
 
-    await admin
-      .from('app_config')
-      .update({ value: LOW_MAX_PAYOUT_PHON })
-      .eq('key', 'casino_max_payout_phon');
+    await withStepTimeout(
+      'cap fixture setup',
+      (async () => {
+        fundE2EWallet(auth.userId, { phon: '1000000.000000', usdt: '1000000.000000' });
+        await resetCasinoCloseoutConfig(admin);
+        await admin
+          .from('app_config')
+          .update({ value: LOW_MAX_PAYOUT_PHON })
+          .eq('key', 'casino_max_payout_phon');
+      })(),
+    );
 
     try {
       await page.addInitScript(() => {
         window.localStorage.setItem('phonara.locale', 'ko');
       });
-      await injectSession(page, auth.accessToken, auth.refreshToken);
+      await withStepTimeout('session injection', injectSession(page, auth.accessToken, auth.refreshToken));
 
-      const { count: betsBefore } = await admin
-        .from('game_bets')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', auth.userId);
-      const before = await currencyTotals(admin);
+      const betsBefore = gameBetCount(auth.userId);
+      const before = currencyTotals(admin);
 
-      await page.goto('/casino/dice');
+      await withStepTimeout('goto casino dice', page.goto('/casino/dice', { waitUntil: 'commit' }));
       await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
 
-      await page.getByTestId('casino-prepare-hash').click();
+      await page.getByTestId('casino-prepare-hash').click({ timeout: 5_000 });
       await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 15_000 });
 
       await page.getByTestId('casino-stake-input').fill('100');
-      await page.getByTestId('casino-place-bet').click();
+      await page.getByTestId('casino-place-bet').click({ timeout: 5_000 });
       await expect(page.getByTestId('casino-bet-confirm-confirm')).toBeVisible({ timeout: 5_000 });
 
-      await page.getByTestId('casino-bet-confirm-confirm').click();
+      const betResponse = page.waitForResponse((response) => response.url().includes('rpc_place_game_bet'), {
+        timeout: 30_000,
+      });
+      await page.getByTestId('casino-bet-confirm-confirm').click({ timeout: 5_000 });
+      await betResponse;
       await expect(page.getByTestId('casino-error')).toBeVisible({ timeout: 15_000 });
 
       const errorText = await page.getByTestId('casino-error').innerText();
@@ -73,11 +105,8 @@ test.describe('Wave 7 Phase 4 closeout', () => {
       expect(after.PHON, 'cap reject: PHON conserved').toBe(before.PHON);
       expect(after.USDT, 'cap reject: USDT conserved').toBe(before.USDT);
 
-      const { count: betsAfter } = await admin
-        .from('game_bets')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', auth.userId);
-      expect(betsAfter ?? 0, 'cap reject: no new bet row').toBe(betsBefore ?? 0);
+      const betsAfter = gameBetCount(auth.userId);
+      expect(betsAfter, 'cap reject: no new bet row').toBe(betsBefore);
     } finally {
       await admin
         .from('app_config')
@@ -90,13 +119,12 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     const auth = readAuth();
     const admin = adminClient();
 
+    fundE2EWallet(auth.userId, { phon: '1000000.000000', usdt: '1000000.000000' });
+    await resetCasinoCloseoutConfig(admin);
     await injectSession(page, auth.accessToken, auth.refreshToken);
 
     const before = await currencyTotals(admin);
-    const { count: betsBefore } = await admin
-      .from('game_bets')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', auth.userId);
+    const betsBefore = gameBetCount(auth.userId);
 
     await page.goto('/casino/dice');
     await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
@@ -112,11 +140,8 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     expect(after.PHON, 'cancel: PHON delta 0').toBe(before.PHON);
     expect(after.USDT, 'cancel: USDT delta 0').toBe(before.USDT);
 
-    const { count: betsAfter } = await admin
-      .from('game_bets')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', auth.userId);
-    expect(betsAfter ?? 0, 'cancel: bet count delta 0').toBe(betsBefore ?? 0);
+    const betsAfter = gameBetCount(auth.userId);
+    expect(betsAfter, 'cancel: bet count delta 0').toBe(betsBefore);
   });
 
   test('casino double confirm sends one bet RPC and keeps verification evidence visible', async ({ page }) => {
@@ -124,6 +149,8 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     const admin = adminClient();
     let betRequestCount = 0;
 
+    fundE2EWallet(auth.userId, { phon: '1000000.000000', usdt: '1000000.000000' });
+    await resetCasinoCloseoutConfig(admin);
     await admin
       .from('app_config')
       .update({ value: DEFAULT_MAX_PAYOUT_PHON })
@@ -167,7 +194,9 @@ test.describe('Wave 7 Phase 4 closeout', () => {
 
   test('casino client seed: auto value rotates per round while manual value is preserved', async ({ page }) => {
     const auth = readAuth();
+    const admin = adminClient();
 
+    await resetCasinoCloseoutConfig(admin);
     await injectSession(page, auth.accessToken, auth.refreshToken);
     await page.goto('/casino/dice');
     await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
@@ -191,6 +220,8 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     const admin = adminClient();
     const client = authedClient(auth);
 
+    fundE2EWallet(auth.userId, { phon: '1000000.000000', usdt: '1000000.000000' });
+    await resetCasinoCloseoutConfig(admin);
     await injectSession(page, auth.accessToken, auth.refreshToken);
     await page.goto('/dashboard');
     await expect(page.getByTestId('daily-claim-submit')).toBeVisible({ timeout: 15_000 });

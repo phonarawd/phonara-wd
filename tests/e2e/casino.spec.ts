@@ -1,8 +1,9 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { verifyRound, type GameCode } from '../../packages/game-engine/src';
 import {
   adminClient,
+  injectBrowserSession,
   readAuth,
   ANON_KEY,
   SUPABASE_URL,
@@ -39,28 +40,14 @@ const GAME_CASES: Array<{ game: GameCode; selection: Record<string, unknown>; st
   { game: 'plinko', selection: { rows: 12, risk: 'medium' }, stake: '10.000000' },
 ];
 
-async function injectSession(page: Page, accessToken: string, refreshToken: string): Promise<void> {
-  await page.goto('/login');
-  await page.waitForFunction(() => Boolean((window as unknown as { __supabase?: unknown }).__supabase));
-  const errMsg = await page.evaluate(
-    async ([at, rt]) => {
-      const sb = (
-        window as unknown as {
-          __supabase: {
-            auth: {
-              setSession: (a: { access_token: string; refresh_token: string }) => Promise<{
-                error: { message?: string } | null;
-              }>;
-            };
-          };
-        }
-      ).__supabase;
-      const { error } = await sb.auth.setSession({ access_token: at, refresh_token: rt });
-      return error ? (error.message ?? 'setSession failed') : null;
-    },
-    [accessToken, refreshToken] as const,
-  );
-  expect(errMsg, 'setSession should succeed').toBeNull();
+async function injectSession(
+  page: Parameters<typeof injectBrowserSession>[0],
+  accessToken: string,
+  refreshToken: string,
+): Promise<void> {
+  await injectBrowserSession(page, accessToken, refreshToken, {
+    unregisterServiceWorkers: true,
+  });
 }
 
 function authedClient(auth: E2EAuth): SupabaseClient {
@@ -118,12 +105,33 @@ async function createSecondUser(admin: SupabaseClient): Promise<E2EAuth> {
   };
 }
 
+async function resetCasinoConfig(admin: SupabaseClient): Promise<void> {
+  await admin
+    .from('app_config')
+    .update({ value: '1000000.000000' })
+    .eq('key', 'casino_max_payout_phon');
+  await admin
+    .from('app_config')
+    .update({ value: 'true' })
+    .in('key', [
+      'feature_game_enabled',
+      'feature_game_crash_enabled',
+      'feature_game_limbo_enabled',
+      'feature_game_dice_enabled',
+      'feature_game_mines_enabled',
+      'feature_game_hilo_enabled',
+      'feature_game_plinko_enabled',
+      'consent_gate_enabled',
+    ]);
+}
+
 test.describe('casino provably fair E2E', () => {
   for (const gameCase of GAME_CASES) {
     test(`${gameCase.game}: commit, settle, reveal, verify, idempotency, auth`, async ({ page }) => {
       const auth = readAuth();
       const admin = adminClient();
       const client = authedClient(auth);
+      await resetCasinoConfig(admin);
       await injectSession(page, auth.accessToken, auth.refreshToken);
       await page.goto(`/casino/${gameCase.game}`);
       await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
@@ -233,6 +241,7 @@ test.describe('casino provably fair E2E', () => {
     const auth = readAuth();
     const admin = adminClient();
     const client = authedClient(auth);
+    await resetCasinoConfig(admin);
     await injectSession(page, auth.accessToken, auth.refreshToken);
     await page.goto('/casino/dice');
     await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });

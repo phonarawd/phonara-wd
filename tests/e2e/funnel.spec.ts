@@ -18,6 +18,7 @@ import {
   adminClient,
   currencyTotals,
   freshenOracle,
+  fundE2EWallet,
   SUPABASE_URL,
   ANON_KEY,
 } from './_helpers';
@@ -175,10 +176,7 @@ test('funnel: signup → welcome bonus → futures open → liquidation (conserv
   );
 
   // ── 5. Fund 200 USDT for futures margin (test fixture outside conservation) ──
-  await admin
-    .from('wallets')
-    .update({ usdt_available: '200.000000' })
-    .eq('user_id', userId);
+  fundE2EWallet(userId, { usdt: '200.000000' });
 
   // Capture futures-only baseline AFTER manual funding
   await freshenOracle(admin);
@@ -217,14 +215,41 @@ test('funnel: signup → welcome bonus → futures open → liquidation (conserv
     .from('oracle_prices')
     .update({ price: triggerPrice, updated_at: new Date().toISOString() })
     .eq('symbol', pos.market);
+  await admin
+    .from('price_ticks')
+    .insert({ symbol: pos.market, price: triggerPrice, created_at: new Date().toISOString() });
 
   // ── 10. Trigger liquidation via user-scoped client ───────────────────────
   // rpc_liquidate_position rejects service-role (auth.uid() IS NULL) after the
   // anon-lockdown migration. Call it with the user's access token instead.
-  const { error: liqErr } = await userClient.rpc('rpc_liquidate_position', {
+  const { data: firstLiq, error: firstLiqErr } = await userClient.rpc('rpc_liquidate_position', {
     p_position_id: pos.id,
-  });
-  expect(liqErr, 'liquidation RPC should succeed').toBeNull();
+  }) as { data: { reason?: string } | null; error: { message?: string } | null };
+  expect(firstLiqErr, 'first liquidation RPC should succeed').toBeNull();
+  expect(firstLiq?.reason, 'first breach records liquidation buffer').toBe(
+    'liquidation_buffer_pending',
+  );
+
+  const { data: afterFirstBreach } = await admin
+    .from('futures_positions')
+    .select('status')
+    .eq('id', pos.id)
+    .single();
+
+  if (afterFirstBreach?.status === 'open') {
+    const secondTriggerPrice = (liqPrice * 0.97).toFixed(6);
+    await admin
+      .from('oracle_prices')
+      .update({ price: secondTriggerPrice, updated_at: new Date().toISOString() })
+      .eq('symbol', pos.market);
+    await admin
+      .from('price_ticks')
+      .insert({ symbol: pos.market, price: secondTriggerPrice, created_at: new Date().toISOString() });
+    const { error: liqErr } = await userClient.rpc('rpc_liquidate_position', {
+      p_position_id: pos.id,
+    });
+    expect(liqErr, 'liquidation RPC should succeed').toBeNull();
+  }
 
   // ── 11. Verify position is closed in the DB ───────────────────────────────
   const { data: closedPos } = await admin

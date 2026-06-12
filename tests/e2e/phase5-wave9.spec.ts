@@ -388,6 +388,7 @@ test.describe.serial('Wave 9.1 — deposits, withdrawals, gates', () => {
   test('KRW deposit request + auto-match credits PHON (Σ conserved)', async ({ page }) => {
     const auth = readAuth();
     const admin = adminClient();
+    let requestCount = 0;
 
     await admin.from('profiles').update({
       kyc_tier: 'email_verified',
@@ -412,13 +413,27 @@ test.describe.serial('Wave 9.1 — deposits, withdrawals, gates', () => {
 
     const before = await currencyTotals(admin);
 
+    await page.route(/.*\/rest\/v1\/rpc\/rpc_create_krw_deposit_request.*/, async (route) => {
+      requestCount += 1;
+      await route.fallback();
+    });
+
     await injectSession(page, auth.accessToken, auth.refreshToken);
     await page.goto('/wallet');
 
     await page.getByTestId('wallet-deposit-amount').fill('50000');
     await page.getByTestId('wallet-deposit-submit').click();
+    const depositConfirm = page.getByRole('dialog').filter({
+      has: page.getByTestId('wallet-deposit-confirm'),
+    });
+    await expect(depositConfirm).toBeVisible({ timeout: 10_000 });
+    expect(requestCount, 'opening deposit confirmation must not emit deposit RPC').toBe(0);
+    await expect(depositConfirm.getByText(/50,?000(?:\.000000)? KRW|50000(?:\.000000)? KRW/)).toBeVisible();
+    await expect(depositConfirm.getByText(/5,?000(?:\.000000)? PHON|5000(?:\.000000)? PHON/)).toBeVisible();
+    await page.getByTestId('wallet-deposit-confirm').click();
 
     await expect(page.getByTestId('wallet-deposit-ref')).toBeVisible({ timeout: 15_000 });
+    expect(requestCount, 'confirming deposit must emit exactly one deposit RPC').toBe(1);
     const refCode = await page.getByTestId('wallet-deposit-ref').innerText();
     await expect(page.getByTestId('wallet-deposit-timeline')).toBeVisible();
 
