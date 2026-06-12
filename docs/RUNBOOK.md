@@ -9,7 +9,19 @@
 
 ---
 
-## Admin 운영 루프 빠른 판정
+## 7섹션 목차
+
+| § | 제목 | 본문 |
+|---|------|------|
+| §1 | Kill switches | [§1 Kill switches](#1-kill-switches) |
+| §2 | Incidents | [§2 Incidents](#2-incidents) — Scenario 1~8 |
+| §3 | Backup / recovery | [§3 Backup / recovery](#3-backup--recovery) |
+| §4 | 출금 활성화 | [§4 출금 활성화 체크리스트](#4-출금-활성화-체크리스트-wave-12--사람만-수행) |
+| §5 | AML / 제재 | [§5 AML/제재 매치 대응](#5-aml제재-매치-대응-절차) |
+| §6 | 책임도박 (RG) | [§6 책임도박(RG)](#6-책임도박rg-사용자-문의-대응) |
+| §7 | Escalation | [§7 Escalation](#7-escalation) |
+
+---
 
 Admin Overview는 `rpc_get_ops_health()`와 `rpc_get_ops_alerts()`가 저장한 최신 운영
 신호를 읽어 우선순위를 정한다. 빨간 항목은 아래 Runbook 시나리오로 바로 연결해
@@ -92,6 +104,23 @@ SELECT case_type, status, user_id, trigger_ref, created_at
   별도의 money RPC와 conservation 검증이 선행되어야 한다.
 
 ---
+
+## §1 Kill switches
+
+| 스위치 | 키 / RPC | 효과 |
+|--------|----------|------|
+| 전역 halt | `app_config.system_halt=true` | 모든 위험 RPC 차단 |
+| 읽기 전용 | `app_config.system_readonly=true` | 지갑 변경 RPC 차단 (Scenario 1 자동 설정) |
+| 기능별 | `feature_*_enabled=false` | 해당 surface만 차단 (Scenario 4d) |
+| Admin 수동 | `rpc_set_feature_enabled`, `rpc_set_system_mode` | reason + audit 필수, AAL2 Admin MFA |
+
+**원칙**: kill switch는 자동(재조정/서킷브레이커) 또는 Admin RPC로만 변경. SQL 직접 UPDATE는 Wave 12 긴급 복구 외 금지.
+
+---
+
+## §2 Incidents
+
+아래 Scenario 1~8 및 Wave 10 시나리오는 야간 인시던트 대응 본문이다. Admin Overview 카드의 `runbookKey`가 여기로 연결된다.
 
 ## 🔴 Scenario 1: Reconciliation 불일치 → 자동 system_readonly
 
@@ -633,6 +662,19 @@ SELECT version, name
 
 ---
 
+## §3 Backup / recovery
+
+| 항목 | 조치 |
+|------|------|
+| PITR / 백업 | Supabase Dashboard → Database → Backups (인간 결정 #3 — Wave 12 전 활성화 확인) |
+| 마이그레이션 복구 | 로컬 `supabase db reset` → `test:sql` 41/41 PASS 확인 후 remote push |
+| Auth rate limits | Dashboard → Auth → Rate limits (인간 결정 #3) |
+| 데이터 손실 의심 | 즉시 `system_halt=true` → Scenario 1·2 확인 → §7 Escalation |
+
+Point-in-time recovery는 **사람만** 트리거. 자동화/에이전트가 remote 백업 복원을 실행하지 않는다.
+
+---
+
 ## §4 출금 활성화 체크리스트 (Wave 12 — 사람만 수행)
 
 > **코드/마이그레이션은 출금을 켜지 않는다.** `feature_withdrawal_enabled` 기본값은 `false`이며, 아래를 **전부** 확인한 뒤에만 운영자가 수동으로 전환한다.
@@ -716,6 +758,51 @@ SELECT
 ### 잔여 운영 갭
 
 - 외부 제재 리스트 데이터 소스·적재 주기는 **미선정** (인간 결정 #7). 리스트 적재 전까지 3시점 스크리닝은 **구조만** 존재할 수 있음.
+
+---
+
+## §6 책임도박(RG) 사용자 문의 대응
+
+### 사용자가 설정하는 항목 (웹 `/responsible-gaming`)
+
+| 기능 | RPC | 비고 |
+|------|-----|------|
+| 월 입금 한도 (KRW) | `rpc_set_rg_limit('deposit', …, 'KRW', amount)` | `_assert_rg_deposit_allowed`가 초과 입금 차단 |
+| 월 게임 손실 한도 | `rpc_set_rg_limit('loss', 'game', …)` | 월간 순손실 누적 시 신규 베팅 차단 |
+| 자기제한 | `rpc_set_self_exclusion(until, reason)` | 입금·베팅·트레이딩 **신규 진입** 차단 |
+
+### 자기제한 중 사용자 문의 시 (운영자 응답 원칙)
+
+1. **만료 전 조기 해제 불가**: 운영자는 `rg_self_exclusions`를 직접 UPDATE하거나 임의 RPC로 만료를 당기지 **않는다**. 24시간 cooling-off 이후에만 시스템이 허용하는 해제 경로가 있다(마이그레이션 `00073` — 사용자 요청 + 대기).
+2. **잔액·원장 변경 없음**: 자기제한은 진입 가드만 적용한다. 기존 포지션 청산·잔액 조회는 가능; Σ=0 불변.
+3. **확인 쿼리**:
+```sql
+SELECT user_id, excluded_until, reason, created_at
+  FROM rg_self_exclusions
+ WHERE user_id = '<uuid>'
+   AND excluded_until > NOW()
+ ORDER BY created_at DESC
+ LIMIT 1;
+```
+4. **오탐/버그 의심**: `audit_logs`와 해당 시점 `wallet_ledger` delta만 확인. 잔액 직접 수정 금지 — Scenario 1 참조.
+
+### 입금 한도 초과 문의
+
+- 사용자 월 한도 vs `_rg_month_deposit_total` 누적 비교.
+- `rg_deposit_limit_exceeded`는 정상 차단; 한도 **상향**은 사용자가 UI에서 재설정(운영자 임의 상향 금지, AML 정책 예외 시 별도 절차).
+
+---
+
+## §7 Escalation
+
+| 단계 | 조건 | 조치 |
+|------|------|------|
+| L1 | 단일 open alert, Σ=0 유지 | Admin Alerts acknowledge → Scenario 해당 절차 |
+| L2 | `reconciliation_mismatch` 또는 hash-chain broken | `system_readonly` 유지, Scenario 1·2, 24h 내 root-cause Build Log |
+| L3 | 출금/제재/RG와 법무·AML 교차 | STOP — `feature_withdrawal_enabled` 변경 금지, 인간 결정 #1·#5·#7 |
+| L4 | 데이터 무결성·보안 침해 의심 | `system_halt=true`, Supabase support + 인간 결정, remote 스키마 변경 중단 |
+
+**연락 전 준비**: 최신 `reconciliation_log`, `ops_alerts`, `audit_logs` 20건, 영향 통화별 Σ 스냅샷(빠른 참조 SQL).
 
 ---
 
