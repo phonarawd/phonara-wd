@@ -9,11 +9,12 @@
 
 ---
 
-## Admin Overview 빠른 판정
+## Admin 운영 루프 빠른 판정
 
-Admin Overview는 `rpc_get_ops_health()`가 저장된 최신 운영 신호만 읽어 5개 카드로 표시한다.
-빨간 항목은 아래 Runbook 시나리오로 바로 연결해 확인한다. 이 화면은 즉석 재조정이나
-hash-chain 검사를 실행하지 않으며, 최신 로그를 보고 새벽 대응 우선순위를 정하는 용도다.
+Admin Overview는 `rpc_get_ops_health()`와 `rpc_get_ops_alerts()`가 저장한 최신 운영
+신호를 읽어 우선순위를 정한다. 빨간 항목은 아래 Runbook 시나리오로 바로 연결해
+확인한다. 이 화면은 즉석 재조정이나 hash-chain 검사를 실행하지 않으며, 최신 로그와
+알림 inbox를 보고 새벽 대응 순서를 정하는 용도다.
 
 | Admin 카드 | 빨간 항목 / runbookKey | 확인할 시나리오 |
 |------------|------------------------|-----------------|
@@ -21,7 +22,74 @@ hash-chain 검사를 실행하지 않으며, 최신 로그를 보고 새벽 대�
 | 재조정 | `reconciliation_mismatch` | Scenario 1 |
 | 크론/청산 | `cron_liquidation_stale`, `liquidation_recent_error` | Scenario 4 |
 | 리저브 최신성 | `treasury_stale` | Scenario 3 |
+| 리스크 신호 | `hash_chain_broken`, `pending_exceptions`, `treasury_solvency_risk` | Scenario 1, Scenario 2, Scenario 3, Scenario 8 |
 | 최근 운영자 조치 | `operator_actions_review` | 감사 로그에서 변경 사유와 대상 확인 |
+
+운영자는 다음 순서로 처리한다.
+
+1. **Overview**: critical/warning 카드와 알림 배너를 확인한다.
+2. **Alerts**: `admin/alerts`에서 open 알림을 동기화하고, 확인한 알림은 반드시 reason과 함께 acknowledge/resolve한다.
+3. **Queues**: `admin/queues`에서 deposit/KYC/withdrawal/STR/risk exception을 SLA 순서로 처리한다.
+4. **Audit**: `admin/audit`에서 방금 수행한 수동 조치의 audit row가 생성됐는지 확인한다.
+5. **Operations**: 필요할 때만 feature flag, `system_readonly`, `system_halt`를 reason과 함께 변경한다.
+
+---
+
+## Ops Alerts와 Exception Queue
+
+`ops_alerts`는 health snapshot에서 생성되는 영속 inbox다. `status = open` 또는
+`acknowledged`인 항목은 Overview 알림 배너와 Alerts 화면에 나타난다.
+
+**확인 쿼리**:
+```sql
+SELECT id, source_check_id, severity, status, summary, runbook_key,
+       occurrence_count, last_seen_at
+  FROM ops_alerts
+ WHERE status IN ('open', 'acknowledged')
+ ORDER BY severity DESC, last_seen_at DESC;
+```
+
+**수동 처리 원칙**:
+- 알림 acknowledge/resolve, exception queue resolve, withdrawal reject/approve,
+  STR status update, risk flag clear는 모두 Admin 화면의 reason dialog 또는
+  대응 `rpc_*`를 통해 처리한다.
+- 원장·지갑·상태 테이블을 직접 UPDATE하지 않는다.
+- 모든 수동 조치 후 `audit_logs`에서 action, entity, payload.reason을 확인한다.
+
+**예외 큐 확인 쿼리**:
+```sql
+SELECT queue_type, entity_type, entity_id, user_id, reason, status, sla_due_at
+  FROM admin_review_queue
+ WHERE status IN ('pending', 'in_review')
+ ORDER BY sla_due_at, created_at;
+```
+
+---
+
+## RG / Sanctions 신호
+
+제재 심사, 자기제한, 계정 활동 제한은 `risk_flags`, `str_cases`, `admin_review_queue`에
+나뉘어 나타난다. 정상 케이스는 자동 차단·큐 생성까지 끝나며, 사람은 예외 처리와 해제
+근거 기록만 담당한다.
+
+**확인 쿼리**:
+```sql
+SELECT flag_type, status, user_id, created_at, details
+  FROM risk_flags
+ WHERE status = 'active'
+ ORDER BY created_at DESC;
+
+SELECT case_type, status, user_id, trigger_ref, created_at
+  FROM str_cases
+ WHERE status IN ('open', 'reviewing')
+ ORDER BY created_at;
+```
+
+**해제 원칙**:
+- `sanctions_hit`, `account_activity_frozen`, `rg_self_exclusion`은 원인 증거가
+  해소된 뒤에만 Admin queue/RPC 경로로 해제한다.
+- 해제 전후에 사용자 wallet/system Σ가 바뀌지 않아야 한다. 잔액 변경이 필요하면
+  별도의 money RPC와 conservation 검증이 선행되어야 한다.
 
 ---
 
@@ -245,8 +313,8 @@ SELECT code, currency, balance FROM system_accounts ORDER BY currency, code;
 ```
 - [ ] Check recent casino settlement legs and largest payouts:
 ```sql
-SELECT user_id, game, stake_amount, payout_amount, settled_at
-  FROM casino_bets
+SELECT user_id, game, stake, payout, settled_at
+  FROM game_bets
  ORDER BY settled_at DESC
  LIMIT 50;
 ```
@@ -583,6 +651,8 @@ SELECT
 SELECT code, currency, balance FROM system_accounts ORDER BY currency, code;
 
 -- 최근 audit_log (고위험 관리자 액션)
-SELECT performed_at, admin_id, action, target_type, target_id, reason
-  FROM audit_log ORDER BY performed_at DESC LIMIT 20;
+SELECT created_at, actor_id, action, entity_type, entity_id, payload->>'reason' AS reason
+  FROM audit_logs
+ ORDER BY created_at DESC
+ LIMIT 20;
 ```

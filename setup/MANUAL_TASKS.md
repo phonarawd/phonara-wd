@@ -189,31 +189,151 @@ bun run test:sql
 
 ## 9. Supabase Remote 마이그레이션 적용 현황
 
-> AI가 마이그레이션 파일을 작성한 후 직접 MCP로 원격 적용합니다.
+> AI가 Launch RC 중 원격 적용을 완료했습니다.
 > 수동 확인용 레퍼런스.
 
 | 마이그레이션 | 내용 | 원격 적용 |
 |------------|------|---------|
-| `000001` ~ `000010` | Phase1~P0 기초 스키마/RPC | ✅ 완료 |
-| `000011` | 보상 보존 수정 | ✅ 완료 |
-| `000012` | anon oracle/liquidate 차단 | ✅ 완료 |
-| `000013` | advisor cleanup (anon REVOKE + search_path) | ✅ 완료 |
-| `000014` | 보상 발행 명시 화이트리스트 (substring LIKE 제거) | ✅ 완료 |
-| `000015` | 자동청산 pg_cron 러너 (매 1분) | ✅ 완료 |
-| `000016` | SQL RPC 입력 정규식 가드 | ✅ 완료 |
-| `000017` | 해시체인 페이로드 v2 | ✅ 완료 |
-| `000018` | 전역 system-live / readonly 가드 | ✅ 완료 |
-| `000019` | 기능별 kill switch | ✅ 완료 |
-| `000020` | 포지션 수 상한 + 마켓 OI cap | ✅ 완료 |
-| `000021` | 요청 단위 멱등(client_request_id) | ✅ 완료 |
-| `000022` | 청산 가드 + 이력 closeout | ✅ 완료 |
-| `000023` | 가입 트리거 search_path 버그 수정 | ✅ 완료 |
-| `000024` | Admin 감사 RLS | ✅ 완료 |
-| `000025` | rpc_complete_mission 무료머니 홀 봉인 (S1 Critical) | 🔲 원격 적용 필요 |
+| `20260609000001` ~ `20260611000079` | Phase1~Launch RC schema/RLS/RPC/ops/affiliate/closeout 전체 | ✅ 완료 |
 
 ---
 
-## 10. 빠른 확인 명령어 모음
+## 10. 프로덕션 첫 계정과 Authenticated Smoke
+
+현재 원격 `auth.users=0`입니다. 앱/DB read-only smoke는 green이지만, 로그인 후
+지갑/거래/카지노/Admin 화면을 여는 smoke는 실제 계정이 없으면 수행할 수 없습니다.
+
+원칙:
+
+- persistent fake user, fake funding, mock deposit, mock withdrawal을 production에 만들지 않습니다.
+- Admin smoke는 실제 운영자 계정으로만 수행합니다.
+- User smoke는 실제 내부 운영 계정 또는 출시 직후 첫 실제 사용자 계정으로 **무변경 탐색만**
+  수행합니다. 입금 신청, 출금 신청, 매수/매도, futures open, casino bet, reward claim은
+  launch-ops에서 별도 승인 전까지 실행하지 않습니다.
+- 스모크 중 feature flag, halt, readonly는 실제 토글하지 않습니다. 현재 값 확인만 합니다.
+
+필수 수동 작업:
+
+- [ ] Supabase Dashboard → Authentication에서 운영자 계정을 생성합니다.
+- [ ] 생성된 운영자 `auth.users.id`를 확인한 뒤 SQL Editor에서 아래처럼 Admin role을 부여합니다.
+
+```sql
+UPDATE profiles
+   SET role = 'admin'
+ WHERE id = '<운영자 auth.users.id>';
+```
+
+- [ ] Supabase Dashboard → Authentication → MFA에서 운영자 계정에 TOTP MFA를 등록합니다.
+- [ ] Admin app 로그인 후 `/overview`, `/alerts`, `/queues`, `/audit`, `/operations`를 열어
+      읽기 smoke만 수행합니다.
+- [ ] User app 로그인 후 `/wallet`, `/trade`, `/casino`, `/ledger`를 열어 읽기 smoke만 수행합니다.
+- [ ] smoke 후 `audit_logs`에 원치 않는 manual action이 생기지 않았고, `wallet_ledger`/`game_bets`/
+      `withdrawal_requests`/`krw_deposit_requests`에 smoke로 인한 새 행이 없는지 확인합니다.
+
+확인 SQL:
+
+```sql
+SELECT key, value
+  FROM app_config
+ WHERE key IN (
+   'system_halt',
+   'system_readonly',
+   'feature_withdrawal_enabled',
+   'feature_deposit_enabled',
+   'feature_spot_enabled',
+   'feature_futures_enabled',
+   'feature_game_enabled'
+ )
+ ORDER BY key;
+
+SELECT count(*) AS open_ops_alerts
+  FROM ops_alerts
+ WHERE status = 'open';
+```
+
+---
+
+## 11. Launch-Ops 당일 운영 루프
+
+AI가 read-only로 확인한 최신 원격 상태:
+
+- `system_halt=false`, `system_readonly=false`
+- `feature_deposit_enabled=true`, `feature_spot_enabled=true`, `feature_futures_enabled=true`, `feature_game_enabled=true`
+- `feature_withdrawal_enabled=false`
+- `auth.users=0`
+- open/ack ops alerts 0, pending review queue 0, pending withdrawals 0, active risk flags 0, open STR cases 0
+- pg_cron jobs active:
+  - `phonara_auto_liquidations` → `* * * * *`
+  - `phonara_casino_stale_pending_sweep` → `*/5 * * * *`
+  - `phonara_daily_reconciliation` → `0 2 * * *`
+- `reconciliation_log`는 아직 비어 있습니다. 첫 launch-ops 전에 수동 실행 또는 첫 scheduled run 후 green 확인이 필요합니다.
+- AI MCP SQL 세션은 `supabase_read_only_user`라 `rpc_run_reconciliation()` 실행 권한이 없습니다.
+  이 RPC는 의도적으로 `service_role` 전용입니다. 첫 reconciliation은 Supabase Dashboard SQL Editor
+  또는 service-role/DB owner 권한 세션에서 실행하세요.
+
+Launch-Ops 전환 전 필수 수동 확인:
+
+- [ ] 운영자 Admin 계정 + MFA + no-mutation authenticated smoke 완료.
+- [ ] 첫 reconciliation을 실행하거나 scheduled `phonara_daily_reconciliation` 후 결과 확인.
+- [ ] `reconciliation_log` 최신 5개 check가 모두 `is_match = true`.
+- [ ] `system_halt=false`, `system_readonly=false` 유지.
+- [ ] `feature_withdrawal_enabled=false` 유지(출금은 별도 운영 승인 전까지 닫힘).
+- [ ] open ops alerts, pending queues, active risk flags, open STR cases가 모두 0 또는 운영자가 사유를 확인함.
+- [ ] 출시 후 24시간 high-risk freeze: feature flag 변경, withdrawal enable, reserve edit, manual balance/ledger correction, admin high-risk RPC는 원칙적으로 금지. 예외 시 reason + audit row 확인.
+
+확인 SQL:
+
+```sql
+-- Supabase Dashboard SQL Editor 또는 service_role/DB owner 권한에서 실행
+SELECT rpc_run_reconciliation();
+
+SELECT key, value
+  FROM app_config
+ WHERE key IN (
+   'system_halt',
+   'system_readonly',
+   'feature_withdrawal_enabled',
+   'feature_deposit_enabled',
+   'feature_spot_enabled',
+   'feature_futures_enabled',
+   'feature_game_enabled'
+ )
+ ORDER BY key;
+
+SELECT jobname, schedule, active
+  FROM cron.job
+ WHERE jobname IN (
+   'phonara_auto_liquidations',
+   'phonara_daily_reconciliation',
+   'phonara_casino_stale_pending_sweep'
+ )
+ ORDER BY jobname;
+
+SELECT run_at, check_type, currency, delta, broken_count, is_match, triggered_halt
+  FROM reconciliation_log
+ ORDER BY run_at DESC, check_type
+ LIMIT 20;
+
+SELECT count(*) AS open_ops_alerts
+  FROM ops_alerts
+ WHERE status = 'open';
+
+SELECT count(*) AS pending_review_queue
+  FROM admin_review_queue
+ WHERE status IN ('pending', 'in_review');
+
+SELECT count(*) AS pending_withdrawals
+  FROM withdrawal_requests
+ WHERE status IN ('pending', 'approved');
+
+SELECT count(*) AS active_risk_flags
+  FROM risk_flags
+ WHERE status = 'active';
+```
+
+---
+
+## 12. 빠른 확인 명령어 모음
 
 ```bash
 # 로컬 Supabase 상태 확인
@@ -250,4 +370,6 @@ bun run build
   4. [ ] 프로덕션 배포 환경 변수
   5. [ ] GitHub Secrets (CI/CD)
   6. [ ] VAPID 키 (PWA)
+  7. [ ] 운영자 Admin 계정 + 무변경 authenticated smoke
+  8. [ ] Launch-Ops 첫 reconciliation green 확인
 ```
