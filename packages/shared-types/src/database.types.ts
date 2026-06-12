@@ -94,6 +94,57 @@ export type Database = {
           },
         ]
       }
+      affiliate_commission_daily_aggregates: {
+        Row: {
+          affiliate_id: string
+          aggregate_date: string
+          created_at: string
+          currency: Database["public"]["Enums"]["currency"]
+          domain: string
+          gross_revenue: string
+          id: string
+          referred_id: string
+          updated_at: string
+        }
+        Insert: {
+          affiliate_id: string
+          aggregate_date: string
+          created_at?: string
+          currency: Database["public"]["Enums"]["currency"]
+          domain: string
+          gross_revenue: string
+          id?: string
+          referred_id: string
+          updated_at?: string
+        }
+        Update: {
+          affiliate_id?: string
+          aggregate_date?: string
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency"]
+          domain?: string
+          gross_revenue?: string
+          id?: string
+          referred_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_commission_daily_aggregates_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_commission_daily_aggregates_referred_id_fkey"
+            columns: ["referred_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliate_elite_overrides: {
         Row: {
           affiliate_id: string
@@ -3211,6 +3262,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      _refresh_affiliate_commission_daily_aggregates: {
+        Args: { p_from_date?: string; p_to_date?: string }
+        Returns: Json
+      }
       _require_game_float: {
         Args: { p_floats: number[]; p_index: number }
         Returns: number
@@ -3507,6 +3562,10 @@ export type Database = {
           p_locale?: string
           p_user_agent?: string
         }
+        Returns: Json
+      }
+      rpc_refresh_affiliate_commission_daily_aggregates: {
+        Args: { p_from_date?: string; p_to_date?: string }
         Returns: Json
       }
       rpc_refresh_affiliate_tier_snapshots: {

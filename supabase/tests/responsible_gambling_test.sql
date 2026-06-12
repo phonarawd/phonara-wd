@@ -262,6 +262,8 @@ BEGIN
     (v_referred, 'authenticated', 'authenticated', 'rg_referred_' || v_referred::TEXT || '@test.local', NOW(), NOW());
   INSERT INTO referrals (referrer_id, referred_id)
   VALUES (v_referrer, v_referred);
+  INSERT INTO affiliate_relationships (child_id, parent_id)
+  VALUES (v_referred, v_referrer);
 
   PERFORM _credit_wallet_internal(v_referred, 'USDT', '1000.000000', 'rg_funding', 'rg-affiliate-usdt-' || v_referred::TEXT);
   PERFORM _debit_system_account('house_liquidity_usdt', '1000.000000', 'rg_funding', v_referred, 'rg-affiliate-usdt-' || v_referred::TEXT, NULL);
