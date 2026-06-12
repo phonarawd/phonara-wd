@@ -1,6 +1,6 @@
-import Decimal from 'decimal.js';
 import { z } from 'zod';
 import { registerGame, type GameDefinition } from '../registry';
+import { quantize6 } from '../lib/quantize';
 import { requireFloat } from '../lib/require-float';
 
 export interface MinesSelection {
@@ -74,9 +74,9 @@ const minesDefinition: GameDefinition<MinesSelection, MinesResult> = {
 
   settle(stake, selection, result) {
     if (result.hitMine || selection.revealedCells.length === 0) {
-      return { payout: new Decimal('0'), houseEdgeLeg: stake };
+      return { payout: quantize6('0'), houseEdgeLeg: stake };
     }
-    const mult = new Decimal(
+    const mult = quantize6(
       minesMultiplier(selection.mineCount, selection.revealedCells.length).toFixed(2),
     );
     const payout = stake.mul(mult);

@@ -1,6 +1,6 @@
-import Decimal from 'decimal.js';
 import { z } from 'zod';
 import { registerGame, type GameDefinition } from '../registry';
+import { quantize6 } from '../lib/quantize';
 import { requireFloat } from '../lib/require-float';
 
 export interface CrashSelection {
@@ -44,11 +44,11 @@ const crashDefinition: GameDefinition<CrashSelection, CrashResult> = {
 
   settle(stake, _selection, result) {
     if (result.cashedOut && result.cashoutMultiplier >= 1.01) {
-      const payout = stake.mul(new Decimal(result.cashoutMultiplier.toFixed(2)));
+      const payout = stake.mul(quantize6(result.cashoutMultiplier.toFixed(2)));
       const houseEdgeLeg = stake.minus(payout);
       return { payout, houseEdgeLeg };
     }
-    return { payout: new Decimal('0'), houseEdgeLeg: stake };
+    return { payout: quantize6('0'), houseEdgeLeg: stake };
   },
 };
 

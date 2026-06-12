@@ -10,5 +10,8 @@
     "rootDir": "src",
     "tsBuildInfoFile": "../../node_modules/.cache/tsbuild/game-engine.tsbuildinfo"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    { "path": "../money" }
+  ]
 }

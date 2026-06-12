@@ -1,6 +1,6 @@
-import Decimal from 'decimal.js';
 import { z } from 'zod';
 import { registerGame, type GameDefinition } from '../registry';
+import { quantize6 } from '../lib/quantize';
 import { requireFloat } from '../lib/require-float';
 
 export type HiLoGuess = 'higher' | 'lower' | 'skip';
@@ -81,10 +81,10 @@ const hiloDefinition: GameDefinition<HiLoSelection, HiLoResult> = {
 
   settle(stake, _selection, result) {
     if (!result.won || result.rounds.length === 0) {
-      return { payout: new Decimal('0'), houseEdgeLeg: stake };
+      return { payout: quantize6('0'), houseEdgeLeg: stake };
     }
     const lastRound = result.rounds[result.rounds.length - 1];
-    const mult = new Decimal((lastRound?.multiplier ?? 1).toFixed(2));
+    const mult = quantize6((lastRound?.multiplier ?? 1).toFixed(2));
     const payout = stake.mul(mult);
     const houseEdgeLeg = stake.minus(payout);
     return { payout, houseEdgeLeg };

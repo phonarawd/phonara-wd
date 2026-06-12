@@ -1,5 +1,5 @@
 import type { ZodType } from 'zod';
-import type { Decimal } from 'decimal.js';
+import type { Decimal } from '@phonara/money';
 
 export type GameCode = 'crash' | 'limbo' | 'dice' | 'mines' | 'hilo' | 'plinko';
 

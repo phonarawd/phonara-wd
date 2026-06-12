@@ -1,6 +1,6 @@
-import Decimal from 'decimal.js';
 import { z } from 'zod';
 import { registerGame, type GameDefinition } from '../registry';
+import { quantize6 } from '../lib/quantize';
 import { requireFloat } from '../lib/require-float';
 
 export type DiceDirection = 'over' | 'under';
@@ -69,12 +69,12 @@ const diceDefinition: GameDefinition<DiceSelection, DiceResult> = {
   settle(stake, selection, result) {
     if (result.won) {
       const target = parseFloat(selection.target);
-      const mult = new Decimal(diceMultiplier(target, selection.direction).toFixed(2));
+      const mult = quantize6(diceMultiplier(target, selection.direction).toFixed(2));
       const payout = stake.mul(mult);
       const houseEdgeLeg = stake.minus(payout);
       return { payout, houseEdgeLeg };
     }
-    return { payout: new Decimal('0'), houseEdgeLeg: stake };
+    return { payout: quantize6('0'), houseEdgeLeg: stake };
   },
 };
 

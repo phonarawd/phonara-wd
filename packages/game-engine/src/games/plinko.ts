@@ -1,6 +1,6 @@
-import Decimal from 'decimal.js';
 import { z } from 'zod';
 import { registerGame, type GameDefinition } from '../registry';
+import { quantize6 } from '../lib/quantize';
 import { requireFloat } from '../lib/require-float';
 
 export type PlinkoRisk = 'low' | 'medium' | 'high';
@@ -80,7 +80,7 @@ const plinkoDefinition: GameDefinition<PlinkoSelection, PlinkoResult> = {
   },
 
   settle(stake, _selection, result) {
-    const mult = new Decimal(result.bucketMultiplier);
+    const mult = quantize6(result.bucketMultiplier);
     const payout = stake.mul(mult);
     const houseEdgeLeg = stake.minus(payout);
     return { payout, houseEdgeLeg };

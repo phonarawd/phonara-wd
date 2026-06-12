@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import Decimal from 'decimal.js';
+import { Decimal } from '@phonara/money';
 import { floatStream } from '../fairness/float';
 import { plinkoDefinition, plinkoRtp, PAYOUT_TABLES } from './plinko';
 import { minesDefinition } from './mines';

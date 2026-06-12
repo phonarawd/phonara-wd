@@ -1,6 +1,6 @@
-import Decimal from 'decimal.js';
 import { z } from 'zod';
 import { registerGame, type GameDefinition } from '../registry';
+import { quantize6 } from '../lib/quantize';
 import { requireFloat } from '../lib/require-float';
 
 export interface LimboSelection {
@@ -45,12 +45,12 @@ const limboDefinition: GameDefinition<LimboSelection, LimboResult> = {
 
   settle(stake, selection, result) {
     if (result.won) {
-      const mult = new Decimal(selection.target);
+      const mult = quantize6(selection.target);
       const payout = stake.mul(mult);
       const houseEdgeLeg = stake.minus(payout);
       return { payout, houseEdgeLeg };
     }
-    return { payout: new Decimal('0'), houseEdgeLeg: stake };
+    return { payout: quantize6('0'), houseEdgeLeg: stake };
   },
 };
 
