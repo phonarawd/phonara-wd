@@ -420,3 +420,57 @@ BEGIN
 END;
 $$;
 ROLLBACK;
+
+-- ── Task 7: monthly KRW deposit cap blocks over-limit requests ────────────────
+BEGIN;
+DO $$
+DECLARE
+  v_uid UUID := gen_random_uuid();
+  v_res JSONB;
+  v_blocked BOOLEAN := FALSE;
+  v_msg TEXT;
+BEGIN
+  INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
+  VALUES (v_uid, 'authenticated', 'authenticated',
+          'rg_dep_cap_' || v_uid::TEXT || '@test.local', NOW(), NOW());
+
+  INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
+  SELECT v_uid, doc_type::consent_doc_type, 'rg', TRUE
+    FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']::TEXT[]) AS doc_type;
+  INSERT INTO sanctions_screenings (user_id, status, screened_at)
+  VALUES (v_uid, 'clear', NOW());
+
+  UPDATE app_config SET value = 'false'
+    WHERE key IN ('system_halt', 'system_readonly', 'consent_gate_enabled');
+  UPDATE app_config SET value = 'true' WHERE key = 'feature_deposit_enabled';
+
+  UPDATE exchange_rate_snapshots
+     SET is_active = TRUE, rate = '100.000000'
+   WHERE base_currency = 'PHON' AND quote_currency = 'KRW';
+  IF NOT FOUND THEN
+    INSERT INTO exchange_rate_snapshots (base_currency, quote_currency, rate, is_active, source)
+    VALUES ('PHON', 'KRW', '100.000000', TRUE, 'rg_deposit_cap_test');
+  END IF;
+
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
+
+  v_res := rpc_set_rg_limit('deposit', '', 'KRW', '100000');
+  ASSERT COALESCE((v_res->>'ok')::BOOLEAN, FALSE), format('deposit limit set failed: %s', v_res);
+
+  v_res := rpc_create_krw_deposit_request('60000', 'rg-dep-cap-1-' || v_uid::TEXT);
+  ASSERT COALESCE((v_res->>'ok')::BOOLEAN, FALSE), format('first deposit under cap must succeed: %s', v_res);
+
+  BEGIN
+    PERFORM rpc_create_krw_deposit_request('50000', 'rg-dep-cap-2-' || v_uid::TEXT);
+  EXCEPTION WHEN OTHERS THEN
+    GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
+    IF v_msg = 'rg_deposit_limit_exceeded' THEN v_blocked := TRUE; END IF;
+  END;
+
+  ASSERT v_blocked,
+    format('over-cap deposit must raise rg_deposit_limit_exceeded, got %s', COALESCE(v_msg, '<none>'));
+
+  RAISE NOTICE 'RG DEPOSIT CAP OK — monthly KRW deposit limit enforced';
+END;
+$$;
+ROLLBACK;
