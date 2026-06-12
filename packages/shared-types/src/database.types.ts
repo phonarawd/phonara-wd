@@ -226,6 +226,113 @@ export type Database = {
           },
         ]
       }
+      affiliate_settlement_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          payload: Json
+          settlement_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          payload?: Json
+          settlement_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          payload?: Json
+          settlement_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_settlement_events_settlement_id_fkey"
+            columns: ["settlement_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_settlements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_settlements: {
+        Row: {
+          affiliate_id: string
+          cap_reduction: Json
+          created_at: string
+          direct_commission: Json
+          direct_ggr: Json
+          id: string
+          ledger_entry_ids: Json
+          override_commission: Json
+          override_commission_raw: Json
+          override_ggr: Json
+          paid_at: string | null
+          settlement_date: string
+          state: string
+          system_transfer_ids: Json
+          tier_code: string
+          total_commission: Json
+          updated_at: string
+        }
+        Insert: {
+          affiliate_id: string
+          cap_reduction?: Json
+          created_at?: string
+          direct_commission?: Json
+          direct_ggr?: Json
+          id?: string
+          ledger_entry_ids?: Json
+          override_commission?: Json
+          override_commission_raw?: Json
+          override_ggr?: Json
+          paid_at?: string | null
+          settlement_date: string
+          state?: string
+          system_transfer_ids?: Json
+          tier_code: string
+          total_commission?: Json
+          updated_at?: string
+        }
+        Update: {
+          affiliate_id?: string
+          cap_reduction?: Json
+          created_at?: string
+          direct_commission?: Json
+          direct_ggr?: Json
+          id?: string
+          ledger_entry_ids?: Json
+          override_commission?: Json
+          override_commission_raw?: Json
+          override_ggr?: Json
+          paid_at?: string | null
+          settlement_date?: string
+          state?: string
+          system_transfer_ids?: Json
+          tier_code?: string
+          total_commission?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_settlements_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_settlements_tier_code_fkey"
+            columns: ["tier_code"]
+            isOneToOne: false
+            referencedRelation: "affiliate_tier_configs"
+            referencedColumns: ["tier_code"]
+          },
+        ]
+      }
       affiliate_tier_configs: {
         Row: {
           auto_eligible: boolean
@@ -2955,6 +3062,10 @@ export type Database = {
         Args: { p_snapshot_date?: string }
         Returns: Json
       }
+      _affiliate_tier_for_settlement: {
+        Args: { p_affiliate_id: string; p_settlement_date: string }
+        Returns: string
+      }
       _affiliate_tier_rank: { Args: { p_tier_code: string }; Returns: number }
       _app_config_numeric: {
         Args: { p_default: number; p_key: string }
@@ -3199,6 +3310,14 @@ export type Database = {
         Args: { p_reason_code: string }
         Returns: boolean
       }
+      _jsonb_amount_object: {
+        Args: {
+          p_amount: number
+          p_amounts: Json
+          p_currency: Database["public"]["Enums"]["currency"]
+        }
+        Returns: Json
+      }
       _liquidation_buffer_state: {
         Args: { p_mark: number; p_position_id: string }
         Returns: string
@@ -3349,6 +3468,10 @@ export type Database = {
         Returns: number
       }
       _roulette_weighted_index: { Args: { p_roll: number }; Returns: number }
+      _run_affiliate_settlements: {
+        Args: { p_settlement_date?: string }
+        Returns: Json
+      }
       _run_liquidations_logged: { Args: never; Returns: undefined }
       _sal_row_hash: {
         Args: {
@@ -3617,6 +3740,10 @@ export type Database = {
       }
       rpc_review_kyc_submission: {
         Args: { p_reason: string; p_status: string; p_submission_id: string }
+        Returns: Json
+      }
+      rpc_run_affiliate_settlements: {
+        Args: { p_settlement_date?: string }
         Returns: Json
       }
       rpc_run_liquidations: { Args: never; Returns: Json }
