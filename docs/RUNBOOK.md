@@ -633,6 +633,60 @@ SELECT version, name
 
 ---
 
+## §4 출금 활성화 체크리스트 (Wave 12 — 사람만 수행)
+
+> **코드/마이그레이션은 출금을 켜지 않는다.** `feature_withdrawal_enabled` 기본값은 `false`이며, 아래를 **전부** 확인한 뒤에만 운영자가 수동으로 전환한다.
+
+### 선행 조건 (STOP if any fail)
+
+- [ ] **법률 전제**: [`docs/LEGAL_BASIS.md`](LEGAL_BASIS.md) 전제사실과 현재 제품 구조가 일치하는지 확인.
+- [ ] **Admin MFA (AAL2)**: 모든 운영자 계정이 TOTP 등록 완료; Admin 로그인 후 JWT `aal=aal2` 확인.
+- [ ] **3시점 제재 스크리닝**: KYC 제출, 입금 매칭, 출금 요청 경로에 `_assert_sanctions_screening` / `_ensure_kyc_sanctions_screening_pending` 존재 확인(마이그레이션 적용됨).
+- [ ] **대기 중 제재 심사 0건**:
+```sql
+SELECT COUNT(*) AS pending_screenings
+  FROM sanctions_screenings
+ WHERE status = 'pending';
+```
+  잔여 건은 `rpc_resolve_sanctions_screening`으로 clear/hit 처리 후 재확인.
+- [ ] **외부 제재 리스트**: 데이터 소스·적재 주기 결정 완료(인간 결정 #7). 미결정 시 STOP.
+- [ ] **일일 출금 한도**:
+```sql
+SELECT key, value FROM app_config WHERE key = 'withdrawal_daily_cap_per_user';
+```
+
+### 활성화 (사람만)
+
+```sql
+-- RUNBOOK 승인 + audit 사유 기록 후, Admin rpc_set_feature_enabled 또는 검토된 SQL:
+UPDATE app_config SET value = 'true', updated_at = NOW()
+ WHERE key = 'feature_withdrawal_enabled';
+```
+
+### 활성화 후 24시간 모니터링
+
+```sql
+SELECT COUNT(*) AS withdrawal_requests_24h
+  FROM withdrawal_requests
+ WHERE created_at >= NOW() - INTERVAL '24 hours';
+
+SELECT COALESCE(SUM(phon_locked::NUMERIC), 0) AS phon_locked_total FROM wallets;
+
+-- Σ=0 (PHON)
+SELECT
+  (SELECT COALESCE(SUM(phon_available::NUMERIC + phon_locked::NUMERIC), 0) FROM wallets)
+  + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'PHON') AS phon_sigma;
+```
+
+### 롤백 (이상 징후 시)
+
+1. 즉시 `feature_withdrawal_enabled=false` (Admin feature flag 또는 동일 UPDATE).
+2. 필요 시 `system_readonly=true` — Scenario 1 참조.
+3. 미결 출금 큐는 Admin queues에서 reject/approve; 원장 직접 UPDATE 금지.
+4. Build Log에 사유·영향·복구 상태 기록.
+
+---
+
 ## 빠른 참조 SQL
 
 ```sql

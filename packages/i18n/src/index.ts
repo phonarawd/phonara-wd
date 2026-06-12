@@ -897,6 +897,7 @@ export const koMessages = {
   'admin.mfa.challenge.verifyError': '인증 코드가 올바르지 않습니다. 다시 시도하세요.',
   'admin.mfa.challenge.missingFactor': '등록된 2단계 인증이 없습니다. 등록 화면으로 이동하세요.',
   'error.ERR_MFA_REQUIRED': '2단계 인증이 필요합니다. 인증을 완료한 뒤 다시 시도하세요.',
+  'error.ERR_WITHDRAWAL_DAILY_CAP': '일일 출금 한도를 초과했습니다. 내일 다시 시도하거나 한도를 확인하세요.',
 } as const;
 
 export const enMessages: Record<keyof typeof koMessages, string> = {
@@ -1773,6 +1774,7 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'admin.mfa.challenge.verifyError': 'The verification code is invalid. Please try again.',
   'admin.mfa.challenge.missingFactor': 'No MFA factor is enrolled. Go to enrollment first.',
   'error.ERR_MFA_REQUIRED': 'Two-factor authentication is required. Complete verification and try again.',
+  'error.ERR_WITHDRAWAL_DAILY_CAP': 'Daily withdrawal limit exceeded. Try again tomorrow or review your limit.',
 };
 
 export type MessageKey = keyof typeof koMessages;

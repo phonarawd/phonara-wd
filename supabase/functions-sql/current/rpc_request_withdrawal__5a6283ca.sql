@@ -13,6 +13,9 @@ DECLARE
   v_wallet  wallets%ROWTYPE;
   v_wr_id   UUID;
   v_lock_id UUID;
+  v_cap     TEXT;
+  v_today   NUMERIC;
+  v_amount  NUMERIC;
 BEGIN
   IF v_user_id IS NULL THEN RAISE EXCEPTION 'unauthenticated'; END IF;
 
@@ -36,6 +39,24 @@ BEGIN
   PERFORM _assert_kyc_withdrawal_gate(v_user_id);
   PERFORM _assert_sanctions_screening(v_user_id);
   PERFORM _assert_solvency_withdrawal_gate(v_ccy);
+
+  SELECT value INTO v_cap
+    FROM app_config
+   WHERE key = 'withdrawal_daily_cap_per_user';
+
+  IF v_cap IS NOT NULL AND length(btrim(v_cap)) > 0 THEN
+    PERFORM _assert_amount_text(v_cap);
+    v_amount := p_amount::NUMERIC;
+    SELECT COALESCE(SUM(amount::NUMERIC), 0) INTO v_today
+      FROM withdrawal_requests
+     WHERE user_id = v_user_id
+       AND currency = v_ccy
+       AND status NOT IN ('rejected', 'cancelled')
+       AND created_at >= date_trunc('day', NOW() AT TIME ZONE 'UTC');
+    IF v_today + v_amount > v_cap::NUMERIC THEN
+      RAISE EXCEPTION 'ERR_WITHDRAWAL_DAILY_CAP';
+    END IF;
+  END IF;
 
   SELECT id INTO v_wr_id FROM withdrawal_requests
    WHERE user_id = v_user_id AND idempotency_key = p_idempotency_key;

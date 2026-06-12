@@ -51,6 +51,7 @@ const ERROR_KEY_MAP: ReadonlyArray<readonly [string, MessageKey]> = [
   ['sanctions_pending', 'error.SANCTIONS_PENDING'],
   ['sanctions_stale', 'error.SANCTIONS_PENDING'],
   ['withdrawal_solvency_hold', 'error.WITHDRAWAL_SOLVENCY_HOLD'],
+  ['err_withdrawal_daily_cap', 'error.ERR_WITHDRAWAL_DAILY_CAP'],
   ['account_activity_frozen', 'error.ACCOUNT_ACTIVITY_FROZEN'],
   ['duplicate_transfer_id', 'error.DUPLICATE_REQUEST'],
   ['unique_violation', 'error.DUPLICATE_REQUEST'],
