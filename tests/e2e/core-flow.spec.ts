@@ -3,6 +3,9 @@ import { adminClient, readAuth, currencyTotals, freshenOracle, injectBrowserSess
 
 test.setTimeout(180_000);
 
+/** Oracle/price-estimate gates can lag after full-gate load; wait on UI/RPC state, not fixed sleeps. */
+const ORACLE_ACTION_TIMEOUT = 45_000;
+
 async function injectSession(page: Page, accessToken: string, refreshToken: string): Promise<void> {
   await injectBrowserSession(page, accessToken, refreshToken, { unregisterServiceWorkers: true });
 }
@@ -32,8 +35,8 @@ async function waitForSpotBuyRpc(
     { timeout: 90_000, message: 'spot buy RPC did not record a trade' },
   ).toBeGreaterThan(spotCountBefore);
 
-  await expect(page.getByTestId('spot-confirm')).toBeHidden({ timeout: 10_000 });
-  await expect(page.getByTestId('spot-submit')).toBeEnabled({ timeout: 10_000 });
+  await expect(page.getByTestId('spot-confirm')).toBeHidden({ timeout: ORACLE_ACTION_TIMEOUT });
+  await expect(page.getByTestId('spot-submit')).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
 }
 
 test('core money flow: spot buy → futures open/close → stake → claim (ledger conserved)', async ({
@@ -56,23 +59,24 @@ test('core money flow: spot buy → futures open/close → stake → claim (ledg
     .eq('user_id', auth.userId);
   await page.goto('/trade');
   await freshenOracle(admin);
-  await expect(page.getByTestId('spot-submit')).toBeEnabled({ timeout: 15_000 });
+  await expect(page.getByTestId('spot-submit')).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
   await page.getByTestId('spot-submit').click();
   await page.getByTestId('spot-confirm').click();
   await waitForSpotBuyRpc(page, admin, auth.userId, spotCountBeforeBuy ?? 0);
 
   // ── Futures open (default market, long, USDT margin) ──
   await freshenOracle(admin);
-  await expect(page.getByTestId('futures-open')).toBeEnabled({ timeout: 15_000 });
+  await expect(page.getByTestId('futures-open')).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
   await page.getByTestId('futures-open').click();
   await page.getByTestId('futures-open-confirm').click();
-  await expect(page.getByTestId('futures-close').first()).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId('futures-close').first()).toBeVisible({ timeout: ORACLE_ACTION_TIMEOUT });
 
   // ── Futures close ──
   await freshenOracle(admin);
+  await expect(page.getByTestId('futures-close').first()).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
   await page.getByTestId('futures-close').first().click();
   await page.getByTestId('futures-close-confirm').click();
-  await expect(page.getByTestId('futures-close')).toHaveCount(0, { timeout: 15_000 });
+  await expect(page.getByTestId('futures-close')).toHaveCount(0, { timeout: ORACLE_ACTION_TIMEOUT });
 
   // ── Stake (first pool = flexible) ──
   await page.goto('/staking');
@@ -144,7 +148,8 @@ test('confirm dialog: cancel closes without executing any action', async ({ page
 
   // ── Spot cancel ──
   await page.goto('/trade');
-  await expect(page.getByTestId('spot-submit')).toBeEnabled({ timeout: 15_000 });
+  await freshenOracle(admin);
+  await expect(page.getByTestId('spot-submit')).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
   await page.getByTestId('spot-submit').click();
   await expect(page.getByTestId('spot-confirm')).toBeVisible({ timeout: 5_000 });
   await page.getByTestId('spot-cancel').click();
@@ -152,7 +157,7 @@ test('confirm dialog: cancel closes without executing any action', async ({ page
 
   // ── Futures open cancel ──
   await freshenOracle(admin);
-  await expect(page.getByTestId('futures-open')).toBeEnabled({ timeout: 15_000 });
+  await expect(page.getByTestId('futures-open')).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
   // Capture the existing open-position count so the assertion is stable when
   // prior tests left behind open futures positions.
   const futuresCloseBefore = await page.getByTestId('futures-close').count();
@@ -220,7 +225,8 @@ test('futures risk caps reject in browser without moving money', async ({ page }
 
   await injectSession(page, auth.accessToken, auth.refreshToken);
   await page.goto('/trade');
-  await expect(page.getByTestId('futures-open')).toBeEnabled({ timeout: 15_000 });
+  await freshenOracle(admin);
+  await expect(page.getByTestId('futures-open')).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
 
   // Load the UI with permissive metadata, then tighten the trusted server cap
   // underneath it so the RPC rejection, not a hidden button, proves the guard.
@@ -229,6 +235,7 @@ test('futures risk caps reject in browser without moving money', async ({ page }
     .update({ max_user_positions: 100, max_open_interest: '1.000000', max_leverage: '10' })
     .eq('symbol', 'PHONUSDT-PERP');
 
+  await expect(page.getByTestId('futures-open')).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
   await page.getByTestId('futures-open').click();
   await page.getByTestId('futures-open-confirm').click();
   await expect(page.getByText(/open-interest|미결제약정|market has reached|한도/i)).toBeVisible({ timeout: 45_000 });
