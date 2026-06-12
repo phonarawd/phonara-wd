@@ -63,16 +63,31 @@ Dashboard에서 아래 설정이 끝나야 운영자가 접근할 수 있습니�
 
 Supabase Dashboard → Authentication → **MFA (Multi-Factor Auth)**:
 
-- [ ] TOTP 활성화 (Google Authenticator / Authy 등)
+- [x] TOTP 활성화 (Google Authenticator / Authy 등) — AI가 원격 Auth config push로 적용
 - [ ] 관리자 계정에 MFA 등록
 - [ ] 프로덕션 Admin 로그인 후 MFA challenge 완료 상태로 `/overview` 접근 확인
 
+AI가 함께 적용한 Auth 기본 보안 설정:
+
+- [x] email signup enabled, anonymous sign-ins disabled, manual linking disabled.
+- [x] email confirmation enabled, secure email change enabled.
+- [x] secure password change enabled.
+- [x] minimum password length = 8.
+- [x] refresh token rotation enabled, reuse interval = 10 seconds.
+- [x] email OTP length = 8, expiry = 3600 seconds.
+- [x] rate limits pinned to Dashboard baseline values.
+- [x] local redirect URLs added: `http://localhost:3000`, `http://localhost:3001`.
+- [x] local passkey/WebAuthn config pinned for localhost.
+
 ### 3-2. HIBP 비밀번호 유출 감지
 
-Supabase Dashboard → Authentication → **Password Policies**:
+Supabase Dashboard → Authentication → **Password Policies / Attack Protection**:
 
 - [ ] "Check for compromised passwords (HIBP)" 활성화
 - [ ] Auth logs에서 유출 비밀번호 거부 이벤트가 기록되는지 확인
+
+> 현재 Dashboard에서 HIBP는 email provider/플랜 조건에 묶여 있어 AI가 안전하게 강제 적용하지
+> 않았습니다. Pro/SMTP 준비 후 Dashboard에서 직접 활성화하세요.
 
 ### 3-3. 프로덕션 사이트 URL 설정
 
@@ -80,6 +95,9 @@ Supabase Dashboard → Authentication → **URL Configuration**:
 
 - [ ] `Site URL`을 실제 도메인으로 변경 (현재 `http://localhost:3000`)
 - [ ] `Redirect URLs`에 프로덕션 도메인 추가
+
+> 실제 운영 도메인이 아직 확정되지 않아 AI가 localhost를 프로덕션 도메인으로 임의 변경하지
+> 않았습니다. 도메인을 알려주면 AI가 원격 Auth config에 반영할 수 있습니다.
 
 ---
 
@@ -94,11 +112,11 @@ Supabase Dashboard → Database → **Extensions**:
 
 | Extension | 용도 | 우선순위 |
 |-----------|------|---------|
-| `pg_cron` | SQL 레벨 주기적 실행 (청산 러너) | 완료 확인용/재설치 필요 시만 |
-| `pg_net` | SQL에서 HTTP 요청 (Edge Function 백업 경로) | 선택사항 |
+| `pg_cron` | SQL 레벨 주기적 실행 (청산/오라클 러너) | ✅ 완료 |
+| `pg_net` | SQL에서 HTTP 요청 (오라클 Edge Function 호출) | ✅ 완료 |
 
-- [ ] (선택) `pg_cron` 활성화
-- [ ] (선택) `pg_net` 활성화
+- [x] `pg_cron` 활성화
+- [x] `pg_net` 활성화
 
 ---
 
@@ -200,8 +218,9 @@ bun run test:sql
 
 ## 10. 프로덕션 첫 계정과 Authenticated Smoke
 
-현재 원격 `auth.users=0`입니다. 앱/DB read-only smoke는 green이지만, 로그인 후
-지갑/거래/카지노/Admin 화면을 여는 smoke는 실제 계정이 없으면 수행할 수 없습니다.
+원격 첫 운영자 계정은 생성되어 있고 Admin role 부여까지 완료되었습니다.
+로그인 후 지갑/거래/카지노/Admin 화면을 여는 smoke는 실제 운영자 계정으로만
+수행합니다.
 
 원칙:
 
@@ -212,16 +231,15 @@ bun run test:sql
   launch-ops에서 별도 승인 전까지 실행하지 않습니다.
 - 스모크 중 feature flag, halt, readonly는 실제 토글하지 않습니다. 현재 값 확인만 합니다.
 
-필수 수동 작업:
+상태:
 
-- [ ] Supabase Dashboard → Authentication에서 운영자 계정을 생성합니다.
-- [ ] 생성된 운영자 `auth.users.id`를 확인한 뒤 SQL Editor에서 아래처럼 Admin role을 부여합니다.
+- [x] Supabase Dashboard → Authentication 운영자 계정 생성 확인:
+      `gfeqwe12@gmail.com` (`98c8e301-c0e0-470e-b60b-633ea99c9165`)
+- [x] AI가 원격 DB에서 `profiles.role = 'admin'` 설정 완료.
+- [x] AI가 `request.jwt.claims.sub = 98c8e301-c0e0-470e-b60b-633ea99c9165`
+      세션으로 `_is_admin() = true` 검증 완료.
 
-```sql
-UPDATE profiles
-   SET role = 'admin'
- WHERE id = '<운영자 auth.users.id>';
-```
+남은 필수 수동 작업:
 
 - [ ] Supabase Dashboard → Authentication → MFA에서 운영자 계정에 TOTP MFA를 등록합니다.
 - [ ] Admin app 로그인 후 `/overview`, `/alerts`, `/queues`, `/audit`, `/operations`를 열어

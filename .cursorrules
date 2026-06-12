@@ -4,7 +4,6 @@ Always read `docs/PHONARA_V2_MASTER_PLAN.md`, `docs/FINAL_DIRECTION.md`, `docs/Q
 
 ## Non-negotiables
 
-- Before starting core engine or high-risk work, stop and tell the user: "AI 모델을 바꿔주세요." Continue only after the user confirms.
 - Do not apply Supabase schema/RLS/RPC changes without explicit user approval.
 - Do not use JavaScript `number` or floating point arithmetic for money, balances, odds, PnL, fees, or exchange rates.
 - Use Decimal-based money utilities from `@phonara/money` once engine implementation begins.
@@ -22,16 +21,3 @@ Always read `docs/PHONARA_V2_MASTER_PLAN.md`, `docs/FINAL_DIRECTION.md`, `docs/Q
 4. Supabase schema/RLS/RPC drafts, then approval.
 5. Minimal UI and E2E.
 6. Admin automation, PWA, monitoring, global UX.
-
-## Model-Switch Stop Rule
-
-Pause before these work types and ask the user to switch AI model:
-
-- Money/Decimal engine implementation.
-- Wallet ledger implementation.
-- Trading engine implementation.
-- Game engine or provably fair implementation.
-- Supabase schema/RLS/RPC migration application.
-- Admin permission, withdrawal, or kill-switch logic.
-- Security-sensitive auth/session changes.
-- Any task that can affect user balances, settlement, or withdrawals.

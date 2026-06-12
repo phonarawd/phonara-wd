@@ -25,9 +25,57 @@ enabled = false
 enabled = true
 site_url = "http://localhost:3000"
 additional_redirect_urls = ["http://localhost:3000", "http://localhost:3001"]
+jwt_expiry = 3600
+enable_signup = true
+enable_anonymous_sign_ins = false
+enable_manual_linking = false
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+minimum_password_length = 8
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+double_confirm_changes = true
+secure_password_change = true
+max_frequency = "1m"
+otp_length = 8
+otp_expiry = 3600
+
+[auth.rate_limit]
+email_sent = 2
+sms_sent = 30
+anonymous_users = 30
+token_refresh = 150
+token_verifications = 30
+sign_in_sign_ups = 30
+
+[auth.mfa]
+max_enrolled_factors = 10
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[auth.mfa.phone]
+enroll_enabled = false
+verify_enabled = false
+otp_length = 6
+max_frequency = "10s"
+
+[auth.passkey]
+enabled = true
+
+[auth.webauthn]
+rp_display_name = "phonara-gb"
+rp_id = "localhost"
+rp_origins = ["http://localhost:3000"]
 
 # Analytics (logflare) is disabled for local dev. On Windows it requires the
 # Docker daemon to be exposed on tcp://localhost:2375, which we don't enable.
 # It is a local log viewer only and is not needed for development/testing.
 [analytics]
 enabled = false
+
+[functions.price-feed]
+verify_jwt = true

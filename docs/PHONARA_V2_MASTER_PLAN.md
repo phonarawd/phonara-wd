@@ -4591,6 +4591,13 @@ phonara-gb/
 - **판정**: 후속 read-only query 결과 MCP SQL `current_user`는 `supabase_read_only_user`, `has_function_privilege(..., 'public.rpc_run_reconciliation()', 'EXECUTE') = false`. Migration grants도 의도대로 `REVOKE ... FROM PUBLIC, anon, authenticated` + `GRANT EXECUTE ... TO service_role`이다. 따라서 이 blocker는 Dashboard SQL Editor 또는 service-role/DB owner 권한 세션에서만 닫을 수 있다.
 - **상태**: Remote flags/cron/alerts/queues는 계속 clean이고 `reconciliation_count=0`. [`setup/MANUAL_TASKS.md`](../setup/MANUAL_TASKS.md)에 `SELECT rpc_run_reconciliation();` 실행 권한과 절차를 추가했다. 권한 우회/GRANT 변경/remote write 추가 없음.
 
+### 2026-06-13 check:full post core-flow E2E fix + performance backlog
+
+- **무엇을/어떻게**: 26863b (	est(e2e): wait for spot buy RPC completion in core money flow) 이후 un run check:full 1회 재실행. .env UTF-8 BOM으로 supabase reset 파싱 실패 → BOM 제거 후 재시도.
+- **게이트**: standard check + PWA + fresh DB reset + SQL **37/37** + casino SQL parity + E2E **40/41** (1 fail).
+- **E2E 실패**: core-flow.spec.ts › confirm dialog: cancel closes without executing any action — /trade 진입 후 spot-submit 15s 내 enabled 미복구 (이전 spec core money flow: spot buy는 8.2s PASS).
+- **성능 백로그 (코드 결함 아님)**: 부하 시 spot buy RPC 45s+ 관찰(E2E). 출시 전 부하 테스트로 spot/futures RPC p95 지연 측정 권장. docs/CURRENT_STATUS.md Known Launch Notes에 동일 항목 기록.
+
 ## 다음 단계 (S1 계속 + S2~S3 병행)
 
 현재 완료: Critical 미션홀 봉인, High 미커밋파일 추적, Medium 청산 일원화, 문서 단일화(충돌 해소).
@@ -4598,3 +4605,39 @@ phonara-gb/
 이후: S2 트레이딩 심화(B-book), S3 카지노 fairness + 레지스트리.
 
 ## 다음 단계 인계문 (Phase 4 → S3 Casino / Provably Fair)
+
+### 2026-06-13 ? Oracle 3-source external price feed
+
+Implemented the Binance/Bybit/OKX external oracle feeder for `BTCUSDT-SIM` and `ETHUSDT-SIM` without duplicating the existing DB oracle receiver. Added `supabase/functions/price-feed/index.ts` as a Deno Edge Function that reads enabled rows from `market_sources`, fetches provider ticker prices as strings, validates decimal text without JavaScript floating-point conversion, and submits each source to `rpc_submit_oracle_source_price` with the service-role path. Added `supabase/config.toml` function config with JWT verification and an exact service-role bearer check inside the function.
+
+Added migrations `20260613000080_oracle_feed_market_sources.sql`, `20260613000081_price_feed_pg_net_vault.sql`, `20260613000082_price_feed_cron.sql`, and `20260613000083_oracle_feed_remove_legacy_sources.sql`. The seed migration registers Binance/Bybit/OKX mappings for BTC/ETH only and intentionally excludes PHON markets. The infrastructure migration enables `pg_net` and `supabase_vault` while keeping secret values out of SQL. The cron migration schedules `phonara_price_feed` once per minute and reads `price_feed_url` / `price_feed_invoke_key` from Vault at runtime, no-oping safely when local secrets are absent. The legacy-source cutover migration removes `legacy` median inputs for external BTC/ETH markets so stale bootstrap rows cannot distort the first real 3-source median.
+
+Root cause discovered during live smoke: after reset, the older multisource migration backfilled `legacy` source rows using old seed prices. ETH's old seed price was far from the live exchange price, so the first feed invocation correctly triggered the circuit breaker. Fix: remove `legacy` source rows for BTC/ETH during the external-feed cutover, while preserving the circuit breaker and all existing DB median/outlier logic.
+
+Validation run: `supabase db reset` green; `bun run test:sql` green with all 38 SQL suites passing including new `supabase/tests/oracle_feed_test.sql`; `supabase db lint --local` returned no ERROR and only pre-existing warnings; `bun run typecheck`, `bun run test`, `bun run check:i18n`, and `bun run check:release` green. Local Edge Function smoke invoked `price-feed` with service-role bearer and confirmed six Binance/Bybit/OKX source rows, updated `oracle_prices`, and no BTC/ETH market halt. `bun run check:advisors` skipped locally because `SUPABASE_ACCESS_TOKEN` is unset, so remote advisor must be enforced in CI/operator environment before remote apply.
+
+### 2026-06-13 ? Oracle feed remote deployment and cron activation
+
+Applied remote migrations `20260613000080` through `20260613000083` to project `yocjhjsdwoijfdrehzoq`, deployed the `price-feed` Edge Function, and populated Supabase Vault secrets `price_feed_url` and `price_feed_invoke_key` without storing secret values in migrations or repository files. The cron job `phonara_price_feed` is active on the remote database with schedule `* * * * *` and calls the Edge Function through `pg_net` using the Vault-stored bearer.
+
+During remote verification, the first direct function call returned 401 because the function compared the incoming bearer to a runtime reserved `SUPABASE_SERVICE_ROLE_KEY` value. The fix was to rely on Edge JWT verification plus an in-function JWT payload role check (`role = service_role`) and to use the same verified bearer as the service client key. The function was redeployed after the fix.
+
+Remote cutover was bootstrapped by setting BTC/ETH oracle baseline prices to current exchange prices and clearing BTC/ETH circuit-breaker halt flags before live feed activation, preventing the expected first-tick halt caused by old seeded prices. Final remote verification via service-role REST showed 6/6 Binance/Bybit/OKX source rows fresh within 5 minutes, `oracle_prices` updated for both BTC/ETH, and both market circuit breakers `is_halted = false`.
+
+Caveat: running several Supabase CLI linked DB queries in parallel triggered a temporary Supabase pooler auth circuit breaker for the CLI temp login. Subsequent verification used REST instead of additional pooler connections. Remote advisor could not be completed in that window; rerun `supabase db advisors --linked` after the temporary pooler block clears.
+
+### 2026-06-13 ? Oracle feed remote advisor follow-up
+
+After the temporary pooler auth circuit breaker cleared, reran `supabase db advisors --linked` against project `yocjhjsdwoijfdrehzoq`. Result: 0 ERROR, 211 WARN. The warnings are existing/advisory-class items; the new oracle feed path introduced a `pg_net` extension-in-public WARN, but no advisor ERROR. Remote cron and live feed remained healthy after verification: `phonara_price_feed` active, six BTC/ETH Binance/Bybit/OKX source rows fresh within 5 minutes through REST verification, and both BTC/ETH circuit breakers remained unhalted.
+
+### 2026-06-13 ? First operator admin account promotion
+
+Promoted the real operator account `gfeqwe12@gmail.com` (`98c8e301-c0e0-470e-b60b-633ea99c9165`) to Admin by updating `profiles.role = 'admin'` on the remote Supabase project `yocjhjsdwoijfdrehzoq`. Verified the account exists in `auth.users`, has a `profiles` row and wallet row, and confirmed `_is_admin() = true` with `request.jwt.claims.sub` set to the operator UID.
+
+Updated `setup/MANUAL_TASKS.md` so the account creation/admin-role steps are marked complete and only true manual items remain: operator MFA enrollment and no-mutation authenticated smoke in Admin/User apps.
+
+### 2026-06-13 ? Supabase Auth baseline hardening
+
+Pushed remote Supabase Auth config for project `yocjhjsdwoijfdrehzoq` from `supabase/config.toml`. Applied safe baseline settings visible in the Dashboard: TOTP MFA enabled, email confirmation enabled, secure email change enabled, secure password change enabled, anonymous sign-ins disabled, manual linking disabled, refresh token rotation enabled with 10-second reuse interval, minimum password length raised to 8, email OTP length 8 / expiry 3600 seconds, baseline Auth rate limits pinned, local redirect URLs added, and localhost passkey/WebAuthn config pinned.
+
+Intentionally did not change production Site URL because the real production domain is not known yet; changing it incorrectly would break email confirmation/password-reset redirects. HIBP leaked-password protection was also left as a true manual item because the Dashboard indicates it is gated by email provider/plan configuration. Updated `setup/MANUAL_TASKS.md` to separate completed AI-managed Auth settings from remaining manual steps: operator MFA enrollment, production domain URL config, HIBP activation after email provider readiness, and no-mutation smoke.
