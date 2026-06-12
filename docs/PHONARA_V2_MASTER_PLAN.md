@@ -4715,3 +4715,21 @@ Validation: ReadLints clean; bun run lint green (0 RPC-rule violations, confirmi
 - Added docs/SCORECARD.md: per-item before->after for operational stability and maintainability, each backed by reproducible gate evidence (bun run check, test:sql 38, E2E 9 specs, advisor 0 ERROR, migration lock, functions mirror). Overall 81 -> 99.
 - Recorded God-route decomposition sizes: casino 828->420, trade 917->149, wallet 737->664, admin queues 539->422.
 - check:release confirmed it scans only apps/packages/supabase (not docs/), so the scorecard's audit vocabulary does not trip the release gate. check:release PASS.
+
+### 2026-06-13 — Final Closeout v2+ Tasks 3, 7, 8
+
+**Task 7 (RG)**
+- Commits: 36239cf test red gates, 3407c2 web UI/domain/i18n.
+- **Task 7 RED-first 절차 미준수(테스트·구현 동시 작성)**: deposit-cap SQL block and E2E were authored in the same session as web UI without a recorded pre-implementation RED failure; _assert_rg_deposit_allowed already existed in  0073 so the new SQL block passed on first run.
+- Gates: SQL 41/41 PASS, RG E2E 1/1 PASS (limit decrease immediate, increase 24h pending, self-exclusion bet block + conservation), casino E2E 7/7 PASS.
+- No new g_* tables/RPCs; browser coverage only.
+
+**Task 8 (Invariant monitoring)**
+- Commits: d94996 test, 2e929fe migration  0087 + pc_run_invariant_checks + pg_cron phonara_invariant_checks.
+- invariant_checks_test.sql: mismatch injected inside BEGIN…ROLLBACK; post-run open invariant alerts=0, insurance_fund_phon balance unchanged.
+
+**Task 3 (RUNBOOK)**
+- Commit e45fa6: 7-section TOC, §1 kill switches, §2 incidents wrapper, §3 backup/recovery, §6 RG (from Task 7), §7 escalation.
+
+**Task 2 notation correction**: Task 2 gate was **39/39 PASS** (not 39/40); 40th SQL file added in Task 6.3.
+
