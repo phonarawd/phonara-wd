@@ -22,8 +22,10 @@ function Badge({ icon, labelKey }: BadgeProps) {
 }
 
 export function AuthTrustBadges() {
+  const t = useT();
+
   return (
-    <ul className="grid gap-2" aria-label="trust">
+    <ul className="grid gap-2" aria-label={t('auth.entry.trust.ariaLabel')}>
       <Badge
         labelKey="auth.entry.trust.wallet"
         icon={

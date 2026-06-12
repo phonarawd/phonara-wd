@@ -57,6 +57,7 @@ function WalletPage() {
   const [depositAmount, setDepositAmount] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [withdrawAddress, setWithdrawAddress] = useState('');
+  const [depositConfirmOpen, setDepositConfirmOpen] = useState(false);
   const [withdrawConfirmOpen, setWithdrawConfirmOpen] = useState(false);
   const [showKycForm, setShowKycForm] = useState(false);
   const [kycLegalName, setKycLegalName] = useState('');
@@ -174,6 +175,7 @@ function WalletPage() {
     }
   }, [activePhonKrwRate?.rate, depositAmount]);
   const showDepositRateFallback = Boolean(depositAmount && !depositPreviewPhon && (depositRateError || !activePhonKrwRate));
+  const canRequestDeposit = Boolean(isPositiveDecimalInput(depositAmount) && !busy);
 
   const withdrawKrwApprox = useMemo(() => {
     try {
@@ -310,7 +312,7 @@ function WalletPage() {
   }, [kycSubmissions, t]);
 
   const handleDeposit = useCallback(async () => {
-    if (!depositAmount || busy || depositInFlightRef.current) return;
+    if (!canRequestDeposit || depositInFlightRef.current) return;
     const clientRequestId = depositRequestIdRef.current ?? (depositRequestIdRef.current = newRequestId());
     depositInFlightRef.current = true;
     setBusy(true);
@@ -334,6 +336,7 @@ function WalletPage() {
         sla_hours: row.sla_hours,
       });
       toast.success(t('wallet.deposit.success'));
+      setDepositConfirmOpen(false);
       void qc.invalidateQueries({ queryKey: ['krw-deposits', userId] });
     } catch (err) {
       toast.error(t(translateError(err)));
@@ -342,7 +345,19 @@ function WalletPage() {
       depositInFlightRef.current = false;
       depositRequestIdRef.current = null;
     }
-  }, [busy, depositAmount, qc, t, userId]);
+  }, [canRequestDeposit, depositAmount, qc, t, userId]);
+
+  const openDepositConfirm = useCallback(() => {
+    if (!canRequestDeposit || depositInFlightRef.current) return;
+    depositRequestIdRef.current ??= newRequestId();
+    setDepositConfirmOpen(true);
+  }, [canRequestDeposit]);
+
+  const closeDepositConfirm = useCallback(() => {
+    if (depositInFlightRef.current) return;
+    depositRequestIdRef.current = null;
+    setDepositConfirmOpen(false);
+  }, []);
 
   const openWithdrawConfirm = useCallback(() => {
     if (!withdrawAmountValid || busy || !kycVerified || !withdrawDestination) return;
@@ -508,8 +523,8 @@ function WalletPage() {
               ) : null}
               <Button
                 data-testid="wallet-deposit-submit"
-                disabled={busy || !depositAmount}
-                onClick={() => void handleDeposit()}
+                disabled={!canRequestDeposit}
+                onClick={openDepositConfirm}
               >
                 {busy ? t('common.processing') : t('wallet.deposit.submit')}
               </Button>
@@ -539,6 +554,43 @@ function WalletPage() {
             )}
 
             <StatusTimeline items={depositTimeline} data-testid="wallet-deposit-timeline" />
+            <ConfirmDialog
+              open={depositConfirmOpen}
+              title={t('wallet.deposit.confirmTitle')}
+              description={t('wallet.deposit.confirmDesc')}
+              rows={[
+                {
+                  label: t('wallet.deposit.confirmAmount'),
+                  value: `${formatMoney(depositAmount || '0', 'KRW')} KRW`,
+                },
+                {
+                  label: t('wallet.deposit.confirmExpectedPhon'),
+                  value: depositPreviewPhon
+                    ? `${formatMoney(depositPreviewPhon, 'PHON')} PHON`
+                    : t('wallet.deposit.rateFallback'),
+                  wrap: true,
+                },
+                {
+                  label: t('wallet.deposit.confirmBankAccount'),
+                  value: t('wallet.deposit.bankAccountDisplay'),
+                  wrap: true,
+                },
+                {
+                  label: t('wallet.deposit.confirmWarningLabel'),
+                  value: t('wallet.deposit.confirmWarning'),
+                  tone: 'danger',
+                  wrap: true,
+                },
+              ]}
+              confirmLabel={t('wallet.deposit.confirmProceed')}
+              cancelLabel={t('common.cancel')}
+              processingLabel={t('common.processing')}
+              tone="primary"
+              busy={busy}
+              testId="wallet-deposit"
+              onConfirm={() => void handleDeposit()}
+              onCancel={closeDepositConfirm}
+            />
           </section>
         )}
 

@@ -1,6 +1,6 @@
 import { createRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Route as rootRoute } from './__root';
 import { useAuth } from '../contexts/auth-context';
 import { useWallet, walletKeys } from '../hooks/use-wallet';
@@ -238,22 +238,31 @@ export const casinoFairnessRoute = createRoute({
   component: FairnessDocsPage,
 });
 
-function CasinoPage({ initialGame }: { initialGame: GameCode }) {
-  const t = useT();
-  const navigate = useNavigate();
+function useCasinoRoundPipeline({
+  gameCode,
+  currency,
+  stake,
+  selection,
+  clientSeed,
+  clientSeedIsAuto,
+  setClientSeed,
+  userId,
+  onRecentBetsChange,
+}: {
+  gameCode: GameCode;
+  currency: Currency;
+  stake: string;
+  selection: Record<string, unknown>;
+  clientSeed: string;
+  clientSeedIsAuto: boolean;
+  setClientSeed: (value: string) => void;
+  userId: string | null;
+  onRecentBetsChange: (rows: RecentBet[]) => void;
+}) {
   const queryClient = useQueryClient();
-  const { session, loading: authLoading } = useAuth();
-  const { wallet, loading: walletLoading } = useWallet();
-  const [gameCode, setGameCode] = useState<GameCode>(initialGame);
-  const [currency, setCurrency] = useState<Currency>('PHON');
-  const [stake, setStake] = useState(GAME_BY_CODE[initialGame].defaultStake);
-  const [selection, setSelection] = useState<Record<string, unknown>>(GAME_BY_CODE[initialGame].defaultSelection);
-  const [clientSeed, setClientSeed] = useState(() => randomHex());
-  const [clientSeedIsAuto, setClientSeedIsAuto] = useState(true);
   const [commitment, setCommitment] = useState<RoundCommitment | null>(null);
   const [bet, setBet] = useState<BetResponse | null>(null);
   const [verificationEvidence, setVerificationEvidence] = useState<VerificationEvidence | null>(null);
-  const [recentBets, setRecentBets] = useState<RecentBet[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [errorKey, setErrorKey] = useState<MessageKey | null>(null);
@@ -261,56 +270,20 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
   const betIdempotencyKeyRef = useRef<string | null>(null);
   const betInFlightRef = useRef(false);
 
-  const config = GAME_BY_CODE[gameCode];
-  const available = currency === 'PHON' ? wallet?.phon_available : wallet?.usdt_available;
-  const canSubmit = Boolean(commitment && isPositiveDecimalInput(stake) && !busy);
-
-  useEffect(() => {
-    if (!authLoading && !session) void navigate({ to: '/login' });
-  }, [session, authLoading, navigate]);
-
-  useEffect(() => {
-    setGameCode(initialGame);
-    setStake(GAME_BY_CODE[initialGame].defaultStake);
-    setSelection(GAME_BY_CODE[initialGame].defaultSelection);
+  const resetRoundState = useCallback(() => {
     setCommitment(null);
     setBet(null);
     setVerificationEvidence(null);
-  }, [initialGame]);
-
-  useEffect(() => {
-    void loadRecentBets().then(setRecentBets);
+    setConfirmOpen(false);
+    setErrorKey(null);
+    setToastKey(null);
+    betIdempotencyKeyRef.current = null;
   }, []);
 
-  const timeline = useMemo(
-    () => [
-      {
-        id: 'commit',
-        label: t('casino.timeline.commit'),
-        description: commitment?.server_seed_hash ?? t('casino.timeline.waiting'),
-        state: commitment ? 'done' as const : busy ? 'active' as const : 'pending' as const,
-      },
-      {
-        id: 'settle',
-        label: t('casino.timeline.settle'),
-        description: bet ? t(bet.status === 'won' ? 'casino.result.won' : 'casino.result.lost') : t('casino.timeline.waiting'),
-        state: bet ? 'done' as const : busy && commitment ? 'active' as const : 'pending' as const,
-      },
-      {
-        id: 'reveal',
-        label: t('casino.timeline.reveal'),
-        description: verificationEvidence
-          ? t(verificationEvidence.verification.resultMatch ? 'casino.verify.match' : 'casino.verify.mismatch')
-          : t('casino.timeline.waiting'),
-        state: verificationEvidence
-          ? (verificationEvidence.verification.resultMatch ? 'done' as const : 'error' as const)
-          : 'pending' as const,
-      },
-    ],
-    [bet, busy, commitment, t, verificationEvidence],
-  );
-
-  async function prepareRound(nextGame = gameCode, options: { preserveEvidence?: boolean } = {}) {
+  const prepareRound = useCallback(async (
+    nextGame = gameCode,
+    options: { preserveEvidence?: boolean } = {},
+  ) => {
     setBusy(true);
     setErrorKey(null);
     setBet(null);
@@ -329,9 +302,9 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
     } finally {
       setBusy(false);
     }
-  }
+  }, [clientSeedIsAuto, gameCode, setClientSeed]);
 
-  async function submitBet() {
+  const submitBet = useCallback(async () => {
     if (!commitment || betInFlightRef.current) return;
     const idempotencyKey = betIdempotencyKeyRef.current ?? (betIdempotencyKeyRef.current = `casino:${randomHex()}`);
     betInFlightRef.current = true;
@@ -366,23 +339,141 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
       });
       setConfirmOpen(false);
       setToastKey(placed.status === 'won' ? 'casino.toast.won' : 'casino.toast.settled');
-      await queryClient.invalidateQueries({ queryKey: walletKeys.all(session?.user.id ?? null) });
-      setRecentBets(await loadRecentBets());
+      await queryClient.invalidateQueries({ queryKey: walletKeys.all(userId) });
+      onRecentBetsChange(await loadRecentBets());
       await prepareRound(gameCode, { preserveEvidence: true });
     } catch (error) {
       setErrorKey(errorToKey(error));
+      setConfirmOpen(false);
     } finally {
       setBusy(false);
       betInFlightRef.current = false;
       betIdempotencyKeyRef.current = null;
     }
-  }
+  }, [
+    clientSeed,
+    commitment,
+    currency,
+    gameCode,
+    onRecentBetsChange,
+    prepareRound,
+    queryClient,
+    selection,
+    stake,
+    userId,
+  ]);
 
-  function openBetConfirm() {
-    if (!canSubmit) return;
+  const openBetConfirm = useCallback(() => {
     betIdempotencyKeyRef.current ??= `casino:${randomHex()}`;
     setConfirmOpen(true);
-  }
+  }, []);
+
+  const cancelBetConfirm = useCallback(() => {
+    if (betInFlightRef.current) return;
+    betIdempotencyKeyRef.current = null;
+    setConfirmOpen(false);
+  }, []);
+
+  return {
+    commitment,
+    bet,
+    verificationEvidence,
+    confirmOpen,
+    busy,
+    errorKey,
+    toastKey,
+    prepareRound,
+    submitBet,
+    openBetConfirm,
+    cancelBetConfirm,
+    resetRoundState,
+  };
+}
+
+function CasinoPage({ initialGame }: { initialGame: GameCode }) {
+  const t = useT();
+  const navigate = useNavigate();
+  const { session, loading: authLoading } = useAuth();
+  const { wallet, loading: walletLoading } = useWallet();
+  const [gameCode, setGameCode] = useState<GameCode>(initialGame);
+  const [currency, setCurrency] = useState<Currency>('PHON');
+  const [stake, setStake] = useState(GAME_BY_CODE[initialGame].defaultStake);
+  const [selection, setSelection] = useState<Record<string, unknown>>(GAME_BY_CODE[initialGame].defaultSelection);
+  const [clientSeed, setClientSeed] = useState(() => randomHex());
+  const [clientSeedIsAuto, setClientSeedIsAuto] = useState(true);
+  const [recentBets, setRecentBets] = useState<RecentBet[]>([]);
+
+  const config = GAME_BY_CODE[gameCode];
+  const available = currency === 'PHON' ? wallet?.phon_available : wallet?.usdt_available;
+  const casinoRound = useCasinoRoundPipeline({
+    gameCode,
+    currency,
+    stake,
+    selection,
+    clientSeed,
+    clientSeedIsAuto,
+    setClientSeed,
+    userId: session?.user.id ?? null,
+    onRecentBetsChange: setRecentBets,
+  });
+  const {
+    commitment,
+    bet,
+    verificationEvidence,
+    confirmOpen,
+    busy,
+    errorKey,
+    toastKey,
+    prepareRound,
+    submitBet,
+    openBetConfirm,
+    cancelBetConfirm,
+    resetRoundState,
+  } = casinoRound;
+  const canSubmit = Boolean(commitment && isPositiveDecimalInput(stake) && !busy);
+
+  useEffect(() => {
+    if (!authLoading && !session) void navigate({ to: '/login' });
+  }, [session, authLoading, navigate]);
+
+  useEffect(() => {
+    setGameCode(initialGame);
+    setStake(GAME_BY_CODE[initialGame].defaultStake);
+    setSelection(GAME_BY_CODE[initialGame].defaultSelection);
+    resetRoundState();
+  }, [initialGame, resetRoundState]);
+
+  useEffect(() => {
+    void loadRecentBets().then(setRecentBets);
+  }, []);
+
+  const timeline = useMemo(
+    () => [
+      {
+        id: 'commit',
+        label: t('casino.timeline.commit'),
+        description: commitment?.server_seed_hash ?? t('casino.timeline.waiting'),
+        state: commitment ? 'done' as const : busy ? 'active' as const : 'pending' as const,
+      },
+      {
+        id: 'settle',
+        label: t('casino.timeline.settle'),
+        description: bet ? t(bet.status === 'won' ? 'casino.result.won' : 'casino.result.lost') : t('casino.timeline.waiting'),
+        state: bet ? 'done' as const : busy && commitment ? 'active' as const : 'pending' as const,
+      },
+      {
+        id: 'reveal',
+        label: t('casino.timeline.reveal'),
+        description: verificationEvidence
+          ? t(verificationEvidence.verification.resultMatch ? 'casino.verify.match' : 'casino.verify.mismatch')
+          : t('casino.timeline.waiting'),
+        state: verificationEvidence
+          ? (verificationEvidence.verification.resultMatch ? 'done' as const : 'error' as const)
+          : 'pending' as const,
+      },
+    ],
+    [bet, busy, commitment, t, verificationEvidence],
+  );
 
   function selectGame(next: GameCode) {
     void navigate({ to: next === 'dice' ? '/casino/dice' : `/casino/${next}` });
@@ -395,17 +486,13 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
       if (key === 'rows' || key === 'mineCount') return { ...current, [key]: Number(value) };
       return { ...current, [key]: value };
     });
-    setCommitment(null);
-    setBet(null);
-    setVerificationEvidence(null);
+    resetRoundState();
   }
 
   function updateClientSeed(value: string) {
     setClientSeed(value);
     setClientSeedIsAuto(false);
-    setCommitment(null);
-    setBet(null);
-    setVerificationEvidence(null);
+    resetRoundState();
   }
 
   if (authLoading) {
@@ -572,7 +659,9 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
                 {recentBets.map((row) => (
                   <div key={row.id} className="grid grid-cols-4 items-center gap-2 rounded-xl border border-border bg-surface-2/60 px-3 py-2 text-sm">
                     <span className="font-semibold text-fg">{t(GAME_BY_CODE[row.game].labelKey)}</span>
-                    <Badge tone={row.status === 'won' ? 'up' : 'down'} size="sm">{row.status}</Badge>
+                    <Badge tone={row.status === 'won' ? 'up' : 'down'} size="sm">
+                      {t(row.status === 'won' ? 'casino.bet.status.won' : 'casino.bet.status.lost')}
+                    </Badge>
                     <span className="text-right text-muted">{formatMoney(row.stake, row.currency)} {row.currency}</span>
                     <span className="text-right font-semibold text-fg">{formatMoney(row.payout ?? '0', row.currency)}</span>
                   </div>
@@ -599,11 +688,7 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
         cancelLabel={t('common.cancel')}
         busy={busy}
         onConfirm={() => void submitBet()}
-        onCancel={() => {
-          if (betInFlightRef.current) return;
-          betIdempotencyKeyRef.current = null;
-          setConfirmOpen(false);
-        }}
+        onCancel={cancelBetConfirm}
       />
     </div>
   );

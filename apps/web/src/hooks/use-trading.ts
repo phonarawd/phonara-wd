@@ -1,11 +1,14 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import type { Tables } from '@phonara/shared-types';
 import type { MessageKey } from '@phonara/i18n';
+import { computeOpenPosition, TradingError, type PositionSide } from '@phonara/trading-engine';
+import { toDecimal } from '@phonara/money';
 import { useAuth } from '../contexts/auth-context';
 import { useRealtime } from './use-realtime';
 import { translateError } from '../lib/translate-error';
+import { isPositiveAmount } from '../lib/money-display';
 import { walletKeys } from './use-wallet';
 
 // Stable id for a single user intent. Rapid double-clicks share the same id
@@ -238,6 +241,100 @@ export function useFuturesPositions() {
   }, [qc, userId]);
 
   return { positions, loading, refresh, isError, error, isFetching, dataUpdatedAt, refetch };
+}
+
+export function useFuturesOrderTicket({
+  markets,
+  prices,
+  isPriceStale,
+  realtimeDisconnected,
+}: {
+  markets: FuturesMarket[];
+  prices: Record<string, string>;
+  isPriceStale: (symbol: string | null | undefined) => boolean;
+  realtimeDisconnected: boolean;
+}) {
+  const [marketIdx, setMarketIdx] = useState(0);
+  const [side, setSide] = useState<PositionSide>('long');
+  const [marginCurrency, setMarginCurrency] = useState<'PHON' | 'USDT'>('USDT');
+  const [margin, setMargin] = useState('100');
+  const [leverage, setLeverage] = useState('10');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const market = markets[marketIdx] ?? markets[0] ?? null;
+  const price = market ? (prices[market.symbol] ?? '0') : '0';
+  const priceStale = market ? isPriceStale(market.symbol) : false;
+  const maxLeverage = market?.max_leverage ?? '1';
+
+  const highLeverageThreshold = useMemo(() => {
+    try {
+      const half = toDecimal(maxLeverage).div(2).ceil();
+      return half.lessThanOrEqualTo('20') ? half.toString() : '20';
+    } catch {
+      return '1';
+    }
+  }, [maxLeverage]);
+
+  const isHighLeverage = useMemo(() => {
+    try {
+      return toDecimal(leverage).greaterThan(highLeverageThreshold);
+    } catch {
+      return false;
+    }
+  }, [highLeverageThreshold, leverage]);
+
+  useEffect(() => {
+    if (marketIdx >= markets.length) setMarketIdx(0);
+  }, [marketIdx, markets.length]);
+
+  useEffect(() => {
+    try {
+      if (toDecimal(leverage).greaterThan(maxLeverage)) {
+        setLeverage(toDecimal(maxLeverage).toFixed(0));
+      }
+    } catch {
+      setLeverage('1');
+    }
+  }, [leverage, maxLeverage]);
+
+  const preview = useMemo(() => {
+    try {
+      if (!isPositiveAmount(price) || !isPositiveAmount(margin)) return null;
+      return computeOpenPosition({
+        side,
+        marginCurrency,
+        marginAmount: margin,
+        leverage,
+        entryPrice: price,
+        maxLeverage,
+      });
+    } catch (error) {
+      return error instanceof TradingError ? null : null;
+    }
+  }, [side, marginCurrency, margin, leverage, price, maxLeverage]);
+
+  return {
+    marketIdx,
+    setMarketIdx,
+    side,
+    setSide,
+    marginCurrency,
+    setMarginCurrency,
+    margin,
+    setMargin,
+    leverage,
+    setLeverage,
+    confirmOpen,
+    setConfirmOpen,
+    market,
+    price,
+    priceStale,
+    maxLeverage,
+    highLeverageThreshold,
+    isHighLeverage,
+    preview,
+    tradeDisabled: priceStale || realtimeDisconnected,
+  };
 }
 
 // ─── Futures actions ───────────────────────────────────────────

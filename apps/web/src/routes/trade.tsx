@@ -12,6 +12,7 @@ import {
   useCandles,
   useSyntheticBook,
   useFuturesPositions,
+  useFuturesOrderTicket,
   useFuturesActions,
   useTradingRiskAcknowledgement,
   useSpotActions,
@@ -20,11 +21,9 @@ import {
   type SpotMarket,
 } from '../hooks/use-trading';
 import {
-  computeOpenPosition,
   computePnl,
   computeSpotBuy,
   computeSpotSell,
-  TradingError,
   type PositionSide,
 } from '@phonara/trading-engine';
 import { formatMoney, ConfirmDialog, Button, Card, Stat, Badge, Input, SegmentedControl, Slider, OrderBook, Skeleton } from '@phonara/ui';
@@ -419,71 +418,43 @@ function FuturesPanel({
   realtimeDisconnected: boolean;
 }) {
   const t = useT();
-  const [marketIdx, setMarketIdx] = useState(0);
-  const [side, setSide] = useState<PositionSide>('long');
-  const [marginCurrency, setMarginCurrency] = useState<'PHON' | 'USDT'>('USDT');
-  const [margin, setMargin] = useState('100');
-  const [leverage, setLeverage] = useState('10');
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const ticket = useFuturesOrderTicket({
+    markets,
+    prices,
+    isPriceStale,
+    realtimeDisconnected,
+  });
   const { openPosition, busy, error } = useFuturesActions(onTraded);
   const riskAck = useTradingRiskAcknowledgement();
-
-  const market = markets[marketIdx] ?? markets[0] ?? null;
-  const price = market ? (prices[market.symbol] ?? '0') : '0';
-  const priceStale = market ? isPriceStale(market.symbol) : false;
-  const maxLeverage = market?.max_leverage ?? '1';
-  const highLeverageThreshold = useMemo(() => {
-    try {
-      const half = toDecimal(maxLeverage).div(2).ceil();
-      return half.lessThanOrEqualTo('20') ? half.toString() : '20';
-    } catch {
-      return '1';
-    }
-  }, [maxLeverage]);
-  const isHighLeverage = useMemo(() => {
-    try {
-      return toDecimal(leverage).greaterThan(highLeverageThreshold);
-    } catch {
-      return false;
-    }
-  }, [highLeverageThreshold, leverage]);
+  const {
+    market,
+    price,
+    priceStale,
+    maxLeverage,
+    isHighLeverage,
+    preview,
+    side,
+    setSide,
+    marginCurrency,
+    setMarginCurrency,
+    margin,
+    setMargin,
+    leverage,
+    setLeverage,
+    confirmOpen,
+    setConfirmOpen,
+  } = ticket;
   const { candles, loading: candlesLoading, isError: candlesError, refetch: refetchCandles } = useCandles(market?.symbol ?? null, '1m');
   const syntheticBook = useSyntheticBook(market?.symbol ?? null);
   const staleReason = t('trade.dataStatus.staleDescription');
   const realtimeReason = t('trade.dataStatus.realtimeDisconnectedDescription');
   const disabledReason = priceStale ? staleReason : realtimeDisconnected ? realtimeReason : undefined;
 
-  useEffect(() => {
-    if (marketIdx >= markets.length) setMarketIdx(0);
-  }, [marketIdx, markets.length]);
-
-  useEffect(() => {
-    try {
-      if (toDecimal(leverage).greaterThan(maxLeverage)) {
-        setLeverage(toDecimal(maxLeverage).toFixed(0));
-      }
-    } catch {
-      setLeverage('1');
-    }
-  }, [leverage, maxLeverage]);
-
   async function submitOpen() {
     if (!market || priceStale || realtimeDisconnected) return;
     await openPosition({ market: market.symbol, side, marginCurrency, marginAmount: margin, leverage });
     setConfirmOpen(false);
   }
-
-  const preview = useMemo(() => {
-    try {
-      if (!isPositiveAmount(price) || !isPositiveAmount(margin)) return null;
-      return computeOpenPosition({
-        side, marginCurrency, marginAmount: margin, leverage,
-        entryPrice: price, maxLeverage,
-      });
-    } catch (e) {
-      return e instanceof TradingError ? null : null;
-    }
-  }, [side, marginCurrency, margin, leverage, price, maxLeverage]);
 
   const avail = marginCurrency === 'USDT' ? usdtAvail : phonAvail;
   const chartLabels = useMemo(() => ({
@@ -525,7 +496,7 @@ function FuturesPanel({
         <SegmentedControl<string>
           tone="primary"
           value={market.symbol}
-          onChange={(sym) => setMarketIdx(Math.max(0, markets.findIndex(m => m.symbol === sym)))}
+          onChange={(sym) => ticket.setMarketIdx(Math.max(0, markets.findIndex(m => m.symbol === sym)))}
           options={markets.map(m => ({
             value: m.symbol,
             label: (
