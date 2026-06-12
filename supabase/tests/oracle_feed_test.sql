@@ -187,32 +187,19 @@ BEGIN
 END;
 $$;
 
-SELECT set_config('request.jwt.claims', '{}', true);
-SET ROLE anon;
 DO $$
 BEGIN
-  BEGIN
-    PERFORM rpc_submit_oracle_source_price('BTCUSDT-SIM', '1.000000', 'anon-test');
-    RAISE EXCEPTION 'anon must not execute rpc_submit_oracle_source_price';
-  EXCEPTION WHEN insufficient_privilege THEN
-    NULL;
-  END;
+  ASSERT NOT has_function_privilege(
+    'anon',
+    'public.rpc_submit_oracle_source_price(text,text,text)',
+    'EXECUTE'
+  ), 'anon must not have EXECUTE on rpc_submit_oracle_source_price';
+  ASSERT NOT has_function_privilege(
+    'authenticated',
+    'public.rpc_submit_oracle_source_price(text,text,text)',
+    'EXECUTE'
+  ), 'authenticated must not have EXECUTE on rpc_submit_oracle_source_price';
 END;
 $$;
-RESET ROLE;
-
-SELECT set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-000000000001"}', true);
-SET ROLE authenticated;
-DO $$
-BEGIN
-  BEGIN
-    PERFORM rpc_submit_oracle_source_price('BTCUSDT-SIM', '1.000000', 'auth-test');
-    RAISE EXCEPTION 'authenticated must not execute rpc_submit_oracle_source_price';
-  EXCEPTION WHEN insufficient_privilege THEN
-    NULL;
-  END;
-END;
-$$;
-RESET ROLE;
 
 ROLLBACK;
