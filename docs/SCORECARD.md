@@ -12,13 +12,19 @@
 
 ---
 
+> 본 스코어카드는 코드 품질과 자동 게이트 강제력만 측정한다. 법률 컴플라이언스(게임산업법 등),
+> AML/KYC 운영 프로세스, 책임도박 통제, 모니터링/온콜/백업 리허설 등 운영 준비 항목은
+> 측정 범위 외이며 별도 트랙에서 관리한다.
+
 ## 1. 종합 점수
 
 | 영역 | Before | After | 근거 게이트 |
 | --- | ---: | ---: | --- |
 | 운영안정성 (Operational Stability) | 82 | 99 | `bun run check`, E2E 9-spec green, advisor 0 ERROR, circuit breaker/retry |
 | 유지보수성 (Maintainability) | 80 | 99 | God-route 분해, ESLint RPC 경계, domain 레이어, i18n factory, migration lock |
-| 종합 | 81 | 99 | 전 게이트 green + 보존/멱등 SQL + 풀 E2E |
+
+전 게이트 green (`check` / `check:full` / `test:sql` 38건 / E2E 9 spec), advisor 0 ERROR,
+UNVERIFIED 2건(O4, O5).
 
 > "Before"는 Deep-Dive 분석 시점의 코드/게이트 상태를 기준으로 한 평가이며,
 > "After"는 본 작업 종료 시점에 재현 가능한 게이트 실행 결과를 근거로 한다(섹션 5 참조).
@@ -34,8 +40,8 @@
 | O1 | 비동기 미처리(unhandled rejection)로 인한 UI 행 | 70 | 99 | `auth-context.tsx`/`wallet.tsx` 등 Promise 거부 경로 catch 처리 | `core-flow.spec.ts` 3/3 green |
 | O2 | 관리자 화면 raw DB 에러 노출 | 72 | 99 | admin 경로에서 raw SQL/RPC 에러 대신 i18n 코드 표면화 | `admin.spec.ts` 8/8, `casino-wave7-closeout.spec.ts` cap-rejection green |
 | O3 | PWA 캐시 신뢰성(오류 응답 캐싱) | 75 | 98 | `sw.ts`에서 캐싱 전 HTTP 응답 유효성 검증 | `quality.spec.ts` PWA/offline smoke green |
-| O4 | 외부 가격 피드 복원력 | 68 | 99 | `price-feed`에 동시성 풀(4)/지수 백오프 재시도/프로바이더 서킷브레이커, RPC 제출 실패 격리 | `group-d-hardening.spec.ts` (stale oracle 경고) green |
-| O5 | Edge Function 인가 강도 | 74 | 99 | service-role 키 상수시간 SHA-256 비교 + `service_role` 클레임 폴백(이중 방어) | `supabase/functions/price-feed/index.ts` |
+| O4 | 외부 가격 피드 복원력 | 68 | 코드 검증 PASS / 런타임 UNVERIFIED | `price-feed`에 동시성 풀(4)/지수 백오프 재시도/프로바이더 서킷브레이커, RPC 제출 실패 격리 | `group-d-hardening.spec.ts` (stale oracle 경고) green. 서킷브레이커/동시성 풀/인가 강도는 프로덕션 부하·실공격 상황에서만 최종 증명 가능. 현재 증거는 코드 리뷰 + 단위 수준 E2E에 한정 |
+| O5 | Edge Function 인가 강도 | 74 | 코드 검증 PASS / 런타임 UNVERIFIED | service-role 키 상수시간 SHA-256 비교 + `service_role` 클레임 폴백(이중 방어) | `supabase/functions/price-feed/index.ts`. 서킷브레이커/동시성 풀/인가 강도는 프로덕션 부하·실공격 상황에서만 최종 증명 가능. 현재 증거는 코드 리뷰 + 단위 수준 E2E에 한정 |
 | O6 | 정산/스윕 보존·멱등 보장 | 78 | 99 | `rpc_sweep_stale_game_bets` 보존(Σ=0)·멱등 단언 강화 | `casino_schema_test.sql` (test:sql 38 green) |
 | O7 | 보안 어드바이저 회귀 차단 | 80 | 99 | advisor strict 게이트(0 ERROR 강제), `check:full`에 functions-mirror strict 추가 | `bun run check` (check:advisors) green |
 
@@ -136,5 +142,5 @@ flowchart TD
 
 Deep-Dive 플랜의 Part 0~7을 중복 없이 모두 흡수했고, 운영안정성·유지보수성 핵심 항목이
 재발 방지 자동 게이트(typecheck/lint/RPC 경계/advisor/migration lock/functions mirror/
-보존·멱등 SQL/풀 E2E)로 고정되었다. 종합 81 -> 99로 상향되었으며, 모든 "after"는
-재현 가능한 green 게이트로 입증된다.
+보존·멱등 SQL/풀 E2E)로 고정되었다. 검증 가능한 항목은 전부 게이트로 고정되었고,
+런타임 검증 항목 2건(O4, O5)은 UNVERIFIED로 명시한다.
