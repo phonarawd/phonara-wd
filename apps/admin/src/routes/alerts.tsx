@@ -8,6 +8,7 @@ import { supabase } from '../lib/supabase';
 import { useT } from '../lib/i18n';
 import { Badge, Button, Card, DataTable, type ColumnDef } from '@phonara/ui';
 import type { Json } from '@phonara/shared-types';
+import type { MessageKey } from '@phonara/i18n';
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -59,12 +60,12 @@ export function AlertsPage() {
       {
         key: 'severity',
         header: t('admin.alerts.col.severity'),
-        cell: (row) => <SeverityBadge severity={row.severity} />,
+        cell: (row) => <SeverityBadge severity={row.severity} t={t} />,
       },
       {
         key: 'status',
         header: t('admin.alerts.col.status'),
-        cell: (row) => <StatusBadge status={row.status} />,
+        cell: (row) => <StatusBadge status={row.status} t={t} />,
       },
       {
         key: 'check',
@@ -293,15 +294,26 @@ function MetricCard({ label, value }: { label: string; value: number }) {
   );
 }
 
-function SeverityBadge({ severity }: { severity: AlertSeverity }) {
-  return <Badge tone={severity === 'critical' ? 'down' : 'warning'}>{severity}</Badge>;
+function SeverityBadge({ severity, t }: { severity: AlertSeverity; t: ReturnType<typeof useT> }) {
+  return <Badge tone={severity === 'critical' ? 'down' : 'warning'}>{t(ALERT_SEVERITY_LABELS[severity])}</Badge>;
 }
 
-function StatusBadge({ status }: { status: AlertStatus }) {
+function StatusBadge({ status, t }: { status: AlertStatus; t: ReturnType<typeof useT> }) {
   const tone =
     status === 'open' ? 'warning' : status === 'acknowledged' ? 'primary' : 'neutral';
-  return <Badge tone={tone}>{status}</Badge>;
+  return <Badge tone={tone}>{t(ALERT_STATUS_LABELS[status])}</Badge>;
 }
+
+const ALERT_SEVERITY_LABELS: Record<AlertSeverity, MessageKey> = {
+  warning: 'admin.alerts.severity.warning',
+  critical: 'admin.alerts.severity.critical',
+};
+
+const ALERT_STATUS_LABELS: Record<AlertStatus, MessageKey> = {
+  open: 'admin.status.open',
+  acknowledged: 'admin.status.acknowledged',
+  resolved: 'admin.status.resolved',
+};
 
 function formatDate(value: string) {
   const date = new Date(value);

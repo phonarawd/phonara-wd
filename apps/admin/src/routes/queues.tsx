@@ -9,6 +9,7 @@ import { translateError } from '../lib/translate-error';
 import { useT } from '../lib/i18n';
 import { Badge, Button, Card, DataTable, type ColumnDef } from '@phonara/ui';
 import type { Tables } from '@phonara/shared-types';
+import type { MessageKey } from '@phonara/i18n';
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -63,7 +64,7 @@ export function QueuesPage() {
 
   const reviewColumns = useMemo<ColumnDef<ReviewQueueRow>[]>(
     () => [
-      { key: 'type', header: t('admin.queues.col.type'), cell: (row) => row.queue_type },
+      { key: 'type', header: t('admin.queues.col.type'), cell: (row) => labelFor(row.queue_type, QUEUE_TYPE_LABELS, t) },
       { key: 'reason', header: t('admin.queues.col.reason'), cell: (row) => row.reason ?? '—' },
       {
         key: 'sla',
@@ -119,7 +120,7 @@ export function QueuesPage() {
       {
         key: 'status',
         header: t('admin.queues.col.status'),
-        cell: (row) => <StatusBadge status={row.status} />,
+        cell: (row) => <StatusBadge status={row.status} t={t} />,
       },
       {
         key: 'created',
@@ -176,8 +177,8 @@ export function QueuesPage() {
 
   const strColumns = useMemo<ColumnDef<StrCaseRow>[]>(
     () => [
-      { key: 'type', header: t('admin.queues.col.type'), cell: (row) => row.case_type },
-      { key: 'status', header: t('admin.queues.col.status'), cell: (row) => <StatusBadge status={row.status} /> },
+      { key: 'type', header: t('admin.queues.col.type'), cell: (row) => labelFor(row.case_type, CASE_TYPE_LABELS, t) },
+      { key: 'status', header: t('admin.queues.col.status'), cell: (row) => <StatusBadge status={row.status} t={t} /> },
       { key: 'trigger', header: t('admin.queues.col.trigger'), cell: (row) => row.trigger_ref ?? '—' },
       {
         key: 'details',
@@ -225,8 +226,8 @@ export function QueuesPage() {
 
   const riskColumns = useMemo<ColumnDef<RiskFlagRow>[]>(
     () => [
-      { key: 'type', header: t('admin.queues.col.type'), cell: (row) => row.flag_type },
-      { key: 'status', header: t('admin.queues.col.status'), cell: (row) => <StatusBadge status={row.status} /> },
+      { key: 'type', header: t('admin.queues.col.type'), cell: (row) => labelFor(row.flag_type, RISK_FLAG_LABELS, t) },
+      { key: 'status', header: t('admin.queues.col.status'), cell: (row) => <StatusBadge status={row.status} t={t} /> },
       {
         key: 'created',
         header: t('admin.queues.col.created'),
@@ -516,7 +517,7 @@ function MetricCard({ label, value }: { label: string; value: number }) {
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status, t }: { status: string; t: ReturnType<typeof useT> }) {
   const tone = status === 'pending' || status === 'open'
     ? 'warning'
     : status === 'active'
@@ -524,7 +525,7 @@ function StatusBadge({ status }: { status: string }) {
       : status === 'approved' || status === 'reviewing'
         ? 'primary'
         : 'neutral';
-  return <Badge tone={tone}>{status}</Badge>;
+  return <Badge tone={tone}>{labelFor(status, STATUS_LABELS, t)}</Badge>;
 }
 
 function SlaBadge({ dueAt }: { dueAt: string }) {
@@ -544,6 +545,48 @@ function summarizeJson(value: unknown) {
   if (!value || typeof value !== 'object') return '—';
   const text = JSON.stringify(maskSensitiveJson(value));
   return text.length > 80 ? `${text.slice(0, 77)}...` : text;
+}
+
+const STATUS_LABELS: Record<string, MessageKey> = {
+  pending: 'admin.status.pending',
+  in_review: 'admin.status.inReview',
+  resolved: 'admin.status.resolved',
+  approved: 'admin.status.approved',
+  processing: 'admin.status.processing',
+  completed: 'admin.status.completed',
+  sent: 'admin.status.sent',
+  rejected: 'admin.status.rejected',
+  cancelled: 'admin.status.cancelled',
+  open: 'admin.status.open',
+  reviewing: 'admin.status.reviewing',
+  filed: 'admin.status.filed',
+  dismissed: 'admin.status.dismissed',
+  active: 'admin.status.active',
+  cleared: 'admin.status.cleared',
+};
+
+const QUEUE_TYPE_LABELS: Record<string, MessageKey> = {
+  deposit_exception: 'admin.queues.type.depositException',
+  kyc_review: 'admin.queues.type.kycReview',
+  sanctions_screening: 'admin.queues.type.sanctionsScreening',
+  rg_self_exclusion_release: 'admin.queues.type.rgSelfExclusionRelease',
+  affiliate_commission_approval: 'admin.queues.type.affiliateCommissionApproval',
+};
+
+const CASE_TYPE_LABELS: Record<string, MessageKey> = {
+  sanctions_hit: 'admin.queues.case.sanctionsHit',
+};
+
+const RISK_FLAG_LABELS: Record<string, MessageKey> = {
+  sanctions_hit: 'admin.queues.risk.sanctionsHit',
+  sanctions_pending: 'admin.queues.risk.sanctionsPending',
+  account_activity_frozen: 'admin.queues.risk.accountActivityFrozen',
+  rg_self_exclusion: 'admin.queues.risk.rgSelfExclusion',
+};
+
+function labelFor(value: string, labels: Record<string, MessageKey>, t: ReturnType<typeof useT>) {
+  const key = labels[value];
+  return key ? t(key) : value;
 }
 
 function maskSensitiveJson(value: unknown): unknown {

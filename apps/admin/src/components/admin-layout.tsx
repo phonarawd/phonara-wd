@@ -43,7 +43,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
           </span>
         </div>
 
-        <nav className="flex-1 px-3 py-4 flex flex-col gap-1" aria-label="Admin navigation">
+        <nav className="flex-1 px-3 py-4 flex flex-col gap-1" aria-label={t('admin.nav.ariaLabel')}>
           {NAV_ITEMS.map(({ to, labelKey, testId }) => {
             const active = location.pathname === to || location.pathname.startsWith(`${to}/`);
             return (
