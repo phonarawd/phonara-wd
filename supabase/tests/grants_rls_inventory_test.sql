@@ -67,6 +67,18 @@ BEGIN
     'authenticated must NOT UPDATE affiliate_relationships directly';
   ASSERT NOT has_table_privilege('authenticated', 'public.affiliate_relationships', 'DELETE'),
     'authenticated must NOT DELETE affiliate_relationships directly';
+  ASSERT NOT has_table_privilege('anon', 'public.affiliate_tier_configs', 'SELECT'),
+    'anon must NOT SELECT affiliate_tier_configs';
+  ASSERT has_table_privilege('authenticated', 'public.affiliate_tier_configs', 'SELECT'),
+    'authenticated must SELECT affiliate_tier_configs';
+  ASSERT NOT has_table_privilege('authenticated', 'public.affiliate_tier_configs', 'INSERT'),
+    'authenticated must NOT INSERT affiliate_tier_configs directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.affiliate_elite_overrides', 'UPDATE'),
+    'authenticated must NOT UPDATE affiliate_elite_overrides directly';
+  ASSERT has_table_privilege('authenticated', 'public.affiliate_tier_snapshots', 'SELECT'),
+    'authenticated must SELECT affiliate_tier_snapshots (own-row RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.affiliate_tier_snapshots', 'INSERT'),
+    'authenticated must NOT INSERT affiliate_tier_snapshots directly';
 
   -- system account belt (000045)
   ASSERT NOT has_table_privilege('anon', 'public.system_accounts', 'INSERT'),
@@ -92,6 +104,7 @@ BEGIN
       AND c.relname IN (
         'app_config', 'profiles', 'wallets', 'spot_trades',
         'price_change_audit', 'market_sources', 'affiliate_relationships',
+        'affiliate_tier_configs', 'affiliate_elite_overrides', 'affiliate_tier_snapshots',
         'system_accounts', 'system_account_ledger'
       )
       AND NOT c.relrowsecurity
@@ -102,7 +115,7 @@ BEGIN
   ASSERT v_rls_off = '',
     format('RLS must be enabled on inventory tables:%s', v_rls_off);
 
-  RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges match migrations 000045/053–055';
+  RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges match migrations 000045/053–055 and affiliate tier snapshots';
 END;
 $$;
 

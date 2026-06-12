@@ -94,6 +94,48 @@ export type Database = {
           },
         ]
       }
+      affiliate_elite_overrides: {
+        Row: {
+          affiliate_id: string
+          created_at: string
+          is_active: boolean
+          reason: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          affiliate_id: string
+          created_at?: string
+          is_active?: boolean
+          reason: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          affiliate_id?: string
+          created_at?: string
+          is_active?: boolean
+          reason?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_elite_overrides_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_elite_overrides_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliate_relationships: {
         Row: {
           child_id: string
@@ -130,6 +172,115 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_tier_configs: {
+        Row: {
+          auto_eligible: boolean
+          created_at: string
+          direct_commission_bps: number
+          min_active_direct_users: number
+          min_rolling_30d_volume: string
+          override_commission_bps: number
+          tier_code: string
+          tier_rank: number
+          updated_at: string
+        }
+        Insert: {
+          auto_eligible?: boolean
+          created_at?: string
+          direct_commission_bps: number
+          min_active_direct_users: number
+          min_rolling_30d_volume: string
+          override_commission_bps: number
+          tier_code: string
+          tier_rank: number
+          updated_at?: string
+        }
+        Update: {
+          auto_eligible?: boolean
+          created_at?: string
+          direct_commission_bps?: number
+          min_active_direct_users?: number
+          min_rolling_30d_volume?: string
+          override_commission_bps?: number
+          tier_code?: string
+          tier_rank?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      affiliate_tier_snapshots: {
+        Row: {
+          active_direct_users: number
+          affiliate_age_days: number
+          affiliate_id: string
+          computed_tier_code: string
+          created_at: string
+          demotion_candidate_since: string | null
+          elite_override_active: boolean
+          id: string
+          is_active_eligible: boolean
+          is_age_eligible: boolean
+          rolling_30d_volume: string
+          snapshot_date: string
+          tier_code: string
+          updated_at: string
+        }
+        Insert: {
+          active_direct_users: number
+          affiliate_age_days: number
+          affiliate_id: string
+          computed_tier_code: string
+          created_at?: string
+          demotion_candidate_since?: string | null
+          elite_override_active?: boolean
+          id?: string
+          is_active_eligible: boolean
+          is_age_eligible: boolean
+          rolling_30d_volume: string
+          snapshot_date: string
+          tier_code: string
+          updated_at?: string
+        }
+        Update: {
+          active_direct_users?: number
+          affiliate_age_days?: number
+          affiliate_id?: string
+          computed_tier_code?: string
+          created_at?: string
+          demotion_candidate_since?: string | null
+          elite_override_active?: boolean
+          id?: string
+          is_active_eligible?: boolean
+          is_age_eligible?: boolean
+          rolling_30d_volume?: string
+          snapshot_date?: string
+          tier_code?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_tier_snapshots_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_tier_snapshots_computed_tier_code_fkey"
+            columns: ["computed_tier_code"]
+            isOneToOne: false
+            referencedRelation: "affiliate_tier_configs"
+            referencedColumns: ["tier_code"]
+          },
+          {
+            foreignKeyName: "affiliate_tier_snapshots_tier_code_fkey"
+            columns: ["tier_code"]
+            isOneToOne: false
+            referencedRelation: "affiliate_tier_configs"
+            referencedColumns: ["tier_code"]
           },
         ]
       }
@@ -2737,10 +2888,23 @@ export type Database = {
       }
     }
     Functions: {
+      _affiliate_computed_tier: {
+        Args: {
+          p_active_direct_users: number
+          p_affiliate_age_days: number
+          p_rolling_30d_volume: number
+        }
+        Returns: string
+      }
       _affiliate_create_relationship: {
         Args: { p_child_id: string; p_parent_id: string }
         Returns: undefined
       }
+      _affiliate_refresh_tier_snapshots: {
+        Args: { p_snapshot_date?: string }
+        Returns: Json
+      }
+      _affiliate_tier_rank: { Args: { p_tier_code: string }; Returns: number }
       _app_config_numeric: {
         Args: { p_default: number; p_key: string }
         Returns: number
@@ -3345,6 +3509,10 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_refresh_affiliate_tier_snapshots: {
+        Args: { p_snapshot_date?: string }
+        Returns: Json
+      }
       rpc_register_affiliate_relationship: {
         Args: { p_parent_code: string }
         Returns: Json
@@ -3394,6 +3562,10 @@ export type Database = {
       }
       rpc_run_liquidations: { Args: never; Returns: Json }
       rpc_run_reconciliation: { Args: never; Returns: Json }
+      rpc_set_affiliate_elite_override: {
+        Args: { p_affiliate_id: string; p_is_active: boolean; p_reason: string }
+        Returns: Json
+      }
       rpc_set_feature_enabled: {
         Args: { p_enabled: boolean; p_feature: string; p_reason: string }
         Returns: Json
