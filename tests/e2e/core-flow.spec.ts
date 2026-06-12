@@ -14,6 +14,28 @@ async function resetTradingRiskLimits(admin: ReturnType<typeof adminClient>): Pr
     .in('symbol', ['PHONUSDT-PERP', 'BTCUSDT-SIM', 'ETHUSDT-SIM']);
 }
 
+/** Wait for rpc_spot_market_buy to settle (DB row) before asserting UI teardown. */
+async function waitForSpotBuyRpc(
+  page: Page,
+  admin: ReturnType<typeof adminClient>,
+  userId: string,
+  spotCountBefore: number,
+): Promise<void> {
+  await expect.poll(
+    async () => {
+      const { count } = await admin
+        .from('spot_trades')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId);
+      return count ?? 0;
+    },
+    { timeout: 90_000, message: 'spot buy RPC did not record a trade' },
+  ).toBeGreaterThan(spotCountBefore);
+
+  await expect(page.getByTestId('spot-confirm')).toBeHidden({ timeout: 10_000 });
+  await expect(page.getByTestId('spot-submit')).toBeEnabled({ timeout: 10_000 });
+}
+
 test('core money flow: spot buy → futures open/close → stake → claim (ledger conserved)', async ({
   page,
 }) => {
@@ -28,11 +50,16 @@ test('core money flow: spot buy → futures open/close → stake → claim (ledg
 
   // Navigate directly to trade (dashboard wallet rendering is covered by visual.spec.ts).
   // ── Spot buy (10 USDT → PHON) ──
+  const { count: spotCountBeforeBuy } = await admin
+    .from('spot_trades')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', auth.userId);
   await page.goto('/trade');
+  await freshenOracle(admin);
   await expect(page.getByTestId('spot-submit')).toBeEnabled({ timeout: 15_000 });
   await page.getByTestId('spot-submit').click();
   await page.getByTestId('spot-confirm').click();
-  await expect(page.getByTestId('spot-confirm')).toBeHidden({ timeout: 45_000 });
+  await waitForSpotBuyRpc(page, admin, auth.userId, spotCountBeforeBuy ?? 0);
 
   // ── Futures open (default market, long, USDT margin) ──
   await freshenOracle(admin);
