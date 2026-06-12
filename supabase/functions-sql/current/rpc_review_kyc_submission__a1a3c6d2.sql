@@ -13,6 +13,7 @@ DECLARE
 BEGIN
   IF v_actor IS NULL THEN RAISE EXCEPTION 'unauthenticated'; END IF;
   IF NOT _is_admin() THEN RAISE EXCEPTION 'forbidden'; END IF;
+  PERFORM _assert_admin_aal2();
   IF p_reason IS NULL OR length(btrim(p_reason)) < 3 THEN RAISE EXCEPTION 'reason_required'; END IF;
   IF p_status NOT IN ('reviewing', 'approved', 'rejected') THEN RAISE EXCEPTION 'invalid_kyc_status'; END IF;
 

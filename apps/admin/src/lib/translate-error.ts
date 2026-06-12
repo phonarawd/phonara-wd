@@ -1,6 +1,8 @@
 import type { MessageKey } from '@phonara/i18n';
 
 const ERROR_KEY_MAP: ReadonlyArray<readonly [string, MessageKey]> = [
+  ['err_mfa_required', 'error.ERR_MFA_REQUIRED'],
+  ['mfa_required', 'error.ERR_MFA_REQUIRED'],
   ['unauthenticated', 'error.UNAUTHENTICATED'],
   ['feature_disabled', 'error.FEATURE_DISABLED'],
   ['self_approval_forbidden', 'error.SELF_APPROVAL_FORBIDDEN'],

@@ -10,6 +10,7 @@ AS $function$
 BEGIN
   IF auth.uid() IS NULL THEN RAISE EXCEPTION 'unauthenticated'; END IF;
   IF NOT _is_admin() THEN RAISE EXCEPTION 'forbidden'; END IF;
+  PERFORM _assert_admin_aal2();
 
   RETURN _sync_ops_alerts_from_health();
 END;

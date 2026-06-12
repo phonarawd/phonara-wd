@@ -84,6 +84,7 @@
     "20260613000080_oracle_feed_market_sources.sql": "448c52e4037eb422f3c437dd4cb84d076d6694945710e0110314ec40b623eaf5",
     "20260613000081_price_feed_pg_net_vault.sql": "6de9e5346a28fb8e7514ccc17a6f03b3be9ebf84e6d1d9e07da1c7aae6a11d72",
     "20260613000082_price_feed_cron.sql": "eb74d0ea873a84d530a2137e0ac6d508905c062d88b67d36713006c3ddbfa60f",
-    "20260613000083_oracle_feed_remove_legacy_sources.sql": "b5792f6e2bede476864ddb674d8c014b5a32bdcdc739b42575930147f982a883"
+    "20260613000083_oracle_feed_remove_legacy_sources.sql": "b5792f6e2bede476864ddb674d8c014b5a32bdcdc739b42575930147f982a883",
+    "20260613000084_admin_mfa_aal2_guard.sql": "38259e95c774cbbc9ce0a38bc2ca7d2e0eee2514dcca5dc63a3e8a72d93c772e"
   }
 }

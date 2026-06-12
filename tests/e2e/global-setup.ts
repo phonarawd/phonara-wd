@@ -1,6 +1,7 @@
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { generateSync } from 'otplib';
 import {
   SUPABASE_URL,
   ANON_KEY,
@@ -171,14 +172,51 @@ async function globalSetup(): Promise<void> {
     throw new Error(`admin sign-in failed: ${asErr?.message ?? 'no session'}`);
   }
 
+  const adminSessionClient = createClient(SUPABASE_URL, ANON_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: {
+      headers: { Authorization: `Bearer ${adminSignIn.session.access_token}` },
+    },
+  });
+
+  const { data: enrollData, error: enrollErr } = await adminSessionClient.auth.mfa.enroll({
+    factorType: 'totp',
+    friendlyName: 'E2E Admin',
+  });
+  if (enrollErr || !enrollData?.totp) {
+    throw new Error(`admin MFA enroll failed: ${enrollErr?.message ?? 'no totp payload'}`);
+  }
+
+  const totpSecret = enrollData.totp.secret;
+  const verifyCode = generateSync({ secret: totpSecret });
+  const { data: challengeData, error: challengeErr } = await adminSessionClient.auth.mfa.challenge({
+    factorId: enrollData.id,
+  });
+  if (challengeErr || !challengeData?.id) {
+    throw new Error(`admin MFA challenge failed: ${challengeErr?.message ?? 'no challenge id'}`);
+  }
+
+  const { data: verifyData, error: verifyErr } = await adminSessionClient.auth.mfa.verify({
+    factorId: enrollData.id,
+    challengeId: challengeData.id,
+    code: verifyCode,
+  });
+  if (verifyErr || !verifyData) {
+    throw new Error(`admin MFA verify failed: ${verifyErr?.message ?? 'no verify data'}`);
+  }
+
+  const aal2AccessToken = verifyData.access_token ?? adminSignIn.session.access_token;
+  const aal2RefreshToken = verifyData.refresh_token ?? adminSignIn.session.refresh_token;
+
   writeFileSync(
     ADMIN_AUTH_FILE,
     JSON.stringify(
       {
         userId: adminUserId,
         email: adminEmail,
-        accessToken: adminSignIn.session.access_token,
-        refreshToken: adminSignIn.session.refresh_token,
+        accessToken: aal2AccessToken,
+        refreshToken: aal2RefreshToken,
+        totpSecret,
       },
       null,
       2,

@@ -31,7 +31,7 @@ BEGIN
   UPDATE profiles SET role = 'admin' WHERE id = v_admin;
 
   -- Health snapshot refactor must remain admin-only and unchanged shape.
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   v_res := rpc_get_ops_health();
   ASSERT v_res ? 'status' AND v_res ? 'lastUpdatedAt' AND v_res ? 'checks',
     'rpc_get_ops_health must remain unchanged after snapshot extraction';
@@ -48,7 +48,7 @@ BEGIN
   END;
   ASSERT v_blocked, 'non-admin must not sync ops alerts';
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
 
   -- Materialize warning from missing reconciliation.
   DELETE FROM reconciliation_log;

@@ -56,7 +56,7 @@ BEGIN
 
   UPDATE app_config SET value = 'false' WHERE key IN ('system_halt', 'system_readonly');
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   v_res := rpc_get_ops_health();
   ASSERT v_res ? 'status' AND v_res ? 'lastUpdatedAt' AND v_res ? 'checks',
     'rpc_get_ops_health must return status, lastUpdatedAt, checks';

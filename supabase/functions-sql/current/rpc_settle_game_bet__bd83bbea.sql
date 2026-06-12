@@ -11,6 +11,7 @@ BEGIN
   IF auth.uid() IS NOT NULL AND NOT _is_admin() THEN
     RAISE EXCEPTION 'FORBIDDEN';
   END IF;
+  PERFORM _assert_admin_aal2();
   RAISE EXCEPTION 'atomic_settlement_required'
     USING HINT = COALESCE(p_bet_id::TEXT, 'null') || ':' || COALESCE(length(p_server_seed)::TEXT, 'null');
 END;

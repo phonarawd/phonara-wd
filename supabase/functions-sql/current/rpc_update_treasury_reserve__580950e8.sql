@@ -18,6 +18,7 @@ DECLARE
   v_delta_pct NUMERIC;
 BEGIN
   IF NOT _is_admin() THEN RAISE EXCEPTION 'FORBIDDEN'; END IF;
+  PERFORM _assert_admin_aal2();
 
   BEGIN v_ccy := p_currency::currency;
   EXCEPTION WHEN invalid_text_representation THEN

@@ -88,7 +88,7 @@ BEGIN
   END;
   ASSERT v_msg = 'forbidden', format('non-admin KYC review must be forbidden, got %s', v_msg);
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   v_res := rpc_review_kyc_submission(v_submission, 'approved', 'documents verified');
   ASSERT v_res->>'status' = 'approved', 'admin KYC approval did not return approved';
 

@@ -9,7 +9,7 @@
  *
  * All tests run against the LOCAL Supabase stack via the admin app (port 3001).
  */
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   readAuth,
   readAdminAuth,
@@ -18,24 +18,17 @@ import {
   ANON_KEY,
   currencyTotals,
   fundE2EWallet,
+  loginAdmin,
 } from './_helpers';
 import { createClient } from '@supabase/supabase-js';
 
 const ADMIN_BASE = 'http://localhost:3001';
 
-async function loginAdmin(page: Page, email: string, password: string): Promise<void> {
-  await page.goto(`${ADMIN_BASE}/login`);
-  await expect(page.getByTestId('admin-login-form')).toBeVisible({ timeout: 15_000 });
-  await page.getByTestId('admin-email').fill(email);
-  await page.getByTestId('admin-password').fill(password);
-  await page.getByTestId('admin-login-submit').click();
-}
-
 test.describe('Admin RBAC', () => {
   test('positive: admin user can access all admin routes', async ({ page }) => {
     const auth = readAdminAuth();
 
-    await loginAdmin(page, auth.email, 'E2e-Admin-Password-123456');
+    await loginAdmin(page, auth.email, 'E2e-Admin-Password-123456', readAdminAuth().totpSecret);
 
     // After login, should redirect to /overview.
     await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
@@ -65,7 +58,11 @@ test.describe('Admin RBAC', () => {
     const auth = readAuth();
 
     // Regular user (role='user') attempts to log in to admin app.
-    await loginAdmin(page, auth.email, 'E2e-Test-Password-123456');
+    await page.goto(`${ADMIN_BASE}/login`);
+    await expect(page.getByTestId('admin-login-form')).toBeVisible({ timeout: 15_000 });
+    await page.getByTestId('admin-email').fill(auth.email);
+    await page.getByTestId('admin-password').fill('E2e-Test-Password-123456');
+    await page.getByTestId('admin-login-submit').click();
 
     // Should see the forbidden screen, NOT the admin dashboard.
     await expect(page.getByTestId('admin-forbidden')).toBeVisible({ timeout: 20_000 });
@@ -85,7 +82,7 @@ test.describe('Admin Operations + Audit (S8c/S8d)', () => {
     await dbAdmin.from('app_config').update({ value: 'true' }).eq('key', 'feature_game_enabled');
 
     // Log in as admin.
-    await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456');
+    await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456', adminAuth.totpSecret);
     await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
 
     // Navigate to operations.
@@ -193,7 +190,7 @@ test.describe('Admin Exception Queues (W9-R1)', () => {
     expect(requestErr, 'withdrawal request should create a pending locked item').toBeNull();
     const withdrawalId = (requestData as { withdrawal_id: string }).withdrawal_id;
 
-    await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456');
+    await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456', adminAuth.totpSecret);
     await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
     await page.getByTestId('nav-queues').click();
     await expect(page.getByTestId('admin-withdrawals-table')).toBeVisible({ timeout: 10_000 });
@@ -230,7 +227,7 @@ test.describe('Admin Exception Queues (W9-R1)', () => {
 
     await dbAdmin.from('reconciliation_log').delete().neq('id', '00000000-0000-0000-0000-000000000000');
 
-    await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456');
+    await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456', adminAuth.totpSecret);
     await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
 
     await page.getByTestId('nav-alerts').click();

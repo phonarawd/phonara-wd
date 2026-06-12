@@ -50,7 +50,7 @@ BEGIN
   ASSERT v_oi_required, 'active futures market accepted NULL OI cap';
 
   -- Admin market-limit RPC requires reason, writes audit, and updates leverage.
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   PERFORM rpc_set_market_limits('BTCUSDT-SIM', 25, '250000.000000', '25', 'stage2 boundary test');
   ASSERT EXISTS (
     SELECT 1 FROM futures_markets

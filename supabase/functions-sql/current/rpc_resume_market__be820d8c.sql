@@ -10,6 +10,7 @@ AS $function$
 BEGIN
   SET search_path = public, pg_temp;
   IF NOT _is_admin() THEN RAISE EXCEPTION 'forbidden'; END IF;
+  PERFORM _assert_admin_aal2();
 
   UPDATE market_circuit_breakers SET
     is_halted = FALSE, halt_reason = NULL, resumed_at = NOW(), updated_at = NOW()

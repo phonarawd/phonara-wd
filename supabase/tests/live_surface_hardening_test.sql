@@ -84,7 +84,7 @@ BEGIN
           'reserve_admin_' || v_admin::TEXT || '@test.local', NOW(), NOW());
   UPDATE profiles SET role = 'admin' WHERE id = v_admin;
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   v_result := rpc_update_treasury_reserve('PHON', '1000000.000000', 10, 50, 'monthly reserve attestation');
 
   ASSERT (v_result->>'ok')::BOOLEAN = TRUE, 'reserve update must succeed for admin';

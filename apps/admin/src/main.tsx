@@ -9,6 +9,8 @@ import { Route as queuesRoute } from './routes/queues';
 import { Route as auditRoute } from './routes/audit';
 import { Route as operationsRoute } from './routes/operations';
 import { Route as alertsRoute } from './routes/alerts';
+import { Route as mfaEnrollRoute } from './routes/mfa-enroll';
+import { Route as mfaChallengeRoute } from './routes/mfa-challenge';
 import { AuthProvider } from './contexts/auth-context';
 import { I18nProvider } from './lib/i18n';
 import { queryClient } from './lib/query';
@@ -16,6 +18,8 @@ import './theme.css';
 
 const routeTree = rootRoute.addChildren([
   loginRoute,
+  mfaEnrollRoute,
+  mfaChallengeRoute,
   overviewRoute,
   alertsRoute,
   queuesRoute,

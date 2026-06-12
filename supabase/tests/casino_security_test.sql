@@ -34,7 +34,7 @@ BEGIN
     'pending', 'void_idem_' || v_user::TEXT, v_lock_id
   );
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   v_result := rpc_admin_void_game_bet(v_bet_id, 'risk review reversal');
 
   ASSERT v_result->>'status' = 'cancelled', 'admin void must cancel pending bet';

@@ -50,6 +50,7 @@
     "fast-check": "^4.8.0",
     "globals": "^17.6.0",
     "knip": "^6.16.1",
+    "otplib": "^13.4.1",
     "playwright": "^1.60.0",
     "prettier": "^3.8.3",
     "tailwindcss": "^4.3.0",

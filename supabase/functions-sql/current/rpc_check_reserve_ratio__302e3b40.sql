@@ -16,6 +16,7 @@ DECLARE
   v_results      JSONB[] := '{}';
 BEGIN
   IF NOT _is_admin() THEN RAISE EXCEPTION 'FORBIDDEN'; END IF;
+  PERFORM _assert_admin_aal2();
 
   FOR v_ccy IN SELECT unnest(ARRAY['PHON'::currency, 'USDT'::currency, 'KRW'::currency]) LOOP
     v_wallet_total := CASE v_ccy

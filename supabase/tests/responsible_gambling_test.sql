@@ -227,7 +227,7 @@ BEGIN
   END;
   ASSERT v_deposit_blocked, format('self-exclusion must block new deposit request, got %s', COALESCE(v_msg, '<none>'));
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   BEGIN
     PERFORM rpc_admin_release_self_exclusion(v_exclusion_id, 'support review');
   EXCEPTION WHEN OTHERS THEN

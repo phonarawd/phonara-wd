@@ -55,7 +55,7 @@ BEGIN
 
   -- T1/T2: admin contributions for both supported currencies. The insurance
   -- fund starts at zero, so the large-change guard is intentionally a no-op.
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   v_res := rpc_contribute_insurance_capital(
     'PHON', '1000.000000', 'E1-a test PHON contribution', 'ins-e1a-phon-001', FALSE
   );
@@ -81,7 +81,7 @@ BEGIN
   END;
   ASSERT v_blocked, format('non-admin must fail with FORBIDDEN, got %s', COALESCE(v_msg, '<none>'));
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
 
   -- T4: KRW is deliberately out of scope for E1-a.
   v_blocked := FALSE;

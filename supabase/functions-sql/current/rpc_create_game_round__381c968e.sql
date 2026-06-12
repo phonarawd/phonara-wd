@@ -15,6 +15,7 @@ BEGIN
   IF auth.uid() IS NOT NULL AND NOT _is_admin() THEN
     RAISE EXCEPTION 'FORBIDDEN';
   END IF;
+  PERFORM _assert_admin_aal2();
 
   IF p_server_seed IS NULL OR length(p_server_seed) < 16 THEN
     RAISE EXCEPTION 'invalid_server_seed';

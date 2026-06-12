@@ -15,6 +15,7 @@ DECLARE
 BEGIN
   IF v_actor IS NULL THEN RAISE EXCEPTION 'unauthenticated'; END IF;
   IF NOT _is_admin() THEN RAISE EXCEPTION 'forbidden'; END IF;
+  PERFORM _assert_admin_aal2();
   IF p_reason IS NULL OR length(btrim(p_reason)) < 3 THEN RAISE EXCEPTION 'reason_required'; END IF;
 
   SELECT * INTO v_row FROM rg_exclusions WHERE id = p_exclusion_id FOR UPDATE;

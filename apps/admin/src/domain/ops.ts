@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { callRpc } from '../lib/rpc';
 import type { Json } from '@phonara/shared-types';
 
 export async function setSystemMode(input: {
@@ -6,12 +6,11 @@ export async function setSystemMode(input: {
   readonly: boolean;
   reason: string;
 }): Promise<void> {
-  const { error } = await supabase.rpc('rpc_set_system_mode', {
+  await callRpc('rpc_set_system_mode', {
     p_halt: input.halt,
     p_readonly: input.readonly,
     p_reason: input.reason,
   });
-  if (error) throw new Error(error.message);
 }
 
 export async function setFeatureEnabled(input: {
@@ -19,45 +18,37 @@ export async function setFeatureEnabled(input: {
   enabled: boolean;
   reason: string;
 }): Promise<void> {
-  const { error } = await supabase.rpc('rpc_set_feature_enabled', {
+  await callRpc('rpc_set_feature_enabled', {
     p_feature: input.feature,
     p_enabled: input.enabled,
     p_reason: input.reason,
   });
-  if (error) throw new Error(error.message);
 }
 
 export async function syncOpsAlertsFromHealth(): Promise<void> {
-  const { error } = await supabase.rpc('rpc_sync_ops_alerts_from_health');
-  if (error) throw new Error(error.message);
+  await callRpc('rpc_sync_ops_alerts_from_health');
 }
 
 export async function ackOpsAlert(input: { alertId: string; reason: string }): Promise<void> {
-  const { error } = await supabase.rpc('rpc_ack_ops_alert', {
+  await callRpc('rpc_ack_ops_alert', {
     p_alert_id: input.alertId,
     p_reason: input.reason,
   });
-  if (error) throw new Error(error.message);
 }
 
 export async function resolveOpsAlert(input: { alertId: string; reason: string }): Promise<void> {
-  const { error } = await supabase.rpc('rpc_resolve_ops_alert', {
+  await callRpc('rpc_resolve_ops_alert', {
     p_alert_id: input.alertId,
     p_reason: input.reason,
   });
-  if (error) throw new Error(error.message);
 }
 
 export async function getOpsHealthRaw(): Promise<Json> {
-  const { data, error } = await supabase.rpc('rpc_get_ops_health');
-  if (error) throw error;
-  return data;
+  return await callRpc('rpc_get_ops_health');
 }
 
 export async function getOpsAlertsRaw(statuses?: string[]): Promise<Json> {
-  const { data, error } = statuses
-    ? await supabase.rpc('rpc_get_ops_alerts', { p_statuses: statuses })
-    : await supabase.rpc('rpc_get_ops_alerts');
-  if (error) throw error;
-  return data;
+  return statuses
+    ? await callRpc('rpc_get_ops_alerts', { p_statuses: statuses })
+    : await callRpc('rpc_get_ops_alerts', {});
 }

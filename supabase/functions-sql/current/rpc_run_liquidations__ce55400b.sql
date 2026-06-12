@@ -21,6 +21,7 @@ BEGIN
   IF auth.role() = 'anon' OR (auth.role() = 'authenticated' AND NOT _is_admin()) THEN
     RAISE EXCEPTION 'forbidden';
   END IF;
+  PERFORM _assert_admin_aal2();
 
   FOR v_symbol IN
     SELECT fm.symbol

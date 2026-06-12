@@ -26,6 +26,7 @@ BEGIN
   IF NOT _is_admin() THEN
     RAISE EXCEPTION 'FORBIDDEN';
   END IF;
+  PERFORM _assert_admin_aal2();
 
   IF p_reason IS NULL OR length(btrim(p_reason)) = 0 THEN
     RAISE EXCEPTION 'reason_required';

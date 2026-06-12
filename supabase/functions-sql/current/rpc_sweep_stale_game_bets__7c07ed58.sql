@@ -15,6 +15,7 @@ BEGIN
   IF auth.uid() IS NOT NULL AND NOT _is_admin() THEN
     RAISE EXCEPTION 'FORBIDDEN';
   END IF;
+  PERFORM _assert_admin_aal2();
 
   FOR v_bet IN
     SELECT * FROM game_bets

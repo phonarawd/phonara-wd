@@ -13,6 +13,7 @@ DECLARE
 BEGIN
   IF auth.uid() IS NULL THEN RAISE EXCEPTION 'unauthenticated'; END IF;
   IF NOT _is_admin() THEN RAISE EXCEPTION 'forbidden'; END IF;
+  PERFORM _assert_admin_aal2();
 
   IF p_resolved_days IS NULL OR p_resolved_days < 0 THEN
     RAISE EXCEPTION 'invalid_resolved_days';

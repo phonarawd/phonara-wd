@@ -11,6 +11,7 @@ BEGIN
   IF auth.uid() IS NOT NULL AND NOT _is_admin() THEN
     RAISE EXCEPTION 'forbidden';
   END IF;
+  PERFORM _assert_admin_aal2();
 
   RETURN _refresh_affiliate_commission_daily_aggregates(p_from_date, p_to_date);
 END;

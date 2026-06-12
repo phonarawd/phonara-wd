@@ -41,7 +41,7 @@ BEGIN
     'public.rpc_check_reserve_ratio()', 'EXECUTE'),
     'anon must not execute rpc_check_reserve_ratio';
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
 
   v_ok := rpc_set_system_mode(FALSE, FALSE, 'admin authz regression check');
   ASSERT v_ok ? 'system_halt', 'rpc_set_system_mode did not return status';

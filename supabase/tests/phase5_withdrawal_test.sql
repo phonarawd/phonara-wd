@@ -81,7 +81,7 @@ BEGIN
   UPDATE treasury_reserves SET real_balance = '99999999.000000' WHERE currency = 'PHON';
   PERFORM rpc_run_reconciliation();
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin_user::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin_user::TEXT, 'aal', 'aal2')::TEXT, true);
   v_res := rpc_request_withdrawal('PHON', '10.000000', '{}'::JSONB, 'wd-self-approve-001', NULL);
   v_wr_id := (v_res->>'withdrawal_id')::UUID;
 
@@ -145,7 +145,7 @@ BEGIN
   v_res := rpc_request_withdrawal('PHON', '10.000000', '{}'::JSONB, 'wd-feature-sent-001', NULL);
   v_wr_sent := (v_res->>'withdrawal_id')::UUID;
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   PERFORM rpc_approve_withdrawal(v_wr_sent, 'prepare sent feature-off case');
 
   UPDATE app_config SET value = 'false' WHERE key = 'feature_withdrawal_enabled';
@@ -216,7 +216,7 @@ BEGIN
   v_res := rpc_request_withdrawal('PHON', '10.000000', '{}'::JSONB, 'wd-idem-approve-001', NULL);
   v_wr_id := (v_res->>'withdrawal_id')::UUID;
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   PERFORM rpc_approve_withdrawal(v_wr_id, 'initial approval');
   v_res := rpc_approve_withdrawal(v_wr_id, 'idempotent approval');
   ASSERT v_res->>'idempotent' = 'true',
@@ -303,7 +303,7 @@ BEGIN
   ASSERT v_locked = v_locked_before + 10,
     format('request must lock PHON instead of immediate debit, got locked=%s', v_locked);
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   PERFORM rpc_reject_withdrawal(v_wr_id, 'RED-first reject refund check');
 
   SELECT phon_available, phon_locked INTO v_available, v_locked
@@ -396,7 +396,7 @@ BEGIN
   v_res := rpc_request_withdrawal('PHON', '10.000000', '{}'::JSONB, 'wd-lock-approve-001', NULL);
   v_wr_id := (v_res->>'withdrawal_id')::UUID;
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   PERFORM rpc_approve_withdrawal(v_wr_id, 'RED-first approve payout check');
 
   SELECT phon_available, phon_locked INTO v_available, v_locked

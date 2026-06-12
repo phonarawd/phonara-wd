@@ -21,6 +21,7 @@ BEGIN
   IF v_actor_id IS NOT NULL AND NOT _is_admin() THEN
     RAISE EXCEPTION 'forbidden';
   END IF;
+  PERFORM _assert_admin_aal2();
   IF v_new_price <= 0 THEN RAISE EXCEPTION 'invalid_price'; END IF;
   IF p_source_name = '' OR p_source_name IS NULL THEN
     RAISE EXCEPTION 'invalid_source_name';

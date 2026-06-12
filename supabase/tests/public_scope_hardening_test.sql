@@ -84,7 +84,7 @@ BEGIN
   ASSERT v_user_sources = 0,
     format('non-admin must not read market_sources provider mapping, got %s rows', v_user_sources);
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   SET ROLE authenticated;
   SELECT COUNT(*) INTO v_admin_sensitive
     FROM app_config

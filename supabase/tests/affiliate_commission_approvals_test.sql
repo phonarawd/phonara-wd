@@ -88,7 +88,7 @@ BEGIN
        AND status = 'pending'
   ), 'high-value settlement must enter admin review queue';
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   PERFORM rpc_approve_affiliate_commission(v_approval_id, 'reviewed high-value affiliate commission');
 
   SELECT * INTO v_settlement
@@ -176,7 +176,7 @@ BEGIN
    WHERE s.settlement_date = v_day
      AND s.affiliate_id = v_self_admin;
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_self_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_self_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   BEGIN
     PERFORM rpc_approve_affiliate_commission(v_approval_id, 'self approval attempt');
   EXCEPTION WHEN OTHERS THEN

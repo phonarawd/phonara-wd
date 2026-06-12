@@ -12,6 +12,7 @@ DECLARE
   v_bet game_bets%ROWTYPE;
 BEGIN
   IF NOT _is_admin() THEN RAISE EXCEPTION 'FORBIDDEN'; END IF;
+  PERFORM _assert_admin_aal2();
   IF p_reason IS NULL OR length(btrim(p_reason)) = 0 THEN RAISE EXCEPTION 'reason_required'; END IF;
 
   SELECT * INTO v_bet FROM game_bets WHERE id = p_bet_id FOR UPDATE;

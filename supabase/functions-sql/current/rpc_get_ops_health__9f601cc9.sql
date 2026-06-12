@@ -11,6 +11,7 @@ BEGIN
   IF NOT _is_admin() THEN
     RAISE EXCEPTION 'forbidden';
   END IF;
+  PERFORM _assert_admin_aal2();
 
   RETURN _ops_build_health_snapshot();
 END;

@@ -175,7 +175,7 @@ BEGIN
   END;
   ASSERT v_forbidden, format('non-admin elite override must be forbidden, got %s', COALESCE(v_msg, '<none>'));
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   PERFORM rpc_set_affiliate_elite_override(v_affiliate, TRUE, 'operator approval');
   PERFORM rpc_refresh_affiliate_tier_snapshots(v_day);
 

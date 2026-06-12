@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
+import { generateSync } from 'otplib';
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -45,6 +46,7 @@ export interface E2EAuth {
   email: string;
   accessToken: string;
   refreshToken: string;
+  totpSecret?: string;
 }
 
 /** Service-role client (bypasses RLS) for fixtures + invariant assertions. */
@@ -60,6 +62,48 @@ export function readAuth(): E2EAuth {
 
 export function readAdminAuth(): E2EAuth {
   return JSON.parse(readFileSync(ADMIN_AUTH_FILE, 'utf8')) as E2EAuth;
+}
+
+const ADMIN_BASE = 'http://localhost:3001';
+
+/** Password login plus MFA challenge when the admin has an enrolled TOTP factor. */
+export async function loginAdmin(
+  page: Page,
+  email: string,
+  password: string,
+  totpSecret?: string,
+): Promise<void> {
+  await page.goto(`${ADMIN_BASE}/login`);
+  await expect(page.getByTestId('admin-login-form')).toBeVisible({ timeout: 15_000 });
+  await page.getByTestId('admin-email').fill(email);
+  await page.getByTestId('admin-password').fill(password);
+  await page.getByTestId('admin-login-submit').click();
+
+  await Promise.race([
+    page.getByTestId('admin-mfa-enroll-page').waitFor({ state: 'visible', timeout: 20_000 }),
+    page.getByTestId('admin-mfa-challenge-page').waitFor({ state: 'visible', timeout: 20_000 }),
+    page.getByTestId('overview-page').waitFor({ state: 'visible', timeout: 20_000 }),
+  ]);
+
+  if (await page.getByTestId('admin-mfa-enroll-page').isVisible()) {
+    await expect(page.getByTestId('overview-page')).not.toBeVisible();
+    return;
+  }
+
+  if (await page.getByTestId('admin-mfa-challenge-page').isVisible()) {
+    if (!totpSecret) {
+      await expect(page.getByTestId('overview-page')).not.toBeVisible();
+      return;
+    }
+    await expect(page.getByTestId('admin-mfa-challenge-code')).toBeVisible({ timeout: 20_000 });
+    const code = generateSync({ secret: totpSecret });
+    await page.getByTestId('admin-mfa-challenge-code').fill(code);
+    await page.getByTestId('admin-mfa-challenge-submit').click();
+    await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
+    return;
+  }
+
+  await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
 }
 
 interface BrowserSessionOptions {
