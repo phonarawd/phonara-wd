@@ -24,3 +24,6 @@ supabase/.temp
 tests/e2e/.auth.json
 tests/e2e/.admin-auth.json
 tests/e2e/.*auth*.json
+
+# Local backup rehearsal dumps (scripts/backup-rehearsal.ts)
+backups/

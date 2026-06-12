@@ -35,7 +35,8 @@
     "check:functions-mirror": "tsx scripts/generate-functions-mirror.ts --check",
     "mirror:functions": "tsx scripts/generate-functions-mirror.ts",
     "clean": "bun run clean:artifacts",
-    "clean:artifacts": "tsx scripts/clean-artifacts.ts"
+    "clean:artifacts": "tsx scripts/clean-artifacts.ts",
+    "rehearsal:backup": "tsx scripts/backup-rehearsal.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
