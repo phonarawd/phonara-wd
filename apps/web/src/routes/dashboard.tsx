@@ -82,6 +82,7 @@ function DashboardPage() {
           </div>
           <nav className="dash-nav">
             <Link to="/ledger" className="nav-link">{t('nav.ledgerHistory')}</Link>
+            <Link to="/responsible-gaming" className="nav-link">{t('nav.responsibleGaming')}</Link>
             <Button variant="outline" size="sm" onClick={handleSignOut}>{t('nav.logout')}</Button>
           </nav>
         </header>

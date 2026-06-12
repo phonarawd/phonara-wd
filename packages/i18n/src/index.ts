@@ -902,6 +902,26 @@ export const koMessages = {
   'admin.mfa.challenge.missingFactor': '등록된 2단계 인증이 없습니다. 등록 화면으로 이동하세요.',
   'error.ERR_MFA_REQUIRED': '2단계 인증이 필요합니다. 인증을 완료한 뒤 다시 시도하세요.',
   'error.ERR_WITHDRAWAL_DAILY_CAP': '일일 출금 한도를 초과했습니다. 내일 다시 시도하거나 한도를 확인하세요.',
+
+  'rg.title': '책임도박 설정',
+  'rg.description': '입금·손실 한도와 자기제한을 설정해 건강한 이용을 돕습니다.',
+  'rg.saveSuccess': '한도 설정이 저장되었습니다.',
+  'rg.saveError': '한도 설정에 실패했습니다.',
+  'rg.limits.title': '한도 설정',
+  'rg.limits.depositKrw': '월 입금 한도 (KRW)',
+  'rg.limits.lossGameUsdt': '월 게임 손실 한도 (USDT)',
+  'rg.limits.save': '한도 저장',
+  'rg.selfExclusion.title': '자기제한',
+  'rg.selfExclusion.description': '기간 동안 입금·베팅·트레이딩 신규 진입이 차단됩니다.',
+  'rg.selfExclusion.daysLabel': '제한 기간 (일)',
+  'rg.selfExclusion.start': '자기제한 시작',
+  'rg.selfExclusion.confirmTitle': '자기제한을 시작할까요?',
+  'rg.selfExclusion.confirmDescription': '선택한 기간 동안 신규 입금과 베팅이 차단됩니다. 기존 포지션 정리는 가능합니다.',
+  'rg.selfExclusion.confirmAction': '자기제한 시작',
+  'rg.selfExclusion.defaultReason': '사용자 자기제한 요청',
+  'rg.selfExclusion.success': '자기제한이 적용되었습니다.',
+  'rg.selfExclusion.error': '자기제한 설정에 실패했습니다.',
+  'nav.responsibleGaming': '책임도박',
 } as const;
 
 export const enMessages: Record<keyof typeof koMessages, string> = {
@@ -1783,6 +1803,26 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'admin.mfa.challenge.missingFactor': 'No MFA factor is enrolled. Go to enrollment first.',
   'error.ERR_MFA_REQUIRED': 'Two-factor authentication is required. Complete verification and try again.',
   'error.ERR_WITHDRAWAL_DAILY_CAP': 'Daily withdrawal limit exceeded. Try again tomorrow or review your limit.',
+
+  'rg.title': 'Responsible gaming',
+  'rg.description': 'Set deposit and loss limits and self-exclusion to support healthy play.',
+  'rg.saveSuccess': 'Limits saved.',
+  'rg.saveError': 'Could not save limits.',
+  'rg.limits.title': 'Limits',
+  'rg.limits.depositKrw': 'Monthly deposit limit (KRW)',
+  'rg.limits.lossGameUsdt': 'Monthly game loss limit (USDT)',
+  'rg.limits.save': 'Save limits',
+  'rg.selfExclusion.title': 'Self-exclusion',
+  'rg.selfExclusion.description': 'Blocks new deposits, bets, and trading entries for the selected period.',
+  'rg.selfExclusion.daysLabel': 'Duration (days)',
+  'rg.selfExclusion.start': 'Start self-exclusion',
+  'rg.selfExclusion.confirmTitle': 'Start self-exclusion?',
+  'rg.selfExclusion.confirmDescription': 'New deposits and bets will be blocked for the selected period. You can still close existing positions.',
+  'rg.selfExclusion.confirmAction': 'Start self-exclusion',
+  'rg.selfExclusion.defaultReason': 'User-requested self-exclusion',
+  'rg.selfExclusion.success': 'Self-exclusion is active.',
+  'rg.selfExclusion.error': 'Could not start self-exclusion.',
+  'nav.responsibleGaming': 'Responsible gaming',
 };
 
 export type MessageKey = keyof typeof koMessages;

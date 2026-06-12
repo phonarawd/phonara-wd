@@ -21,6 +21,7 @@ import {
   casinoFairnessRoute,
 } from './routes/casino';
 import { Route as walletRoute } from './routes/wallet';
+import { Route as responsibleGamingRoute } from './routes/responsible-gaming';
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -34,6 +35,7 @@ const routeTree = rootRoute.addChildren([
   tradeRoute,
   stakingRoute,
   walletRoute,
+  responsibleGamingRoute,
   casinoIndexRoute,
   casinoCrashRoute,
   casinoLimboRoute,
