@@ -6,6 +6,7 @@ import { signOut } from '../lib/auth';
 import { useWallet } from '../hooks/use-wallet';
 import { formatMoney, Badge, Button, Card, Skeleton } from '@phonara/ui';
 import { useT } from '../lib/i18n';
+import { ensureOnboardingConsents } from '../lib/onboarding-consent';
 import { WelcomeModal } from '../components/welcome-modal';
 import { DailyClaimCard } from '../components/daily-claim-card';
 import { RouletteCard } from '../components/roulette-card';
@@ -30,6 +31,14 @@ function DashboardPage() {
       void navigate({ to: '/login' });
     }
   }, [session, authLoading, navigate]);
+
+  // Backfill mandatory consents for accounts created before client-side recording shipped.
+  useEffect(() => {
+    if (!session?.user.id) return;
+    void ensureOnboardingConsents().catch(() => {
+      // Non-fatal: reward RPCs surface CONSENT_REQUIRED until the user completes onboarding.
+    });
+  }, [session?.user.id]);
 
   // Show welcome modal for new users (no wallet balance yet)
   useEffect(() => {

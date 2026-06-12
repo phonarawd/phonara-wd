@@ -6,10 +6,23 @@ import { AdminLayout } from '../components/admin-layout';
 import { AdminActionDialog } from '../components/admin-action-dialog';
 import { supabase } from '../lib/supabase';
 import { translateError } from '../lib/translate-error';
+import { runQueueAction, type QueueAction } from '../domain/queues';
 import { useT } from '../lib/i18n';
-import { Badge, Button, Card, DataTable, type ColumnDef } from '@phonara/ui';
+import { Button, DataTable, type ColumnDef } from '@phonara/ui';
 import type { Tables } from '@phonara/shared-types';
-import type { MessageKey } from '@phonara/i18n';
+import {
+  MetricCard,
+  StatusBadge,
+  SlaBadge,
+  formatDate,
+  summarizeJson,
+  labelFor,
+  actionTitle,
+  actionKey,
+  QUEUE_TYPE_LABELS,
+  CASE_TYPE_LABELS,
+  RISK_FLAG_LABELS,
+} from '../features/queues/presentation';
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -21,18 +34,6 @@ type ReviewQueueRow = Tables<'admin_review_queue'>;
 type WithdrawalRow = Tables<'withdrawal_requests'>;
 type StrCaseRow = Tables<'str_cases'>;
 type RiskFlagRow = Tables<'risk_flags'>;
-
-type QueueAction =
-  | { kind: 'resolveQueue'; id: string }
-  | { kind: 'approveWithdrawal'; id: string }
-  | { kind: 'rejectWithdrawal'; id: string }
-  | { kind: 'markWithdrawalSent'; id: string }
-  | { kind: 'reviewStr'; id: string }
-  | { kind: 'fileStr'; id: string }
-  | { kind: 'dismissStr'; id: string }
-  | { kind: 'clearRiskFlag'; id: string }
-  | { kind: 'approveKyc'; id: string }
-  | { kind: 'rejectKyc'; id: string };
 
 interface QueueData {
   reviewQueue: ReviewQueueRow[];
@@ -262,7 +263,7 @@ export function QueuesPage() {
     setBusy(true);
     setErrorMsg(null);
     try {
-      await runAction(action, reason);
+      await runQueueAction(action, reason);
       await Promise.all([
         qc.invalidateQueries({ queryKey: ['admin-queues'] }),
         qc.invalidateQueries({ queryKey: ['audit-logs'] }),
@@ -387,95 +388,6 @@ async function fetchQueueData(): Promise<QueueData> {
   };
 }
 
-async function runAction(action: QueueAction, reason: string) {
-  switch (action.kind) {
-    case 'resolveQueue': {
-      const { error } = await supabase.rpc('rpc_resolve_admin_review_queue', {
-        p_queue_id: action.id,
-        p_reason: reason,
-      });
-      if (error) throw new Error(error.message);
-      return;
-    }
-    case 'approveWithdrawal': {
-      const { error } = await supabase.rpc('rpc_approve_withdrawal', {
-        p_withdrawal_id: action.id,
-        p_reason: reason,
-      });
-      if (error) throw new Error(error.message);
-      return;
-    }
-    case 'rejectWithdrawal': {
-      const { error } = await supabase.rpc('rpc_reject_withdrawal', {
-        p_withdrawal_id: action.id,
-        p_reason: reason,
-      });
-      if (error) throw new Error(error.message);
-      return;
-    }
-    case 'markWithdrawalSent': {
-      const { error } = await supabase.rpc('rpc_mark_withdrawal_sent', {
-        p_withdrawal_id: action.id,
-        p_reason: reason,
-      });
-      if (error) throw new Error(error.message);
-      return;
-    }
-    case 'reviewStr': {
-      const { error } = await supabase.rpc('rpc_update_str_case_status', {
-        p_case_id: action.id,
-        p_status: 'reviewing',
-        p_reason: reason,
-      });
-      if (error) throw new Error(error.message);
-      return;
-    }
-    case 'fileStr': {
-      const { error } = await supabase.rpc('rpc_update_str_case_status', {
-        p_case_id: action.id,
-        p_status: 'filed',
-        p_reason: reason,
-      });
-      if (error) throw new Error(error.message);
-      return;
-    }
-    case 'dismissStr': {
-      const { error } = await supabase.rpc('rpc_update_str_case_status', {
-        p_case_id: action.id,
-        p_status: 'dismissed',
-        p_reason: reason,
-      });
-      if (error) throw new Error(error.message);
-      return;
-    }
-    case 'clearRiskFlag': {
-      const { error } = await supabase.rpc('rpc_clear_risk_flag', {
-        p_flag_id: action.id,
-        p_reason: reason,
-      });
-      if (error) throw new Error(error.message);
-      return;
-    }
-    case 'approveKyc': {
-      const { error } = await supabase.rpc('rpc_review_kyc_submission', {
-        p_submission_id: action.id,
-        p_status: 'approved',
-        p_reason: reason,
-      });
-      if (error) throw new Error(error.message);
-      return;
-    }
-    case 'rejectKyc': {
-      const { error } = await supabase.rpc('rpc_review_kyc_submission', {
-        p_submission_id: action.id,
-        p_status: 'rejected',
-        p_reason: reason,
-      });
-      if (error) throw new Error(error.message);
-      return;
-    }
-  }
-}
 
 function QueueSection<T>({
   title,
@@ -508,132 +420,3 @@ function QueueSection<T>({
   );
 }
 
-function MetricCard({ label, value }: { label: string; value: number }) {
-  return (
-    <Card className="p-4">
-      <p className="text-xs text-muted">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-fg tabular-nums">{value}</p>
-    </Card>
-  );
-}
-
-function StatusBadge({ status, t }: { status: string; t: ReturnType<typeof useT> }) {
-  const tone = status === 'pending' || status === 'open'
-    ? 'warning'
-    : status === 'active'
-      ? 'down'
-      : status === 'approved' || status === 'reviewing'
-        ? 'primary'
-        : 'neutral';
-  return <Badge tone={tone}>{labelFor(status, STATUS_LABELS, t)}</Badge>;
-}
-
-function SlaBadge({ dueAt }: { dueAt: string }) {
-  const overdue = new Date(dueAt).getTime() < Date.now();
-  return (
-    <Badge tone={overdue ? 'down' : 'warning'}>
-      {formatDate(dueAt)}
-    </Badge>
-  );
-}
-
-function formatDate(value: string) {
-  return new Date(value).toLocaleString();
-}
-
-function summarizeJson(value: unknown) {
-  if (!value || typeof value !== 'object') return '—';
-  const text = JSON.stringify(maskSensitiveJson(value));
-  return text.length > 80 ? `${text.slice(0, 77)}...` : text;
-}
-
-const STATUS_LABELS: Record<string, MessageKey> = {
-  pending: 'admin.status.pending',
-  in_review: 'admin.status.inReview',
-  resolved: 'admin.status.resolved',
-  approved: 'admin.status.approved',
-  processing: 'admin.status.processing',
-  completed: 'admin.status.completed',
-  sent: 'admin.status.sent',
-  rejected: 'admin.status.rejected',
-  cancelled: 'admin.status.cancelled',
-  open: 'admin.status.open',
-  reviewing: 'admin.status.reviewing',
-  filed: 'admin.status.filed',
-  dismissed: 'admin.status.dismissed',
-  active: 'admin.status.active',
-  cleared: 'admin.status.cleared',
-};
-
-const QUEUE_TYPE_LABELS: Record<string, MessageKey> = {
-  deposit_exception: 'admin.queues.type.depositException',
-  kyc_review: 'admin.queues.type.kycReview',
-  sanctions_screening: 'admin.queues.type.sanctionsScreening',
-  rg_self_exclusion_release: 'admin.queues.type.rgSelfExclusionRelease',
-  affiliate_commission_approval: 'admin.queues.type.affiliateCommissionApproval',
-};
-
-const CASE_TYPE_LABELS: Record<string, MessageKey> = {
-  sanctions_hit: 'admin.queues.case.sanctionsHit',
-};
-
-const RISK_FLAG_LABELS: Record<string, MessageKey> = {
-  sanctions_hit: 'admin.queues.risk.sanctionsHit',
-  sanctions_pending: 'admin.queues.risk.sanctionsPending',
-  account_activity_frozen: 'admin.queues.risk.accountActivityFrozen',
-  rg_self_exclusion: 'admin.queues.risk.rgSelfExclusion',
-};
-
-function labelFor(value: string, labels: Record<string, MessageKey>, t: ReturnType<typeof useT>) {
-  const key = labels[value];
-  return key ? t(key) : value;
-}
-
-function maskSensitiveJson(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(maskSensitiveJson);
-  if (!value || typeof value !== 'object') return value;
-  return Object.fromEntries(
-    Object.entries(value as Record<string, unknown>).map(([key, entry]) => {
-      const normalized = key.toLowerCase();
-      if (
-        normalized.includes('legal_name') ||
-        normalized.includes('document_last4') ||
-        normalized.includes('birth') ||
-        normalized.includes('address')
-      ) {
-        return [key, '***'];
-      }
-      return [key, maskSensitiveJson(entry)];
-    }),
-  );
-}
-
-function actionTitle(action: QueueAction | null, t: ReturnType<typeof useT>) {
-  if (!action) return '';
-  switch (action.kind) {
-    case 'resolveQueue':
-      return t('admin.queues.dialog.resolve');
-    case 'approveWithdrawal':
-      return t('admin.queues.dialog.approveWithdrawal');
-    case 'rejectWithdrawal':
-      return t('admin.queues.dialog.rejectWithdrawal');
-    case 'markWithdrawalSent':
-      return t('admin.queues.dialog.markSent');
-    case 'reviewStr':
-      return t('admin.queues.dialog.reviewStr');
-    case 'fileStr':
-      return t('admin.queues.dialog.fileStr');
-    case 'dismissStr':
-      return t('admin.queues.dialog.dismissStr');
-    case 'clearRiskFlag':
-      return t('admin.queues.dialog.clearRisk');
-    case 'approveKyc':
-      return t('admin.queues.dialog.approveKyc');
-    case 'rejectKyc':
-      return t('admin.queues.dialog.rejectKyc');
-  }
-}
-
-function actionKey(action: QueueAction | null): string | null {
-  return action ? `${action.kind}:${action.id}` : null;
-}

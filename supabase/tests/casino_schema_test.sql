@@ -288,7 +288,7 @@ END;
 $$;
 ROLLBACK;
 
--- ── 6. Stale sweep cancels non-parity pending bets only ───────────────────────
+-- ── 6. Stale sweep: cancels stale pending bets, conserves funds, is idempotent ─
 BEGIN;
 DO $$
 DECLARE
@@ -297,8 +297,14 @@ DECLARE
   v_bet_id UUID := gen_random_uuid();
   v_lock_id UUID;
   v_sweep JSONB;
+  v_sweep_again JSONB;
   v_status bet_status;
-  v_locked NUMERIC;
+  v_avail_before NUMERIC;
+  v_locked_before NUMERIC;
+  v_avail_after NUMERIC;
+  v_locked_after NUMERIC;
+  v_avail_final NUMERIC;
+  v_locked_final NUMERIC;
 BEGIN
   INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
   VALUES (v_uid, 'authenticated', 'authenticated',
@@ -319,14 +325,34 @@ BEGIN
     'pending', 'stale_idem_' || v_uid::TEXT, v_lock_id, NOW() - INTERVAL '30 minutes'
   );
 
+  SELECT phon_available::NUMERIC, phon_locked::NUMERIC
+    INTO v_avail_before, v_locked_before FROM wallets WHERE user_id = v_uid;
+  ASSERT v_locked_before = 25, 'fixture: stake must be locked before sweep';
+
   v_sweep := rpc_sweep_stale_game_bets();
   ASSERT (v_sweep->>'cancelled')::INT = 1, 'stale sweep must cancel one pending bet';
   SELECT status INTO v_status FROM game_bets WHERE id = v_bet_id;
   ASSERT v_status = 'cancelled', 'stale bet must be cancelled';
-  SELECT phon_locked::NUMERIC INTO v_locked FROM wallets WHERE user_id = v_uid;
-  ASSERT v_locked = 0, 'stale sweep must unlock stake';
 
-  RAISE NOTICE 'CASINO STALE SWEEP OK — old non-parity pending bet cancelled and unlocked';
+  SELECT phon_available::NUMERIC, phon_locked::NUMERIC
+    INTO v_avail_after, v_locked_after FROM wallets WHERE user_id = v_uid;
+
+  -- Conservation: an unlock moves funds locked->available within the same wallet,
+  -- so the wallet total is unchanged (Σ delta = 0) and the stake nets out exactly.
+  ASSERT (v_avail_after + v_locked_after) = (v_avail_before + v_locked_before),
+    'stale sweep must conserve wallet total (locked->available, Σ delta = 0)';
+  ASSERT (v_locked_after - v_locked_before) = -25, 'stale sweep must release exactly the staked amount';
+  ASSERT (v_avail_after - v_avail_before) = 25, 'stale sweep must return the stake to available';
+
+  -- Idempotency: re-running finds no pending bets and moves no money.
+  v_sweep_again := rpc_sweep_stale_game_bets();
+  ASSERT (v_sweep_again->>'cancelled')::INT = 0, 'repeat sweep must cancel nothing';
+  SELECT phon_available::NUMERIC, phon_locked::NUMERIC
+    INTO v_avail_final, v_locked_final FROM wallets WHERE user_id = v_uid;
+  ASSERT v_avail_final = v_avail_after AND v_locked_final = v_locked_after,
+    'repeat sweep must leave balances unchanged (idempotent)';
+
+  RAISE NOTICE 'CASINO STALE SWEEP OK — cancelled, unlocked, conservation Σ=0, idempotent';
 END;
 $$;
 ROLLBACK;

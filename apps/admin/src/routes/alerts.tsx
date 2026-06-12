@@ -4,7 +4,13 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Route as rootRoute } from './__root';
 import { AdminLayout } from '../components/admin-layout';
 import { AdminActionDialog } from '../components/admin-action-dialog';
-import { supabase } from '../lib/supabase';
+import { translateError } from '../lib/translate-error';
+import {
+  ackOpsAlert,
+  getOpsAlertsRaw,
+  resolveOpsAlert,
+  syncOpsAlertsFromHealth,
+} from '../domain/ops';
 import { useT } from '../lib/i18n';
 import { Badge, Button, Card, DataTable, type ColumnDef } from '@phonara/ui';
 import type { Json } from '@phonara/shared-types';
@@ -129,12 +135,11 @@ export function AlertsPage() {
     setBusy(true);
     setErrorMsg(null);
     try {
-      const { error } = await supabase.rpc('rpc_sync_ops_alerts_from_health');
-      if (error) throw new Error(error.message);
+      await syncOpsAlertsFromHealth();
       await invalidateAlertQueries(qc);
       await refetch();
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : t('error.UNKNOWN'));
+      setErrorMsg(t(translateError(err)));
     } finally {
       setBusy(false);
     }
@@ -146,22 +151,14 @@ export function AlertsPage() {
     setErrorMsg(null);
     try {
       if (action.kind === 'ack') {
-        const { error } = await supabase.rpc('rpc_ack_ops_alert', {
-          p_alert_id: action.id,
-          p_reason: reason,
-        });
-        if (error) throw new Error(error.message);
+        await ackOpsAlert({ alertId: action.id, reason });
       } else {
-        const { error } = await supabase.rpc('rpc_resolve_ops_alert', {
-          p_alert_id: action.id,
-          p_reason: reason,
-        });
-        if (error) throw new Error(error.message);
+        await resolveOpsAlert({ alertId: action.id, reason });
       }
       await invalidateAlertQueries(qc);
       setAction(null);
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : t('error.UNKNOWN'));
+      setErrorMsg(t(translateError(err)));
     } finally {
       setBusy(false);
     }
@@ -232,9 +229,7 @@ export function AlertsPage() {
 }
 
 async function fetchOpsAlerts(): Promise<{ alerts: OpsAlertRow[]; fetchedAt: string }> {
-  const { data, error } = await supabase.rpc('rpc_get_ops_alerts');
-  if (error) throw error;
-  return parseOpsAlertsResponse(data);
+  return parseOpsAlertsResponse(await getOpsAlertsRaw());
 }
 
 function parseOpsAlertsResponse(value: Json): { alerts: OpsAlertRow[]; fetchedAt: string } {

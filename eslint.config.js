@@ -30,4 +30,34 @@ export default tseslint.config(
       '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
+  {
+    // RPC single-boundary enforcement: routes/components must go through the
+    // domain layer (apps/*/src/domain/**) or hooks, never call PostgREST RPC
+    // directly. Keeps RPC names, payload shapes, and error translation in one
+    // place so the UI stays declarative and decoupled from the DB contract.
+    files: [
+      'apps/*/src/routes/**/*.{ts,tsx}',
+      'apps/*/src/components/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.property.name='rpc'][callee.object.name='supabase']",
+          message:
+            'Do not call supabase.rpc() directly from routes/components. Add a function in apps/*/src/domain/** (or a hook) and call that instead.',
+        },
+        {
+          selector: 'Literal[value=/\\/rest\\/v1\\/rpc\\//]',
+          message:
+            'Do not call the PostgREST /rest/v1/rpc/ endpoint directly from routes/components. Use the domain layer (callRpc) instead.',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/\\/rest\\/v1\\/rpc\\//]',
+          message:
+            'Do not call the PostgREST /rest/v1/rpc/ endpoint directly from routes/components. Use the domain layer (callRpc) instead.',
+        },
+      ],
+    },
+  },
 );

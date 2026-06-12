@@ -9,13 +9,21 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
     }
   },
   "scripts": {
     "build": "tsc -b",
     "test": "vitest run"
   },
+  "peerDependencies": {
+    "react": ">=19"
+  },
   "devDependencies": {
+    "@types/react": "^19.2.17",
     "typescript": "latest",
     "vitest": "latest"
   }

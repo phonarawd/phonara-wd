@@ -11,6 +11,7 @@ import {
 import { Button, Card, Input } from '@phonara/ui';
 import { useT } from '../lib/i18n';
 import { AuthShell } from '../components/auth-shell';
+import { ensureOnboardingConsents } from '../lib/onboarding-consent';
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -67,6 +68,11 @@ function SignupPage() {
     if (result.status === 'verify_email') {
       setState({ kind: 'verifySent' });
       return;
+    }
+    try {
+      await ensureOnboardingConsents();
+    } catch {
+      // Dashboard mount retries; signup terms notice covers implied acceptance.
     }
     void navigate({ to: '/dashboard' });
   }

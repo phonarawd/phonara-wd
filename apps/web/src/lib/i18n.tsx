@@ -1,70 +1,8 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
-import {
-  DEFAULT_LOCALE,
-  translate,
-  type Locale,
-  type MessageKey,
-} from '@phonara/i18n';
+import { createI18n, type I18nContextValue, type TranslateFn } from '@phonara/i18n/react';
 
-const STORAGE_KEY = 'phonara.locale';
+const i18n = createI18n({ storageKey: 'phonara.locale' });
 
-type TranslateFn = (key: MessageKey, vars?: Record<string, string | number>) => string;
-
-interface I18nContextValue {
-  locale: Locale;
-  setLocale: (locale: Locale) => void;
-  t: TranslateFn;
-}
-
-const I18nContext = createContext<I18nContextValue | null>(null);
-
-function readInitialLocale(): Locale {
-  if (typeof window === 'undefined') return DEFAULT_LOCALE;
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored === 'ko' || stored === 'en') return stored;
-  return DEFAULT_LOCALE;
-}
-
-export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(readInitialLocale);
-
-  useEffect(() => {
-    document.documentElement.lang = locale;
-  }, [locale]);
-
-  const setLocale = useCallback((next: Locale) => {
-    setLocaleState(next);
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem(STORAGE_KEY, next);
-      document.documentElement.lang = next;
-    }
-  }, []);
-
-  const t = useCallback<TranslateFn>(
-    (key, vars) => translate(locale, key, vars),
-    [locale],
-  );
-
-  const value = useMemo<I18nContextValue>(() => ({ locale, setLocale, t }), [locale, setLocale, t]);
-
-  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
-}
-
-export function useI18n(): I18nContextValue {
-  const ctx = useContext(I18nContext);
-  if (!ctx) throw new Error('useI18n must be used within <I18nProvider>');
-  return ctx;
-}
-
-/** Convenience hook returning just the translate function. */
-export function useT(): TranslateFn {
-  return useI18n().t;
-}
+export const I18nProvider = i18n.I18nProvider;
+export const useI18n = i18n.useI18n;
+export const useT = i18n.useT;
+export type { I18nContextValue, TranslateFn };

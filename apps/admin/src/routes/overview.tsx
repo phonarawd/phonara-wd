@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Route as rootRoute } from './__root';
 import { AdminLayout } from '../components/admin-layout';
 import { useT } from '../lib/i18n';
-import { supabase } from '../lib/supabase';
+import { getOpsAlertsRaw, getOpsHealthRaw } from '../domain/ops';
 import { useAppConfig } from '../hooks/use-app-config';
 import { Badge, Button, Card, ErrorState, Skeleton } from '@phonara/ui';
 import type { Json } from '@phonara/shared-types';
@@ -237,9 +237,7 @@ const CHECK_METADATA_CONFIG: Partial<Record<CheckId, MetadataConfig>> = {
 };
 
 async function fetchOpsHealth(): Promise<OpsHealthResponse> {
-  const { data, error } = await supabase.rpc('rpc_get_ops_health');
-  if (error) throw error;
-  return parseOpsHealth(data);
+  return parseOpsHealth(await getOpsHealthRaw());
 }
 
 interface OpsAlertSummary {
@@ -248,10 +246,7 @@ interface OpsAlertSummary {
 }
 
 async function fetchOpsAlertsSummary(): Promise<{ alerts: OpsAlertSummary[] }> {
-  const { data, error } = await supabase.rpc('rpc_get_ops_alerts', {
-    p_statuses: ['open', 'acknowledged'],
-  });
-  if (error) throw error;
+  const data = await getOpsAlertsRaw(['open', 'acknowledged']);
   if (!isRecord(data)) return { alerts: [] };
   const rawAlerts = Array.isArray(data['alerts']) ? data['alerts'] : [];
   const alerts = rawAlerts

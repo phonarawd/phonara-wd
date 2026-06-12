@@ -61,7 +61,17 @@ async function fetchAdvisor(ref: string, token: string, type: 'security' | 'perf
 async function main(): Promise<void> {
   const ref = lockedRef();
   const token = process.env.SUPABASE_ACCESS_TOKEN?.trim();
+  const strict = process.env.PHONARA_ADVISORS_STRICT === '1';
   if (!token) {
+    if (strict) {
+      process.stderr.write(
+        'check:advisors FAILED — SUPABASE_ACCESS_TOKEN is required in strict mode ' +
+          '(PHONARA_ADVISORS_STRICT=1, used by check:full/CI).\n' +
+          '  A skipped advisor run is NOT a pass for the full launch-readiness gate.\n' +
+          '  Set SUPABASE_ACCESS_TOKEN in the environment (see .env.example) and retry.\n',
+      );
+      process.exit(1);
+    }
     process.stderr.write(
       'check:advisors SKIPPED — SUPABASE_ACCESS_TOKEN is not set.\n' +
         '  Set it in .env (see .env.example) or run `supabase login` and copy the PAT.\n' +

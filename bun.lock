@@ -111,8 +111,12 @@
       "name": "@phonara/i18n",
       "version": "0.1.0",
       "devDependencies": {
+        "@types/react": "^19.2.17",
         "typescript": "latest",
         "vitest": "latest",
+      },
+      "peerDependencies": {
+        "react": ">=19",
       },
     },
     "packages/money": {

@@ -21,7 +21,19 @@ const PRICE_PATTERN = /^\d+(\.\d+)?$/;
 const ZERO_PATTERN = /^0+(\.0+)?$/;
 const REQUEST_TIMEOUT_MS = 4_000;
 
+// Provider resilience budget. The feed runs once per minute over every enabled
+// market source; many sources share a single upstream provider, so an outage
+// must not turn into an unbounded fan-out of failing requests.
+const MAX_CONCURRENCY = 4;
+const MAX_RETRIES = 2; // total attempts per fetch = 1 + MAX_RETRIES
+const RETRY_BASE_MS = 200;
+const CIRCUIT_THRESHOLD = 3; // consecutive provider failures (this invocation) before tripping
+
 const jsonHeaders = { 'content-type': 'application/json' };
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), { status, headers: jsonHeaders });
+}
 
 function env(name: string): string {
   const value = Deno.env.get(name);
@@ -41,29 +53,96 @@ function decodeBase64UrlJson(segment: string): Record<string, unknown> | null {
   }
 }
 
-function serviceBearerFrom(request: Request): string | Response {
+async function sha256(text: string): Promise<Uint8Array> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return new Uint8Array(digest);
+}
+
+// Constant-time comparison over fixed-length SHA-256 digests: no early return and
+// no length-dependent branch, so it leaks neither token contents nor length.
+function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
+  if (a.length !== b.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < a.length; i++) {
+    mismatch |= a[i] ^ b[i];
+  }
+  return mismatch === 0;
+}
+
+async function tokenMatchesSecret(token: string, secret: string): Promise<boolean> {
+  const [tokenHash, secretHash] = await Promise.all([sha256(token), sha256(secret)]);
+  return constantTimeEqual(tokenHash, secretHash);
+}
+
+// Authorization is layered. The platform gateway enforces verify_jwt=true, so by
+// the time a request reaches this code its bearer is already a signature-verified
+// project JWT. On top of that we require proof of the actual service-role secret:
+// the scheduler invokes with the service-role key, so a constant-time match is the
+// strongest check. We fall back to the signature-verified service_role claim so a
+// rotated-but-valid service token still works while signed end-user tokens cannot.
+async function authorize(request: Request): Promise<string | Response> {
   const authorization = request.headers.get('authorization') ?? '';
   const match = authorization.match(/^Bearer\s+(.+)$/i);
 
   if (!match) {
-    return new Response(JSON.stringify({ ok: false, error: 'unauthorized' }), {
-      status: 401,
-      headers: jsonHeaders,
-    });
+    return jsonResponse({ ok: false, error: 'unauthorized' }, 401);
   }
 
-  const token = match[1];
+  const token = match[1].trim();
+
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (serviceKey && (await tokenMatchesSecret(token, serviceKey))) {
+    return token;
+  }
+
   const [, payload] = token.split('.');
   const claims = payload ? decodeBase64UrlJson(payload) : null;
-
-  if (claims?.['role'] !== 'service_role') {
-    return new Response(JSON.stringify({ ok: false, error: 'service_role_required' }), {
-      status: 403,
-      headers: jsonHeaders,
-    });
+  if (claims?.['role'] === 'service_role') {
+    return token;
   }
 
-  return token;
+  return jsonResponse({ ok: false, error: 'service_role_required' }, 403);
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Bounded retry with exponential backoff. Caps total upstream work per source so a
+// flapping provider cannot stretch a single invocation past the cron interval.
+async function withRetry<T>(fn: () => Promise<T>, retries: number, baseDelayMs: number): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (attempt < retries) {
+        await sleep(baseDelayMs * 2 ** attempt);
+      }
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error('retry_exhausted');
+}
+
+// Fixed-size worker pool: at most `limit` upstream fetches are in flight at once,
+// regardless of how many market sources are enabled. The worker resolves with a
+// FeedResult for every item (never rejects), so the pool always settles cleanly.
+async function runPool<T, R>(items: readonly T[], limit: number, worker: (item: T) => Promise<R>): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let cursor = 0;
+
+  async function runner(): Promise<void> {
+    for (;;) {
+      const index = cursor++;
+      if (index >= items.length) return;
+      results[index] = await worker(items[index]);
+    }
+  }
+
+  const runners = Array.from({ length: Math.min(limit, items.length) }, () => runner());
+  await Promise.all(runners);
+  return results;
 }
 
 function normalizePrice(raw: unknown): string | null {
@@ -162,9 +241,14 @@ function isProvider(value: string): value is Provider {
   return value === 'binance' || value === 'bybit' || value === 'okx';
 }
 
+interface BreakerState {
+  failures: number;
+  open: boolean;
+}
+
 Deno.serve(async (request) => {
   try {
-    const serviceBearer = serviceBearerFrom(request);
+    const serviceBearer = await authorize(request);
     if (typeof serviceBearer !== 'string') {
       return serviceBearer;
     }
@@ -179,13 +263,22 @@ Deno.serve(async (request) => {
       .eq('enabled', true);
 
     if (sourceError) {
-      return new Response(
-        JSON.stringify({ ok: false, error: 'source_query_failed', detail: sourceError.message }),
-        { status: 500, headers: jsonHeaders },
-      );
+      return jsonResponse({ ok: false, error: 'source_query_failed', detail: sourceError.message }, 500);
     }
 
-    const tasks = (sources ?? []).map(async (source: MarketSource): Promise<FeedResult> => {
+    // Per-invocation, per-provider circuit breaker. Once a provider trips, the
+    // remaining sources for that provider short-circuit instead of each retrying
+    // a known-bad upstream.
+    const breakers = new Map<Provider, BreakerState>();
+    const breakerFor = (provider: Provider): BreakerState => {
+      const existing = breakers.get(provider);
+      if (existing) return existing;
+      const created: BreakerState = { failures: 0, open: false };
+      breakers.set(provider, created);
+      return created;
+    };
+
+    const processSource = async (source: MarketSource): Promise<FeedResult> => {
       const provider = source.provider.toLowerCase();
 
       if (!isProvider(provider)) {
@@ -198,8 +291,38 @@ Deno.serve(async (request) => {
         };
       }
 
+      const breaker = breakerFor(provider);
+      if (breaker.open) {
+        return {
+          internalSymbol: source.internal_symbol,
+          provider,
+          providerSymbol: source.provider_symbol,
+          ok: false,
+          reason: 'circuit_open',
+        };
+      }
+
+      let price: string;
       try {
-        const price = await fetchers[provider](source.provider_symbol);
+        price = await withRetry(() => fetchers[provider](source.provider_symbol), MAX_RETRIES, RETRY_BASE_MS);
+        breaker.failures = 0;
+      } catch (error) {
+        breaker.failures += 1;
+        if (breaker.failures >= CIRCUIT_THRESHOLD) {
+          breaker.open = true;
+        }
+        return {
+          internalSymbol: source.internal_symbol,
+          provider,
+          providerSymbol: source.provider_symbol,
+          ok: false,
+          reason: error instanceof Error ? error.message : 'unknown_error',
+        };
+      }
+
+      // RPC failures are submission-side, not provider health, so they do not
+      // trip the breaker. Kept isolated so one source can never reject the pool.
+      try {
         const { data, error } = await supabase.rpc('rpc_submit_oracle_source_price', {
           p_symbol: source.internal_symbol,
           p_price: price,
@@ -232,22 +355,12 @@ Deno.serve(async (request) => {
           reason: error instanceof Error ? error.message : 'unknown_error',
         };
       }
-    });
+    };
 
-    const settled = await Promise.allSettled(tasks);
-    const results: FeedResult[] = settled.map((result) =>
-      result.status === 'fulfilled'
-        ? result.value
-        : {
-            internalSymbol: 'unknown',
-            provider: 'unknown',
-            providerSymbol: 'unknown',
-            ok: false,
-            reason: result.reason instanceof Error ? result.reason.message : 'unknown_error',
-          },
-    );
+    const results = await runPool(sources ?? [], MAX_CONCURRENCY, processSource);
 
     const submitted = results.filter((result) => result.ok).length;
+    const circuitSkipped = results.filter((result) => result.reason === 'circuit_open').length;
     const insufficientSources = results.filter((result) => {
       if (!result.ok || !result.rpcResult || typeof result.rpcResult !== 'object') {
         return false;
@@ -257,24 +370,19 @@ Deno.serve(async (request) => {
       return rpcResult['reason'] === 'insufficient_sources';
     }).length;
 
-    return new Response(
-      JSON.stringify({
-        ok: true,
-        attempted: results.length,
-        submitted,
-        failed: results.length - submitted,
-        insufficientSources,
-        results,
-      }),
-      { headers: jsonHeaders },
-    );
+    return jsonResponse({
+      ok: true,
+      attempted: results.length,
+      submitted,
+      failed: results.length - submitted,
+      circuitSkipped,
+      insufficientSources,
+      results,
+    });
   } catch (error) {
-    return new Response(
-      JSON.stringify({
-        ok: false,
-        error: error instanceof Error ? error.message : 'unknown_error',
-      }),
-      { status: 500, headers: jsonHeaders },
+    return jsonResponse(
+      { ok: false, error: error instanceof Error ? error.message : 'unknown_error' },
+      500,
     );
   }
 });

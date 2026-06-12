@@ -62,8 +62,12 @@ sw.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        const copy = response.clone();
-        void caches.open(RUNTIME_PAGES).then((cache) => cache.put(event.request, copy));
+        if (response.ok && response.type === 'basic') {
+          const copy = response.clone();
+          event.waitUntil(
+            caches.open(RUNTIME_PAGES).then((cache) => cache.put(event.request, copy)),
+          );
+        }
         return response;
       })
       .catch(async () => {

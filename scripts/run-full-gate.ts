@@ -61,9 +61,20 @@ async function waitForLocalAuth(): Promise<void> {
 }
 
 const steps: GateStep[] = [
-  { name: 'standard check', command: 'bun', args: ['run', 'check'] },
+  // Strict advisor mode: a skipped Supabase advisor run is NOT a pass for the
+  // full launch-readiness gate. check:advisors (inside `bun run check`) fails
+  // when SUPABASE_ACCESS_TOKEN is absent instead of silently exiting 0.
+  { name: 'standard check', command: 'bun', args: ['run', 'check'], env: { PHONARA_ADVISORS_STRICT: '1' } },
   { name: 'pwa', command: 'bun', args: ['run', 'check:pwa'] },
   { name: 'supabase reset', command: 'supabase', args: ['db', 'reset'] },
+  // After a clean apply of all append-only migrations, the committed function
+  // mirror must match the database exactly (strict: a missing DB is a failure here).
+  {
+    name: 'functions mirror',
+    command: 'bun',
+    args: ['run', 'check:functions-mirror'],
+    env: { PHONARA_FUNCTIONS_MIRROR_STRICT: '1' },
+  },
   { name: 'sql', command: 'bun', args: ['run', 'test:sql'] },
   {
     name: 'casino sql parity',

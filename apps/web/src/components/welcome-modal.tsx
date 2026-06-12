@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { formatMoney, Button, Modal, Input } from '@phonara/ui'
 import { useWelcomeBonus, useReferral } from '../hooks/use-retention'
 import { isPositiveAmount } from '../lib/money-display'
+import { ensureOnboardingConsents } from '../lib/onboarding-consent'
 import { useT } from '../lib/i18n'
 
 interface WelcomeModalProps {
@@ -27,8 +28,14 @@ export function WelcomeModal({ onDismiss }: WelcomeModalProps) {
 
   const handleSkipReferral = async () => {
     setStep('claiming')
-    const r = await claimWelcomeBonus()
-    if (r) setStep('done')
+    try {
+      await ensureOnboardingConsents()
+      const r = await claimWelcomeBonus()
+      if (r) setStep('done')
+      else setStep('referral')
+    } catch {
+      setStep('referral')
+    }
   }
 
   const handleSubmitReferral = async () => {
@@ -36,8 +43,14 @@ export function WelcomeModal({ onDismiss }: WelcomeModalProps) {
       await registerReferral(refCode)
     }
     setStep('claiming')
-    const r = await claimWelcomeBonus()
-    if (r) setStep('done')
+    try {
+      await ensureOnboardingConsents()
+      const r = await claimWelcomeBonus()
+      if (r) setStep('done')
+      else setStep('referral')
+    } catch {
+      setStep('referral')
+    }
   }
 
   return (

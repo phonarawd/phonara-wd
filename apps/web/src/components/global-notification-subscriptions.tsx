@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/auth-context';
 import { useT } from '../lib/i18n';
 import { supabase } from '../lib/supabase';
 import { useRealtime } from '../hooks/use-realtime';
-import { useFuturesPositions, tradingKeys } from '../hooks/use-trading';
+import { tradingKeys } from '../hooks/use-trading';
 import {
   positionStatusRef,
   priceRef,
@@ -38,8 +38,26 @@ export function GlobalNotificationSubscriptions() {
   const seedPositionBaselines = useNotificationStore((s) => s.seedPositionBaselines);
   const resetBaselinesForUser = useNotificationStore((s) => s.resetBaselinesForUser);
   const setRealtimeStatus = useRealtimeConnectionStore((s) => s.setStatus);
-  const { positions } = useFuturesPositions();
   const priceAlertSymbol = priceAlert?.symbol ?? null;
+
+  // Baseline seed for cross-route liquidation/close alerts. Decoupled from the
+  // /trade positions query and projected to (id, status): only open positions
+  // can still transition, and the realtime channel keeps positionStatusRef live
+  // after this initial seed, so no polling or full-row fetch is needed globally.
+  const { data: openPositions = [] } = useQuery({
+    queryKey: ['global-position-baselines', userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('futures_positions')
+        .select('id,status')
+        .eq('user_id', userId!)
+        .eq('status', 'open');
+      if (error) throw error;
+      return (data ?? []) as { id: string; status: string }[];
+    },
+    enabled: !!userId,
+    staleTime: 60_000,
+  });
 
   const { data: fallbackPrice } = useQuery({
     queryKey: ['global-price-alert-price', priceAlertSymbol],
@@ -63,8 +81,8 @@ export function GlobalNotificationSubscriptions() {
 
   useEffect(() => {
     if (!userId) return;
-    seedPositionBaselines(positions);
-  }, [positions, seedPositionBaselines, userId]);
+    seedPositionBaselines(openPositions);
+  }, [openPositions, seedPositionBaselines, userId]);
 
   const handlePriceAlertChange = useCallback((row: { symbol?: string; price?: string }): void => {
     if (!row.symbol || !row.price) return;

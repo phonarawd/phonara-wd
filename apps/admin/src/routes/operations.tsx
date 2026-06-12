@@ -5,7 +5,8 @@ import { Route as rootRoute } from './__root';
 import { AdminLayout } from '../components/admin-layout';
 import { AdminActionDialog } from '../components/admin-action-dialog';
 import { useT } from '../lib/i18n';
-import { supabase } from '../lib/supabase';
+import { translateError } from '../lib/translate-error';
+import { setFeatureEnabled, setSystemMode } from '../domain/ops';
 import { useAppConfig } from '../hooks/use-app-config';
 import { Button, Badge, Card, ErrorState, Skeleton } from '@phonara/ui';
 import type { MessageKey } from '@phonara/i18n';
@@ -59,24 +60,14 @@ function OperationsPage() {
       if (dialog.type === 'system_halt' || dialog.type === 'system_readonly') {
         const halt = dialog.type === 'system_halt' ? dialog.targetValue : isEnabled(config, 'system_halt');
         const readonly = dialog.type === 'system_readonly' ? dialog.targetValue : isEnabled(config, 'system_readonly');
-        const { error } = await supabase.rpc('rpc_set_system_mode', {
-          p_halt: halt,
-          p_readonly: readonly,
-          p_reason: reason,
-        });
-        if (error) throw new Error(error.message);
+        await setSystemMode({ halt, readonly, reason });
       } else if (dialog.type === 'feature' && dialog.feature) {
-        const { error } = await supabase.rpc('rpc_set_feature_enabled', {
-          p_feature: dialog.feature,
-          p_enabled: dialog.targetValue,
-          p_reason: reason,
-        });
-        if (error) throw new Error(error.message);
+        await setFeatureEnabled({ feature: dialog.feature, enabled: dialog.targetValue, reason });
       }
       refreshAll();
       setDialog(null);
     } catch (e) {
-      setErrorMsg(e instanceof Error ? e.message : t('error.UNKNOWN'));
+      setErrorMsg(t(translateError(e)));
     } finally {
       setBusy(false);
     }

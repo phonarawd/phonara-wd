@@ -1,16 +1,16 @@
 import { createRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { toDecimal, toFixed } from '@phonara/money';
 import { Route as rootRoute } from './__root';
 import { useAuth } from '../contexts/auth-context';
 import { useWallet } from '../hooks/use-wallet';
 import { useProfile } from '../hooks/use-profile';
-import { env } from '../lib/env';
-import { supabase } from '../lib/supabase';
 import { useT } from '../lib/i18n';
 import { translateError } from '../lib/translate-error';
+import { createKrwDepositRequest, requestWithdrawal, submitKyc } from '../domain/wallet';
+import { useWalletData } from '../features/wallet/use-wallet-data';
 import { isPositiveDecimalInput, normalizeDecimalInput } from '../lib/money-input';
 import {
   Button,
@@ -22,18 +22,11 @@ import {
   type StatusTimelineItem,
   formatMoney,
 } from '@phonara/ui';
-import type { Tables } from '@phonara/shared-types';
-
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
   path: '/wallet',
   component: WalletPage,
 });
-
-type DepositRequest = Tables<'krw_deposit_requests'>;
-type WithdrawalRequest = Tables<'withdrawal_requests'>;
-type KycSubmission = Tables<'kyc_submissions'>;
-type ExchangeRateSnapshot = Tables<'exchange_rate_snapshots'>;
 
 function newRequestId(): string {
   const c = globalThis.crypto;
@@ -80,64 +73,16 @@ function WalletPage() {
     if (!authLoading && !session) void navigate({ to: '/login' });
   }, [session, authLoading, navigate]);
 
-  const { data: deposits = [] } = useQuery({
-    queryKey: ['krw-deposits', userId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('krw_deposit_requests')
-        .select('*')
-        .eq('user_id', userId!)
-        .order('created_at', { ascending: false })
-        .limit(5);
-      if (error) throw error;
-      return (data ?? []) as DepositRequest[];
-    },
-    enabled: !!userId,
-  });
-
-  const { data: withdrawals = [] } = useQuery({
-    queryKey: ['withdrawals', userId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('withdrawal_requests')
-        .select('*')
-        .eq('user_id', userId!)
-        .order('created_at', { ascending: false })
-        .limit(5);
-      if (error) throw error;
-      return (data ?? []) as WithdrawalRequest[];
-    },
-    enabled: !!userId,
-  });
-
-  const { data: kycSubmissions = [] } = useQuery({
-    queryKey: ['kyc-submissions', userId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('kyc_submissions')
-        .select('*')
-        .eq('user_id', userId!)
-        .order('created_at', { ascending: false })
-        .limit(3);
-      if (error) throw error;
-      return (data ?? []) as KycSubmission[];
-    },
-    enabled: !!userId,
-  });
+  const {
+    deposits,
+    withdrawals,
+    kycSubmissions,
+    withdrawalEnabled,
+    activePhonKrwRate,
+    depositRateError,
+  } = useWalletData(userId);
 
   const activeDeposit = deposits[0] ?? null;
-  const { data: withdrawalEnabled } = useQuery({
-    queryKey: ['app-config', 'feature_withdrawal_enabled'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('app_config')
-        .select('value')
-        .eq('key', 'feature_withdrawal_enabled')
-        .maybeSingle();
-      if (error) throw error;
-      return data?.value !== 'false';
-    },
-  });
   const withdrawalPaused = withdrawalEnabled === false;
   const withdrawCurrency = 'PHON' as const;
   const withdrawDestination = withdrawAddress.trim();
@@ -145,24 +90,6 @@ function WalletPage() {
   const canRequestWithdraw = Boolean(
     withdrawAmountValid && withdrawDestination && !busy && kycVerified && !withdrawalPaused,
   );
-
-  const { data: activePhonKrwRate = null, isError: depositRateError } = useQuery({
-    queryKey: ['exchange-rate', 'PHON', 'KRW', 'active'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('exchange_rate_snapshots')
-        .select('id,base_currency,quote_currency,rate,captured_at,source,is_active,created_by')
-        .eq('base_currency', 'PHON')
-        .eq('quote_currency', 'KRW')
-        .eq('is_active', true)
-        .order('captured_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (error) throw error;
-      return data as ExchangeRateSnapshot | null;
-    },
-    staleTime: 30_000,
-  });
 
   const depositPreviewPhon = useMemo(() => {
     try {
@@ -317,18 +244,10 @@ function WalletPage() {
     depositInFlightRef.current = true;
     setBusy(true);
     try {
-      const { data, error } = await supabase.rpc('rpc_create_krw_deposit_request', {
-        p_amount_krw: depositAmount,
-        p_client_request_id: clientRequestId,
+      const row = await createKrwDepositRequest({
+        amountKrw: depositAmount,
+        clientRequestId,
       });
-      if (error) throw error;
-      const row = data as {
-        ok: boolean;
-        deposit_id: string;
-        reference_code: string;
-        expected_phon: string;
-        sla_hours: string;
-      };
       setLastDeposit({
         deposit_id: row.deposit_id,
         reference_code: row.reference_code,
@@ -384,14 +303,13 @@ function WalletPage() {
     withdrawInFlightRef.current = true;
     setBusy(true);
     try {
-      const { error } = await supabase.rpc('rpc_request_withdrawal', {
-        p_currency: withdrawCurrency,
-        p_amount: withdrawAmount,
-        p_destination: { address: withdrawDestination, currency: withdrawCurrency },
-        p_idempotency_key: idem,
-        p_client_request_id: clientRequestId,
+      await requestWithdrawal({
+        currency: withdrawCurrency,
+        amount: withdrawAmount,
+        destination: withdrawDestination,
+        idempotencyKey: idem,
+        clientRequestId,
       });
-      if (error) throw error;
       toast.success(t('wallet.withdraw.success'));
       setWithdrawConfirmOpen(false);
       setWithdrawAmount('');
@@ -412,24 +330,12 @@ function WalletPage() {
     if (!userId || !session || busy || !kycLegalName || !kycDocumentLast4 || !kycCountry) return;
     setBusy(true);
     try {
-      const response = await fetch(`${env.VITE_SUPABASE_URL}/rest/v1/rpc/rpc_submit_kyc`, {
-        method: 'POST',
-        headers: {
-          apikey: env.VITE_SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          p_payload: {
-            legal_name: kycLegalName,
-            document_type: 'id_card',
-            document_last4: kycDocumentLast4,
-            country: kycCountry.toUpperCase(),
-          },
-          p_idempotency_key: `kyc-${userId}-${crypto.randomUUID()}`,
-        }),
+      await submitKyc({
+        legalName: kycLegalName,
+        documentLast4: kycDocumentLast4,
+        country: kycCountry,
+        idempotencyKey: `kyc-${userId}-${crypto.randomUUID()}`,
       });
-      if (!response.ok) throw new Error(await response.text());
       toast.success(t('wallet.kyc.submitOk'));
       setShowKycForm(false);
       await qc.invalidateQueries({ queryKey: ['kyc-submissions', userId] });
@@ -441,8 +347,12 @@ function WalletPage() {
   }, [busy, kycCountry, kycDocumentLast4, kycLegalName, qc, session, t, userId]);
 
   const copyRef = useCallback(async (code: string) => {
-    await navigator.clipboard.writeText(code);
-    toast.success(t('wallet.deposit.copyOk'));
+    try {
+      await navigator.clipboard.writeText(code);
+      toast.success(t('wallet.deposit.copyOk'));
+    } catch {
+      toast.error(t('wallet.deposit.copyFailed'));
+    }
   }, [t]);
 
   if (authLoading) {
