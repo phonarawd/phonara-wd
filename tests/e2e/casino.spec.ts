@@ -246,7 +246,6 @@ test.describe('casino provably fair E2E', () => {
     await page.goto('/casino/dice');
     await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
 
-    fundE2EWallet(auth.userId, { phon: '1000000.000000' });
     await admin
       .from('app_config')
       .update({ value: 'true' })

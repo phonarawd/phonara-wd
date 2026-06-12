@@ -4,12 +4,11 @@
 import { test, expect } from '@playwright/test';
 import { generateSync } from 'otplib';
 import {
+  ADMIN_BASE,
   readAdminAuth,
   adminClient,
   loginAdmin,
 } from './_helpers';
-
-const ADMIN_BASE = 'http://localhost:3001';
 
 test.describe('Admin MFA', () => {
   test('unenrolled admin is forced to MFA enrollment before accessing routes', async ({ page }) => {

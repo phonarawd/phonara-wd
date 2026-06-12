@@ -64,15 +64,23 @@ export function readAdminAuth(): E2EAuth {
   return JSON.parse(readFileSync(ADMIN_AUTH_FILE, 'utf8')) as E2EAuth;
 }
 
-const ADMIN_BASE = 'http://localhost:3001';
+export const ADMIN_BASE = 'http://127.0.0.1:3001';
 
-/** Password login plus MFA challenge when the admin has an enrolled TOTP factor. */
+function resolveAdminTotpSecret(email: string, totpSecret?: string): string | undefined {
+  if (totpSecret) return totpSecret;
+  const adminAuth = readAdminAuth();
+  return adminAuth.email === email ? adminAuth.totpSecret : undefined;
+}
+
+/** Password login plus MFA challenge. Global admin TOTP is resolved from `.admin-auth.json`. */
 export async function loginAdmin(
   page: Page,
   email: string,
   password: string,
   totpSecret?: string,
 ): Promise<void> {
+  const resolvedTotpSecret = resolveAdminTotpSecret(email, totpSecret);
+
   await page.goto(`${ADMIN_BASE}/login`);
   await expect(page.getByTestId('admin-login-form')).toBeVisible({ timeout: 15_000 });
   await page.getByTestId('admin-email').fill(email);
@@ -86,17 +94,17 @@ export async function loginAdmin(
   ]);
 
   if (await page.getByTestId('admin-mfa-enroll-page').isVisible()) {
-    await expect(page.getByTestId('overview-page')).not.toBeVisible();
-    return;
+    throw new Error(
+      `loginAdmin hit MFA enrollment for ${email}; use a fresh-user flow for unenrolled admins`,
+    );
   }
 
   if (await page.getByTestId('admin-mfa-challenge-page').isVisible()) {
-    if (!totpSecret) {
-      await expect(page.getByTestId('overview-page')).not.toBeVisible();
-      return;
+    if (!resolvedTotpSecret) {
+      throw new Error(`loginAdmin requires a TOTP secret to complete MFA challenge for ${email}`);
     }
     await expect(page.getByTestId('admin-mfa-challenge-code')).toBeVisible({ timeout: 20_000 });
-    const code = generateSync({ secret: totpSecret });
+    const code = generateSync({ secret: resolvedTotpSecret });
     await page.getByTestId('admin-mfa-challenge-code').fill(code);
     await page.getByTestId('admin-mfa-challenge-submit').click();
     await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
@@ -104,6 +112,25 @@ export async function loginAdmin(
   }
 
   await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
+}
+
+export interface CurrencyTotals {
+  USDT: string;
+  PHON: string;
+}
+
+/** Per-currency delta between two global conservation snapshots (wallets + system accounts). */
+export function conservationDelta(before: CurrencyTotals, after: CurrencyTotals): CurrencyTotals {
+  const delta = (start: string, end: string): string =>
+    (Number(end) - Number(start)).toFixed(6);
+  return { USDT: delta(before.USDT, after.USDT), PHON: delta(before.PHON, after.PHON) };
+}
+
+/** Assert this test's operations did not move global Σ (delta = 0 per currency). */
+export function assertConservationUnchanged(before: CurrencyTotals, after: CurrencyTotals): void {
+  const delta = conservationDelta(before, after);
+  expect(delta.USDT).toBe('0.000000');
+  expect(delta.PHON).toBe('0.000000');
 }
 
 interface BrowserSessionOptions {
@@ -202,7 +229,7 @@ export async function injectBrowserSession(
  * currency. The platform invariant (rule 30/25) is that these are unchanged by
  * any user money operation, since every leg nets to zero across user + system.
  */
-export function currencyTotals(_admin: SupabaseClient): { USDT: string; PHON: string } {
+export function currencyTotals(_admin: SupabaseClient): CurrencyTotals {
   void _admin;
 
   const sql = `
@@ -293,6 +320,12 @@ export function gameBetCount(userId: string): number {
   return count;
 }
 
+/**
+ * E2E-only wallet fixture: SET available balances via ledger-write guard (bypasses
+ * conservation). Use for global-setup and **new** users only. Do not re-SET the shared
+ * `readAuth()` user mid-suite — that lowers global Σ and breaks absolute conservation
+ * assertions in other specs. Prefer per-test `currencyTotals` snapshots + delta checks.
+ */
 export function fundE2EWallet(
   userId: string,
   balances: { phon?: string; usdt?: string },

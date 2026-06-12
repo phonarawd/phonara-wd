@@ -7,7 +7,7 @@ import {
   readAuth,
   injectBrowserSession,
   adminClient,
-  fundE2EWallet,
+  assertConservationUnchanged,
   currencyTotals,
   ANON_KEY,
   SUPABASE_URL,
@@ -102,7 +102,6 @@ test.describe('Responsible gaming', () => {
     await page.getByTestId('rg-self-exclusion-confirm-confirm').click();
     await expect(page.locator('[data-sonner-toast]')).toContainText(/적용|active/i, { timeout: 15_000 });
 
-    fundE2EWallet(auth.userId, { phon: '1000000.000000' });
     await admin
       .from('app_config')
       .update({ value: 'true' })
@@ -121,8 +120,6 @@ test.describe('Responsible gaming', () => {
     });
     expect(betError?.message).toMatch(/rg_self_excluded/i);
 
-    const after = currencyTotals(admin);
-    expect(after.USDT).toBe(before.USDT);
-    expect(after.PHON).toBe(before.PHON);
+    assertConservationUnchanged(before, currencyTotals(admin));
   });
 });

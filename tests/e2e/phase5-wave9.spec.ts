@@ -3,27 +3,19 @@ import {
   adminClient,
   currencyTotals,
   injectBrowserSession,
+  loginAdmin,
   readAdminAuth,
   readAuth,
   SERVICE_ROLE_KEY,
   SUPABASE_URL,
+  ADMIN_BASE,
 } from './_helpers';
-
-const ADMIN_BASE = 'http://127.0.0.1:3001';
 
 async function injectSession(page: Page, accessToken: string, refreshToken: string): Promise<void> {
   await injectBrowserSession(page, accessToken, refreshToken, {
     postLoginPath: '/dashboard',
     unregisterServiceWorkers: true,
   });
-}
-
-async function loginAdmin(page: Page, email: string, password: string): Promise<void> {
-  await page.goto(`${ADMIN_BASE}/login`);
-  await expect(page.getByTestId('admin-login-form')).toBeVisible({ timeout: 15_000 });
-  await page.getByTestId('admin-email').fill(email);
-  await page.getByTestId('admin-password').fill(password);
-  await page.getByTestId('admin-login-submit').click();
 }
 
 test.describe.serial('Wave 9.1 — deposits, withdrawals, gates', () => {

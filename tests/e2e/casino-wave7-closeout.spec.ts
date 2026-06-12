@@ -3,7 +3,6 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { messages } from '../../packages/i18n/src/index.ts';
 import {
   adminClient,
-  fundE2EWallet,
   gameBetCount,
   injectBrowserSession,
   readAuth,
@@ -62,7 +61,6 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     await withStepTimeout(
       'cap fixture setup',
       (async () => {
-        fundE2EWallet(auth.userId, { phon: '1000000.000000', usdt: '1000000.000000' });
         await resetCasinoCloseoutConfig(admin);
         await admin
           .from('app_config')
@@ -119,7 +117,6 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     const auth = readAuth();
     const admin = adminClient();
 
-    fundE2EWallet(auth.userId, { phon: '1000000.000000', usdt: '1000000.000000' });
     await resetCasinoCloseoutConfig(admin);
     await injectSession(page, auth.accessToken, auth.refreshToken);
 
@@ -149,7 +146,6 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     const admin = adminClient();
     let betRequestCount = 0;
 
-    fundE2EWallet(auth.userId, { phon: '1000000.000000', usdt: '1000000.000000' });
     await resetCasinoCloseoutConfig(admin);
     await admin
       .from('app_config')
@@ -220,7 +216,6 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     const admin = adminClient();
     const client = authedClient(auth);
 
-    fundE2EWallet(auth.userId, { phon: '1000000.000000', usdt: '1000000.000000' });
     await resetCasinoCloseoutConfig(admin);
     await injectSession(page, auth.accessToken, auth.refreshToken);
     await page.goto('/dashboard');

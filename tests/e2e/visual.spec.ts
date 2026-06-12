@@ -1,9 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
-import { readAdminAuth, readAuth } from './_helpers';
+import { ADMIN_BASE, loginAdmin, readAdminAuth, readAuth } from './_helpers';
 
 const SHOTS = 'test-results/visual';
-
-const ADMIN_BASE = 'http://127.0.0.1:3001';
 
 async function injectSession(page: Page, accessToken: string, refreshToken: string, loginPath = '/login'): Promise<void> {
   await page.goto(loginPath);
@@ -27,14 +25,6 @@ async function injectSession(page: Page, accessToken: string, refreshToken: stri
     [accessToken, refreshToken] as const,
   );
   expect(errMsg, 'setSession should succeed').toBeNull();
-}
-
-async function loginAdmin(page: Page, email: string): Promise<void> {
-  await page.goto(`${ADMIN_BASE}/login`);
-  await expect(page.getByTestId('admin-login-form')).toBeVisible({ timeout: 15_000 });
-  await page.getByTestId('admin-email').fill(email);
-  await page.getByTestId('admin-password').fill('E2e-Admin-Password-123456');
-  await page.getByTestId('admin-login-submit').click();
 }
 
 async function expectAuthFrameVerticallyCentered(page: Page): Promise<void> {
@@ -147,7 +137,7 @@ test('visual smoke: login + authed routes render', async ({ page }) => {
 
   // Admin mobile shell.
   const adminAuth = readAdminAuth();
-  await loginAdmin(page, adminAuth.email);
+  await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456');
   await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
   await page.screenshot({ path: `${SHOTS}/admin-overview.png`, fullPage: true });
   await page.goto(`${ADMIN_BASE}/operations`);

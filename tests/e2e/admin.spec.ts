@@ -17,12 +17,10 @@ import {
   SUPABASE_URL,
   ANON_KEY,
   currencyTotals,
-  fundE2EWallet,
   loginAdmin,
+  ADMIN_BASE,
 } from './_helpers';
 import { createClient } from '@supabase/supabase-js';
-
-const ADMIN_BASE = 'http://localhost:3001';
 
 test.describe('Admin RBAC', () => {
   test('positive: admin user can access all admin routes', async ({ page }) => {
@@ -165,7 +163,6 @@ test.describe('Admin Exception Queues (W9-R1)', () => {
       global: { headers: { Authorization: `Bearer ${auth.accessToken}` } },
     });
 
-    fundE2EWallet(auth.userId, { phon: '1000000.000000', usdt: '1000000.000000' });
     await dbAdmin.from('profiles').update({ kyc_tier: 'id_verified' }).eq('id', auth.userId);
     await dbAdmin.from('sanctions_screenings').insert({
       user_id: auth.userId,
