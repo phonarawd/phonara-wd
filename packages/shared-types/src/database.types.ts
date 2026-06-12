@@ -94,6 +94,73 @@ export type Database = {
           },
         ]
       }
+      affiliate_commission_approvals: {
+        Row: {
+          affiliate_id: string
+          approval_reason: string | null
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          id: string
+          requested_at: string
+          settlement_id: string
+          status: string
+          threshold_config: Json
+          total_commission: Json
+          updated_at: string
+        }
+        Insert: {
+          affiliate_id: string
+          approval_reason?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          id?: string
+          requested_at?: string
+          settlement_id: string
+          status?: string
+          threshold_config?: Json
+          total_commission?: Json
+          updated_at?: string
+        }
+        Update: {
+          affiliate_id?: string
+          approval_reason?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          id?: string
+          requested_at?: string
+          settlement_id?: string
+          status?: string
+          threshold_config?: Json
+          total_commission?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_commission_approvals_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_commission_approvals_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_commission_approvals_settlement_id_fkey"
+            columns: ["settlement_id"]
+            isOneToOne: true
+            referencedRelation: "affiliate_settlements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliate_commission_daily_aggregates: {
         Row: {
           affiliate_id: string
@@ -3046,6 +3113,14 @@ export type Database = {
       }
     }
     Functions: {
+      _affiliate_commission_requires_approval: {
+        Args: { p_total_commission: Json }
+        Returns: boolean
+      }
+      _affiliate_commission_threshold_snapshot: {
+        Args: { p_total_commission: Json }
+        Returns: Json
+      }
       _affiliate_computed_tier: {
         Args: {
           p_active_direct_users: number
@@ -3229,6 +3304,12 @@ export type Database = {
         }
         Returns: string
       }
+      _enqueue_affiliate_commission_approval: {
+        Args: {
+          p_settlement: Database["public"]["Tables"]["affiliate_settlements"]["Row"]
+        }
+        Returns: string
+      }
       _ensure_kyc_sanctions_screening_pending: {
         Args: { p_trigger?: string; p_user_id: string }
         Returns: undefined
@@ -3342,6 +3423,10 @@ export type Database = {
       _ops_relative_age: {
         Args: { p_at: string; p_now?: string }
         Returns: string
+      }
+      _pay_affiliate_settlement: {
+        Args: { p_settlement_id: string }
+        Returns: Json
       }
       _plinko_multiplier: {
         Args: { p_bucket: number; p_risk: string; p_rows: number }
@@ -3556,6 +3641,10 @@ export type Database = {
       }
       rpc_admin_void_game_bet: {
         Args: { p_bet_id: string; p_reason: string }
+        Returns: Json
+      }
+      rpc_approve_affiliate_commission: {
+        Args: { p_approval_id: string; p_reason: string }
         Returns: Json
       }
       rpc_approve_withdrawal: {

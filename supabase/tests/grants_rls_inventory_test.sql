@@ -93,6 +93,12 @@ BEGIN
     'authenticated must SELECT affiliate_settlement_events (own-row RLS)';
   ASSERT NOT has_table_privilege('authenticated', 'public.affiliate_settlement_events', 'UPDATE'),
     'authenticated must NOT UPDATE affiliate_settlement_events directly';
+  ASSERT has_table_privilege('authenticated', 'public.affiliate_commission_approvals', 'SELECT'),
+    'authenticated must SELECT affiliate_commission_approvals (own-row RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.affiliate_commission_approvals', 'INSERT'),
+    'authenticated must NOT INSERT affiliate_commission_approvals directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.affiliate_commission_approvals', 'UPDATE'),
+    'authenticated must NOT UPDATE affiliate_commission_approvals directly';
 
   -- system account belt (000045)
   ASSERT NOT has_table_privilege('anon', 'public.system_accounts', 'INSERT'),
@@ -121,6 +127,7 @@ BEGIN
         'affiliate_tier_configs', 'affiliate_elite_overrides', 'affiliate_tier_snapshots',
         'affiliate_commission_daily_aggregates',
         'affiliate_settlements', 'affiliate_settlement_events',
+        'affiliate_commission_approvals',
         'system_accounts', 'system_account_ledger'
       )
       AND NOT c.relrowsecurity
@@ -131,7 +138,7 @@ BEGIN
   ASSERT v_rls_off = '',
     format('RLS must be enabled on inventory tables:%s', v_rls_off);
 
-  RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges match migrations 000045/053–055 and affiliate settlements';
+  RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges match migrations 000045/053–055 and affiliate approvals';
 END;
 $$;
 
