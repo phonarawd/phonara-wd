@@ -1,0 +1,159 @@
+-- ============================================================
+-- Migration: 20260613000087_invariant_checks_monitoring
+-- Coordinator for Σ=0, hash chains, orphan game rounds → ops_alerts.
+-- Does not apply system_readonly (unlike rpc_run_reconciliation).
+-- ============================================================
+
+SET search_path = public, pg_temp;
+
+CREATE OR REPLACE FUNCTION rpc_run_invariant_checks()
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_now TIMESTAMPTZ := NOW();
+  v_ccy currency;
+  v_tolerance NUMERIC := 0.000001;
+  v_wallet_sum NUMERIC;
+  v_sys_bal NUMERIC;
+  v_sigma NUMERIC;
+  v_wl_broken INT;
+  v_sal_broken INT;
+  v_orphan INT;
+  v_orphan_threshold INT := 100;
+  v_mismatch BOOLEAN := FALSE;
+  v_opened INT := 0;
+  v_dedupe TEXT;
+  v_check_id TEXT;
+BEGIN
+  FOR v_ccy IN SELECT unnest(ARRAY['PHON'::currency, 'USDT'::currency, 'KRW'::currency]) LOOP
+    v_wallet_sum := CASE v_ccy
+      WHEN 'PHON' THEN COALESCE((SELECT SUM(phon_available::NUMERIC + phon_locked::NUMERIC) FROM wallets), 0)
+      WHEN 'USDT' THEN COALESCE((SELECT SUM(usdt_available::NUMERIC + usdt_locked::NUMERIC) FROM wallets), 0)
+      WHEN 'KRW'  THEN COALESCE((SELECT SUM(krw_available::NUMERIC  + krw_locked::NUMERIC)  FROM wallets), 0)
+    END;
+    v_sys_bal := COALESCE((SELECT SUM(balance::NUMERIC) FROM system_accounts WHERE currency = v_ccy), 0);
+    v_sigma := v_wallet_sum + v_sys_bal;
+
+    v_dedupe := 'invariant:global_zero:' || v_ccy::TEXT;
+    v_check_id := 'invariant_global_zero_' || lower(v_ccy::TEXT);
+
+    IF ABS(v_sigma) > v_tolerance THEN
+      v_mismatch := TRUE;
+      IF NOT EXISTS (
+        SELECT 1 FROM ops_alerts
+         WHERE dedupe_key = v_dedupe AND status IN ('open', 'acknowledged')
+      ) THEN
+        INSERT INTO ops_alerts (
+          dedupe_key, source_check_id, severity, status,
+          summary, runbook_key, first_seen_at, last_seen_at,
+          occurrence_count, metadata
+        ) VALUES (
+          v_dedupe, v_check_id, 'critical', 'open',
+          format('Invariant global_zero %s sigma=%s', v_ccy, _fmt6(v_sigma)),
+          'reconciliation_mismatch',
+          v_now, v_now, 1,
+          jsonb_build_object('currency', v_ccy, 'sigma', _fmt6(v_sigma))
+        );
+        v_opened := v_opened + 1;
+      ELSE
+        UPDATE ops_alerts
+           SET last_seen_at = v_now,
+               occurrence_count = occurrence_count + 1,
+               summary = format('Invariant global_zero %s sigma=%s', v_ccy, _fmt6(v_sigma)),
+               metadata = jsonb_build_object('currency', v_ccy, 'sigma', _fmt6(v_sigma)),
+               updated_at = v_now
+         WHERE dedupe_key = v_dedupe AND status IN ('open', 'acknowledged');
+      END IF;
+    END IF;
+  END LOOP;
+
+  SELECT count(*) INTO v_wl_broken FROM verify_ledger_hash_chain();
+  IF v_wl_broken > 0 THEN
+    v_mismatch := TRUE;
+    v_dedupe := 'invariant:hash_chain_wallet';
+    IF NOT EXISTS (
+      SELECT 1 FROM ops_alerts WHERE dedupe_key = v_dedupe AND status IN ('open', 'acknowledged')
+    ) THEN
+      INSERT INTO ops_alerts (
+        dedupe_key, source_check_id, severity, status,
+        summary, runbook_key, first_seen_at, last_seen_at, occurrence_count, metadata
+      ) VALUES (
+        v_dedupe, 'invariant_hash_chain_wallet', 'critical', 'open',
+        format('Wallet hash chain broken rows=%s', v_wl_broken),
+        'hash_chain_broken', v_now, v_now, 1,
+        jsonb_build_object('broken', v_wl_broken)
+      );
+      v_opened := v_opened + 1;
+    END IF;
+  END IF;
+
+  SELECT count(*) INTO v_sal_broken FROM verify_system_account_hash_chain();
+  IF v_sal_broken > 0 THEN
+    v_mismatch := TRUE;
+    v_dedupe := 'invariant:hash_chain_system';
+    IF NOT EXISTS (
+      SELECT 1 FROM ops_alerts WHERE dedupe_key = v_dedupe AND status IN ('open', 'acknowledged')
+    ) THEN
+      INSERT INTO ops_alerts (
+        dedupe_key, source_check_id, severity, status,
+        summary, runbook_key, first_seen_at, last_seen_at, occurrence_count, metadata
+      ) VALUES (
+        v_dedupe, 'invariant_hash_chain_system', 'critical', 'open',
+        format('System hash chain broken rows=%s', v_sal_broken),
+        'hash_chain_broken', v_now, v_now, 1,
+        jsonb_build_object('broken', v_sal_broken)
+      );
+      v_opened := v_opened + 1;
+    END IF;
+  END IF;
+
+  SELECT COUNT(*)::INT INTO v_orphan
+    FROM game_rounds
+   WHERE status = 'open'
+     AND created_at < v_now - INTERVAL '24 hours';
+
+  IF v_orphan >= v_orphan_threshold THEN
+    v_mismatch := TRUE;
+    v_dedupe := 'invariant:orphan_game_rounds';
+    IF NOT EXISTS (
+      SELECT 1 FROM ops_alerts WHERE dedupe_key = v_dedupe AND status IN ('open', 'acknowledged')
+    ) THEN
+      INSERT INTO ops_alerts (
+        dedupe_key, source_check_id, severity, status,
+        summary, runbook_key, first_seen_at, last_seen_at, occurrence_count, metadata
+      ) VALUES (
+        v_dedupe, 'invariant_orphan_game_rounds', 'warning', 'open',
+        format('Stale open game rounds=%s (threshold=%s)', v_orphan, v_orphan_threshold),
+        'pending_exceptions', v_now, v_now, 1,
+        jsonb_build_object('open_rounds', v_orphan, 'threshold', v_orphan_threshold)
+      );
+      v_opened := v_opened + 1;
+    END IF;
+  END IF;
+
+  RETURN jsonb_build_object(
+    'ok', TRUE,
+    'mismatch', v_mismatch,
+    'alerts_opened', v_opened,
+    'wallet_chain_broken', v_wl_broken,
+    'system_chain_broken', v_sal_broken,
+    'orphan_open_rounds', v_orphan,
+    'checked_at', v_now
+  );
+END;
+$$;
+
+REVOKE ALL ON FUNCTION rpc_run_invariant_checks() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION rpc_run_invariant_checks() TO service_role;
+
+SELECT cron.unschedule('phonara_invariant_checks')
+ WHERE EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'phonara_invariant_checks');
+
+SELECT cron.schedule(
+  'phonara_invariant_checks',
+  '*/15 * * * *',
+  $cron$SELECT public.rpc_run_invariant_checks();$cron$
+);
