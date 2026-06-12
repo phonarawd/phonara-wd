@@ -500,3 +500,132 @@ BEGIN
 END;
 $$;
 ROLLBACK;
+
+-- ── Task 5 RED: daily cap rejects over-limit requests ─────────────────────────
+BEGIN;
+DO $$
+DECLARE
+  v_uid UUID := gen_random_uuid();
+  v_res JSONB;
+  v_blocked BOOLEAN := FALSE;
+  v_msg TEXT;
+  v_locked_before NUMERIC;
+  v_locked_after NUMERIC;
+BEGIN
+  INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
+  VALUES (v_uid, 'authenticated', 'authenticated',
+          'wd_cap_' || v_uid::TEXT || '@test.local', NOW(), NOW());
+
+  UPDATE profiles SET kyc_tier = 'id_verified' WHERE id = v_uid;
+  INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
+  SELECT v_uid, doc_type::consent_doc_type, 'test', TRUE
+    FROM unnest(ARRAY[
+      'terms_of_service','privacy_policy','risk_disclosure','age_verification'
+    ]::TEXT[]) AS doc_type;
+  INSERT INTO sanctions_screenings (user_id, status, screened_at)
+  VALUES (v_uid, 'clear', NOW());
+
+  PERFORM _credit_wallet_internal(v_uid, 'PHON', '500.000000',
+    'test_funding', 'wd-cap-fund-001');
+  PERFORM _debit_system_account('reward_issuance_phon', '500.000000',
+    'test_funding', v_uid, 'wd-cap-fund-001', NULL);
+
+  UPDATE app_config SET value = 'false'
+    WHERE key IN ('system_halt', 'system_readonly', 'consent_gate_enabled');
+  UPDATE app_config SET value = 'true' WHERE key = 'feature_withdrawal_enabled';
+  UPDATE treasury_reserves SET real_balance = '99999999.000000' WHERE currency = 'PHON';
+  INSERT INTO app_config (key, value, description, is_public)
+  VALUES ('withdrawal_daily_cap_per_user', '100.000000', 'Per-user daily withdrawal cap (PHON).', FALSE)
+  ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW();
+  PERFORM rpc_run_reconciliation();
+
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
+
+  v_res := rpc_request_withdrawal('PHON', '60.000000', '{}'::JSONB, 'wd-cap-first-001', NULL);
+  ASSERT COALESCE((v_res->>'ok')::BOOLEAN, FALSE),
+    format('first in-cap withdrawal must succeed, got %s', v_res);
+
+  BEGIN
+    PERFORM rpc_request_withdrawal('PHON', '50.000000', '{}'::JSONB, 'wd-cap-over-001', NULL);
+  EXCEPTION WHEN OTHERS THEN
+    GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
+    IF v_msg LIKE 'ERR_WITHDRAWAL_DAILY_CAP%' THEN v_blocked := TRUE; END IF;
+  END;
+
+  ASSERT v_blocked,
+    format('over-cap withdrawal must raise ERR_WITHDRAWAL_DAILY_CAP, got: %s', COALESCE(v_msg, '<none>'));
+
+  SELECT phon_locked::NUMERIC INTO v_locked_before FROM wallets WHERE user_id = v_uid;
+  ASSERT v_locked_before = 60.000000,
+    format('only first withdrawal should lock funds, locked=%s', v_locked_before);
+
+  RAISE NOTICE 'WITHDRAWAL DAILY CAP OVER-LIMIT OK';
+END;
+$$;
+ROLLBACK;
+
+-- ── Task 5 RED: in-cap request enters lock/escrow path ──────────────────────
+BEGIN;
+DO $$
+DECLARE
+  v_uid UUID := gen_random_uuid();
+  v_res JSONB;
+  v_wr_id UUID;
+  v_lock_id UUID;
+  v_status TEXT;
+  v_avail_before NUMERIC;
+  v_avail_after NUMERIC;
+  v_locked_after NUMERIC;
+BEGIN
+  INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
+  VALUES (v_uid, 'authenticated', 'authenticated',
+          'wd_cap_in_' || v_uid::TEXT || '@test.local', NOW(), NOW());
+
+  UPDATE profiles SET kyc_tier = 'id_verified' WHERE id = v_uid;
+  INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
+  SELECT v_uid, doc_type::consent_doc_type, 'test', TRUE
+    FROM unnest(ARRAY[
+      'terms_of_service','privacy_policy','risk_disclosure','age_verification'
+    ]::TEXT[]) AS doc_type;
+  INSERT INTO sanctions_screenings (user_id, status, screened_at)
+  VALUES (v_uid, 'clear', NOW());
+
+  PERFORM _credit_wallet_internal(v_uid, 'PHON', '200.000000',
+    'test_funding', 'wd-cap-in-fund-001');
+  PERFORM _debit_system_account('reward_issuance_phon', '200.000000',
+    'test_funding', v_uid, 'wd-cap-in-fund-001', NULL);
+
+  UPDATE app_config SET value = 'false'
+    WHERE key IN ('system_halt', 'system_readonly', 'consent_gate_enabled');
+  UPDATE app_config SET value = 'true' WHERE key = 'feature_withdrawal_enabled';
+  UPDATE treasury_reserves SET real_balance = '99999999.000000' WHERE currency = 'PHON';
+  INSERT INTO app_config (key, value, description, is_public)
+  VALUES ('withdrawal_daily_cap_per_user', '100.000000', 'Per-user daily withdrawal cap (PHON).', FALSE)
+  ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW();
+  PERFORM rpc_run_reconciliation();
+
+  SELECT phon_available::NUMERIC INTO v_avail_before FROM wallets WHERE user_id = v_uid;
+
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
+  v_res := rpc_request_withdrawal('PHON', '40.000000', '{}'::JSONB, 'wd-cap-in-001', NULL);
+  ASSERT COALESCE((v_res->>'ok')::BOOLEAN, FALSE),
+    format('in-cap withdrawal must succeed, got %s', v_res);
+
+  v_wr_id := (v_res->>'withdrawal_id')::UUID;
+  SELECT ledger_lock_id, status::TEXT INTO v_lock_id, v_status
+    FROM withdrawal_requests WHERE id = v_wr_id;
+  ASSERT v_lock_id IS NOT NULL, 'in-cap withdrawal must record ledger_lock_id';
+  ASSERT v_status = 'pending', format('in-cap withdrawal must be pending, got %s', v_status);
+
+  SELECT phon_available::NUMERIC, phon_locked::NUMERIC
+    INTO v_avail_after, v_locked_after
+    FROM wallets WHERE user_id = v_uid;
+  ASSERT v_avail_after = v_avail_before - 40.000000,
+    format('available must drop by withdrawal amount, before=%s after=%s', v_avail_before, v_avail_after);
+  ASSERT v_locked_after = 40.000000,
+    format('locked must equal withdrawal amount, got %s', v_locked_after);
+
+  RAISE NOTICE 'WITHDRAWAL DAILY CAP IN-CAP ESCROW OK';
+END;
+$$;
+ROLLBACK;
