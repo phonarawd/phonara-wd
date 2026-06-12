@@ -687,6 +687,38 @@ SELECT
 
 ---
 
+## §5 AML/제재 매치 대응 절차
+
+### 3시점 스크리닝 (코드 경로)
+
+| 시점 | 진입 RPC | 내부 헬퍼 |
+|------|----------|-----------|
+| KYC/온보딩 | `rpc_submit_kyc` | `_ensure_kyc_sanctions_screening_pending` → `sanctions_screenings` + `admin_review_queue` |
+| 입금 | `rpc_create_krw_deposit_request` / `_try_match_krw_deposit` | `_assert_sanctions_screening` |
+| 출금 | `rpc_request_withdrawal` | `_assert_kyc_withdrawal_gate` + `_assert_sanctions_screening` |
+
+### 매치(hit) 시 자동 동작 (사실)
+
+`_apply_sanctions_hit` 호출 시:
+
+- `profiles.activity_frozen = true`
+- `risk_flags` (`sanctions_hit`, `account_activity_frozen`)
+- `str_cases` (`case_type = sanctions_hit`)
+
+원장/지갑 잔액은 **변경하지 않음**.
+
+### 운영자 해소 경로
+
+- **공식 clear/hit RPC**: `rpc_resolve_sanctions_screening(screening_id, decision, reason)` — Admin Queues에서 clear/hit + reason.
+- AAL2 Admin MFA 필수 (`ERR_MFA_REQUIRED` without aal2).
+- 모든 결정은 `audit_logs` (`action = sanctions_screening_resolved`)에 기록.
+
+### 잔여 운영 갭
+
+- 외부 제재 리스트 데이터 소스·적재 주기는 **미선정** (인간 결정 #7). 리스트 적재 전까지 3시점 스크리닝은 **구조만** 존재할 수 있음.
+
+---
+
 ## 빠른 참조 SQL
 
 ```sql

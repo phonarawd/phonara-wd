@@ -108,6 +108,10 @@ export function actionTitle(action: QueueAction | null, t: ReturnType<typeof use
   switch (action.kind) {
     case 'resolveQueue':
       return t('admin.queues.dialog.resolve');
+    case 'clearSanctionsScreening':
+      return t('admin.queues.dialog.clearSanctions');
+    case 'hitSanctionsScreening':
+      return t('admin.queues.dialog.hitSanctions');
     case 'approveWithdrawal':
       return t('admin.queues.dialog.approveWithdrawal');
     case 'rejectWithdrawal':

@@ -3814,6 +3814,10 @@ export type Database = {
         Args: { p_queue_id: string; p_reason: string }
         Returns: Json
       }
+      rpc_resolve_sanctions_screening: {
+        Args: { p_decision: string; p_reason: string; p_screening_id: string }
+        Returns: Json
+      }
       rpc_resolve_ops_alert: {
         Args: { p_alert_id: string; p_reason: string }
         Returns: Json

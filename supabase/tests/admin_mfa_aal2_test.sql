@@ -50,6 +50,15 @@ BEGIN
   END;
   ASSERT v_blocked, 'aal1 admin executed rpc_approve_withdrawal without MFA guard';
 
+  v_blocked := FALSE;
+  BEGIN
+    PERFORM rpc_resolve_sanctions_screening(gen_random_uuid(), 'clear', 'admin mfa aal2 regression check');
+  EXCEPTION WHEN OTHERS THEN
+    GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
+    IF v_msg LIKE 'ERR_MFA_REQUIRED%' THEN v_blocked := TRUE; END IF;
+  END;
+  ASSERT v_blocked, 'aal1 admin executed rpc_resolve_sanctions_screening without MFA guard';
+
   PERFORM set_config(
     'request.jwt.claims',
     json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT,

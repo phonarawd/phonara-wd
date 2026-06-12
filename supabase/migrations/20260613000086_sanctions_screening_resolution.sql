@@ -1,0 +1,115 @@
+-- ============================================================
+-- Migration: 20260613000086_sanctions_screening_resolution
+-- Admin path to clear or confirm-hit pending sanctions screenings.
+-- ============================================================
+
+SET search_path = public, pg_temp;
+
+CREATE OR REPLACE FUNCTION rpc_resolve_sanctions_screening(
+  p_screening_id UUID,
+  p_decision TEXT,
+  p_reason TEXT
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_actor UUID := auth.uid();
+  v_row sanctions_screenings%ROWTYPE;
+  v_decision TEXT := lower(btrim(COALESCE(p_decision, '')));
+BEGIN
+  IF v_actor IS NULL THEN RAISE EXCEPTION 'unauthenticated'; END IF;
+  IF NOT _is_admin() THEN RAISE EXCEPTION 'forbidden'; END IF;
+  PERFORM _assert_admin_aal2();
+
+  IF p_reason IS NULL OR length(btrim(p_reason)) < 3 THEN
+    RAISE EXCEPTION 'reason_required';
+  END IF;
+
+  IF v_decision NOT IN ('clear', 'hit') THEN
+    RAISE EXCEPTION 'invalid_sanctions_decision';
+  END IF;
+
+  SELECT * INTO v_row FROM sanctions_screenings WHERE id = p_screening_id FOR UPDATE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'screening_not_found';
+  END IF;
+
+  IF v_row.status = 'clear' AND v_decision = 'clear' THEN
+    RETURN jsonb_build_object('ok', TRUE, 'screening_id', p_screening_id, 'decision', 'clear', 'idempotent', TRUE);
+  END IF;
+
+  IF v_row.status = 'hit' AND v_decision = 'hit' THEN
+    RETURN jsonb_build_object('ok', TRUE, 'screening_id', p_screening_id, 'decision', 'hit', 'idempotent', TRUE);
+  END IF;
+
+  IF v_row.status IN ('clear', 'hit') THEN
+    RAISE EXCEPTION 'screening_already_resolved';
+  END IF;
+
+  IF v_decision = 'clear' THEN
+    UPDATE sanctions_screenings
+       SET status = 'clear',
+           screened_at = NOW(),
+           details = COALESCE(details, '{}'::JSONB)
+             || jsonb_build_object('resolved_by', v_actor, 'resolution_reason', p_reason)
+     WHERE id = p_screening_id;
+
+    UPDATE admin_review_queue
+       SET status = 'resolved',
+           resolved_at = NOW(),
+           resolved_by = v_actor
+     WHERE queue_type = 'sanctions_screening'
+       AND entity_type = 'sanctions_screening'
+       AND entity_id = p_screening_id
+       AND status IN ('pending', 'in_review');
+  ELSE
+    UPDATE sanctions_screenings
+       SET status = 'hit',
+           screened_at = NOW(),
+           details = COALESCE(details, '{}'::JSONB)
+             || jsonb_build_object('resolved_by', v_actor, 'resolution_reason', p_reason)
+     WHERE id = p_screening_id;
+
+    PERFORM _apply_sanctions_hit(
+      v_row.user_id,
+      jsonb_build_object('screening_id', p_screening_id, 'reason', p_reason)
+    );
+
+    UPDATE admin_review_queue
+       SET status = 'resolved',
+           resolved_at = NOW(),
+           resolved_by = v_actor
+     WHERE queue_type = 'sanctions_screening'
+       AND entity_type = 'sanctions_screening'
+       AND entity_id = p_screening_id
+       AND status IN ('pending', 'in_review');
+  END IF;
+
+  INSERT INTO audit_logs (actor_id, action, entity_type, entity_id, payload)
+  VALUES (
+    v_actor,
+    'sanctions_screening_resolved',
+    'sanctions_screenings',
+    p_screening_id,
+    jsonb_build_object(
+      'decision', v_decision,
+      'reason', p_reason,
+      'user_id', v_row.user_id,
+      'previous_status', v_row.status
+    )
+  );
+
+  RETURN jsonb_build_object(
+    'ok', TRUE,
+    'screening_id', p_screening_id,
+    'decision', v_decision,
+    'user_id', v_row.user_id
+  );
+END;
+$$;
+
+REVOKE ALL ON FUNCTION rpc_resolve_sanctions_screening(UUID, TEXT, TEXT) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION rpc_resolve_sanctions_screening(UUID, TEXT, TEXT) TO authenticated;

@@ -100,6 +100,25 @@ export function QueuesPage() {
               {t('admin.queues.action.reject')}
             </Button>
           </div>
+        ) : row.entity_type === 'sanctions_screening' ? (
+          <div className="flex justify-end gap-2">
+            <Button
+              size="sm"
+              variant="primary"
+              data-testid={`queue-sanctions-clear-${row.entity_id}`}
+              onClick={() => setAction({ kind: 'clearSanctionsScreening', id: row.entity_id })}
+            >
+              {t('admin.queues.action.clearSanctions')}
+            </Button>
+            <Button
+              size="sm"
+              variant="danger"
+              data-testid={`queue-sanctions-hit-${row.entity_id}`}
+              onClick={() => setAction({ kind: 'hitSanctionsScreening', id: row.entity_id })}
+            >
+              {t('admin.queues.action.hitSanctions')}
+            </Button>
+          </div>
         ) : (
           <Button
             size="sm"

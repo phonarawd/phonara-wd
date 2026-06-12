@@ -86,6 +86,7 @@
     "20260613000082_price_feed_cron.sql": "eb74d0ea873a84d530a2137e0ac6d508905c062d88b67d36713006c3ddbfa60f",
     "20260613000083_oracle_feed_remove_legacy_sources.sql": "b5792f6e2bede476864ddb674d8c014b5a32bdcdc739b42575930147f982a883",
     "20260613000084_admin_mfa_aal2_guard.sql": "38259e95c774cbbc9ce0a38bc2ca7d2e0eee2514dcca5dc63a3e8a72d93c772e",
-    "20260613000085_withdrawal_daily_cap.sql": "280548a3b4bdb5be46880816b449276d7c546ac59eaf531cc532ea689bea5faf"
+    "20260613000085_withdrawal_daily_cap.sql": "280548a3b4bdb5be46880816b449276d7c546ac59eaf531cc532ea689bea5faf",
+    "20260613000086_sanctions_screening_resolution.sql": "306837fe7b32dd51231146b41fbeac589a27659865c99b1f9d7526d2e0f3ae02"
   }
 }

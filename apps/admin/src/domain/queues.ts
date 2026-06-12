@@ -2,6 +2,8 @@ import { callRpc } from '../lib/rpc';
 
 export type QueueAction =
   | { kind: 'resolveQueue'; id: string }
+  | { kind: 'clearSanctionsScreening'; id: string }
+  | { kind: 'hitSanctionsScreening'; id: string }
   | { kind: 'approveWithdrawal'; id: string }
   | { kind: 'rejectWithdrawal'; id: string }
   | { kind: 'markWithdrawalSent'; id: string }
@@ -17,6 +19,22 @@ export async function runQueueAction(action: QueueAction, reason: string): Promi
     case 'resolveQueue': {
       await callRpc('rpc_resolve_admin_review_queue', {
         p_queue_id: action.id,
+        p_reason: reason,
+      });
+      return;
+    }
+    case 'clearSanctionsScreening': {
+      await callRpc('rpc_resolve_sanctions_screening', {
+        p_screening_id: action.id,
+        p_decision: 'clear',
+        p_reason: reason,
+      });
+      return;
+    }
+    case 'hitSanctionsScreening': {
+      await callRpc('rpc_resolve_sanctions_screening', {
+        p_screening_id: action.id,
+        p_decision: 'hit',
         p_reason: reason,
       });
       return;
