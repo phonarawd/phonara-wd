@@ -16,6 +16,8 @@ DO $$
 DECLARE
   r RECORD;
   v_rls_off TEXT := '';
+  v_anon_writes TEXT := '';
+  v_auth_writes TEXT := '';
 BEGIN
   -- ── Helper: assert privilege state ───────────────────────────────────────
   -- app_config (000053 RLS + 20260611000054 GRANT)
@@ -113,6 +115,59 @@ BEGIN
     'authenticated must NOT UPDATE system_account_ledger';
   ASSERT NOT has_table_privilege('authenticated', 'public.system_account_ledger', 'DELETE'),
     'authenticated must NOT DELETE system_account_ledger';
+
+  -- Launch closeout: client roles must not keep broad table-write grants just
+  -- because RLS policies would usually filter them. Direct writes are allowed
+  -- only for explicitly shipped client-owned surfaces.
+  FOR r IN
+    SELECT c.oid, c.relname AS tbl
+    FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public'
+      AND c.relkind = 'r'
+      AND (
+        has_table_privilege('anon', c.oid, 'INSERT')
+        OR has_table_privilege('anon', c.oid, 'UPDATE')
+        OR has_table_privilege('anon', c.oid, 'DELETE')
+        OR has_table_privilege('anon', c.oid, 'TRUNCATE')
+      )
+    ORDER BY c.relname
+  LOOP
+    v_anon_writes := v_anon_writes || ' ' || r.tbl;
+  END LOOP;
+
+  ASSERT v_anon_writes = '',
+    format('anon must not have direct table write grants:%s', v_anon_writes);
+
+  FOR r IN
+    SELECT c.oid, c.relname AS tbl
+    FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public'
+      AND c.relkind = 'r'
+      AND c.relname NOT IN ('profiles', 'push_subscriptions')
+      AND (
+        has_table_privilege('authenticated', c.oid, 'INSERT')
+        OR has_table_privilege('authenticated', c.oid, 'UPDATE')
+        OR has_table_privilege('authenticated', c.oid, 'DELETE')
+        OR has_table_privilege('authenticated', c.oid, 'TRUNCATE')
+      )
+    ORDER BY c.relname
+  LOOP
+    v_auth_writes := v_auth_writes || ' ' || r.tbl;
+  END LOOP;
+
+  ASSERT v_auth_writes = '',
+    format('authenticated direct table writes must be allowlisted only:%s', v_auth_writes);
+
+  ASSERT has_table_privilege('authenticated', 'public.profiles', 'UPDATE'),
+    'authenticated may UPDATE own profile through RLS';
+  ASSERT NOT has_table_privilege('authenticated', 'public.profiles', 'INSERT'),
+    'authenticated must not INSERT profiles';
+  ASSERT has_table_privilege('authenticated', 'public.push_subscriptions', 'INSERT')
+     AND has_table_privilege('authenticated', 'public.push_subscriptions', 'UPDATE')
+     AND has_table_privilege('authenticated', 'public.push_subscriptions', 'DELETE'),
+    'authenticated may manage own push_subscriptions through RLS';
 
   -- ── RLS enabled on inventory tables ──────────────────────────────────────
   FOR r IN
