@@ -48,6 +48,51 @@ Every implementation task must pass the relevant quality gates before completion
 - Full Phase E2E: all critical journeys for the phase. Required before a phase is
   called complete or launch-ready.
 
+## Current E2E Matrix
+
+This matrix is the current local browser coverage map. Extend the listed spec
+when a behavior belongs to an existing domain; create a new spec only when the
+domain or invariant is not already represented.
+
+- Auth/session/mobile shell: `global-setup.ts` provisions real local Supabase
+  users and sessions; `visual.spec.ts` covers login plus authenticated route
+  rendering; `admin.spec.ts` covers admin login, allowed admin access, and
+  regular-user denial. Success: real session injection and route render.
+  Failure: non-admin blocked from admin app.
+- Wallet, deposits, withdrawals, and KYC: `phase5-wave9.spec.ts` covers KYC
+  lock, withdrawal pause, withdrawal confirmation/cancel/double-submit, frozen
+  account browse-only UX, KYC submission to admin approval, and KRW deposit
+  request plus bank auto-match. Invariants: deposit PHON conservation,
+  withdrawal request no-RPC-before-confirm, and single RPC on double confirm.
+- Trading and staking money flows: `core-flow.spec.ts` covers spot buy, futures
+  open/close, staking, reward claim, confirm cancel, OI cap rejection, leverage
+  rejection, and conservation. `funnel.spec.ts` covers signup, welcome bonus,
+  futures open, and liquidation. `group-d-hardening.spec.ts` adds candle volume,
+  price alert, stale oracle UI, and parallel OI-cap race coverage. Invariants:
+  PHON/USDT conservation, no side effect on cancel/reject, race boundary.
+- Casino/provably fair: `casino.spec.ts` covers all six games for commit,
+  settle, reveal, verification, idempotency, and auth. `casino-wave7-closeout.spec.ts`
+  covers cap rejection with translated error, confirmation cancel, double
+  confirm dedupe, RG block, self-exclusion block, and mismatch auto-kill.
+  Invariants: ledger conservation, seed hash/result verification, no raw SQL
+  code leakage, no bet on cancel/reject.
+- Admin, security, and audit: `admin.spec.ts` covers RBAC positive/negative,
+  feature toggle confirmation plus audit, withdrawal reject/refund plus audit,
+  ops alert sync/ack audit, and non-admin RPC denial. Invariants: server-side
+  authz, audit row for manual actions, PHON conservation on withdrawal refund.
+- Responsible gambling and risk gates: `casino-wave7-closeout.spec.ts` covers
+  self-exclusion/RG blocks in the browser; `phase5-wave9.spec.ts` covers frozen
+  account browse-only UX; SQL suites remain the deeper policy/invariant gate.
+- Affiliate approvals: browser E2E is not a separate spec yet; coverage is SQL
+  integration focused (`affiliate_*` suites) plus admin queue patterns in
+  `admin.spec.ts`. Add browser coverage when an affiliate user/admin route is
+  shipped.
+- PWA/offline/i18n UI: `visual.spec.ts` covers login and authenticated route
+  rendering; `quality.spec.ts` and `bun run check:pwa` cover production quality
+  and PWA checks. `check:i18n` detects hardcoded Korean outside the catalog and
+  server-tested error codes without mappings. Add explicit locale-toggle E2E
+  before launch once the language switch UX is exposed.
+
 ## Completion Definition
 
 A task is complete only when code, tests, relevant E2E, security notes, cleanup,

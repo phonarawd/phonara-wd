@@ -99,7 +99,7 @@
       "name": "@phonara/game-engine",
       "version": "0.1.0",
       "dependencies": {
-        "decimal.js": "^10.6.0",
+        "@phonara/money": "workspace:*",
         "zod": "^4.4.3",
       },
       "devDependencies": {

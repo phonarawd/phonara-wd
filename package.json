@@ -23,6 +23,7 @@
     "test:sql": "tsx scripts/run-sql-tests.ts",
     "test:e2e": "playwright test",
     "check": "bun run check:env && bun run check:i18n && bun run check:release && bun run check:advisors && bun run check:deps && bun run typecheck && bun run lint && bun run test && bun run build",
+    "check:full": "tsx scripts/run-full-gate.ts",
     "check:env": "tsx scripts/check-env.ts",
     "check:i18n": "tsx scripts/check-i18n-coverage.ts",
     "check:deps": "knip --dependencies --no-progress --workspace \"@phonara/*\"",
