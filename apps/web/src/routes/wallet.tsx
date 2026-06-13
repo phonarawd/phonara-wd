@@ -380,7 +380,7 @@ function WalletPage() {
 
   return (
     <AppShell active="wallet">
-      <div className="app-page pn-anim-rise">
+      <div className="surface-wallet app-page pn-anim-rise">
         <section className="app-section mb-6" aria-labelledby="wallet-hero-title">
           <Card elevation="raised" className="overflow-hidden p-0">
             <div className="p-5 pb-4">

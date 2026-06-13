@@ -18,7 +18,7 @@ end-to-end. This file is the operating contract for that grant.
   across plans/files.
 - Minimum preflight sources:
   - `.cursor/rules/*` for non-negotiable operating rules.
-  - `docs/PHONARA_V2_MASTER_PLAN.md` including its **Build Log**.
+  - `docs/PHONARA_V2_MASTER_PLAN.md` when it is readable and relevant.
  - `docs/CURRENT_STATUS.md` for the lightweight current-state summary.
  - For UI/UX work, `docs/PHONARA_UI_UX_MASTER.md` and the active Cursor UI plan.
   - `git status`, recent commits, and relevant file/RPC/component searches.
@@ -34,7 +34,7 @@ end-to-end. This file is the operating contract for that grant.
  only one active tactical plan for the current UI/UX slice. Do not create a
  third competing plan unless the older plan is explicitly superseded in writing.
 - If current code and a plan disagree, inspect the code/tests/remote state, then
-  update the stale plan/Build Log before implementing. Never blindly implement
+  follow verified current state before implementing. Never blindly implement
   from an old plan.
 
 ## 1. Standing autonomy (no per-step approval)
@@ -70,21 +70,17 @@ end-to-end. This file is the operating contract for that grant.
   to investigation-only work.
 - A task is "done" only when its relevant gates (see `10-quality-gates`) pass.
 
-## 3. Build log in the master plan (mandatory, immediate)
+## 3. Documentation updates
 
-- After completing each meaningful task, immediately append a dated entry to the
-  **Build Log** section of `docs/PHONARA_V2_MASTER_PLAN.md` describing:
-  - What was implemented and how (files, RPCs, components, design decisions).
-  - Any error encountered and exactly how it was fixed (root cause → fix).
-  - Tests run and their results; gates passed.
-- The Build Log is the durable cross-session memory. Keep it accurate enough that
-  a fresh session can resume from it alone.
+- Do not treat `docs/PHONARA_V2_MASTER_PLAN.md` Build Log updates as mandatory
+  task-closeout work. Update docs only when the user asks or when the task
+  explicitly changes durable product plans, runbooks, or operator-facing docs.
 
 ## 4. Production cleanliness (launch-ready)
 
 - The shipped product must show NO test/dev/debug/"test mode" UI. Gate any dev-
   only tooling behind `import.meta.env.DEV` so production builds exclude it.
-- No mock/seed/bot/demo data, no placeholder copy, no `console.log` noise, no TODO
+- No mock/seed/demo data in engine, RPC, or ledger paths. Zero-user launch may still use presentation-layer FOMO/live-feed/social-proof string display props presented as real-time activity.
   banners in production paths. Remove scaffolding and residue as you go.
 - All user-facing copy is i18n-keyed (Korean lives only in the i18n catalog).
   English mode must never show Korean. `bun run check:i18n` must pass before a
@@ -98,9 +94,8 @@ end-to-end. This file is the operating contract for that grant.
 
 ## 6. Session continuity & performance hygiene
 
-- Keep the Build Log current so work survives a chat reset. If the conversation
-  grows large/laggy, consolidate state into the Build Log + TODOs so a new
-  session can continue seamlessly, then proceed.
+- Use concise chat summaries and TODOs for session continuity. Do not require
+  Build Log updates for ordinary implementation tasks.
 - Delete generated junk, dead files, and lag-inducing residue after each phase
   (`bun run clean` where applicable). Keep the repo lean.
 

@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { Button, Icon, buttonVariants } from '@phonara/ui';
 import { useI18n, useT } from '../lib/i18n';
+import { RewardLoopHero } from '../features/landing/reward-loop-hero';
 
 export function LandingPage() {
   const t = useT();
@@ -50,50 +51,7 @@ export function LandingPage() {
           </div>
         </header>
 
-        <section className="landing-hero auth-stagger auth-stagger-1 flex flex-1 flex-col justify-center text-center">
-          <div className="auth-live-badge mx-auto mb-6">
-            <span className="auth-live-dot" aria-hidden="true" />
-            <Icon name="activity" size="xs" aria-hidden="true" />
-            <span>{t('auth.entry.brand.eyebrow')}</span>
-          </div>
-
-          <h1 className="auth-headline text-3xl font-extrabold leading-tight sm:text-4xl">
-            {t('landing.hero.headlineBefore')}{' '}
-            <span className="auth-headline-phon bg-clip-text text-transparent">
-              {t('landing.hero.headlinePhon')}
-            </span>{' '}
-            {t('landing.hero.headlineAfter')}
-          </h1>
-          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted sm:text-base">
-            {t('landing.hero.sub')}
-          </p>
-
-          <div className="landing-proof-grid" aria-label={t('auth.entry.trust.ariaLabel')}>
-            <span className="landing-proof-card">
-              <Icon name="earn" size="sm" aria-hidden="true" />
-              <span>{t('auth.entry.trust.participation')}</span>
-            </span>
-            <span className="landing-proof-card">
-              <Icon name="wallet" size="sm" aria-hidden="true" />
-              <span>{t('auth.entry.trust.wallet')}</span>
-            </span>
-          </div>
-
-          <div className="mt-8 flex flex-col gap-3">
-            <Link
-              to="/signup"
-              className={buttonVariants({ variant: 'primary', size: 'lg', full: true })}
-            >
-              {t('landing.cta.primary')}
-            </Link>
-            <Link
-              to="/login"
-              className={buttonVariants({ variant: 'secondary', size: 'lg', full: true })}
-            >
-              {t('landing.cta.secondary')}
-            </Link>
-          </div>
-        </section>
+        <RewardLoopHero />
 
         <footer
           className="auth-trust-strip auth-stagger auth-stagger-3 mt-10"

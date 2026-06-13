@@ -62,7 +62,7 @@ function ResponsibleGamingPage() {
 
   if (authLoading || !session) {
     return (
-      <AppShell active="casino">
+      <AppShell active="more">
         <div className="app-page flex min-h-[40vh] items-center justify-center text-sm text-muted">
           {t('common.loading')}
         </div>
@@ -71,7 +71,7 @@ function ResponsibleGamingPage() {
   }
 
   return (
-    <AppShell active="casino">
+    <AppShell active="more">
       <div className="app-page pn-anim-rise" data-testid="responsible-gaming-page">
         <section className="app-section" aria-labelledby="rg-hero-title">
           <Card elevation="raised" className="p-5">

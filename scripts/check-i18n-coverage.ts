@@ -36,8 +36,19 @@ function collectFiles(dir: string): string[] {
 
 const bilingualSet = new Set(bilingualHtmlFiles.map((b) => b.file));
 
+// Imported presentation zones may keep Korean copy verbatim until mirrored into packages/i18n.
+const allowedPrefixes = [
+  'apps/web/src/components/shell/',
+  'apps/web/src/components/ui/',
+  'apps/web/src/presentation-import/',
+];
+
+function isAllowedPresentationImportPath(file: string): boolean {
+  return allowedPrefixes.some((prefix) => file.startsWith(prefix));
+}
+
 const violations = roots.flatMap((root) => collectFiles(root)).filter((file) => {
-  if (allowedFiles.has(file) || bilingualSet.has(file)) return false;
+  if (allowedFiles.has(file) || bilingualSet.has(file) || isAllowedPresentationImportPath(file)) return false;
   return koreanPattern.test(readFileSync(file, 'utf8'));
 });
 

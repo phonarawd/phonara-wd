@@ -96,8 +96,18 @@
   --color-accent: var(--color-trust);
   --color-accent-hover: var(--color-primary-hover);
   --color-accent-secondary: oklch(0.55 0.18 280);
+  --color-violet: #8b5cf6;
+  --gradient-aurora: linear-gradient(135deg, var(--color-primary) 0%, var(--color-violet) 55%, #f5c84c 100%);
+  --gradient-cta: linear-gradient(
+    135deg,
+    var(--color-primary),
+    color-mix(in oklab, var(--color-primary) 55%, var(--color-violet))
+  );
   --primary-glow: 0 0 28px oklch(0.84 0.15 166 / 0.28);
   --primary-glow-strong: 0 0 44px oklch(0.89 0.135 166 / 0.38);
+  --shadow-glow-cta:
+    0 0 0 1px color-mix(in oklab, var(--color-primary) 40%, transparent),
+    0 8px 32px color-mix(in oklab, var(--color-primary) 35%, transparent);
 
   /* Auth/onboarding release tokens (canvas glow preserved) */
   --color-auth-bg: oklch(0.12 0.012 260);
@@ -177,6 +187,9 @@
   --motion-duration-2: 200ms;
   --motion-duration-3: 320ms;
   --motion-duration-4: 480ms;
+  --dur-fast: 160ms;
+  --dur-med: 260ms;
+  --dur-slow: 420ms;
   --motion-duration-anticipation: var(--motion-duration-1);
   --motion-duration-reveal: var(--motion-duration-3);
   --motion-duration-confirmation: var(--motion-duration-2);
@@ -185,6 +198,7 @@
   --motion-ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
   --motion-ease-emphasized: cubic-bezier(0.2, 0.9, 0.1, 1);
   --motion-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --motion-ease-press: cubic-bezier(0.32, 0, 0.67, 0);
   --motion-stagger-step: 48ms;
   --motion-press-scale: 0.98;
@@ -196,6 +210,9 @@
   --text-display: clamp(2.75rem, 6vw, 5rem);
   --text-display--line-height: 0.92;
   --text-display--letter-spacing: -0.06em;
+  --text-hero: clamp(2.5rem, 8vw, 4.5rem);
+  --text-hero--line-height: 0.92;
+  --text-hero--letter-spacing: -0.06em;
   --text-title: clamp(2rem, 4vw, 3.25rem);
   --text-title--line-height: 0.98;
   --text-title--letter-spacing: -0.05em;
@@ -266,6 +283,23 @@
   --density-comfortable-gap: 1rem;
   --density-comfortable-panel-padding: 1.25rem;
   --touch-target-min: 44px;
+
+  /* Surface density — Earn (low) / Games (medium) / Trade (high) */
+  --surface-earn-control: 3rem;
+  --surface-earn-control-lg: 3.25rem;
+  --surface-earn-row: 3.5rem;
+  --surface-earn-gap: 1.125rem;
+  --surface-earn-padding: 1.375rem;
+  --surface-earn-radius: var(--radius-2xl);
+  --surface-games-control: 2.75rem;
+  --surface-games-gap: 0.875rem;
+  --surface-games-padding: 1.125rem;
+  --surface-trade-control: var(--density-compact-control);
+  --surface-trade-row: var(--density-compact-row);
+  --surface-trade-gap: var(--density-compact-gap);
+  --surface-trade-padding: var(--density-compact-panel-padding);
+  --surface-wallet-gap: 1rem;
+  --surface-wallet-padding: 1.25rem;
 
   /* Nexus Rocket absorption tokens: scoped so the broader PHONARA skin stays intact. */
   --color-rocket-bg: oklch(0.08 0.028 285);

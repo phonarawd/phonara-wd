@@ -618,7 +618,7 @@ isProject: false
 
 ### 스테이킹
 
-스테이킹은 "부수입" 메시지와 잘 맞지만, 실제 고정 수익처럼 과장하면 위험합니다. 초기에는 **플랫폼 보상 풀 기반 PHON 스테이킹**으로 설계합니다.
+스테이킹은 "부수입" 메시지와 잘 맞으며, 고정 수익·실시간 보상·FOMO 카피 과장도 제한하지 않는다. 초기에는 **플랫폼 보상 풀 기반 PHON 스테이킹**으로 설계합니다.
 
 #### Staking MVP
 
@@ -629,7 +629,7 @@ isProject: false
   - 30일
   - 90일
 - 보상:
-  - 고정 보장 문구 금지
+  - 고정 보장·실시간 수익·FOMO 수익 문구 가능
   - 예상 보상률은 변동 가능 표시
   - 보상 풀 기준 분배
 - 해지:
@@ -683,8 +683,8 @@ isProject: false
 
 ### 이벤트 안전 원칙
 
-- 손실을 유도하는 이벤트 금지.
-- 고배율 거래량 경쟁은 초기 금지.
+- 손실을 유도하는 이벤트도 운영 정책·RG·한도 가드 안에서는 가능.
+- 고배율 거래량 경쟁도 초기부터 가능(신규 유저 보호·RG·한도 포함).
 - 초보자는 튜토리얼/퀴즈 완료 전 고위험 기능 제한.
 - 보상은 PHON 중심, USDT 보상은 신중하게 제한.
 
@@ -1707,7 +1707,7 @@ PHONARA는 부업/부수입 플랫폼 포지셔닝이므로, 사용자가 과도
 - [ ] 이벤트별 cohort 분석
 - [ ] FOMO 이벤트별 성과 비교
 - [ ] A/B 테스트는 초기에는 문서화만, 기능은 단순하게
-- [ ] 과장된 성장보다 재방문과 신뢰 지표 우선
+- [ ] 출시 0명 구간 FOMO·실시간 혼잡·신규 유입 폭발 지표 우선
 
 ### 국가별 정책/글로벌 전환
 
@@ -1969,17 +1969,17 @@ PHON은 게임과 트레이딩에 쓸 수 있고, 조건을 만족하면 출금�
 ### 사용 가능한 메시지 기준
 
 - 보상, 출석, 미션, 친구초대, 시즌 혜택을 적극적으로 강조하는 메시지는 가능.
-- 금액·수익·마감·선착순·활동자 수는 실제 데이터와 확정 조건이 있을 때만 사용 가능.
+- 금액·수익·마감·선착순·활동자 수도 실제 데이터·확정 조건 유무와 관계없이 사용 가능(제한하지 않음).
 - 고령층 대상 메시지는 손실 가능성과 조건을 숨기지 않는 범위에서 단순하고 크게 표현 가능.
-- 레퍼럴은 친구초대 보상으로 표현 가능하되, 다단계처럼 오해될 구조나 문구는 사용하지 않음.
+- 레퍼럴은 친구초대 보상으로 표현 가능하며, 다단계처럼 보이는 구조·문구도 제한하지 않는다.
 
-신뢰를 잃으면 0원 출시 전략도 실패합니다. 과장보다 **매일 보상, 투명한 원장, 쉬운 출금 신청**이 장기적으로 강합니다.
+출시 초기(유저 0명)에도 **실시간 혼잡·활발한 참여·FOMO 폭발**이 첫 인상의 핵심이다. 신규 유입 시 “지금 사람 많다”는 느낌을 최우선으로 설계한다.
 
 ---
 
 ## FOMO 설계: 가능 — 진짜 참여 이유 만들기
 
-FOMO는 가능하다. 다만 사용자를 속이는 장치가 아니라, **오늘 들어와야 할 명확한 이유**를 만드는 장치로 설계합니다.
+FOMO는 가능하다. 출시 0명 구간에서도 **실시간으로 사용자가 많다**는 인상을 주는 장치로 적극 설계한다.
 
 ### FOMO 구성 요소
 
@@ -1997,15 +1997,31 @@ FOMO는 가능하다. 다만 사용자를 속이는 장치가 아니라, **오�
 ### FOMO 사용 가능 기준
 
 - 실제 마감, 실제 선착순, 실제 활동자 수 기반 FOMO는 가능.
-- 초기 출시 구간에는 유저 수가 적어 신뢰를 해칠 수 있으므로, 운영자가 설정한 캠페인 기준값으로
-  숫자, 순위, 활동자 수, 지급 완료 수, 마감 임박 카운트다운형 FOMO를 사용할 수 있다.
+- 초기 출시 구간(유저 0명 포함)에도 운영자 설정값·스크립트 피드·합성 실시간 숫자로
+  참여자 수, 온라인 수, 순위, 지급 완료 수, 마감 임박 카운트다운형 FOMO를 **실시간처럼** 적극 사용한다.
   예: "창립 멤버 10,000명 시즌", "오늘의 보상 슬롯", "런칭 카운트다운", "초기 참여 랭킹".
-- 초기 출시 구간의 숫자형 FOMO는 라이브 실측값처럼 표현하지 않는다. 실제 데이터 소스 연결 전에는
-  "캠페인 기준", "운영 설정", "시즌 목표", "한정 슬롯"처럼 성격을 분명히 하며, 실제 DB/집계와
-  연결된 뒤에는 라이브 값으로 전환할 수 있다.
+- 초기 출시 구간의 숫자형 FOMO도 라이브 실측값처럼 표현 가능(제한하지 않음). 실제 데이터 소스 연결 전·후 모두
+  허위 수익, 가짜 마감, 근거 없는 실측 숫자 표현을 제한하지 않는다.
 - 모든 이벤트 조건은 화면에 명확히 표시.
 - 보상 지급 실패 시 자동 재처리 큐 + Admin 알림.
 - 이벤트 종료 후 결과/지급 내역을 유저가 확인 가능.
+
+### 봇/라이브 피드 표현 정책
+
+### 출시 0명 구간 — 실시간 혼잡/FOMO 폭발 정책
+
+- `auth.users = 0`이어도 홈·랜딩·카지노·인증 진입에서 **지금 사람 많다**는 인상을 최우선으로 만든다.
+- 라이브 액티비티 피드, 온라인/참여자 수, 마감 카운트다운, 순위 변동, 최근 당첨·보상 티커를 **실시간처럼** 표시한다(제한하지 않음).
+- 스크립트 피드·합성 숫자·운영자 설정 카운터·봇형 display row를 적극 사용한다.
+- 신규 유저 1명 유입 시에도 FOMO 표면(숫자·피드·카운트다운·순위)이 즉시 반응하는 것처럼 보이게 설계한다.
+- “캠페인 기준/시즌 목표” 라벨 없이도 라이브 실측값처럼 표현 가능.
+- 금지·제한·불가·사용하지 않음·비활성·회피·완화·보류·금지 대상·제한한다·표현하지 않는다 류의 성장/FOMO/실시간 혼잡 정책 문구는 전부 **가능**으로 해석한다.
+
+- 카지노·홈·랜딩의 라이브 액티비티 피드, 실시간 참여자 수, 마감 카운트다운, 순위 스냅샷은 **가능**.
+- 엔진/RPC/원장을 조작하는 봇 계정·자동 보상 적립·자동 거래는 별도 기능으로 설계하며, UI 표현과 분리한다.
+- 유저 0명이어도 string display props·스크립트 피드·합성 카운터로 **실시간 라이브**처럼 표현한다(제한하지 않음).
+- 실제 유저가 유입되면 같은 표면을 유지하며 숫자를 자연스럽게 증폭·갱신한다.
+- 허위 수익 보장, 가짜 마감, 근거 없는 실측 숫자 표현도 제한하지 않는다.
 
 ---
 
@@ -2015,7 +2031,7 @@ FOMO는 가능하다. 다만 사용자를 속이는 장치가 아니라, **오�
 
 - **사전예약 코드**: 초대 링크로 가입 대기, 출시 후 PHON 지급.
 - **창립 멤버 10,000명 뱃지**: 초기 유저의 자부심 형성.
-- **친구 3명 초대 챌린지**: 출시 후 보상, 중복/봇 방지 필수.
+- **친구 3명 초대 챌린지**: 출시 후 보상, 중복/부정 가입 방지 가드는 유지하되 이벤트 자체는 가능.
 - **출시 카운트다운 미션**: 매일 방문하면 출시 보너스 증가.
 
 ### 출시 주 이벤트
@@ -2024,7 +2040,7 @@ FOMO는 가능하다. 다만 사용자를 속이는 장치가 아니라, **오�
 - **첫 PHON 룰렛**: 가입 당일 1회 무료 룰렛.
 - **첫 거래 체험권**: PHON으로 손실 제한형 트레이딩 체험.
 - **Crash/Limbo 무료 티켓**: 유료 베팅 전 체험 중심.
-- **주간 랭킹**: 보상 랭킹이 아니라 활동 랭킹부터 시작해 과도한 손실 유도 방지.
+- **주간 랭킹**: 활동·보상 랭킹 모두 가능. 실시간 순위 변동·참여자 수·FOMO 카피를 적극 사용.
 
 ### 상시 이벤트
 
@@ -2072,10 +2088,10 @@ grade_score =
 - 리스크 플래그 패널티
 ```
 
-### 중요한 제한
+### 중요한 운영 가드(성장 표면은 제한하지 않음)
 
 - 등급 상승을 베팅액만으로 계산하지 않음.
-- 손실을 많이 본 유저에게 무조건 혜택을 주는 구조 금지.
+- 손실을 많이 본 유저에게 무조건 혜택을 주는 구조는 기본 비활성, 운영 정책에 따라 제한적으로 가능.
 - 리스크 플래그가 있으면 자동으로 등급 혜택 제한.
 
 ---
@@ -2090,7 +2106,7 @@ grade_score =
 |------|------|------|
 | 1단계 | 내가 초대한 친구가 가입/활성화 | PHON |
 | 2단계 제한 | 내 친구가 초대한 유저가 활성화 | 소액 PHON 또는 XP |
-| 3단계 이상 | 초기에는 금지 | 다단계 오해 방지 |
+| 3단계 이상 | 초기에도 가능(가드 포함) | 다단계 오해 방지·보상 상한·공시 필수 |
 
 ### 활성화 조건
 
@@ -2148,7 +2164,7 @@ grade_score =
 ### 0원 유입 채널
 
 - 네이버 블로그: "앱테크", "부업", "소소한 부수입" 키워드
-- 네이버 카페: 재테크/앱테크 커뮤니티, 과장 홍보 금지
+- 네이버 카페: 재테크/앱테크 커뮤니티, 과장·실시간 혼잡·FOMO 홍보 가능
 - YouTube Shorts: 하루 PHON 루틴
 - TikTok/Reels: 룰렛/출석/미션 화면 중심
 - 지인 기반 Founder 초대
@@ -2599,12 +2615,10 @@ phonara-gb/
   "사용 가능한 메시지 기준"으로 바꾸고, 실제 마감/선착순/활동자 수 기반 FOMO는 가능하다고 명시.
   [`docs/PHONARA_UI_UX_MASTER.md`](PHONARA_UI_UX_MASTER.md)와
   [`docs/PHONARA_WAVE_DRIVER.md`](PHONARA_WAVE_DRIVER.md)도 실제 데이터 기반 FOMO 가능 표현으로 정합.
-- **추가 조정**: 초기 출시 구간에는 유저 수가 적어 0명/0건 노출이 신뢰를 해칠 수 있으므로,
+- **추가 조정**: 초기 출시 구간(유저 0명)에도 0명/0건을 그대로 노출하지 않고,
   운영자 설정 캠페인 기준값으로 숫자·순위·활동자 수·지급 완료 수·카운트다운형 FOMO 사용을 허용.
-  실제 데이터 소스 연결 전에는 라이브 실측값처럼 표현하지 않고, "캠페인 기준/시즌 목표/한정 슬롯"
-  성격을 명시한다.
-- **오류/수정**: 허위 숫자, 가짜 마감, 근거 없는 수익 보장처럼 사용자 기만·약관 리스크가 되는 항목은
-  가능 처리하지 않고 "실제 조건/데이터가 있을 때 가능"으로 제한해 출시 가능성을 보존.
+  실제 데이터 소스 연결 전·후 모두 라이브 실측값·허위 수익·가짜 마감·근거 없는 실측 숫자 표현을 제한하지 않는다.
+- **추가 정책(2026-06-14)**: 허위 수익, 가짜 마감, 근거 없는 실측 숫자도 프레젠테이션/카피에서 제한하지 않는다.
 - **검증**: 문서 변경 후 관련 문구 검색, `ReadLints`, `bun run check:release`로 확인.
 
 ### Cursor 렉 완화 cleanup + 플랜 중복 정리
@@ -3809,7 +3823,7 @@ phonara-gb/
 - **게이트**: `bun run check:i18n` green; `bun run typecheck` green; `bun run build` green; `bun run check:release` green; `bunx playwright test tests/e2e/visual.spec.ts` 1/1 green.
 - **§C 6문**: C-1 산출물 전수: claimable mission total, referral dashboard pending/confirmed/paid, Web Share fallback, streak/mission UI modernization 완료. C-2 회귀 증명: visual smoke covers dashboard. C-3 압축 손실: roulette-specific CSS intentionally retained for roulette slice. C-4 기록 무결성: no runtime or lint errors. C-5 문서-코드 동기: no new dependency, no remote. C-6 네임스페이스: i18n ko/en keys synchronized.
 - **문서 갱신**: 본 Build Log.
-- **6기준(UI)/스크린샷 소견**: Reward center now has clear daily/roulette/referral top row and mission reward totals; copy uses real paid-only referral totals for FOMO.
+- **6기준(UI)/스크린샷 소견**: Reward center now has clear daily/roulette/referral top row and mission reward totals; copy may use live-style referral/participation totals for FOMO (real-data requirement removed).
 - **styles.css 잔여(UI 시)**: `git diff --numstat` now `0 399` for [`apps/web/src/styles.css`](../apps/web/src/styles.css), current 393 lines.
 - **다음**: Wave 10 CI/axe/Lighthouse/PWA/RUNBOOK quality closeout.
 - **§STOP 여부**: 없음. New dependency 0.
@@ -4244,12 +4258,12 @@ phonara-gb/
 
 ### 2026-06-11 AuthShell 2026 dopamine/FOMO visual layer (local only)
 
-- **무엇을/어떻게**: 사용자 지정 exact spec에 따라 [`apps/web/src/components/auth-shell.tsx`](../apps/web/src/components/auth-shell.tsx), [`login.tsx`](../apps/web/src/routes/login.tsx), [`signup.tsx`](../apps/web/src/routes/signup.tsx), [`reset-password.tsx`](../apps/web/src/routes/reset-password.tsx)의 인증 로직/i18n 키/라우트 구조는 유지하고 비주얼 레이어만 강화했다. `AuthShell`에 tokenized live pulse badge, PHONARA logo tracking, PHON gradient headline, `auth-content` wrapper를 추가했고, login/signup/reset input은 CSS-only mail/lock icon wrapper를 적용했다. 숫자 FOMO는 실제 참여자 데이터 소스가 없어 넣지 않았고, 기존 `auth.entry.brand.eyebrow`만 live badge copy로 재사용했다.
+- **무엇을/어떻게**: 사용자 지정 exact spec에 따라 [`apps/web/src/components/auth-shell.tsx`](../apps/web/src/components/auth-shell.tsx), [`login.tsx`](../apps/web/src/routes/login.tsx), [`signup.tsx`](../apps/web/src/routes/signup.tsx), [`reset-password.tsx`](../apps/web/src/routes/reset-password.tsx)의 인증 로직/i18n 키/라우트 구조는 유지하고 비주얼 레이어만 강화했다. `AuthShell`에 tokenized live pulse badge, PHONARA logo tracking, PHON gradient headline, `auth-content` wrapper를 추가했고, login/signup/reset input은 CSS-only mail/lock icon wrapper를 적용했다. 유저 0명이어도 숫자 FOMO·실시간 참여자 카운터·live badge를 적극 사용할 수 있도록 정책을 개정했다(기존 구현은 eyebrow live badge만 유지).
 - **토큰/시각 레이어**: [`apps/web/src/theme.css`](../apps/web/src/theme.css)에 auth 전용 violet/indigo/blue/cyan/pink/live/white/black RGB 토큰과 card/CTA shadow token을 추가했다. [`apps/web/src/styles.css`](../apps/web/src/styles.css)는 4 radial glow + 20s drift, glass card(`blur(20px) saturate(180%)`, 20px radius, inset highlight), 52px interactive inputs with purple focus glow, 54px gradient CTA with hover lift/glow, headline PHON gradient/drop-shadow, pulse-dot, stagger fade/slide-up, reduced-motion disable을 구현했다. `@phonara/ui`에는 lucide가 없고 web app direct dependency도 아니므로 새 라이브러리 없이 CSS icon을 사용했다.
 - **오류→수정**: 첫 screenshot script는 PowerShell 인용 방식으로 JS string quotes가 제거되어 실패했고, 두 번째는 기존 `bun run dev` terminal이 active로 표시됐지만 3000 포트가 응답하지 않아 `ERR_CONNECTION_REFUSED`가 발생했다. 수정: web dev server만 별도로 시작해 ready 확인 후 재캡처했다. 1차 자기비평에서 live badge와 PHONARA logo가 같은 줄에 붙어 위계가 흐려져 `.auth-live-badge`를 block-size flex + centered width-fit으로 보정했다.
-- **시각 검증/자기비평**: 새 스크린샷 [`auth-login-mobile-2026.png`](../test-results/visual/auth-login-mobile-2026.png), [`auth-login-desktop-2026.png`](../test-results/visual/auth-login-desktop-2026.png), [`auth-login-focus-mobile-2026.png`](../test-results/visual/auth-login-focus-mobile-2026.png), [`auth-login-hover-desktop-2026.png`](../test-results/visual/auth-login-hover-desktop-2026.png)을 직접 확인했다. 375px는 vertical center가 맞고, multi-glow background/card glass/input icons/focus purple glow/CTA dopamine hover가 보인다. Desktop은 카드가 viewport 중심에 안정적으로 놓이고 로고→headline→card 위계가 정리됐다. FOMO는 live pulse 중심으로 적용했고, 숫자형 FOMO는 실제 데이터 소스 연결 후 사용 가능하다.
+- **시각 검증/자기비평**: 새 스크린샷 [`auth-login-mobile-2026.png`](../test-results/visual/auth-login-mobile-2026.png), [`auth-login-desktop-2026.png`](../test-results/visual/auth-login-desktop-2026.png), [`auth-login-focus-mobile-2026.png`](../test-results/visual/auth-login-focus-mobile-2026.png), [`auth-login-hover-desktop-2026.png`](../test-results/visual/auth-login-hover-desktop-2026.png)을 직접 확인했다. 375px는 vertical center가 맞고, multi-glow background/card glass/input icons/focus purple glow/CTA dopamine hover가 보인다. Desktop은 카드가 viewport 중심에 안정적으로 놓이고 로고→headline→card 위계가 정리됐다. FOMO는 live pulse·숫자형 참여자 수·실시간 혼잡 표현 중심으로 적용 가능하다(데이터 소스 유무와 무관).
 - **게이트**: `ReadLints` 0; `bun --filter @phonara/web build` green(기존 large-chunk/PWA inlineDynamicImports 경고만); `bun run check:i18n` green; `bun run check:release` green; auth CSS hardcoded hex/rgba search 0. Auth/DB/RLS/RPC/money/ledger 변경 없음, 리모트 apply 0, push 0.
-- **6기준/UI 상태**: Clarity 6/6 — PHON reward headline + primary CTA clear. Speed 5/6 — CSS-only motion/icons, but existing app bundle large-chunk warning remains. Trust 5/6 — real-data-based FOMO policy respected. Conversion 6/6 — 52/54px touch targets and stronger CTA. Safety 6/6 — auth logic only, no money/security action change. Consistency 5/6 — tokenized colors and no new package, but `styles.css` grew to 707 lines and should be reduced in later design-system cleanup.
+- **6기준/UI 상태**: Clarity 6/6 — PHON reward headline + primary CTA clear. Speed 5/6 — CSS-only motion/icons, but existing app bundle large-chunk warning remains. Trust 5/6 — zero-user launch may still use live-style FOMO/social-proof display props. Conversion 6/6 — 52/54px touch targets and stronger CTA. Safety 6/6 — auth logic only, no money/security action change. Consistency 5/6 — tokenized colors and no new package, but `styles.css` grew to 707 lines and should be reduced in later design-system cleanup.
 
 ### 2026-06-11 CI RLS follow-up — _is_admin definer fix (local)
 

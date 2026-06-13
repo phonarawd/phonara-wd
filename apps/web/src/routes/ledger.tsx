@@ -88,7 +88,7 @@ function LedgerPage() {
   }, [session, authLoading, navigate]);
 
   return (
-    <AppShell active="wallet">
+    <AppShell active="more">
       <div className="app-page pn-anim-rise">
         <section className="app-section" aria-labelledby="ledger-page-title">
           <h2 id="ledger-page-title" className="section-title">

@@ -84,7 +84,7 @@ function StakingPage() {
 
   if (authLoading) {
     return (
-      <AppShell active="staking">
+      <AppShell active="more">
         <div className="app-page" aria-busy="true">
           <Card className="grid w-full max-w-md gap-4 p-5">
             <Skeleton className="h-5 w-32" />
@@ -99,7 +99,7 @@ function StakingPage() {
   }
 
   return (
-    <AppShell active="staking">
+    <AppShell active="more">
       <div className="app-page pn-anim-rise" data-testid="staking-page">
         <section className="app-section" aria-labelledby="staking-hero-title">
           <Card elevation="raised" className="overflow-hidden p-0">

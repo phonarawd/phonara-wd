@@ -4,6 +4,8 @@ import { Route as indexRoute } from './routes/index';
 import { Route as loginRoute } from './routes/login';
 import { Route as signupRoute } from './routes/signup';
 import { Route as resetPasswordRoute } from './routes/reset-password';
+import { Route as gamesRoute } from './routes/games';
+import { Route as aboutRoute } from './routes/about';
 import { Route as termsRoute } from './routes/terms';
 import { Route as privacyRoute } from './routes/privacy';
 import { Route as dashboardRoute } from './routes/dashboard';
@@ -21,6 +23,12 @@ import {
   casinoFairnessRoute,
 } from './routes/casino';
 import { Route as walletRoute } from './routes/wallet';
+import { Route as earnRoute } from './routes/earn';
+import { Route as moreRoute } from './routes/more';
+import { Route as homeRoute } from './routes/home';
+import { Route as accountRoute } from './routes/account';
+import { Route as settingsRoute } from './routes/settings';
+import { Route as referralRoute } from './routes/referral';
 import { Route as responsibleGamingRoute } from './routes/responsible-gaming';
 
 const routeTree = rootRoute.addChildren([
@@ -28,6 +36,8 @@ const routeTree = rootRoute.addChildren([
   loginRoute,
   signupRoute,
   resetPasswordRoute,
+  gamesRoute,
+  aboutRoute,
   termsRoute,
   privacyRoute,
   dashboardRoute,
@@ -35,6 +45,12 @@ const routeTree = rootRoute.addChildren([
   tradeRoute,
   stakingRoute,
   walletRoute,
+  earnRoute,
+  moreRoute,
+  homeRoute,
+  accountRoute,
+  settingsRoute,
+  referralRoute,
   responsibleGamingRoute,
   casinoIndexRoute,
   casinoCrashRoute,

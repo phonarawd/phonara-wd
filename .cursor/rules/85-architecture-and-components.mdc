@@ -11,6 +11,10 @@ alwaysApply: true
 
 ## 컴포넌트 소유권 (가장 중요)
 
+- 예외: 사용자 앱 UI/UX를 외부 산출물로 1:1 교체·흡수하는 작업은
+  `95-presentation-import-absorption`을 우선한다. 이 경우 `apps/web/src/components/ui`,
+  `apps/web/src/components/shell`, `apps/web/src/presentation-import`에 로컬 컴포넌트를
+  유지하여 시각 결과를 그대로 보존한다.
 - 재사용 가능성이 있는 UI 컴포넌트는 반드시 `@phonara/ui`에 만든다.
   예: Button, Modal, ConfirmDialog, Sheet, DataTable, Toast, Badge, Tooltip.
 - 새 컴포넌트 작성 전 자문한다: ① 다른 곳에서도 쓰일 가능성이 있는가? ② `@phonara/ui`에

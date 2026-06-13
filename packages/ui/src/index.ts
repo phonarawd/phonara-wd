@@ -109,6 +109,9 @@ export {
   type TradingChartProps,
 } from './components/trading-chart';
 export { OrderBook, type OrderBookLabels, type OrderBookLevel, type OrderBookProps } from './components/order-book';
+export { MissionItem, missionItemVariants, type MissionItemProps } from './components/mission-item';
+export { AssetCard, assetCardVariants, type AssetCardProps } from './components/asset-card';
+export { QuickAction, quickActionVariants, type QuickActionProps } from './components/quick-action';
 
 // Navigation & layout
 export { Sheet, type SheetProps } from './components/sheet';

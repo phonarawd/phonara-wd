@@ -100,7 +100,7 @@ function DashboardPage() {
     <AppShell active="home">
       {showWelcome && <WelcomeModal onDismiss={() => setShowWelcome(false)} />}
 
-      <div className="app-page pn-anim-rise" data-testid="dashboard-page">
+      <div className="surface-earn app-page pn-anim-rise" data-testid="dashboard-page">
         <section className="app-section" aria-labelledby="dashboard-hero-title">
           <Card elevation="raised" className="overflow-hidden p-0">
             <div className="p-5 pb-4">
@@ -204,7 +204,7 @@ function DashboardPage() {
 
           <div className="dashboard-hub-grid">
             <DashboardHubCard
-              to="/staking"
+              to="/earn"
               eyebrow={t('dashboard.hub.earn.eyebrow')}
               title={t('dashboard.hub.earn.title')}
               description={t('dashboard.hub.earn.description')}
@@ -225,7 +225,7 @@ function DashboardPage() {
               metric={t('dashboard.hub.trade.metric')}
             />
             <DashboardHubCard
-              to="/ledger"
+              to="/wallet"
               eyebrow={t('dashboard.hub.wallet.eyebrow')}
               title={t('dashboard.hub.wallet.title')}
               description={t('dashboard.hub.wallet.description')}
@@ -254,6 +254,9 @@ function DashboardPage() {
 
         <section className="app-section-secondary" aria-label={t('dashboard.secondaryLinks')}>
           <div className="flex flex-wrap gap-2">
+            <Link to="/earn" className={buttonVariants({ variant: 'primary', size: 'sm' })}>
+              {t('nav.earn')}
+            </Link>
             <Link to="/ledger" className={buttonVariants({ variant: 'outline', size: 'sm' })}>
               {t('nav.ledgerHistory')}
             </Link>
@@ -277,7 +280,7 @@ function DashboardHubCard({
   description,
   metric,
 }: {
-  to: '/staking' | '/casino' | '/trade' | '/ledger';
+  to: '/staking' | '/casino' | '/trade' | '/ledger' | '/earn' | '/wallet';
   eyebrow: string;
   title: string;
   description: string;

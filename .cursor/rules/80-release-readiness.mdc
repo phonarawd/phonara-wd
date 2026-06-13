@@ -20,7 +20,7 @@ alwaysApply: true
 - placeholder/미완 문구: "추후 구현", "미구현", "미정", "샘플", "예시",
   "test mode", "dummy data", "lorem ipsum".
 - 개발자용 코멘트로 노출되는 UI(빨간 박스, "개발용"/"테스트" 배지 등)와 디버깅 UI.
-- 하드코딩된 테스트 데이터(테스트 userId/UUID, 고정 amount, mock/seed/봇/데모 데이터).
+- 하드코딩된 테스트 데이터(테스트 userId/UUID, 고정 amount, mock/seed/데모 데이터) — 엔진·RPC·원장 경로 기준. 프레젠테이션 레이어의 FOMO/라이브 피드/0명 출시 실시간 혼잡 string display props는 가능.
 - `describe.only` / `it.only` / `test.only` (포커스된 테스트 잔재).
 
 ## 마감 기준

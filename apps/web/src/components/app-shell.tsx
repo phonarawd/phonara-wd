@@ -10,36 +10,84 @@ import { useAuth } from '../contexts/auth-context';
 import { walletKeys } from '../hooks/use-wallet';
 import { supabase } from '../lib/supabase';
 
-type AppNavKey = 'home' | 'trade' | 'wallet' | 'casino' | 'staking';
+type AppNavKey = 'home' | 'games' | 'trade' | 'wallet' | 'more' | 'earn';
 
 type AppShellProps = {
   children: ReactNode;
-  /** Override active tab when the route is not in the primary nav map. */
   active?: AppNavKey;
 };
 
 type Wallet = Tables<'wallets'>;
 
-const NAV: ReadonlyArray<{
+type NavItem = {
   key: AppNavKey;
-  to: '/dashboard' | '/trade' | '/wallet' | '/casino' | '/staking';
+  to: '/dashboard' | '/casino' | '/trade' | '/wallet' | '/more' | '/earn';
   labelKey: MessageKey;
   icon: IconName;
-}> = [
+};
+
+const MOBILE_NAV: ReadonlyArray<NavItem> = [
   { key: 'home', to: '/dashboard', labelKey: 'nav.home', icon: 'home' },
+  { key: 'games', to: '/casino', labelKey: 'nav.games', icon: 'games' },
   { key: 'trade', to: '/trade', labelKey: 'nav.trade', icon: 'trade' },
   { key: 'wallet', to: '/wallet', labelKey: 'nav.wallet', icon: 'wallet' },
-  { key: 'casino', to: '/casino', labelKey: 'nav.casino', icon: 'casino' },
-  { key: 'staking', to: '/staking', labelKey: 'nav.staking', icon: 'staking' },
+  { key: 'more', to: '/more', labelKey: 'nav.more', icon: 'menu' },
+];
+
+const SIDE_NAV: ReadonlyArray<NavItem> = [
+  { key: 'home', to: '/dashboard', labelKey: 'nav.home', icon: 'home' },
+  { key: 'earn', to: '/earn', labelKey: 'nav.earn', icon: 'earn' },
+  { key: 'games', to: '/casino', labelKey: 'nav.games', icon: 'games' },
+  { key: 'trade', to: '/trade', labelKey: 'nav.trade', icon: 'trade' },
+  { key: 'wallet', to: '/wallet', labelKey: 'nav.wallet', icon: 'wallet' },
+  { key: 'more', to: '/more', labelKey: 'nav.more', icon: 'menu' },
 ];
 
 function resolveActive(pathname: string, override?: AppNavKey): AppNavKey {
   if (override) return override;
+  if (pathname.startsWith('/earn')) return 'earn';
   if (pathname.startsWith('/trade')) return 'trade';
   if (pathname.startsWith('/wallet')) return 'wallet';
-  if (pathname.startsWith('/casino')) return 'casino';
-  if (pathname.startsWith('/staking')) return 'staking';
+  if (pathname.startsWith('/casino')) return 'games';
+  if (pathname.startsWith('/more') || pathname.startsWith('/staking') || pathname.startsWith('/ledger') || pathname.startsWith('/responsible-gaming')) {
+    return 'more';
+  }
   return 'home';
+}
+
+function NavLink({
+  item,
+  isActive,
+  variant,
+}: {
+  item: NavItem;
+  isActive: boolean;
+  variant: 'mobile' | 'side' | 'top';
+}) {
+  const t = useT();
+  const className =
+    variant === 'mobile'
+      ? `app-shell-nav-item${isActive ? ' is-active' : ''}`
+      : variant === 'side'
+        ? `app-shell-side-nav-item${isActive ? ' is-active' : ''}`
+        : `app-shell-top-nav-item${isActive ? ' is-active' : ''}`;
+
+  return (
+    <Link
+      to={item.to}
+      className={className}
+      aria-current={isActive ? 'page' : undefined}
+    >
+      <Icon name={item.icon} size={variant === 'mobile' ? 'sm' : 'xs'} />
+      {variant === 'mobile' ? (
+        <span className="app-shell-nav-label">{t(item.labelKey)}</span>
+      ) : (
+        t(item.labelKey)
+      )}
+      {variant === 'mobile' && isActive ? <span className="app-shell-nav-active" aria-hidden="true" /> : null}
+      {variant === 'top' && isActive ? <span className="app-shell-top-nav-active" aria-hidden="true" /> : null}
+    </Link>
+  );
 }
 
 export function AppShell({ children, active: activeOverride }: AppShellProps) {
@@ -82,21 +130,9 @@ export function AppShell({ children, active: activeOverride }: AppShellProps) {
         </Link>
 
         <nav className="app-shell-top-nav" aria-label={t('appShell.topNavAria')}>
-          {NAV.map((item) => {
-            const isActive = item.key === active;
-            return (
-              <Link
-                key={item.key}
-                to={item.to}
-                className={`app-shell-top-nav-item${isActive ? ' is-active' : ''}`}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                <Icon name={item.icon} size="xs" />
-                {t(item.labelKey)}
-                {isActive ? <span className="app-shell-top-nav-active" aria-hidden="true" /> : null}
-              </Link>
-            );
-          })}
+          {SIDE_NAV.map((item) => (
+            <NavLink key={item.key} item={item} isActive={item.key === active} variant="top" />
+          ))}
         </nav>
 
         <div className="app-shell-header-actions">
@@ -137,24 +173,24 @@ export function AppShell({ children, active: activeOverride }: AppShellProps) {
         </div>
       </header>
 
-      <main id="main-content" className="app-shell-main" tabIndex={-1}>{children}</main>
+      <div className="app-shell-layout">
+        <nav className="app-shell-side-nav" aria-label={t('appShell.sideNavAria')}>
+          {SIDE_NAV.map((item) => (
+            <NavLink key={item.key} item={item} isActive={item.key === active} variant="side" />
+          ))}
+        </nav>
+
+        <div className="app-shell-body">
+          <main id="main-content" className="app-shell-main" tabIndex={-1}>
+            {children}
+          </main>
+        </div>
+      </div>
 
       <nav className="app-shell-nav" aria-label={t('appShell.navAria')}>
-        {NAV.map((item) => {
-          const isActive = item.key === active;
-          return (
-            <Link
-              key={item.key}
-              to={item.to}
-              className={`app-shell-nav-item${isActive ? ' is-active' : ''}`}
-              aria-current={isActive ? 'page' : undefined}
-            >
-              <Icon name={item.icon} size="sm" />
-              <span className="app-shell-nav-label">{t(item.labelKey)}</span>
-              {isActive ? <span className="app-shell-nav-active" aria-hidden="true" /> : null}
-            </Link>
-          );
-        })}
+        {MOBILE_NAV.map((item) => (
+          <NavLink key={item.key} item={item} isActive={item.key === active} variant="mobile" />
+        ))}
       </nav>
     </div>
   );

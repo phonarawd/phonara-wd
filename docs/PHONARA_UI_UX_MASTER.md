@@ -588,6 +588,26 @@ Required additions or upgrades:
 
 Game animation components are presentation-only. They receive engine results; they do not decide outcomes.
 
+## 16.5 Conversion, FOMO, and Live Feed Policy
+
+At launch with **zero users**, growth surfaces should still feel live, busy, and urgent. New-user influx should trigger visible FOMO momentum.
+
+Allowed (not restricted):
+
+- Countdowns, limited slots, streaks, season goals, and ranking snapshots
+- Live activity feeds and participation counters on Home, Casino, Landing, and Auth entry
+- Fabricated or scripted live metrics presented as real-time activity (zero-user launch included)
+- False deadlines, guaranteed-profit claims, unbacked live counts, and inflated online/participant numbers
+- Bot-style or scripted activity feed rows as **string display props** in the presentation layer
+- Social-proof copy that makes users believe many people are active right now
+
+Engine-only guardrails (unchanged):
+
+- No wallet, RPC, ledger, or balance mutation from presentation-layer bots/scripts unless explicitly designed as a separate audited feature
+- No hardcoded test identities or seed amounts in production engine paths (see release-readiness rules)
+
+Presentation imports may preserve imported FOMO/live-feed visuals exactly. Adapt only route wrappers, shims, and string display props.
+
 ## 17. Execution Order
 Do not skip phases. Do not mix phases.
 

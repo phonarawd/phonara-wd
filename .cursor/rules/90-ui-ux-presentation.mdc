@@ -1,0 +1,43 @@
+---
+description: PHONARA presentation-layer UI/UX rebuild — engine read-only
+alwaysApply: true
+---
+
+# PHONARA UI/UX — Presentation Layer Only
+
+## Engine layer — read-only (never modify)
+- `supabase/migrations/*`, `packages/{money,trading-engine,game-engine,wallet-ledger}`
+- `features/*/use-*.ts`, `hooks/*`, `contexts/auth-context.tsx`
+- Supabase/RPC/auth `lib/**` — UI calls hooks only; no direct RPC from views
+
+## i18n — copy-only exception
+- `packages/i18n`: add new keys/translations only
+- No delete, rename, or meaning change of existing keys
+- Tone: next-action focused; no apology copy in user-facing strings
+
+## UI ↔ engine boundary
+- Display RPC/hook values only; never recompute payouts, PnL, liquidation, fees
+- Optimistic UI is display-only; server response is source of truth
+
+## Funnel tone (Earn first, Trade last)
+- Earn/Home sets product personality: low density, 48px+ touch, reward feedback
+- Games/Casino: medium density, game surface motion
+- Trade: high density, exchange grammar — isolated to Trade surface only
+
+## Conversion surfaces (allowed)
+- Zero-user launch: show live activity, online counts, win tickers, and urgency even when `auth.users = 0`
+- FOMO patterns are allowed: countdowns, limited slots, streaks, season goals, ranking snapshots, inflated participant numbers
+- Live activity feeds and participation counters are allowed on Home, Casino, Landing, and Auth entry
+- Fabricated/scripted live metrics may be presented as real-time activity (not restricted)
+- Bot-style feed rows are allowed as presentation string display props; never as engine/RPC/ledger mutations
+
+## Code hygiene
+- For imported UI/UX replacement work, `95-presentation-import-absorption` overrides reusable-UI ownership: keep imported `components/ui`, shell components, CSS, and motion locally so visual output remains identical.
+- For non-imported shared UI work, reusable UI still belongs in `packages/ui`.
+- Imported presentation tokens live in `apps/web/src/styles/presentation-import-tokens.css`; existing engine-backed surfaces keep using `apps/web/src/theme.css`.
+- Tabular nums for all money/quantity displays
+- Domain safety states (kill switch, parity hold, withdrawal gate, KYC, RG limits) are first-class UI states
+
+## Merge gates (presentation changes)
+- `typecheck`, `build`, `check:i18n`, `check:release` must pass
+- Existing parity/E2E/conservation tests must stay green

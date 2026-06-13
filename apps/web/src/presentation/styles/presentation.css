@@ -1,0 +1,22 @@
+.presentation-root {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in oklab, var(--color-primary) 14%, transparent), transparent 42%),
+    var(--color-bg);
+}
+
+.presentation-focus-ring:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .presentation-root *,
+  .presentation-root *::before,
+  .presentation-root *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

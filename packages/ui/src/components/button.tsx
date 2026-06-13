@@ -1,4 +1,4 @@
-import { forwardRef, type ButtonHTMLAttributes } from 'react';
+import { forwardRef, useId, type ButtonHTMLAttributes } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../lib/cn';
 import { Spinner } from './spinner';
@@ -55,6 +55,8 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   loading?: boolean;
   loadingLabel?: string;
+  /** Shown as title + aria-describedby when disabled (domain gate reason). */
+  disabledReason?: string;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
@@ -68,23 +70,37 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     type,
     loading = false,
     loadingLabel,
+    disabledReason,
     disabled,
     'aria-label': ariaLabel,
+    'aria-describedby': ariaDescribedBy,
+    title,
     ...props
   },
   ref,
 ) {
+  const autoReasonId = useId();
+  const isDisabled = disabled || loading;
+  const reasonId = disabledReason && isDisabled ? autoReasonId : undefined;
+
   return (
     <button
       {...props}
       ref={ref}
       type={type ?? 'button'}
-      disabled={disabled || loading}
+      disabled={isDisabled}
       aria-busy={loading || undefined}
       aria-label={loading && loadingLabel ? loadingLabel : ariaLabel}
+      aria-describedby={reasonId ?? ariaDescribedBy}
+      title={isDisabled && disabledReason ? disabledReason : title}
       className={cn(buttonVariants({ variant, size, density, full }), className)}
     >
       {loading ? <Spinner size="sm" label={loadingLabel} className="absolute" /> : null}
+      {disabledReason && isDisabled ? (
+        <span id={reasonId} className="sr-only">
+          {disabledReason}
+        </span>
+      ) : null}
       <span className={cn('relative inline-flex items-center justify-center gap-2', loading && 'opacity-0')}>
         {children}
       </span>

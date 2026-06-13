@@ -1,11 +1,18 @@
+import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const webSrc = fileURLToPath(new URL('./src', import.meta.url));
+
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      babel: {
+        plugins: [['babel-plugin-react-compiler', { target: '19' }]],
+      },
+    }),
     tailwindcss(),
     VitePWA({
       strategies: 'injectManifest',
@@ -75,6 +82,26 @@ export default defineConfig({
   // with an undefined Supabase config. Kept as a relative string (no node: imports)
   // so the web typecheck project doesn't need @types/node.
   envDir: '../..',
+  resolve: {
+    alias: {
+      '@': webSrc,
+      'react-router-dom': `${webSrc}/shims/react-router-dom.tsx`,
+    },
+  },
+  optimizeDeps: {
+    include: [
+      'framer-motion',
+      'lucide-react',
+      'vaul',
+      'cmdk',
+      'embla-carousel-react',
+      'react-hook-form',
+      '@hookform/resolvers/zod',
+      'input-otp',
+      'react-day-picker',
+      'canvas-confetti',
+    ],
+  },
   server: {
     port: 3000,
   },

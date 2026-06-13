@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 import { Route as rootRoute } from './__root';
 import { useAuth } from '../contexts/auth-context';
 import { Card, Skeleton } from '@phonara/ui';
-import { LandingPage } from '../components/landing-page';
+import { PresentationRoot } from '../presentation-import/presentation-root';
+import { ImportedLandingPage } from '../presentation-import/pages/landing-page';
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -44,5 +45,9 @@ function IndexPage() {
     );
   }
 
-  return <LandingPage />;
+  return (
+    <PresentationRoot>
+      <ImportedLandingPage />
+    </PresentationRoot>
+  );
 }

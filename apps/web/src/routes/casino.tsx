@@ -273,8 +273,8 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
 
   if (authLoading) {
     return (
-      <AppShell active="casino">
-        <div className="app-page" aria-busy="true">
+      <AppShell active="games">
+        <div className="surface-games app-page" aria-busy="true">
           <Skeleton className="h-40" />
         </div>
       </AppShell>
@@ -282,8 +282,8 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
   }
 
   return (
-    <AppShell active="casino">
-      <div className="relative min-h-[calc(100dvh-4rem)] overflow-hidden">
+    <AppShell active="games">
+      <div className="surface-games relative min-h-[calc(100dvh-4rem)] overflow-hidden">
         <RocketStarfield />
         <RocketGameTopBar
           title={t('casino.rocket.title')}
@@ -650,8 +650,8 @@ function getPrimaryResultLabel(result: Record<string, unknown> | undefined): str
 function FairnessDocsPage() {
   const t = useT();
   return (
-    <AppShell active="casino">
-      <div className="app-page">
+    <AppShell active="games">
+      <div className="surface-games app-page">
         <BetPanel title={t('casino.fairness.title')} description={t('casino.fairness.description')}>
           <div className="grid gap-4 md:grid-cols-3">
             <StatusTimeline

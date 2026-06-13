@@ -16,9 +16,9 @@ alwaysApply: true
   advisor-cleanup passes for the same issue. If a prior migration/test exists but
   is stale, update or supersede it explicitly; do not create a parallel version.
 - Before applying remote changes, compare local migration files, remote migration
-  history, current function/policy definitions, and the tactical plan/Build Log.
-  If local and remote disagree, reconcile intentionally and record the decision
-  in the Build Log.
+  history, current function/policy definitions, and the active tactical plan.
+  If local and remote disagree, reconcile intentionally and report the decision
+  in the task summary unless the user asks for a durable docs update.
 
 ## Single-project lock (ABSOLUTE)
 

@@ -1,0 +1,15 @@
+export { ImportedLandingPage } from './landing-page';
+export { ImportedHomePage } from './home-page';
+export { ImportedEarnPage } from './earn-page';
+export { ImportedTradePage } from './trade-page';
+export { ImportedAccountPage } from './account-page';
+export { ImportedSettingsPage } from './settings-page';
+export { ImportedReferralPage } from './referral-page';
+export { ImportedAboutPage } from './about-page';
+export { ImportedTermsPage } from './terms-page';
+export { ImportedPrivacyPage } from './privacy-page';
+export { ImportedGamesCatalogPage } from './games-catalog-page';
+export { ImportedGamesHistoryPage } from './games-history-page';
+export { ImportedGamesFairnessPage } from './games-fairness-page';
+export { ImportedGamesTournamentsPage } from './games-tournaments-page';
+export { PresentationRoot } from '../presentation-root';

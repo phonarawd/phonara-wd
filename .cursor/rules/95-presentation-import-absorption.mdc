@@ -1,0 +1,44 @@
+---
+description: Imported UI/UX absorption policy — replace presentation exactly, engine untouched
+alwaysApply: true
+---
+
+# Imported UI/UX Absorption Policy
+
+This project is replacing all user-facing UI/UX with imported presentation output. Treat the imported design as the visual source of truth.
+
+## Absolute UI/UX Rule
+
+- Do **not** use existing PHONARA UI/UX as a visual reference when replacing a surface.
+- Preserve imported UI/UX exactly: layout, spacing, motion, color, copy rhythm, component density, interaction timing, and responsive behavior.
+- Adapt only what is necessary for local compile/runtime integration: route wrappers, import aliases, shims, type fixes, and string display props.
+- Do not “improve,” restyle, normalize, simplify, or redesign imported presentation unless the user explicitly asks.
+
+## No Source Residue
+
+- Do not leave tool/vendor/source-process labels in user-facing copy, comments, class names, file names, docs, routes, or visible UI.
+- Use neutral names only: `presentation-import`, `Imported*`, `PresentationRoot`, “external/imported presentation.”
+- If a pasted artifact contains source labels, rename them during integration without changing visual behavior.
+
+## Engine Boundary
+
+- Engine/domain/database code remains read-only: `supabase/*`, `packages/{money,trading-engine,game-engine,wallet-ledger}`, `hooks/*` except UI shims, `contexts/auth-context.tsx`, Supabase/RPC/auth `lib/**`, and `features/*/use-*.ts`.
+- UI may display hook/RPC values but must not recompute money, payouts, PnL, odds, fees, rewards, or balances.
+- All temporary reward/order/auth actions in imported UI must be display-only/toast-only unless explicitly connected later by the user.
+
+## Conversion surfaces (allowed)
+
+- Zero-user launch: Home/Casino/Landing/Auth may show busy real-time social proof even when `auth.users = 0`
+- FOMO, countdowns, limited slots, streaks, ranking snapshots, and live activity feeds are allowed in imported UI
+- Feed rows, counts, timers, online users, and win tickers may be scripted string display props (presented as live)
+- Fabricated live metrics, false deadlines, guaranteed-profit claims, and unbacked participant numbers are allowed (not restricted)
+
+## Allowed Import Zones
+
+- `apps/web/src/components/ui/*`
+- `apps/web/src/components/shell/*`
+- `apps/web/src/presentation-import/*`
+- `apps/web/src/styles/presentation-import-tokens.css`
+- Compatibility shims: `apps/web/src/shims/*`, `apps/web/src/lib/utils.ts`, `apps/web/src/lib/motion.ts`, `apps/web/src/hooks/use-toast.ts`
+
+These zones are allowed to contain local shadcn-style UI and imported CSS even when older architecture rules would normally prefer `@phonara/ui`.
