@@ -2,6 +2,7 @@ import {
   forwardRef,
   useState,
   useRef,
+  useId,
   type ReactNode,
   type HTMLAttributes,
 } from 'react';
@@ -23,6 +24,7 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(
   ({ content, children, placement = 'top', className, ...rest }, ref) => {
     const [visible, setVisible] = useState(false);
     const spanRef = useRef<HTMLSpanElement>(null);
+    const tooltipId = useId();
 
     const placementCls = {
       top: 'bottom-full left-1/2 -translate-x-1/2 mb-1.5',
@@ -35,6 +37,7 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(
       <span
         ref={mergeRefs(spanRef, ref)}
         className={cn('relative inline-flex', className)}
+        aria-describedby={visible ? tooltipId : undefined}
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
         onFocus={() => setVisible(true)}
@@ -44,10 +47,12 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(
         {children}
         {visible && content != null && (
           <span
+            id={tooltipId}
             role="tooltip"
             className={cn(
-              'absolute z-50 whitespace-nowrap rounded-lg',
-              'bg-surface-2 border border-border px-2.5 py-1 text-xs text-fg shadow-lg',
+              'absolute z-50 whitespace-nowrap rounded-xl',
+              'border border-border bg-[var(--glass-panel-strong)] px-2.5 py-1 text-xs text-fg shadow-[var(--elevation-1)] backdrop-blur-[var(--glass-blur)]',
+              'animate-[pn-rise_var(--motion-duration-anticipation)_var(--motion-ease-spring)_both]',
               'pointer-events-none',
               placementCls,
             )}

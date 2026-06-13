@@ -24,6 +24,7 @@ function PrivacyPage() {
       intro="legal.privacy.intro"
       effectiveDate={EFFECTIVE_DATE}
       sections={SECTIONS}
+      activeDoc="privacy"
     />
   );
 }

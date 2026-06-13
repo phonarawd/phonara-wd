@@ -2,9 +2,11 @@ import { useEffect, useMemo, useRef, useState, forwardRef, type HTMLAttributes }
 import { toDecimal } from '@phonara/money';
 import type * as LightweightChartsModule from 'lightweight-charts';
 import { cn } from '../lib/cn';
-import { Button } from './button';
+import { resolveThemeColor } from '../lib/resolve-css-color';
+import { Badge } from './badge';
 import { Card } from './card';
 import { Skeleton } from './skeleton';
+import { StateSurface } from './state-surface';
 
 type LightweightCharts = typeof LightweightChartsModule;
 type ChartApi = ReturnType<LightweightCharts['createChart']>;
@@ -30,6 +32,7 @@ export interface TradingChartCandle {
 
 export interface TradingChartLabels {
   loading: string;
+  loadingDescription?: string;
   emptyTitle: string;
   emptyDescription?: string;
   errorTitle: string;
@@ -37,6 +40,13 @@ export interface TradingChartLabels {
   retry?: string;
   oraclePrice: string;
   liquidationPrice: string;
+  policyTitle?: string;
+  oracleLineDescription?: string;
+  liquidationLineDescription?: string;
+  liquidationApproachingTitle?: string;
+  liquidationApproachingDescription?: string;
+  disclosureTitle?: string;
+  syncedTitle?: string;
   volume?: string;
 }
 
@@ -56,8 +66,8 @@ export interface TradingChartProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   disclosure?: string;
 }
 
-function token(name: string): string {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+function themeColor(name: `--${string}`): string {
+  return resolveThemeColor(name);
 }
 
 function toChartNumber(value: string): number | null {
@@ -124,14 +134,12 @@ function normalizeVolume(candles: TradingChartCandle[], border: string, muted: s
 }
 
 function createChartApi(mod: LightweightCharts, container: HTMLDivElement): ChartApi {
-  const fg = token('--color-fg');
-  const muted = token('--color-muted');
-  const surface = token('--color-surface');
-  const border = token('--color-border-strong');
+  const fg = themeColor('--color-fg');
+  const muted = themeColor('--color-muted');
+  const surface = themeColor('--color-surface');
+  const border = themeColor('--color-border-strong');
 
   return mod.createChart(container, {
-    width: container.clientWidth,
-    height: container.clientHeight,
     autoSize: true,
     layout: {
       background: { type: mod.ColorType.Solid, color: surface },
@@ -167,16 +175,16 @@ function createDataSeries(
 ): ChartSeriesApi {
   return mode === 'candles'
     ? chart.addSeries(mod.CandlestickSeries, {
-      upColor: token('--color-up'),
-      downColor: token('--color-down'),
-      borderUpColor: token('--color-up'),
-      borderDownColor: token('--color-down'),
-      wickUpColor: token('--color-up'),
-      wickDownColor: token('--color-down'),
+      upColor: themeColor('--color-up'),
+      downColor: themeColor('--color-down'),
+      borderUpColor: themeColor('--color-up'),
+      borderDownColor: themeColor('--color-down'),
+      wickUpColor: themeColor('--color-up'),
+      wickDownColor: themeColor('--color-down'),
       priceFormat: { type: 'price', precision: pricePrecision, minMove: 1 / (10 ** pricePrecision) },
     })
     : chart.addSeries(mod.LineSeries, {
-      color: token('--color-primary'),
+      color: themeColor('--color-primary'),
       lineWidth: 2,
       priceLineVisible: false,
       lastValueVisible: false,
@@ -225,7 +233,6 @@ export const TradingChart = forwardRef<HTMLDivElement, TradingChartProps>(functi
   const volumeSeriesRef = useRef<HistogramSeriesApi | null>(null);
   const oracleLineRef = useRef<PriceLineApi | null>(null);
   const liquidationLineRef = useRef<PriceLineApi | null>(null);
-  const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const [error, setError] = useState(false);
   const [chartReady, setChartReady] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
@@ -237,6 +244,10 @@ export const TradingChart = forwardRef<HTMLDivElement, TradingChartProps>(functi
   const validPoints = useMemo(() => normalizePoints(chartPoints), [chartPoints]);
   const displayError = externalError || error;
   const isEmpty = !loading && !displayError && (!hasOracle || (chartPoints.length === 0 && chartCandles.length === 0));
+  const approachingLiquidation = useMemo(
+    () => isApproachingLiquidation(oraclePrice, liquidationPrice, approachThreshold),
+    [approachThreshold, liquidationPrice, oraclePrice],
+  );
 
   useEffect(() => {
     if (loading || isEmpty || !containerRef.current) return undefined;
@@ -250,14 +261,6 @@ export const TradingChart = forwardRef<HTMLDivElement, TradingChartProps>(functi
         if (cancelled || !containerRef.current) return;
         moduleRef.current = mod;
         chartRef.current = createChartApi(mod, containerRef.current);
-        resizeObserverRef.current = new ResizeObserver(() => {
-          if (!containerRef.current || !chartRef.current) return;
-          chartRef.current.applyOptions({
-            width: containerRef.current.clientWidth,
-            height: containerRef.current.clientHeight,
-          });
-        });
-        resizeObserverRef.current.observe(containerRef.current);
         setChartReady(true);
       })
       .catch(() => {
@@ -266,8 +269,6 @@ export const TradingChart = forwardRef<HTMLDivElement, TradingChartProps>(functi
 
     return () => {
       cancelled = true;
-      resizeObserverRef.current?.disconnect();
-      resizeObserverRef.current = null;
       oracleLineRef.current = null;
       liquidationLineRef.current = null;
       volumeSeriesRef.current = null;
@@ -292,7 +293,7 @@ export const TradingChart = forwardRef<HTMLDivElement, TradingChartProps>(functi
 
     if (mode === 'candles') {
       (seriesRef.current as CandlestickSeriesApi).setData(validCandles);
-      const volumePoints = normalizeVolume(chartCandles, token('--color-border-strong'), token('--color-muted'));
+      const volumePoints = normalizeVolume(chartCandles, themeColor('--color-border-strong'), themeColor('--color-muted'));
       if (volumePoints.length > 0) {
         const volumeSeries = volumeSeriesRef.current ?? createVolumeSeries(mod, chart);
         volumeSeriesRef.current = volumeSeries;
@@ -320,7 +321,7 @@ export const TradingChart = forwardRef<HTMLDivElement, TradingChartProps>(functi
     if (oracle !== null) {
       oracleLineRef.current = series.createPriceLine({
         price: oracle,
-        color: token('--color-primary'),
+        color: themeColor('--color-primary'),
         lineWidth: 2,
         lineStyle: mod.LineStyle.Solid,
         axisLabelVisible: true,
@@ -336,7 +337,7 @@ export const TradingChart = forwardRef<HTMLDivElement, TradingChartProps>(functi
     if (liquidation !== null) {
       liquidationLineRef.current = series.createPriceLine({
         price: liquidation,
-        color: token('--color-down'),
+        color: themeColor('--color-down'),
         lineWidth: 2,
         lineStyle: mod.LineStyle.Dashed,
         axisLabelVisible: true,
@@ -348,75 +349,143 @@ export const TradingChart = forwardRef<HTMLDivElement, TradingChartProps>(functi
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    if (isApproachingLiquidation(oraclePrice, liquidationPrice, approachThreshold)) {
+    if (approachingLiquidation) {
       container.dataset['approachingLiquidation'] = 'true';
     } else {
       delete container.dataset['approachingLiquidation'];
     }
-  }, [approachThreshold, liquidationPrice, oraclePrice]);
+  }, [approachingLiquidation]);
 
   return (
     <Card
       ref={ref}
-      className={cn('flex min-h-[320px] flex-col gap-3 p-4', className)}
+      className={cn(
+        'flex min-h-[320px] flex-col gap-3 p-4',
+        approachingLiquidation && !loading && !displayError
+          ? 'border-down/50 shadow-[var(--elevation-1)]'
+          : '',
+        className,
+      )}
       data-testid="trading-chart"
+      data-risk={approachingLiquidation ? 'approaching-liquidation' : undefined}
       {...props}
     >
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="text-[1.05rem] font-bold text-fg">{title}</h3>
           {subtitle && <p className="mt-1 text-xs text-muted">{subtitle}</p>}
-          {disclosure && <p className="mt-1 text-xs text-warning">{disclosure}</p>}
+        </div>
+        <div className="flex flex-wrap justify-end gap-1.5">
+          {!loading && !displayError && !isEmpty && labels.syncedTitle ? (
+            <Badge tone="primary" size="sm" density="compact">
+              {labels.syncedTitle}
+            </Badge>
+          ) : null}
+          {approachingLiquidation && labels.liquidationApproachingTitle ? (
+            <Badge tone="risk" size="sm" density="compact">
+              {labels.liquidationApproachingTitle}
+            </Badge>
+          ) : null}
         </div>
       </div>
 
       {loading && (
         <div className="grid flex-1 gap-3" data-testid="trading-chart-loading">
           <Skeleton className="h-[220px] w-full" />
-          <p className="text-xs text-muted">{labels.loading}</p>
+          <StateSurface
+            state="loading"
+            density="compact"
+            title={labels.loading}
+            description={labels.loadingDescription}
+            loadingLabel={labels.loading}
+            className="py-3"
+          />
         </div>
       )}
 
       {!loading && isEmpty && (
-        <div
-          className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-border bg-surface-2/40 p-6 text-center"
+        <StateSurface
+          state="empty"
+          title={labels.emptyTitle}
+          description={labels.emptyDescription}
+          className="flex flex-1 flex-col items-center justify-center"
           data-testid="trading-chart-empty"
-        >
-          <p className="font-semibold text-fg">{labels.emptyTitle}</p>
-          {labels.emptyDescription && <p className="mt-2 text-sm text-muted">{labels.emptyDescription}</p>}
-        </div>
+        />
       )}
 
       {!loading && displayError && (
-        <div
-          className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-down/40 bg-down/10 p-6 text-center"
-          role="alert"
+        <StateSurface
+          state="error"
+          title={labels.errorTitle}
+          description={labels.errorDescription}
+          actionLabel={labels.retry}
+          actionVariant="danger"
+          onAction={() => {
+            setRetryKey((value) => value + 1);
+            onRetry?.();
+          }}
+          className="flex flex-1 flex-col items-center justify-center"
           data-testid="trading-chart-error"
-        >
-          <p className="font-semibold text-fg">{labels.errorTitle}</p>
-          {labels.errorDescription && <p className="mt-2 text-sm text-muted">{labels.errorDescription}</p>}
-          {labels.retry && (
-            <Button
-              className="mt-4"
-              size="sm"
-              variant="danger"
-              onClick={() => {
-                setRetryKey((value) => value + 1);
-                onRetry?.();
-              }}
-            >
-              {labels.retry}
-            </Button>
-          )}
-        </div>
+        />
       )}
 
       {!loading && !isEmpty && !displayError && (
-        <div
-          ref={containerRef}
-          className="relative min-h-[240px] flex-1 overflow-hidden rounded-2xl border border-border bg-surface [&[data-approaching-liquidation='true']]:animate-pulse [&[data-approaching-liquidation='true']]:border-down/70"
-          data-testid="trading-chart-success"
-        />
+        <>
+          <div
+            ref={containerRef}
+            className={cn(
+              'relative min-h-[240px] flex-1 overflow-hidden rounded-2xl border border-border bg-surface shadow-[var(--surface-inset-shadow)]',
+              'transition-[border-color,box-shadow] duration-[var(--motion-duration-confirmation)] ease-[var(--motion-ease-standard)]',
+              "[&[data-approaching-liquidation='true']]:animate-pulse [&[data-approaching-liquidation='true']]:border-down/70",
+            )}
+            data-testid="trading-chart-success"
+          />
+          <div className="grid gap-2 rounded-2xl border border-border bg-surface-inset p-3 text-xs shadow-[var(--surface-inset-shadow)]">
+            {labels.policyTitle && (
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-semibold text-fg">{labels.policyTitle}</span>
+                {labels.syncedTitle && <Badge tone="primary" size="sm" density="compact">{labels.syncedTitle}</Badge>}
+              </div>
+            )}
+            <div className="grid gap-2 sm:grid-cols-2">
+              <div className="rounded-xl border border-primary/25 bg-primary/10 px-3 py-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-semibold text-primary">{labels.oraclePrice}</span>
+                  <span className="font-semibold tabular-nums text-fg">{oraclePrice}</span>
+                </div>
+                {labels.oracleLineDescription && (
+                  <p className="mt-1 leading-5 text-muted">{labels.oracleLineDescription}</p>
+                )}
+              </div>
+              {liquidationPrice && (
+                <div
+                  className={cn(
+                    'rounded-xl border px-3 py-2',
+                    approachingLiquidation
+                      ? 'border-down/45 bg-down/15'
+                      : 'border-down/25 bg-down/10',
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-semibold text-down">{labels.liquidationPrice}</span>
+                    <span className="font-semibold tabular-nums text-fg">{liquidationPrice}</span>
+                  </div>
+                  {approachingLiquidation && labels.liquidationApproachingDescription ? (
+                    <p className="mt-1 leading-5 text-down">{labels.liquidationApproachingDescription}</p>
+                  ) : labels.liquidationLineDescription ? (
+                    <p className="mt-1 leading-5 text-muted">{labels.liquidationLineDescription}</p>
+                  ) : null}
+                </div>
+              )}
+            </div>
+            {disclosure && (
+              <div className="rounded-xl border border-warning/30 bg-warning/10 px-3 py-2 text-warning">
+                {labels.disclosureTitle && <p className="font-semibold">{labels.disclosureTitle}</p>}
+                <p className={cn('leading-5', labels.disclosureTitle ? 'mt-1' : '')}>{disclosure}</p>
+              </div>
+            )}
+          </div>
+        </>
       )}
     </Card>
   );

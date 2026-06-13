@@ -668,10 +668,24 @@ SELECT version, name
 |------|------|
 | PITR / 백업 | Supabase Dashboard → Database → Backups (인간 결정 #3 — Wave 12 전 활성화 확인) |
 | 마이그레이션 복구 | 로컬 `supabase db reset` → `test:sql` 41/41 PASS 확인 후 remote push |
+| **로컬 백업 리허설** | `bun run rehearsal:backup` — `pg_dump` → **덤프 파일 `psql` 복원** → 복원 DB에서 `verify_ledger_hash_chain()` / `verify_system_account_hash_chain()` 0건 |
 | Auth rate limits | Dashboard → Auth → Rate limits (인간 결정 #3) |
 | 데이터 손실 의심 | 즉시 `system_halt=true` → Scenario 1·2 확인 → §7 Escalation |
 
 Point-in-time recovery는 **사람만** 트리거. 자동화/에이전트가 remote 백업 복원을 실행하지 않는다.
+
+### 로컬 백업 리허설 기록
+
+| Field | Value |
+|---|---|
+| Script | `bun run rehearsal:backup` (`scripts/backup-rehearsal.ts`) |
+| Recovery path | Docker `pg_dump` → stop realtime → drop replication slots → `DROP DATABASE postgres` → `CREATE` → **`psql` stdin restore** (`supabase_admin`; not `supabase db reset`) |
+| Post-restore verify | `verify_ledger_hash_chain()` = 0 broken; `verify_system_account_hash_chain()` = 0 broken (on **restored** DB) |
+| Post-rehearsal dev heal | Script ends with `supabase db reset` to re-apply migrations/grants — **not** counted as recovery |
+| Last run | `2026-06-12T23:57:59.822Z` — wallet 0 / system 0 broken; dump ~1.39 MB (see `backups/last-rehearsal.json`) |
+| Artifact | `backups/last-rehearsal.json` (dump files gitignored) |
+
+> **주의**: `supabase db reset`은 마이그레이션 재적용이지 덤프 복원이 아니다. 리허설의 목적은 **백업 파일 존재**가 아니라 **복원 가능성** 검증이다.
 
 ---
 

@@ -5,8 +5,10 @@ import { useAuth } from '../contexts/auth-context';
 import { signOut } from '../lib/auth';
 import { env } from '../lib/env';
 import { useT } from '../lib/i18n';
-import { Button, Card, buttonVariants } from '@phonara/ui';
+import { Button, Card, Icon, buttonVariants } from '@phonara/ui';
 import { GlobalNotificationSubscriptions } from '../components/global-notification-subscriptions';
+import { PwaShell } from '../components/pwa-shell';
+import { SkipLink } from '../components/skip-link';
 import { useRealtimeConnectionStore } from '../stores/realtime';
 
 export const Route = createRootRoute({
@@ -16,6 +18,8 @@ export const Route = createRootRoute({
 function RootLayout() {
   return (
     <AuthProvider>
+      <SkipLink />
+      <PwaShell />
       <GlobalNotificationSubscriptions />
       <AccountRestrictionBanner />
       <RealtimeConnectionBanner />
@@ -31,10 +35,15 @@ function RealtimeConnectionBanner() {
   if (!disconnected) return null;
 
   return (
-    <div className="fixed inset-x-0 top-20 z-40 px-4 pt-3" data-testid="realtime-disconnect-banner">
-      <Card className="mx-auto flex max-w-4xl flex-col gap-1 border-warning/40 bg-surface p-4 shadow-lg">
-        <p className="text-sm font-semibold text-fg">{t('realtime.banner.title')}</p>
-        <p className="text-xs text-muted">{t('realtime.banner.description')}</p>
+    <div className="root-floating-banner root-floating-banner-realtime" data-testid="realtime-disconnect-banner">
+      <Card className="root-banner-card root-banner-card-warning">
+        <span className="root-banner-icon root-banner-icon-warning" aria-hidden="true">
+          <Icon name="activity" size="sm" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-fg">{t('realtime.banner.title')}</p>
+          <p className="mt-1 text-xs leading-5 text-muted">{t('realtime.banner.description')}</p>
+        </div>
       </Card>
     </div>
   );
@@ -69,11 +78,16 @@ function AccountRestrictionBanner() {
   if (!activityFrozen) return null;
 
   return (
-    <div className="fixed inset-x-0 top-0 z-50 px-4 pt-3" data-testid="account-restriction-banner">
-      <Card className="mx-auto flex max-w-4xl flex-col gap-3 border-down/40 bg-surface p-4 shadow-lg md:flex-row md:items-center md:justify-between">
-        <div>
+    <div className="root-floating-banner root-floating-banner-restriction" data-testid="account-restriction-banner">
+      <Card className="root-banner-card root-banner-card-danger md:flex-row md:items-center md:justify-between">
+        <div className="flex min-w-0 items-start gap-3">
+          <span className="root-banner-icon root-banner-icon-danger" aria-hidden="true">
+            <Icon name="lock" size="sm" />
+          </span>
+          <div className="min-w-0">
           <p className="text-sm font-semibold text-fg">{t('account.restricted.title')}</p>
-          <p className="mt-1 text-xs text-muted">{t('account.restricted.description')}</p>
+            <p className="mt-1 text-xs leading-5 text-muted">{t('account.restricted.description')}</p>
+          </div>
         </div>
         <div className="flex shrink-0 gap-2">
           <Button

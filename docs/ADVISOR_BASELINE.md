@@ -26,7 +26,7 @@ runs. The gate **fails only on ERROR**; WARN/INFO are tracked here for drift con
 | 4 | `function_search_path_mutable` | 3 | Function hardening | **Security** | **Watch** — residual functions without pinned `search_path`; migration 000013+ addressed bulk; re-check if count rises |
 | 5 | `extension_in_public` | 1 | Extension placement | **Security** | **Accepted** — `pgcrypto` lives in `extensions` schema per rule 25; advisor may still flag historical `public` references |
 | 6 | `anon_security_definer_function_executable` | 1 | Definer exposure | **Security (critical)** | **Watch** — must stay at 0–1 known exceptions; any **increase** triggers manual review (rule 25: revoke unguarded definer from `anon`) |
-| 7 | `auth_leaked_password_protection` | 1 | Auth config | **Security** | **Deferred** — 대시보드 설정 대기 — 인간 결정 사항 |
+| 7 | `auth_leaked_password_protection` | 1 | Auth config | **Security** | **Deferred** — Pro 플랜 전용 — 무료 플랜에서 토글 불가, Pro 전환 시 활성화. 무료 대체 통제: 비밀번호 강도 정책(적용 완료) |
 | 8 | `auth_insufficient_mfa_options` | 1 | Auth config | **Security** (admin MFA) | **Deferred** — admin은 AAL2 해결 / 일반 사용자 MFA는 출시 후 백로그 |
 
 **WARN total:** 108 + 57 + 40 + 3 + 1 + 1 + 1 + 1 = **212**
@@ -64,7 +64,7 @@ No WARN type is classified as a **confirmed money conservation bug**; money corr
 | `extension_in_public` | Crypto helpers are schema-qualified to `extensions`; advisor lint is informational legacy noise. |
 | `function_search_path_mutable` | Residual count after bulk `search_path` pin migrations; treat **increases** as regressions. |
 | `anon_security_definer_function_executable` | Baseline allows one known residual; **zero tolerance for growth** without review. |
-| `auth_leaked_password_protection` | 대시보드 설정 대기 — 인간 결정 사항 |
+| `auth_leaked_password_protection` | Pro 플랜 전용 — 무료 플랜에서 토글 불가, Pro 전환 시 활성화. 무료 대체 통제: 비밀번호 강도 정책(적용 완료) |
 | `auth_insufficient_mfa_options` | admin은 AAL2 해결 / 일반 사용자 MFA는 출시 후 백로그 |
 
 ## INFO — full classification (109)

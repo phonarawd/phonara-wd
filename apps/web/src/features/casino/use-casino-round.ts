@@ -83,7 +83,7 @@ export function useCasinoRoundPipeline({
   }, [clientSeedIsAuto, gameCode, setClientSeed]);
 
   const submitBet = useCallback(async () => {
-    if (!commitment || betInFlightRef.current) return;
+    if (!commitment || betInFlightRef.current || !betIdempotencyKeyRef.current) return;
     const idempotencyKey = betIdempotencyKeyRef.current ?? (betIdempotencyKeyRef.current = `casino:${randomHex()}`);
     betInFlightRef.current = true;
     setBusy(true);

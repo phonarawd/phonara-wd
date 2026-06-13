@@ -4,6 +4,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Route as rootRoute } from './__root';
 import { AdminLayout } from '../components/admin-layout';
 import { AdminActionDialog } from '../components/admin-action-dialog';
+import { AdminPageHeader } from '../components/admin-page-header';
+import { AdminSection } from '../components/admin-section';
 import { useT } from '../lib/i18n';
 import { translateError } from '../lib/translate-error';
 import { setFeatureEnabled, setSystemMode } from '../domain/ops';
@@ -91,7 +93,7 @@ function OperationsPage() {
   if (isLoading) {
     return (
       <AdminLayout>
-        <Card className="grid max-w-2xl gap-4 p-5" aria-busy="true">
+        <Card elevation="raised" className="grid max-w-2xl gap-4 p-5" aria-busy="true">
           <Skeleton className="h-6 w-48" />
           <Skeleton className="h-24" />
           <Skeleton className="h-40" />
@@ -105,25 +107,24 @@ function OperationsPage() {
 
   return (
     <AdminLayout>
-      <div className="space-y-8 max-w-2xl" data-testid="operations-page">
-        <div>
-          <h1 className="text-2xl font-bold text-fg">{t('admin.operations.title')}</h1>
-          <p className="text-muted mt-1">{t('admin.operations.description')}</p>
-        </div>
+      <div className="max-w-2xl" data-testid="operations-page">
+        <AdminPageHeader
+          title={t('admin.operations.title')}
+          description={t('admin.operations.description')}
+        />
 
         {errorMsg && (
-          <ErrorState
-            data-testid="ops-error"
-            title={t('error.UNKNOWN')}
-            description={errorMsg}
-          />
+          <div className="mt-6">
+            <ErrorState
+              data-testid="ops-error"
+              title={t('error.UNKNOWN')}
+              description={errorMsg}
+            />
+          </div>
         )}
 
-        <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">
-            {t('admin.operations.section.systemMode')}
-          </h2>
-          <div className="rounded-2xl border border-border bg-surface p-4 space-y-4">
+        <AdminSection title={t('admin.operations.section.systemMode')} className="mt-6">
+          <Card elevation="raised" className="space-y-4 p-4">
             <ToggleRow
               label={t('admin.operations.systemHalt.label')}
               description={t('admin.operations.systemHalt.description')}
@@ -140,14 +141,11 @@ function OperationsPage() {
               testId="ops-system-readonly"
               onToggle={(v) => setDialog({ type: 'system_readonly', targetValue: v })}
             />
-          </div>
-        </section>
+          </Card>
+        </AdminSection>
 
-        <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">
-            {t('admin.operations.section.featureFlags')}
-          </h2>
-          <div className="rounded-2xl border border-border bg-surface divide-y divide-border">
+        <AdminSection title={t('admin.operations.section.featureFlags')} className="mt-6">
+          <Card elevation="raised" className="divide-y divide-border p-0">
             {FEATURES.map((feature) => (
               <ToggleRow
                 key={feature}
@@ -159,8 +157,8 @@ function OperationsPage() {
                 onToggle={(v) => setDialog({ type: 'feature', feature, targetValue: v })}
               />
             ))}
-          </div>
-        </section>
+          </Card>
+        </AdminSection>
       </div>
 
       <AdminActionDialog

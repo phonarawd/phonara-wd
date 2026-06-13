@@ -1,10 +1,19 @@
-import { createRoute, useNavigate, Link } from '@tanstack/react-router';
+import { createRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { Route as rootRoute } from './__root';
 import { useAuth } from '../contexts/auth-context';
-import { signOut } from '../lib/auth';
 import { useWallet } from '../hooks/use-wallet';
-import { formatMoney, Badge, Button, Card, Skeleton } from '@phonara/ui';
+import {
+  Badge,
+  Card,
+  CardDivider,
+  CardTitle,
+  Money,
+  Skeleton,
+  Ticker,
+  buttonVariants,
+  formatMoney,
+} from '@phonara/ui';
 import { useT } from '../lib/i18n';
 import { ensureOnboardingConsents } from '../lib/onboarding-consent';
 import { WelcomeModal } from '../components/welcome-modal';
@@ -12,6 +21,7 @@ import { DailyClaimCard } from '../components/daily-claim-card';
 import { RouletteCard } from '../components/roulette-card';
 import { MissionsCard } from '../components/missions-card';
 import { ReferralDashboardCard } from '../components/referral-dashboard-card';
+import { AppShell } from '../components/app-shell';
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -32,15 +42,11 @@ function DashboardPage() {
     }
   }, [session, authLoading, navigate]);
 
-  // Backfill mandatory consents for accounts created before client-side recording shipped.
   useEffect(() => {
     if (!session?.user.id) return;
-    void ensureOnboardingConsents().catch(() => {
-      // Non-fatal: reward RPCs surface CONSENT_REQUIRED until the user completes onboarding.
-    });
+    void ensureOnboardingConsents().catch(() => undefined);
   }, [session?.user.id]);
 
-  // Show welcome modal for new users (no wallet balance yet)
   useEffect(() => {
     if (!walletLoading && wallet) {
       const isNew =
@@ -51,141 +57,260 @@ function DashboardPage() {
     }
   }, [wallet, walletLoading]);
 
-  async function handleSignOut() {
-    await signOut();
-    void navigate({ to: '/login' });
-  }
-
   if (authLoading) {
     return (
-      <div className="shell">
-        <Card className="grid w-full max-w-md gap-4 p-5" aria-busy="true">
-          <Skeleton className="h-5 w-32" />
-          <Skeleton className="h-24" />
-          <Skeleton className="h-10" />
-        </Card>
-      </div>
+      <AppShell active="home">
+        <div className="app-page" aria-busy="true">
+          <Card elevation="raised" className="p-6">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="mt-4 h-14 w-48" />
+            <Skeleton className="mt-6 h-11 w-full" />
+          </Card>
+        </div>
+      </AppShell>
     );
   }
 
+  const phonLocked = wallet?.phon_locked !== '0.000000';
+  const tickerItems = [
+    {
+      id: 'phon',
+      label: t('wallet.currency.phon'),
+      value: wallet?.phon_available ?? '0',
+      suffix: 'PHON',
+      format: (value: string) => formatMoney(value, 'PHON'),
+    },
+    {
+      id: 'usdt',
+      label: t('wallet.currency.usdt'),
+      value: wallet?.usdt_available ?? '0',
+      suffix: 'USDT',
+      format: (value: string) => formatMoney(value, 'USDT'),
+    },
+    {
+      id: 'krw',
+      label: t('wallet.currency.krw'),
+      value: wallet?.krw_available ?? '0',
+      suffix: 'KRW',
+      format: (value: string) => formatMoney(value, 'KRW'),
+    },
+  ];
+
   return (
-    <div className="shell">
-      {showWelcome && (
-        <WelcomeModal onDismiss={() => setShowWelcome(false)} />
-      )}
+    <AppShell active="home">
+      {showWelcome && <WelcomeModal onDismiss={() => setShowWelcome(false)} />}
 
-      <div className="dashboard" data-testid="dashboard-page">
-        <header className="dash-header">
-          <div className="dash-logo">
-            <span className="logo-mark">P</span>
-            <span className="logo-name">PHONARA</span>
-          </div>
-          <nav className="dash-nav">
-            <Link to="/ledger" className="nav-link">{t('nav.ledgerHistory')}</Link>
-            <Link to="/responsible-gaming" className="nav-link">{t('nav.responsibleGaming')}</Link>
-            <Button variant="outline" size="sm" onClick={handleSignOut}>{t('nav.logout')}</Button>
-          </nav>
-        </header>
-
-        <section className="wallet-section">
-          <h2 className="section-title">{t('wallet.title')}</h2>
-
-          {walletLoading && (
-            <div className="wallet-grid">
-              {['PHON', 'USDT', 'KRW'].map(c => (
-                <Card key={c} className="h-[120px] animate-pulse bg-surface-2/40" />
-              ))}
-            </div>
-          )}
-
-          {error && <p className="error-msg">{t('wallet.loadError')}</p>}
-
-          {wallet && !walletLoading && (
-            <>
-              <Card className="mb-4 flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
+      <div className="app-page pn-anim-rise" data-testid="dashboard-page">
+        <section className="app-section" aria-labelledby="dashboard-hero-title">
+          <Card elevation="raised" className="overflow-hidden p-0">
+            <div className="p-5 pb-4">
+              <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm font-semibold text-fg">{t('dashboard.balanceSummary')}</p>
-                  <p className="mt-1 text-xs text-muted">{t('dashboard.balanceSummaryDesc')}</p>
+                  <p id="dashboard-hero-title" className="text-sm text-muted">
+                    {t('dashboard.hero.label')}
+                  </p>
+                  {walletLoading ? (
+                    <Skeleton className="mt-3 h-12 w-40" />
+                  ) : (
+                    <Money
+                      amount={wallet?.phon_available ?? '0'}
+                      currency="PHON"
+                      emphasis="hero"
+                      tone="neutral"
+                      pulseOnChange
+                      showCurrency
+                      className="mt-1 block text-primary"
+                      data-testid="dashboard-hero-balance"
+                    />
+                  )}
                 </div>
-                <Badge tone={wallet.phon_locked !== '0.000000' ? 'warning' : 'primary'}>
-                  {wallet.phon_locked !== '0.000000' ? t('dashboard.badge.locked') : t('dashboard.badge.live')}
+                <Badge tone={phonLocked ? 'risk' : 'trust'}>
+                  {phonLocked ? t('dashboard.badge.locked') : t('dashboard.badge.live')}
                 </Badge>
-              </Card>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <WalletCard currency="PHON" available={wallet.phon_available} locked={wallet.phon_locked} />
-                <WalletCard currency="USDT" available={wallet.usdt_available} locked={wallet.usdt_locked} />
-                <WalletCard currency="KRW" available={wallet.krw_available} locked={wallet.krw_locked} />
               </div>
-            </>
+
+              {!walletLoading && wallet && (
+                <div className="mt-5 grid grid-cols-2 gap-3">
+                  <BalanceChip
+                    label={t('wallet.currency.usdt')}
+                    amount={wallet.usdt_available}
+                    currency="USDT"
+                  />
+                  <BalanceChip
+                    label={t('wallet.currency.krw')}
+                    amount={wallet.krw_available}
+                    currency="KRW"
+                  />
+                </div>
+              )}
+            </div>
+
+            <CardDivider className="mx-0" />
+
+            <div className="flex flex-col gap-2 p-4 sm:flex-row">
+              <Link
+                to="/wallet"
+                className={buttonVariants({ variant: 'primary', size: 'lg', full: true })}
+              >
+                {t('dashboard.hero.depositCta')}
+              </Link>
+              <Link
+                to="/trade"
+                className={buttonVariants({ variant: 'secondary', size: 'lg', full: true })}
+              >
+                {t('dashboard.hero.tradeCta')}
+              </Link>
+            </div>
+          </Card>
+
+          {error && (
+            <p className="mt-3 text-sm text-down" role="alert">
+              {t('wallet.loadError')}
+            </p>
           )}
         </section>
 
-        <section className="px-5 pb-4">
-          <h2 className="section-title flex flex-col gap-1 sm:flex-row sm:items-baseline">
+        <section
+          className="app-section dashboard-command-center"
+          aria-labelledby="dashboard-hub-title"
+        >
+          <div className="dashboard-section-heading">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                {t('dashboard.hub.eyebrow')}
+              </p>
+              <h2 id="dashboard-hub-title" className="mt-1 text-xl font-black text-fg">
+                {t('dashboard.hub.title')}
+              </h2>
+            </div>
+            <div className="dashboard-live-ticker" aria-label={t('dashboard.liveTicker')}>
+              {walletLoading ? (
+                <Skeleton className="h-10 w-full md:w-72" />
+              ) : (
+                tickerItems.map((item) => (
+                  <Ticker
+                    key={item.id}
+                    label={item.label}
+                    value={item.value}
+                    suffix={item.suffix}
+                    format={item.format}
+                    density="compact"
+                    aria-label={`${item.label} ${item.format(item.value)} ${item.suffix}`}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+
+          <div className="dashboard-hub-grid">
+            <DashboardHubCard
+              to="/staking"
+              eyebrow={t('dashboard.hub.earn.eyebrow')}
+              title={t('dashboard.hub.earn.title')}
+              description={t('dashboard.hub.earn.description')}
+              metric={t('dashboard.hub.earn.metric')}
+            />
+            <DashboardHubCard
+              to="/casino"
+              eyebrow={t('dashboard.hub.games.eyebrow')}
+              title={t('dashboard.hub.games.title')}
+              description={t('dashboard.hub.games.description')}
+              metric={t('dashboard.hub.games.metric')}
+            />
+            <DashboardHubCard
+              to="/trade"
+              eyebrow={t('dashboard.hub.trade.eyebrow')}
+              title={t('dashboard.hub.trade.title')}
+              description={t('dashboard.hub.trade.description')}
+              metric={t('dashboard.hub.trade.metric')}
+            />
+            <DashboardHubCard
+              to="/ledger"
+              eyebrow={t('dashboard.hub.wallet.eyebrow')}
+              title={t('dashboard.hub.wallet.title')}
+              description={t('dashboard.hub.wallet.description')}
+              metric={phonLocked ? t('dashboard.badge.locked') : t('dashboard.badge.live')}
+            />
+          </div>
+        </section>
+
+        <section className="app-section" aria-labelledby="dashboard-rewards-title">
+          <CardTitle
+            id="dashboard-rewards-title"
+            className="mb-3 px-0 pt-0 normal-case tracking-normal"
+          >
             {t('dashboard.rewardCenter')}
-            <span className="text-xs font-normal text-muted">{t('dashboard.rewardCenterSub')}</span>
-          </h2>
-          <div className="mb-3 grid grid-cols-1 gap-3 lg:grid-cols-3">
+          </CardTitle>
+          <p className="mb-4 text-sm text-muted">{t('dashboard.rewardCenterSub')}</p>
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
             <DailyClaimCard />
             <RouletteCard />
             <ReferralDashboardCard />
           </div>
-          <MissionsCard />
+          <div className="mt-3">
+            <MissionsCard />
+          </div>
         </section>
 
-        <section className="quick-section">
-          <h2 className="section-title">{t('dashboard.quickMenu')}</h2>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            <QuickLink to="/ledger" label={t('nav.ledgerHistory')} />
-            <QuickLink to="/wallet" label={t('dashboard.krwDeposit')} />
-            <QuickLink to="/trade" label={t('nav.trade')} />
-            <QuickLink to="/staking" label={t('nav.staking')} />
-            <QuickLink to="/casino" label={t('dashboard.casino')} />
+        <section className="app-section-secondary" aria-label={t('dashboard.secondaryLinks')}>
+          <div className="flex flex-wrap gap-2">
+            <Link to="/ledger" className={buttonVariants({ variant: 'outline', size: 'sm' })}>
+              {t('nav.ledgerHistory')}
+            </Link>
+            <Link
+              to="/responsible-gaming"
+              className={buttonVariants({ variant: 'outline', size: 'sm' })}
+            >
+              {t('nav.responsibleGaming')}
+            </Link>
           </div>
         </section>
       </div>
-    </div>
+    </AppShell>
   );
 }
 
-function WalletCard({
-  currency,
-  available,
-  locked,
+function DashboardHubCard({
+  to,
+  eyebrow,
+  title,
+  description,
+  metric,
 }: {
-  currency: 'PHON' | 'USDT' | 'KRW';
-  available: string;
-  locked: string;
+  to: '/staking' | '/casino' | '/trade' | '/ledger';
+  eyebrow: string;
+  title: string;
+  description: string;
+  metric: string;
 }) {
-  const t = useT();
-  const fmtAvail = formatMoney(available, currency);
-  const fmtLocked = formatMoney(locked, currency);
-  const hasLocked = locked !== '0' && locked !== '0.000000';
-
   return (
-    <Card className="relative flex flex-col gap-3 overflow-hidden p-5 transition-colors before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-primary hover:border-border-strong">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-bold tracking-wide text-primary">{currency}</span>
-        <Badge tone={hasLocked ? 'warning' : 'neutral'}>{hasLocked ? t('wallet.lockedShort') : t('common.available')}</Badge>
-      </div>
-      <div>
-        <span className="mb-1 block text-xs text-muted">{t('wallet.available')}</span>
-        <span className="text-2xl font-bold tabular-nums text-fg">{fmtAvail}</span>
-      </div>
-      {hasLocked && (
-        <div>
-          <span className="mb-1 block text-xs text-muted">{t('wallet.lockedShort')}</span>
-          <span className="text-sm font-medium tabular-nums text-muted">{fmtLocked}</span>
-        </div>
-      )}
-    </Card>
+    <Link to={to} className="dashboard-hub-card">
+      <span className="dashboard-hub-card-eyebrow">{eyebrow}</span>
+      <span className="dashboard-hub-card-title">{title}</span>
+      <span className="dashboard-hub-card-description">{description}</span>
+      <span className="dashboard-hub-card-metric">{metric}</span>
+    </Link>
   );
 }
 
-function QuickLink({ to, label }: { to: '/ledger' | '/wallet' | '/trade' | '/staking' | '/casino'; label: string }) {
+function BalanceChip({
+  label,
+  amount,
+  currency,
+}: {
+  label: string;
+  amount: string;
+  currency: 'USDT' | 'KRW';
+}) {
   return (
-    <Link to={to} className="rounded-2xl border border-border bg-surface p-4 text-sm font-semibold text-fg transition-colors hover:border-border-strong hover:bg-surface-2">
-      {label}
-    </Link>
+    <div className="rounded-xl border border-border bg-surface-inset px-3 py-2.5">
+      <p className="text-[0.68rem] font-semibold uppercase tracking-wide text-muted">{label}</p>
+      <Money
+        amount={amount}
+        currency={currency}
+        showCurrency
+        className="mt-1 block text-base font-semibold"
+      />
+    </div>
   );
 }

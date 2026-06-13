@@ -90,7 +90,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
 
   return createPortal(
     <div
-      className="fixed inset-0 z-1000 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-1000 flex items-center justify-center bg-[var(--overlay-scrim)] p-4 backdrop-blur-[var(--glass-blur)]"
       onClick={(e) => {
         if (dismissible && e.target === e.currentTarget) onClose();
       }}
@@ -104,8 +104,8 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
         tabIndex={-1}
         onKeyDown={onKeyDown}
         className={cn(
-          'w-full max-w-sm rounded-2xl border border-border bg-surface p-6 outline-none ' +
-            'shadow-[0_24px_64px_-24px_rgba(0,0,0,0.7)]',
+          'w-full max-w-sm rounded-2xl border border-border bg-[var(--glass-panel-strong)] p-[var(--density-comfortable-panel-padding)] outline-none shadow-[var(--elevation-sheet)]',
+          'animate-[pn-rise_var(--motion-duration-reveal)_var(--motion-ease-spring)_both]',
           className,
         )}
       >

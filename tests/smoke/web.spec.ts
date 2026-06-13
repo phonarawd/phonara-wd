@@ -18,12 +18,8 @@ test('PWA icon assets are reachable', async ({ page }) => {
 });
 
 test('PWA service worker script is reachable (production build)', async ({ page }) => {
-  // SW is only registered in production builds (devOptions.enabled=false).
-  // In dev mode (Playwright CI against the dev server), check the registerSW.js
-  // endpoint; skip gracefully if it returns 404 (dev mode).
-  const resp = await page.request.get('/registerSW.js');
+  const resp = await page.request.get('/sw.js');
   if (resp.status() === 404) {
-    // Dev server — SW not enabled. Assert the file exists in the built output.
     test.skip();
     return;
   }

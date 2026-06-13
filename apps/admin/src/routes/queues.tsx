@@ -4,11 +4,13 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Route as rootRoute } from './__root';
 import { AdminLayout } from '../components/admin-layout';
 import { AdminActionDialog } from '../components/admin-action-dialog';
+import { AdminPageHeader } from '../components/admin-page-header';
+import { AdminSection } from '../components/admin-section';
 import { supabase } from '../lib/supabase';
 import { translateError } from '../lib/translate-error';
 import { runQueueAction, type QueueAction } from '../domain/queues';
 import { useT } from '../lib/i18n';
-import { Button, DataTable, type ColumnDef } from '@phonara/ui';
+import { Button, Card, DataTable, type ColumnDef } from '@phonara/ui';
 import type { Tables } from '@phonara/shared-types';
 import {
   MetricCard,
@@ -297,19 +299,19 @@ export function QueuesPage() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6" data-testid="admin-queues-page">
-        <div>
-          <h1 className="text-2xl font-bold text-fg">{t('admin.queues.title')}</h1>
-          <p className="text-muted mt-1">{t('admin.queues.description')}</p>
-        </div>
+      <div data-testid="admin-queues-page">
+        <AdminPageHeader
+          title={t('admin.queues.title')}
+          description={t('admin.queues.description')}
+        />
 
         {errorMsg && (
-          <p className="text-down text-sm" role="alert" data-testid="admin-queues-error">
+          <p className="mt-4 text-sm text-down" role="alert" data-testid="admin-queues-error">
             {errorMsg}
           </p>
         )}
 
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+        <div className="admin-metric-grid cols-4 mt-6">
           <MetricCard label={t('admin.queues.metric.review')} value={queueData.reviewQueue.length} />
           <MetricCard label={t('admin.queues.metric.withdrawals')} value={queueData.withdrawals.length} />
           <MetricCard label={t('admin.queues.metric.str')} value={queueData.strCases.length} />
@@ -424,18 +426,19 @@ function QueueSection<T>({
   testId: string;
 }) {
   return (
-    <section className="space-y-3">
-      <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">{title}</h2>
-      <DataTable
-        columns={columns}
-        data={data}
-        keyExtractor={(row, i) => ('id' in (row as Record<string, unknown>) ? String((row as { id: string }).id) : i)}
-        emptyState={empty}
-        loading={loading}
-        size="sm"
-        data-testid={testId}
-      />
-    </section>
+    <AdminSection title={title} className="mt-6">
+      <Card elevation="raised" className="admin-panel-card p-0">
+        <DataTable
+          columns={columns}
+          data={data}
+          keyExtractor={(row, i) => ('id' in (row as Record<string, unknown>) ? String((row as { id: string }).id) : i)}
+          emptyState={empty}
+          loading={loading}
+          size="sm"
+          data-testid={testId}
+        />
+      </Card>
+    </AdminSection>
   );
 }
 

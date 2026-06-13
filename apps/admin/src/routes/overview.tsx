@@ -2,6 +2,8 @@ import { createRoute, Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Route as rootRoute } from './__root';
 import { AdminLayout } from '../components/admin-layout';
+import { AdminPageHeader } from '../components/admin-page-header';
+import { AdminSection } from '../components/admin-section';
 import { useT } from '../lib/i18n';
 import { getOpsAlertsRaw, getOpsHealthRaw } from '../domain/ops';
 import { useAppConfig } from '../hooks/use-app-config';
@@ -54,30 +56,30 @@ function OverviewPage() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6" data-testid="overview-page">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-fg">{t('admin.overview.title')}</h1>
-            <p className="text-muted">{t('admin.overview.description')}</p>
-            {data?.lastUpdatedAt && (
-              <p className="mt-2 text-xs text-muted tabular-nums">
-                {t('admin.overview.lastUpdated')}: {formatDateTime(data.lastUpdatedAt)}
-              </p>
-            )}
-          </div>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={refreshAll}
-            disabled={isFetching}
-            data-testid="ops-health-refresh"
-          >
-            {t('admin.overview.refresh')}
-          </Button>
-        </div>
+      <div data-testid="overview-page">
+        <AdminPageHeader
+          title={t('admin.overview.title')}
+          description={t('admin.overview.description')}
+          meta={
+            data?.lastUpdatedAt
+              ? `${t('admin.overview.lastUpdated')}: ${formatDateTime(data.lastUpdatedAt)}`
+              : undefined
+          }
+          actions={
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={refreshAll}
+              disabled={isFetching}
+              data-testid="ops-health-refresh"
+            >
+              {t('admin.overview.refresh')}
+            </Button>
+          }
+        />
 
         {isLoading && (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" aria-busy="true">
+          <div className="admin-metric-grid mt-6" aria-busy="true">
             <Skeleton className="h-40" />
             <Skeleton className="h-40" />
             <Skeleton className="h-40" />
@@ -88,13 +90,13 @@ function OverviewPage() {
         )}
 
         {!isLoading && error && (
-          <div className="space-y-4">
+          <div className="mt-6 space-y-4">
             <ErrorState
               data-testid="ops-health-error"
               title={t('admin.overview.healthUnavailable.title')}
               description={t('admin.overview.healthUnavailable.description')}
             />
-            <Card className="p-5" data-testid="ops-health-fallback">
+            <Card elevation="raised" className="p-5" data-testid="ops-health-fallback">
               <CardHeaderLine title={t('admin.overview.card.systemMode')} status="critical" />
               <div className="mt-4 space-y-2 text-sm text-muted">
                 <p>
@@ -113,7 +115,11 @@ function OverviewPage() {
         )}
 
         {!isLoading && !error && unresolvedAlerts > 0 && (
-          <Card className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between" data-testid="ops-alerts-cta">
+          <Card
+            elevation="raised"
+            className="mt-6 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between"
+            data-testid="ops-alerts-cta"
+          >
             <div>
               <p className="text-sm font-semibold text-fg">{t('admin.overview.alertsBanner.title')}</p>
               <p className="mt-1 text-sm text-muted">
@@ -129,7 +135,8 @@ function OverviewPage() {
         )}
 
         {!isLoading && !error && (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <AdminSection title={t('admin.overview.section.health')} className="mt-6">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             <HealthCard
               title={t('admin.overview.card.systemMode')}
               check={systemMode}
@@ -161,7 +168,8 @@ function OverviewPage() {
               testId="ops-card-operator-actions"
               className="md:col-span-2 xl:col-span-1"
             />
-          </div>
+            </div>
+          </AdminSection>
         )}
       </div>
     </AdminLayout>
@@ -396,7 +404,7 @@ function HealthCard({
   const t = useT();
   const status = check?.status ?? 'warning';
   return (
-    <Card className={`p-5 ${className}`} data-testid={testId}>
+    <Card className={`p-5 ${className}`} elevation="raised" data-testid={testId}>
       <CardHeaderLine title={title} status={status} />
       <p className="mt-4 text-sm text-fg">{check?.summary ?? t('admin.overview.noObservedAt')}</p>
       <CheckMeta check={check} />
@@ -416,7 +424,7 @@ function CombinedHealthCard({
   const t = useT();
   const status = worstStatus(checks.map((check) => check?.status ?? 'warning'));
   return (
-    <Card className="p-5" data-testid={testId}>
+    <Card elevation="raised" className="p-5" data-testid={testId}>
       <CardHeaderLine title={title} status={status} />
       <div className="mt-4 space-y-4">
         {checks.map((check) => (

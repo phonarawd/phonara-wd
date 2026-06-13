@@ -2,8 +2,8 @@ import { forwardRef, type HTMLAttributes } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../lib/cn';
 
-const spinnerVariants = cva(
-  'inline-block animate-spin rounded-full border-solid border-border border-t-primary',
+export const spinnerVariants = cva(
+  'inline-block animate-spin rounded-full border-solid',
   {
     variants: {
       size: {
@@ -11,8 +11,14 @@ const spinnerVariants = cva(
         md: 'h-9 w-9 border-[3px]',
         lg: 'h-12 w-12 border-4',
       },
+      tone: {
+        primary: 'border-border border-t-primary',
+        muted: 'border-border border-t-muted',
+        up: 'border-border border-t-up',
+        down: 'border-border border-t-down',
+      },
     },
-    defaultVariants: { size: 'md' },
+    defaultVariants: { size: 'md', tone: 'primary' },
   },
 );
 
@@ -25,7 +31,7 @@ export interface SpinnerProps
 
 /** Loading spinner. Replaces the bespoke `.spinner` class. */
 export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinner(
-  { className, size, label, ...props },
+  { className, size, tone, label, ...props },
   ref,
 ) {
   return (
@@ -34,7 +40,7 @@ export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinne
       role="status"
       aria-label={label}
       aria-live="polite"
-      className={cn(spinnerVariants({ size }), className)}
+      className={cn(spinnerVariants({ size, tone }), className)}
       {...props}
     />
   );

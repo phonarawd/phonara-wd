@@ -24,6 +24,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   override componentDidCatch(error: Error, info: ErrorInfo): void {
     if (import.meta.env.DEV) {
+      // release-allow: dev-only render crash diagnostics are stripped from production.
       console.error('[ErrorBoundary]', error, info.componentStack);
     }
   }
@@ -43,17 +44,9 @@ function ErrorFallback() {
       role="alert"
       className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-bg px-6 py-[max(1.5rem,env(safe-area-inset-top))] text-center text-fg"
     >
-      <h1 className="text-xl font-semibold">
-        {t('error.boundary.title')}
-      </h1>
-      <p className="max-w-md text-sm text-muted">
-        {t('error.boundary.description')}
-      </p>
-      <Button
-        type="button"
-        className="mt-2"
-        onClick={() => window.location.reload()}
-      >
+      <h1 className="text-xl font-semibold">{t('error.boundary.title')}</h1>
+      <p className="max-w-md text-sm text-muted">{t('error.boundary.description')}</p>
+      <Button type="button" className="mt-2" onClick={() => window.location.reload()}>
         {t('error.boundary.reload')}
       </Button>
     </div>

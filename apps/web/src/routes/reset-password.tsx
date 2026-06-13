@@ -120,7 +120,7 @@ function ResetPasswordPage() {
   if (mode === 'loading') {
     return (
       <AuthShell>
-        <Card className="auth-card p-6">
+        <Card className="auth-card auth-screen-card p-6">
           <p className="text-sm text-muted" role="status" aria-live="polite">
             {t('auth.entry.shared.statusLoading')}
           </p>
@@ -132,7 +132,7 @@ function ResetPasswordPage() {
   if (state.kind === 'requestSent') {
     return (
       <AuthShell>
-        <Card className="auth-card p-6">
+        <Card className="auth-card auth-screen-card p-6">
           <h2 className="text-base font-semibold text-fg">
             {t('auth.entry.reset.requestSentTitle')}
           </h2>
@@ -153,7 +153,7 @@ function ResetPasswordPage() {
   if (state.kind === 'updateDone') {
     return (
       <AuthShell>
-        <Card className="auth-card p-6">
+        <Card className="auth-card auth-screen-card p-6">
           <h2 className="text-base font-semibold text-fg">
             {t('auth.entry.reset.updateDoneTitle')}
           </h2>
@@ -195,11 +195,12 @@ function ResetPasswordPage() {
   if (mode === 'update') {
     return (
       <AuthShell>
-        <Card className="auth-card p-6">
-          <p className="mb-4 text-sm leading-relaxed text-muted">
-            {t('auth.entry.shared.passwordHelp')}
-          </p>
-          <form onSubmit={handleUpdate} noValidate className="space-y-4">
+        <Card className="auth-card auth-screen-card p-6">
+          <header className="auth-card-header">
+            <h2 className="text-lg font-semibold text-fg">{t('auth.entry.reset.title')}</h2>
+            <p className="mt-1 text-sm text-muted">{t('auth.entry.shared.passwordHelp')}</p>
+          </header>
+          <form onSubmit={handleUpdate} noValidate className="auth-form">
             <div className="space-y-1.5">
               <label htmlFor="reset-new" className="text-sm font-medium text-fg">
                 {t('auth.entry.reset.newPasswordLabel')}
@@ -249,7 +250,7 @@ function ResetPasswordPage() {
               id="reset-error"
               role="alert"
               aria-live="polite"
-              className="min-h-5 text-sm text-down"
+              className="auth-error-message"
             >
               {errorKey ? t(errorKey) : ''}
             </p>
@@ -267,11 +268,12 @@ function ResetPasswordPage() {
 
   return (
     <AuthShell>
-      <Card className="auth-card p-6">
-        <p className="mb-4 text-sm leading-relaxed text-muted">
-          {t('auth.entry.reset.subtitle')}
-        </p>
-        <form onSubmit={handleRequest} noValidate className="space-y-4">
+      <Card className="auth-card auth-screen-card p-6">
+        <header className="auth-card-header">
+          <h2 className="text-lg font-semibold text-fg">{t('auth.entry.reset.title')}</h2>
+          <p className="mt-1 text-sm text-muted">{t('auth.entry.reset.subtitle')}</p>
+        </header>
+        <form onSubmit={handleRequest} noValidate className="auth-form">
           <div className="space-y-1.5">
             <label htmlFor="reset-email" className="text-sm font-medium text-fg">
               {t('auth.entry.shared.emailLabel')}
@@ -301,7 +303,7 @@ function ResetPasswordPage() {
             id="reset-error"
             role="alert"
             aria-live="polite"
-            className="min-h-5 text-sm text-down"
+            className="auth-error-message"
           >
             {errorKey ? t(errorKey) : ''}
           </p>
@@ -313,7 +315,7 @@ function ResetPasswordPage() {
           </Button>
         </form>
       </Card>
-      <footer className="mt-6 text-center text-sm text-muted">
+      <footer className="auth-entry-footer">
         <p>
           <Link
             to="/login"

@@ -4,6 +4,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Route as rootRoute } from './__root';
 import { AdminLayout } from '../components/admin-layout';
 import { AdminActionDialog } from '../components/admin-action-dialog';
+import { AdminMetricCard } from '../components/admin-metric-card';
+import { AdminPageHeader } from '../components/admin-page-header';
+import { AdminSection } from '../components/admin-section';
 import { translateError } from '../lib/translate-error';
 import {
   ackOpsAlert,
@@ -166,49 +169,53 @@ export function AlertsPage() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6" data-testid="admin-alerts-page">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-fg">{t('admin.alerts.title')}</h1>
-            <p className="text-muted mt-1">{t('admin.alerts.description')}</p>
-            {data?.fetchedAt && (
-              <p className="mt-2 text-xs text-muted tabular-nums">
-                {t('admin.alerts.lastSynced')}: {formatDate(data.fetchedAt)}
-              </p>
-            )}
-          </div>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={handleSync}
-            disabled={busy || isFetching}
-            data-testid="ops-alerts-sync"
-          >
-            {t('admin.alerts.sync')}
-          </Button>
-        </div>
+      <div data-testid="admin-alerts-page">
+        <AdminPageHeader
+          title={t('admin.alerts.title')}
+          description={t('admin.alerts.description')}
+          meta={
+            data?.fetchedAt
+              ? `${t('admin.alerts.lastSynced')}: ${formatDate(data.fetchedAt)}`
+              : undefined
+          }
+          actions={
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleSync}
+              disabled={busy || isFetching}
+              data-testid="ops-alerts-sync"
+            >
+              {t('admin.alerts.sync')}
+            </Button>
+          }
+        />
 
         {errorMsg && (
-          <p className="text-down text-sm" role="alert" data-testid="admin-alerts-error">
+          <p className="mt-4 text-sm text-down" role="alert" data-testid="admin-alerts-error">
             {errorMsg}
           </p>
         )}
 
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-          <MetricCard label={t('admin.alerts.metric.critical')} value={openCritical} />
-          <MetricCard label={t('admin.alerts.metric.warning')} value={openWarning} />
-          <MetricCard label={t('admin.alerts.metric.acknowledged')} value={acknowledged} />
+        <div className="admin-metric-grid mt-6">
+          <AdminMetricCard label={t('admin.alerts.metric.critical')} value={openCritical} />
+          <AdminMetricCard label={t('admin.alerts.metric.warning')} value={openWarning} />
+          <AdminMetricCard label={t('admin.alerts.metric.acknowledged')} value={acknowledged} />
         </div>
 
-        <DataTable
-          columns={columns}
-          data={alerts}
-          keyExtractor={(row) => row.id}
-          emptyState={t('admin.alerts.empty')}
-          loading={isLoading}
-          size="sm"
-          data-testid="admin-alerts-table"
-        />
+        <AdminSection title={t('admin.alerts.section.open')} className="mt-6">
+          <Card elevation="raised" className="admin-panel-card p-0">
+            <DataTable
+              columns={columns}
+              data={alerts}
+              keyExtractor={(row) => row.id}
+              emptyState={t('admin.alerts.empty')}
+              loading={isLoading}
+              size="sm"
+              data-testid="admin-alerts-table"
+            />
+          </Card>
+        </AdminSection>
       </div>
 
       <AdminActionDialog
@@ -278,15 +285,6 @@ async function invalidateAlertQueries(qc: ReturnType<typeof useQueryClient>) {
     qc.invalidateQueries({ queryKey: ['ops-health'] }),
     qc.invalidateQueries({ queryKey: ['audit-logs'] }),
   ]);
-}
-
-function MetricCard({ label, value }: { label: string; value: number }) {
-  return (
-    <Card className="p-4">
-      <p className="text-xs text-muted">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-fg tabular-nums">{value}</p>
-    </Card>
-  );
 }
 
 function SeverityBadge({ severity, t }: { severity: AlertSeverity; t: ReturnType<typeof useT> }) {

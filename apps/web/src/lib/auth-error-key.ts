@@ -22,6 +22,10 @@ export function authErrorMessageKey(code: AuthFieldErrorCode): MessageKey {
       return 'auth.entry.errors.emailInvalid';
     case 'passwordTooShort':
       return 'auth.entry.errors.passwordTooShort';
+    case 'emailNotConfirmed':
+      return 'auth.entry.errors.emailNotConfirmed';
+    case 'rateLimited':
+      return 'auth.entry.errors.rateLimited';
     case 'network':
       return 'auth.entry.errors.network';
     case 'generic':

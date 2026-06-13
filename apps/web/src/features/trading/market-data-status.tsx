@@ -38,7 +38,7 @@ export function MarketDataStatus({
     >
       <div className="flex flex-wrap items-center gap-2">
         {hasError && <Badge tone="down">{t('trade.dataStatus.error')}</Badge>}
-        {!hasError && stale && <Badge tone="warning">{t('trade.dataStatus.stale')}</Badge>}
+        {!hasError && stale && <Badge tone="risk">{t('trade.dataStatus.stale')}</Badge>}
         {!hasError && !stale && (pricesFetching || positionsFetching) && (
           <Badge tone="primary">{t('trade.dataStatus.syncing')}</Badge>
         )}

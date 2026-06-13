@@ -26,6 +26,7 @@ function TermsPage() {
       intro="legal.terms.intro"
       effectiveDate={EFFECTIVE_DATE}
       sections={SECTIONS}
+      activeDoc="terms"
     />
   );
 }

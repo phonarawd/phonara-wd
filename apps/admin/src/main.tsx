@@ -15,6 +15,7 @@ import { AuthProvider } from './contexts/auth-context';
 import { I18nProvider } from './lib/i18n';
 import { queryClient } from './lib/query';
 import './theme.css';
+import './styles.css';
 
 const routeTree = rootRoute.addChildren([
   loginRoute,

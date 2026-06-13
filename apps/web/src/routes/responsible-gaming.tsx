@@ -6,7 +6,9 @@ import { useAuth } from '../contexts/auth-context';
 import { useT } from '../lib/i18n';
 import { translateError } from '../lib/translate-error';
 import { setRgLimit, setSelfExclusion } from '../domain/responsible-gaming';
-import { Button, Card, ConfirmDialog, Input } from '@phonara/ui';
+import { normalizeDecimalInput } from '../lib/money-input';
+import { Button, Card, CardDivider, ConfirmDialog, Input } from '@phonara/ui';
+import { AppShell } from '../components/app-shell';
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -60,73 +62,107 @@ function ResponsibleGamingPage() {
 
   if (authLoading || !session) {
     return (
-      <div className="shell flex min-h-dvh items-center justify-center text-muted text-sm">
-        {t('common.loading')}
-      </div>
+      <AppShell active="casino">
+        <div className="app-page flex min-h-[40vh] items-center justify-center text-sm text-muted">
+          {t('common.loading')}
+        </div>
+      </AppShell>
     );
   }
 
   return (
-    <div className="shell py-6" data-testid="responsible-gaming-page">
-      <Card className="mx-auto max-w-lg space-y-6 p-5">
-        <div>
-          <h1 className="text-xl font-bold text-fg">{t('rg.title')}</h1>
-          <p className="mt-1 text-sm text-muted">{t('rg.description')}</p>
-        </div>
-
-        <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-fg">{t('rg.limits.title')}</h2>
-          <label className="block space-y-1">
-            <span className="text-xs text-muted">{t('rg.limits.depositKrw')}</span>
-            <Input
-              value={depositLimit}
-              onChange={(e) => setDepositLimit(e.target.value)}
-              data-testid="rg-deposit-limit-input"
-            />
-          </label>
-          <label className="block space-y-1">
-            <span className="text-xs text-muted">{t('rg.limits.lossGameUsdt')}</span>
-            <Input
-              value={lossLimit}
-              onChange={(e) => setLossLimit(e.target.value)}
-              data-testid="rg-loss-limit-input"
-            />
-          </label>
-          <Button
-            variant="primary"
-            full
-            disabled={busy}
-            data-testid="rg-save-limits"
-            onClick={() => { void handleSaveLimits(); }}
-          >
-            {t('rg.limits.save')}
-          </Button>
+    <AppShell active="casino">
+      <div className="app-page pn-anim-rise" data-testid="responsible-gaming-page">
+        <section className="app-section" aria-labelledby="rg-hero-title">
+          <Card elevation="raised" className="p-5">
+            <h1 id="rg-hero-title" className="text-xl font-bold text-fg">
+              {t('rg.title')}
+            </h1>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{t('rg.description')}</p>
+            <p className="mt-3 text-xs leading-relaxed text-muted">{t('rg.hero.note')}</p>
+          </Card>
         </section>
 
-        <section className="space-y-3 border-t border-border pt-4">
-          <h2 className="text-sm font-semibold text-fg">{t('rg.selfExclusion.title')}</h2>
-          <p className="text-xs text-muted">{t('rg.selfExclusion.description')}</p>
-          <label className="block space-y-1">
-            <span className="text-xs text-muted">{t('rg.selfExclusion.daysLabel')}</span>
-            <Input
-              type="number"
-              min={1}
-              value={exclusionDays}
-              onChange={(e) => setExclusionDays(e.target.value)}
-              data-testid="rg-exclusion-days-input"
-            />
-          </label>
-          <Button
-            variant="danger"
-            full
-            disabled={busy}
-            data-testid="rg-self-exclusion-start"
-            onClick={() => setConfirmOpen(true)}
-          >
-            {t('rg.selfExclusion.start')}
-          </Button>
+        <section className="app-section" aria-labelledby="rg-limits-title">
+          <Card className="p-5">
+            <h2 id="rg-limits-title" className="text-sm font-semibold text-fg">
+              {t('rg.limits.title')}
+            </h2>
+            <p className="mt-1 text-xs text-muted">{t('rg.limits.help')}</p>
+
+            <div className="mt-4 space-y-4">
+              <label className="block space-y-1.5">
+                <span className="text-xs font-medium text-muted">{t('rg.limits.depositKrw')}</span>
+                <Input
+                  inputMode="decimal"
+                  value={depositLimit}
+                  onChange={(e) => setDepositLimit(normalizeDecimalInput(e.target.value))}
+                  data-testid="rg-deposit-limit-input"
+                />
+              </label>
+              <label className="block space-y-1.5">
+                <span className="text-xs font-medium text-muted">
+                  {t('rg.limits.lossGameUsdt')}
+                </span>
+                <Input
+                  inputMode="decimal"
+                  value={lossLimit}
+                  onChange={(e) => setLossLimit(normalizeDecimalInput(e.target.value))}
+                  data-testid="rg-loss-limit-input"
+                />
+              </label>
+              <Button
+                variant="primary"
+                full
+                disabled={busy}
+                data-testid="rg-save-limits"
+                onClick={() => {
+                  void handleSaveLimits();
+                }}
+              >
+                {t('rg.limits.save')}
+              </Button>
+            </div>
+          </Card>
         </section>
-      </Card>
+
+        <section className="app-section app-section-secondary" aria-labelledby="rg-exclusion-title">
+          <Card className="border border-down/25 p-5">
+            <h2 id="rg-exclusion-title" className="text-sm font-semibold text-fg">
+              {t('rg.selfExclusion.title')}
+            </h2>
+            <p className="mt-1 text-xs leading-relaxed text-muted">
+              {t('rg.selfExclusion.description')}
+            </p>
+            <p className="mt-2 text-xs font-medium text-down">{t('rg.selfExclusion.warning')}</p>
+
+            <CardDivider className="my-4" />
+
+            <label className="block space-y-1.5">
+              <span className="text-xs font-medium text-muted">
+                {t('rg.selfExclusion.daysLabel')}
+              </span>
+              <Input
+                type="number"
+                min={1}
+                value={exclusionDays}
+                onChange={(e) => setExclusionDays(e.target.value)}
+                data-testid="rg-exclusion-days-input"
+              />
+            </label>
+            <Button
+              variant="danger"
+              full
+              className="mt-4"
+              disabled={busy}
+              data-testid="rg-self-exclusion-start"
+              onClick={() => setConfirmOpen(true)}
+            >
+              {t('rg.selfExclusion.start')}
+            </Button>
+          </Card>
+        </section>
+      </div>
 
       <ConfirmDialog
         open={confirmOpen}
@@ -137,9 +173,11 @@ function ResponsibleGamingPage() {
         tone="danger"
         busy={busy}
         testId="rg-self-exclusion-confirm"
-        onConfirm={() => { void handleSelfExclusion(); }}
+        onConfirm={() => {
+          void handleSelfExclusion();
+        }}
         onCancel={() => setConfirmOpen(false)}
       />
-    </div>
+    </AppShell>
   );
 }

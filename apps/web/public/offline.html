@@ -6,7 +6,14 @@
     <meta name="theme-color" content="#0b0b0f" />
     <title>PHONARA</title>
     <style>
-      :root { color-scheme: dark; }
+      :root {
+        color-scheme: dark;
+        --trust: #89f0cb;
+        --trust-ink: #172822;
+        --bg: #0b0b0f;
+        --fg: #f2f2f5;
+        --muted: #9191a4;
+      }
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       body {
         display: flex;
@@ -14,39 +21,43 @@
         align-items: center;
         justify-content: center;
         min-height: 100dvh;
-        background: #0b0b0f;
-        color: #f2f2f5;
+        background: var(--bg);
+        color: var(--fg);
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
                  env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
         text-align: center;
         gap: 1rem;
       }
-      svg { opacity: 0.6; }
+      svg { opacity: 0.72; }
       h1 { font-size: 1.25rem; font-weight: 700; }
-      p { font-size: 0.875rem; color: #9191a4; max-width: 22rem; line-height: 1.6; }
+      p { font-size: 0.875rem; color: var(--muted); max-width: 22rem; line-height: 1.6; }
       button {
         margin-top: 0.5rem;
         padding: 0.625rem 1.5rem;
         border-radius: 0.75rem;
         border: none;
-        background: #6366f1;
-        color: #fff;
+        background: var(--trust);
+        color: var(--trust-ink);
         font-size: 0.875rem;
         font-weight: 600;
         cursor: pointer;
       }
+      button:focus-visible {
+        outline: 2px solid var(--trust);
+        outline-offset: 2px;
+      }
     </style>
   </head>
   <body>
-    <svg width="56" height="56" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="256" cy="256" r="160" stroke="#6366f1" stroke-width="28"/>
-      <path d="M182 180 L256 330 L330 180" stroke="#6366f1" stroke-width="28" stroke-linejoin="round" stroke-linecap="round"/>
-      <circle cx="256" cy="256" r="24" fill="#6366f1"/>
+    <svg width="56" height="56" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="256" cy="256" r="160" stroke="#89f0cb" stroke-width="28"/>
+      <path d="M182 180 L256 330 L330 180" stroke="#89f0cb" stroke-width="28" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="256" cy="256" r="24" fill="#89f0cb"/>
     </svg>
     <h1 id="title"></h1>
     <p id="body"></p>
-    <button id="retry"></button>
+    <button id="retry" type="button"></button>
     <script>
       // This static fallback ships outside the bundle, so it cannot use the app
       // i18n catalog. It mirrors the app locale resolution: stored preference

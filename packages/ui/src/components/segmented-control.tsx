@@ -3,16 +3,21 @@ import { cva } from 'class-variance-authority';
 import { cn } from '../lib/cn';
 
 export type SegmentedTone = 'default' | 'primary' | 'accent' | 'up' | 'down';
+export type SegmentedDensity = 'compact' | 'comfortable';
 
-const segmentVariants = cva(
-  'flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl border font-semibold ' +
-    'transition-colors outline-none cursor-pointer select-none ' +
+export const segmentVariants = cva(
+  'relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl border font-semibold ' +
+    'transition-[color,background-color,border-color,box-shadow,transform] duration-[var(--motion-duration-confirmation)] ease-[var(--motion-ease-standard)] outline-none cursor-pointer select-none ' +
     'focus-visible:ring-2 focus-visible:ring-primary/50 disabled:opacity-45 disabled:pointer-events-none',
   {
     variants: {
       size: {
         sm: 'px-2 py-2 text-xs',
         md: 'px-3 py-2.5 text-sm',
+      },
+      density: {
+        compact: 'min-h-[var(--density-compact-control)]',
+        comfortable: 'min-h-[var(--density-comfortable-control)]',
       },
       tone: {
         default: '',
@@ -21,7 +26,7 @@ const segmentVariants = cva(
         up: '',
         down: '',
       },
-      active: { true: '', false: 'border-transparent bg-white/5 text-muted hover:text-fg' },
+      active: { true: 'shadow-[var(--elevation-1)]', false: 'border-transparent bg-transparent text-muted hover:bg-surface/70 hover:text-fg' },
     },
     compoundVariants: [
       { active: true, tone: 'default', className: 'border-border-strong bg-surface-2 text-fg' },
@@ -30,7 +35,7 @@ const segmentVariants = cva(
       { active: true, tone: 'up', className: 'border-up/40 bg-up/15 text-up' },
       { active: true, tone: 'down', className: 'border-down/40 bg-down/15 text-down' },
     ],
-    defaultVariants: { size: 'md', tone: 'default', active: false },
+    defaultVariants: { size: 'md', density: 'comfortable', tone: 'default', active: false },
   },
 );
 
@@ -51,6 +56,7 @@ export interface SegmentedControlProps<T extends string> {
   /** Default active color for options that don't set their own `tone`. */
   tone?: SegmentedTone;
   size?: 'sm' | 'md';
+  density?: SegmentedDensity;
   className?: string;
   'aria-label'?: string;
 }
@@ -66,11 +72,16 @@ export function SegmentedControl<T extends string>({
   onChange,
   tone = 'default',
   size = 'md',
+  density = 'comfortable',
   className,
   'aria-label': ariaLabel,
 }: SegmentedControlProps<T>) {
   return (
-    <div role="radiogroup" aria-label={ariaLabel} className={cn('flex gap-1.5', className)}>
+    <div
+      role="radiogroup"
+      aria-label={ariaLabel}
+      className={cn('flex gap-1.5 rounded-2xl border border-border bg-surface-inset p-1 shadow-[var(--surface-inset-shadow)]', className)}
+    >
       {options.map((opt) => {
         const active = opt.value === value;
         return (
@@ -82,7 +93,7 @@ export function SegmentedControl<T extends string>({
             disabled={opt.disabled}
             data-testid={opt.testId}
             onClick={() => onChange(opt.value)}
-            className={segmentVariants({ size, tone: opt.tone ?? tone, active })}
+            className={segmentVariants({ size, density, tone: opt.tone ?? tone, active })}
           >
             {opt.label}
           </button>

@@ -10,6 +10,7 @@ import {
 import { useT } from '../lib/i18n';
 import { translateError } from '../lib/translate-error';
 import { signOut } from '../lib/auth';
+import { AdminAuthBrand, AdminAuthFrame } from '../components/admin-auth-frame';
 import { Button, Input } from '@phonara/ui';
 import type { MessageKey } from '@phonara/i18n';
 
@@ -82,69 +83,64 @@ function MfaChallengePage() {
   }
 
   return (
-    <div
-      className="flex items-center justify-center min-h-dvh bg-bg px-6"
-      data-testid="admin-mfa-challenge-page"
-    >
-      <div className="w-full max-w-sm space-y-6">
-        <div className="space-y-1 text-center">
-          <p className="text-xs font-bold tracking-widest uppercase text-primary">PHONARA</p>
-          <h1 className="text-xl font-bold text-fg">{t('admin.mfa.challenge.title')}</h1>
-          <p className="text-sm text-muted">{t('admin.mfa.challenge.description')}</p>
-        </div>
-
-        {challengeState.kind === 'loading' && (
-          <p className="text-center text-sm text-muted">{t('common.loading')}</p>
-        )}
-
-        {challengeState.kind === 'error' && (
-          <div className="space-y-4 text-center">
-            <p className="text-sm text-down" role="alert">{t(challengeState.messageKey)}</p>
-            <button
-              type="button"
-              className="text-sm text-muted underline"
-              onClick={() => { void signOut(); }}
-            >
-              {t('nav.logout')}
-            </button>
-          </div>
-        )}
-
-        {challengeState.kind === 'ready' && (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1">
-              <label className="text-xs text-muted font-medium" htmlFor="admin-mfa-challenge-code">
-                {t('admin.mfa.challenge.codeLabel')}
-              </label>
-              <Input
-                id="admin-mfa-challenge-code"
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                required
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                placeholder={t('admin.mfa.challenge.codePlaceholder')}
-                data-testid="admin-mfa-challenge-code"
-              />
-            </div>
-
-            {submitErrorKey && (
-              <p className="text-sm text-down" role="alert">{t(submitErrorKey)}</p>
-            )}
-
-            <Button
-              type="submit"
-              variant="primary"
-              full
-              disabled={submitting || !code.trim()}
-              data-testid="admin-mfa-challenge-submit"
-            >
-              {submitting ? t('admin.mfa.challenge.verifying') : t('admin.mfa.challenge.submit')}
-            </Button>
-          </form>
-        )}
+    <AdminAuthFrame testId="admin-mfa-challenge-page">
+      <AdminAuthBrand />
+      <div className="space-y-1 text-center">
+        <h1 className="admin-auth-brand-title">{t('admin.mfa.challenge.title')}</h1>
+        <p className="admin-auth-brand-description">{t('admin.mfa.challenge.description')}</p>
       </div>
-    </div>
+
+      {challengeState.kind === 'loading' && (
+        <p className="mt-6 text-center text-sm text-muted">{t('common.loading')}</p>
+      )}
+
+      {challengeState.kind === 'error' && (
+        <div className="mt-6 space-y-4 text-center">
+          <p className="text-sm text-down" role="alert">
+            {t(challengeState.messageKey)}
+          </p>
+          <Button type="button" variant="ghost" size="sm" onClick={() => { void signOut(); }}>
+            {t('nav.logout')}
+          </Button>
+        </div>
+      )}
+
+      {challengeState.kind === 'ready' && (
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted" htmlFor="admin-mfa-challenge-code">
+              {t('admin.mfa.challenge.codeLabel')}
+            </label>
+            <Input
+              id="admin-mfa-challenge-code"
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              required
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder={t('admin.mfa.challenge.codePlaceholder')}
+              data-testid="admin-mfa-challenge-code"
+            />
+          </div>
+
+          {submitErrorKey && (
+            <p className="text-sm text-down" role="alert">
+              {t(submitErrorKey)}
+            </p>
+          )}
+
+          <Button
+            type="submit"
+            variant="primary"
+            full
+            disabled={submitting || !code.trim()}
+            data-testid="admin-mfa-challenge-submit"
+          >
+            {submitting ? t('admin.mfa.challenge.verifying') : t('admin.mfa.challenge.submit')}
+          </Button>
+        </form>
+      )}
+    </AdminAuthFrame>
   );
 }

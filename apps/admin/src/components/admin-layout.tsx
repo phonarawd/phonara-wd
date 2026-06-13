@@ -23,6 +23,10 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/operations', labelKey: 'admin.nav.operations', testId: 'nav-operations' },
 ];
 
+function navLinkClass(active: boolean, baseClass: string): string {
+  return `${baseClass}${active ? ' is-active' : ''}`;
+}
+
 export function AdminLayout({ children }: { children: ReactNode }) {
   const t = useT();
   const { location } = useRouterState();
@@ -32,18 +36,21 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-dvh">
-      <aside
-        className="w-64 shrink-0 flex flex-col border-r border-border bg-surface"
-        data-testid="admin-sidebar"
-      >
-        <div className="px-6 py-5 border-b border-border">
-          <span className="font-bold text-primary tracking-wide text-sm uppercase">
-            PHONARA Admin
-          </span>
+    <div className="admin-shell">
+      <aside className="admin-shell-sidebar" data-testid="admin-sidebar">
+        <div className="admin-shell-brand-block">
+          <Link to="/overview" className="admin-shell-brand" aria-label={t('admin.shell.brandAria')}>
+            <span className="admin-shell-mark" aria-hidden="true">
+              P
+            </span>
+            <span className="admin-shell-brand-text">
+              <span className="admin-shell-brand-name">{t('common.appName')}</span>
+              <span className="admin-shell-brand-sub">{t('admin.shell.subtitle')}</span>
+            </span>
+          </Link>
         </div>
 
-        <nav className="flex-1 px-3 py-4 flex flex-col gap-1" aria-label={t('admin.nav.ariaLabel')}>
+        <nav className="admin-shell-side-nav" aria-label={t('admin.nav.ariaLabel')}>
           {NAV_ITEMS.map(({ to, labelKey, testId }) => {
             const active = location.pathname === to || location.pathname.startsWith(`${to}/`);
             return (
@@ -51,12 +58,8 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                 key={to}
                 to={to}
                 data-testid={testId}
-                className={[
-                  'flex items-center px-3 py-2 rounded-xl text-sm font-medium transition-colors',
-                  active
-                    ? 'bg-primary/15 text-primary'
-                    : 'text-muted hover:bg-surface-2 hover:text-fg',
-                ].join(' ')}
+                className={navLinkClass(active, 'admin-shell-side-link')}
+                aria-current={active ? 'page' : undefined}
               >
                 {t(labelKey)}
               </Link>
@@ -64,7 +67,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="px-3 py-4 border-t border-border">
+        <div className="admin-shell-sidebar-footer">
           <Button
             variant="outline"
             size="sm"
@@ -77,7 +80,45 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-auto p-8">{children}</main>
+      <div className="admin-shell-body">
+        <header className="admin-shell-header">
+          <div className="admin-shell-header-brand">
+            <span className="admin-shell-mark" aria-hidden="true">
+              P
+            </span>
+            <span className="admin-shell-header-title">{t('admin.shell.subtitle')}</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            data-testid="admin-logout-mobile"
+            onClick={handleSignOut}
+          >
+            {t('nav.logout')}
+          </Button>
+        </header>
+
+        <main className="admin-shell-main">
+          <div className="admin-page admin-pn-rise">{children}</div>
+        </main>
+      </div>
+
+      <nav className="admin-shell-nav" aria-label={t('admin.nav.ariaLabel')}>
+        {NAV_ITEMS.map(({ to, labelKey, testId }) => {
+          const active = location.pathname === to || location.pathname.startsWith(`${to}/`);
+          return (
+            <Link
+              key={to}
+              to={to}
+              data-testid={`${testId}-mobile`}
+              className={navLinkClass(active, 'admin-shell-nav-item')}
+              aria-current={active ? 'page' : undefined}
+            >
+              <span className="admin-shell-nav-label">{t(labelKey)}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Route as rootRoute } from './__root';
 import { useT } from '../lib/i18n';
 import { signIn } from '../lib/auth';
+import { AdminAuthBrand, AdminAuthFrame } from '../components/admin-auth-frame';
 import { Button, Input } from '@phonara/ui';
 
 export const Route = createRoute({
@@ -33,65 +34,60 @@ function AdminLoginPage() {
   }
 
   return (
-    <div
-      className="flex items-center justify-center min-h-dvh bg-bg"
-      data-testid="admin-login-page"
-    >
-      <div className="w-full max-w-sm space-y-6 px-6">
-        <div className="space-y-1 text-center">
-          <p className="text-xs font-bold tracking-widest uppercase text-primary">PHONARA</p>
-          <h1 className="text-xl font-bold text-fg">{t('admin.login.title')}</h1>
-          <p className="text-sm text-muted">{t('admin.login.adminOnly')}</p>
+    <AdminAuthFrame testId="admin-login-page">
+      <AdminAuthBrand />
+      <div className="space-y-1 text-center">
+        <h1 className="admin-auth-brand-title">{t('admin.login.title')}</h1>
+        <p className="admin-auth-brand-description">{t('admin.login.adminOnly')}</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4" data-testid="admin-login-form">
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-muted" htmlFor="admin-email">
+            {t('auth.email')}
+          </label>
+          <Input
+            id="admin-email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            data-testid="admin-email"
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4" data-testid="admin-login-form">
-          <div className="space-y-1">
-            <label className="text-xs text-muted font-medium" htmlFor="admin-email">
-              {t('auth.email')}
-            </label>
-            <Input
-              id="admin-email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              data-testid="admin-email"
-            />
-          </div>
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-muted" htmlFor="admin-password">
+            {t('auth.password')}
+          </label>
+          <Input
+            id="admin-password"
+            type="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            data-testid="admin-password"
+          />
+        </div>
 
-          <div className="space-y-1">
-            <label className="text-xs text-muted font-medium" htmlFor="admin-password">
-              {t('auth.password')}
-            </label>
-            <Input
-              id="admin-password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              data-testid="admin-password"
-            />
-          </div>
+        {error && (
+          <p className="text-sm text-down" data-testid="admin-login-error" role="alert">
+            {error}
+          </p>
+        )}
 
-          {error && (
-            <p className="text-sm text-down" data-testid="admin-login-error" role="alert">
-              {error}
-            </p>
-          )}
-
-          <Button
-            type="submit"
-            variant="primary"
-            full
-            disabled={submitting}
-            data-testid="admin-login-submit"
-          >
-            {submitting ? t('admin.login.signing') : t('admin.login.signIn')}
-          </Button>
-        </form>
-      </div>
-    </div>
+        <Button
+          type="submit"
+          variant="primary"
+          full
+          disabled={submitting}
+          data-testid="admin-login-submit"
+        >
+          {submitting ? t('admin.login.signing') : t('admin.login.signIn')}
+        </Button>
+      </form>
+    </AdminAuthFrame>
   );
 }

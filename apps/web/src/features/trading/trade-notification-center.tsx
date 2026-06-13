@@ -46,13 +46,14 @@ export function TradeNotificationCenter({
   }, [markets, symbol]);
 
   const selectedPrice = symbol ? (prices[symbol] ?? '0') : '0';
-  const permissionLabel = permission === 'granted'
-    ? t('notif.permission.statusGranted')
-    : permission === 'denied'
-      ? t('notif.permission.statusDenied')
-      : permission === 'unsupported'
-        ? t('notif.permission.statusUnsupported')
-        : t('notif.permission.statusDefault');
+  const permissionLabel =
+    permission === 'granted'
+      ? t('notif.permission.statusGranted')
+      : permission === 'denied'
+        ? t('notif.permission.statusDenied')
+        : permission === 'unsupported'
+          ? t('notif.permission.statusUnsupported')
+          : t('notif.permission.statusDefault');
 
   return (
     <div className="relative z-50" data-testid="notification-center">
@@ -61,6 +62,7 @@ export function TradeNotificationCenter({
         size="sm"
         data-testid="notification-center-toggle"
         aria-expanded={open}
+        aria-controls="trade-notification-panel"
         onClick={() => setOpen((value) => !value)}
       >
         {t('notif.center.toggle')}
@@ -68,16 +70,34 @@ export function TradeNotificationCenter({
       </Button>
 
       {open && (
-        <Card className="fixed right-4 top-20 z-100 flex w-[min(92vw,390px)] flex-col gap-3 p-4 text-left shadow-2xl">
+        <Card
+          id="trade-notification-panel"
+          role="dialog"
+          aria-modal="false"
+          aria-labelledby="trade-notification-title"
+          className="fixed right-4 top-20 z-100 flex w-[min(92vw,390px)] flex-col gap-3 p-4 text-left shadow-2xl"
+        >
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h3 className="text-sm font-bold text-fg">{t('notif.center.title')}</h3>
+              <h3 id="trade-notification-title" className="text-sm font-bold text-fg">
+                {t('notif.center.title')}
+              </h3>
               <p className="text-xs text-muted">{t('notif.center.description')}</p>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>{t('common.close')}</Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              aria-label={t('common.close')}
+              onClick={() => setOpen(false)}
+            >
+              {t('common.close')}
+            </Button>
           </div>
 
-          <div className="rounded-xl border border-border bg-surface-2/60 p-3" data-testid="notification-permission">
+          <div
+            className="rounded-xl border border-border bg-surface-2/60 p-3"
+            data-testid="notification-permission"
+          >
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-fg">{t('notif.permission.title')}</p>
@@ -93,11 +113,16 @@ export function TradeNotificationCenter({
                 {permissionBusy ? t('common.processing') : t('notif.permission.cta')}
               </Button>
             </div>
-            {pushConsent && <p className="mt-2 text-xs text-up">{t('notif.permission.consentLinked')}</p>}
+            {pushConsent && (
+              <p className="mt-2 text-xs text-up">{t('notif.permission.consentLinked')}</p>
+            )}
             {permissionError && <p className="mt-2 text-xs text-down">{t(permissionError)}</p>}
           </div>
 
-          <div className="rounded-xl border border-border bg-surface-2/60 p-3" data-testid="price-alert-form">
+          <div
+            className="rounded-xl border border-border bg-surface-2/60 p-3"
+            data-testid="price-alert-form"
+          >
             <p className="text-sm font-semibold text-fg">{t('notif.priceAlert.formTitle')}</p>
             <p className="text-xs text-muted">{t('notif.priceAlert.formDescription')}</p>
             <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-[1fr_0.8fr]">
@@ -108,7 +133,9 @@ export function TradeNotificationCenter({
                 onChange={(event) => setSymbol(event.target.value)}
               >
                 {markets.map((market) => (
-                  <option key={market.symbol} value={market.symbol}>{market.display_name ?? market.symbol}</option>
+                  <option key={market.symbol} value={market.symbol}>
+                    {market.display_name ?? market.symbol}
+                  </option>
                 ))}
               </select>
               <SegmentedControl<'above' | 'below'>
@@ -141,43 +168,66 @@ export function TradeNotificationCenter({
               </Button>
             </div>
             <p className="mt-2 text-xs text-muted">
-              {t('notif.priceAlert.current', { symbol: symbol || '-', price: formatMoney(selectedPrice, 'USDT') })}
+              {t('notif.priceAlert.current', {
+                symbol: symbol || '-',
+                price: formatMoney(selectedPrice, 'USDT'),
+              })}
             </p>
             {priceAlert && (
               <div className="mt-3 flex items-center justify-between gap-2 rounded-lg bg-surface px-3 py-2 text-xs">
                 <span className="text-muted">
                   {t('notif.priceAlert.active', {
                     symbol: priceAlert.symbol,
-                    direction: t(priceAlert.direction === 'above' ? 'notif.priceAlert.above' : 'notif.priceAlert.below'),
+                    direction: t(
+                      priceAlert.direction === 'above'
+                        ? 'notif.priceAlert.above'
+                        : 'notif.priceAlert.below',
+                    ),
                     target: priceAlert.target,
                   })}
                 </span>
-                <Button variant="ghost" size="sm" onClick={onClearPriceAlert}>{t('notif.priceAlert.clear')}</Button>
+                <Button variant="ghost" size="sm" onClick={onClearPriceAlert}>
+                  {t('notif.priceAlert.clear')}
+                </Button>
               </div>
             )}
           </div>
 
           <div className="flex items-center justify-between gap-3">
             <p className="text-sm font-semibold text-fg">{t('notif.center.recent')}</p>
-            <Button variant="ghost" size="sm" onClick={onClearNotifications}>{t('notif.center.clear')}</Button>
+            <Button variant="ghost" size="sm" onClick={onClearNotifications}>
+              {t('notif.center.clear')}
+            </Button>
           </div>
-          <div className="flex max-h-64 flex-col gap-2 overflow-auto" data-testid="notification-list">
+          <div
+            className="flex max-h-64 flex-col gap-2 overflow-auto"
+            data-testid="notification-list"
+            aria-live="polite"
+          >
             {notifications.length === 0 ? (
               <p className="rounded-xl border border-border bg-surface-2/50 p-3 text-sm text-muted">
                 {t('notif.center.empty')}
               </p>
-            ) : notifications.map((item) => (
-              <div key={item.id} className="rounded-xl border border-border bg-surface-2/60 p-3">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-fg">{item.title}</p>
-                  <Badge tone={item.tone === 'danger' ? 'down' : item.tone === 'success' ? 'up' : 'primary'}>
-                    {t(`notif.tone.${item.tone}` as MessageKey)}
-                  </Badge>
+            ) : (
+              notifications.map((item) => (
+                <div key={item.id} className="rounded-xl border border-border bg-surface-2/60 p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-fg">{item.title}</p>
+                    <Badge
+                      tone={
+                        item.tone === 'danger' ? 'down' : item.tone === 'success' ? 'up' : 'primary'
+                      }
+                    >
+                      {t(`notif.tone.${item.tone}` as MessageKey)}
+                    </Badge>
+                  </div>
+                  <p className="mt-1 text-xs text-muted">{item.body}</p>
+                  <p className="mt-2 text-[0.7rem] text-muted">
+                    {new Date(item.createdAt).toLocaleString()}
+                  </p>
                 </div>
-                <p className="mt-1 text-xs text-muted">{item.body}</p>
-                <p className="mt-2 text-[0.7rem] text-muted">{new Date(item.createdAt).toLocaleString()}</p>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </Card>
       )}

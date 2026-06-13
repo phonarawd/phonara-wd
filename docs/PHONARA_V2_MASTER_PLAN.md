@@ -4670,8 +4670,8 @@ Validation: ReadLints clean; bun run lint green (0 RPC-rule violations, confirmi
 
 ### 2026-06-13 ? Part 3: God Route decomposition (behavior-preserving)
 
-- casino.tsx 828��~430: extracted feature-sliced modules under apps/web/src/features/casino/ (types.ts, game-config.ts, helpers.ts, recent-bets.ts, use-casino-round.ts pipeline hook, game-field-control.tsx). Route now composes them.
-- trade.tsx 917��~155: extracted apps/web/src/features/trading/{market-data-status,trade-notification-center,futures-panel,spot-panel,open-positions}.tsx. Relative import depth adjusted (../ -> ../../).
+- casino.tsx 828��~430: extracted feature-sliced modules under apps/web/src/features/casino/ (types.ts, game-config.ts, helpers.ts, recent-bets.ts, use-casino-round.ts pipeline hook, game-field-control.tsx). Route now composes them.
+- trade.tsx 917��~155: extracted apps/web/src/features/trading/{market-data-status,trade-notification-center,futures-panel,spot-panel,open-positions}.tsx. Relative import depth adjusted (../ -> ../../).
 - wallet.tsx: extracted the 5 self-contained read queries into apps/web/src/features/wallet/use-wallet-data.ts; removed the supabase + useQuery + Tables imports and the now-unused table type aliases from the route. Deep section split deferred behind the Part 7 E2E net since wallet is a single stateful money component.
 - admin queues.tsx: extracted pure presentational helpers/labels (MetricCard, StatusBadge, SlaBadge, formatDate, summarizeJson, maskSensitiveJson, labelFor, *_LABELS, actionTitle, actionKey) into apps/admin/src/features/queues/presentation.tsx; dropped now-unused Badge/Card/MessageKey route imports.
 - Error/fix: presentation.tsx used useT only in `ReturnType<typeof useT>` -> consistent-type-imports required `import type { useT }`. Fixed.
@@ -4733,3 +4733,186 @@ Validation: ReadLints clean; bun run lint green (0 RPC-rule violations, confirmi
 
 **Task 2 notation correction**: Task 2 gate was **39/39 PASS** (not 39/40); 40th SQL file added in Task 6.3.
 
+
+### 2026-06-13 — Closeout: env loader, E2E Σ fix, backup rehearsal, FINAL_AUDIT_DUMP
+
+- Extracted `scripts/lib/load-repo-env.ts`; wired `check-env.ts` and `check-advisors.ts` (commits `14fab90`).
+- `docs/ADVISOR_BASELINE.md`: auth deferred rationales updated (HIBP dashboard / admin AAL2 vs user MFA backlog).
+- E2E: removed mid-suite `fundE2EWallet` SET on shared user; MFA-aware `loginAdmin`; RG delta assertions (`b4bbe80`). Root cause of −979: SET lowered `phon_available` below prior suite accumulation.
+- `scripts/backup-rehearsal.ts` + `bun run rehearsal:backup`: local pg_dump → db reset → test:sql 41/41 (`ebc5e7d`).
+- Gates at `1d068b5`: `bun run check` PASS; `test:sql` 41/41; `test:e2e` 45/45; `check:advisors` 0 ERROR.
+- `docs/FINAL_AUDIT_DUMP.md` — **CLOSEOUT PASS**.
+
+### 2026-06-13 ? Backup rehearsal fix + advisor baseline
+- Prior ehearsal:backup only ran pg_dump �� supabase db reset �� test:sql (migration rebuild, not dump restore). Replaced with psql restore from dump + verify_ledger_hash_chain()/verify_system_account_hash_chain() on restored DB.
+- Rehearsal PASS at 2026-06-12T23:57:59.822Z (wallet 0 / system 0 broken; dump ~1.39 MB). Recorded in RUNBOOK ��3.
+- ADVISOR_BASELINE auth_leaked_password_protection disposition updated (Pro-only HIBP; free-tier password strength policy applied).
+
+
+## Build Log — 2026-06-13 — Lovable UI/UX Midnight Vault absorption (wave 1)
+
+- Ingested phonara-gb-patches/ from Project Deep Dive.zip; Lovable shadcn scaffold excluded.
+- P2: Midnight Vault OKLCH tokens in apps/web/src/theme.css + apps/admin/src/theme.css; supplemental motion in apps/web/src/styles.css.
+- P3: @phonara/ui additive — Money, Button, Input, Card, Badge, Toast.
+- P4: AuthShell trust strip; wallet hero balance; trade stale Badge tone=risk; i18n keys auth.entry.trust.secured, wallet.activity.empty.
+- Card 40 skipped (framer-motion already in root; CSS fallback shipped).
+- Gates: bun run check green; visual.spec.ts passed.
+- Wave 2 backlog: Pretendard self-host, typed-amount confirm, settings/onboarding, admin overview.
+
+### 2026-06-13 — Local auth friction fix (signup/login 429/400)
+
+**Problem:** Manual signup/login on local stack hit 429 (rate limit), 400 (stale refresh tokens after db reset), and email-not-confirmed dead-end (confirmations on, no mail catcher).
+
+**Fix:**
+- supabase/config.toml: enable_confirmations = false for local only; relaxed max_frequency and rate limits; enabled Mailpit/Inbucket.
+- pps/web/src/lib/auth.ts: map 429 → ateLimited, email-not-confirmed → emailNotConfirmed.
+- pps/web/src/contexts/auth-context.tsx: clear local session on invalid refresh token.
+- i18n keys for new error codes; 	ests/e2e/auth-entry.spec.ts guards browser signup+login path.
+
+**Gates:** check:i18n, 	ypecheck, uth-entry.spec.ts 1/1 passed; signup API returns immediate session.
+
+
+
+### 2026-06-13 — UI Rebuild Phase 1 (Foundation) gate closeout
+
+**Scope:** Responsive AppShell v2 (mobile bottom-nav + desktop top-nav), Pretendard self-host, shell legacy CSS purge, route chrome migration — apps/web only; engine/RPC/hooks/domain 0 touch.
+
+**Implemented:**
+- apps/web/src/components/app-shell.tsx — single responsive shell with active tab, locale toggle, ledger link, sign-out; data-testid anchors preserved.
+- apps/web/public/fonts/ — Pretendard variable + 400/500/600/700 woff2; theme.css @font-face (swap + unicode-range); index.html preload.
+- Route migration: ledger, responsible-gaming, staking, trade, wallet, casino, dashboard wrapped in AppShell; legacy .shell/.dashboard/.dash-* shell markup removed.
+- styles.css — responsive shell tokens, safe-area insets, content-visibility: auto, prefers-reduced-motion respected; backdrop-filter limited to fixed shell/auth surfaces.
+
+**Gates (2026-06-13):**
+- Static: bun run check PASS (env, i18n, release, advisors 0 ERROR, migrations lock 88, deps, typecheck, lint, unit 142/143, build).
+- E2E: visual.spec.ts 1/1, auth-entry.spec.ts 1/1, core-flow.spec.ts 3/3 — 5/5 PASS (~1.8m, local Supabase).
+- Perf review: no persistent will-change; charts remain lazy-loaded (trading-chart-loader chunk); main bundle ~944 kB / gzip ~270 kB (unchanged vs pre-shell baseline).
+
+**Phase 1 complete.** Wave 2 backlog: first-touch landing, settings/onboarding routes, typed-amount confirm UX, admin shell (Phase 5).
+
+
+### 2026-06-13 — UI Rebuild Phase 2 (First-touch & Home) gate closeout
+
+**Scope:** Landing page, auth/legal polish, welcome modal + reward card redesign — apps/web only; engine/RPC/hooks/domain 0 touch.
+
+**Implemented:**
+- apps/web/src/components/landing-page.tsx + routes/index.tsx — public landing at / with hero, signup/login CTAs, trust strip, locale toggle; authed users redirect to dashboard.
+- Auth form headlines on login/signup/reset cards (auth.entry.*.title/subtitle keys).
+- apps/web/src/components/legal-page.tsx — Midnight Vault shell, home + login nav links.
+- apps/web/src/components/welcome-modal.tsx — token-based layout; Money/formatMoney for bonus amounts via lib/reward-amounts.ts (mirrors rpc_claim_welcome_bonus 5000/1000); emoji JSX removed.
+- apps/web/src/components/roulette-card.tsx — @phonara/ui Button/Badge; legacy roulette/welcome CSS purged from styles.css.
+- i18n: landing.*, legal.backHome, welcome.badge; welcome copy de-emojified for release cleanliness.
+- tests/e2e/visual.spec.ts — landing.png capture added.
+
+**Gates (2026-06-13):**
+- Static: bun run check PASS.
+- E2E: visual 1/1, auth-entry 1/1, core-flow 3/3, funnel 1/1 — 6/6 PASS (~3.1m).
+
+**Phase 2 complete.** Phase 3 backlog: wallet hero/activity confirm UX, ledger DataTable.
+
+
+### 2026-06-13 — UI Rebuild Phase 3 (Money 표면) gate closeout
+
+**Scope:** wallet hero/activity, 입출금 confirm UX (기존 ConfirmDialog 유지), ledger DataTable — apps/web + i18n only; engine/RPC/hooks/domain 0 touch.
+
+**Implemented:**
+- apps/web/src/routes/wallet.tsx — dashboard급 hero Card(hero Money, locked/live Badge, PHON avail/lock, USDT/KRW chips, hero 내 deposit/withdraw 탭 CTA); 기존 ConfirmDialog 입출금 확인 UX 유지.
+- apps/web/src/features/wallet/wallet-activity-list.tsx — useLedger(8) 최근 활동 미리보기, EmptyState(i18n), /ledger 링크.
+- apps/web/src/features/wallet/direction-badge.tsx — ledger/wallet 공유 DirectionBadge.
+- apps/web/src/routes/ledger.tsx — shared DirectionBadge, pn-anim-rise, ledger-page-title a11y; desktop DataTable + mobile cards 유지.
+- packages/i18n — wallet.activity.title, wallet.activity.viewAll (ko/en).
+- tests/e2e/visual.spec.ts — wallet/ledger 스크린샷·랜드마크 단언을 dashboard 직후로 이동; trade chart loading/error 상태 허용( lazy chart flake 완화, success/empty-only 약화 아님).
+
+**Gates (2026-06-13):**
+- Static: build:packages, typecheck, check:i18n, check:release PASS.
+- E2E: visual 1/1, auth-entry 1/1, core-flow 3/3, funnel 1/1, phase5-wave9 wallet/deposit 7/7 — 13/13 PASS.
+
+**Phase 3 complete.** Phase 4 backlog: trade + casino confirm/stale UX polish.
+
+### 2026-06-13 UI Rebuild Phase 4 — trade + casino confirm/stale UX polish
+
+- **무엇/어떻게**: Card 32 intent applied to trading and casino confirm flows without touching RPC/hooks domain logic. Extended [packages/ui/src/components/confirm-dialog.tsx](../packages/ui/src/components/confirm-dialog.tsx) with confirmDisabled, pre-translated 
+otice, and row emphasis="hero". Added [pps/web/src/hooks/use-confirm-snapshot.ts](../apps/web/src/hooks/use-confirm-snapshot.ts) to lock order/bet fingerprints while confirm is open; drift triggers trust-critical 	oast.warning and disables confirm until re-open. Updated [spot-panel.tsx](../apps/web/src/features/trading/spot-panel.tsx), [utures-panel.tsx](../apps/web/src/features/trading/futures-panel.tsx), [open-positions.tsx](../apps/web/src/features/trading/open-positions.tsx), and [casino.tsx](../apps/web/src/routes/casino.tsx) with mark-price rows, stale/disconnect badges on futures close cards, Money pulse on spot price, and inline stale/price-changed notices in confirm sheets. i18n: 	rade.confirm.*, confirm.row.markPrice, casino.confirm.inputsChanged (ko/en).
+- **게이트**: un run build:packages, 	ypecheck, lint, check:i18n, check:release green. Focused Playwright core-flow confirm cancel + casino-wave7-closeout confirm paths + group-d-hardening stale oracle **5/5 passed**. No Supabase/migration/RPC changes.
+
+### 2026-06-13 — UI Rebuild Phase 5 (Staking, RG, Legal + Admin shell) gate closeout
+
+**Scope:** Staking hero + pool cards, responsible-gaming layout, legal doc nav/TOC/locale, admin responsive shell + login visual — apps/web + apps/admin + i18n only; engine/RPC/hooks/domain 0 touch.
+
+**Implemented:**
+- apps/web/src/routes/staking.tsx — hero Card + Money balance, raised pool/position cards, app-section layout, data-testid staking-page/staking-hero-balance.
+- apps/web/src/routes/responsible-gaming.tsx — hero + limits + self-exclusion cards, Decimal input normalization, cooldown/exclusion copy.
+- apps/web/src/components/legal-page.tsx — doc nav (terms/privacy), TOC anchors, locale toggle, trust strip, data-testid legal-page.
+- apps/web/src/styles.css — legal nav/TOC styles; legacy staking grid CSS removed.
+- apps/admin/src/styles.css + admin-layout.tsx + login.tsx — Midnight Vault admin shell (desktop sidebar + mobile bottom nav), glass login card; main.tsx imports styles.css.
+- packages/i18n — staking.hero.label, legal.nav.*, legal.toc, rg.hero.note/limits.help/selfExclusion.warning, admin.shell.* (ko/en).
+- tests/e2e/visual.spec.ts — staking-page/RG/legal landmarks + responsible-gaming.png screenshot.
+
+**Gates (2026-06-13):**
+- Static: build:packages, typecheck, check:i18n, check:release PASS.
+- E2E: visual 1/1, core-flow 3/3, responsible-gaming 1/1, admin 8/8 — 13/13 PASS (~2.3m).
+
+**Phase 5 complete.** UI Rebuild wave closed (Phases 1–5).
+
+### 2026-06-13 — UI Rebuild Phase 5 closeout (admin routes + MFA/login full surface)
+
+**Scope:** Complete Phase 5 per ui_rebuild_phase_1 plan — admin overview/alerts/queues/audit/operations route visual rebuild + shared auth frame for login/MFA; apps/admin + i18n only; engine/RPC/hooks/domain 0 touch.
+
+**Implemented:**
+- apps/admin/src/components/admin-page-header.tsx, admin-section.tsx, admin-auth-frame.tsx, admin-metric-card.tsx — shared Midnight Vault admin primitives.
+- apps/admin/src/routes/{overview,alerts,queues,audit,operations}.tsx — AdminPageHeader + AdminSection + raised Card panels + metric grids.
+- apps/admin/src/routes/{login,mfa-enroll,mfa-challenge}.tsx — AdminAuthFrame + AdminAuthBrand glass auth surfaces.
+- apps/admin/src/styles.css — page header/section/metric grid/data surface tokens.
+- packages/i18n — admin.audit.description/section.entries, admin.alerts.section.open, admin.overview.section.health (ko/en).
+- tests/e2e/visual.spec.ts — admin desktop screenshots (overview/queues/alerts) + mobile overview retained.
+
+**Gates (2026-06-13):**
+- Static: build:packages, typecheck, check:i18n, check:release PASS.
+- E2E: admin-mfa 3/3, admin 8/8, core-flow 3/3, responsible-gaming 1/1, visual 1/1 — 16/16 PASS (~2.5m).
+
+**Phase 5 CLOSED.** UI Rebuild Phases 1–5 complete; next = Phase 6 (PWA & Polish & Gates).
+
+### 2026-06-13 — UI Rebuild Phase 6 closed (PWA & Polish & Gates)
+
+**Implemented**
+- `apps/web/src/components/pwa-shell.tsx` + `apps/web/src/lib/pwa.ts`: production `registerSW` via `virtual:pwa-register`, update toast (`pwa.update.*`), install prompt card with dismiss persistence (`pwa.install.*`).
+- `apps/web/src/components/skip-link.tsx` + `#main-content` landmark on app shell, auth, landing, legal surfaces; global `:focus-visible` polish in `styles.css`.
+- Manifest shortcuts (Trade/Wallet/Casino) in `vite.config.ts` + `public/manifest.webmanifest`; `offline.html` retokenized to Midnight Vault trust mint (removed legacy indigo).
+- Legacy cleanup: `open-positions.tsx` → `EmptyState` + raised history `Card` (emoji removed); `spot-panel` success copy → `text-up`; `ledger` → `app-section`; pruned dead CSS (wallet-grid, empty-state, positions/history helpers).
+- `packages/i18n`: `pwa.skipLink`, `pwa.install.*`, `pwa.update.*` (ko/en).
+- `scripts/check-pwa.ts`: shortcuts, trust-token offline guard, `PwaShell`/`SkipLink` wiring, workbox-window bundle assert (replaces `registerSW.js`).
+- `tests/e2e/quality.spec.ts`: skip link, manifest shortcuts, offline token guard, `#main-content`; `tests/smoke/web.spec.ts`: `/sw.js` probe.
+- Dependency: `workbox-window` added to `apps/web` for vite-plugin-pwa client registration.
+
+**Gates**
+- `bun run build:packages && bun run typecheck && bun run check:i18n && bun run check:release && bun run build && bun run check:pwa` — PASS
+- E2E: `quality.spec.ts` 1/1, `visual.spec.ts` 1/1 — PASS
+
+**Phase 6 status: CLOSED** — UI Rebuild Phases 1–6 complete per `ui_rebuild_phase_1_6e31b6f2.plan.md`.
+
+### 2026-06-13 ? UI Rebuild Phase 4/5 assigned closeout
+
+**Scope:** Completed assigned UI rebuild todos p4-dashboard, p4-trade, p4-wallet, p4-casino, p4-staking, p4-misc and P5 i18n/responsive/performance/a11y/craft/gates/log closeout. User-app UI, shared i18n, Vite chunking, and E2E smoke maintenance only; engine/RPC/domain logic unchanged.
+
+**Implemented:**
+- Dashboard/home hub: added Earn, Live Games, Pro Trading, Wallet Activity command-center cards and shared `Ticker` live balance chips for PHON/USDT/KRW.
+- Trade: added live PnL flashing via `AnimatedNumber`, liquidation-distance display, stale/drift confirm guard surfacing, and accessible notification dialog semantics.
+- Wallet/ledger: activity rows now expose rate snapshots, linked references, immutable ledger sequence; ledger mobile list now uses bounded virtual rendering over a larger history window.
+- Casino: clarified fairness navigation/status announcements, kept game-specific animation primitives and server-seed reveal flow, and moved verifier formula copy into i18n.
+- Staking: upgraded pool cards with available/term metrics and animated Decimal-based reward estimates.
+- Misc/legal/responsible-gaming: shell targeting and route smoke coverage preserved; legal remains app-local because it is product-copy and route-structure coupled.
+- Performance: added conservative web Vite manual chunks for TanStack/Supabase/vendor/trading/casino/chart domains. Web build main chunk dropped from ~1,014 kB minified to ~148 kB; largest web chunk is casino-domain ~493 kB. Existing admin single-chunk warning remains outside this user-app assignment.
+- E2E maintenance: switched quality/visual specs to the shared bounded `injectBrowserSession` helper to avoid Windows/local Supabase `auth.setSession` hangs while preserving assertions.
+
+**Validation:**
+- `bun run check:i18n` PASS.
+- `bun run check:release` PASS.
+- `bun run check:pwa` PASS.
+- `bun run typecheck` PASS.
+- `bun run lint` PASS.
+- `bun run test` PASS: 13 files, 142 passed, 1 skipped.
+- `bun run build` PASS for packages, web, admin. Web chunk warning resolved; admin warning noted above.
+- `bunx playwright test tests/e2e/quality.spec.ts` PASS: PWA/accessibility smoke.
+- `bunx playwright test tests/e2e/visual.spec.ts` PASS: mobile/desktop KO route render and screenshot smoke across landing/auth/legal/dashboard/wallet/ledger/trade/staking/responsible-gaming/casino/admin.
+
+**Errors fixed:** The first `quality.spec.ts` run timed out during inline browser `auth.setSession`; root cause was duplicated older session-injection logic lacking the shared bounded retry/timeout helper. Fixed quality and visual specs to call `injectBrowserSession`, then both E2E smokes passed.

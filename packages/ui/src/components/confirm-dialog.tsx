@@ -10,6 +10,8 @@ export interface ConfirmRow {
   value: string;
   /** `danger` renders the value in the down/loss color (e.g. liquidation price). */
   tone?: 'default' | 'danger';
+  /** Hero emphasis for primary monetary totals in the summary. */
+  emphasis?: 'default' | 'hero';
   /** Allow long values such as wallet addresses or risk notes to wrap in full. */
   wrap?: boolean;
 }
@@ -32,6 +34,12 @@ export interface ConfirmDialogProps {
   tone?: 'primary' | 'danger';
   /** Disables actions and blocks dismissal while a request is in-flight. */
   busy?: boolean;
+  /** Extra guard (e.g. stale price or drifted inputs) — confirm stays disabled even when not busy. */
+  confirmDisabled?: boolean;
+  /** Pre-translated inline notice (e.g. price changed, stale oracle). */
+  notice?: string;
+  /** Visual weight for `notice`. */
+  noticeTone?: 'warning' | 'danger';
   /** Optional base test id; applied as `${testId}-confirm` / `${testId}-cancel`. */
   testId?: string;
   onConfirm: () => void;
@@ -54,6 +62,9 @@ export const ConfirmDialog = forwardRef<HTMLDivElement, ConfirmDialogProps>(func
     processingLabel,
     tone = 'primary',
     busy = false,
+    confirmDisabled = false,
+    notice,
+    noticeTone = 'warning',
     testId,
     onConfirm,
     onCancel,
@@ -62,6 +73,9 @@ export const ConfirmDialog = forwardRef<HTMLDivElement, ConfirmDialogProps>(func
 ) {
   const titleId = useId();
   const descId = useId();
+  const noticeId = useId();
+  const confirmBlocked = busy || confirmDisabled;
+  const describedBy = [description ? descId : null, notice ? noticeId : null].filter(Boolean).join(' ') || undefined;
 
   return (
     <Modal
@@ -70,9 +84,9 @@ export const ConfirmDialog = forwardRef<HTMLDivElement, ConfirmDialogProps>(func
       onClose={onCancel}
       dismissible={!busy}
       labelledBy={titleId}
-      describedBy={description ? descId : undefined}
+      describedBy={describedBy}
     >
-      <h2 id={titleId} className="text-base font-bold text-fg">
+      <h2 id={titleId} className="text-[length:var(--text-subheading)] font-[var(--font-weight-heading)] leading-[var(--text-subheading--line-height)] text-fg">
         {title}
       </h2>
       {description && (
@@ -81,8 +95,23 @@ export const ConfirmDialog = forwardRef<HTMLDivElement, ConfirmDialogProps>(func
         </p>
       )}
 
+      {notice && (
+        <p
+          id={noticeId}
+          className={cn(
+            'mt-3 rounded-xl border px-3 py-2 text-sm leading-snug shadow-[var(--surface-highlight)]',
+            noticeTone === 'danger'
+              ? 'border-down/40 bg-down/10 text-down'
+              : 'border-warning/40 bg-warning/10 text-warning',
+          )}
+          data-testid={testId ? `${testId}-notice` : undefined}
+        >
+          {notice}
+        </p>
+      )}
+
       {rows.length > 0 && (
-        <dl className="mt-4 flex flex-col gap-2 rounded-xl border border-border bg-surface-2/60 px-4 py-3">
+        <dl className="mt-4 flex flex-col gap-2 rounded-2xl border border-border bg-surface-inset px-4 py-3 shadow-[var(--surface-inset-shadow)]">
           {rows.map((row) => (
             <div
               key={row.label}
@@ -95,6 +124,7 @@ export const ConfirmDialog = forwardRef<HTMLDivElement, ConfirmDialogProps>(func
                   row.wrap
                     ? 'max-w-[min(18rem,60vw)] whitespace-normal break-words text-right leading-snug'
                     : 'whitespace-nowrap',
+                  row.emphasis === 'hero' && 'text-[length:var(--money-hero-size)] font-[var(--money-hero-weight)] tracking-[var(--tracking-title)]',
                   row.tone === 'danger' ? 'text-down' : 'text-fg',
                 )}
               >
@@ -119,7 +149,9 @@ export const ConfirmDialog = forwardRef<HTMLDivElement, ConfirmDialogProps>(func
           variant={tone === 'danger' ? 'danger' : 'primary'}
           full
           onClick={onConfirm}
-          disabled={busy}
+          disabled={confirmBlocked}
+          loading={busy}
+          loadingLabel={processingLabel}
           data-testid={testId ? `${testId}-confirm` : undefined}
         >
           {busy ? (processingLabel ?? confirmLabel) : confirmLabel}

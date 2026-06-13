@@ -5,6 +5,7 @@ import { enrollTotpFactor, challengeMfaFactor, verifyMfaFactor } from '../domain
 import { useT } from '../lib/i18n';
 import { translateError } from '../lib/translate-error';
 import { signOut } from '../lib/auth';
+import { AdminAuthBrand, AdminAuthFrame } from '../components/admin-auth-frame';
 import { Button, Input } from '@phonara/ui';
 import type { MessageKey } from '@phonara/i18n';
 
@@ -64,86 +65,81 @@ function MfaEnrollPage() {
   }
 
   return (
-    <div
-      className="flex items-center justify-center min-h-dvh bg-bg px-6"
-      data-testid="admin-mfa-enroll-page"
-    >
-      <div className="w-full max-w-md space-y-6">
-        <div className="space-y-1 text-center">
-          <p className="text-xs font-bold tracking-widest uppercase text-primary">PHONARA</p>
-          <h1 className="text-xl font-bold text-fg">{t('admin.mfa.enroll.title')}</h1>
-          <p className="text-sm text-muted">{t('admin.mfa.enroll.description')}</p>
-        </div>
-
-        {enrollState.kind === 'loading' && (
-          <p className="text-center text-sm text-muted">{t('common.loading')}</p>
-        )}
-
-        {enrollState.kind === 'error' && (
-          <div className="space-y-4 text-center">
-            <p className="text-sm text-down" role="alert">{t(enrollState.messageKey)}</p>
-            <button
-              type="button"
-              className="text-sm text-muted underline"
-              onClick={() => { void signOut(); }}
-            >
-              {t('nav.logout')}
-            </button>
-          </div>
-        )}
-
-        {enrollState.kind === 'ready' && (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="flex flex-col items-center gap-3">
-              <p className="text-xs text-muted">{t('admin.mfa.enroll.qrLabel')}</p>
-              <img
-                src={enrollState.qrCode}
-                alt={t('admin.mfa.enroll.qrAlt')}
-                className="rounded-2xl border border-border bg-surface p-3"
-                width={200}
-                height={200}
-              />
-              <div className="w-full space-y-1">
-                <p className="text-xs text-muted">{t('admin.mfa.enroll.secretLabel')}</p>
-                <p className="rounded-2xl border border-border bg-surface-2 px-3 py-2 text-center text-sm font-mono text-fg">
-                  {enrollState.secret}
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs text-muted font-medium" htmlFor="admin-mfa-enroll-code">
-                {t('admin.mfa.enroll.codeLabel')}
-              </label>
-              <Input
-                id="admin-mfa-enroll-code"
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                required
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                placeholder={t('admin.mfa.enroll.codePlaceholder')}
-                data-testid="admin-mfa-enroll-code"
-              />
-            </div>
-
-            {submitErrorKey && (
-              <p className="text-sm text-down" role="alert">{t(submitErrorKey)}</p>
-            )}
-
-            <Button
-              type="submit"
-              variant="primary"
-              full
-              disabled={submitting || !code.trim()}
-              data-testid="admin-mfa-enroll-submit"
-            >
-              {submitting ? t('admin.mfa.enroll.verifying') : t('admin.mfa.enroll.submit')}
-            </Button>
-          </form>
-        )}
+    <AdminAuthFrame testId="admin-mfa-enroll-page" size="md">
+      <AdminAuthBrand />
+      <div className="space-y-1 text-center">
+        <h1 className="admin-auth-brand-title">{t('admin.mfa.enroll.title')}</h1>
+        <p className="admin-auth-brand-description">{t('admin.mfa.enroll.description')}</p>
       </div>
-    </div>
+
+      {enrollState.kind === 'loading' && (
+        <p className="mt-6 text-center text-sm text-muted">{t('common.loading')}</p>
+      )}
+
+      {enrollState.kind === 'error' && (
+        <div className="mt-6 space-y-4 text-center">
+          <p className="text-sm text-down" role="alert">
+            {t(enrollState.messageKey)}
+          </p>
+          <Button type="button" variant="ghost" size="sm" onClick={() => { void signOut(); }}>
+            {t('nav.logout')}
+          </Button>
+        </div>
+      )}
+
+      {enrollState.kind === 'ready' && (
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-xs font-medium text-muted">{t('admin.mfa.enroll.qrLabel')}</p>
+            <img
+              src={enrollState.qrCode}
+              alt={t('admin.mfa.enroll.qrAlt')}
+              className="rounded-2xl border border-border bg-surface p-3"
+              width={200}
+              height={200}
+            />
+            <div className="w-full space-y-1">
+              <p className="text-xs font-medium text-muted">{t('admin.mfa.enroll.secretLabel')}</p>
+              <p className="rounded-2xl border border-border bg-surface-2/60 px-3 py-2 text-center text-sm font-mono text-fg">
+                {enrollState.secret}
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted" htmlFor="admin-mfa-enroll-code">
+              {t('admin.mfa.enroll.codeLabel')}
+            </label>
+            <Input
+              id="admin-mfa-enroll-code"
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              required
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder={t('admin.mfa.enroll.codePlaceholder')}
+              data-testid="admin-mfa-enroll-code"
+            />
+          </div>
+
+          {submitErrorKey && (
+            <p className="text-sm text-down" role="alert">
+              {t(submitErrorKey)}
+            </p>
+          )}
+
+          <Button
+            type="submit"
+            variant="primary"
+            full
+            disabled={submitting || !code.trim()}
+            data-testid="admin-mfa-enroll-submit"
+          >
+            {submitting ? t('admin.mfa.enroll.verifying') : t('admin.mfa.enroll.submit')}
+          </Button>
+        </form>
+      )}
+    </AdminAuthFrame>
   );
 }

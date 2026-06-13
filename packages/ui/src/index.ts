@@ -2,9 +2,31 @@ export { cn } from './lib/cn';
 export { mergeRefs } from './lib/merge-refs';
 
 // Primitives
-export { Money, formatMoney, type MoneyProps, type FormatMoneyOptions } from './components/money';
+export { Money, formatMoney, type MoneyProps, type FormatMoneyOptions, type MoneyEmphasis, type MoneyTone } from './components/money';
+export { Icon, iconPaths, iconVariants, type IconName, type IconProps } from './components/icon';
+export {
+  AnimatedNumber,
+  animatedNumberVariants,
+  compareDecimalLike,
+  type AnimatedNumberProps,
+  type DecimalLike,
+  type NumberDirection,
+} from './components/animated-number';
+export { Ticker, tickerVariants, type TickerProps } from './components/ticker';
+export { Progress, progressVariants, type ProgressProps } from './components/progress';
+export { IconButton, type IconButtonProps } from './components/icon-button';
 export { Button, buttonVariants, type ButtonProps } from './components/button';
-export { Card, CardHeader, CardTitle, CardContent } from './components/card';
+export {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDivider,
+  cardVariants,
+  type CardProps,
+  type CardElevation,
+  type CardDensity,
+} from './components/card';
 export { Modal, type ModalProps } from './components/modal';
 export {
   ConfirmDialog,
@@ -14,17 +36,19 @@ export {
 export { Input, inputVariants, type InputProps } from './components/input';
 export {
   SegmentedControl,
+  segmentVariants,
   type SegmentedControlProps,
+  type SegmentedDensity,
   type SegmentedOption,
   type SegmentedTone,
 } from './components/segmented-control';
 export { Badge, badgeVariants, type BadgeProps } from './components/badge';
-export { Stat, type StatProps } from './components/stat';
-export { Spinner, type SpinnerProps } from './components/spinner';
-export { Toast, toastVariants, type ToastProps } from './components/toast';
-export { Skeleton, type SkeletonProps } from './components/skeleton';
-export { BetPanel, type BetPanelProps } from './components/bet-panel';
-export { GameStakeInput, type GameStakeInputProps } from './components/game-stake-input';
+export { Stat, statValueVariants, type StatProps } from './components/stat';
+export { Spinner, spinnerVariants, type SpinnerProps } from './components/spinner';
+export { Toast, toastVariants, type ToastProps, type ToastTrack, type ToastSeverity } from './components/toast';
+export { Skeleton, skeletonVariants, type SkeletonProps } from './components/skeleton';
+export { BetPanel, betPanelVariants, type BetPanelProps } from './components/bet-panel';
+export { GameStakeInput, gameStakeInputVariants, type GameStakeInputProps } from './components/game-stake-input';
 export {
   MultiplierDisplay,
   multiplierDisplayVariants,
@@ -33,8 +57,24 @@ export {
 export { ProvablyFairBadge, type ProvablyFairBadgeProps } from './components/provably-fair-badge';
 export { EmptyState, type EmptyStateProps } from './components/empty-state';
 export { ErrorState, type ErrorStateProps } from './components/error-state';
+export {
+  StateSurface,
+  stateSurfaceVariants,
+  type StateSurfaceProps,
+  type SurfaceState,
+} from './components/state-surface';
 export { StatusTimeline, type StatusTimelineProps, type StatusTimelineItem } from './components/status-timeline';
-export { FairnessVerifier, type FairnessVerifierProps } from './components/fairness-verifier';
+export {
+  FairnessVerifier,
+  fairnessVerifierVariants,
+  type FairnessVerifierProps,
+} from './components/fairness-verifier';
+export { CrashCurve, type CrashCurveProps } from './components/crash-curve';
+export { PlinkoBoard, type PlinkoBoardProps } from './components/plinko-board';
+export { MinesGrid, type MinesGridProps } from './components/mines-grid';
+export { DiceTrack, type DiceTrackProps } from './components/dice-track';
+export { LimboMeter, type LimboMeterProps } from './components/limbo-meter';
+export { HiLoCards, type HiLoCardsProps } from './components/hilo-cards';
 export {
   TradingChart,
   type TradingChartCandle,

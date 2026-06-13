@@ -5,9 +5,9 @@ import type { QueueAction } from '../../domain/queues';
 
 export function MetricCard({ label, value }: { label: string; value: number }) {
   return (
-    <Card className="p-4">
-      <p className="text-xs text-muted">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-fg tabular-nums">{value}</p>
+    <Card elevation="raised" className="p-4">
+      <p className="text-xs font-medium text-muted">{label}</p>
+      <p className="mt-1 text-2xl font-bold tabular-nums text-fg">{value}</p>
     </Card>
   );
 }

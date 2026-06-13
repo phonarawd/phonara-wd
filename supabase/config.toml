@@ -19,12 +19,21 @@ enabled = true
 port = 54445
 
 [inbucket]
-enabled = false
+# Catch signup/reset/magic-link emails locally (http://127.0.0.1:54424).
+enabled = true
 
 [auth]
 enabled = true
+# Vite may bind 3000–3002 when ports are busy; additional_redirect_urls covers them.
 site_url = "http://localhost:3000"
-additional_redirect_urls = ["http://localhost:3000", "http://localhost:3001"]
+additional_redirect_urls = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3002",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:3001",
+  "http://127.0.0.1:3002",
+]
 jwt_expiry = 3600
 enable_signup = true
 enable_anonymous_sign_ins = false
@@ -35,20 +44,23 @@ minimum_password_length = 8
 
 [auth.email]
 enable_signup = true
-enable_confirmations = true
+# Local stack only — signup/login must work without Studio manual confirm.
+# Production project keeps confirmations enabled in the Supabase Dashboard.
+enable_confirmations = false
 double_confirm_changes = true
 secure_password_change = true
-max_frequency = "1m"
+max_frequency = "1s"
 otp_length = 8
 otp_expiry = 3600
 
 [auth.rate_limit]
-email_sent = 2
-sms_sent = 30
-anonymous_users = 30
-token_refresh = 150
-token_verifications = 30
-sign_in_sign_ups = 30
+# Local dev: relaxed limits so repeated signup/login attempts during UI work do not 429.
+email_sent = 100
+sms_sent = 100
+anonymous_users = 100
+token_refresh = 500
+token_verifications = 300
+sign_in_sign_ups = 300
 
 [auth.mfa]
 max_enrolled_factors = 10
@@ -69,7 +81,7 @@ enabled = true
 [auth.webauthn]
 rp_display_name = "phonara-gb"
 rp_id = "localhost"
-rp_origins = ["http://localhost:3000"]
+rp_origins = ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"]
 
 # Analytics (logflare) is disabled for local dev. On Windows it requires the
 # Docker daemon to be exposed on tcp://localhost:2375, which we don't enable.

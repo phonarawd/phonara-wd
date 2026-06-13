@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import type { Session } from '@supabase/supabase-js';
 
 export async function sendMagicLink(email: string): Promise<{ error: string | null }> {
   const { error } = await supabase.auth.signInWithOtp({
@@ -34,21 +35,43 @@ export type AuthStatus =
 export type AuthErrorCode =
   | 'invalidCredentials'
   | 'emailInvalid'
+  | 'emailNotConfirmed'
   | 'passwordTooShort'
+  | 'rateLimited'
   | 'network'
   | 'generic';
 
 export type AuthResult =
-  | { ok: true; status?: AuthStatus }
+  | { ok: true; status?: AuthStatus; session?: Session }
   | { ok: false; code: AuthErrorCode };
 
 function mapSupabaseError(error: unknown): AuthErrorCode {
   if (error instanceof TypeError) return 'network';
-  const message =
-    typeof error === 'object' && error !== null && 'message' in error
-      ? String((error as { message: unknown }).message ?? '')
-      : '';
+  const record =
+    typeof error === 'object' && error !== null
+      ? (error as { message?: unknown; status?: unknown; code?: unknown })
+      : null;
+  const message = record?.message != null ? String(record.message) : '';
   const lower = message.toLowerCase();
+  const status = typeof record?.status === 'number' ? record.status : undefined;
+  const code = record?.code != null ? String(record.code).toLowerCase() : '';
+
+  if (
+    status === 429 ||
+    code === 'over_email_send_rate_limit' ||
+    code === 'over_request_rate_limit' ||
+    lower.includes('rate limit') ||
+    lower.includes('too many requests')
+  ) {
+    return 'rateLimited';
+  }
+  if (
+    code === 'email_not_confirmed' ||
+    lower.includes('email not confirmed') ||
+    lower.includes('email address not confirmed')
+  ) {
+    return 'emailNotConfirmed';
+  }
   if (
     lower.includes('invalid login credentials') ||
     lower.includes('invalid_grant') ||
@@ -78,9 +101,9 @@ function resetRedirect(): string | undefined {
 
 export async function signInWithPassword(email: string, password: string): Promise<AuthResult> {
   try {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return { ok: false, code: mapSupabaseError(error) };
-    return { ok: true };
+    return data.session ? { ok: true, session: data.session } : { ok: false, code: 'generic' };
   } catch (error) {
     return { ok: false, code: mapSupabaseError(error) };
   }
@@ -97,7 +120,7 @@ export async function signUpWithPassword(email: string, password: string): Promi
     // When email confirmation is required Supabase returns no session — show the
     // verify-email state. When confirmation is disabled a session is returned
     // immediately and the caller can route straight to the dashboard.
-    if (data.session) return { ok: true };
+    if (data.session) return { ok: true, session: data.session };
     return { ok: true, status: 'verify_email' };
   } catch (error) {
     return { ok: false, code: mapSupabaseError(error) };

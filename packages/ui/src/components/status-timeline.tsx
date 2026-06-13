@@ -5,7 +5,7 @@ export interface StatusTimelineItem {
   id: string;
   label: ReactNode;
   description?: ReactNode;
-  state?: 'pending' | 'active' | 'done' | 'error';
+  state?: 'pending' | 'active' | 'done' | 'success' | 'warning' | 'error' | 'offline' | 'reconnecting';
 }
 
 export interface StatusTimelineProps extends HTMLAttributes<HTMLOListElement> {
@@ -21,9 +21,12 @@ export const StatusTimeline = forwardRef<HTMLOListElement, StatusTimelineProps>(
             <span
               className={cn(
                 'mt-0.5 h-3 w-3 rounded-full border',
-                item.state === 'done' && 'border-up bg-up',
+                (item.state === 'done' || item.state === 'success') && 'border-up bg-up',
                 item.state === 'active' && 'border-primary bg-primary',
+                item.state === 'warning' && 'border-warning bg-warning',
                 item.state === 'error' && 'border-down bg-down',
+                item.state === 'offline' && 'border-border-strong bg-surface-inset',
+                item.state === 'reconnecting' && 'border-primary bg-primary/40 animate-pulse',
                 (!item.state || item.state === 'pending') && 'border-border bg-surface-2',
               )}
             />

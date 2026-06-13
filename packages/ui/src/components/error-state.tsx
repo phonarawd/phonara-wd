@@ -1,6 +1,6 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
-import { Button, type ButtonProps } from './button';
-import { cn } from '../lib/cn';
+import type { ButtonProps } from './button';
+import { StateSurface } from './state-surface';
 
 export interface ErrorStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   title: ReactNode;
@@ -14,20 +14,16 @@ export const ErrorState = forwardRef<HTMLDivElement, ErrorStateProps>(function E
   ref,
 ) {
   return (
-    <div
+    <StateSurface
       ref={ref}
-      className={cn('rounded-2xl border border-down/40 bg-down/10 p-5 text-center', className)}
-      role="alert"
+      state="error"
+      title={title}
+      description={description}
+      actionLabel={actionLabel}
+      onAction={onAction}
+      className={className}
       {...props}
-    >
-      <h3 className="font-semibold text-fg">{title}</h3>
-      {description && <p className="mt-2 text-sm text-muted">{description}</p>}
-      {actionLabel && onAction && (
-        <Button className="mt-4" size="sm" variant="danger" onClick={onAction}>
-          {actionLabel}
-        </Button>
-      )}
-    </div>
+    />
   );
 });
 

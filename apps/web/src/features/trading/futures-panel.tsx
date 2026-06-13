@@ -1,4 +1,5 @@
-import { lazy, Suspense, useMemo } from 'react';
+import { lazy, Suspense, useCallback, useMemo } from 'react';
+import { toast } from 'sonner';
 import {
   useCandles,
   useSyntheticBook,
@@ -7,8 +8,9 @@ import {
   useTradingRiskAcknowledgement,
   type FuturesMarket,
 } from '../../hooks/use-trading';
+import { useConfirmSnapshot } from '../../hooks/use-confirm-snapshot';
 import { type PositionSide } from '@phonara/trading-engine';
-import { formatMoney, ConfirmDialog, Button, Card, Stat, Input, SegmentedControl, Slider, OrderBook } from '@phonara/ui';
+import { formatMoney, ConfirmDialog, Button, Card, Stat, Input, SegmentedControl, Slider, OrderBook, Badge } from '@phonara/ui';
 import { toDecimal } from '@phonara/money';
 import { normalizeDecimalInput } from '../../lib/money-input';
 import { useT } from '../../lib/i18n';
@@ -61,9 +63,24 @@ export function FuturesPanel({
   const staleReason = t('trade.dataStatus.staleDescription');
   const realtimeReason = t('trade.dataStatus.realtimeDisconnectedDescription');
   const disabledReason = priceStale ? staleReason : realtimeDisconnected ? realtimeReason : undefined;
+  const tradeBlocked = priceStale || realtimeDisconnected;
+  const confirmFingerprint = `${price}:${side}:${margin}:${leverage}:${marginCurrency}:${market?.symbol ?? ''}`;
+  const handleConfirmDrift = useCallback(() => {
+    toast.warning(t('trade.confirm.priceChanged'));
+  }, [t]);
+  const { canConfirm, isDrifted } = useConfirmSnapshot({
+    open: confirmOpen,
+    fingerprint: confirmFingerprint,
+    onDrift: handleConfirmDrift,
+  });
+  const confirmNotice = tradeBlocked && confirmOpen
+    ? t('trade.confirm.staleBlocked')
+    : isDrifted
+      ? t('trade.confirm.priceChanged')
+      : undefined;
 
   async function submitOpen() {
-    if (!market || priceStale || realtimeDisconnected) return;
+    if (!market || tradeBlocked || !canConfirm) return;
     await openPosition({ market: market.symbol, side, marginCurrency, marginAmount: margin, leverage });
     setConfirmOpen(false);
   }
@@ -78,6 +95,13 @@ export function FuturesPanel({
     retry: t('common.retry'),
     oraclePrice: t('trade.markPrice'),
     liquidationPrice: t('trade.liquidationPrice'),
+    policyTitle: t('trade.chart.policyTitle'),
+    oracleLineDescription: t('trade.chart.oracleLineDescription'),
+    liquidationLineDescription: t('trade.chart.liquidationLineDescription'),
+    liquidationApproachingTitle: t('trade.chart.liquidationApproachingTitle'),
+    liquidationApproachingDescription: t('trade.chart.liquidationApproachingDescription'),
+    disclosureTitle: t('trade.chart.disclosureTitle'),
+    syncedTitle: t('trade.chart.syncedTitle'),
     volume: t('trade.chart.volume'),
   }), [t]);
   const chartDisclosure = market?.symbol === 'PHON_USDT' || market?.base_label === 'PHON'
@@ -92,11 +116,19 @@ export function FuturesPanel({
     bids: t('trade.orderBook.bids'),
     price: t('trade.price'),
     size: t('trade.quantity'),
+    spread: t('trade.orderBook.spread'),
+    midpoint: t('trade.orderBook.midpoint'),
+    liveDepth: t('trade.orderBook.liveDepth'),
   }), [t]);
 
   return (
     <Card className="flex flex-col gap-3 p-[18px]">
-      <h3 className="text-[1.05rem] font-bold text-fg">{t('trade.futuresTitle')}</h3>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 className="text-[1.05rem] font-bold text-fg">{t('trade.futuresTitle')}</h3>
+        {(priceStale || realtimeDisconnected) && (
+          <Badge tone="risk">{t('trade.dataStatus.stale')}</Badge>
+        )}
+      </div>
 
       {(marketsLoading || !market) && (
         <div className="rounded-xl border border-border bg-surface-2/60 px-3 py-2 text-sm text-muted">
@@ -243,7 +275,7 @@ export function FuturesPanel({
           variant={side === 'long' ? 'success' : 'danger'}
           full
           data-testid="futures-open"
-          disabled={busy || walletLoading || !preview || priceStale || realtimeDisconnected || (isHighLeverage && !riskAck.acknowledged)}
+          disabled={busy || walletLoading || !preview || tradeBlocked || (isHighLeverage && !riskAck.acknowledged)}
           onClick={() => setConfirmOpen(true)}
         >
           {busy ? t('common.processing') : t(side === 'long' ? 'trade.openLongPosition' : 'trade.openShortPosition')}
@@ -253,14 +285,21 @@ export function FuturesPanel({
       <ConfirmDialog
         open={confirmOpen}
         title={t('confirm.futuresOpen.title')}
-        description={t('confirm.serverPriceNote')}
+        description={t('trade.confirm.review')}
+        notice={confirmNotice}
+        noticeTone={tradeBlocked ? 'danger' : 'warning'}
         tone={side === 'long' ? 'primary' : 'danger'}
         rows={preview ? [
           { label: t('confirm.row.market'), value: market?.display_name ?? market?.symbol ?? '' },
           { label: t('confirm.row.side'), value: t(side === 'long' ? 'trade.long' : 'trade.short') },
           { label: t('confirm.row.leverage'), value: `${leverage}x` },
+          { label: t('confirm.row.markPrice'), value: formatMoney(price, 'USDT') },
           { label: t('trade.margin'), value: `${formatMoney(margin, marginCurrency)} ${marginCurrency}` },
-          { label: t('trade.positionSize'), value: `${formatMoney(preview.notional, marginCurrency)} ${marginCurrency}` },
+          {
+            label: t('trade.positionSize'),
+            value: `${formatMoney(preview.notional, marginCurrency)} ${marginCurrency}`,
+            emphasis: 'hero',
+          },
           { label: t('trade.liquidationPrice'), value: formatMoney(preview.liquidationPrice, 'USDT'), tone: 'danger' },
           { label: t('trade.openFee'), value: `${formatMoney(preview.openFee, marginCurrency)} ${marginCurrency}` },
         ] : []}
@@ -268,6 +307,7 @@ export function FuturesPanel({
         cancelLabel={t('common.cancel')}
         processingLabel={t('common.processing')}
         busy={busy}
+        confirmDisabled={!canConfirm || tradeBlocked}
         testId="futures-open"
         onConfirm={() => void submitOpen()}
         onCancel={() => setConfirmOpen(false)}

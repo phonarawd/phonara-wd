@@ -1,4 +1,4 @@
-import { createRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -13,15 +13,20 @@ import { createKrwDepositRequest, requestWithdrawal, submitKyc } from '../domain
 import { useWalletData } from '../features/wallet/use-wallet-data';
 import { isPositiveDecimalInput, normalizeDecimalInput } from '../lib/money-input';
 import {
+  Badge,
   Button,
   Card,
+  CardDivider,
   ConfirmDialog,
   Input,
+  Money,
   Skeleton,
   StatusTimeline,
   type StatusTimelineItem,
   formatMoney,
 } from '@phonara/ui';
+import { AppShell } from '../components/app-shell';
+import { WalletActivityList } from '../features/wallet/wallet-activity-list';
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
   path: '/wallet',
@@ -42,7 +47,7 @@ function WalletPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { session, loading: authLoading } = useAuth();
-  const { wallet } = useWallet();
+  const { wallet, loading: walletLoading } = useWallet();
   const { profile, kycVerified } = useProfile();
   const userId = session?.user.id ?? null;
 
@@ -357,49 +362,101 @@ function WalletPage() {
 
   if (authLoading) {
     return (
-      <div className="shell">
-        <Card className="grid w-full max-w-md gap-4 p-5" aria-busy="true">
-          <Skeleton className="h-5 w-32" />
-          <Skeleton className="h-28" />
-          <Skeleton className="h-10" />
-        </Card>
-      </div>
+      <AppShell active="wallet">
+        <div className="app-page" aria-busy="true">
+          <Card className="grid w-full max-w-md gap-4 p-5">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-28" />
+            <Skeleton className="h-10" />
+          </Card>
+        </div>
+      </AppShell>
     );
   }
 
   const refCode = lastDeposit?.reference_code ?? activeDeposit?.reference_code;
   const expectedPhon = lastDeposit?.expected_phon ?? activeDeposit?.expected_phon;
+  const phonLocked = wallet?.phon_locked !== '0.000000';
 
   return (
-    <div className="shell">
-      <div className="dashboard">
-        <header className="dash-header">
-          <div className="dash-logo">
-            <Link to="/dashboard" className="logo-name" style={{ textDecoration: 'none' }}>
-              ← PHONARA
-            </Link>
-          </div>
-          <nav className="dash-nav">
-            <Link to="/ledger" className="nav-link">{t('nav.ledgerHistory')}</Link>
-          </nav>
-        </header>
+    <AppShell active="wallet">
+      <div className="app-page pn-anim-rise">
+        <section className="app-section mb-6" aria-labelledby="wallet-hero-title">
+          <Card elevation="raised" className="overflow-hidden p-0">
+            <div className="p-5 pb-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p id="wallet-hero-title" className="text-sm text-muted">
+                    {t('wallet.balance')}
+                  </p>
+                  {walletLoading ? (
+                    <Skeleton className="mt-3 h-12 w-40" data-testid="wallet-hero-loading" />
+                  ) : (
+                    <Money
+                      amount={wallet?.phon_available ?? '0'}
+                      currency="PHON"
+                      emphasis="hero"
+                      tone="neutral"
+                      pulseOnChange
+                      showCurrency
+                      className="mt-1 block text-primary"
+                      data-testid="wallet-hero-balance"
+                    />
+                  )}
+                </div>
+                {!walletLoading && (
+                  <Badge tone={phonLocked ? 'risk' : 'trust'} data-testid="wallet-hero-badge">
+                    {phonLocked ? t('wallet.lockedShort') : t('dashboard.badge.live')}
+                  </Badge>
+                )}
+              </div>
 
-        <div className="flex gap-2 mb-6">
-          <Button
-            variant={tab === 'deposit' ? 'primary' : 'outline'}
-            onClick={() => setTab('deposit')}
-            data-testid="wallet-tab-deposit"
-          >
-            {t('wallet.tab.deposit')}
-          </Button>
-          <Button
-            variant={tab === 'withdraw' ? 'primary' : 'outline'}
-            onClick={() => setTab('withdraw')}
-            data-testid="wallet-tab-withdraw"
-          >
-            {t('wallet.tab.withdraw')}
-          </Button>
-        </div>
+              {!walletLoading && wallet && (
+                <>
+                  <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted">
+                    <span>
+                      {t('wallet.available')}:{' '}
+                      <Money amount={wallet.phon_available} currency="PHON" showCurrency />
+                    </span>
+                    <span>
+                      {t('wallet.locked')}:{' '}
+                      <Money amount={wallet.phon_locked} currency="PHON" showCurrency emphasis="muted" />
+                    </span>
+                  </div>
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <BalanceChip label={t('wallet.currency.usdt')} amount={wallet.usdt_available} currency="USDT" />
+                    <BalanceChip label={t('wallet.currency.krw')} amount={wallet.krw_available} currency="KRW" />
+                  </div>
+                </>
+              )}
+            </div>
+
+            <CardDivider className="mx-0" />
+
+            <div className="flex flex-col gap-2 p-4 sm:flex-row">
+              <Button
+                variant={tab === 'deposit' ? 'primary' : 'outline'}
+                size="lg"
+                full
+                data-testid="wallet-tab-deposit"
+                onClick={() => setTab('deposit')}
+              >
+                {t('wallet.tab.deposit')}
+              </Button>
+              <Button
+                variant={tab === 'withdraw' ? 'primary' : 'outline'}
+                size="lg"
+                full
+                data-testid="wallet-tab-withdraw"
+                onClick={() => setTab('withdraw')}
+              >
+                {t('wallet.tab.withdraw')}
+              </Button>
+            </div>
+          </Card>
+        </section>
+
+        <WalletActivityList />
 
         {tab === 'deposit' && (
           <section className="wallet-deposit-section">
@@ -418,6 +475,7 @@ function WalletPage() {
               <Input
                 id="deposit-amount"
                 data-testid="wallet-deposit-amount"
+                monetary
                 inputMode="numeric"
                 value={depositAmount}
                 onChange={(e) => setDepositAmount(normalizeDecimalInput(e.target.value, { allowDecimal: false }))}
@@ -659,6 +717,23 @@ function WalletPage() {
           </section>
         )}
       </div>
+    </AppShell>
+  );
+}
+
+function BalanceChip({
+  label,
+  amount,
+  currency,
+}: {
+  label: string;
+  amount: string;
+  currency: 'USDT' | 'KRW';
+}) {
+  return (
+    <div className="rounded-xl border border-border bg-surface-inset px-3 py-2.5">
+      <p className="text-[0.68rem] font-semibold uppercase tracking-wide text-muted">{label}</p>
+      <Money amount={amount} currency={currency} showCurrency className="mt-1 block text-base font-semibold" />
     </div>
   );
 }

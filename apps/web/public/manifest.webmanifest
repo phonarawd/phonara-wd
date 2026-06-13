@@ -1,0 +1,46 @@
+{
+  "name": "PHONARA",
+  "short_name": "PHONARA",
+  "description": "PHON-powered crypto trading & rewards platform",
+  "theme_color": "#0b0b0f",
+  "background_color": "#0b0b0f",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "/",
+  "scope": "/",
+  "lang": "ko",
+  "icons": [
+    { "src": "pwa-64x64.png", "sizes": "64x64", "type": "image/png" },
+    { "src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "pwa-512x512.png", "sizes": "512x512", "type": "image/png" },
+    {
+      "src": "maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Trade",
+      "short_name": "Trade",
+      "description": "Spot and futures trading",
+      "url": "/trade",
+      "icons": [{ "src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Wallet",
+      "short_name": "Wallet",
+      "description": "Wallet and deposits",
+      "url": "/wallet",
+      "icons": [{ "src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Casino",
+      "short_name": "Casino",
+      "description": "Casino games",
+      "url": "/casino",
+      "icons": [{ "src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

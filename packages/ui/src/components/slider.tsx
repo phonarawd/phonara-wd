@@ -14,6 +14,8 @@ export interface SliderProps extends Omit<InputHTMLAttributes<HTMLInputElement>,
   /** Show the current value label above the thumb */
   showLabel?: boolean;
   formatLabel?: (v: number) => string;
+  tone?: 'primary' | 'risk' | 'up' | 'down';
+  density?: 'compact' | 'comfortable';
 }
 
 /**
@@ -30,6 +32,8 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
       onChange,
       showLabel = false,
       formatLabel,
+      tone = 'primary',
+      density = 'comfortable',
       className,
       ...rest
     },
@@ -37,26 +41,30 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
   ) => {
     const pct = max > min ? ((value - min) / (max - min)) * 100 : 0;
     const label = formatLabel ? formatLabel(value) : `${value}×`;
+    const fillClass = {
+      primary: 'bg-primary',
+      risk: 'bg-[linear-gradient(90deg,var(--color-primary),var(--color-warning),var(--color-danger))]',
+      up: 'bg-up',
+      down: 'bg-down',
+    }[tone];
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       onChange?.(Number(e.target.value));
     };
 
     return (
-      <div className={cn('relative flex flex-col gap-1', className)}>
+      <div className={cn('relative flex flex-col gap-1.5', className)}>
         {showLabel && (
-          <div className="flex justify-between text-xs text-muted mb-1">
+          <div className="mb-1 flex justify-between text-xs text-muted">
             <span>{formatLabel ? formatLabel(min) : `${min}×`}</span>
             <span className="text-primary font-semibold">{label}</span>
             <span>{formatLabel ? formatLabel(max) : `${max}×`}</span>
           </div>
         )}
-        <div className="relative h-6 flex items-center">
-          {/* Track background */}
-          <div className="absolute inset-x-0 h-1.5 rounded-full bg-surface-2 border border-border" />
-          {/* Filled portion */}
+        <div className={cn('relative flex items-center', density === 'compact' ? 'h-5' : 'h-7')}>
+          <div className="absolute inset-x-0 h-2 rounded-full border border-border bg-surface-inset shadow-[var(--surface-inset-shadow)]" />
           <div
-            className="absolute left-0 h-1.5 rounded-full bg-primary"
+            className={cn('absolute left-0 h-2 rounded-full shadow-[var(--primary-glow)]', fillClass)}
             style={{ width: `${pct}%` }}
           />
           <input
@@ -73,9 +81,8 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             )}
             {...rest}
           />
-          {/* Thumb */}
           <div
-            className="absolute w-4 h-4 rounded-full bg-primary border-2 border-primary-fg shadow pointer-events-none"
+            className="pointer-events-none absolute h-4 w-4 rounded-full border-2 border-primary-fg bg-primary shadow-[var(--elevation-1)]"
             style={{ left: `calc(${pct}% - 8px)` }}
           />
         </div>

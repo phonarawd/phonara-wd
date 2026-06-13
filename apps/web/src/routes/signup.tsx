@@ -29,7 +29,7 @@ type ViewState =
 
 function SignupPage() {
   const t = useT();
-  const { session, loading } = useAuth();
+  const { session, loading, setAuthSession } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -69,6 +69,11 @@ function SignupPage() {
       setState({ kind: 'verifySent' });
       return;
     }
+    if (!result.session) {
+      setState({ kind: 'error', code: 'generic' });
+      return;
+    }
+    setAuthSession(result.session);
     try {
       await ensureOnboardingConsents();
     } catch {
@@ -112,8 +117,12 @@ function SignupPage() {
 
   return (
     <AuthShell>
-      <Card className="auth-card p-6">
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
+      <Card className="auth-card auth-screen-card p-6">
+        <header className="auth-card-header">
+          <h2 className="text-lg font-semibold text-fg">{t('auth.entry.signup.title')}</h2>
+          <p className="mt-1 text-sm text-muted">{t('auth.entry.signup.subtitle')}</p>
+        </header>
+        <form onSubmit={handleSubmit} noValidate className="auth-form">
           <div className="space-y-1.5">
             <label htmlFor="signup-email" className="text-sm font-medium text-fg">
               {t('auth.entry.shared.emailLabel')}
@@ -191,7 +200,7 @@ function SignupPage() {
             id="signup-error"
             role="alert"
             aria-live="polite"
-            className="min-h-5 text-sm text-down"
+            className="auth-error-message"
           >
             {errorKey ? t(errorKey) : ''}
           </p>
@@ -203,7 +212,7 @@ function SignupPage() {
           </Button>
         </form>
       </Card>
-      <footer className="mt-6 text-center text-sm text-muted">
+      <footer className="auth-entry-footer">
         <p>
           {t('auth.entry.signup.haveAccount')}{' '}
           <Link

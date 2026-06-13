@@ -42,7 +42,7 @@
 
 | Lint | Disposition |
 |---|---|
-| `auth_leaked_password_protection` | 대시보드 설정 대기 — 인간 결정 사항 |
+| `auth_leaked_password_protection` | Pro 플랜 전용 — 무료 플랜에서 토글 불가, Pro 전환 시 활성화. 무료 대체 통제: 비밀번호 강도 정책(적용 완료) |
 | `auth_insufficient_mfa_options` | admin은 AAL2 해결 / 일반 사용자 MFA는 출시 후 백로그 |
 
 ## E2E `fundE2EWallet` inventory (post-fix)
@@ -61,10 +61,11 @@ Helper JSDoc (`_helpers.ts`): SET bypasses conservation — use only for global-
 | Step | Result |
 |---|---|
 | `pg_dump` (Docker `supabase_db_yocjhjsdwoijfdrehzoq`) | **PASS** — ~1.39 MB dump |
-| Recovery | `supabase db reset` |
-| Post-recovery verify | `test:sql` 41/41 **PASS** |
+| Recovery | **`psql` restore from dump** (stop realtime → drop replication slots → `DROP DATABASE postgres` → `CREATE` → stdin restore as `supabase_admin`) — **not** `supabase db reset` |
+| Post-restore verify | `verify_ledger_hash_chain()` = 0; `verify_system_account_hash_chain()` = 0 on **restored** DB |
 | Script | `bun run rehearsal:backup` |
-| Last run | `2026-06-12T23:42:11.540Z` (see `backups/last-rehearsal.json`, gitignored dumps) |
+| Last run | `2026-06-12T23:57:59.822Z` (see `backups/last-rehearsal.json`, gitignored dumps) |
+| Dev heal | Script ends with `supabase db reset` to re-apply grants — **not** counted as recovery |
 
 Remote PITR remains **human-only** per RUNBOOK §3.
 

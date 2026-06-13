@@ -45,15 +45,17 @@ Tabs.displayName = 'Tabs';
 
 export interface TabListProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
+  density?: 'compact' | 'comfortable';
 }
 
 export const TabList = forwardRef<HTMLDivElement, TabListProps>(
-  ({ children, className, ...rest }, ref) => (
+  ({ children, density = 'comfortable', className, ...rest }, ref) => (
     <div
       ref={ref}
       role="tablist"
       className={cn(
-        'flex gap-1 p-1 rounded-xl bg-surface-2 border border-border',
+        'flex gap-1 rounded-2xl border border-border bg-surface-inset p-1 shadow-[var(--surface-inset-shadow)]',
+        density === 'compact' ? 'min-h-[var(--density-compact-control)]' : 'min-h-[var(--density-comfortable-control)]',
         className,
       )}
       {...rest}
@@ -67,10 +69,11 @@ TabList.displayName = 'TabList';
 export interface TabTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   value: string;
   children: ReactNode;
+  density?: 'compact' | 'comfortable';
 }
 
 export const TabTrigger = forwardRef<HTMLButtonElement, TabTriggerProps>(
-  ({ value, children, className, ...rest }, ref) => {
+  ({ value, children, density = 'comfortable', className, ...rest }, ref) => {
     const { active, setActive } = useContext(TabsContext);
     const isActive = active === value;
     return (
@@ -80,9 +83,10 @@ export const TabTrigger = forwardRef<HTMLButtonElement, TabTriggerProps>(
         aria-selected={isActive}
         onClick={() => setActive(value)}
         className={cn(
-          'flex-1 px-3 py-1.5 text-sm rounded-lg font-medium transition-colors',
+          'flex-1 rounded-xl font-medium transition-[color,background-color,box-shadow,transform] duration-[var(--motion-duration-confirmation)] ease-[var(--motion-ease-standard)]',
+          density === 'compact' ? 'min-h-[calc(var(--density-compact-control)-0.5rem)] px-3 text-xs' : 'min-h-[calc(var(--density-comfortable-control)-0.5rem)] px-3.5 text-sm',
           isActive
-            ? 'bg-surface text-fg shadow-sm'
+            ? 'bg-surface-elevated text-fg shadow-[var(--elevation-1)]'
             : 'text-muted hover:text-fg',
           className,
         )}

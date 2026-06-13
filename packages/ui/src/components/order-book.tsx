@@ -1,9 +1,10 @@
 import { memo, forwardRef, type HTMLAttributes } from 'react';
 import { toDecimal } from '@phonara/money';
 import { cn } from '../lib/cn';
-import { Button } from './button';
+import { Badge } from './badge';
 import { Card } from './card';
 import { Skeleton } from './skeleton';
+import { StateSurface } from './state-surface';
 
 export interface OrderBookLevel {
   price: string;
@@ -12,13 +13,19 @@ export interface OrderBookLevel {
 
 export interface OrderBookLabels {
   loading: string;
+  loadingDescription?: string;
   emptyTitle: string;
+  emptyDescription?: string;
   errorTitle: string;
+  errorDescription?: string;
   retry?: string;
   asks: string;
   bids: string;
   price: string;
   size: string;
+  spread?: string;
+  midpoint?: string;
+  liveDepth?: string;
 }
 
 export interface OrderBookProps extends HTMLAttributes<HTMLDivElement> {
@@ -54,6 +61,25 @@ function depthPercent(size: string, max: string): string {
   }
 }
 
+function spreadSummary(asks: OrderBookLevel[], bids: OrderBookLevel[]): { spread: string; midpoint: string } | null {
+  const bestAsk = asks[0]?.price;
+  const bestBid = bids[0]?.price;
+  if (!bestAsk || !bestBid) return null;
+  try {
+    const ask = toDecimal(bestAsk);
+    const bid = toDecimal(bestBid);
+    if (ask.isNegative() || bid.isNegative() || ask.isZero() || bid.isZero()) return null;
+    const spread = ask.minus(bid).abs();
+    const midpoint = ask.plus(bid).div(2);
+    return {
+      spread: spread.toString(),
+      midpoint: midpoint.toString(),
+    };
+  } catch {
+    return null;
+  }
+}
+
 const Row = memo(function Row({
   level,
   max,
@@ -64,11 +90,21 @@ const Row = memo(function Row({
   tone: 'ask' | 'bid';
 }) {
   return (
-    <div className="relative grid grid-cols-2 overflow-hidden rounded-lg px-2 py-1.5 text-xs">
+    <div
+      className={cn(
+        'group relative grid grid-cols-2 overflow-hidden rounded-lg border px-2 py-1.5 text-xs tabular-nums',
+        'transition-[border-color,background-color,transform] duration-[var(--motion-duration-confirmation)] ease-[var(--motion-ease-standard)]',
+        tone === 'ask'
+          ? 'border-down/10 bg-down/[0.035] hover:border-down/35 hover:bg-down/10'
+          : 'border-up/10 bg-up/[0.035] hover:border-up/35 hover:bg-up/10',
+      )}
+    >
       <span
         className={cn(
-          'absolute inset-y-0 right-0 opacity-20',
-          tone === 'ask' ? 'bg-down' : 'bg-up',
+          'absolute inset-y-0 right-0 opacity-25 transition-[width,opacity] duration-[var(--motion-duration-confirmation)] ease-[var(--motion-ease-standard)] group-hover:opacity-35',
+          tone === 'ask'
+            ? 'bg-[linear-gradient(90deg,transparent,var(--color-down))]'
+            : 'bg-[linear-gradient(90deg,transparent,var(--color-up))]',
         )}
         style={{ width: depthPercent(level.size, max) }}
       />
@@ -96,44 +132,66 @@ export const OrderBook = forwardRef<HTMLDivElement, OrderBookProps>(function Ord
 ) {
   const isEmpty = !loading && !error && asks.length === 0 && bids.length === 0;
   const max = maxSize([...asks, ...bids]);
+  const spread = spreadSummary(asks, bids);
 
   return (
-    <Card ref={ref} className={cn('flex flex-col gap-3 p-4', className)} data-testid="order-book" {...props}>
+    <Card ref={ref} className={cn('flex flex-col gap-3 p-4', className)} data-testid="order-book" elevation="raised" {...props}>
       <div>
         <div className="flex items-center gap-2">
           <h3 className="text-[1.05rem] font-bold text-fg">{title}</h3>
           {referenceLabel && (
-            <span className="rounded-full border border-warning/40 bg-warning/10 px-2 py-0.5 text-[0.7rem] font-semibold text-warning">
+            <Badge tone="warning" size="sm" density="compact">
               {referenceLabel}
-            </span>
+            </Badge>
           )}
+          {labels.liveDepth && !loading && !error && !isEmpty ? (
+            <Badge tone="primary" size="sm" density="compact">
+              {labels.liveDepth}
+            </Badge>
+          ) : null}
         </div>
         <p className="mt-1 text-xs leading-5 text-warning">{disclosure}</p>
       </div>
 
       {loading && (
         <div className="grid gap-2" data-testid="order-book-loading">
-          <Skeleton className="h-8 w-full" />
-          <Skeleton className="h-8 w-full" />
-          <Skeleton className="h-8 w-full" />
+          <StateSurface
+            state="loading"
+            density="compact"
+            title={labels.loading}
+            description={labels.loadingDescription}
+            loadingLabel={labels.loading}
+            className="py-3"
+          />
+          <Skeleton shape="line" density="compact" className="h-7 w-full" />
+          <Skeleton shape="line" density="compact" className="h-7 w-full" />
+          <Skeleton shape="line" density="compact" className="h-7 w-full" />
         </div>
       )}
 
       {isEmpty && (
-        <div className="rounded-2xl border border-border bg-surface-2/40 p-4 text-center" data-testid="order-book-empty">
-          <p className="font-semibold text-fg">{labels.emptyTitle}</p>
-        </div>
+        <StateSurface
+          state="empty"
+          density="compact"
+          title={labels.emptyTitle}
+          description={labels.emptyDescription}
+          className="py-4"
+          data-testid="order-book-empty"
+        />
       )}
 
       {!loading && error && (
-        <div className="rounded-2xl border border-down/40 bg-down/10 p-4 text-center" role="alert" data-testid="order-book-error">
-          <p className="font-semibold text-fg">{labels.errorTitle}</p>
-          {labels.retry && onRetry && (
-            <Button className="mt-3" size="sm" variant="danger" onClick={onRetry}>
-              {labels.retry}
-            </Button>
-          )}
-        </div>
+        <StateSurface
+          state="error"
+          density="compact"
+          title={labels.errorTitle}
+          description={labels.errorDescription}
+          actionLabel={labels.retry}
+          actionVariant="danger"
+          onAction={onRetry}
+          className="py-4"
+          data-testid="order-book-error"
+        />
       )}
 
       {!loading && !error && !isEmpty && (
@@ -149,7 +207,22 @@ export const OrderBook = forwardRef<HTMLDivElement, OrderBookProps>(function Ord
               ))}
             </div>
           </div>
-          <div className="h-px bg-border" />
+          {spread && (
+            <div className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-surface-inset px-3 py-2 text-[0.72rem] tabular-nums shadow-[var(--surface-inset-shadow)]">
+              {labels.spread && (
+                <span className="flex items-center justify-between gap-2 text-muted">
+                  <span>{labels.spread}</span>
+                  <span className="font-semibold text-fg">{spread.spread}</span>
+                </span>
+              )}
+              {labels.midpoint && (
+                <span className="flex items-center justify-between gap-2 text-muted">
+                  <span>{labels.midpoint}</span>
+                  <span className="font-semibold text-primary">{spread.midpoint}</span>
+                </span>
+              )}
+            </div>
+          )}
           <div className="grid gap-1" aria-label={labels.bids}>
             {bids.map((level) => (
               <Row key={`bid-${level.price}`} level={level} max={max} tone="bid" />

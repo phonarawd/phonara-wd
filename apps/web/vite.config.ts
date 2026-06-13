@@ -28,7 +28,35 @@ export default defineConfig({
           { src: 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
           { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          {
+            src: 'maskable-icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+        ],
+        shortcuts: [
+          {
+            name: 'Trade',
+            short_name: 'Trade',
+            description: 'Spot and futures trading',
+            url: '/trade',
+            icons: [{ src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
+          },
+          {
+            name: 'Wallet',
+            short_name: 'Wallet',
+            description: 'Wallet and deposits',
+            url: '/wallet',
+            icons: [{ src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
+          },
+          {
+            name: 'Casino',
+            short_name: 'Casino',
+            description: 'Casino games',
+            url: '/casino',
+            icons: [{ src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
+          },
         ],
       },
       injectManifest: {
@@ -49,5 +77,22 @@ export default defineConfig({
   envDir: '../..',
   server: {
     port: 3000,
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/lightweight-charts')) return 'charts-vendor';
+          if (id.includes('node_modules/@supabase')) return 'supabase-vendor';
+          if (id.includes('node_modules/@tanstack')) return 'tanstack-vendor';
+          if (id.includes('node_modules')) return 'vendor';
+          if (id.includes('/packages/game-engine/') || id.includes('/features/casino/'))
+            return 'casino-domain';
+          if (id.includes('/packages/trading-engine/') || id.includes('/features/trading/'))
+            return 'trading-domain';
+          return undefined;
+        },
+      },
+    },
   },
 });

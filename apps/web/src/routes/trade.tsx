@@ -1,4 +1,4 @@
-import { createRoute, useNavigate, Link } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { useEffect, useMemo } from 'react';
 import { Route as rootRoute } from './__root';
 import { useAuth } from '../contexts/auth-context';
@@ -11,13 +11,14 @@ import {
   useFuturesPositions,
 } from '../hooks/use-trading';
 import { Card, Skeleton } from '@phonara/ui';
-import { useT } from '../lib/i18n';
 import { useRealtimeConnectionStore } from '../stores/realtime';
 import { MarketDataStatus } from '../features/trading/market-data-status';
 import { TradeNotificationCenter } from '../features/trading/trade-notification-center';
 import { FuturesPanel } from '../features/trading/futures-panel';
 import { SpotPanel } from '../features/trading/spot-panel';
 import { OpenPositions } from '../features/trading/open-positions';
+import { AppShell } from '../components/app-shell';
+import { useT } from '../lib/i18n';
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -62,27 +63,27 @@ function TradePage() {
 
   if (authLoading) {
     return (
-      <div className="shell">
-        <Card className="grid w-full max-w-3xl gap-4 p-5" aria-busy="true">
-          <Skeleton className="h-5 w-40" />
-          <Skeleton className="h-[260px]" />
-          <Skeleton className="h-24" />
-        </Card>
-      </div>
+      <AppShell active="trade">
+        <div className="app-page" aria-busy="true">
+          <Card className="grid w-full max-w-3xl gap-4 p-5">
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-[260px]" />
+            <Skeleton className="h-24" />
+          </Card>
+        </div>
+      </AppShell>
     );
   }
 
   return (
-    <div className="shell">
-      <div className="dashboard">
-        <header className="dash-header">
-          <div className="dash-logo">
-            <Link to="/dashboard" className="logo-name" style={{ textDecoration: 'none' }}>← PHONARA</Link>
+    <AppShell active="trade">
+      <div className="app-page">
+        <section className="trade-ia-header" aria-labelledby="trade-page-title">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">{t('nav.trade')}</p>
+            <h1 id="trade-page-title" className="mt-1 text-2xl font-black text-fg">{t('trade.title')}</h1>
           </div>
-          <nav className="dash-nav">
-            <Link to="/staking" className="nav-link">{t('nav.staking')}</Link>
-            <Link to="/dashboard" className="nav-link">{t('nav.dashboard')}</Link>
-          </nav>
+          <div className="trade-ia-header-actions">
           <TradeNotificationCenter
             markets={futuresMarkets}
             prices={prices}
@@ -97,7 +98,8 @@ function TradePage() {
             onClearPriceAlert={tradeNotifications.clearPriceAlert}
             onClearNotifications={tradeNotifications.clearNotifications}
           />
-        </header>
+          </div>
+        </section>
 
         <MarketDataStatus
           pricesError={pricesError}
@@ -114,7 +116,7 @@ function TradePage() {
           }}
         />
 
-        <section className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,7fr)_minmax(320px,3fr)]">
+        <section className="trade-workspace">
           <FuturesPanel
             markets={futuresMarkets}
             marketsLoading={futuresMarketsLoading}
@@ -144,6 +146,6 @@ function TradePage() {
           onClosed={refresh}
         />
       </div>
-    </div>
+    </AppShell>
   );
 }

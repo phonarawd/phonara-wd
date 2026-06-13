@@ -45,17 +45,6 @@ export interface MissionStatus {
 
 export const ROULETTE_PRIZES = [10, 20, 30, 50, 100, 300, 500, 1000] as const
 
-export const ROULETTE_LABELS = [
-  '10 PHON',
-  '20 PHON',
-  '30 PHON',
-  '50 PHON',
-  '100 PHON',
-  '300 PHON',
-  '500 PHON',
-  '1,000 PHON 🎉',
-] as const
-
 // ─── Query keys ───────────────────────────────────────────────
 
 export const retentionKeys = {
