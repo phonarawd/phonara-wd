@@ -100,6 +100,17 @@ export default defineConfig({
       'input-otp',
       'react-day-picker',
       'canvas-confetti',
+      'pixi.js',
+      'pixi-filters',
+      'matter-js',
+      'comlink',
+      'lightweight-charts',
+      '@tanstack/react-virtual',
+      '@tanstack/react-table',
+      'html-to-image',
+      'qrcode.react',
+      'react-helmet-async',
+      '@use-gesture/react',
     ],
   },
   server: {
@@ -109,10 +120,20 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (id.includes('node_modules/pixi.js')) return 'pixi-vendor';
+          if (id.includes('node_modules/pixi-filters')) return 'pixi-filters-vendor';
+          if (id.includes('node_modules/matter-js')) return 'matter-vendor';
           if (id.includes('node_modules/lightweight-charts')) return 'charts-vendor';
           if (id.includes('node_modules/@supabase')) return 'supabase-vendor';
           if (id.includes('node_modules/@tanstack')) return 'tanstack-vendor';
           if (id.includes('node_modules')) return 'vendor';
+          if (id.includes('/components/games/crash/')) return 'game-crash';
+          if (id.includes('/components/games/plinko/')) return 'game-plinko';
+          if (id.includes('/components/games/mines/')) return 'game-mines';
+          if (id.includes('/components/games/dice/')) return 'game-dice';
+          if (id.includes('/components/games/limbo/')) return 'game-limbo';
+          if (id.includes('/components/games/hilo/')) return 'game-hilo';
+          if (id.includes('/components/games/shared/')) return 'game-shared';
           if (id.includes('/packages/game-engine/') || id.includes('/features/casino/'))
             return 'casino-domain';
           if (id.includes('/packages/trading-engine/') || id.includes('/features/trading/'))

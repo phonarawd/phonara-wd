@@ -19,6 +19,19 @@ export { DayPicker } from 'react-day-picker';
 export { format } from 'date-fns';
 export { ko } from 'date-fns/locale';
 export { default as useEmblaCarousel } from 'embla-carousel-react';
+export { useVirtualizer } from '@tanstack/react-virtual';
+export { useReactTable, getCoreRowModel } from '@tanstack/react-table';
+export { toPng } from 'html-to-image';
+export { wrap } from 'comlink';
+export { createChart } from 'lightweight-charts';
+export { useGesture } from '@use-gesture/react';
+export { Helmet, HelmetProvider } from 'react-helmet-async';
+export { QRCodeSVG } from 'qrcode.react';
+export { AdvancedBloomFilter, BloomFilter } from 'pixi-filters';
+export { NoiseFilter } from 'pixi.js';
+
+export type { Application as PixiApplication } from 'pixi.js';
+export type { Engine as MatterEngine } from 'matter-js';
 
 export * as Accordion from '@radix-ui/react-accordion';
 export * as AlertDialog from '@radix-ui/react-alert-dialog';

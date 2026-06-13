@@ -5,6 +5,9 @@ import { Route as loginRoute } from './routes/login';
 import { Route as signupRoute } from './routes/signup';
 import { Route as resetPasswordRoute } from './routes/reset-password';
 import { Route as gamesRoute } from './routes/games';
+import { Route as gamesHistoryRoute } from './routes/games-history';
+import { Route as gamesFairnessRoute } from './routes/games-fairness';
+import { Route as gamesTournamentsRoute } from './routes/games-tournaments';
 import { Route as aboutRoute } from './routes/about';
 import { Route as termsRoute } from './routes/terms';
 import { Route as privacyRoute } from './routes/privacy';
@@ -37,6 +40,9 @@ const routeTree = rootRoute.addChildren([
   signupRoute,
   resetPasswordRoute,
   gamesRoute,
+  gamesHistoryRoute,
+  gamesFairnessRoute,
+  gamesTournamentsRoute,
   aboutRoute,
   termsRoute,
   privacyRoute,

@@ -1,11 +1,11 @@
 /*
- * Imported presentation design tokens.
- * Paste the external :root / @theme variables here unchanged, scoped under
- * [data-presentation-import="v1"] so the engine-backed app theme stays intact.
+ * Imported presentation design tokens (Lovable replacement mode).
+ * Paste Lovable :root / @theme variables here VERBATIM on ZIP arrival.
+ * Scoped under [data-presentation-import] until full cutover; then lovable-globals.css owns :root.
  */
 
-[data-presentation-import='v1'] {
-  /* Imported presentation tokens land here. */
+[data-presentation-import='v1'][data-lovable-skin='v1'] {
+  /* Lovable presentation tokens land here. */
 }
 
 [data-presentation-import='v1'] .presentation-import-root {

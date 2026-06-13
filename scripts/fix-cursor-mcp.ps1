@@ -58,20 +58,40 @@ if (Test-Path $vscodeSupabaseExt) {
   Write-Host '[ok] VS Code Supabase extension not installed'
 }
 
-# 6) Preflight .env PAT
-if (-not (Test-Path $envFile)) {
-  Write-Host '[warn] .env missing — add SUPABASE_ACCESS_TOKEN'
-  exit 1
+# 6) Preflight PAT (.env or .env.local, else sync from Supabase CLI credential)
+function Test-SupabasePatFile {
+  param([string]$Path)
+  if (-not (Test-Path $Path)) { return $false }
+  foreach ($line in Get-Content $Path -Encoding UTF8) {
+    if ($line -match '^\s*SUPABASE_ACCESS_TOKEN=(.+)$') { return $true }
+  }
+  return $false
 }
-$hasToken = $false
-foreach ($line in Get-Content $envFile -Encoding UTF8) {
-  if ($line -match '^\s*SUPABASE_ACCESS_TOKEN=(.+)$') { $hasToken = $true; break }
-}
+
+$envFile = Join-Path $repoRoot '.env'
+$envLocalFile = Join-Path $repoRoot '.env.local'
+$hasToken = (Test-SupabasePatFile $envFile) -or (Test-SupabasePatFile $envLocalFile)
+
 if (-not $hasToken) {
-  Write-Host '[warn] SUPABASE_ACCESS_TOKEN not in .env'
+  $syncScript = Join-Path $repoRoot 'scripts\sync-supabase-pat.ps1'
+  if (Test-Path $syncScript) {
+    Write-Host '[info] PAT missing — trying sync from Supabase CLI credential...'
+    try {
+      & powershell -NoProfile -ExecutionPolicy Bypass -File $syncScript
+      $hasToken = Test-SupabasePatFile $envFile
+    } catch {
+      Write-Host "[warn] sync-supabase-pat failed: $($_.Exception.Message)"
+    }
+  }
+}
+
+if (-not $hasToken) {
+  Write-Host '[warn] SUPABASE_ACCESS_TOKEN not in .env / .env.local'
+  Write-Host '       Run: supabase login'
+  Write-Host '       Then: powershell -File scripts/sync-supabase-pat.ps1'
   exit 1
 }
-Write-Host '[ok] SUPABASE_ACCESS_TOKEN present in .env'
+Write-Host '[ok] SUPABASE_ACCESS_TOKEN present (.env or .env.local)'
 
 # 7) Warm global MCP binary (avoids npx cold start when Cursor spawns the server).
 $npx = Join-Path $env:ProgramFiles 'nodejs\npx.cmd'

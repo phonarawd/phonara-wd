@@ -36,6 +36,8 @@ import {
   type RocketHistoryItem,
 } from '@phonara/ui';
 import type { GameCode } from '@phonara/game-engine';
+import { CasinoLovableSurface } from '../presentation-import/casino/casino-lovable-surface';
+import { USE_LOVABLE_CASINO_SURFACE } from '../presentation-import/casino/casino-skin';
 import type { MessageKey } from '@phonara/i18n';
 import { GAME_BY_CODE, GAME_CONFIGS } from '../features/casino/game-config';
 import { GameFieldControl } from '../features/casino/game-field-control';
@@ -94,6 +96,13 @@ export const casinoFairnessRoute = createRoute({
 });
 
 function CasinoPage({ initialGame }: { initialGame: GameCode }) {
+  if (USE_LOVABLE_CASINO_SURFACE) {
+    return <CasinoLovableSurface initialGame={initialGame} />;
+  }
+  return <LegacyCasinoPage initialGame={initialGame} />;
+}
+
+function LegacyCasinoPage({ initialGame }: { initialGame: GameCode }) {
   const t = useT();
   const navigate = useNavigate();
   const { session, loading: authLoading } = useAuth();

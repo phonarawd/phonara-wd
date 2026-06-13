@@ -38,13 +38,13 @@ console.log('PHONARA dev environment setup\n');
 const bun = probe('bun', ['--version']);
 const node = probe('node', ['--version']);
 const docker = probe('docker', ['--version']);
-const supabase = probe('supabase', ['--version']);
+const supabase = probe('bunx', ['supabase', '--version']) ?? probe('supabase', ['--version']);
 
 console.log('Toolchain:');
 console.log(`  bun:      ${bun ?? 'MISSING — install https://bun.sh'}`);
 console.log(`  node:     ${node ?? 'optional (bun bundles runtime)'}`);
 console.log(`  docker:   ${docker ?? 'MISSING — required for local Supabase/E2E'}`);
-console.log(`  supabase: ${supabase ?? 'MISSING — install https://supabase.com/docs/guides/cli'}`);
+console.log(`  supabase: ${supabase ?? 'MISSING — run `bun install` (CLI pinned in devDependencies)'}`);
 
 if (!bun) {
   process.exit(1);
@@ -64,10 +64,20 @@ if (docker && supabase) {
   console.log('\n⚠ Skipping Supabase start hint — install Docker + Supabase CLI for money/E2E gates.');
 }
 
-console.log('\nPresentation stack (apps/web):');
-console.log('  React 19 + React Compiler, Vite 8, Tailwind v4, TanStack Router/Query');
-console.log('  framer-motion, lucide-react, Radix UI, vaul, cmdk, sonner, canvas-confetti');
-console.log('  react-hook-form + zod, embla-carousel, react-day-picker, tw-animate-css');
+console.log('\nPresentation stack (apps/web) — Lovable replacement mode:');
+console.log('  Core: React 19 + React Compiler, Vite 8, Tailwind v4, TS 6 strict');
+console.log('  Data: TanStack Router/Query/Table/Virtual');
+console.log('  UI: framer-motion, Radix (full shadcn set), vaul, cmdk, sonner, @use-gesture/react');
+console.log('  Forms: react-hook-form + zod 4, input-otp, react-day-picker, embla-carousel');
+console.log('  Casino: pixi.js@8, pixi-filters@6, matter-js, canvas-confetti, comlink');
+console.log('  Trade: lightweight-charts@5');
+console.log('  Share/SEO: html-to-image, qrcode.react, react-helmet-async, vite-plugin-pwa');
+console.log('\nEngine stack (read-only during UI import):');
+console.log('  @phonara/money, game-engine, trading-engine, wallet-ledger, Supabase JS v2');
+console.log('\nSystem tools (install separately if MISSING):');
+console.log('  Docker Desktop — local Supabase + money E2E');
+console.log('  Supabase CLI — migrations (`supabase start`, `db reset`)');
+console.log('  Playwright Chromium — installed by this script');
 
 if (ok) {
   console.log('\n✓ setup complete — run `bun run dev` to start the web app.');

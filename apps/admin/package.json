@@ -12,17 +12,17 @@
     "@phonara/i18n": "workspace:*",
     "@phonara/shared-types": "workspace:*",
     "@phonara/ui": "workspace:*",
-    "@supabase/supabase-js": "2.108.0",
-    "@tanstack/react-query": "5.80.7",
+    "@supabase/supabase-js": "^2.108.1",
+    "@tanstack/react-query": "^5.101.0",
     "@tanstack/react-router": "1.170.15",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "zod": "3.25.67"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "4.1.10",
+    "@tailwindcss/vite": "^4.3.1",
     "@vitejs/plugin-react": "6.0.2",
-    "tailwindcss": "4.1.10",
+    "tailwindcss": "^4.3.1",
     "typescript": "6.0.3",
     "vite": "8.0.16"
   }

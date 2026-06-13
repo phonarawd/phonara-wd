@@ -12,6 +12,8 @@ import {
 } from '@tanstack/react-router';
 import {
   forwardRef,
+  useCallback,
+  useMemo,
   type AnchorHTMLAttributes,
   type ReactNode,
   type Ref,
@@ -107,6 +109,30 @@ export function Navigate({ to, replace }: { to: string; replace?: boolean }) {
 
 export function Outlet() {
   return <TanOutlet />;
+}
+
+export function useSearchParams(): [
+  URLSearchParams,
+  (next: URLSearchParams | Record<string, string>) => void,
+] {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const searchStr = useRouterState({ select: (s) => s.location.searchStr });
+  const navigate = useTanNavigate();
+
+  const params = useMemo(() => new URLSearchParams(searchStr), [searchStr]);
+
+  const setSearchParams = useCallback(
+    (next: URLSearchParams | Record<string, string>) => {
+      const nextParams =
+        next instanceof URLSearchParams ? next : new URLSearchParams(Object.entries(next));
+      const qs = nextParams.toString();
+      const target = qs ? `${pathname}?${qs}` : pathname;
+      void navigate({ to: target as '/', replace: true });
+    },
+    [navigate, pathname],
+  );
+
+  return [params, setSearchParams];
 }
 
 /** Passthrough — TanStack Router owns the tree. */

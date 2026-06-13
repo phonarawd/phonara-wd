@@ -2,6 +2,7 @@ import { StrictMode, lazy, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
+import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'sonner';
 import { router } from './router';
 import { queryClient } from './lib/query';
@@ -11,6 +12,7 @@ import { supabase } from './lib/supabase';
 import './theme.css';
 import './styles.css';
 import './styles/presentation-import-tokens.css';
+import './presentation-import/styles/lovable-globals.css';
 import './presentation-import/styles/presentation.css';
 
 const QueryDevtools = import.meta.env.DEV
@@ -38,19 +40,21 @@ if (import.meta.env.DEV) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <I18nProvider>
-        <ErrorBoundary>
-          <RouterProvider router={router} />
-        </ErrorBoundary>
-        <Toaster position="top-center" theme="dark" richColors closeButton />
-        {import.meta.env.DEV && QueryDevtools && RouterDevtools ? (
-          <Suspense fallback={null}>
-            <QueryDevtools initialIsOpen={false} />
-            <RouterDevtools router={router} position="bottom-right" />
-          </Suspense>
-        ) : null}
-      </I18nProvider>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <I18nProvider>
+          <ErrorBoundary>
+            <RouterProvider router={router} />
+          </ErrorBoundary>
+          <Toaster position="top-center" theme="dark" richColors closeButton />
+          {import.meta.env.DEV && QueryDevtools && RouterDevtools ? (
+            <Suspense fallback={null}>
+              <QueryDevtools initialIsOpen={false} />
+              <RouterDevtools router={router} position="bottom-right" />
+            </Suspense>
+          ) : null}
+        </I18nProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   </StrictMode>,
 );

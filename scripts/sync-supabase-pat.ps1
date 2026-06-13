@@ -1,5 +1,5 @@
 # Sync SUPABASE_ACCESS_TOKEN in repo .env from Windows Credential Manager (Supabase CLI).
-# Does NOT print the token.
+# Does NOT print the token. Also mirrors into .env.local when that file exists.
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
 $envFile = Join-Path $repoRoot '.env'
@@ -65,3 +65,22 @@ if (-not $found) {
 }
 Set-Content -Path $envFile -Value $out -Encoding UTF8
 Write-Host '[ok] SUPABASE_ACCESS_TOKEN synced from Supabase CLI credential to .env'
+
+$envLocalFile = Join-Path $repoRoot '.env.local'
+if (Test-Path $envLocalFile) {
+  $localLines = @(Get-Content $envLocalFile -Encoding UTF8)
+  $localFound = $false
+  $localOut = foreach ($line in $localLines) {
+    if ($line -match '^\s*SUPABASE_ACCESS_TOKEN=') {
+      $localFound = $true
+      "SUPABASE_ACCESS_TOKEN=$token"
+    } else {
+      $line
+    }
+  }
+  if (-not $localFound) {
+    $localOut += "SUPABASE_ACCESS_TOKEN=$token"
+  }
+  Set-Content -Path $envLocalFile -Value $localOut -Encoding UTF8
+  Write-Host '[ok] SUPABASE_ACCESS_TOKEN mirrored to .env.local'
+}

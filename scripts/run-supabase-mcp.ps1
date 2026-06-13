@@ -1,26 +1,32 @@
 # Starts Supabase MCP (stdio) with PAT from repo .env — no secrets in mcp.json.
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
-$envFile = Join-Path $repoRoot '.env'
 
-if (-not (Test-Path $envFile)) {
-  [Console]::Error.WriteLine('run-supabase-mcp: missing .env — set SUPABASE_ACCESS_TOKEN')
-  exit 1
-}
-
-foreach ($line in Get-Content $envFile -Encoding UTF8) {
-  if ($line -match '^\s*#' -or $line -notmatch '=') { continue }
-  $parts = $line -split '=', 2
-  $key = $parts[0].Trim()
-  $val = $parts[1].Trim().Trim('"').Trim("'")
-  if ($key -eq 'SUPABASE_ACCESS_TOKEN' -and $val) {
-    $env:SUPABASE_ACCESS_TOKEN = $val
-    break
+function Import-SupabaseAccessToken {
+  param([string[]]$Files)
+  foreach ($envFile in $Files) {
+    if (-not (Test-Path $envFile)) { continue }
+    foreach ($line in Get-Content $envFile -Encoding UTF8) {
+      if ($line -match '^\s*#' -or $line -notmatch '=') { continue }
+      $parts = $line -split '=', 2
+      $key = $parts[0].Trim()
+      $val = $parts[1].Trim().Trim('"').Trim("'")
+      if ($key -eq 'SUPABASE_ACCESS_TOKEN' -and $val) {
+        $env:SUPABASE_ACCESS_TOKEN = $val
+        return $true
+      }
+    }
   }
+  return $false
 }
 
-if (-not $env:SUPABASE_ACCESS_TOKEN) {
-  [Console]::Error.WriteLine('run-supabase-mcp: SUPABASE_ACCESS_TOKEN not set in .env')
+$loaded = Import-SupabaseAccessToken @(
+  (Join-Path $repoRoot '.env'),
+  (Join-Path $repoRoot '.env.local')
+)
+
+if (-not $loaded) {
+  [Console]::Error.WriteLine('run-supabase-mcp: set SUPABASE_ACCESS_TOKEN in .env or .env.local (or run: supabase login && scripts/sync-supabase-pat.ps1)')
   exit 1
 }
 

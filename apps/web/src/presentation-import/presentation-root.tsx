@@ -11,7 +11,11 @@ type PresentationRootProps = {
  */
 export function PresentationRoot({ children }: PresentationRootProps) {
   return (
-    <div data-presentation-import="v1" className="presentation-import-root min-h-dvh bg-bg text-fg">
+    <div
+      data-presentation-import="v1"
+      data-lovable-skin="v1"
+      className="presentation-import-root min-h-dvh"
+    >
       {children}
     </div>
   );
