@@ -1,6 +1,6 @@
 ﻿# PHONARA Cursor Rules
 
-Always read `docs/PHONARA_V2_MASTER_PLAN.md`, `docs/FINAL_DIRECTION.md`, `docs/QUALITY_GATES.md`, and the relevant domain docs before making implementation changes.
+Always read `docs/PHONARA_V2_MASTER_PLAN.md`, `docs/QUALITY_GATES.md`, and for UI work `docs/PHONARA_UI_UX_MASTER.md` before making implementation changes.
 
 ## Non-negotiables
 
@@ -13,11 +13,9 @@ Always read `docs/PHONARA_V2_MASTER_PLAN.md`, `docs/FINAL_DIRECTION.md`, `docs/Q
 - Never expose `SUPABASE_SERVICE_ROLE_KEY` to browser code or `VITE_` env vars.
 - Normal operations should be automated; humans handle exceptions through Admin.
 
-## Execution Order
+## Current Focus
 
-1. Governance, docs, rules, scaffold, quality gates.
-2. Types and domain models.
-3. Money/Decimal and wallet ledger engines.
-4. Supabase schema/RLS/RPC drafts, then approval.
-5. Minimal UI and E2E.
-6. Admin automation, PWA, monitoring, global UX.
+1. Preserve completed engine, ledger, Supabase, and domain behavior.
+2. Build UI/UX through shared `@phonara/ui` components, app shells, and route presentation.
+3. Keep copy i18n-keyed and validate release cleanliness.
+4. Run relevant UI, type, i18n, release, and E2E gates before calling work complete.

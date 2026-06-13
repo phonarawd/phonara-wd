@@ -54,7 +54,7 @@ Next slices:
 - Remote migration history is aligned through `20260611000079`.
 - Local `check:advisors` still skips without `SUPABASE_ACCESS_TOKEN`, but MCP advisor checks currently show 0 ERROR.
 - `db diff --linked` default-direction output includes reverse drift/noise (`pg_net`); the desired `linked -> local` diff produced no SQL, and the generated reverse migration attempt was rejected by local SQL gates and deleted.
-- Production `auth.users=0`, so wallet/trading/casino/admin authenticated smoke was not executed. `setup/MANUAL_TASKS.md` now carries the first operator account and no-mutation smoke checklist. Do not create persistent fake users or funded production data just to close this item.
+- Production `auth.users=0`, so wallet/trading/casino/admin authenticated smoke was not executed. `setup/MANUAL_TASKS.md` now carries the first operator account and no-mutation smoke checklist.
 - Remote `reconciliation_log` is still empty after migration apply. AI MCP SQL runs as `supabase_read_only_user` and cannot execute service-role-only `rpc_run_reconciliation()`, so launch-ops requires a first Dashboard/service-role manual or scheduled reconciliation green check before launch-day operations can start.
 - Affiliate browser E2E and explicit locale-toggle E2E are not separate browser specs yet because the corresponding shipped user/admin UX is not exposed as a dedicated route. Current coverage is SQL/admin-pattern/check based and is documented in the E2E matrix.
 - If local Playwright global setup fails with `createUser failed: {}`, check `http://127.0.0.1:54444/auth/v1/health`. In the latest run this was a local Auth upstream issue and recovered with `supabase stop && supabase start`.

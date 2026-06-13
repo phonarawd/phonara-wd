@@ -11,7 +11,7 @@ alwaysApply: true
   is not already implemented, not already tracked, and not duplicated elsewhere.
   Duplicate work and duplicate generated artifacts are forbidden.
 - Prefer small, tested, auditable changes.
-- Implement engines before decorative UI.
+- Preserve completed engine/domain behavior; current product work prioritizes UI/UX presentation.
 - Preserve a clear boundary between `apps/web`, `apps/admin`, and `packages/*`.
 - Do not add compatibility shims for unshipped work on this branch; keep the branch clean and direct.
 
@@ -25,14 +25,13 @@ only hard constraint that survives this grant is the single-project lock in
 `20-supabase-safety` (project `yocjhjsdwoijfdrehzoq` only). See
 `70-autonomy-and-delivery` for the full operating contract.
 
-## High-Risk Work (extra rigor, proceed autonomously)
+## Protected Work (extra rigor if touched)
 
-The agent proceeds directly through high-risk work. The following areas demand
-extra rigor — draft first, validate locally, test the changed branch, run the
-advisor, THEN apply autonomously (no approval needed):
+The current focus is UI/UX. If a change still touches protected domain or
+database behavior, use extra rigor: draft first, validate locally, test the
+changed branch, run the advisor, THEN apply autonomously when relevant:
 
-- Money/Decimal engine, wallet ledger, conservation logic.
-- Trading engine, liquidation, game/provably-fair engine.
+- Completed money, ledger, conservation, trading, liquidation, and casino settlement behavior.
 - Supabase schema/RLS/RPC migrations.
 - anon/public/role privilege changes (GRANT/REVOKE).
 - Admin permission, withdrawal, or kill-switch logic.

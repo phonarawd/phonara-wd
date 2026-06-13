@@ -1372,6 +1372,92 @@ textarea:focus-visible,
   animation: pn-money-pulse var(--motion-duration-3) var(--motion-ease-standard) 1;
 }
 
+/* ─── Nexus Rocket absorption utilities ─────────────────────── */
+@keyframes rocket-starfield-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -200px, 0);
+  }
+}
+
+@keyframes rocket-crash-shake {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  20% {
+    transform: translate3d(-6px, 4px, 0);
+  }
+  40% {
+    transform: translate3d(8px, -3px, 0);
+  }
+  60% {
+    transform: translate3d(-5px, -5px, 0);
+  }
+  80% {
+    transform: translate3d(4px, 6px, 0);
+  }
+}
+
+@keyframes rocket-tick-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.rocket-glass-panel {
+  border: 1px solid color-mix(in srgb, var(--color-rocket-violet) 36%, transparent);
+  background: var(--rocket-gradient-panel);
+  box-shadow: var(--rocket-shadow-panel);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+}
+
+.rocket-scanline-grid {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--color-rocket-cyan) 10%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-rocket-magenta) 10%, transparent) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.rocket-text-gradient {
+  background: var(--rocket-gradient-flight);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.rocket-text-glow-cyan {
+  text-shadow: 0 0 12px color-mix(in srgb, var(--color-rocket-cyan) 80%, transparent);
+}
+
+.rocket-text-glow-gold {
+  text-shadow: 0 0 14px color-mix(in srgb, var(--color-rocket-gold) 86%, transparent);
+}
+
+.rocket-no-scrollbar {
+  scrollbar-width: none;
+}
+
+.rocket-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.rocket-crash-shake {
+  animation: rocket-crash-shake 450ms var(--motion-ease-standard);
+}
+
+.rocket-tick-up {
+  animation: rocket-tick-up 250ms var(--motion-ease-standard) both;
+}
+
 .auth-trust-strip {
   display: flex;
   flex-wrap: wrap;
@@ -1400,7 +1486,9 @@ textarea:focus-visible,
 
 @media (prefers-reduced-motion: reduce) {
   .pn-anim-rise,
-  .pn-anim-money-pulse {
+  .pn-anim-money-pulse,
+  .rocket-crash-shake,
+  .rocket-tick-up {
     animation: none !important;
   }
 }

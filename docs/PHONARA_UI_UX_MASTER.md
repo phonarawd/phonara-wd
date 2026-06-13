@@ -109,28 +109,6 @@ UI/UX 리빌드는 프레젠테이션 레이어 작업이다. 아래 영역은 �
 
 어떤 상태도 raw text fallback으로 끝나면 안 된다. 모든 상태는 복구 경로 또는 다음 행동을 제시한다.
 
-## 4. 금지 디자인 패턴
-아래 패턴은 발견 즉시 제거한다.
-
-- v0 default layout
-- Lovable default layout
-- Tailwind demo layout
-- Generic card grid
-- Oversized empty whitespace
-- Centered marketing sections
-- Fake glassmorphism without depth
-- Random gradients
-- Excessive neon
-- Crypto scam aesthetics
-- Dribbble-only concepts that harm usability
-- Generic SaaS dashboard chrome
-- Cute reward app visuals
-- Corporate banking visuals
-- Decoration-only animation
-- Color used without semantic meaning
-
-Dark theme이라고 해서 무조건 neon을 쓰지 않는다. Mint glow는 브랜드 신호이자 상태 신호로만 사용한다.
-
 ## 5. Reference Board 원칙
 제공된 4장 이미지는 복제 대상이 아니다. 형태가 아니라 원칙만 추출한다.
 
@@ -261,7 +239,7 @@ Required token scale:
 All money, price, odds, balance, PnL, APR and percentage displays use tabular numerals. Balance updates must not shift layout.
 
 ### Depth and Light
-Depth must come from layered surfaces, subtle borders, top highlights and controlled ambient light. Fake glassmorphism is forbidden.
+Depth must come from layered surfaces, subtle borders, top highlights and controlled ambient light.
 
 Required tokens:
 

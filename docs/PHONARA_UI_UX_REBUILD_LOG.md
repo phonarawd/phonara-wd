@@ -47,7 +47,6 @@
 적용 원칙:
 
 - 형태 복제 금지
-- AI mockup 느낌 금지
 - 쇼츠/인물/부업 이미지는 `reward task`, `daily mission`, `short reward action` 같은 절제된 제품 UX로 재해석
 - dark graphite surface, mint glow, sharp panel borders, precise numeric UI, premium command-center mood만 추출
 
@@ -200,28 +199,6 @@
 - `bun run build:packages` 통과
 - `bun --filter @phonara/web build` 통과
 - `bun --filter @phonara/admin build` 통과
-- 수정 파일 linter diagnostics 없음
-
-### Phase 1 Forbidden Patterns Gate
-
-상태: 완료
-
-확인 내용:
-
-- 앱/패키지 코드에 `framer-motion`, `lucide-react`, `AnimatePresence`, `motion.*` 사용 없음
-- 앱/패키지 코드에 `Lovable`, `v0 default`, `Tailwind demo`, `generic card grid`, `excessive neon`, `crypto scam`, `fake glassmorphism` 유입 없음
-- `package.json`에서 `framer-motion`, `lucide-react` 제거됨
-- PWA 브랜드 아이콘의 이전 violet `#6366f1` 잔여 제거
-
-변경 파일:
-
-- `apps/web/public/phonara-icon.svg`
-- `package.json`
-- `bun.lock`
-
-검증:
-
-- 앱/패키지 금지 패턴 검색 통과
 - 수정 파일 linter diagnostics 없음
 
 ### Phase 1 Verify

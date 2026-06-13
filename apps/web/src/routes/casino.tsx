@@ -10,11 +10,8 @@ import { useT } from '../lib/i18n';
 import {
   Button,
   BetPanel,
-  Badge,
   ConfirmDialog,
-  CrashCurve,
   DiceTrack,
-  EmptyState,
   ErrorState,
   FairnessVerifier,
   GameStakeInput,
@@ -23,14 +20,23 @@ import {
   MinesGrid,
   MultiplierDisplay,
   PlinkoBoard,
-  ProvablyFairBadge,
+  RocketActivityFeed,
+  RocketBetSurface,
+  RocketCrashCanvas,
+  RocketGameTopBar,
+  RocketHistoryStrip,
+  RocketStarfield,
   SegmentedControl,
   Skeleton,
   StatusTimeline,
   Toast,
   formatMoney,
+  type RocketActivityItem,
+  type RocketCrashCanvasState,
+  type RocketHistoryItem,
 } from '@phonara/ui';
 import type { GameCode } from '@phonara/game-engine';
+import type { MessageKey } from '@phonara/i18n';
 import { GAME_BY_CODE, GAME_CONFIGS } from '../features/casino/game-config';
 import { GameFieldControl } from '../features/casino/game-field-control';
 import { useCasinoRoundPipeline } from '../features/casino/use-casino-round';
@@ -164,8 +170,12 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
   }, [initialGame, resetRoundState]);
 
   useEffect(() => {
+    if (!session) {
+      setRecentBets([]);
+      return;
+    }
     void loadRecentBets().then(setRecentBets);
-  }, []);
+  }, [session]);
 
   const timeline = useMemo(
     () => [
@@ -207,6 +217,40 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
     [bet, busy, commitment, t, verificationEvidence],
   );
 
+  const rocketState: RocketCrashCanvasState = busy && commitment
+    ? 'flying'
+    : bet?.status === 'lost'
+      ? 'crashed'
+      : bet
+        ? 'settled'
+        : commitment
+          ? 'armed'
+          : 'idle';
+  const primaryResult = getPrimaryResultLabel(bet?.result);
+  const rocketActivityItems = useMemo<RocketActivityItem[]>(
+    () =>
+      recentBets.map((row) => ({
+        id: row.id,
+        title: t(GAME_BY_CODE[row.game].labelKey),
+        subtitle: `${formatMoney(row.stake, row.currency)} ${row.currency}`,
+        value: t(row.status === 'won' ? 'casino.bet.status.won' : 'casino.bet.status.lost'),
+        valueDetail: row.payout ? `${formatMoney(row.payout, row.currency)} ${row.currency}` : undefined,
+        status: row.status === 'won' ? 'won' : row.status === 'lost' ? 'lost' : 'neutral',
+        highlighted: row.id === bet?.bet_id,
+      })),
+    [bet?.bet_id, recentBets, t],
+  );
+  const rocketHistoryItems = useMemo<RocketHistoryItem[]>(
+    () =>
+      recentBets.map((row) => ({
+        id: row.id,
+        label: row.payout ? formatMoney(row.payout, row.currency) : t(row.status === 'won' ? 'casino.result.won' : 'casino.result.lost'),
+        meta: `${t(GAME_BY_CODE[row.game].labelKey)} · ${row.currency}`,
+        tone: row.status === 'won' ? 'good' : row.status === 'lost' ? 'low' : 'neutral',
+      })),
+    [recentBets, t],
+  );
+
   function selectGame(next: GameCode) {
     void navigate({ to: next === 'dice' ? '/casino/dice' : `/casino/${next}` });
   }
@@ -239,28 +283,34 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
 
   return (
     <AppShell active="casino">
-      <div className="app-page">
-        <section className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-black text-fg">{t('casino.title')}</h1>
-              <ProvablyFairBadge>{t('casino.provablyFair')}</ProvablyFairBadge>
-              <Link
-                to="/casino/fairness"
-                className="text-sm font-semibold text-primary hover:underline"
-              >
+      <div className="relative min-h-[calc(100dvh-4rem)] overflow-hidden">
+        <RocketStarfield />
+        <RocketGameTopBar
+          title={t('casino.rocket.title')}
+          subtitle={t('casino.rocket.subtitle')}
+          balanceLabel={t('casino.rocket.balance')}
+          balance={formatMoney(available ?? '0', currency)}
+          currency={currency}
+          actions={
+            <>
+              <Button variant="ghost" size="sm" onClick={() => void prepareRound()} disabled={busy}>
+                {commitment ? t('casino.refreshHash') : t('casino.prepareHash')}
+              </Button>
+              <Link to="/casino/fairness" className="text-sm font-semibold text-rocket-cyan hover:underline">
                 {t('casino.fairness.link')}
               </Link>
-            </div>
-            <p className="max-w-3xl text-sm text-muted">{t('casino.subtitle')}</p>
-          </div>
+            </>
+          }
+        />
 
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
-            <BetPanel
+        <main className="relative z-10 px-3 py-3 md:px-5 md:py-4">
+          <div className="grid gap-3 md:gap-4 lg:grid-cols-[320px_minmax(0,1fr)_340px]">
+            <aside className="flex flex-col gap-3 lg:order-0">
+              <RocketBetSurface
+                eyebrow={t('casino.rocket.betSlot')}
               title={t(config.labelKey)}
-              description={t(config.descriptionKey)}
-              actions={<Badge tone="primary">{t('casino.instantSettle')}</Badge>}
-              tone="casino"
+                badge={t('casino.instantSettle')}
+                accent="magenta"
             >
               <div className="casino-game-switcher" aria-label={t('casino.title')}>
                 {GAME_CONFIGS.map((game) => (
@@ -277,17 +327,134 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
                 ))}
               </div>
 
-              <div className="mb-5">
-                {gameCode === 'crash' && (
-                  <CrashCurve
+              <div className="grid gap-3">
+                <GameStakeInput
+                  data-testid="casino-stake-input"
+                  label={t('casino.stake')}
+                  value={stake}
+                  onChange={(event) => setStake(normalizeDecimalInput(event.target.value))}
+                  currency={currency}
+                  hint={
+                    walletLoading
+                      ? t('common.loading')
+                      : t('casino.available', {
+                          amount: formatMoney(available ?? '0', currency),
+                          currency,
+                        })
+                  }
+                />
+
+                <label className="flex flex-col gap-2">
+                  <span className="text-sm font-medium text-fg">{t('casino.currency')}</span>
+                  <SegmentedControl<Currency>
+                    value={currency}
+                    onChange={setCurrency}
+                    options={[
+                      { value: 'PHON', label: 'PHON' },
+                      { value: 'USDT', label: 'USDT' },
+                    ]}
+                  />
+                </label>
+              </div>
+
+              <div className="grid gap-3">
+                {config.fields.map((field) => (
+                  <GameFieldControl
+                    key={field.key}
+                    field={field}
+                    selection={selection}
+                    onChange={updateSelection}
+                  />
+                ))}
+              </div>
+
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-fg">{t('casino.field.clientSeed')}</span>
+                <input
+                  className="rounded-xl border border-border bg-surface-2 px-3 py-2 text-fg tabular-nums"
+                  data-testid="casino-client-seed-input"
+                  aria-label={t('casino.field.clientSeed')}
+                  value={clientSeed}
+                  onChange={(event) => updateClientSeed(event.target.value)}
+                />
+                <span className="text-xs text-muted">
+                  {t(
+                    clientSeedIsAuto
+                      ? 'casino.field.clientSeedAutoHint'
+                      : 'casino.field.clientSeedManualHint',
+                  )}
+                </span>
+              </label>
+
+              <div className="grid gap-3">
+                <MultiplierDisplay
+                  label={t('casino.hashStatus')}
+                  value={commitment ? t('casino.hashReady') : t('casino.hashMissing')}
+                  tone={commitment ? 'primary' : 'neutral'}
+                />
+                <MultiplierDisplay
+                  label={t('casino.lastPayout')}
+                  value={
+                    bet
+                      ? `${formatMoney(bet.payout, currency)} ${currency}`
+                      : t('casino.timeline.waiting')
+                  }
+                  tone={bet?.status === 'won' ? 'up' : bet ? 'down' : 'neutral'}
+                />
+                <MultiplierDisplay
+                  label={t('casino.lossLimit')}
+                  value={t('casino.lossLimitValue')}
+                  tone="primary"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Button
+                  variant="outline"
+                  disabled={busy}
+                  data-testid="casino-prepare-hash"
+                  onClick={() => void prepareRound()}
+                >
+                  {commitment ? t('casino.refreshHash') : t('casino.prepareHash')}
+                </Button>
+                <Button
+                  full
+                  data-testid="casino-place-bet"
+                  disabled={!canSubmit}
+                  onClick={openBetConfirm}
+                >
+                  {busy ? t('common.processing') : t('casino.placeBet')}
+                </Button>
+              </div>
+
+              {errorKey && (
+                <ErrorState
+                  className="mt-4"
+                  data-testid="casino-error"
+                  title={t('casino.error.title')}
+                  description={t(errorKey)}
+                />
+              )}
+              </RocketBetSurface>
+            </aside>
+
+            <section className="flex min-w-0 flex-col gap-3">
+              {gameCode === 'crash' ? (
+                <RocketCrashCanvas
+                  data-testid="casino-rocket-canvas"
                     title={t('casino.game.crash')}
+                  multiplierLabel={primaryResult ?? (commitment ? `${String(autoCashout)}x` : '1.00x')}
                     targetLabel={t('casino.field.autoCashout')}
-                    target={String(autoCashout)}
+                  target={`${String(autoCashout)}x`}
+                  statusLabel={t(rocketStateToMessageKey(rocketState))}
+                  seedHashLabel={t('casino.verify.seedHash')}
+                  seedHash={commitment?.server_seed_hash.slice(0, 16) ?? t('casino.timeline.waiting')}
                     resultLabel={gameResult ? t('casino.verify.result') : undefined}
                     result={gameResult}
-                    settled={settled}
+                  state={rocketState}
                   />
-                )}
+              ) : (
+                <div className="rocket-glass-panel rounded-2xl p-4">
                 {gameCode === 'limbo' && (
                   <LimboMeter
                     title={t('casino.game.limbo')}
@@ -358,118 +525,24 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
                   />
                 )}
               </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <GameStakeInput
-                  data-testid="casino-stake-input"
-                  label={t('casino.stake')}
-                  value={stake}
-                  onChange={(event) => setStake(normalizeDecimalInput(event.target.value))}
-                  currency={currency}
-                  hint={
-                    walletLoading
-                      ? t('common.loading')
-                      : t('casino.available', {
-                          amount: formatMoney(available ?? '0', currency),
-                          currency,
-                        })
-                  }
-                />
-
-                <label className="flex flex-col gap-2">
-                  <span className="text-sm font-medium text-fg">{t('casino.currency')}</span>
-                  <SegmentedControl<Currency>
-                    value={currency}
-                    onChange={setCurrency}
-                    options={[
-                      { value: 'PHON', label: 'PHON' },
-                      { value: 'USDT', label: 'USDT' },
-                    ]}
-                  />
-                </label>
-              </div>
-
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
-                {config.fields.map((field) => (
-                  <GameFieldControl
-                    key={field.key}
-                    field={field}
-                    selection={selection}
-                    onChange={updateSelection}
-                  />
-                ))}
-              </div>
-
-              <label className="mt-4 flex flex-col gap-2">
-                <span className="text-sm font-medium text-fg">{t('casino.field.clientSeed')}</span>
-                <input
-                  className="rounded-xl border border-border bg-surface-2 px-3 py-2 text-fg tabular-nums"
-                  data-testid="casino-client-seed-input"
-                  aria-label={t('casino.field.clientSeed')}
-                  value={clientSeed}
-                  onChange={(event) => updateClientSeed(event.target.value)}
-                />
-                <span className="text-xs text-muted">
-                  {t(
-                    clientSeedIsAuto
-                      ? 'casino.field.clientSeedAutoHint'
-                      : 'casino.field.clientSeedManualHint',
-                  )}
-                </span>
-              </label>
-
-              <div className="mt-5 grid gap-3 md:grid-cols-3">
-                <MultiplierDisplay
-                  label={t('casino.hashStatus')}
-                  value={commitment ? t('casino.hashReady') : t('casino.hashMissing')}
-                  tone={commitment ? 'primary' : 'neutral'}
-                />
-                <MultiplierDisplay
-                  label={t('casino.lastPayout')}
-                  value={
-                    bet
-                      ? `${formatMoney(bet.payout, currency)} ${currency}`
-                      : t('casino.timeline.waiting')
-                  }
-                  tone={bet?.status === 'won' ? 'up' : bet ? 'down' : 'neutral'}
-                />
-                <MultiplierDisplay
-                  label={t('casino.lossLimit')}
-                  value={t('casino.lossLimitValue')}
-                  tone="primary"
-                />
-              </div>
-
-              <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-                <Button
-                  variant="outline"
-                  disabled={busy}
-                  data-testid="casino-prepare-hash"
-                  onClick={() => void prepareRound()}
-                >
-                  {commitment ? t('casino.refreshHash') : t('casino.prepareHash')}
-                </Button>
-                <Button
-                  full
-                  data-testid="casino-place-bet"
-                  disabled={!canSubmit}
-                  onClick={openBetConfirm}
-                >
-                  {busy ? t('common.processing') : t('casino.placeBet')}
-                </Button>
-              </div>
-
-              {errorKey && (
-                <ErrorState
-                  className="mt-4"
-                  data-testid="casino-error"
-                  title={t('casino.error.title')}
-                  description={t(errorKey)}
-                />
               )}
-            </BetPanel>
 
-            <aside className="flex flex-col gap-4">
+              <RocketHistoryStrip
+                title={t('casino.rocket.recent')}
+                emptyLabel={t('casino.recent.empty')}
+                items={rocketHistoryItems}
+              />
+
+            </section>
+
+            <aside className="flex flex-col gap-3">
+              <RocketActivityFeed
+                title={t('casino.rocket.activity')}
+                liveLabel={t('casino.rocket.live')}
+                emptyLabel={t('casino.rocket.waiting')}
+                items={rocketActivityItems}
+                className="min-h-[360px]"
+              />
               <FairnessVerifier
                 data-testid="casino-fairness-verifier"
                 title={t('casino.verify.title')}
@@ -509,38 +582,7 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
               </div>
             </aside>
           </div>
-
-          <BetPanel title={t('casino.recent.title')} description={t('casino.recent.description')}>
-            {recentBets.length === 0 ? (
-              <EmptyState
-                title={t('casino.recent.empty')}
-                description={t('casino.recent.emptyDesc')}
-              />
-            ) : (
-              <div className="grid gap-2">
-                {recentBets.map((row) => (
-                  <div
-                    key={row.id}
-                    className="grid grid-cols-4 items-center gap-2 rounded-xl border border-border bg-surface-2/60 px-3 py-2 text-sm"
-                  >
-                    <span className="font-semibold text-fg">
-                      {t(GAME_BY_CODE[row.game].labelKey)}
-                    </span>
-                    <Badge tone={row.status === 'won' ? 'up' : 'down'} size="sm">
-                      {t(row.status === 'won' ? 'casino.bet.status.won' : 'casino.bet.status.lost')}
-                    </Badge>
-                    <span className="text-right text-muted">
-                      {formatMoney(row.stake, row.currency)} {row.currency}
-                    </span>
-                    <span className="text-right font-semibold text-fg">
-                      {formatMoney(row.payout ?? '0', row.currency)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </BetPanel>
-        </section>
+        </main>
       </div>
 
       <ConfirmDialog
@@ -574,6 +616,35 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
       />
     </AppShell>
   );
+}
+
+function rocketStateToMessageKey(state: RocketCrashCanvasState): MessageKey {
+  switch (state) {
+    case 'armed':
+      return 'casino.rocket.state.armed';
+    case 'flying':
+      return 'casino.rocket.state.flying';
+    case 'settled':
+      return 'casino.rocket.state.settled';
+    case 'crashed':
+      return 'casino.rocket.state.crashed';
+    case 'idle':
+    default:
+      return 'casino.rocket.state.idle';
+  }
+}
+
+function getPrimaryResultLabel(result: Record<string, unknown> | undefined): string | null {
+  if (!result) return null;
+  const fields = ['crashMultiplier', 'cashoutMultiplier', 'resultMultiplier', 'roll'] as const;
+  for (const field of fields) {
+    const value = result[field];
+    if (typeof value === 'string' || typeof value === 'number') {
+      const suffix = field === 'roll' ? '' : 'x';
+      return `${value}${suffix}`;
+    }
+  }
+  return null;
 }
 
 function FairnessDocsPage() {

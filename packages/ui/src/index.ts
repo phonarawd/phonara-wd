@@ -70,6 +70,32 @@ export {
   type FairnessVerifierProps,
 } from './components/fairness-verifier';
 export { CrashCurve, type CrashCurveProps } from './components/crash-curve';
+export {
+  RocketActivityFeed,
+  type RocketActivityFeedProps,
+  type RocketActivityItem,
+} from './components/rocket-activity-feed';
+export {
+  RocketBetSurface,
+  rocketBetSurfaceVariants,
+  type RocketBetSurfaceProps,
+} from './components/rocket-bet-surface';
+export {
+  RocketCrashCanvas,
+  type RocketCrashCanvasProps,
+  type RocketCrashCanvasState,
+} from './components/rocket-crash-canvas';
+export {
+  RocketGameTopBar,
+  type RocketGameTopBarProps,
+} from './components/rocket-game-top-bar';
+export {
+  RocketHistoryStrip,
+  type RocketHistoryItem,
+  type RocketHistoryStripProps,
+  type RocketHistoryTone,
+} from './components/rocket-history-strip';
+export { RocketStarfield, type RocketStarfieldProps } from './components/rocket-starfield';
 export { PlinkoBoard, type PlinkoBoardProps } from './components/plinko-board';
 export { MinesGrid, type MinesGridProps } from './components/mines-grid';
 export { DiceTrack, type DiceTrackProps } from './components/dice-track';

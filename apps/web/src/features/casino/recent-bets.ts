@@ -6,6 +6,6 @@ export async function loadRecentBets(): Promise<RecentBet[]> {
     .from('game_bets')
     .select('id,game,status,stake,payout,currency,created_at')
     .order('created_at', { ascending: false })
-    .limit(5);
+    .limit(20);
   return (data ?? []) as RecentBet[];
 }

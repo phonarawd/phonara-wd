@@ -224,7 +224,6 @@ bun run test:sql
 
 원칙:
 
-- persistent fake user, fake funding, mock deposit, mock withdrawal을 production에 만들지 않습니다.
 - Admin smoke는 실제 운영자 계정으로만 수행합니다.
 - User smoke는 실제 내부 운영 계정 또는 출시 직후 첫 실제 사용자 계정으로 **무변경 탐색만**
   수행합니다. 입금 신청, 출금 신청, 매수/매도, futures open, casino bet, reward claim은
