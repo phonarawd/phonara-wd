@@ -11,7 +11,7 @@ import { supabase } from './lib/supabase';
 import './theme.css';
 import './styles.css';
 import './styles/presentation-import-tokens.css';
-import './presentation/styles/presentation.css';
+import './presentation-import/styles/presentation.css';
 
 const QueryDevtools = import.meta.env.DEV
   ? lazy(() =>

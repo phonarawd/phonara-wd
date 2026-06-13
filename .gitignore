@@ -7,8 +7,11 @@ build
 coverage
 playwright-report
 test-results
+blob-report
 playwright-*.log
 *.tsbuildinfo
+**/.vite
+**/node_modules/.vite
 .env
 .env.*
 .env.local

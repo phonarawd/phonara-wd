@@ -1,6 +1,7 @@
-# Dependencies and package manager caches (largest index noise)
+﻿# Dependencies and package manager caches (largest index noise)
 node_modules/
 .bun/
+**/node_modules/
 
 # Build and test artifacts
 dist/
@@ -11,11 +12,18 @@ playwright-report/
 blob-report/
 .turbo/
 .vite/
+**/.vite/
+**/node_modules/.vite/
+**/node_modules/.cache/
 *.tsbuildinfo
 
-# Supabase CLI local state
+# Generated package outputs (rebuilt by `bun run build:packages`)
+packages/*/dist/
+
+# Supabase CLI local state + generated SQL mirror
 supabase/.temp/
 supabase/.branches/
+supabase/functions-sql/
 
 # E2E ephemeral auth (tokens — also in .gitignore)
 tests/e2e/.auth.json
@@ -24,8 +32,14 @@ tests/e2e/.*auth*.json
 
 # Lockfile is generated; exclude from semantic index (still on disk for installs)
 bun.lock
-# Generated / archival docs (large, duplicate index noise)
+
+# Large / archival / generated docs (duplicate index noise)
 project_dump.md
 docs/PHONARA_V2_MASTER_PLAN.md
 docs/AUDIT_REPORT_2026-06-11.md
 docs/AUDIT_FINAL_REPORT.md
+docs/PHONARA_UI_UX_REBUILD_LOG.md
+
+# Playwright screenshots/traces from local runs (if any escape test-results)
+**/*.png.snap
+**/trace.zip

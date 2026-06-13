@@ -34,7 +34,9 @@ A task is not complete until relevant gates pass:
 - SQL integration tests pass for money/settlement/liquidation/circuit-breaker RPCs, exercising the changed branch and asserting conservation + hash-chain integrity.
 - Env and i18n coverage checks.
 - Security review for Supabase/RLS/RPC or admin changes.
-- Test residue cleanup.
+- Test residue cleanup. After E2E/build sessions run `bun run clean` per
+  `75-workspace-hygiene` so `test-results/`, `dist/`, and `.vite/` caches do not
+  accumulate (Cursor index lag).
 
 Run these gates yourself, automatically, without asking (Docker/local stack
 included — see `70-autonomy-and-delivery`). Additionally:

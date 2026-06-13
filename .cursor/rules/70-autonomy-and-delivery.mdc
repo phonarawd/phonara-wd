@@ -97,7 +97,10 @@ end-to-end. This file is the operating contract for that grant.
 - Use concise chat summaries and TODOs for session continuity. Do not require
   Build Log updates for ordinary implementation tasks.
 - Delete generated junk, dead files, and lag-inducing residue after each phase
-  (`bun run clean` where applicable). Keep the repo lean.
+  (`bun run clean` where applicable). Keep the repo lean. See
+  `75-workspace-hygiene` for mandatory cleanup triggers and Cursor index rules.
+- Run `bun run clean` after every E2E run and before task closeout when build or
+  E2E executed in that session.
 
 ## 7. Naming & structure (world-class defaults)
 

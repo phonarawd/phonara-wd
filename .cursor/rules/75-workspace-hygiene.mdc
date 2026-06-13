@@ -1,0 +1,61 @@
+---
+description: Workspace hygiene and Cursor performance — artifact cleanup, index noise prevention
+alwaysApply: true
+---
+
+# Workspace Hygiene & Cursor Performance
+
+Cursor lag is mostly **index noise** (file count), not repo git size. Keep the
+workspace lean so the IDE stays responsive.
+
+## Mandatory cleanup triggers
+
+Run `bun run clean` (→ `scripts/clean-artifacts.ts`) **automatically** after:
+
+- Any Playwright / `bun run test:e2e` run (pass or fail)
+- `bun --filter @phonara/web build` or full `bun run build` when done for the session
+- Large dependency installs (`bun install` adding new packages)
+- Before reporting a task complete if build/E2E ran in that session
+
+Do **not** leave behind: `test-results/`, `playwright-report/`, `dist/`,
+`coverage/`, `**/.vite/`, `**/node_modules/.vite/`, `.playwright-artifacts-*`.
+
+## Forbidden residue (never commit, delete when found)
+
+- E2E auth tokens: `tests/e2e/.auth.json`, `.admin-auth.json`
+- Playwright screenshots/traces under `test-results/`
+- Build outputs: `apps/*/dist/`, `packages/*/dist/` (rebuilt by `build:packages`)
+- Duplicate presentation layers — single source: `presentation-import/` + Lovable paste zones
+- Dev-only UI (`DemoBadge`, demo labels) in production paths
+
+## Index exclusions (`.cursorignore` — do not remove)
+
+These stay on disk but out of Cursor semantic index:
+
+- `node_modules/`, `**/node_modules/`
+- `dist/`, `packages/*/dist/`
+- `**/.vite/`, `**/node_modules/.vite/`
+- `test-results/`, `playwright-report/`, `blob-report/`
+- `supabase/functions-sql/` (generated mirror)
+- `bun.lock`, large archival docs listed in `.cursorignore`
+
+When adding new **generated** or **high-volume** paths, update `.cursorignore`
+and `scripts/clean-artifacts.ts` in the same change.
+
+## Duplicate prevention (presentation)
+
+- Do not recreate `apps/web/src/presentation/` — removed; use `presentation-import/`.
+- One shell: Lovable `components/shell/*`, not parallel `presentation/shell`.
+
+## Session end checklist (agents)
+
+Before closing a implementation session:
+
+1. `bun run clean`
+2. `git status` — no untracked `dist/`, `test-results/`, `.vite/`
+3. No new duplicate folders mirroring existing paste zones
+
+## Operator note
+
+After bulk cleanup or `.cursorignore` changes, **restart Cursor** once so the
+index rebuilds without excluded paths.

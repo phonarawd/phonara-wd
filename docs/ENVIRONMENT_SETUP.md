@@ -19,6 +19,16 @@ VITE_SUPPORTED_LOCALES=ko,en
 - `SUPABASE_SERVICE_ROLE_KEY` is server-only and must never be added to frontend env.
 - Missing env values should fail early with a clear message.
 
+## Workspace hygiene (Cursor performance)
+
+```bash
+bun run clean    # after E2E, build sessions, or when IDE feels slow
+```
+
+Removes `dist/`, `test-results/`, `.vite/` caches, Playwright artifacts. See
+`.cursor/rules/75-workspace-hygiene.mdc`. Restart Cursor after bulk cleanup or
+`.cursorignore` changes.
+
 ## Confirmed Supabase Project
 
 - URL: `https://yocjhjsdwoijfdrehzoq.supabase.co`

@@ -48,8 +48,33 @@ function workspaceTargets() {
   });
 }
 
-const targets = [...rootTargets, ...workspaceTargets(), ...ephemeralAuthPatterns];
+/** Playwright leaves nested artifact dirs under test-results between runs. */
+function playwrightArtifactDirs() {
+  const base = 'test-results';
+  if (!existsSync(base)) {
+    return [];
+  }
+  return readdirSync(base, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name.startsWith('.playwright-artifacts'))
+    .map((entry) => join(base, entry.name));
+}
 
+const targets = [
+  ...rootTargets,
+  ...workspaceTargets(),
+  ...ephemeralAuthPatterns,
+  ...playwrightArtifactDirs(),
+];
+
+let removed = 0;
 for (const target of targets) {
+  if (!existsSync(target)) {
+    continue;
+  }
   rmSync(target, { recursive: true, force: true });
+  removed += 1;
+}
+
+if (removed > 0) {
+  console.log(`clean:artifacts removed ${removed} path(s)`);
 }
