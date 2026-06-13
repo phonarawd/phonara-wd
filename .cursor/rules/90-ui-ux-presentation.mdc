@@ -5,8 +5,10 @@ alwaysApply: true
 
 # PHONARA UI/UX — Presentation Layer Only
 
-## Engine layer — read-only (never modify)
-- `supabase/migrations/*`, `packages/{money,trading-engine,game-engine,wallet-ledger}`
+## Engine layer — absolute no-touch (never modify)
+- **During UI/UX / Lovable absorption: do not modify the engine** — no migrations, RPC/RLS, hook logic, domain, schema, settlement, or ledger changes; not even small fixes or refactors.
+- If UI work seems to require engine changes, **stop and report**; engine changes need explicit user approval as a separate task.
+- `supabase/migrations/*`, `packages/{money,trading-engine,game-engine,wallet-ledger}`, `apps/web/src/domain/**`
 - `features/*/use-*.ts`, `hooks/*`, `contexts/auth-context.tsx`
 - Supabase/RPC/auth `lib/**` — UI calls hooks only; no direct RPC from views
 

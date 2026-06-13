@@ -20,9 +20,11 @@ This project is replacing all user-facing UI/UX with imported presentation outpu
 - Use neutral names only: `presentation-import`, `Imported*`, `PresentationRoot`, “external/imported presentation.”
 - If a pasted artifact contains source labels, rename them during integration without changing visual behavior.
 
-## Engine Boundary
+## Engine Boundary — Absolute No-Touch (non-negotiable)
 
-- Engine/domain/database code remains read-only: `supabase/*`, `packages/{money,trading-engine,game-engine,wallet-ledger}`, `hooks/*` except UI shims, `contexts/auth-context.tsx`, Supabase/RPC/auth `lib/**`, and `features/*/use-*.ts`.
+- **Never modify the engine** during imported UI/UX work — not one line, not a “small fix,” not a refactor, not a migration, not an RPC/RLS tweak, not hook logic inside engine paths.
+- Engine/domain/database code remains **read-only and no-touch**: `supabase/*`, `packages/{money,trading-engine,game-engine,wallet-ledger}`, `apps/web/src/domain/**`, `hooks/*` except UI shims, `contexts/auth-context.tsx`, Supabase/RPC/auth `lib/**`, and `features/*/use-*.ts`.
+- If UI integration appears to require an engine change, **stop and report** — do not implement. Engine work requires explicit user approval as a **separate task**.
 - UI may display hook/RPC values but must not recompute money, payouts, PnL, odds, fees, rewards, or balances.
 - All temporary reward/order/auth actions in imported UI must be display-only/toast-only unless explicitly connected later by the user.
 

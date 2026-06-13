@@ -3,6 +3,8 @@
 > **새 Cursor 채팅 첫 메시지에 이 파일 전체를 붙여넣거나 `@docs/LOVABLE_HANDOFF.md` 로 참조하세요.**  
 > 이 문서 하나로 이전 대화 맥락·결정·진행상태·다음 작업을 **빠짐없이** 이어갑니다.
 
+**관련 문서:** `docs/LOVABLE_P1_FINAL_PHONARA.md` (P1 Lovable 제작 스펙 · 부록 A–K) · `docs/LOVABLE_ABSORPTION_PLAN_FINAL.md` · `docs/GAMES-INTEGRATION.md`
+
 **레포:** `c:\Users\PC\Desktop\phonara-gb`  
 **브랜치:** `main` (로컬 `origin/main` 대비 +42 commits, push 안 함)  
 **핵심 커밋:**
@@ -19,7 +21,27 @@
 
 - **유입:** 부업·부수입·FOMO (0명 구간에서도 live/busy 체감)
 - **퍼널:** Earn → Wallet → Casino → Trade (Earn first, Trade last)
-- **기술 분리:** **눈에 보이는 것 100% Lovable** · **돈·RNG·페이아웃·원장·인증 = PHONARA 엔진 (수정 금지)**
+- **기술 분리:** **눈에 보이는 것 100% Lovable** · **돈·RNG·페이아웃·원장·인증 = PHONARA 엔진 (절대 무수정)**
+
+**엔진 절대 무수정:** Lovable/UI 이식 작업 중 엔진 레이어는 **한 줄도 손대지 않는다.** `packages/*` · `supabase/*` · domain · RPC · hooks · auth — 수정·마이그레이션·리팩터·UI 맞춤 변경 **전부 금지**. UI가 엔진 변경을 요구하면 **구현하지 말고 보고** (§10).
+
+### 전역 흡수 범위 (게임만이 아님 — 절대 흔들리지 말 것)
+
+**현재 PHONARA에 구현되어 있는 엔진만 빼고**, 사용자에게 보이는 **모든 것**은 Lovable 플랫폼에서 만든 UI/UX를 **100% 동일하게** 그대로 이식한다.
+
+| 포함 (Lovable = 시각 소스 오브 트루스) | 제외 (엔진 · read-only) |
+|---|---|
+| **모든 페이지** — Earn·Home·Landing·Wallet·Login/Signup·Trade·Casino·Games 카탈로그·History·Fairness·Tournaments·Share·Offline·RG·More·Account·Settings·Dashboard·Ledger·Staking·Referral·Legal 등 | `packages/*` · `supabase/*` |
+| **모든 탭·네비** — BottomNav 5탭·TopBar·서브탭·AccountSheet 섹션·모달 로그인 | `features/*/use-*.ts` · `hooks/use-wallet.ts` · `use-casino-round.ts` |
+| **폰트·타이포·아이콘** — `lovable-globals.css` verbatim, font-family/weight/spacing 그대로 | `contexts/auth-context.tsx` · `lib/rpc.ts` · `domain/**` |
+| **셸** — `components/shell/*` · `components/ui/*` (imported) | 원장·정산·RNG·PF 산출·잔액·배당 재계산 |
+| **6종 게임 + A–G** — Stage/HUD/Controls·gfx/feel/presence 등 | `@phonara/ui`·구 PHONARA 셸/카지노 위젯 **잔재 금지** (ZIP 후 전량 삭제) |
+
+- **구 UI = 구닥다리:** 기존 PHONARA 사용자-facing UI는 **전부 폐기 대상**. Lovable 이식 후 **한 톨도 남기지 않는다** — `app-shell`·구 `landing-page`·690줄 casino 시각·`@phonara/ui` 게임 위젯·placeholder·구 route JSX **전량 삭제**
+- **폰트:** Lovable 지정 폰트를 시스템/`theme.css` 폰트로 **대체하지 않음**
+- **탭:** 활성/비활성 스타일·아이콘·라벨·전환 모션 Lovable과 **동일**
+- **최고 스펙:** 레포에 설치된 React 19 · Vite 8 · pixi@8 · matter-js · framer-motion · Tailwind v4 · Playwright/axe를 **전면 사용** — 구 PHONARA UI 패턴으로 되돌리지 않음
+- **Cursor 역할:** ZIP paste + 어댑터 10~30줄 + props/i18n/testid 연결 + **구 UI 삭제**만 — **재디자인·정규화·개선·구 UI 혼합 금지**
 
 Lovable ZIP 이식 후 Cursor가 할 일: **어댑터 10~30줄 + props 연결**뿐.
 
@@ -294,7 +316,11 @@ function CasinoPage({ initialGame }: { initialGame: GameCode }) {
 
 ---
 
-## 10. 엔진 파일 — 절대 수정 금지 목록
+## 10. 엔진 — 절대 무수정 (non-negotiable)
+
+> **Lovable 이식 · P1 · UI/UX 작업 중 엔진은 절대 손대지 않는다.**  
+> read-only가 아니라 **no-touch**: 수정·삭제·리팩터·버그픽스·마이그레이션·RPC/RLS·hook 로직 변경 **일체 금지**.  
+> UI 통합이 엔진 변경을 요구하면 **중단하고 보고** — 엔진 변경은 **별도 명시 승인·별도 태스크**에서만.
 
 ```
 packages/game-engine/**
@@ -302,18 +328,28 @@ packages/money/**
 packages/trading-engine/**
 packages/wallet-ledger/**
 supabase/**
+apps/web/src/domain/**
 apps/web/src/features/casino/use-casino-round.ts
 apps/web/src/features/casino/game-config.ts
 apps/web/src/hooks/use-wallet.ts
 apps/web/src/hooks/use-trading.ts
+apps/web/src/hooks/use-profile.ts
+apps/web/src/hooks/use-money.ts
 apps/web/src/lib/rpc.ts
 apps/web/src/lib/auth.ts
+apps/web/src/lib/supabase.ts
 apps/web/src/contexts/auth-context.tsx
 ```
 
+**UI가 할 수 있는 것:** 위 hook/domain **호출** · RPC 결과 **표시** · `ImportedGameSurfaceProps` **callback 호출** · `mapGameSurfaceProps` **매핑**
+
+**UI가 하면 안 되는 것:** RPC 직접 호출(게임/컴포넌트) · 금액/배당/PnL **재계산** · selection/RNG/PF **변경** · schema/migration **작성**
+
 ---
 
-## 11. 삭제·금지 대상 (이식 완료 시)
+## 11. 삭제·금지 대상 (이식 완료 시 — **잔재 0, 한 톨도 금지**)
+
+> 기존 PHONARA 사용자-facing UI = **구닥다리**. Lovable이 **유일한** 시각 출처. 아래는 ZIP 이식·게이트 green 후 **반드시 삭제**. 구 UI와 Lovable UI **공존 불가**.
 
 ```
 apps/web/src/components/app-shell.tsx
@@ -322,10 +358,15 @@ apps/web/src/components/landing-page.tsx
 apps/web/src/components/daily-claim-card.tsx, roulette-card.tsx, missions-card.tsx
 apps/web/src/features/earn/earn-surface.tsx (시각 — hook 아님)
 apps/web/src/features/trading/*-panel.tsx (시각)
+routes/casino.tsx 내 구 시각 코드 (@phonara/ui Rocket/Mines/Dice 등) — 어댑터 ~30줄만 남김
 @phonara/ui 카지노 게임 위젯 사용처 (RocketCrashCanvas, MinesGrid, …)
+구 PHONARA route JSX (login/dashboard/wallet/ledger/staking/more/RG 등) — Lovable 페이지로 교체 후 구 JSX 삭제
+PresentationImportPlaceholder — 해당 surface Lovable 교체 완료 시 삭제
 ```
 
 `apps/web/src/presentation/` — **이미 삭제됨**. 재생성 금지.
+
+**금지:** 구 CSS/class를 Lovable 컴포넌트에 혼합 · `theme.css`로 Lovable 토큰 덮어쓰기 · Lovable을 `@phonara/ui`/구 스타일로 되돌리기
 
 ---
 
