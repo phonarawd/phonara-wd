@@ -1,0 +1,388 @@
+# PHONARA Lovable 이식 — 지구끝판왕 인계문 (새 채팅용)
+
+> **새 Cursor 채팅 첫 메시지에 이 파일 전체를 붙여넣거나 `@docs/LOVABLE_HANDOFF.md` 로 참조하세요.**  
+> 이 문서 하나로 이전 대화 맥락·결정·진행상태·다음 작업을 **빠짐없이** 이어갑니다.
+
+**레포:** `c:\Users\PC\Desktop\phonara-gb`  
+**브랜치:** `main` (로컬 `origin/main` 대비 +42 commits, push 안 함)  
+**핵심 커밋:**
+- `e78374f` — Lovable 흡수 스캐폴드 (presentation-import, 라우트 어댑터, 게임 계약)
+- `3e2796e` — workspace hygiene, 중복 `presentation/` 제거, cursorignore
+
+**이전 대화 transcript:** `99f0ef84-75e1-4304-8248-7f3aeb3f0901` (Cursor agent-transcripts)
+
+---
+
+## 0. 한 줄 미션 (절대 흔들리지 말 것)
+
+**Stake / Rollbit / Binance / Bybit를 압도하는 한국인 타깃 플랫폼.**
+
+- **유입:** 부업·부수입·FOMO (0명 구간에서도 live/busy 체감)
+- **퍼널:** Earn → Wallet → Casino → Trade (Earn first, Trade last)
+- **기술 분리:** **눈에 보이는 것 100% Lovable** · **돈·RNG·페이아웃·원장·인증 = PHONARA 엔진 (수정 금지)**
+
+Lovable ZIP 이식 후 Cursor가 할 일: **어댑터 10~30줄 + props 연결**뿐.
+
+---
+
+## 1. 제품·정책 결정 (이미 문서/규칙 반영됨)
+
+| 결정 | 내용 |
+|---|---|
+| FOMO / 라이브 피드 | **허용** — 0명 출시 구간에도 scripted feed·카운터·혼잡감 |
+| 허위 수익·가짜 마감·근거 없는 실측 숫자 | 프레젠테이션 카피 **제한 안 함** (엔진 경로 mock 데이터는 여전히 금지) |
+| Lovable Cloud | **비활성** — OAuth/결제/백엔드 Lovable에 두지 않음 |
+| 데모/시뮬 라벨 | Lovable ZIP **출시 전 전부 제거** (`check:release` 통과 필수) |
+| i18n | 모든 사용자 문구 `@phonara/i18n` 키 — 한국어는 locale 파일만 |
+| Supabase | 프로젝트 **단일 고정** `yocjhjsdwoijfdrehzoq` |
+
+관련 규칙: `.cursor/rules/90-ui-ux-presentation.mdc`, `95-presentation-import-absorption.mdc`, `75-workspace-hygiene.mdc`
+
+---
+
+## 2. 아키텍처 (3층 — 절대 규칙)
+
+```text
+┌──────────────────────────────────────────────────────────────┐
+│ Lovable ZIP — UI/UX/게임 화면/Canvas/Pixi/사운드/모션       │
+│ apps/web/src/components/{ui,shell,earn,trade,fomo,welcome,  │
+│   games/**}                                                  │
+│ apps/web/src/presentation-import/pages/**                    │
+└────────────────────────────┬─────────────────────────────────┘
+                             │ props / callbacks ONLY
+┌────────────────────────────▼─────────────────────────────────┐
+│ Cursor 어댑터 — apps/web/src/routes/*.tsx (얇게)             │
+│ auth guard, useWallet, useCasinoRoundPipeline, navigate      │
+└────────────────────────────┬─────────────────────────────────┘
+                             │ hooks / RPC ONLY
+┌────────────────────────────▼─────────────────────────────────┐
+│ PHONARA 엔진 — READ-ONLY (Lovable 이식 중 수정 금지)         │
+│ packages/{game-engine,money,trading-engine,wallet-ledger}    │
+│ supabase/*, features/casino/use-casino-round.ts            │
+│ hooks/use-wallet.ts, contexts/auth-context.tsx, lib/rpc.ts  │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Lovable이 만들면 **안 되는 것**
+
+- `src/engine/ports/*`, `EngineProvider`, `VITE_ENGINE_MODE`
+- 클라이언트 RNG/HMAC 결과 생성 (`useProvablyFair` 결과 산출)
+- `rpc_*` / Supabase 직접 호출
+- JS `number`로 금액·배수·페이아웃 계산
+- `routeTree.gen.ts`, `/auth`, `games.$gameId` 동적 라우트
+- Wheel/Keno/슬롯/라이브 **정산** (UI shell만 P2)
+- `@phonara/ui` 카지노 위젯 유지/모방
+
+### PF 포맷 (엔진 고정)
+
+```
+HMAC-SHA256(key=serverSeed, message=`${clientSeed}:${nonce}:${cursor}`)
+```
+
+기본 `nonce=1`. UI는 **표시·검증만** (`verifyRound` from `@phonara/game-engine`).
+
+---
+
+## 3. 현재 진행 상태 (DONE vs TODO)
+
+### ✅ 완료 (레포에 이미 있음)
+
+| 항목 | 위치 |
+|---|---|
+| 흡수 플랜 v2.1 | `docs/LOVABLE_ABSORPTION_PLAN_FINAL.md` |
+| 게임 엔진 계약 | `docs/GAMES-INTEGRATION.md` |
+| 일반 이식 가이드 | `apps/web/PRESENTATION_IMPORT.md` |
+| `presentation-import/` 페이지 placeholder | `apps/web/src/presentation-import/pages/*` |
+| 얇은 라우트 어댑터 | `/`, `/home`, `/earn`, `/trade`, `/account`, `/settings`, `/referral`, `/about`, `/terms`, `/privacy`, `/games` |
+| 게임 props 타입 | `apps/web/src/components/games/shared/types.ts` |
+| Vite alias `@/`, `react-router-dom` shim | `apps/web/vite.config.ts`, `shims/react-router-dom.tsx` |
+| shadcn/Lovable 스택 선설치 | `apps/web/package.json` (framer-motion, Radix, vaul, cmdk, …) |
+| React Compiler | `vite.config.ts` babel plugin |
+| `PresentationRoot` + tokens | `presentation-import/presentation-root.tsx`, `styles/presentation-import-tokens.css` |
+| 중복 `presentation/` 폴더 | **삭제됨** (CSS → `presentation-import/styles/presentation.css`) |
+| workspace hygiene | `.cursor/rules/75-workspace-hygiene.mdc`, `bun run clean` |
+| 카지노 엔진 6종 + RPC + PF | `packages/game-engine`, `supabase`, `use-casino-round.ts` |
+| RG | `/responsible-gaming` + DB 가드 |
+
+### ⏳ 미완 (다음 작업)
+
+| 우선순위 | 작업 |
+|---|---|
+| **P0** | Lovable ZIP 대기 → **6종 게임 UI** + `games/shared` + **카탈로그** 붙여넣기 |
+| **P0** | `routes/casino.tsx` (**690줄**) → 어댑터 축소 + `<Imported*Game {...props} />` |
+| **P0** | `pixi.js@8`, `matter-js`, `@tanstack/react-virtual` — ZIP에 import 있으면 `apps/web`에 추가 |
+| **P1** | Earn/Home/Landing/Wallet/Auth/Trade Lovable 페이지 실제 UI 교체 |
+| **P1** | `games-history`, `games-fairness`, `games-tournaments` 라우트 어댑터 추가 |
+| **P1** | Earn 액션 → `useWallet` 실 RPC 연결 |
+| **P2** | 슬롯/라이브 UI shell, 인터랙티브 Crash/Mines (엔진 PR 후) |
+| **P3** | 신규 `game_code`, Storybook, ja/zh-CN i18n |
+
+### ⚠️ placeholder 상태 (Lovable 붙여넣기 전)
+
+모든 `presentation-import/pages/*-page.tsx`는 `PresentationImportPlaceholder` 표시 중.  
+`components/games/crash/imported-crash-game.tsx`도 placeholder.
+
+---
+
+## 4. 라우트 전체 맵
+
+### TanStack Router — `apps/web/src/router.ts` (수동 등록, `routeTree.gen.ts` 없음)
+
+| URL | 파일 | 상태 |
+|---|---|---|
+| `/` | `routes/index.tsx` | 어댑터 ✅ · landing placeholder |
+| `/home` | `routes/home.tsx` | 어댑터 ✅ · placeholder |
+| `/earn` | `routes/earn.tsx` | 어댑터 ✅ · placeholder |
+| `/trade` | `routes/trade.tsx` | 어댑터 ✅ · placeholder |
+| `/games` | `routes/games.tsx` | 어댑터 ✅ · catalog placeholder |
+| `/account` | `routes/account.tsx` | 어댑터 ✅ · placeholder |
+| `/settings` | `routes/settings.tsx` | 어댑터 ✅ · placeholder |
+| `/referral` | `routes/referral.tsx` | 어댑터 ✅ · placeholder |
+| `/about` | `routes/about.tsx` | 어댑터 ✅ · placeholder |
+| `/terms` | `routes/terms.tsx` | 어댑터 ✅ · placeholder |
+| `/privacy` | `routes/privacy.tsx` | 어댑터 ✅ · placeholder |
+| `/login` | `routes/login.tsx` | **구 PHONARA UI** |
+| `/signup` | `routes/signup.tsx` | **구 PHONARA UI** |
+| `/reset-password` | `routes/reset-password.tsx` | **구 PHONARA UI** |
+| `/dashboard` | `routes/dashboard.tsx` | **구 PHONARA UI** + `useWallet` |
+| `/wallet` | `routes/wallet.tsx` | **구 PHONARA UI** + 엔진 |
+| `/ledger` | `routes/ledger.tsx` | **구 PHONARA UI** |
+| `/staking` | `routes/staking.tsx` | **구 PHONARA UI** |
+| `/more` | `routes/more.tsx` | **구 PHONARA UI** |
+| `/responsible-gaming` | `routes/responsible-gaming.tsx` | **구 PHONARA UI** + RG RPC |
+| `/casino` | `routes/casino.tsx` | **690줄 구 UI** + `useCasinoRoundPipeline` |
+| `/casino/crash` … `/hilo` | `routes/casino.tsx` | 동일 |
+| `/casino/fairness` | `routes/casino.tsx` | FairnessDocsPage |
+
+인증 URL: `/login`, `/signup` (Lovable의 `/auth` 아님).
+
+---
+
+## 5. Lovable ZIP → PHONARA 붙여넣기 경로 (§6 v2.1)
+
+```text
+src/components/{ui,shell,earn,trade,fomo,welcome}/*
+  → apps/web/src/components/{ui,shell,earn,trade,fomo,welcome}/
+
+src/games/shared/*
+  → apps/web/src/components/games/shared/
+src/games/shared/hooks/*
+  → apps/web/src/components/games/shared/hooks/
+src/games/{crash,dice,mines,plinko,limbo,hilo}/*
+  → apps/web/src/components/games/{game}/
+
+src/routes/games.tsx
+  → presentation-import/pages/games-catalog-page.tsx  (export ImportedGamesCatalogPage)
+src/routes/games.history.tsx
+  → presentation-import/pages/games-history-page.tsx
+src/routes/games.fairness.tsx
+  → presentation-import/pages/games-fairness-page.tsx
+src/routes/games.tournaments.tsx
+  → presentation-import/pages/games-tournaments-page.tsx
+
+src/routes/{home,earn,landing,account,...} 페이지 본문
+  → presentation-import/pages/*-page.tsx  (export Imported*Page 이름 유지)
+```
+
+### Import 호환 (수정 불필요)
+
+| Lovable | PHONARA |
+|---|---|
+| `@/components/...` | `apps/web/src/components/...` |
+| `@/lib/utils` | `apps/web/src/lib/utils.ts` |
+| `@/lib/motion` | `apps/web/src/lib/motion.ts` |
+| `@/hooks/use-toast` | sonner shim |
+| `react-router-dom` | `shims/react-router-dom.tsx` → TanStack Router |
+
+---
+
+## 6. 카지노 엔진 계약 (Lovable 게임 UI 필수)
+
+### game_code (DB ENUM — 6종만)
+
+`crash | limbo | dice | mines | hilo | plinko`
+
+### 통화
+
+`PHON` (플랫폼 토큰, 기본) | `USDT` — 금액 **항상 string** (`"10.000000"`)
+
+### RPC 순서 (어댑터만 호출, 게임 컴포넌트 금지)
+
+```
+1. rpc_open_game_round({ p_game })
+2. rpc_place_game_bet({ p_round_id, p_currency, p_stake, p_selection, p_client_seed, p_idempotency_key })
+3. rpc_reveal_game_round({ p_round_id })
+4. verifyRound() — 클라 검증 표시
+```
+
+훅: `apps/web/src/features/casino/use-casino-round.ts` — **포크/수정 금지**
+
+### 게임별 selection (UI가 조작하는 JSON)
+
+| 게임 | selection | 엔진 모델 주의 |
+|---|---|---|
+| Crash | `{ autoCashout: "2.00" }` | **원샷** — 베팅 전 목표 설정. Pixi 곡선은 연출. 중간 캐시아웃 버튼=시각만 |
+| Dice | `{ target, direction: 'over'\|'under' }` | 원샷 |
+| Mines | `{ mineCount, revealedCells: number[] }` | **원샷** — 타일 클릭으로 배열 쌓다가 한 번에 베팅 |
+| Plinko | `{ rows: 8\|12\|16, risk }` | Matter.js=연출, 결과=서버 |
+| Limbo | `{ target: "2.00" }` | 원샷 |
+| Hilo | `{ startCard, guesses: [...] }` | 원샷 |
+
+### 게임 컴포넌트 Props
+
+`apps/web/src/components/games/shared/types.ts` → `ImportedGameSurfaceProps`
+
+게임 컴포넌트는 **dumb/presentational** — props/callback만.
+
+---
+
+## 7. `casino.tsx` 어댑터 축소 (P0 ZIP 후 즉시)
+
+**현재:** `apps/web/src/routes/casino.tsx` 690줄 — `@phonara/ui` Rocket/Mines/Dice 등 + `useCasinoRoundPipeline` 혼재.
+
+**목표 패턴:**
+
+```tsx
+function CasinoPage({ initialGame }: { initialGame: GameCode }) {
+  // auth, wallet, state, useCasinoRoundPipeline — 기존 로직 유지
+  return (
+    <PresentationRoot>
+      <ImportedCrashGame {...gameProps} />  {/* gameCode별 분기 또는 lazy */}
+      <ConfirmDialog ... />  {/* money UX — 엔진 확인 유지 */}
+    </PresentationRoot>
+  );
+}
+```
+
+- `@phonara/ui` 게임 위젯 import **전부 제거**
+- payout/multiplier **서버 `bet.payout`만** 표시
+- `GAME_CONFIGS` / `game-config.ts` selection 스키마 유지
+
+---
+
+## 8. Lovable에 보낼 계약 (v2.1 요약)
+
+**한 줄:** Stake급 **60fps 화면만** 만든다. 정산은 PHONARA 서버.
+
+**P0 산출물:**
+- `src/games/shared/` — BetPanel, BetHistoryStrip, FairnessSheet, RGGate, hooks
+- 6종 게임 Canvas/Pixi
+- `src/routes/games.tsx` 카탈로그 → 링크 `/casino/crash` 등 **정적 문자열**
+- 데모/시뮬/백엔드연동 라벨 **전부 제거**
+
+전문: `docs/LOVABLE_ABSORPTION_PLAN_FINAL.md`
+
+---
+
+## 9. ZIP 도착 시 Cursor 작업 체크리스트 (순서 고정)
+
+1. **붙여넣기** — §5 경로 그대로, **restyle 금지**
+2. **의존성** — ZIP import에 `pixi.js`, `matter-js` 있으면 `apps/web/package.json` 추가 후 `bun install`
+3. **export 이름** — `Imported*Page`, `ImportedCrashGame` 등 기존 이름 유지
+4. **`casino.tsx` 축소** — §7
+5. **구 UI 삭제** — `app-shell.tsx`, `landing-page.tsx`, casino `@phonara/ui` 사용처 등 (엔진 파일 제외)
+6. **i18n** — 하드코딩 한국어 → `packages/i18n` 키
+7. **게이트:**
+   ```bash
+   bun run typecheck
+   bun --filter @phonara/web build
+   bun run check:i18n
+   bun run check:release
+   bun run clean   # E2E 후 필수
+   ```
+8. **카지노 E2E** — PF + conservation Σ=0
+
+---
+
+## 10. 엔진 파일 — 절대 수정 금지 목록
+
+```
+packages/game-engine/**
+packages/money/**
+packages/trading-engine/**
+packages/wallet-ledger/**
+supabase/**
+apps/web/src/features/casino/use-casino-round.ts
+apps/web/src/features/casino/game-config.ts
+apps/web/src/hooks/use-wallet.ts
+apps/web/src/hooks/use-trading.ts
+apps/web/src/lib/rpc.ts
+apps/web/src/lib/auth.ts
+apps/web/src/contexts/auth-context.tsx
+```
+
+---
+
+## 11. 삭제·금지 대상 (이식 완료 시)
+
+```
+apps/web/src/components/app-shell.tsx
+apps/web/src/components/auth-shell.tsx
+apps/web/src/components/landing-page.tsx
+apps/web/src/components/daily-claim-card.tsx, roulette-card.tsx, missions-card.tsx
+apps/web/src/features/earn/earn-surface.tsx (시각 — hook 아님)
+apps/web/src/features/trading/*-panel.tsx (시각)
+@phonara/ui 카지노 게임 위젯 사용처 (RocketCrashCanvas, MinesGrid, …)
+```
+
+`apps/web/src/presentation/` — **이미 삭제됨**. 재생성 금지.
+
+---
+
+## 12. 개발 환경·성능
+
+```bash
+bun run setup          # 최초 1회: install + packages build + Playwright chromium
+bun run dev            # web :3000
+bun run clean          # E2E/빌드 후 — Cursor 렉 방지 (필수)
+bun run check:release  # demo/test 잔여물 게이트
+```
+
+- `.cursorignore` — node_modules, dist, .vite, functions-sql 등 인덱스 제외
+- bulk cleanup 후 **Cursor 재시작** 권장
+
+---
+
+## 13. 성능 수용 기준 (게임)
+
+| 지표 | 기준 |
+|---|---|
+| Desktop frame p95 | < 12ms |
+| Mobile frame p95 | < 16.6ms |
+| 게임 lazy JS | < 250KB |
+| INP | < 100ms |
+| DOM/게임 | < 150 |
+
+Canvas/Pixi, React 리렌더 최소, DPR cap 2.0.
+
+---
+
+## 14. 새 채팅 첫 지시 예시 (복붙용)
+
+```
+@docs/LOVABLE_HANDOFF.md 기준으로 Lovable P0 ZIP 이식을 이어서 진행해줘.
+
+1) components/games/* + presentation-import/pages/games-catalog-page.tsx 붙여넣기
+2) routes/casino.tsx 어댑터 축소 + ImportedGameSurfaceProps 연결
+3) check:i18n, check:release, typecheck, build green
+4) bun run clean
+
+엔진(supabase, game-engine, use-casino-round) 수정 금지. 시각만 Lovable 그대로.
+```
+
+---
+
+## 15. 참고 문서 인덱스
+
+| 문서 | 용도 |
+|---|---|
+| `docs/LOVABLE_HANDOFF.md` | **이 파일** — 새 채팅 총괄 인계 |
+| `docs/LOVABLE_ABSORPTION_PLAN_FINAL.md` | Lovable/Cursor 계약 v2.1 |
+| `docs/GAMES-INTEGRATION.md` | RPC·selection·PF 기술 명세 |
+| `apps/web/PRESENTATION_IMPORT.md` | 폴더 매핑·스택·워크플로 |
+| `.cursor/rules/95-presentation-import-absorption.mdc` | 흡수 정책 |
+| `.cursor/rules/75-workspace-hygiene.mdc` | 렉 방지 |
+
+---
+
+*Last updated: 2026-06-14 — PHONARA main @ 3e2796e*
