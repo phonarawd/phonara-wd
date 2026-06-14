@@ -44,7 +44,7 @@ Next slices:
 
 ## Lovable Zenith UI (parallel track · Lovable workspace)
 
-> **정본:** [`LOVABLE_ZENITH_SESSION_HANDOFF.md`](LOVABLE_ZENITH_SESSION_HANDOFF.md) §1 · **새 채팅 bootstrap:** [`LOVABLE_ZENITH_NEW_CHAT.md`](LOVABLE_ZENITH_NEW_CHAT.md) · **실행 플랜:** [`LOVABLE_ZENITH_MASTER_PLAN.md`](LOVABLE_ZENITH_MASTER_PLAN.md)  
+> **새 채팅:** [`LOVABLE_ZENITH_CHAT_HANDOFF.md`](LOVABLE_ZENITH_CHAT_HANDOFF.md) · **장문:** [`LOVABLE_ZENITH_SESSION_HANDOFF.md`](LOVABLE_ZENITH_SESSION_HANDOFF.md) · **플랜:** [`LOVABLE_ZENITH_MASTER_PLAN.md`](LOVABLE_ZENITH_MASTER_PLAN.md)  
 > **PHONARA repo:** casino game UI = placeholder until Lovable ZIP paste (engine no-touch).
 
 | Item | Status (2026-06-14) |

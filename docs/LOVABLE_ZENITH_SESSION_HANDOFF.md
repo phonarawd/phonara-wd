@@ -1,6 +1,6 @@
 # PHONARA Lovable Zenith — 세션 인계문 (Phase 0→10 · 지존급)
 
-> **새 Cursor 채팅 첫 메시지:** **`@docs/LOVABLE_ZENITH_NEW_CHAT.md`** (짧은 bootstrap · AI 혼동 방지) — 장문 정본은 이 파일.  
+> **새 Cursor 채팅 첫 메시지:** **`@docs/LOVABLE_ZENITH_CHAT_HANDOFF.md`** (지구끝판왕 · 단일 부트스트랩) — 장문 히스토리는 이 파일.  
 > **이 문서 = Lovable Zenith 진행 상태 정본** (검토·승인·구현·게이트·히스토리·§E 템플릿).  
 > **마지막 갱신:** 2026-06-14 (v5) · **다음 실행:** **Mines v1 §1-G** (Lovable build · §0-RED 선행).  
 > **PHONARA 엔진 100 / Supabase:** 별도 트랙 → [`ENGINE_100_HANDOFF.md`](ENGINE_100_HANDOFF.md) (UI no-touch).  
@@ -614,12 +614,10 @@ Result: GREEN (local · e2e CI-pending)
 
 ## 11. 새 채팅 첫 지시 (복붙용)
 
-> **권장:** [`LOVABLE_ZENITH_NEW_CHAT.md`](LOVABLE_ZENITH_NEW_CHAT.md) 전체 @ — §0-A 워크스페이스 경계 + Mines spec 인라인 (~150줄).  
-> 이 파일(장문)은 히스토리·§E·Phase 상세용.
+> **권장:** [`LOVABLE_ZENITH_CHAT_HANDOFF.md`](LOVABLE_ZENITH_CHAT_HANDOFF.md) — 상태·Mines LOCK·금지·§E **전부 인라인**.
 
 ```text
-@docs/LOVABLE_ZENITH_NEW_CHAT.md — §0-A 워크스페이스 확인 후 Mines v1 §2 실행.
-Lovable src/games/ 없으면 phonara-gb placeholder에 구현하지 말 것. PHONARA 엔진 no-touch.
+@docs/LOVABLE_ZENITH_CHAT_HANDOFF.md
 ```
 
 ---
@@ -628,8 +626,8 @@ Lovable src/games/ 없으면 phonara-gb placeholder에 구현하지 말 것. PHO
 
 | 용도 | 파일 |
 |------|------|
-| **이 대화 이어가기 (Lovable · 새 채팅)** | [`LOVABLE_ZENITH_NEW_CHAT.md`](LOVABLE_ZENITH_NEW_CHAT.md) |
-| **장문 정본 / 히스토리** | **이 파일** |
+| **새 채팅 (종합 인계)** | **[`LOVABLE_ZENITH_CHAT_HANDOFF.md`](LOVABLE_ZENITH_CHAT_HANDOFF.md)** |
+| **장문 히스토리** | **이 파일** |
 | Lovable 실행 마스터 | `LOVABLE_ZENITH_MASTER_PLAN.md` |
 | 제품/퍼널/바이럴 | `LOVABLE_PRODUCT_PLATFORM_MANIFEST.md` |
 | P1 ZIP / testid | `LOVABLE_P1_FINAL_PHONARA.md` |

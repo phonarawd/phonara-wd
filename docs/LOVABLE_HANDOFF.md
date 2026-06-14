@@ -1,6 +1,6 @@
 # PHONARA Lovable 이식 — 지구끝판왕 인계문 (새 채팅용)
 
-> **새 Cursor 채팅:** **`@docs/LOVABLE_ZENITH_NEW_CHAT.md`** (bootstrap · AI 혼동 방지) — 장문 정본 [`LOVABLE_ZENITH_SESSION_HANDOFF.md`](LOVABLE_ZENITH_SESSION_HANDOFF.md).  
+> **새 Cursor 채팅:** **`@docs/LOVABLE_ZENITH_CHAT_HANDOFF.md`** (Lovable Zenith 종합 인계 · **여기부터**).  
 > **카지노 엔진/ZIP-1:** [`docs/CHAT_HANDOFF_2026-06-14.md`](CHAT_HANDOFF_2026-06-14.md).  
 > **ENGINE 100 / Supabase:** [`docs/ENGINE_100_HANDOFF.md`](ENGINE_100_HANDOFF.md).  
 > **작업 이력:** [`docs/WORK_LOG_2026-06-14.md`](WORK_LOG_2026-06-14.md).  
