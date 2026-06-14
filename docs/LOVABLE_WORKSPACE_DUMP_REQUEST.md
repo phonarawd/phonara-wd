@@ -304,7 +304,7 @@ rg -n "@supabase" package.json
 - ZIP 생성: YES/NO — 파일명, size, file count
 - ZIP 내 paste map 준수: YES/NO
 
-## 4-E. PHONARA paste map表
+## 4-E. PHONARA paste map 표
 
 | Lovable path | PHONARA target | ZIP 포함 | paste 시 |
 |--------------|----------------|----------|----------|

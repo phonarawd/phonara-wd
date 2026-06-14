@@ -47,15 +47,15 @@ Next slices:
 > **새 채팅:** [`LOVABLE_ZENITH_CHAT_HANDOFF.md`](LOVABLE_ZENITH_CHAT_HANDOFF.md) · **장문:** [`LOVABLE_ZENITH_SESSION_HANDOFF.md`](LOVABLE_ZENITH_SESSION_HANDOFF.md) · **플랜:** [`LOVABLE_ZENITH_MASTER_PLAN.md`](LOVABLE_ZENITH_MASTER_PLAN.md)  
 > **PHONARA repo:** casino game UI = placeholder until Lovable ZIP paste (engine no-touch).
 
-| Item | Status (2026-06-14) |
+| Item | Status (2026-06-15) |
 |------|---------------------|
 | Macro Phase 0–2 | ✅ GREEN (Lovable local) |
-| Macro Phase 3 (5 P1 games) | 🟡 Plinko ✅ · Limbo ✅ · **Mines next** · HiLo/Dice ⏳ |
-| Macro Phase 4–10 | ⏳ (4 new games + shell + Earn + 32 pages + Admin + ZIP) |
-| Casino games done | **3/10** (crash, plinko, limbo) · Limbo vitest 40/40 · red:grep ALL 0 |
-| Next Lovable turn | **Mines** (Crash template copy) · §1-F hotfix ✅ + preview PASS |
-| e2e pending | crash + plinko + limbo WRITTEN → CI/local PASS · back smoke 3 spec |
-| PHONARA paste | After Lovable Phase 10 export — not started |
+| Macro Phase 3 (5 P1 games) | ✅ crash/plinko/limbo/mines/hilo/dice · **macro P3 DONE** |
+| Macro Phase 4–10 | 🟡 **Roulette §7 ACTIVE** · BJ/slots/shell ⏳ |
+| Casino games done | **6/10** · roulette ⏳ Lovable · vitest 266/266 |
+| Next | **Lovable §7 Roulette RED LOCK** · PHONARA handoff v11 · GREEN §E 대기 |
+| e2e pending | 5 games WRITTEN → CI/local PASS · back smoke 3 spec |
+| PHONARA paste | After Lovable Phase 10 export — HiLo UI placeholder until ZIP |
 
 ## Current Evidence Map
 

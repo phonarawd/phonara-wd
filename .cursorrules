@@ -9,6 +9,7 @@ Always read `docs/PHONARA_V2_MASTER_PLAN.md`, `docs/QUALITY_GATES.md`, and for U
 - Use Decimal-based money utilities from `@phonara/money` once engine implementation begins.
 - Ledger changes must be append-only, atomic, auditable, and idempotent.
 - User-facing copy must use i18n keys. Korean text belongs in locale files, not JSX.
+- **Operator/work docs** (`docs/**`, handoff, rules): **Korean** so the operator can verify; English for code/RPC/key tokens only — no Chinese/Japanese in work docs (see `61-script-locale-hygiene.mdc`). Product i18n may add `zh`/`ja` locales later in catalog files only.
 - Keep user app and admin app separated: `apps/web` and `apps/admin`.
 - Never expose `SUPABASE_SERVICE_ROLE_KEY` to browser code or `VITE_` env vars.
 - Normal operations should be automated; humans handle exceptions through Admin.

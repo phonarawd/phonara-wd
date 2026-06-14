@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { verifyRound, type GameCode } from '@phonara/game-engine';
 import type { MessageKey } from '@phonara/i18n';
@@ -6,6 +6,7 @@ import type { Json } from '@phonara/shared-types';
 import { callRpc } from '../../lib/rpc';
 import { walletKeys } from '../../hooks/use-wallet';
 import { errorToKey, randomHex } from './helpers';
+import { ACCUMULATED_SELECTION_RESET_MS } from './reset-accumulated-selection';
 import { loadRecentBets } from './recent-bets';
 import type {
   BetResponse,
@@ -26,6 +27,7 @@ export function useCasinoRoundPipeline({
   setClientSeed,
   userId,
   onRecentBetsChange,
+  onAccumulatedSelectionReset,
 }: {
   gameCode: GameCode;
   currency: Currency;
@@ -36,6 +38,8 @@ export function useCasinoRoundPipeline({
   setClientSeed: (value: string) => void;
   userId: string | null;
   onRecentBetsChange: (rows: RecentBet[]) => void;
+  /** §1-H — mines revealedCells / hilo guesses+startCard after prepare or settle. */
+  onAccumulatedSelectionReset?: () => void;
 }) {
   const queryClient = useQueryClient();
   const [commitment, setCommitment] = useState<RoundCommitment | null>(null);
@@ -47,8 +51,28 @@ export function useCasinoRoundPipeline({
   const [toastKey, setToastKey] = useState<MessageKey | null>(null);
   const betIdempotencyKeyRef = useRef<string | null>(null);
   const betInFlightRef = useRef(false);
+  const selectionResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearSelectionResetTimer = useCallback(() => {
+    if (selectionResetTimerRef.current) {
+      clearTimeout(selectionResetTimerRef.current);
+      selectionResetTimerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => () => clearSelectionResetTimer(), [clearSelectionResetTimer]);
+
+  const scheduleAccumulatedSelectionReset = useCallback(() => {
+    if (!onAccumulatedSelectionReset) return;
+    clearSelectionResetTimer();
+    selectionResetTimerRef.current = setTimeout(() => {
+      onAccumulatedSelectionReset();
+      selectionResetTimerRef.current = null;
+    }, ACCUMULATED_SELECTION_RESET_MS);
+  }, [clearSelectionResetTimer, onAccumulatedSelectionReset]);
 
   const resetRoundState = useCallback(() => {
+    clearSelectionResetTimer();
     setCommitment(null);
     setBet(null);
     setVerificationEvidence(null);
@@ -56,12 +80,15 @@ export function useCasinoRoundPipeline({
     setErrorKey(null);
     setToastKey(null);
     betIdempotencyKeyRef.current = null;
-  }, []);
+  }, [clearSelectionResetTimer]);
 
   const prepareRound = useCallback(async (
     nextGame = gameCode,
     options: { preserveEvidence?: boolean } = {},
   ) => {
+    if (!options.preserveEvidence) {
+      onAccumulatedSelectionReset?.();
+    }
     setBusy(true);
     setErrorKey(null);
     setBet(null);
@@ -80,7 +107,7 @@ export function useCasinoRoundPipeline({
     } finally {
       setBusy(false);
     }
-  }, [clientSeedIsAuto, gameCode, setClientSeed]);
+  }, [clientSeedIsAuto, gameCode, onAccumulatedSelectionReset, setClientSeed]);
 
   const submitBet = useCallback(async () => {
     if (!commitment || betInFlightRef.current || !betIdempotencyKeyRef.current) return;
@@ -119,6 +146,7 @@ export function useCasinoRoundPipeline({
       setToastKey(placed.status === 'won' ? 'casino.toast.won' : 'casino.toast.settled');
       await queryClient.invalidateQueries({ queryKey: walletKeys.all(userId) });
       onRecentBetsChange(await loadRecentBets());
+      scheduleAccumulatedSelectionReset();
       await prepareRound(gameCode, { preserveEvidence: true });
     } catch (error) {
       setErrorKey(errorToKey(error));
@@ -136,6 +164,7 @@ export function useCasinoRoundPipeline({
     onRecentBetsChange,
     prepareRound,
     queryClient,
+    scheduleAccumulatedSelectionReset,
     selection,
     stake,
     userId,

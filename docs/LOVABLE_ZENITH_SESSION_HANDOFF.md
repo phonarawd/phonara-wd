@@ -2,7 +2,7 @@
 
 > **새 Cursor 채팅 첫 메시지:** **`@docs/LOVABLE_ZENITH_CHAT_HANDOFF.md`** (지구끝판왕 · 단일 부트스트랩) — 장문 히스토리는 이 파일.  
 > **이 문서 = Lovable Zenith 진행 상태 정본** (검토·승인·구현·게이트·히스토리·§E 템플릿).  
-> **마지막 갱신:** 2026-06-14 (v5) · **다음 실행:** **Mines v1 §1-G** (Lovable build · §0-RED 선행).  
+> **마지막 갱신:** 2026-06-15 (v11) · **모드:** Phase 4 ACTIVE — Roulette v1 RED LOCK FINAL+ · Lovable EXECUTE §7.  
 > **PHONARA 엔진 100 / Supabase:** 별도 트랙 → [`ENGINE_100_HANDOFF.md`](ENGINE_100_HANDOFF.md) (UI no-touch).  
 > **카지노 엔진 10종 / ZIP-1:** [`CHAT_HANDOFF_2026-06-14.md`](CHAT_HANDOFF_2026-06-14.md).
 
@@ -37,17 +37,17 @@
 
 ---
 
-## 1. Phase 진행 상태 (한눈에) — 2026-06-14
+## 1. Phase 진행 상태 (한눈에) — 2026-06-15
 
 ### 1-0. 새 채팅 스냅샷 (30초)
 
 | | |
 |---|---|
 | **작업 위치** | Lovable (`src/games/**`, `.lovable/memory/**`) — PHONARA repo는 docs/handoff만 |
-| **완료** | Macro Phase 0–2 ✅ · 게임 **3/10 GREEN** (crash · plinko · limbo) |
-| **최근** | §1-F hotfix ✅ (mock 3 case + BetPanel 라벨) · preview PASS |
-| **다음 1턴** | **Mines v1** — §1-G LOCK · §0-RED `{ minePositions, hitMine }` 선행 |
-| **잔여 게임** | Mines → HiLo → Dice → Roulette → Blackjack → MintReels/GoldRush (**7턴**) |
+| **완료** | Macro Phase 0–2 ✅ · Macro Phase 3 ✅ · 게임 **6/10 GREEN** (crash · plinko · limbo · mines · hilo · dice) |
+| **최근** | Dice v1 LOCK ✅ · §1-H mock selection reset ✅ · vitest **266/266** |
+| **다음** | **Roulette §7 EXECUTE** (Lovable) → Blackjack → MintReels/GoldRush |
+| **잔여 게임** | Roulette → Blackjack → MintReels/GoldRush (**4턴**) |
 | **Zenith 풀-green** | crash/plinko/limbo e2e CI-pending · back smoke 3 spec (블로커 아님) |
 | **PHONARA** | 엔진 no-touch · casino UI placeholder · paste = Phase 10 ZIP 이후 |
 
@@ -61,7 +61,7 @@
 | **0** | Foundation + QA | ✅ GREEN |
 | **1** | Shared A–G + infra | ✅ GREEN |
 | **2** | Crash (템플릿 1종) | ✅ GREEN (local) · e2e CI-pending |
-| **3** | P1 게임 5종 (Plinko→Mines→Limbo→HiLo→Dice) | 🟡 **진행 중** — Plinko ✅ · Limbo ✅ · **Mines 다음** · HiLo/Dice ⏳ |
+| **3** | P1 게임 5종 (Plinko→Mines→Limbo→HiLo→Dice) | ✅ **GREEN** — Plinko ✅ · Limbo ✅ · Mines ✅ · HiLo ✅ · Dice ✅ |
 | **4** | 신규 4종 (Mint Reels→Gold Rush→Blackjack→Roulette) | ⏳ |
 | **5** | App Shell + Tier Nav | ⏳ |
 | **6** | Design System (ui 47+) | ⏳ |
@@ -71,7 +71,7 @@
 | **10** | i18n sweep + QA + ZIP export | ⏳ |
 | **2.5** | Pixi nebula (Crash/Plinko) | ⏸ DEFER (MANUAL) |
 
-**매크로 기준 남은 묶음:** Phase 3 잔여 + **Phase 4~10 (7묶음)**. 게임 10종만 끝나도 Phase 5~10(셸·Earn·페이지·Admin·ZIP)이 대부분.
+**매크로 기준 남은 묶음:** **Phase 4~10 (7묶음)**. 게임 10종만 끝나도 Phase 5~10(셸·Earn·페이지·Admin·ZIP)이 대부분.
 
 ### 1-B. 카지노 게임 10종 (Crash 템플릿 복사 턴)
 
@@ -80,15 +80,15 @@
 | 1 | crash | ✅ GREEN (local) | `{ autoCashout }` · `{ cashedOut, cashoutMultiplier }` |
 | 2 | plinko | ✅ GREEN (local) · vitest **200/200** | `{ rows, risk }` · `{ path, bucket, bucketMultiplier:string }` |
 | 3 | limbo | ✅ GREEN (local) · vitest **40/40** · red:grep ALL 0 | `{ target }` · `{ resultMultiplier, won }` · Limbo 3구간 feel |
-| 4 | mines | 🟡 **다음 · LOCK** — §1-G · Lovable build | `{ mineCount, revealedCells[] }` · `{ minePositions, hitMine }` |
-| 5 | hilo | ⏳ | `{ startCard, guesses[] }` |
-| 6 | dice | ⏳ | `{ target, direction }` · `{ roll, won }` |
+| 4 | mines | ✅ GREEN (local) · vitest **29/29** · red:grep ALL 0 | `{ mineCount, revealedCells[] }` · `{ minePositions, hitMine }` |
+| 5 | hilo | ✅ GREEN (local) · vitest incl. · red-grep clean | `{ startCard, guesses[] }` · `{ cards, rounds, won }` |
+| 6 | dice | ✅ GREEN (local) · vitest incl. · red-grep 6 clean | `{ target, direction }` · `{ roll, won }` · `bet.multiplier` celebrate |
 | 7 | mint_reels | ⏳ (macro Phase 4) | `{ lines }` · `{ totalMultiplier }` |
 | 8 | gold_rush | ⏳ | `{ lines }` · `{ totalMultiplier }` |
 | 9 | blackjack | ⏳ | `{ actions[] }` · settle `{ totalMultiplier }` |
-| 10 | roulette | ⏳ | split `value`=lower pocket · integer chips |
+| 10 | roulette | 🟡 **ACTIVE · RED LOCK FINAL+ §7** | `{ bets[] }` · `{ winningNumber, totalMultiplier }` · split lower · integer chips |
 
-**게임 턴:** **3/10 GREEN** (crash · plinko · limbo) → **7턴** 남음 (Mines 다음).
+**게임 턴:** **6/10 GREEN** (crash · plinko · limbo · mines · hilo · dice) → **4턴** 남음 (Roulette next). **vitest Lovable:** 266/266 PASS.
 
 ### 1-C. 게이트 잔여 (별 Phase 아님)
 
@@ -328,6 +328,140 @@ secondaryLabel="라운드 준비"   // ← !ready 시 primary 와 중복
 - **C-3 §E 첫 줄:** `Mines v1 — RED({mines/hit}→{minePositions/hitMine}) + RGGate/Confirm/Shortkeys/Feel/Rules(casino-game-rules)/Fairness(casino-fairness-verifier) + 해시 커밋`
 
 **후속 (macro):** HiLo → Dice (Phase 3) → Roulette → Blackjack (Phase 4) → MintReels/GoldRush.
+
+#### Mines §E closeout (실측 기록 · 2026-06-15)
+
+```
+[END PHASE 5 · Mines Closeout]
+Mines v1 — RED({mines/hit}→{minePositions/hitMine}) + RGGate/Confirm/Shortkeys/Feel/Rules(casino-game-rules)/Fairness(casino-fairness-verifier) + 해시 커밋
+§0-RED rg result.(mines|hit): 0 : PASS
+A-1~A-5 PASS · B vitest 29/29 mines · 230/230 전체 PASS · B-2 mines.spec: WRITTEN
+C-1 red:grep ALL 0 : PASS · C-2 mines-checkpoint.md: PASS
+D chunk/60fps: MANUAL · Pixi: Phase 2.5 defer
+Result: GREEN (local · e2e CI-pending)
+```
+
+**산출:** 7 files (5 mines + mock + 2 i18n) · 2 new tests · `.lovable/memory/mines-checkpoint.md`
+
+#### §1-H Mock selection reset hotfix ✅ APPLIED (2026-06-15 · Lovable · 1 file)
+
+**증상:** Mines 캐시아웃/라운드 준비 후에도 타일 선택이 남음. `bet.result` `{ minePositions, hitMine }`는 정확 — 그리드만 이전 `revealedCells`를 계속 그림.
+
+**원인:** `useMockPipeline` 라운드 리셋이 `commitment`/`bet`/`verification`만 처리, mines/hilo **누적 selection** 미처리.
+
+**수정:** `src/games/preview/useMockPipeline.ts`
+
+```ts
+function resetAccumulatedSelection<G extends GameCode>(gameCode: G, prev: SelectionFor<G>): SelectionFor<G> {
+  if (gameCode === 'mines') return { ...prev, revealedCells: [] } as SelectionFor<G>;
+  if (gameCode === 'hilo') return { ...prev, guesses: [], startCard: null } as SelectionFor<G>;
+  return prev;
+}
+```
+
+- **`onPrepareRound`:** `setSelection(prev => resetAccumulatedSelection(gameCode, prev))`
+- **`onSubmitBet` settle:** commitment `setTimeout(..., 400)` 와 동일 타이밍 selection 리셋
+
+**검증:** mines 캐시아웃 → 400ms 결과 표시 후 그리드 비움 · 라운드 준비 → 빈 그리드 · vitest **230/230 PASS** ✅
+
+**상태:** `onPrepareRound` + `onSubmitBet` settle 후 **두 지점 호출 적용 완료**
+
+**PHONARA paste 후속:** `resetAccumulatedSelection` (§1-H) — **✅ APPLIED** `reset-accumulated-selection.ts` · `use-casino-round.ts` · unit test 3 cases.
+
+#### §1-I Phase 6 — HiLo v1 LOCK **RED v3** (2026-06-15 · Lovable · §6 CHAT_HANDOFF)
+
+- **§0-RED:** `{ cards, rounds, won }` · **`resultMultiplier` 금지** · tier = `rounds[last].multiplier`
+- **A-6:** `hilo/multiplier.ts` — `expectedMultiplierFromGuesses(guesses)` (BetConfirm UI-only)
+- RG · Confirm · Space 4-state · feel 2지 · 9 testid · `secondaryLabel="해시 커밋"`
+- **목표:** vitest **232/232** · red-grep **5종 0**
+- **실행:** `§0-RED → §0-a → §0-b → A-1 → A-6 → A-3 → A-2 → A-4 → A-5 → §B → C-1~C-3`
+- **macro:** HiLo GREEN → **Dice** (Phase 3 마감)
+
+#### HiLo §E closeout (실측 기록 · 2026-06-15)
+
+```
+[END PHASE 6 · HiLo Closeout · RED v3]
+HiLo v1 — {cards,rounds,won} + expectedMultiplierFromGuesses(UI) + RG/Confirm/Shortkeys/Feel/Rules/Fairness + 해시 커밋
+§0-RED red-grep 5종: 0 : PASS
+A-1~A-6 PASS · B vitest 244/244 PASS
+C-1 red-grep ALL 0 : PASS · C-2 hilo-checkpoint.md v2 : PASS · C-3 docs/checkpoints/hilo/wiring.md : PASS
+D chunk/60fps: MANUAL · Pixi: Phase 2.5 defer
+Result: GREEN (local · e2e CI-pending) · 5/10 games · macro P3 Dice ⏳
+```
+
+**산출:** hilo game tree · celebrate + shortkeys tests · `.lovable/memory/hilo-checkpoint.md` v2 · `docs/checkpoints/hilo/wiring.md`
+
+#### §1-J HiLo + 전 게임 result 정합성 감정 (2026-06-15 · Lovable local)
+
+**판정:** GREEN — shape·feel·red-grep·vitest 244/244 합격. HiLo §0-RED v3 1:1.
+
+| 영역 | 결과 |
+|------|------|
+| HiLo bet.result ↔ Stage/HUD | `cards` · `rounds[-1].multiplier` · `won` — PHONARA `hilo.ts` 정본 일치 |
+| 10종 Stage ↔ mock emit | 키 1:1 (limbo만 정본 `resultMultiplier`) |
+| §1-H selection reset | mines/hilo 두 지점 리셋 ✅ |
+| red-grep | 5종 0 ✅ |
+
+**Preview-only 한계 (의도됨 · paste 전):**
+
+1. mock `startCard` ↔ `correct` — 카드 비교 미사용 · 시각 incoherence 가능 · Stage ✓/✗ 뱃지 없어 UX 노출 낮음
+2. `expectedMultiplierFromGuesses` — 1.1^n UI-only · 실엔진은 카드 거리 배수 · BetConfirm 전용
+
+**🟡 paste/차기 (블로커 아님):**
+
+1. HiLo 라운드별 `rounds[i].correct` 마이크로뱃지 (실엔진 검증 UX)
+2. PHONARA `reset-accumulated-selection.ts` + `use-casino-round` — **✅ APPLIED 2026-06-15** (§1-H Lovable parity)
+3. mock correct → 카드 비교 기반 (preview-only · 엔진 무영향)
+
+**PHONARA read-only 교차:** `packages/game-engine` settle keys 확인. blackjack 엔진 settle = `{ totalMultiplier }` only — Lovable Stage의 `dealer`/`player`는 mock UI enrichment로 분류 · paste 시 settlement 키 drift 금지.
+
+#### §1-K Phase 7 — Dice v1 LOCK **RED v3.1 FINAL** (2026-06-15 · Lovable · §6 CHAT_HANDOFF v8)
+
+- **§0-RED:** `{ roll, won }` · roll [0.00, 99.99] · **`result.won` 진실** · tie=LOSE · UI `over ? roll>target` ❌
+- **multiplier.ts:** `Math.floor(99/prob)/100` (엔진 1:1) · parity target=50 over ≈1.98 · `floor((99/prob)*100)/100` 금지
+- celebrate: **`bet.multiplier`** · mock `{ roll, won }` 한 줄 emit · mock mult = `won ? diceMultiplier(...) : 0`
+- RG · Confirm · Space **3-state** · feel 2지 · 9 testid · engine truth test `{roll:80,won:false}`
+- **red-grep 6종** (v3.1 `#6 \roll\b | rg -v won`) · vitest **§E 실측 N/N** (248~249)
+- **실행:** `§0-RED → §0-a → §0-b → A-1 → A-3 → A-2 → A-4 → A-5 → §B → C-1~C-4`
+- **macro:** Dice GREEN → **macro P3 ✅** → Phase 4
+- **PHONARA:** §1-H N/A · `GAMES-INTEGRATION.md` dice ✅ · handoff v10 merge ✅
+
+#### Dice §E closeout (실측 기록 · 2026-06-15)
+
+```
+[END PHASE 7 · Dice Closeout · RED v3.1 FINAL]
+Dice v1 — {roll,won} + bet.multiplier celebrate + multiplier.ts + RG/Confirm/Shortkeys/Feel/Rules/Fairness + 해시 커밋
+§0-RED red-grep 6종: 0 : PASS
+  #1 dice/ resultMultiplier|totalMultiplier: 0
+  #2 dice/ over ? roll>target 실행코드: 0 (jsdoc/test 설명 only)
+  #3 secondary "라운드 준비": secondary=해시 커밋 ✅ (L36 primary gate-out)
+  #4 금지 testid: 0 · #5 dice 분기 drift: 0 · #6 {roll…} won 누락: 0
+A-1~A-5 PASS · B vitest 266/266 PASS (+22 from baseline 244)
+  celebrate 6 · shortkeys 6 · multiplier 6 · Stage/contract/Controls 보강
+engine truth {roll:80,won:false} over 75 → LOSE ✅ Stage.test.tsx
+parity diceMultiplier(50,'over')≈1.98 ✅ multiplier.test.ts
+roll cap Math.floor(r*10000)/100 ✅ (diceFromFloat 동형)
+C-1~C-3 PASS · .lovable/memory/dice-checkpoint.md · docs/checkpoints/dice/wiring.md v3.1 addendum
+Result: GREEN (local · e2e CI-pending) · 6/10 games · macro P3 ✅ · Phase 4 ⏳
+```
+
+**산출:** `src/games/dice/{multiplier.ts(신규), Stage.tsx, Controls.shared.tsx, HUD.tsx, index.tsx}` · `useMockPipeline.ts` dice 1블록 + import · `shared/types.ts` DiceResult · `i18n/{ko,en}.ts` 4키 · 신규 테스트 3 + 갱신 3
+
+**macro Phase 3 마감 선언 ✅** — Crash · Plinko · Limbo · Mines · HiLo · Dice. **다음:** Roulette → Blackjack (Phase 4) → MintReels/GoldRush.
+
+#### §1-L Phase 8 — Roulette v1 LOCK **RED v1 FINAL+** (2026-06-15 · Lovable · §7 CHAT_HANDOFF v11)
+
+- **§0-RED:** `{ winningNumber, totalMultiplier }` 2키 · **`Number(totalMultiplier) > 0` 진실** · UI `bets[] × winningNumber` ❌
+- **zero pocket:** straight/0 only · split `0|1` LOSE on 0
+- **split:** lower pocket · `|a−b|===1` UI reject · engine silent-fail 보완
+- **5단 + Fairness:** RGGate · Confirm(i18n) · Rules 10키 · FairnessSheet · Shortkeys · Celebrate · reduced-motion
+- **mock:** `evaluateRoulette` local mirror · emit `toFixed(6)` string · `bet.multiplier = Number(totalMultiplier)`
+- **red-grep 8종** (+ optional #9 forbidden testids) · vitest **§E 실측 N/N**
+- **testid:** handoff §5 정본 9 money + optional 3 + roulette 5
+- **실행:** `§0-RED → A-1 → A-3 → A-2 → A-4 → A-5 → §B → §C`
+- **order override:** handoff v10 §7 Roulette first · Master Plan §4 Roulette last deferred
+- **PHONARA:** §1-H N/A · `GAMES-INTEGRATION.md` roulette Result ✅ · handoff v11 merge ✅
+- **macro:** Roulette GREEN → macro Phase 4 Roulette ✅ → Blackjack next
 
 ---
 
@@ -605,7 +739,7 @@ Result: GREEN (local · e2e CI-pending)
 - ❌ Plinko `bin` / `multiplier` 필드명
 - ❌ JSX 하드코딩 한국어 (BetConfirm summary 포함)
 - ❌ `@phonara/game-engine` 정적 import in `src/games/**`
-- ❌ parallel plan 파일量产 (checkpoint.md만 게임별)
+- ❌ parallel plan 파일 대량 생성 (checkpoint.md만 게임별)
 - ❌ Phase 3 전 Crash §4.0 잔여 미완
 - ❌ Stage result shape 변경 후 `useMockPipeline.simulate()` 미동기 (handoff §1-F §1)
 - ❌ BetPanel `!ready` secondary/primary 동일 "라운드 준비" 라벨 (handoff §1-F §2)
@@ -639,4 +773,4 @@ Result: GREEN (local · e2e CI-pending)
 
 ---
 
-*LOVABLE_ZENITH_SESSION_HANDOFF · v5 · 2026-06-14 · Games 3/10 GREEN · §1-F hotfix PASS · Next: Mines v1 §1-G · Macro Phase 3~10 잔여*
+*LOVABLE_ZENITH_SESSION_HANDOFF · v11 · 6/10 GREEN · Roulette RED LOCK FINAL+ ACTIVE*

@@ -1,0 +1,92 @@
+---
+description: Operator docs in Korean; product i18n may add zh/ja later — no CJK in work docs
+alwaysApply: true
+---
+
+# Script / locale hygiene (operator Korean · global i18n later)
+
+Two zones — do not conflate them.
+
+---
+
+## Zone A — Operator & work documents (**Korean for verification**)
+
+**Purpose:** Operator reads and approves in **Hangul**. English only for code paths, RPC names, i18n keys, identifiers, and unavoidable technical tokens.
+
+**Paths (non-exhaustive):**
+
+- `docs/**` — plans, handoff, status, runbooks, work logs, reports
+- `.cursor/rules/**` · `.cursorrules`
+- PR/commit descriptions agents draft **for operator review**
+- Inline comments meant for maintainers (prefer Korean or English — **not** Chinese/Japanese)
+
+**Rules:**
+
+1. Prose the operator must read → **Korean (Hangul)**.
+2. No **Chinese** or **Japanese** in operator/work docs (including stray CJK: 表, 量产, 拼接).
+3. No **Hanja** mixed into Korean sentences — use Hangul (표, 대량 생성, 치트시트).
+4. English-only operator-facing reports when the operator expects Korean → **rewrite in Korean**.
+
+**Verification (Zone A — run before closeout on touched docs):**
+
+```bash
+rg "[\u4e00-\u9fff]" docs .cursor/rules
+```
+
+Expected: **0 matches** (except lines marked `script-locale-allow: <reason>`).
+
+---
+
+## Zone B — Product i18n (**global expansion OK later**)
+
+**Purpose:** End-user UI copy lives in locale catalogs only — not in JSX, not in operator docs.
+
+**Now:** `ko` + `en` in `@phonara/i18n` · Lovable `ko.ts` / `en.ts`.
+
+**Later (operator-approved global slice):** `zh`, `zh-CN`, `zh-TW`, `ja`, etc. **may be added** to:
+
+- `packages/i18n/**` locale files
+- Lovable i18n catalogs
+
+**Rules:**
+
+1. New locales → **locale files only** · keys shared across locales · `check:i18n` green.
+2. **Never** copy zh/ja strings into Zone A docs, handoff, or rules.
+3. English mode must not show Korean; zh mode must not show Korean — standard i18n isolation (see `60-i18n-ux.mdc`).
+
+---
+
+## Zone C — Code & engine
+
+- Identifiers, types, RPC names: **English**.
+- User-visible strings in TS/TSX: **i18n keys only** — Korean/Chinese/Japanese text in locale files, not inline.
+- SQL comments for operator: Korean or English — not Chinese/Japanese.
+
+---
+
+## Agent checklist (every edit)
+
+| Question | Action |
+|----------|--------|
+| Is this docs/handoff/plan/report? | Write for **operator in Korean** |
+| Is this user UI copy? | i18n key → `ko`/`en` (later `zh`/`ja` in catalog only) |
+| Did I slip CJK into Korean doc? | Replace with Hangul equivalent |
+| Adding `zh.ts` / `ja.ts`? | OK in Zone B after operator global slice — **not** in Zone A |
+
+---
+
+## Examples (Zone A)
+
+| Bad | Good |
+|-----|------|
+| `feel表` | `feel 치트시트` |
+| `문자열拼接` | `문자열 이어 붙이기` |
+| English-only handoff paragraph for KR operator | Korean prose + English code tokens |
+| Chinese status report in `docs/` | Korean status report |
+
+---
+
+## Lovable / PHONARA split
+
+- **PHONARA repo:** Zone A applies to all `docs/**` and rules agents touch here.
+- **Lovable canvas:** operator specs pasted in Korean; product strings in `ko`/`en` catalogs (zh/ja later in catalogs only).

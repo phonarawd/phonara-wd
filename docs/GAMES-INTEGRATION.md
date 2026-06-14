@@ -57,6 +57,8 @@ HMAC-SHA256(key=serverSeed, message=`${clientSeed}:${nonce}:${cursor}`)
 ### dice
 `{ target: string; direction: 'over' | 'under' }`
 
+**Result (settle):** `{ roll: number; won: boolean }` — roll ∈ [0.00, 99.99] (`diceFromFloat = floor(f×10000)/100`). Engine: `packages/game-engine/src/games/dice.ts`. WIN/LOSE from **`result.won` only** — not client `roll > target` recompute. Not `resultMultiplier` (Limbo) / `totalMultiplier` in result. Celebrate tier: **`bet.multiplier`** (top-level; Lovable `dice/multiplier.ts` local mirror = `Math.floor(99/prob)/100`, target=50 over ≈1.98). Paste: adapter injects mult or UI-only `payout/stake` derive. **§1-H reset N/A** (scalar selection).
+
 ### mines
 `{ mineCount: number; revealedCells: number[] }`
 
@@ -70,6 +72,20 @@ HMAC-SHA256(key=serverSeed, message=`${clientSeed}:${nonce}:${cursor}`)
 
 ### hilo
 `{ startCard: number | null; guesses: ('higher' | 'lower' | 'skip')[] }`
+
+**Result (settle):** `{ cards: number[]; rounds: HiLoRound[]; won: boolean }` where each `HiLoRound` is `{ card, guess, correct, multiplier }`. Engine: `packages/game-engine/src/games/hilo.ts`. Not flat `streak` / top-level `multiplier` alone.
+
+### Round-boundary selection (mines · hilo)
+
+Clear accumulated in-round picks without resetting other selection fields:
+
+| Game | Reset |
+|------|-------|
+| mines | `revealedCells: []` (keep `mineCount`) |
+| hilo | `guesses: []`, `startCard: null` |
+
+**When:** user prepare-round (immediate) · bet settle (+400ms, Lovable/PHONARA parity).  
+**PHONARA:** `apps/web/src/features/casino/reset-accumulated-selection.ts` · **Lovable:** `useMockPipeline` §1-H.
 
 ### mint_reels / gold_rush
 `{ lines: number }` — integer 1..20, one spin = one bet
@@ -93,6 +109,8 @@ HMAC-SHA256(key=serverSeed, message=`${clientSeed}:${nonce}:${cursor}`)
 - Example: split on pockets 1|2 → `{ type: 'split', value: 1, stakeWeight: 1 }` (not `3`).
 
 Engine: `packages/game-engine/src/games/roulette.ts` (`legWins`, `case 'split'`).
+
+**Result (settle):** `{ winningNumber: number; totalMultiplier: number }` — European single-zero · `winningNumber ∈ [0..36]`. Engine: `packages/game-engine/src/games/roulette.ts` · SQL `_roulette_evaluate`. **WIN/LOSE from `Number(totalMultiplier) > 0` only** — not client `bets[] × winningNumber` recompute. Wire JSON may serialize `totalMultiplier` as number or string; UI adapter normalizes both. **Forbidden in result:** `payout`, `legs`, `legWins`, `multiplier`, `wonBets`. Celebrate tier: **`Number(totalMultiplier) >= 1.01`** · top-level **`bet.multiplier = Number(totalMultiplier)`** on mock/paste. **Zero pocket:** `winningNumber === 0` → only `{ type: 'straight', value: 0 }` wins (split `0|1` and all outside bets lose). **§1-H reset N/A** (bets persist until user clear/repeat). **Earn `rpc_spin_roulette` ≠ casino roulette** — separate domain.
 
 ### blackjack
 ```ts

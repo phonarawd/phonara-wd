@@ -9,6 +9,7 @@ import { isPositiveDecimalInput } from '../../lib/money-input';
 import { useT } from '../../lib/i18n';
 import { mapGameSurfaceProps } from './map-game-surface-props';
 import { GAME_BY_CODE, casinoGamePath } from './game-config';
+import { resetAccumulatedSelection } from './reset-accumulated-selection';
 import { useCasinoRoundPipeline } from './use-casino-round';
 import { loadRecentBets } from './recent-bets';
 import { cellsFromText, randomHex } from './helpers';
@@ -32,6 +33,10 @@ export function useCasinoPageController(initialGame: GameCode) {
   const config = GAME_BY_CODE[gameCode];
   const available = currency === 'PHON' ? wallet?.phon_available : wallet?.usdt_available;
 
+  const resetAccumulatedSelectionState = useCallback(() => {
+    setSelection((prev) => resetAccumulatedSelection(gameCode, prev));
+  }, [gameCode]);
+
   const casinoRound = useCasinoRoundPipeline({
     gameCode,
     currency,
@@ -42,6 +47,7 @@ export function useCasinoPageController(initialGame: GameCode) {
     setClientSeed,
     userId: session?.user.id ?? null,
     onRecentBetsChange: setRecentBets,
+    onAccumulatedSelectionReset: resetAccumulatedSelectionState,
   });
 
   const {

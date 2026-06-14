@@ -7,6 +7,8 @@ alwaysApply: true
 
 - Korean is default, but all user-facing copy must be i18n-keyed.
 - English mode must not show Korean strings.
+- **Operator docs/handoff:** Korean prose for operator verification — no Chinese/Japanese in work docs (see `61-script-locale-hygiene.mdc`).
+- **Global expansion:** `zh` / `ja` / other locales OK **later** in i18n catalog files only — not in operator reports or plans.
 - Mobile is touch-first, safe-area aware, and PWA-ready.
 - Desktop supports exchange/admin-grade multi-panel workflows.
 - High-risk money, trading, staking, betting, and withdrawal actions require confirmation UX.

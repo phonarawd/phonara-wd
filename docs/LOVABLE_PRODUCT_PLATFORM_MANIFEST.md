@@ -238,7 +238,7 @@ type CryptoDepositProps = {
 |----|-------|
 | 짧은 구어체: `~했어요`, `~됐어요`, `지금 ~해보세요` | 번역체·딱딱한 공문: `~하였습니다`, `처리가 완료되었습니다` |
 | 다음 행동 1개 암시 | 사과 남발·장문 설명 |
-| 금액·배수는 `{amount}` placeholder + tabular nums | JSX에서 문자열拼接 |
+| 금액·배수는 `{amount}` placeholder + tabular nums | JSX에서 문자열 이어 붙이기 |
 
 **en catalog:** 동일 의미·동일 길이감. English mode에 한글 0.
 
