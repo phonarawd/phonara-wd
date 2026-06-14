@@ -381,6 +381,19 @@ export const koMessages = {
   'wallet.withdraw.success': '출금 신청이 접수되었습니다.',
   'wallet.tab.deposit': '입금',
   'wallet.tab.withdraw': '출금',
+  'wallet.crypto.deposit.pending': '온체인 입금 확인 중입니다.',
+  'wallet.crypto.deposit.addressLabel': '입금 주소',
+  'wallet.crypto.deposit.amountLabel': '입금 금액 (USDT)',
+  'wallet.crypto.deposit.submit': '입금 신청',
+  'wallet.crypto.deposit.success': '온체인 입금 신청이 접수되었습니다.',
+  'wallet.crypto.withdraw.invalid_chain': '지원하지 않는 체인입니다.',
+  'wallet.crypto.withdraw.invalid_address': '수령 주소 형식이 올바르지 않습니다.',
+
+  'viral.claim.success': '바이럴 미션 보상이 지급되었습니다.',
+  'viral.quota_exhausted': '오늘 받을 수 있는 횟수를 모두 사용했습니다.',
+  'viral.streak_not_eligible': '연속 출석 조건을 충족하지 않았습니다.',
+  'viral.invite_not_eligible': '친구 초대 조건을 충족하지 않았습니다.',
+  'viral.mission.invalid': '유효하지 않은 미션입니다.',
 
   // ── Dashboard ─────────────────────────────────────────────────────────────────
   'dashboard.rewardCenter': '보상 센터',
@@ -1095,6 +1108,10 @@ export const koMessages = {
   'error.ERR_MFA_REQUIRED': '2단계 인증이 필요합니다. 인증을 완료한 뒤 다시 시도하세요.',
   'error.ERR_WITHDRAWAL_DAILY_CAP':
     '일일 출금 한도를 초과했습니다. 내일 다시 시도하거나 한도를 확인하세요.',
+  'error.VIRAL_QUOTA_EXHAUSTED': '오늘 받을 수 있는 횟수를 모두 사용했습니다.',
+  'error.VIRAL_STREAK_NOT_ELIGIBLE': '연속 출석 조건을 충족하지 않았습니다.',
+  'error.VIRAL_INVITE_NOT_ELIGIBLE': '친구 초대 조건을 충족하지 않았습니다.',
+  'error.INVALID_CHAIN': '지원하지 않는 체인입니다.',
 
   'rg.title': '책임도박 설정',
   'rg.description': '입금·손실 한도와 자기제한을 설정해 건강한 이용을 돕습니다.',
@@ -1501,6 +1518,19 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'wallet.withdraw.success': 'Withdrawal request submitted.',
   'wallet.tab.deposit': 'Deposit',
   'wallet.tab.withdraw': 'Withdraw',
+  'wallet.crypto.deposit.pending': 'On-chain deposit is being confirmed.',
+  'wallet.crypto.deposit.addressLabel': 'Deposit address',
+  'wallet.crypto.deposit.amountLabel': 'Deposit amount (USDT)',
+  'wallet.crypto.deposit.submit': 'Request deposit',
+  'wallet.crypto.deposit.success': 'On-chain deposit request submitted.',
+  'wallet.crypto.withdraw.invalid_chain': 'This chain is not supported.',
+  'wallet.crypto.withdraw.invalid_address': 'The recipient address format is invalid.',
+
+  'viral.claim.success': 'Viral mission reward credited.',
+  'viral.quota_exhausted': 'You have used all available claims for today.',
+  'viral.streak_not_eligible': 'Streak requirement not met.',
+  'viral.invite_not_eligible': 'Invite requirement not met.',
+  'viral.mission.invalid': 'Invalid mission.',
 
   'dashboard.rewardCenter': 'Rewards center',
   'dashboard.rewardCenterSub': 'Check in daily and spin the roulette to collect PHON.',
@@ -2217,6 +2247,10 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
     'Two-factor authentication is required. Complete verification and try again.',
   'error.ERR_WITHDRAWAL_DAILY_CAP':
     'Daily withdrawal limit exceeded. Try again tomorrow or review your limit.',
+  'error.VIRAL_QUOTA_EXHAUSTED': 'You have used all available claims for today.',
+  'error.VIRAL_STREAK_NOT_ELIGIBLE': 'Streak requirement not met.',
+  'error.VIRAL_INVITE_NOT_ELIGIBLE': 'Invite requirement not met.',
+  'error.INVALID_CHAIN': 'This chain is not supported.',
 
   'rg.title': 'Responsible gaming',
   'rg.description': 'Set deposit and loss limits and self-exclusion to support healthy play.',
