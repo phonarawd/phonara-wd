@@ -13,6 +13,7 @@ AS $function$
     'daily_claim',
     'roulette_spin',
     'mission_reward',
+    'viral_mission_reward',
     'staking_reward'
   );
 $function$

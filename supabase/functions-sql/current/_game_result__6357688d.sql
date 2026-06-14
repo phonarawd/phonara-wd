@@ -35,6 +35,8 @@ DECLARE
   v_cards JSONB := '[]'::JSONB;
   v_rounds JSONB := '[]'::JSONB;
   v_correct BOOLEAN;
+  v_lines INT;
+  v_winning INT;
 BEGIN
   CASE p_game
     WHEN 'dice' THEN
@@ -96,7 +98,6 @@ BEGIN
       IF EXISTS (SELECT 1 FROM unnest(COALESCE(v_revealed, ARRAY[]::INT[])) c GROUP BY c HAVING count(*) > 1) THEN
         RAISE EXCEPTION 'revealed_cells_not_distinct';
       END IF;
-
       v_floats := _game_float_stream(p_server_seed, p_client_seed, p_nonce, 25);
       v_cells := ARRAY(SELECT generate_series(0, 24));
       FOR v_shuffle_idx IN REVERSE 25..2 LOOP
@@ -156,6 +157,29 @@ BEGIN
         v_multiplier := 0;
       END IF;
       v_result := jsonb_build_object('cards', v_cards, 'rounds', v_rounds, 'won', v_won);
+
+    WHEN 'mint_reels' THEN
+      v_lines := (p_selection->>'lines')::INT;
+      v_floats := _game_float_stream(p_server_seed, p_client_seed, p_nonce, 5);
+      v_multiplier := _slot_spin_multiplier(_mint_reels_reels(), _mint_reels_paytable(), v_lines, v_floats);
+      v_result := jsonb_build_object('totalMultiplier', v_multiplier);
+
+    WHEN 'gold_rush' THEN
+      v_lines := (p_selection->>'lines')::INT;
+      v_floats := _game_float_stream(p_server_seed, p_client_seed, p_nonce, 5);
+      v_multiplier := _slot_spin_multiplier(_gold_rush_reels(), _gold_rush_paytable(), v_lines, v_floats);
+      v_result := jsonb_build_object('totalMultiplier', v_multiplier);
+
+    WHEN 'roulette' THEN
+      v_floats := _game_float_stream(p_server_seed, p_client_seed, p_nonce, 1);
+      v_winning := floor(_require_game_float(v_floats, 1) * 37)::INT;
+      v_multiplier := _roulette_evaluate(p_selection, v_winning);
+      v_result := jsonb_build_object('winningNumber', v_winning, 'totalMultiplier', v_multiplier);
+
+    WHEN 'blackjack' THEN
+      v_floats := _game_float_stream(p_server_seed, p_client_seed, p_nonce, 51);
+      v_multiplier := _bj_play(p_selection, v_floats);
+      v_result := jsonb_build_object('totalMultiplier', v_multiplier);
 
     ELSE
       RAISE EXCEPTION 'invalid_game_code';

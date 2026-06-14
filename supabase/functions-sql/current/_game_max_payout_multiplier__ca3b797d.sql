@@ -17,6 +17,10 @@ DECLARE
   v_rows INT;
   v_risk TEXT;
   v_max NUMERIC := 0;
+  v_lines INT;
+  v_leg JSONB;
+  v_weight_sum NUMERIC := 0;
+  v_type TEXT;
 BEGIN
   CASE p_game
     WHEN 'crash' THEN
@@ -53,6 +57,26 @@ BEGIN
         v_max := GREATEST(v_max, _plinko_multiplier(v_rows, v_risk, v_bucket_idx));
       END LOOP;
       RETURN v_max;
+    WHEN 'mint_reels' THEN
+      v_lines := (p_selection->>'lines')::INT;
+      IF v_lines < 1 OR v_lines > 20 THEN RAISE EXCEPTION 'invalid_slot_lines'; END IF;
+      RETURN 75.0 / v_lines;
+    WHEN 'gold_rush' THEN
+      v_lines := (p_selection->>'lines')::INT;
+      IF v_lines < 1 OR v_lines > 20 THEN RAISE EXCEPTION 'invalid_slot_lines'; END IF;
+      RETURN 80.0 / v_lines;
+    WHEN 'roulette' THEN
+      FOR v_leg IN SELECT jsonb_array_elements(p_selection->'bets') LOOP
+        v_weight_sum := v_weight_sum + (v_leg->>'stakeWeight')::NUMERIC;
+      END LOOP;
+      IF v_weight_sum <= 0 THEN RAISE EXCEPTION 'invalid_roulette_bets'; END IF;
+      FOR v_leg IN SELECT jsonb_array_elements(p_selection->'bets') LOOP
+        v_type := v_leg->>'type';
+        v_max := v_max + _roulette_leg_max_mult(v_type) * (v_leg->>'stakeWeight')::NUMERIC / v_weight_sum;
+      END LOOP;
+      RETURN v_max;
+    WHEN 'blackjack' THEN
+      RETURN 2.5;
     ELSE
       RAISE EXCEPTION 'invalid_game_code';
   END CASE;

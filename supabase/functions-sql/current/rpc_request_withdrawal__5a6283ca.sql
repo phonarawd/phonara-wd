@@ -16,6 +16,7 @@ DECLARE
   v_cap     TEXT;
   v_today   NUMERIC;
   v_amount  NUMERIC;
+  v_chain   TEXT;
 BEGIN
   IF v_user_id IS NULL THEN RAISE EXCEPTION 'unauthenticated'; END IF;
 
@@ -31,6 +32,16 @@ BEGIN
   END;
 
   PERFORM _assert_amount_text(p_amount);
+
+  IF v_ccy = 'USDT' THEN
+    v_chain := COALESCE(p_destination->>'chain', '');
+    IF v_chain NOT IN ('TRC20', 'ERC20') THEN
+      RAISE EXCEPTION 'invalid_chain';
+    END IF;
+    IF COALESCE(length(btrim(p_destination->>'address')), 0) < 10 THEN
+      RAISE EXCEPTION 'invalid_destination';
+    END IF;
+  END IF;
 
   IF p_idempotency_key IS NULL OR length(btrim(p_idempotency_key)) < 8 THEN
     RAISE EXCEPTION 'invalid_idempotency_key';
