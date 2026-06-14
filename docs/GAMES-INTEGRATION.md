@@ -60,6 +60,8 @@ HMAC-SHA256(key=serverSeed, message=`${clientSeed}:${nonce}:${cursor}`)
 ### mines
 `{ mineCount: number; revealedCells: number[] }`
 
+**Result (settle):** `{ minePositions: number[]; hitMine: boolean }` — not `mines` / `hit`. Engine: `packages/game-engine/src/games/mines.ts`.
+
 ### plinko
 `{ rows: 8 | 12 | 16; risk: 'low' | 'medium' | 'high' }`
 

@@ -44,17 +44,17 @@ Next slices:
 
 ## Lovable Zenith UI (parallel track · Lovable workspace)
 
-> **정본:** [`LOVABLE_ZENITH_SESSION_HANDOFF.md`](LOVABLE_ZENITH_SESSION_HANDOFF.md) §1 · **실행 플랜:** [`LOVABLE_ZENITH_MASTER_PLAN.md`](LOVABLE_ZENITH_MASTER_PLAN.md) Phase 0→10.  
+> **정본:** [`LOVABLE_ZENITH_SESSION_HANDOFF.md`](LOVABLE_ZENITH_SESSION_HANDOFF.md) §1 · **새 채팅 bootstrap:** [`LOVABLE_ZENITH_NEW_CHAT.md`](LOVABLE_ZENITH_NEW_CHAT.md) · **실행 플랜:** [`LOVABLE_ZENITH_MASTER_PLAN.md`](LOVABLE_ZENITH_MASTER_PLAN.md)  
 > **PHONARA repo:** casino game UI = placeholder until Lovable ZIP paste (engine no-touch).
 
 | Item | Status (2026-06-14) |
 |------|---------------------|
 | Macro Phase 0–2 | ✅ GREEN (Lovable local) |
-| Macro Phase 3 (5 P1 games) | 🟡 Plinko ✅ · **Limbo next** (v1.3 final-r2 approved) · Mines/HiLo/Dice ⏳ |
+| Macro Phase 3 (5 P1 games) | 🟡 Plinko ✅ · Limbo ✅ · **Mines next** · HiLo/Dice ⏳ |
 | Macro Phase 4–10 | ⏳ (4 new games + shell + Earn + 32 pages + Admin + ZIP) |
-| Casino games done | **2/10** (crash, plinko) · vitest 200/200 after Plinko |
-| Next Lovable turn | §0-0 preview guard + GameBackLink → Limbo mount/tests/checkpoint |
-| e2e pending | crash + plinko WRITTEN → CI/local PASS |
+| Casino games done | **3/10** (crash, plinko, limbo) · Limbo vitest 40/40 · red:grep ALL 0 |
+| Next Lovable turn | **Mines** (Crash template copy) · §1-F hotfix ✅ + preview PASS |
+| e2e pending | crash + plinko + limbo WRITTEN → CI/local PASS · back smoke 3 spec |
 | PHONARA paste | After Lovable Phase 10 export — not started |
 
 ## Current Evidence Map

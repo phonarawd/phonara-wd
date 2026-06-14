@@ -53,7 +53,8 @@
 2. **한 Phase = 한 PR 단위** — 섞지 말 것.  
 3. **추측 금지** — 없으면 `MISSING` 표시 후 해당 Phase에서 구현.  
 4. **route 파일 = 얇은 래퍼만** — 시각 코드는 `Imported*Page` / `Imported*Game` 컴포넌트.  
-5. Phase 종료마다 **`bun qa`** + checkpoint + `.lovable/memory/{phase}-done.md` 기록.
+5. Phase 종료마다 **`bun qa`** + checkpoint + `.lovable/memory/{phase}-done.md` 기록.  
+6. **Stage `bet.result` shape 변경 시** `src/games/preview/useMockPipeline.ts` `simulate()` **동 게임 분기 동시 수정** — red:grep은 mock 출력 비대상 (handoff §0 규칙 9).
 
 ---
 

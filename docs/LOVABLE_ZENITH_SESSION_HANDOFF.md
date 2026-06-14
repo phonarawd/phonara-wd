@@ -1,8 +1,8 @@
 # PHONARA Lovable Zenith — 세션 인계문 (Phase 0→10 · 지존급)
 
-> **새 Cursor 채팅 첫 메시지:** `@docs/LOVABLE_ZENITH_SESSION_HANDOFF.md` 참조 후 **§11「새 채팅 첫 지시」** 복붙.  
-> **이 문서 = Lovable Zenith 진행 상태 정본** (검토·승인·구현·게이트·다음 작업).  
-> **마지막 갱신:** 2026-06-14 · **다음 실행:** Limbo v1.3 final-r2 (Lovable 워크스페이스).  
+> **새 Cursor 채팅 첫 메시지:** **`@docs/LOVABLE_ZENITH_NEW_CHAT.md`** (짧은 bootstrap · AI 혼동 방지) — 장문 정본은 이 파일.  
+> **이 문서 = Lovable Zenith 진행 상태 정본** (검토·승인·구현·게이트·히스토리·§E 템플릿).  
+> **마지막 갱신:** 2026-06-14 (v5) · **다음 실행:** **Mines v1 §1-G** (Lovable build · §0-RED 선행).  
 > **PHONARA 엔진 100 / Supabase:** 별도 트랙 → [`ENGINE_100_HANDOFF.md`](ENGINE_100_HANDOFF.md) (UI no-touch).  
 > **카지노 엔진 10종 / ZIP-1:** [`CHAT_HANDOFF_2026-06-14.md`](CHAT_HANDOFF_2026-06-14.md).
 
@@ -24,6 +24,7 @@
 | 6 | **red:grep ALL 0** — `bet.result.grid`, howler, ads/survey 키워드, 직접 `rpc_(` 등 |
 | 7 | **중복 파일 금지** — 게임마다 **Crash 템플릿 복사** · checkpoint는 `.lovable/memory/{game}-checkpoint.md` |
 | 8 | **Phase 게이트** — green 전 다음 Phase 금지 · Pixi nebula = **Phase 2.5 defer** (MANUAL) |
+| 9 | **Mock↔Stage 동기** — Stage `bet.result` shape를 PHONARA 정본으로 바꿀 때 **`useMockPipeline.simulate()` 해당 분기 동시 수정** (red:grep은 mock 출력 비대상 → 별도 수동 체크) |
 
 **Lovable AI에 붙여넣을 계약 4파일:**
 
@@ -38,6 +39,18 @@
 
 ## 1. Phase 진행 상태 (한눈에) — 2026-06-14
 
+### 1-0. 새 채팅 스냅샷 (30초)
+
+| | |
+|---|---|
+| **작업 위치** | Lovable (`src/games/**`, `.lovable/memory/**`) — PHONARA repo는 docs/handoff만 |
+| **완료** | Macro Phase 0–2 ✅ · 게임 **3/10 GREEN** (crash · plinko · limbo) |
+| **최근** | §1-F hotfix ✅ (mock 3 case + BetPanel 라벨) · preview PASS |
+| **다음 1턴** | **Mines v1** — §1-G LOCK · §0-RED `{ minePositions, hitMine }` 선행 |
+| **잔여 게임** | Mines → HiLo → Dice → Roulette → Blackjack → MintReels/GoldRush (**7턴**) |
+| **Zenith 풀-green** | crash/plinko/limbo e2e CI-pending · back smoke 3 spec (블로커 아님) |
+| **PHONARA** | 엔진 no-touch · casino UI placeholder · paste = Phase 10 ZIP 이후 |
+
 > **작업 위치:** Lovable 프론트엔드 워크스페이스 (`src/games/**`, `.lovable/memory/**`).  
 > **PHONARA repo:** `apps/web/src/components/games/*` = placeholder · paste 전.
 
@@ -48,7 +61,7 @@
 | **0** | Foundation + QA | ✅ GREEN |
 | **1** | Shared A–G + infra | ✅ GREEN |
 | **2** | Crash (템플릿 1종) | ✅ GREEN (local) · e2e CI-pending |
-| **3** | P1 게임 5종 (Plinko→Mines→Limbo→HiLo→Dice) | 🟡 **진행 중** — Plinko ✅ · Limbo **다음** · Mines/HiLo/Dice ⏳ |
+| **3** | P1 게임 5종 (Plinko→Mines→Limbo→HiLo→Dice) | 🟡 **진행 중** — Plinko ✅ · Limbo ✅ · **Mines 다음** · HiLo/Dice ⏳ |
 | **4** | 신규 4종 (Mint Reels→Gold Rush→Blackjack→Roulette) | ⏳ |
 | **5** | App Shell + Tier Nav | ⏳ |
 | **6** | Design System (ui 47+) | ⏳ |
@@ -66,8 +79,8 @@
 |---|----------|--------------|-------------------------|
 | 1 | crash | ✅ GREEN (local) | `{ autoCashout }` · `{ cashedOut, cashoutMultiplier }` |
 | 2 | plinko | ✅ GREEN (local) · vitest **200/200** | `{ rows, risk }` · `{ path, bucket, bucketMultiplier:string }` |
-| 3 | limbo | 🟡 **다음 실행** — spec **v1.3 final-r2** 승인 | `{ target }` · `{ resultMultiplier, won }` · Limbo 전용 3구간 feel |
-| 4 | mines | ⏳ | `{ mineCount, revealedCells[] }` |
+| 3 | limbo | ✅ GREEN (local) · vitest **40/40** · red:grep ALL 0 | `{ target }` · `{ resultMultiplier, won }` · Limbo 3구간 feel |
+| 4 | mines | 🟡 **다음 · LOCK** — §1-G · Lovable build | `{ mineCount, revealedCells[] }` · `{ minePositions, hitMine }` |
 | 5 | hilo | ⏳ | `{ startCard, guesses[] }` |
 | 6 | dice | ⏳ | `{ target, direction }` · `{ roll, won }` |
 | 7 | mint_reels | ⏳ (macro Phase 4) | `{ lines }` · `{ totalMultiplier }` |
@@ -75,14 +88,16 @@
 | 9 | blackjack | ⏳ | `{ actions[] }` · settle `{ totalMultiplier }` |
 | 10 | roulette | ⏳ | split `value`=lower pocket · integer chips |
 
-**게임 턴:** **2/10 완료** → Limbo 포함 **8턴** 남음 (Limbo GREEN 후 **7턴**).
+**게임 턴:** **3/10 GREEN** (crash · plinko · limbo) → **7턴** 남음 (Mines 다음).
 
 ### 1-C. 게이트 잔여 (별 Phase 아님)
 
 | 항목 | 상태 |
 |------|------|
 | Crash C-3 e2e | 🟡 WRITTEN → CI/local `playwright install` 후 PASS |
-| Plinko C-3 e2e | 🟡 WRITTEN → CI PASS 승격 (Limbo §0-1 선행) |
+| Plinko C-3 e2e | 🟡 WRITTEN → CI/local PASS |
+| Limbo C-3 e2e | 🟡 WRITTEN → CI/local PASS |
+| crash/plinko back smoke | ⏳ `casino-game-back` 1줄 (3 spec) |
 | chunk gzip / 60fps | ⏸ MANUAL · Phase 2.5 defer |
 | PHONARA paste | ⏳ Lovable Phase 10 ZIP 이후 별 트랙 |
 
@@ -93,6 +108,241 @@
 | **§0-0** | `useMockPipeline` throw → `!DEV` warn only (preview 라우트 ErrorBoundary 해소) |
 | **§0-0b** | `GameBackLink` → `shared/` paste · Lovable preview 10라우트 · PHONARA `CasinoLovableSurface` **1회** · `casino.back_to_games` i18n |
 | **9 testid** | BetPanel 4 first-paint · PF 2 after-open · Confirm 3 · attached-after-flow |
+
+### 1-E. Limbo v1.3 final-r2 — closeout 완료 (2026-06-14 · Lovable local)
+
+| 구간 | 상태 | 증거 |
+|------|------|------|
+| **§0-0** useMockPipeline guard | ✅ | throw → `!DEV` warn only |
+| **§0-0b** GameBackLink | ✅ | shared + i18n + preview 10라우트 |
+| **A-1~A-6** Limbo wiring | ✅ | 3구간 feel · `{ resultMultiplier, won }` · RG gate · ghost HUD · i18n |
+| **B-1** vitest (Limbo suite) | ✅ **40/40** | Controls 10 · Stage 4 · HUD 2 · contract 9 · celebrate 5 · shortkeys 6 · reducedMotion 1 · GameBackLink 3 |
+| **B-2** e2e spec | 🟡 **WRITTEN** | `tests/e2e/games/limbo.spec.ts` |
+| **C-1** red:grep | ✅ **ALL 0** | Stage 주석 + `games.bet.multiplier` i18n key namespace만 패턴 매치 · **객체 접근 0건** |
+| **C-2** checkpoint | ✅ | `.lovable/memory/limbo-checkpoint.md` v1.3 final-r2 (3구간 + superseded ×2 + §nav) |
+| **C-3** §E closeout | ✅ | 첫 줄: `0-0 useMockPipeline preview guard (throw → warn) + 0-0b GameBackLink (Lovable preview 10라우트 · PHONARA paste 시 CasinoLovableSurface 1회)` |
+
+**잔여 (Zenith 풀-green · 별 턴):** crash/plinko/limbo e2e PASS · back smoke 3 spec · chunk/60fps MANUAL.
+
+### 1-F. Final Plan — Hotfix 묶음 (**✅ APPLIED** · 2026-06-14)
+
+**상태:** 6/6 적용 완료 — mock 3 case · BetPanel L171 · Controls ×3 · checkpoint hotfix 메모.
+
+| # | 항목 | 상태 |
+|---|------|------|
+| §1 | `useMockPipeline.simulate()` crash/plinko/limbo | ✅ |
+| §2 | `BetPanel.tsx` L171 + Controls.shared ×3 라벨 | ✅ |
+| §3 | `limbo-checkpoint.md` Hotfix 2줄 | ✅ |
+| preview | 3 route 베팅 + 라벨 구분 | ✅ **PASS** (operator confirm · 2026-06-14) |
+
+**실행 순서 (완료):** §1 mock 3 case → §2 BetPanel L171 → §2 Controls.shared ×3 → preview 검증 → §3 checkpoint
+
+---
+
+#### §1. Mock pipeline ↔ Stage shape drift
+
+**원인:** Crash/Plinko/Limbo Stage가 PHONARA `bet.result` 정본으로 마이그됐으나 `useMockPipeline.simulate()` 구 shape 유지 → preview 베팅 **무반응**. red:grep mock 출력 **비대상**.
+
+| game | Stage 정본 | mock 구 shape | 증상 |
+|------|-----------|---------------|------|
+| limbo | `resultMultiplier`, `won` | `multiplier` | 카운터 1.00 고정 |
+| plinko | `bucket`, `bucketMultiplier`, `path` | `bin` | 공 미낙하 |
+| crash | `crashMultiplier`, `cashedOut`, `cashoutMultiplier` (**number**) | `crashMultiplier`만 | celebrate 미발화 |
+
+**수정:** `src/games/preview/useMockPipeline.ts` `simulate()` **3 case** (dice/mines/그 외 5종 무변경).
+
+<details>
+<summary>3 case 스니펫 (crash = number 정본)</summary>
+
+```ts
+// limbo
+case "limbo": {
+  const ls = sel as SelectionFor<"limbo">;
+  const r = Math.random();
+  const raw = 0.99 / Math.max(0.0001, r);
+  const resultMultiplier = Math.max(1, raw);
+  const target = Number(ls.target);
+  const won = resultMultiplier >= target;
+  return {
+    result: { resultMultiplier, won },
+    payout: won ? (s * target).toFixed(2) : "0",
+    multiplier: won ? target.toFixed(2) : "0",
+    win: won,
+  };
+}
+
+// plinko
+case "plinko": {
+  const ps = sel as SelectionFor<"plinko">;
+  const bins = ps.rows + 1;
+  let bucket = 0;
+  const path: number[] = [];
+  for (let i = 0; i < ps.rows; i++) {
+    const step = Math.random() < 0.5 ? 0 : 1;
+    path.push(step);
+    bucket += step;
+  }
+  bucket = Math.max(0, Math.min(bins - 1, bucket));
+  const previewMults = [1.5, 1, 0.7, 0.5, 0.3, 0.5, 0.7, 1, 1.5];
+  const m = previewMults[Math.min(previewMults.length - 1, Math.abs(bucket - Math.floor(bins / 2)))];
+  return {
+    result: { bucket, bucketMultiplier: m.toFixed(2), path },
+    payout: (s * m).toFixed(2),
+    multiplier: m.toFixed(2),
+    win: m >= 1,
+  };
+}
+
+// crash — PHONARA packages/game-engine/src/games/crash.ts number 1:1
+case "crash": {
+  const r = Math.random();
+  const crash = Math.max(1.0, 0.99 / Math.max(0.0001, 1 - r));
+  const auto = Number((sel as SelectionFor<"crash">).autoCashout) || 0;
+  const cashedOut = auto > 0 && crash >= auto;
+  const cashoutMultiplier = cashedOut ? auto : 0;
+  const m = cashedOut ? auto : 0;
+  return {
+    result: { crashMultiplier: crash, cashedOut, cashoutMultiplier },
+    payout: (s * m).toFixed(2),
+    multiplier: m.toFixed(2),
+    win: cashedOut,
+  };
+}
+```
+
+</details>
+
+---
+
+#### §2. BetPanel "라운드 준비" 라벨 중복
+
+**원인:** `BetPanel` secondary (`casino-prepare-hash`) + primary (`casino-place-bet`) 모두 `!ready` 시 **"라운드 준비"** — 동일 문자열 2버튼.
+
+```ts
+// Controls.shared.tsx (crash/plinko/limbo 공통 패턴)
+primaryLabel={ready ? "<bet>" : "라운드 준비"}
+secondaryLabel="라운드 준비"   // ← !ready 시 primary 와 중복
+```
+
+**수정 (A안 · LOCK):** 2단계 UX + 9 testid 유지 · **4파일 1라인씩**
+
+| 파일 | 변경 |
+|------|------|
+| `src/games/shared/BetPanel.tsx` **L171** | `"라운드 준비 완료"` → `"해시 커밋 완료"` |
+| `src/games/limbo/Controls.shared.tsx` **L36** | `secondaryLabel="라운드 준비"` → `"해시 커밋"` |
+| `src/games/crash/Controls.shared.tsx` **L35** | 동일 |
+| `src/games/plinko/Controls.shared.tsx` **L38** | 동일 |
+
+**!ready UX:** 위 "해시 커밋" · 아래 "라운드 준비" → commit 후 위 disabled "해시 커밋 완료" · 아래 "N×에 베팅".
+
+**대안 B (미채택):** `!ready` 시 secondary 숨김 — 1버튼 흐름 · preflight 시각화 상실.
+
+**i18n:** raw 한국어 유지 (기존 패턴) · key화는 후속 PR.
+
+#### §3. 영향 · 검증 · checkpoint
+
+| 항목 | 영향 |
+|------|------|
+| 9 E2E testid | **무변경** |
+| vitest **240** (Plinko 200 + Limbo 40) | 라벨만 — text assertion 없으면 회귀 0 |
+| red:grep | 무영향 |
+| PHONARA paste | 4파일 1줄씩 · mock `.lovableignore` 제외 |
+| i18n | raw 한국어 유지 · key화 후속 PR |
+
+**검증 (실행 후):**
+
+1. `/casino/limbo` — 카운터 ease-out · win juice · high-mult miss shake
+2. `/casino/plinko` — 공 낙하 · bucket · celebrate
+3. `/casino/crash` — autoCashout 도달 시 juice
+4. 3 route `!ready` — "해시 커밋" / "라운드 준비" 라벨 구분
+
+**§3 checkpoint** — `.lovable/memory/limbo-checkpoint.md` v1.3 final-r2 §E 아래:
+
+> ### Hotfix (post-handoff)
+> - **mock↔Stage shape drift**: useMockPipeline.simulate() limbo/plinko/crash 3 case 동기. crash number 정본. 후속 §0 에 "Stage shape 변경 시 mock 동기 체크" 1줄.
+> - **BetPanel 라벨 중복**: secondary `"해시 커밋"` 분리 (3 Controls + BetPanel L171). preflight 2단계·testid 유지.
+
+**Mines 착수:** ✅ **GO** (§1-F hotfix + preview PASS · 2026-06-14)
+
+#### Preview 검증 체크리스트 (operator · Lovable canvas)
+
+| route | `!ready` 라벨 | post-commit | mock shape / feel |
+|-------|---------------|-------------|-------------------|
+| `/casino/limbo` | 위 **해시 커밋** · 아래 **라운드 준비** | 위 **해시 커밋 완료**(disabled) · 아래 **N×에 베팅** | 카운터 ease-out · win juice · loss shake |
+| `/casino/plinko` | 동일 | 동일 | 공 낙하 · bucket · celebrate |
+| `/casino/crash` | 동일 | 동일 | autoCashout 도달 시 juice |
+
+---
+
+### 1-G. Phase 5 — Mines v1 (**GO · LOCK** · Lovable · spec 확정 2026-06-14)
+
+**목표:** Crash/Plinko/Limbo v1.3 패턴 1:1 — RG · confirm · shortkeys · feel · rules · checkpoint · tests. **비주얼 1px 무변경.**
+
+**실행 순서:** §0-RED → §0-a → §0-b → A-1 → A-3 → A-2 → A-4 → A-5 → B → C-1 → C-2 → C-3
+
+---
+
+#### §0-RED — result key 전면 교체 (비협상 · 선행)
+
+엔진 정본: `{ minePositions: number[]; hitMine: boolean }` — `packages/game-engine/src/games/mines.ts` L11–14 · `casino_parity_test.sql`. Lovable mock·Stage `{ mines, hit }` → paste 시 adapter **조용히 깨짐**.
+
+| 파일 | 변경 |
+|------|------|
+| `mines/Stage.tsx` L36, 82–83 | `result as { minePositions?; hitMine? }` · `isMineHit` / `isSafeReveal` |
+| `preview/useMockPipeline.ts` mines | emit `{ minePositions, hitMine }` |
+| `shared/types.ts` | `MinesResult` 동기 또는 inline 정리 |
+
+**Gate:** `rg -n "result\.(mines|hit)\b" src/games/mines/ src/games/preview/` → **0건**
+
+#### §0-a · §0-b
+
+- **§0-a:** `Controls.shared.tsx` L39 `"라운드 준비"` → `"해시 커밋"`
+- **§0-b — money 9개** (PHONARA `casino-e2e-testids.ts` 1:1):
+  - BetPanel: `casino-stake-input` · `casino-prepare-hash` · `casino-place-bet` · `casino-error`
+  - Fairness open: `casino-client-seed-input` · `casino-fairness-verifier`
+  - Confirm `open=true`: `casino-bet-confirm` · `casino-bet-confirm-confirm` · `casino-bet-confirm-cancel`
+  - Optional non-money: `casino-game-back` · `casino-presence-ghost`
+  - Mines: cashout 분리 없음 · `casino-currency-select` 없음 · ❌ `casino-cashout` · `casino-fairness-trigger`
+
+#### §A 핵심
+
+| ID | 산출 |
+|----|------|
+| **A-1** | `RGGateProvider` wrap · `BetConfirmDialog` · **`GameRulesSheet`** (`casino-game-rules` on trigger — ❌ not `casino-fairness-verifier`) · **`ProvablyFairBadge`/`FairnessSheet`** (`casino-fairness-verifier` after open) · `useGameShortkeys` Space 2분기 + `1/2/5/Esc/?` |
+| **A-2** | feel 2지: `hitMine` → shake+lose · `!hitMine && revealed>0` → juice+celebrate · `tierOf(Number(minesMultiplier(...)))` ≥1.01 · `CelebrateOverlay` · `useReducedMotionGuard` |
+| **A-3** | `onPrimary`: ready+revealed → `await rg.gate("place_bet")` then `onOpenBetConfirm` · else `onPrepareRound` · `secondaryLabel="해시 커밋"` |
+| **A-4** | HUD `data-testid="casino-presence-ghost"` strip (Limbo 패턴) |
+| **A-5** | i18n `casino.field.next_multiplier` 등 (raw ko/en · key화 후속 PR) |
+
+#### §B Tests
+
+- 기존 5 + `celebrate.test.tsx` + `shortkeys.test.tsx`
+- celebrate: `{ minePositions:[5,12], hitMine:false }` + revealed=[0,1,2] → juice · `{ minePositions:[0,5], hitMine:true }` revealed=[0] → shake · settled=false → no-op
+- shortkeys: Space 2단계 · 빈 선택 openConfirm no-op · Esc/1/2/5
+- 목표 **40+ PASS**
+
+#### §C Closeout
+
+- **C-1:** `result.(mines|hit)` 0 · `rg "라운드 준비" src/games/mines/` 0 · `rg "casino-(cashout|currency-select|fairness-trigger)" src/games/mines/` 0 · red:grep ALL 0
+- **C-2:** `.lovable/memory/mines-checkpoint.md` — result shape · feel 2지 · tier ≥1.01 · 해시 커밋 · testid money 9 + optional 2 · `minesMultiplier` engine fn 통일
+- **C-3 §E 첫 줄:** `Mines v1 — RED({mines/hit}→{minePositions/hitMine}) + RGGate/Confirm/Shortkeys/Feel/Rules + 해시 커밋 + testid 정본`
+
+**후속 (macro):** HiLo → Dice (Phase 3) → Roulette → Blackjack (Phase 4) → MintReels/GoldRush.
+
+---
+
+#### Limbo §E closeout (실측 기록)
+
+```
+[END PHASE 4 · Limbo Closeout]
+0-0 useMockPipeline preview guard (throw → warn)
++ 0-0b GameBackLink (Lovable preview 10라우트 · PHONARA paste 시 CasinoLovableSurface 1회)
+A-1~A-6 PASS · B-1 vitest 40/40 PASS · B-2 e2e limbo.spec.ts: WRITTEN
+C-1 red:grep ALL 0 : PASS
+C-2 limbo-checkpoint.md v1.3 final-r2: PASS (3구간 + superseded ×2 + §nav)
+D chunk/60fps: MANUAL · Pixi: Phase 2.5 defer
+Result: GREEN (local · e2e CI-pending)
+```
 
 ---
 
@@ -299,7 +549,9 @@ plinko-checkpoint.md + §E 게이트 보고
 |----------|----------------------|---------------|-----------|
 | **crash** | `cashedOut`, `cashoutMultiplier` | `cashedOut && cashoutMultiplier ≥ 1.01` | `!cashedOut` → shake |
 | **plinko** | `bucketMultiplier` (string) | `Number ≥ 1.01` | `Number < 1` → shake |
-| dice/mines/… | GAMES-INTEGRATION §selection | Phase 4+에서 게임별 정의 | — |
+| **limbo** | `resultMultiplier`, `won` | `won && resultMultiplier ≥ 1.01` | `!won && resultMultiplier ≥ 1.01` → shake |
+| **mines** | `minePositions`, `hitMine` | `!hitMine && revealed>0` · tier=`minesMultiplier(mineCount, n)` | `hitMine` → shake |
+| dice/hilo/… | GAMES-INTEGRATION §selection | Phase 3+ 잔여 | — |
 
 ---
 
@@ -316,12 +568,20 @@ crash-checkpoint.md: PASS (+ §4.0-1 3줄)
 Result: GREEN
 ```
 
-### Plinko (Phase 3 목표)
+### Plinko (완료 · e2e CI-pending)
 
 ```
 [END PHASE 3 · Plinko Closeout]
 (same sections as Crash §E · bucketMultiplier win/loss · plinko-checkpoint.md)
-Result: GREEN (D MANUAL · Pixi 2.5 defer)
+Result: GREEN (D MANUAL · Pixi 2.5 defer · e2e CI-pending)
+```
+
+### Limbo (완료 · e2e CI-pending)
+
+```
+[END PHASE 4 · Limbo Closeout]
+(see §1-E block · resultMultiplier/won 3구간 · limbo-checkpoint v1.3 final-r2)
+Result: GREEN (local · e2e CI-pending)
 ```
 
 ---
@@ -347,29 +607,19 @@ Result: GREEN (D MANUAL · Pixi 2.5 defer)
 - ❌ `@phonara/game-engine` 정적 import in `src/games/**`
 - ❌ parallel plan 파일量产 (checkpoint.md만 게임별)
 - ❌ Phase 3 전 Crash §4.0 잔여 미완
+- ❌ Stage result shape 변경 후 `useMockPipeline.simulate()` 미동기 (handoff §1-F §1)
+- ❌ BetPanel `!ready` secondary/primary 동일 "라운드 준비" 라벨 (handoff §1-F §2)
 
 ---
 
 ## 11. 새 채팅 첫 지시 (복붙용)
 
+> **권장:** [`LOVABLE_ZENITH_NEW_CHAT.md`](LOVABLE_ZENITH_NEW_CHAT.md) 전체 @ — §0-A 워크스페이스 경계 + Mines spec 인라인 (~150줄).  
+> 이 파일(장문)은 히스토리·§E·Phase 상세용.
+
 ```text
-@docs/LOVABLE_ZENITH_SESSION_HANDOFF.md 기준으로 Lovable Zenith 작업을 이어서 진행해줘.
-
-확정:
-- Lovable UI only · PHONARA 엔진/supabase no-touch.
-- 완료: Phase 0–1 GREEN · Crash GREEN (local) · Plinko GREEN (local, vitest 200/200, red:grep 0).
-- 다음 실행 spec: Phase 4 Limbo v1.3 final-r2 (대화상 "Phase 4" = 게임 3번째 턴; 매크로 Phase 3 안 Limbo).
-
-한 턴 순서:
-0-0 useMockPipeline guard (throw → !DEV warn)
-0-0b GameBackLink shared + i18n + preview 10라우트 (PHONARA paste는 CasinoLovableSurface 1회)
-0-1 Plinko C-3 e2e PASS · 0-2 Phase 3 §E 실측 N/N
-A-6~A-5 Limbo ({ resultMultiplier, won } · Limbo 전용 3구간 · 금지 bet.result.multiplier)
-B-1 vitest 실측 N/N · B-2 limbo.spec + back smoke
-C-1 red:grep · C-2 limbo-checkpoint · C-3 §E (첫 줄: 0-0 + 0-0b)
-
-계약: GAMES-INTEGRATION > P1 > Zenith · 9 testid attached-after-flow · RG await · Space 3-state.
-Pixi = Phase 2.5 defer.
+@docs/LOVABLE_ZENITH_NEW_CHAT.md — §0-A 워크스페이스 확인 후 Mines v1 §2 실행.
+Lovable src/games/ 없으면 phonara-gb placeholder에 구현하지 말 것. PHONARA 엔진 no-touch.
 ```
 
 ---
@@ -378,7 +628,8 @@ Pixi = Phase 2.5 defer.
 
 | 용도 | 파일 |
 |------|------|
-| **이 대화 이어가기 (Lovable Phase 0–3)** | **이 파일** |
+| **이 대화 이어가기 (Lovable · 새 채팅)** | [`LOVABLE_ZENITH_NEW_CHAT.md`](LOVABLE_ZENITH_NEW_CHAT.md) |
+| **장문 정본 / 히스토리** | **이 파일** |
 | Lovable 실행 마스터 | `LOVABLE_ZENITH_MASTER_PLAN.md` |
 | 제품/퍼널/바이럴 | `LOVABLE_PRODUCT_PLATFORM_MANIFEST.md` |
 | P1 ZIP / testid | `LOVABLE_P1_FINAL_PHONARA.md` |
@@ -390,4 +641,4 @@ Pixi = Phase 2.5 defer.
 
 ---
 
-*LOVABLE_ZENITH_SESSION_HANDOFF · v2 · 2026-06-14 · Games 2/10 (Crash·Plinko) · Next: Limbo v1.3 final-r2 · Macro Phase 3~10 잔여*
+*LOVABLE_ZENITH_SESSION_HANDOFF · v5 · 2026-06-14 · Games 3/10 GREEN · §1-F hotfix PASS · Next: Mines v1 §1-G · Macro Phase 3~10 잔여*
