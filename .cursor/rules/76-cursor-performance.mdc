@@ -1,0 +1,89 @@
+---
+description: Cursor IDE performance — terminal discipline, watcher hygiene, agent execution limits
+alwaysApply: true
+---
+
+# Cursor Performance (Agent + Operator)
+
+Cursor lag in this repo is almost always **watcher/index noise** + **CPU-heavy
+scripts running in parallel**, not git history size. Follow these rules on every
+session.
+
+## Agent terminal discipline (mandatory)
+
+- **One heavy gate at a time.** Never run `typecheck`, `lint`, `test`, `build`,
+  or `check` in parallel across multiple terminals or background shells.
+- **Use incremental checks during work:**
+  - `bun run typecheck` (~2s) — default
+  - `bun run typecheck:force` — only after tsconfig/project-reference changes or
+    suspicious stale diagnostics
+  - `bun run lint` — uses ESLint cache automatically
+- **Never run full `bun run check` for a narrow change.** Pick the smallest gate:
+  `typecheck`, `lint`, `test`, or a targeted Playwright spec.
+- **After E2E or coverage:** `bun run clean` runs automatically via post-hooks;
+  still verify with `git status` that `test-results/` and `playwright-report/`
+  are gone.
+- **After local `build` when the session ends:** run `bun run clean` manually
+  (post-build auto-clean would delete dist immediately — do not add that).
+- **Never** start E2E in a background shell. See `77-e2e-lifecycle.mdc`.
+- **Do not leave diagnostic shells running** (`Get-Process`, hung `tasklist`,
+  full-repo file counts). They compete with TypeScript/ESLint and freeze the UI.
+
+## MCP and Cursor runtime
+
+- Project `.cursor/mcp.json` stays minimal. Do not add duplicate Supabase MCP
+  servers (plugin + stdio races on Windows).
+- After clone or MCP errors: `bun run mcp:fix`, then **fully quit and reopen
+  Cursor** (tray icon too).
+- Do not enable heavy global MCP servers unless required for the task.
+
+## Generated output contract
+
+When adding **generated** or **high-volume** paths (build output, caches, SQL
+mirrors, large dumps):
+
+1. `.gitignore`
+2. `.cursorignore`
+3. `scripts/lib/workspace-artifacts.ts` (single source of truth)
+4. `scripts/clean-artifacts.ts` imports from workspace-artifacts (sync enforced
+   by `check:hygiene`)
+5. `.vscode/settings.json` → `files.watcherExclude` + `search.exclude`
+
+**Never** leave a new artifact directory without all five updates.
+
+## Operator habits (Windows)
+
+- **Restart Cursor** after `.cursorignore` or `.vscode/settings.json` changes.
+- **Stop Docker Desktop** when not running local Supabase — it adds constant CPU
+  and file watcher load.
+- **Defender exclusion** (optional): add repo `node_modules` to Windows Defender
+  exclusions if scans coincide with lag spikes. On this PC V3 Lite is often the
+  active AV — run `bun run cursor:av-exclusions` (opens V3 Lite + prints paths).
+- **Session start preflight:** `bun run cursor:preflight` (clean + config check).
+- **Monthly metadata sweep:** `bun run cursor:clean-metadata` (dry-run preview).
+  Apply with `bun run cursor:clean-metadata -- --apply`. Old AI transcripts and
+  terminal logs live **outside the git repo** under
+  `%USERPROFILE%\.cursor\projects\…` — safe to delete; `@` past-chat links in
+  Cursor may break for those sessions.
+
+## Outside-repo Cursor data (not indexed by phonara-gb)
+
+| Location | Typical size | Safe to clean? | Impact on lag |
+|----------|--------------|----------------|---------------|
+| `~\.cursor\projects\…\agent-transcripts` | small–large | Yes (`cursor:clean-metadata`) | Low unless huge |
+| `~\.cursor\projects\…\terminals` | small | Yes | Low |
+| `%APPDATA%\Cursor\logs` | ~86MB+ | Yes (`--include-cursor-logs`) | Medium |
+| `%APPDATA%\Cursor\User` | ~2GB+ | **No** (settings, state) | Main disk use, not workspace index |
+| `%APPDATA%\Cursor\snapshots` | ~264MB+ | Manual only | Occasional |
+| `~\.cursor\ai-tracking` | ~37MB | Optional (`--include-cursor-logs`) | Low |
+
+Repo `.cursor/rules/` and `.cursor/mcp.json` are **source of truth — never delete**.
+
+## Quality gate
+
+`bun run check:hygiene` is part of `bun run check` and CI. It fails when:
+
+- Required watcher/index patterns are missing from config files
+- `clean-artifacts` drifts from `workspace-artifacts.ts`
+- Session residue (`test-results/`, `playwright-report/`, `coverage/`, E2E auth
+  tokens) is still on disk

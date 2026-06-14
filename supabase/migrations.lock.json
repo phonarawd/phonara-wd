@@ -88,6 +88,15 @@
     "20260613000084_admin_mfa_aal2_guard.sql": "38259e95c774cbbc9ce0a38bc2ca7d2e0eee2514dcca5dc63a3e8a72d93c772e",
     "20260613000085_withdrawal_daily_cap.sql": "280548a3b4bdb5be46880816b449276d7c546ac59eaf531cc532ea689bea5faf",
     "20260613000086_sanctions_screening_resolution.sql": "306837fe7b32dd51231146b41fbeac589a27659865c99b1f9d7526d2e0f3ae02",
-    "20260613000087_invariant_checks_monitoring.sql": "00d1c10987ea87607d51d8975f05de51a89036f94245a4c269e16f96366bab9b"
+    "20260613000087_invariant_checks_monitoring.sql": "00d1c10987ea87607d51d8975f05de51a89036f94245a4c269e16f96366bab9b",
+    "20260614000088_game_code_enum_new_games.sql": "ed51eafe4cbf475e2fbdaf357b6b862f7a6bc9bc71b5745cb4928e59f4326dc5",
+    "20260614000089_casino_new_games_engine.sql": "5ef983e306d1a2ac278d54b5a5fdc22ecf12614792b9ab7570b4c3a478620c78",
+    "20260614000090_casino_metrics_slo.sql": "0aaace85a4f817a83dc3d1fa483c40e1790cb1cbc7ae24c170f7098cd623b595",
+    "20260614000091_casino_slot_paytable_calibration.sql": "8793ad1b64d05787f7d074b3621ff087ef7a7482742f8db2e70fd9e3d1e763ab",
+    "20260614000092_blackjack_shuffle_float_fix.sql": "2c0156b5c994a5b80ac240887dba5898842f34e4138e5ff7e62467617b556556",
+    "20260614000093_slot_paytable_jsonb_fix.sql": "2aebf4996fa305f59056f5147ef9b4f13eb8d2b52e5699443f450522365586ff",
+    "20260614000094_slot_reel_strip_extraction_fix.sql": "03c71519533812d46a9af5991dd512a64e056c98ef8e4859d2a8ac17fc551bf3",
+    "20260614000095_slot_reel_strip_length_fix.sql": "b125decf5ab28dbc8678cfbbbe8999903eac07cd811205f9db40203bb615d231",
+    "20260614000096_blackjack_natural_payout_fix.sql": "47940aecad572e0a3cc3e17e321249d2c7884e9d43a1aba945c6614c399947e3"
   }
 }

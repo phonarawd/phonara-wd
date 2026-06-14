@@ -31,3 +31,11 @@ alwaysApply: true
   Security/Admin/PWA E2E suite to be green. If E2E fails, the phase is not done.
 - Tests must not leave persistent mock data, temporary accounts, or generated artifacts in the repo.
 - Before marking work complete, run the narrowest reliable check first, then broader checks when appropriate.
+
+## E2E lifecycle (mandatory — see `77-e2e-lifecycle.mdc`)
+
+- Run E2E only via `bun run test:e2e` or `bun run test:e2e:casino-smoke` — never
+  raw `playwright test`.
+- Wait for full process exit; **never** background E2E in agent terminals.
+- After E2E: ports 3000/3001/3002 free (`bun run e2e:kill`), `check:hygiene` green.
+- Interrupted/hung run: Ctrl+C → wait for teardown → `bun run e2e:kill` if needed.

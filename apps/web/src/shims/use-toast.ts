@@ -25,7 +25,7 @@ export function toast(input: ToastInput | string) {
 export function useToast() {
   return {
     toast,
-    dismiss: (_id?: string) => {
+    dismiss: () => {
       sonnerToast.dismiss();
     },
   };

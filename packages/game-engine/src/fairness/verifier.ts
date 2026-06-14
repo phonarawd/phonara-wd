@@ -1,14 +1,20 @@
 import { hashServerSeed } from './seed';
 import { floatStream } from './float';
-import { crashDefinition } from '../games/crash';
-import { diceDefinition } from '../games/dice';
-import { hiloDefinition } from '../games/hilo';
-import { limboDefinition } from '../games/limbo';
-import { minesDefinition } from '../games/mines';
-import { plinkoDefinition } from '../games/plinko';
-import type { GameDefinition } from '../registry';
+import { getGame, type GameCode } from '../registry';
 
-export type GameCode = 'crash' | 'limbo' | 'dice' | 'mines' | 'hilo' | 'plinko';
+// Side-effect imports — register all game modules.
+import '../games/crash';
+import '../games/limbo';
+import '../games/dice';
+import '../games/mines';
+import '../games/hilo';
+import '../games/plinko';
+import '../games/mint-reels';
+import '../games/gold-rush';
+import '../games/roulette';
+import '../games/blackjack';
+
+export type { GameCode };
 
 export interface VerifyInput {
   game: GameCode;
@@ -30,15 +36,6 @@ export interface VerifyResult {
   resultMatch: boolean | null;
 }
 
-const GAME_DEFINITIONS: Record<GameCode, GameDefinition<unknown, unknown>> = {
-  crash: crashDefinition as GameDefinition<unknown, unknown>,
-  limbo: limboDefinition as GameDefinition<unknown, unknown>,
-  dice: diceDefinition as GameDefinition<unknown, unknown>,
-  mines: minesDefinition as GameDefinition<unknown, unknown>,
-  hilo: hiloDefinition as GameDefinition<unknown, unknown>,
-  plinko: plinkoDefinition as GameDefinition<unknown, unknown>,
-};
-
 function stableStringify(value: unknown): string {
   if (Array.isArray(value)) {
     return `[${value.map((item) => stableStringify(item)).join(',')}]`;
@@ -59,7 +56,7 @@ export function recomputeResult(
   floats: number[],
   selection: unknown,
 ): unknown {
-  return GAME_DEFINITIONS[game].resultFromFloats(floats, selection);
+  return getGame(game).resultFromFloats(floats, selection);
 }
 
 /**
@@ -75,13 +72,14 @@ export function recomputeResult(
  */
 export async function verifyRound(input: VerifyInput): Promise<VerifyResult> {
   const { serverSeed, serverSeedHash, clientSeed, nonce, game, expectedResult } = input;
+  const definition = getGame(game);
 
   // 1. Verify hash commitment
   const computedHash = await hashServerSeed(serverSeed);
   const seedHashMatch = computedHash === serverSeedHash;
 
   // 2. Re-derive the full float stream required by the registered game.
-  const floats = await floatStream(serverSeed, clientSeed, nonce, GAME_DEFINITIONS[game].floatCount);
+  const floats = await floatStream(serverSeed, clientSeed, nonce, definition.floatCount);
 
   // 3. Recompute the deterministic game result and compare it with the stored result.
   const recomputedResult =

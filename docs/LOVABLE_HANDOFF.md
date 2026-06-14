@@ -3,7 +3,7 @@
 > **새 Cursor 채팅 첫 메시지에 이 파일 전체를 붙여넣거나 `@docs/LOVABLE_HANDOFF.md` 로 참조하세요.**  
 > 이 문서 하나로 이전 대화 맥락·결정·진행상태·다음 작업을 **빠짐없이** 이어갑니다.
 
-**관련 문서:** `docs/LOVABLE_P1_FINAL_PHONARA.md` (P1 Lovable 제작 스펙 · 부록 A–K) · `docs/LOVABLE_ABSORPTION_PLAN_FINAL.md` · `docs/GAMES-INTEGRATION.md`
+**관련 문서:** `docs/LOVABLE_P1_FINAL_PHONARA.md` (P1 스펙 · **단일 ZIP 납품**) · `docs/LOVABLE_CRASH_CHECKPOINT.md` (Crash Lovable 내부 QA) · `docs/LOVABLE_ABSORPTION_PLAN_FINAL.md` · `docs/GAMES-INTEGRATION.md`
 
 **레포:** `c:\Users\PC\Desktop\phonara-gb`  
 **브랜치:** `main` (로컬 `origin/main` 대비 +42 commits, push 안 함)  
@@ -43,7 +43,14 @@
 - **최고 스펙:** 레포에 설치된 React 19 · Vite 8 · pixi@8 · matter-js · framer-motion · Tailwind v4 · Playwright/axe를 **전면 사용** — 구 PHONARA UI 패턴으로 되돌리지 않음
 - **Cursor 역할:** ZIP paste + 어댑터 10~30줄 + props/i18n/testid 연결 + **구 UI 삭제**만 — **재디자인·정규화·개선·구 UI 혼합 금지**
 
-Lovable ZIP 이식 후 Cursor가 할 일: **어댑터 10~30줄 + props 연결**뿐.
+Lovable ZIP 이식 후 Cursor가 할 일: **일괄 paste + 어댑터 연결 + 구 UI 삭제** (게임/페이지 **한 번에**).
+
+### 납품 방식 — 단일 ZIP 일괄 (확정)
+
+- **Lovable:** 전 페이지·전 탭·셸·6종 게임·A–G·보조 화면·i18n catalog를 **전부 완성** → **코드베이스 ZIP 1회** export.
+- **Cursor:** ZIP **1회** 수령 → paste map 일괄 이식 → 구 UI **전량 삭제** → 어댑터·i18n·router → 게이트.
+- **하지 않음:** 게임/페이지별 분할 ZIP · PHONARA에 부분 paste · 구 UI와 Lovable UI 공존.
+- Crash 1차 체크포인트 등은 Lovable **내부 QA**용; Cursor 이식 타이밍은 **최종 ZIP** 기준.
 
 ---
 
@@ -220,9 +227,11 @@ src/routes/{home,earn,landing,account,...} 페이지 본문
 
 ## 6. 카지노 엔진 계약 (Lovable 게임 UI 필수)
 
-### game_code (DB ENUM — 6종만)
+### game_code (DB ENUM — 10종)
 
-`crash | limbo | dice | mines | hilo | plinko`
+`crash | limbo | dice | mines | hilo | plinko | mint_reels | gold_rush | roulette | blackjack`
+
+**Earn `rpc_spin_roulette` ≠ 카지노 `roulette`** — 코드·RPC·i18n·metrics 혼용 금지.
 
 ### 통화
 

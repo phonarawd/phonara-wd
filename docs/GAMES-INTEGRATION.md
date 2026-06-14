@@ -1,19 +1,23 @@
 # GAMES-INTEGRATION — PHONARA Engine Contract for Lovable UI
 
 Technical contract for connecting Lovable game surfaces to the existing PHONARA casino engine.  
-**UI must not reimplement settlement, RNG, or payout math.**
+**UI must not reimplement settlement, RNG, or payout math.**  
+**PHONARA does not build game visuals** — Lovable ZIP is paste-only (`PresentationImportPlaceholder` until absorption).
 
 ---
 
-## Game codes (frozen in DB)
+## Game codes (DB enum)
 
 ```sql
 CREATE TYPE game_code AS ENUM (
-  'crash', 'limbo', 'dice', 'mines', 'hilo', 'plinko'
+  'crash', 'limbo', 'dice', 'mines', 'hilo', 'plinko',
+  'mint_reels', 'gold_rush', 'roulette', 'blackjack'
 );
 ```
 
-Adding Wheel, Keno, slots, live tables requires a new migration + `packages/game-engine` module **before** UI work.
+Single source in TS: `GAME_CODES` in `packages/game-engine/src/registry.ts`.
+
+Adding games: follow `docs/ADD_GAME_RUNBOOK.md` (enum migration → engine migration → gates).
 
 ---
 
@@ -26,145 +30,89 @@ Adding Wheel, Keno, slots, live tables requires a new migration + `packages/game
 
 All amounts: **decimal strings** with up to 6 fractional digits (e.g. `"10.000000"`). Never `number`.
 
-Config keys (SQL `app_config`): `casino_min_stake_phon`, `casino_max_stake_phon`, `casino_max_payout_phon`, `casino_house_exposure_cap_phon`, and USDT equivalents.
-
 ---
 
 ## RPC flow
 
-### 1. Open round
-
-```ts
-await callRpc('rpc_open_game_round', { p_game: 'dice' });
-// → { round_id, server_seed_hash }
-```
-
-### 2. Place bet (atomic settlement)
-
-```ts
-await callRpc('rpc_place_game_bet', {
-  p_round_id: string,
-  p_currency: 'PHON' | 'USDT',
-  p_stake: string,
-  p_selection: Json,      // game-specific — see below
-  p_client_seed: string,
-  p_idempotency_key: string,
-});
-// → BetResponse { bet_id, status, result, payout, ... }
-```
-
-Settlement happens **inside** `rpc_place_game_bet`. There is no separate client settle step.
-
-### 3. Reveal
-
-```ts
-await callRpc('rpc_reveal_game_round', { p_round_id });
-// → { server_seed, server_seed_hash, result }
-```
-
-### 4. Client verification
-
-```ts
-import { verifyRound } from '@phonara/game-engine';
-
-await verifyRound({
-  game: gameCode,
-  serverSeed: revealed.server_seed,
-  serverSeedHash: commitment.server_seed_hash,
-  clientSeed,
-  nonce: 1,
-  selection,
-  expectedResult: placed.result,
-});
-```
+### 1. Open round — `rpc_open_game_round`
+### 2. Place bet — `rpc_place_game_bet` (atomic settlement)
+### 3. Reveal — `rpc_reveal_game_round`
+### 4. Verify — `verifyRound()` from `@phonara/game-engine`
 
 ---
 
 ## Provably fair
 
-Implementation: `packages/game-engine/src/fairness/`
-
 ```
-HMAC-SHA256(
-  key = serverSeed,
-  message = `${clientSeed}:${nonce}:${cursor}`
-)
+HMAC-SHA256(key=serverSeed, message=`${clientSeed}:${nonce}:${cursor}`)
 ```
-
-- Floats derived from HMAC hex → uniform [0, 1)
-- **Do not** use `${client}:${nonce}` (missing `:cursor`)
 
 ---
 
-## Selection schemas per game
+## Selection schemas
 
 ### crash
-
-```ts
-{ autoCashout: string }  // e.g. "2.00", min 1.01
-```
-
-**Model:** One-shot. Player sets target multiplier **before** bet. Server computes `crashMultiplier` and whether `autoCashout` was reached.  
-**UI note:** Pixi rising curve is **cosmetic replay** of `result.crashMultiplier`. No mid-round server cashout.
+`{ autoCashout: string }`
 
 ### dice
-
-```ts
-{ target: string; direction: 'over' | 'under' }
-```
+`{ target: string; direction: 'over' | 'under' }`
 
 ### mines
-
-```ts
-{ mineCount: number; revealedCells: number[] }  // distinct indices 0–24
-```
-
-**Model:** One-shot. All revealed cells submitted in a single bet.  
-**UI note:** Click-to-reveal builds `revealedCells` in local state; bet fires once. Display multiplier may use `minesMultiplier()` from game-engine for **preview only** — `payout` comes from server.
+`{ mineCount: number; revealedCells: number[] }`
 
 ### plinko
-
-```ts
-{ rows: 8 | 12 | 16; risk: 'low' | 'medium' | 'high' }
-```
+`{ rows: 8 | 12 | 16; risk: 'low' | 'medium' | 'high' }`
 
 ### limbo
-
-```ts
-{ target: string }
-```
+`{ target: string }`
 
 ### hilo
+`{ startCard: number | null; guesses: ('higher' | 'lower' | 'skip')[] }`
 
+### mint_reels / gold_rush
+`{ lines: number }` — integer 1..20, one spin = one bet
+
+### roulette (casino — NOT Earn `rpc_spin_roulette`)
 ```ts
-{ startCard: number | null; guesses: ('higher' | 'lower' | 'skip')[] }
+{
+  bets: Array<{
+    type: 'straight' | 'split' | 'red' | 'black' | 'even' | 'odd' | 'low' | 'high'
+        | 'dozen1' | 'dozen2' | 'dozen3' | 'column1' | 'column2' | 'column3';
+    value: number | null;  // straight/split number 0..36
+    stakeWeight: number;   // positive; stake split proportionally
+  }>;
+}
 ```
+
+### blackjack
+```ts
+{
+  actions: Array<{ seat: number; move: 'hit' | 'stand' | 'double' | 'split' | 'insurance' }>;
+}
+```
+One-shot submission (like mines). Engine replays legality + dealer S17.
 
 ---
 
-## PHONARA hook (do not fork)
+## ImportedGameSurfaceProps
 
-File: `apps/web/src/features/casino/use-casino-round.ts`
+File: `apps/web/src/components/games/shared/types.ts`
 
-```ts
-const pipeline = useCasinoRoundPipeline({
-  gameCode,
-  currency,
-  stake,
-  selection,
-  clientSeed,
-  clientSeedIsAuto,
-  setClientSeed,
-  userId,
-  onRecentBetsChange,
-});
+Lovable components receive pipeline callbacks only — no direct RPC.
 
-// pipeline.prepareRound()   — open round
-// pipeline.openBetConfirm() — show confirm (required for money UX)
-// pipeline.submitBet()      — place + reveal + verify + wallet invalidate
-```
+---
 
-Route adapter (`routes/casino.tsx`) owns state; Lovable game component receives props.
+## E2E testids (required on bet surfaces)
+
+| testid | Purpose |
+|--------|---------|
+| `casino-prepare-hash` | Open round |
+| `casino-stake-input` | Stake field |
+| `casino-place-bet` | Open confirm dialog |
+| `casino-bet-confirm-confirm` | Submit bet |
+| `casino-bet-confirm-cancel` | Cancel confirm |
+| `casino-error` | Error display |
+| `casino-fairness-verifier` | PF panel |
 
 ---
 
@@ -178,36 +126,37 @@ Route adapter (`routes/casino.tsx`) owns state; Lovable game component receives 
 | `/casino/plinko` | plinko |
 | `/casino/limbo` | limbo |
 | `/casino/hilo` | hilo |
+| `/casino/mint-reels` | mint_reels |
+| `/casino/gold-rush` | gold_rush |
+| `/casino/roulette` | roulette |
+| `/casino/blackjack` | blackjack |
 | `/casino/fairness` | docs |
-| `/games` | catalog (presentation) |
+| `/games` | catalog (Lovable presentation) |
 
 ---
 
-## Responsible gaming
+## i18n namespace
 
-- DB + `rpc_place_game_bet` enforces limits
-- UI: `/responsible-gaming` + gate modal on RG error codes
-- Engine path: `apps/web/src/domain/responsible-gaming.ts`
+- `casino.game.{code}` / `casino.game.{code}.desc`
+- `casino.field.{field}`
+- `casino.option.{option}`
 
 ---
 
 ## Paste zones
 
 ```
-apps/web/src/components/games/shared/     # BetPanel, hooks (sound, loop)
-apps/web/src/components/games/{crash,...}/
+apps/web/src/components/games/{game}/
 apps/web/src/presentation-import/pages/games-*.tsx
 ```
 
 ---
 
-## Tests that must stay green
+## Gates
 
-- `packages/game-engine` unit tests (payout parity)
-- `supabase/tests/casino_schema_test.sql`
-- `supabase/tests/conservation_test.sql`
-- Playwright casino / funnel E2E
+- `bun run check:games` — registration completeness
+- `bun run check:determinism` — no Math.random in games
+- `PHONARA_SQL_PARITY=1` — TS/SQL `_game_result` parity
+- RTP harness — `packages/game-engine/src/lib/rtp-harness.test.ts`
 
----
-
-See also: `docs/LOVABLE_ABSORPTION_PLAN_FINAL.md`, `apps/web/PRESENTATION_IMPORT.md`
+See also: `docs/ADD_GAME_RUNBOOK.md`, `docs/CASINO_SLO.md`, `apps/web/PRESENTATION_IMPORT.md`

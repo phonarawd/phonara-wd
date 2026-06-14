@@ -8,7 +8,7 @@ import { useConfirmSnapshot } from '../../hooks/use-confirm-snapshot';
 import { isPositiveDecimalInput } from '../../lib/money-input';
 import { useT } from '../../lib/i18n';
 import { mapGameSurfaceProps } from './map-game-surface-props';
-import { GAME_BY_CODE } from './game-config';
+import { GAME_BY_CODE, casinoGamePath } from './game-config';
 import { useCasinoRoundPipeline } from './use-casino-round';
 import { loadRecentBets } from './recent-bets';
 import { cellsFromText, randomHex } from './helpers';
@@ -143,7 +143,7 @@ export function useCasinoPageController(initialGame: GameCode) {
 
   const selectGame = useCallback(
     (next: GameCode) => {
-      void navigate({ to: next === 'dice' ? '/casino/dice' : `/casino/${next}` });
+      void navigate({ to: casinoGamePath(next) });
     },
     [navigate],
   );

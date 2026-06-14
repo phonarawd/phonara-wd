@@ -23,6 +23,10 @@ import {
   casinoMinesRoute,
   casinoHiloRoute,
   casinoPlinkoRoute,
+  casinoMintReelsRoute,
+  casinoGoldRushRoute,
+  casinoRouletteRoute,
+  casinoBlackjackRoute,
   casinoFairnessRoute,
 } from './routes/casino';
 import { Route as walletRoute } from './routes/wallet';
@@ -65,6 +69,10 @@ const routeTree = rootRoute.addChildren([
   casinoMinesRoute,
   casinoHiloRoute,
   casinoPlinkoRoute,
+  casinoMintReelsRoute,
+  casinoGoldRushRoute,
+  casinoRouletteRoute,
+  casinoBlackjackRoute,
   casinoFairnessRoute,
 ]);
 

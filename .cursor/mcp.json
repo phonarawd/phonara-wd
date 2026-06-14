@@ -1,11 +1,3 @@
-﻿{
-    "mcpServers":  {
-                       "supabase":  {
-                                        "args":  [
-                                                     "/c",
-                                                     "scripts\\run-supabase-mcp.cmd"
-                                                 ],
-                                        "command":  "cmd"
-                                    }
-                   }
+{
+  "mcpServers": {}
 }

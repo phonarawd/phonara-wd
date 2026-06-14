@@ -1,41 +1,16 @@
 import { existsSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-
-const rootTargets = [
-  '.turbo',
-  '.vite',
-  'blob-report',
-  'coverage',
-  'playwright-report',
-  'test-results',
-  'supabase/.temp',
-  'supabase/.branches',
-];
-
-const ephemeralAuthPatterns = [
-  'tests/e2e/.auth.json',
-  'tests/e2e/.admin-auth.json',
-];
-
-const workspaceArtifactNames = [
-  '.turbo',
-  '.vite',
-  'build',
-  'coverage',
-  'dist',
-  'node_modules/.cache',
-  'node_modules/.vite',
-  'playwright-report',
-  'test-results',
-  'tsconfig.tsbuildinfo',
-  'tsconfig.app.tsbuildinfo',
-  'tsconfig.node.tsbuildinfo',
-];
-
-const workspaceRoots = ['apps', 'packages'];
+import {
+  EPHEMERAL_AUTH_PATHS,
+  CURSOR_EPHEMERAL_PATHS,
+  ROOT_ARTIFACT_DIRS,
+  ROOT_ARTIFACT_FILES,
+  WORKSPACE_ARTIFACT_NAMES,
+  WORKSPACE_ROOTS,
+} from './lib/workspace-artifacts';
 
 function workspaceTargets() {
-  return workspaceRoots.flatMap((root) => {
+  return WORKSPACE_ROOTS.flatMap((root) => {
     if (!existsSync(root)) {
       return [];
     }
@@ -43,7 +18,7 @@ function workspaceTargets() {
     return readdirSync(root, { withFileTypes: true })
       .filter((entry) => entry.isDirectory())
       .flatMap((entry) =>
-        workspaceArtifactNames.map((artifact) => join(root, entry.name, artifact)),
+        WORKSPACE_ARTIFACT_NAMES.map((artifact) => join(root, entry.name, artifact)),
       );
   });
 }
@@ -60,10 +35,12 @@ function playwrightArtifactDirs() {
 }
 
 const targets = [
-  ...rootTargets,
+  ...ROOT_ARTIFACT_DIRS,
   ...workspaceTargets(),
-  ...ephemeralAuthPatterns,
+  ...EPHEMERAL_AUTH_PATHS,
+  ...CURSOR_EPHEMERAL_PATHS,
   ...playwrightArtifactDirs(),
+  ...ROOT_ARTIFACT_FILES,
 ];
 
 let removed = 0;

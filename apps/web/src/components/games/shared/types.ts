@@ -8,6 +8,10 @@ import type {
 
 /**
  * Contract for Lovable game surfaces — see docs/GAMES-INTEGRATION.md
+ *
+ * E2E testids: casino-prepare-hash, casino-stake-input, casino-place-bet,
+ * casino-bet-confirm-confirm, casino-bet-confirm-cancel, casino-error,
+ * casino-fairness-verifier
  */
 export type ImportedGameSurfaceProps = {
   gameCode: GameCode;

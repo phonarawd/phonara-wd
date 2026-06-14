@@ -3,7 +3,7 @@
 > **Lovable AI 채팅에 이 파일 전체를 붙여넣거나 `@docs/LOVABLE_P1_FINAL_PHONARA.md` 로 참조하세요.**  
 > P0 계약·엔진 경계·paste map·2층 QA·i18n·testid 앵커를 한 문서에 고정합니다.
 
-**관련 문서:** `docs/LOVABLE_HANDOFF.md` · `docs/GAMES-INTEGRATION.md` · `docs/LOVABLE_ABSORPTION_PLAN_FINAL.md` · `apps/web/PRESENTATION_IMPORT.md`
+**관련 문서:** `docs/LOVABLE_HANDOFF.md` · `docs/LOVABLE_CRASH_CHECKPOINT.md` · `docs/GAMES-INTEGRATION.md` · `docs/LOVABLE_ABSORPTION_PLAN_FINAL.md` · `apps/web/PRESENTATION_IMPORT.md`
 
 **엔진 절대 무수정 (최상위 규칙 — Lovable/UI 작업 중 위반 금지):** PHONARA **엔진 레이어는 한 줄·한 바이트도 수정하지 않는다.** 리팩터·버그픽스·편의 개선·UI 맞춤 변경·마이그레이션·RPC/RLS 추가·hook 로직 변경·`game_code` 확장 전부 **금지**. UI가 엔진 변경을 요구하면 **구현하지 말고 보고만** 한다. UI는 hook/RPC **반환값 표시 + callback 호출**만.
 
@@ -35,6 +35,8 @@
 
 **탭/네비:** BottomNav 5탭·상단 탭·서브탭·AccountSheet 섹션 탭 — Lovable 레이아웃·아이콘·라벨·활성 상태·전환 모션 그대로.
 
+**납품 방식 — 단일 ZIP 일괄 (확정):** Lovable에서 **모든 페이지·셸·10종 게임 카탈로그·A–G·보조 화면·i18n catalog·(선택) e2e/vitest**를 **전부 완성한 뒤**, **코드베이스 ZIP 한 번**으로 PHONARA에 넘긴다. PHONARA는 엔진·정산·테스트만 준비하고 **시각 구현은 하지 않음** — ZIP을 **1000% 그대로 흡수**만 한다.
+
 ---
 
 # PHONARA P1 FINAL v3 — 승인 (PHONARA 부록 A–K 동등 강제)
@@ -51,8 +53,9 @@ P1 v3 비전(A–G · 모바일 한손 · 데스크탑 단축키 · 6종 Stage/H
 - 클라 RNG/HMAC 결과 산출 금지(PF 표시·검증만), `rpc_*`/Supabase 직접 호출 금지, 금액은 항상 string, `parseFloat` 금지
 - `apps/web/src/theme.css` 수정 금지 (엔진·레거시 표면 토큰 전용)
 - `routeTree.gen.ts` 생성/의존 금지, `/auth`·`games.$gameId`·카지노 동적 `gameId` 라우트 금지
-- `game_code` 6종 고정(`crash|dice|mines|plinko|limbo|hilo`)
-- 슬롯/라이브/Wheel/Keno/Tower/Coinflip **정산** 금지(P2 UI shell만)
+- `game_code` **10종** (`crash|dice|mines|plinko|limbo|hilo|mint_reels|gold_rush|roulette|blackjack`) — PHONARA 엔진·정산·PF **이미 구현됨**. Lovable은 UI/UX만 제공
+- Earn 보상 `rpc_spin_roulette`와 카지노 `roulette` **도메인 분리** (코드·RPC·i18n·metrics 혼용 금지)
+- Wheel/Keno/Tower/Coinflip 등 **미엔진 게임**은 P2 UI shell만 (정산 금지)
 - `howler` 금지(WebAudio `useSound` only), 게임 폴더 내 Supabase/Cloud import **0건**
 - A–G 전부 presentational. 신규 `game_code`/RPC/도메인 수정 금지
 
@@ -74,7 +77,19 @@ P1 v3 비전(A–G · 모바일 한손 · 데스크탑 단축키 · 6종 Stage/H
 
 ---
 
-## 2) 6종 게임 (모바일 압살 + 데스크탑 최강)
+## 2) 10종 게임 (모바일 압살 + 데스크탑 최강)
+
+**엔진 10종 (PHONARA 완료 — Lovable UI만 납품):**
+
+| engine_code | 유형 | selection (원샷) | URL |
+|---|---|---|---|
+| `crash` … `hilo` | 기존 6종 | `docs/GAMES-INTEGRATION.md` | `/casino/{code}` |
+| `mint_reels` | 3×5 슬롯 | `{ lines: 1..20 }` | `/casino/mint-reels` |
+| `gold_rush` | 3×5 슬롯 | `{ lines: 1..20 }` | `/casino/gold-rush` |
+| `roulette` | 유럽식 PF 테이블 | `{ bets: [{ type, value, stakeWeight }] }` | `/casino/roulette` |
+| `blackjack` | PF 즉시 테이블 | `{ actions: [{ seat, move }] }` | `/casino/blackjack` |
+
+Lovable은 `ImportedGameSurfaceProps` + 표준 E2E testid 9개 + i18n `casino.game.{code}` 계약을 준수한다. 베팅은 **`onPlaceBet` callback만** — Supabase/RPC/정산 직접 호출 금지.
 
 각 게임 폴더: `Stage.tsx` · `HUD.tsx` · `Controls.mobile.tsx` · `Controls.desktop.tsx` · `index.tsx` · `__tests__/*.test.tsx`.
 
@@ -309,10 +324,62 @@ apps/web/src/hooks/use-money.ts
 
 ---
 
-## Cursor ZIP 수령 후 (참고)
+## Cursor — 단일 ZIP 수령 후 (일괄 이식 플레이북)
 
-1. Paste map 경로에 restyle 없이 붙여넣기
-2. `useCasinoPageController` + `mapGameSurfaceProps` 연결
-3. `src/i18n/catalog.ts` → `packages/i18n` 키 추가
-4. `router.ts`에 보조·share 라우트 등록
-5. `VITE_LOVABLE_CASINO_SURFACE=true` 후 `bun run check` + `tests/e2e/casino.spec.ts` green
+> **전제:** ZIP에 P1 전면 UI가 **100% 포함**. 엔진 레이어는 touch 0. 구 PHONARA UI는 이식 완료 시 **잔재 0**.
+
+### 0) ZIP 수신 체크 (Lovable → Cursor 인계 전)
+
+ZIP에 포함되어야 함 (paste map §9):
+
+- [ ] `src/games/shared/{gfx,feel,presence,celebrate,theme,replay,mobile,visuals,hooks}/**`
+- [ ] `src/games/{crash,dice,mines,plinko,limbo,hilo}/**` (각 Stage/HUD/Controls.mobile/desktop/index)
+- [ ] `src/components/{ui,shell,earn,trade,fomo,welcome}/**`
+- [ ] `presentation-import` 대응 페이지 컴포넌트 (Earn·Home·Landing·Wallet·Auth·Trade·Games catalog·History·Fairness·Tournaments·Share·Offline·RG·More·Account·Settings·Legal 등)
+- [ ] `lovable-globals.css` (또는 `src/styles.css` 게임/celebrate/thumb 토큰)
+- [ ] `src/i18n/catalog.ts` (키·ko·en)
+- [ ] (권장) `tests/e2e/games/*.spec.ts`, 게임 `__tests__/**`
+
+ZIP에서 **제외** (Cursor만 작성):
+
+- [ ] `src/routes/**` 라우트 등록 파일 (`casino.crash.tsx` 등 Lovable 프리뷰용)
+- [ ] `router.ts` / `routeTree.gen.ts`
+- [ ] Supabase · Lovable Cloud · engine/ports
+
+### 1) 일괄 paste (restyle 0)
+
+`apps/web/PRESENTATION_IMPORT.md` · §9 paste map 경로에 **한 번에** 붙여넣기. `theme.css` 병합 금지.
+
+### 2) 어댑터 연결 (얇게)
+
+- `routes/*.tsx` — hook 호출 + `Imported*` 페이지 / `GameSurfaceLoader` / `CasinoLovableSurface`
+- `mapGameSurfaceProps` · `useCasinoPageController` — 이미 있음, 연결만
+- `src/i18n/catalog.ts` → `packages/i18n` 키 **추가만** (기존 키 삭제/의미변경 금지)
+- `router.ts` — 보조·share·offline 등 미등록 라우트 등록
+- `VITE_LOVABLE_CASINO_SURFACE=true`
+
+### 3) 구 UI 전량 삭제 (§14)
+
+`app-shell` · 구 `landing-page` · casino 구 시각(690줄) · `@phonara/ui` 카지노 위젯 · `PresentationImportPlaceholder` · 구 route JSX — **한 톨도 남기지 않음**.
+
+### 4) 게이트 (P1 완료)
+
+```
+bun run check
+bun run test:e2e    # casino.spec(money/PF) + games/*.spec + quality + RG
+```
+
+엔진 경로 `git diff` = 0 확인.
+
+### 5) (선택) 체크포인트 산출물
+
+`docs/checkpoints/{crash,dice,...}/` — ZIP에 Lovable이 이미 넣었으면 보관만; 없으면 Cursor가 이식 후 생성.
+
+---
+
+## Cursor ZIP 수령 후 (요약)
+
+1. Paste map 일괄 paste · restyle 0  
+2. 어댑터 + i18n + router  
+3. 구 UI 삭제 · `VITE_LOVABLE_CASINO_SURFACE=true`  
+4. `bun run check` + full E2E green · **엔진 diff 0**

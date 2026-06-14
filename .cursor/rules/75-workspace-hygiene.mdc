@@ -5,20 +5,39 @@ alwaysApply: true
 
 # Workspace Hygiene & Cursor Performance
 
-Cursor lag is mostly **index noise** (file count), not repo git size. Keep the
-workspace lean so the IDE stays responsive.
+Cursor lag is mostly **index/watcher noise** (file count + artifact churn), not
+git history size. Keep the workspace lean so the IDE stays responsive.
+
+See also: `76-cursor-performance.mdc` (agent terminal discipline, MCP, operator
+habits).
+
+## Single source of truth
+
+Artifact paths live in `scripts/lib/workspace-artifacts.ts`. Every consumer must
+stay in sync:
+
+- `scripts/clean-artifacts.ts`
+- `scripts/check-workspace-hygiene.ts` (`bun run check:hygiene`)
+- `.cursorignore`, `.gitignore`, `.prettierignore`
+- `.vscode/settings.json` → `files.watcherExclude` / `search.exclude`
+
+`check:hygiene` fails if these drift or session residue remains on disk.
 
 ## Mandatory cleanup triggers
 
 Run `bun run clean` (→ `scripts/clean-artifacts.ts`) **automatically** after:
 
-- Any Playwright / `bun run test:e2e` run (pass or fail)
-- `bun --filter @phonara/web build` or full `bun run build` when done for the session
+- Any Playwright / `bun run test:e2e` run (see `77-e2e-lifecycle.mdc` for mandatory
+  teardown; `pretest`/`posttest` hooks + `globalTeardown` + wrapper)
+- `bun run test` / `bun run test:coverage` (via `posttest` hooks)
+- `bun run build` when **ending** a session (not immediately after — dist is valid
+  mid-session)
 - Large dependency installs (`bun install` adding new packages)
 - Before reporting a task complete if build/E2E ran in that session
 
-Do **not** leave behind: `test-results/`, `playwright-report/`, `dist/`,
-`coverage/`, `**/.vite/`, `**/node_modules/.vite/`, `.playwright-artifacts-*`.
+Session start: `bun run cursor:preflight` (clean + config verify + snapshot).
+Monthly: `bun run cursor:clean-metadata` (preview AI transcript / terminal log
+sizes outside repo; `--apply` to delete).
 
 ## Forbidden residue (never commit, delete when found)
 
@@ -32,15 +51,21 @@ Do **not** leave behind: `test-results/`, `playwright-report/`, `dist/`,
 
 These stay on disk but out of Cursor semantic index:
 
-- `node_modules/`, `**/node_modules/`
-- `dist/`, `packages/*/dist/`
+- `node_modules/`, `**/node_modules/`, `**/node_modules/.cache/`
+- `dist/`, `**/dist/`, `apps/*/dist/`, `packages/*/dist/`
 - `**/.vite/`, `**/node_modules/.vite/`
 - `test-results/`, `playwright-report/`, `blob-report/`
 - `supabase/functions-sql/` (generated mirror)
-- `bun.lock`, large archival docs listed in `.cursorignore`
+- `bun.lock`, `.eslintcache`, `*.tsbuildinfo`
+- Large archival docs listed in `.cursorignore`
 
-When adding new **generated** or **high-volume** paths, update `.cursorignore`
-and `scripts/clean-artifacts.ts` in the same change.
+When adding new **generated** or **high-volume** paths, update
+`workspace-artifacts.ts` and all consumers in the **same change**.
+
+## VS Code / Cursor watcher excludes (`.vscode/settings.json`)
+
+Required for Windows performance — do not delete. After edits: **fully restart
+Cursor** so watchers rebuild without excluded paths.
 
 ## Duplicate prevention (presentation)
 
@@ -49,13 +74,14 @@ and `scripts/clean-artifacts.ts` in the same change.
 
 ## Session end checklist (agents)
 
-Before closing a implementation session:
+Before closing an implementation session:
 
 1. `bun run clean`
-2. `git status` — no untracked `dist/`, `test-results/`, `.vite/`
-3. No new duplicate folders mirroring existing paste zones
+2. `bun run check:hygiene`
+3. `git status` — no untracked `dist/`, `test-results/`, `.vite/`
+4. No new duplicate folders mirroring existing paste zones
 
 ## Operator note
 
-After bulk cleanup or `.cursorignore` changes, **restart Cursor** once so the
-index rebuilds without excluded paths.
+After bulk cleanup or `.cursorignore` / `.vscode/settings.json` changes, **restart
+Cursor** once so the index rebuilds without excluded paths.

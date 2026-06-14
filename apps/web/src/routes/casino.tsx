@@ -39,7 +39,7 @@ import type { GameCode } from '@phonara/game-engine';
 import { CasinoLovableSurface } from '../presentation-import/casino/casino-lovable-surface';
 import { USE_LOVABLE_CASINO_SURFACE } from '../presentation-import/casino/casino-skin';
 import type { MessageKey } from '@phonara/i18n';
-import { GAME_BY_CODE, GAME_CONFIGS } from '../features/casino/game-config';
+import { GAME_BY_CODE, GAME_CONFIGS, casinoGamePath } from '../features/casino/game-config';
 import { GameFieldControl } from '../features/casino/game-field-control';
 import { useCasinoRoundPipeline } from '../features/casino/use-casino-round';
 import { loadRecentBets } from '../features/casino/recent-bets';
@@ -87,6 +87,30 @@ export const casinoPlinkoRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/casino/plinko',
   component: () => <CasinoPage initialGame="plinko" />,
+});
+
+export const casinoMintReelsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/casino/mint-reels',
+  component: () => <CasinoPage initialGame="mint_reels" />,
+});
+
+export const casinoGoldRushRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/casino/gold-rush',
+  component: () => <CasinoPage initialGame="gold_rush" />,
+});
+
+export const casinoRouletteRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/casino/roulette',
+  component: () => <CasinoPage initialGame="roulette" />,
+});
+
+export const casinoBlackjackRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/casino/blackjack',
+  component: () => <CasinoPage initialGame="blackjack" />,
 });
 
 export const casinoFairnessRoute = createRoute({
@@ -261,7 +285,7 @@ function LegacyCasinoPage({ initialGame }: { initialGame: GameCode }) {
   );
 
   function selectGame(next: GameCode) {
-    void navigate({ to: next === 'dice' ? '/casino/dice' : `/casino/${next}` });
+    void navigate({ to: casinoGamePath(next) });
   }
 
   function updateSelection(key: string, value: string) {
@@ -325,7 +349,7 @@ function LegacyCasinoPage({ initialGame }: { initialGame: GameCode }) {
                 {GAME_CONFIGS.map((game) => (
                   <Link
                     key={game.code}
-                    to={game.code === 'dice' ? '/casino/dice' : `/casino/${game.code}`}
+                    to={casinoGamePath(game.code)}
                     className={`casino-game-switcher-item ${
                       game.code === gameCode ? 'is-active' : ''
                     }`}

@@ -1,6 +1,12 @@
 import type { GameCode } from '@phonara/game-engine';
 import type { GameConfig } from './types';
 
+/** URL path for a casino game route (engine code → hyphenated path). */
+export function casinoGamePath(code: GameCode): string {
+  if (code === 'dice') return '/casino/dice';
+  return `/casino/${code.replace(/_/g, '-')}`;
+}
+
 export const GAME_CONFIGS: GameConfig[] = [
   {
     code: 'crash',
@@ -95,6 +101,38 @@ export const GAME_CONFIGS: GameConfig[] = [
         ],
       },
     ],
+  },
+  {
+    code: 'mint_reels',
+    labelKey: 'casino.game.mint_reels',
+    descriptionKey: 'casino.game.mint_reels.desc',
+    defaultStake: '10',
+    defaultSelection: { lines: 20 },
+    fields: [{ kind: 'number', key: 'lines', labelKey: 'casino.field.lines', min: 1, max: 20 }],
+  },
+  {
+    code: 'gold_rush',
+    labelKey: 'casino.game.gold_rush',
+    descriptionKey: 'casino.game.gold_rush.desc',
+    defaultStake: '10',
+    defaultSelection: { lines: 20 },
+    fields: [{ kind: 'number', key: 'lines', labelKey: 'casino.field.lines', min: 1, max: 20 }],
+  },
+  {
+    code: 'roulette',
+    labelKey: 'casino.game.roulette',
+    descriptionKey: 'casino.game.roulette.desc',
+    defaultStake: '10',
+    defaultSelection: { bets: [{ type: 'red', value: null, stakeWeight: 1 }] },
+    fields: [],
+  },
+  {
+    code: 'blackjack',
+    labelKey: 'casino.game.blackjack',
+    descriptionKey: 'casino.game.blackjack.desc',
+    defaultStake: '10',
+    defaultSelection: { actions: [{ seat: 0, move: 'stand' }] },
+    fields: [],
   },
 ];
 

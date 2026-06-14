@@ -10,8 +10,10 @@ test-results
 blob-report
 playwright-*.log
 *.tsbuildinfo
+.eslintcache
 **/.vite
 **/node_modules/.vite
+**/node_modules/.cache
 .env
 .env.*
 .env.local
@@ -31,3 +33,6 @@ tests/e2e/.*auth*.json
 
 # Local backup rehearsal dumps (scripts/backup-rehearsal.ts)
 backups/
+
+# MCP smoke test ephemeral stderr (scripts/test-supabase-mcp-smoke.ps1)
+.cursor/mcp-smoke-stderr.txt

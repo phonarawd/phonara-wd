@@ -2,18 +2,16 @@ import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 import {
-  crashDefinition,
-  diceDefinition,
   diceMultiplier,
-  hiloDefinition,
-  limboDefinition,
-  minesDefinition,
+  getGame,
+  listGames,
   minesMultiplier,
-  plinkoDefinition,
   type GameCode,
 } from '@phonara/game-engine';
 import { floatStream } from '../../packages/game-engine/src/fairness/float';
-import type { GameDefinition } from '../../packages/game-engine/src/registry';
+
+// Side-effect: register all games
+import '../../packages/game-engine/src/index.ts';
 
 type Selection = Record<string, unknown>;
 
@@ -39,16 +37,14 @@ const CASE_DEFS: CaseDef[] = [
   { game: 'mines', selection: { mineCount: 3, revealedCells: [0, 1, 2] } },
   { game: 'hilo', selection: { startCard: null, guesses: ['skip', 'higher', 'lower'] } },
   { game: 'plinko', selection: { rows: 12, risk: 'medium' } },
+  { game: 'mint_reels', selection: { lines: 20 } },
+  { game: 'gold_rush', selection: { lines: 20 } },
+  {
+    game: 'roulette',
+    selection: { bets: [{ type: 'red', value: null, stakeWeight: 1 }] },
+  },
+  { game: 'blackjack', selection: { actions: [{ seat: 0, move: 'stand' }] } },
 ];
-
-const DEFINITIONS: Record<GameCode, GameDefinition<unknown, unknown>> = {
-  crash: crashDefinition as GameDefinition<unknown, unknown>,
-  limbo: limboDefinition as GameDefinition<unknown, unknown>,
-  dice: diceDefinition as GameDefinition<unknown, unknown>,
-  mines: minesDefinition as GameDefinition<unknown, unknown>,
-  hilo: hiloDefinition as GameDefinition<unknown, unknown>,
-  plinko: plinkoDefinition as GameDefinition<unknown, unknown>,
-};
 
 function stableStringify(value: unknown): string {
   if (Array.isArray(value)) {
@@ -167,12 +163,16 @@ function payoutMultiplier(game: GameCode, selection: Selection, result: unknown)
     if (!hilo.won || hilo.rounds.length === 0) return '0.000000';
     return (hilo.rounds.at(-1)?.multiplier ?? 0).toFixed(6);
   }
-  const plinko = result as { bucketMultiplier: string };
-  return Number(plinko.bucketMultiplier).toFixed(6);
+  if (game === 'plinko') {
+    const plinko = result as { bucketMultiplier: string };
+    return Number(plinko.bucketMultiplier).toFixed(6);
+  }
+  const mult = (result as { totalMultiplier: number }).totalMultiplier;
+  return Number(mult).toFixed(6);
 }
 
 describe.runIf(SQL_PARITY_ENABLED)('casino TS to SQL parity', () => {
-  it('matches _game_result for 6 games across 1000 seeds each', async () => {
+  it(`matches _game_result for ${listGames().length} games across 1000 seeds each`, async () => {
     const cases = buildCases();
     const sqlOutput = runSql(buildSql(cases));
     const sqlResults = new Map<number, { result: unknown; payout_multiplier: string }>();
@@ -180,13 +180,14 @@ describe.runIf(SQL_PARITY_ENABLED)('casino TS to SQL parity', () => {
     for (const line of sqlOutput.trim().split('\n')) {
       const [indexText, jsonText] = line.split('\t');
       if (indexText === undefined || jsonText === undefined) continue;
-      sqlResults.set(Number(indexText), JSON.parse(jsonText));
+      const parsed = JSON.parse(jsonText) as { result: unknown; payout_multiplier: string };
+      sqlResults.set(Number(indexText), parsed);
     }
 
     expect(sqlResults.size).toBe(cases.length);
 
     for (const item of cases) {
-      const definition = DEFINITIONS[item.game];
+      const definition = getGame(item.game);
       const floats = await floatStream(
         item.serverSeed,
         item.clientSeed,
@@ -206,7 +207,7 @@ describe.runIf(SQL_PARITY_ENABLED)('casino TS to SQL parity', () => {
         `${item.game} case ${item.index} payout multiplier parity`,
       ).toBe(payoutMultiplier(item.game, item.selection, result));
     }
-  }, 120_000);
+  }, 180_000);
 });
 
 describe.skipIf(SQL_PARITY_ENABLED)('casino TS to SQL parity', () => {

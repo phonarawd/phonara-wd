@@ -2,6 +2,7 @@ import { PresentationImportPlaceholder } from '../../../presentation-import/plac
 import type { ImportedGameSurfaceProps } from '../shared/types';
 
 /** Paste Lovable `src/games/plinko/*` — export `ImportedPlinkoGame`. */
-export function ImportedPlinkoGame(_props: ImportedGameSurfaceProps) {
+export function ImportedPlinkoGame(props: ImportedGameSurfaceProps) {
+  void props;
   return <PresentationImportPlaceholder path="apps/web/src/components/games/plinko/" />;
 }

@@ -10,7 +10,7 @@
 BEGIN;
 DO $$
 DECLARE
-  v_day DATE := DATE '2026-06-12';
+  v_day DATE := CURRENT_DATE;
   v_exact UUID := gen_random_uuid();
   v_below UUID := gen_random_uuid();
   v_rg UUID := gen_random_uuid();
@@ -87,7 +87,7 @@ ROLLBACK;
 BEGIN;
 DO $$
 DECLARE
-  v_day DATE := DATE '2026-06-12';
+  v_day DATE := CURRENT_DATE;
   v_promote UUID := gen_random_uuid();
   v_promote_child UUID := gen_random_uuid();
   v_demote UUID := gen_random_uuid();
@@ -145,7 +145,7 @@ ROLLBACK;
 BEGIN;
 DO $$
 DECLARE
-  v_day DATE := DATE '2026-06-12';
+  v_day DATE := CURRENT_DATE;
   v_admin UUID := gen_random_uuid();
   v_user UUID := gen_random_uuid();
   v_affiliate UUID := gen_random_uuid();

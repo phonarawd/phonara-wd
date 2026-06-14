@@ -33,6 +33,8 @@ A task is not complete until relevant gates pass:
 - SQL migrations apply cleanly on a local Supabase (`supabase db reset`); apply-time errors are not caught by TS checks.
 - SQL integration tests pass for money/settlement/liquidation/circuit-breaker RPCs, exercising the changed branch and asserting conservation + hash-chain integrity.
 - Env and i18n coverage checks.
+- Workspace hygiene (`bun run check:hygiene`) — cursorignore, watcher excludes,
+  clean-artifacts sync, no session residue on disk.
 - Security review for Supabase/RLS/RPC or admin changes.
 - Test residue cleanup. After E2E/build sessions run `bun run clean` per
   `75-workspace-hygiene` so `test-results/`, `dist/`, and `.vite/` caches do not

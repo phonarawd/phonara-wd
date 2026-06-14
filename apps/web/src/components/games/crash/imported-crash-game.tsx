@@ -2,6 +2,7 @@ import { PresentationImportPlaceholder } from '../../../presentation-import/plac
 import type { ImportedGameSurfaceProps } from '../shared/types';
 
 /** Paste Lovable `src/games/crash/*` — export `ImportedCrashGame`. */
-export function ImportedCrashGame(_props: ImportedGameSurfaceProps) {
+export function ImportedCrashGame(props: ImportedGameSurfaceProps) {
+  void props;
   return <PresentationImportPlaceholder path="apps/web/src/components/games/crash/" />;
 }

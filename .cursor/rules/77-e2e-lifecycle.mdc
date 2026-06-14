@@ -1,0 +1,56 @@
+---
+description: E2E lifecycle — mandatory start, teardown, and orphan-process cleanup
+alwaysApply: true
+---
+
+# E2E Lifecycle (mandatory teardown)
+
+E2E must **always end cleanly**: no orphan dev servers, browsers, terminals, or
+artifact residue. Lag and flaky reruns come from interrupted Playwright runs.
+
+See `scripts/lib/e2e-lifecycle.ts` and `scripts/run-e2e.ts`.
+
+## How to run (agents + operators)
+
+| Do | Don't |
+|----|-------|
+| `bun run test:e2e` | raw `playwright test` / `bunx playwright test` |
+| `bun run test:e2e:casino-smoke` | ad-hoc preview server + manual browser |
+| `bun run e2e:kill` when ports stuck | leave 3000/3001/3002 listeners running |
+| wait for command to **fully exit** | background E2E in agent terminal without monitoring |
+| `bun run check:hygiene` after E2E session | mark task complete while `test-results/` exists |
+
+`test:e2e` runs: **pretest kill** → Playwright (+ `globalTeardown`) → **wrapper
+teardown** → `posttest` clean. Triple belt — teardown must succeed.
+
+## Mandatory agent behavior
+
+1. **Never** start E2E in a background shell and move on. Block until the process
+   exits (pass or fail).
+2. **Never** run E2E in parallel with `check`, `build`, or another E2E config.
+3. After E2E (any outcome), verify:
+   - Ports **3000, 3001, 3002** are free (`bun run e2e:kill` exits 0)
+   - `bun run check:hygiene` passes (no `test-results/`, no E2E auth tokens)
+4. If E2E hangs: **Ctrl+C once**, wait for `[e2e] session finalized`, then
+   `bun run e2e:kill` if ports still blocked. Do not open a second E2E terminal.
+5. Session end after E2E: `bun run clean` if anything still lingers.
+
+## What teardown does
+
+`finalizeE2eSession()` (globalTeardown + run-e2e wrapper):
+
+1. Kill LISTENING processes on ports 3000 / 3001 / 3002 (Vite dev/preview orphans)
+2. Delete `tests/e2e/.auth.json` and `.admin-auth.json`
+3. `bun run clean:artifacts` (`test-results/`, traces, `.playwright-artifacts*`)
+
+Playwright `webServer` children should exit with the runner; port-kill catches
+terminal-kill and agent-interrupt orphans.
+
+## Task complete gate
+
+E2E-touching work is **not done** until:
+
+- [ ] E2E command exited (not backgrounded)
+- [ ] `bun run e2e:kill` → ports free
+- [ ] `bun run check:hygiene` green
+- [ ] No extra `node`/`vite` on 3000–3002 (`Get-Process` / Task Manager spot-check if unsure)

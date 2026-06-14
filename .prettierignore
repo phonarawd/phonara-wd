@@ -1,7 +1,21 @@
-﻿node_modules
+﻿# Cursor performance — keep generated/high-volume paths out of Prettier scans
+node_modules
+.bun
 dist
 build
 coverage
 playwright-report
 test-results
+blob-report
+.turbo
+.vite
+**/.vite
+**/node_modules/.vite
+**/node_modules/.cache
+backups
 bun.lock
+*.tsbuildinfo
+.eslintcache
+supabase/.temp
+supabase/.branches
+supabase/functions-sql

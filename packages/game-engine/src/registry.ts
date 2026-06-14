@@ -1,7 +1,21 @@
 import type { ZodType } from 'zod';
 import type { Decimal } from '@phonara/money';
 
-export type GameCode = 'crash' | 'limbo' | 'dice' | 'mines' | 'hilo' | 'plinko';
+/** Single source of truth for all casino game codes (existing + planned). */
+export const GAME_CODES = [
+  'crash',
+  'limbo',
+  'dice',
+  'mines',
+  'hilo',
+  'plinko',
+  'mint_reels',
+  'gold_rush',
+  'roulette',
+  'blackjack',
+] as const;
+
+export type GameCode = (typeof GAME_CODES)[number];
 
 /**
  * Single contract every game must implement.
@@ -29,6 +43,10 @@ export interface GameDefinition<Sel, Res> {
    *   (when payout > stake: system_credit is negative → insurance fund absorbs it)
    */
   settle(stake: Decimal, selection: Sel, result: Res): { payout: Decimal; houseEdgeLeg: Decimal };
+  /** Optional closed-form RTP for harness verification (Decimal in [0,1] range as fraction). */
+  theoreticalRtp?(): Decimal;
+  /** Max payout multiplier for exposure-cap checks (paytable / leg ceiling). */
+  maxPayoutMultiplier?(selection: Sel): number;
 }
 
 // Mutable registry — populated by each game module at import time.
@@ -46,6 +64,10 @@ export function getGame<Sel = unknown, Res = unknown>(code: GameCode): GameDefin
 
 export function listGames(): GameCode[] {
   return [..._registry.keys()];
+}
+
+export function isRegisteredGame(code: string): code is GameCode {
+  return _registry.has(code as GameCode);
 }
 
 export const GAME_REGISTRY = {

@@ -2,9 +2,11 @@
 node_modules/
 .bun/
 **/node_modules/
+**/node_modules/.cache/
 
 # Build and test artifacts
 dist/
+**/dist/
 build/
 coverage/
 test-results/
@@ -14,11 +16,14 @@ blob-report/
 .vite/
 **/.vite/
 **/node_modules/.vite/
-**/node_modules/.cache/
 *.tsbuildinfo
+.eslintcache
+**/.playwright-artifacts*/
 
-# Generated package outputs (rebuilt by `bun run build:packages`)
+# Generated app + package outputs (rebuilt by build scripts)
+apps/*/dist/
 packages/*/dist/
+backups/
 
 # Supabase CLI local state + generated SQL mirror
 supabase/.temp/

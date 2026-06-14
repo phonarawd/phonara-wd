@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { verifyRound, type GameCode } from '../../packages/game-engine/src';
+import { casinoGamePath } from '../../apps/web/src/features/casino/game-config';
 import {
   adminClient,
   injectBrowserSession,
@@ -38,6 +39,10 @@ const GAME_CASES: Array<{ game: GameCode; selection: Record<string, unknown>; st
   { game: 'mines', selection: { mineCount: 3, revealedCells: [0, 1, 2] }, stake: '10.000000' },
   { game: 'hilo', selection: { startCard: null, guesses: ['higher'] }, stake: '10.000000' },
   { game: 'plinko', selection: { rows: 12, risk: 'medium' }, stake: '10.000000' },
+  { game: 'mint_reels', selection: { lines: 20 }, stake: '10.000000' },
+  { game: 'gold_rush', selection: { lines: 20 }, stake: '10.000000' },
+  { game: 'roulette', selection: { bets: [{ type: 'red', value: null, stakeWeight: 1 }] }, stake: '10.000000' },
+  { game: 'blackjack', selection: { actions: [{ seat: 0, move: 'stand' }] }, stake: '10.000000' },
 ];
 
 async function injectSession(
@@ -121,6 +126,10 @@ async function resetCasinoConfig(admin: SupabaseClient): Promise<void> {
       'feature_game_mines_enabled',
       'feature_game_hilo_enabled',
       'feature_game_plinko_enabled',
+      'feature_game_mint_reels_enabled',
+      'feature_game_gold_rush_enabled',
+      'feature_game_roulette_enabled',
+      'feature_game_blackjack_enabled',
       'consent_gate_enabled',
     ]);
 }
@@ -133,7 +142,7 @@ test.describe('casino provably fair E2E', () => {
       const client = authedClient(auth);
       await resetCasinoConfig(admin);
       await injectSession(page, auth.accessToken, auth.refreshToken);
-      await page.goto(`/casino/${gameCase.game}`);
+      await page.goto(casinoGamePath(gameCase.game));
       await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
 
       const before = await currencyTotals(admin);

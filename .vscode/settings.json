@@ -1,0 +1,84 @@
+{
+  "files": {
+    "watcherExclude": {
+      "**/.git/objects/**": true,
+      "**/.git/subtree-cache/**": true,
+      "**/node_modules/**": true,
+      "**/.bun/**": true,
+      "**/dist/**": true,
+      "**/build/**": true,
+      "**/coverage/**": true,
+      "**/.vite/**": true,
+      "**/test-results/**": true,
+      "**/playwright-report/**": true,
+      "**/blob-report/**": true,
+      "**/.turbo/**": true,
+      "**/supabase/.temp/**": true,
+      "**/supabase/.branches/**": true,
+      "**/supabase/functions-sql/**": true,
+      "**/packages/*/dist/**": true,
+      "**/apps/*/dist/**": true,
+      "**/node_modules/.cache/**": true,
+      "**/backups/**": true,
+      "**/.playwright-artifacts*/**": true
+    },
+    "exclude": {
+      "**/dist": true,
+      "**/.vite": true,
+      "**/test-results": true,
+      "**/playwright-report": true,
+      "**/blob-report": true,
+      "**/coverage": true
+    }
+  },
+  "search": {
+    "exclude": {
+      "**/node_modules": true,
+      "**/.bun": true,
+      "**/dist": true,
+      "**/build": true,
+      "**/coverage": true,
+      "**/.vite": true,
+      "**/test-results": true,
+      "**/playwright-report": true,
+      "**/blob-report": true,
+      "**/.turbo": true,
+      "**/supabase/.temp": true,
+      "**/supabase/.branches": true,
+      "**/supabase/functions-sql": true,
+      "**/packages/*/dist": true,
+      "**/apps/*/dist": true,
+      "**/backups": true,
+      "bun.lock": true
+    },
+    "followSymlinks": false
+  },
+  "explorer": {
+    "excludeGitIgnore": true
+  },
+  "npm": {
+    "autoDetect": "off"
+  },
+  "git": {
+    "autorefresh": false
+  },
+  "typescript": {
+    "tsserver": {
+      "maxTsServerMemory": 4096,
+      "experimental": {
+        "enableProjectDiagnostics": false
+      }
+    },
+    "disableAutomaticTypeAcquisition": true,
+    "enablePromptUseWorkspaceTsdk": true
+  },
+  "javascript": {
+    "validate": {
+      "enable": false
+    }
+  },
+  "eslint": {
+    "useFlatConfig": true,
+    "workingDirectories": [{ "mode": "auto" }]
+  }
+}

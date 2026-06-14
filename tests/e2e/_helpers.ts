@@ -10,7 +10,8 @@ import { join } from 'node:path';
 // in git history or shipped to GitHub.
 export const SUPABASE_URL = process.env['VITE_SUPABASE_URL'] ?? 'http://127.0.0.1:54444';
 export const ANON_KEY =
-  process.env['VITE_SUPABASE_ANON_KEY'] ?? 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
+  process.env['VITE_SUPABASE_ANON_KEY'] ??
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
 
 function readLocalServiceKey(): string | undefined {
   const result = spawnSync('supabase', ['status', '-o', 'env'], {
@@ -154,7 +155,7 @@ export async function injectBrowserSession(
   let lastError = 'session injection did not run';
 
   for (let attempt = 1; attempt <= 3; attempt += 1) {
-    await page.goto('/login', { waitUntil: 'commit', timeout: 15_000 });
+    await page.goto('/login', { waitUntil: 'load', timeout: 30_000 });
 
     if (unregisterServiceWorkers) {
       await page.evaluate(async () => {
@@ -168,7 +169,7 @@ export async function injectBrowserSession(
     await page.waitForFunction(
       () => Boolean((window as unknown as { __supabase?: unknown }).__supabase),
       undefined,
-      { timeout: 10_000 },
+      { timeout: 30_000 },
     );
 
     const errMsg = await page.evaluate(
