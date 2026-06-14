@@ -42,6 +42,21 @@ Next slices:
 
 - Launch operations loop.
 
+## Lovable Zenith UI (parallel track · Lovable workspace)
+
+> **정본:** [`LOVABLE_ZENITH_SESSION_HANDOFF.md`](LOVABLE_ZENITH_SESSION_HANDOFF.md) §1 · **실행 플랜:** [`LOVABLE_ZENITH_MASTER_PLAN.md`](LOVABLE_ZENITH_MASTER_PLAN.md) Phase 0→10.  
+> **PHONARA repo:** casino game UI = placeholder until Lovable ZIP paste (engine no-touch).
+
+| Item | Status (2026-06-14) |
+|------|---------------------|
+| Macro Phase 0–2 | ✅ GREEN (Lovable local) |
+| Macro Phase 3 (5 P1 games) | 🟡 Plinko ✅ · **Limbo next** (v1.3 final-r2 approved) · Mines/HiLo/Dice ⏳ |
+| Macro Phase 4–10 | ⏳ (4 new games + shell + Earn + 32 pages + Admin + ZIP) |
+| Casino games done | **2/10** (crash, plinko) · vitest 200/200 after Plinko |
+| Next Lovable turn | §0-0 preview guard + GameBackLink → Limbo mount/tests/checkpoint |
+| e2e pending | crash + plinko WRITTEN → CI/local PASS |
+| PHONARA paste | After Lovable Phase 10 export — not started |
+
 ## Current Evidence Map
 
 - E2E ownership and coverage: [`QUALITY_GATES.md`](QUALITY_GATES.md#current-e2e-matrix).
@@ -58,8 +73,19 @@ Next slices:
 - Production **`rpc_run_reconciliation()`** executed once via linked query → all 5 check families **`is_match=true`**, `system_readonly` not set.
 - Local `check:advisors` still skips without `SUPABASE_ACCESS_TOKEN`, but MCP advisor checks currently show 0 ERROR.
 - `db diff --linked` default-direction output includes reverse drift/noise (`pg_net`); the desired `linked -> local` diff produced no SQL, and the generated reverse migration attempt was rejected by local SQL gates and deleted.
-- Production `auth.users=0`, so wallet/trading/casino/admin authenticated smoke was not executed. `setup/MANUAL_TASKS.md` now carries the first operator account and no-mutation smoke checklist.
+- Production **`auth.users=2`** (2026-06-14 verify): one `profiles.role=admin`, one `profiles.role=user`. Authenticated prod smoke remains **no-mutation** until operator confirms MFA + checklist in `setup/MANUAL_TASKS.md`.
 - Affiliate browser E2E and explicit locale-toggle E2E are not separate browser specs yet because the corresponding shipped user/admin UX is not exposed as a dedicated route. Current coverage is SQL/admin-pattern/check based and is documented in the E2E matrix.
 - If local Playwright global setup fails with `createUser failed: {}`, check `http://127.0.0.1:54444/auth/v1/health`. In the latest run this was a local Auth upstream issue and recovered with `supabase stop && supabase start`.
 - **Local manual signup/login**: `.env.local` must use `VITE_SUPABASE_URL=http://127.0.0.1:54444` and the publishable key from `supabase status`. Local `config.toml` disables email confirmation so signup goes straight to the dashboard. After `supabase db reset`, clear browser Local Storage (`sb-*` keys) once — stale refresh tokens otherwise spam `/auth/v1/token` with 400. Inbucket catches auth emails at http://127.0.0.1:54424 when testing magic links.
 - **Performance backlog (not a code defect)**: Under full-gate load (`check:full`, ~20 prior E2E specs), `rpc_spot_market_buy` was observed exceeding 45s once while isolated `core-flow` runs completed in ~7s. `useSpotActions` busy/ref teardown is correct; E2E now polls `spot_trades` for RPC completion. **ENGINE 100 scope:** oracle-perp excellence + documented p95 SLO is sufficient; **full Binance-grade CLOB is a separate multi-month program**, not a launch blocker for current architecture (display order book, not matching engine).
+
+## Spot RPC latency (isolated · local · 2026-06-14)
+
+Measured via `scripts/measure-spot-rpc-p95.ts` against local stack (`http://127.0.0.1:54444`), **N=40**, spot rate limits temporarily disabled for probe only (`rate_limits_disabled_for_probe: true`).
+
+| RPC | p50 | p95 | p99 | min | max |
+|-----|-----|-----|-----|-----|-----|
+| `rpc_spot_market_buy` | **349 ms** | **1847 ms** | **2221 ms** | 18 ms | 2221 ms |
+| `rpc_spot_market_sell` | **404 ms** | **2776 ms** | **3110 ms** | 27 ms | 3110 ms |
+
+**SLO note:** Isolated p95 under 3s for spot buy/sell on local Docker; production p95 should be re-measured after operator account exists. Full-gate contention can push tail latency higher (see backlog above).

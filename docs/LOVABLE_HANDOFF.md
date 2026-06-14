@@ -1,8 +1,10 @@
 # PHONARA Lovable 이식 — 지구끝판왕 인계문 (새 채팅용)
 
-> **새 Cursor 채팅:** **최신 세션 맥락** → [`docs/CHAT_HANDOFF_2026-06-14.md`](CHAT_HANDOFF_2026-06-14.md) (10게임 엔진·게이트·Lovable ZIP-1 v2 · **여기부터 이어가기**).  
-> **작업 이력 (수정 내역):** [`docs/WORK_LOG_2026-06-14.md`](WORK_LOG_2026-06-14.md).  
-> 정적 인계 베이스는 이 파일(`LOVABLE_HANDOFF.md`) + `LOVABLE_P1_FINAL_PHONARA.md`.
+> **새 Cursor 채팅:** **Lovable Zenith Phase 0–3 (Crash/Plinko)** → [`docs/LOVABLE_ZENITH_SESSION_HANDOFF.md`](LOVABLE_ZENITH_SESSION_HANDOFF.md) (**지금 대화 이어가기 · 여기부터**).  
+> **카지노 엔진/ZIP-1:** [`docs/CHAT_HANDOFF_2026-06-14.md`](CHAT_HANDOFF_2026-06-14.md).  
+> **ENGINE 100 / Supabase:** [`docs/ENGINE_100_HANDOFF.md`](ENGINE_100_HANDOFF.md).  
+> **작업 이력:** [`docs/WORK_LOG_2026-06-14.md`](WORK_LOG_2026-06-14.md).  
+> 정적 베이스: 이 파일 + `LOVABLE_P1_FINAL_PHONARA.md`.
 
 **관련 문서:** `docs/CHAT_HANDOFF_2026-06-14.md` · `docs/LOVABLE_P1_FINAL_PHONARA.md` · `docs/LOVABLE_CRASH_CHECKPOINT.md` · `docs/LOVABLE_ABSORPTION_PLAN_FINAL.md` · `docs/GAMES-INTEGRATION.md` · `docs/ADD_GAME_RUNBOOK.md`
 
