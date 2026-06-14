@@ -78,11 +78,19 @@ HMAC-SHA256(key=serverSeed, message=`${clientSeed}:${nonce}:${cursor}`)
   bets: Array<{
     type: 'straight' | 'split' | 'red' | 'black' | 'even' | 'odd' | 'low' | 'high'
         | 'dozen1' | 'dozen2' | 'dozen3' | 'column1' | 'column2' | 'column3';
-    value: number | null;  // straight/split number 0..36
+    value: number | null;  // straight: pocket 0..36; split: see below (NOT sum)
     stakeWeight: number;   // positive; stake split proportionally
   }>;
 }
 ```
+
+**Split encoding (engine-fixed — wrong value wins silently):**
+
+- `value` = the **lower** adjacent pocket number (never the sum of the two pockets).
+- Wins when `winningNumber === value` **or** `winningNumber === value + 1`.
+- Example: split on pockets 1|2 → `{ type: 'split', value: 1, stakeWeight: 1 }` (not `3`).
+
+Engine: `packages/game-engine/src/games/roulette.ts` (`legWins`, `case 'split'`).
 
 ### blackjack
 ```ts

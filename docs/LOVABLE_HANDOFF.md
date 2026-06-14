@@ -1,17 +1,14 @@
 # PHONARA Lovable 이식 — 지구끝판왕 인계문 (새 채팅용)
 
-> **새 Cursor 채팅 첫 메시지에 이 파일 전체를 붙여넣거나 `@docs/LOVABLE_HANDOFF.md` 로 참조하세요.**  
-> 이 문서 하나로 이전 대화 맥락·결정·진행상태·다음 작업을 **빠짐없이** 이어갑니다.
+> **새 Cursor 채팅:** **최신 세션 맥락** → [`docs/CHAT_HANDOFF_2026-06-14.md`](CHAT_HANDOFF_2026-06-14.md) (10게임 엔진·게이트·Lovable ZIP-1 v2 · **여기부터 이어가기**).  
+> **작업 이력 (수정 내역):** [`docs/WORK_LOG_2026-06-14.md`](WORK_LOG_2026-06-14.md).  
+> 정적 인계 베이스는 이 파일(`LOVABLE_HANDOFF.md`) + `LOVABLE_P1_FINAL_PHONARA.md`.
 
-**관련 문서:** `docs/LOVABLE_P1_FINAL_PHONARA.md` (P1 스펙 · **단일 ZIP 납품**) · `docs/LOVABLE_CRASH_CHECKPOINT.md` (Crash Lovable 내부 QA) · `docs/LOVABLE_ABSORPTION_PLAN_FINAL.md` · `docs/GAMES-INTEGRATION.md`
+**관련 문서:** `docs/CHAT_HANDOFF_2026-06-14.md` · `docs/LOVABLE_P1_FINAL_PHONARA.md` · `docs/LOVABLE_CRASH_CHECKPOINT.md` · `docs/LOVABLE_ABSORPTION_PLAN_FINAL.md` · `docs/GAMES-INTEGRATION.md` · `docs/ADD_GAME_RUNBOOK.md`
 
 **레포:** `c:\Users\PC\Desktop\phonara-gb`  
-**브랜치:** `main` (로컬 `origin/main` 대비 +42 commits, push 안 함)  
-**핵심 커밋:**
-- `e78374f` — Lovable 흡수 스캐폴드 (presentation-import, 라우트 어댑터, 게임 계약)
-- `3e2796e` — workspace hygiene, 중복 `presentation/` 제거, cursorignore
-
-**이전 대화 transcript:** `99f0ef84-75e1-4304-8248-7f3aeb3f0901` (Cursor agent-transcripts)
+**브랜치:** `main` · **HEAD:** `2d2547e` (`feat(casino): add four games, integration factory, and smoke E2E`)  
+**이전 커밋:** `e78374f` (흡수 스캐폴드) · `b903c34` (P1 스펙 lock)
 
 ---
 
@@ -133,11 +130,12 @@ HMAC-SHA256(key=serverSeed, message=`${clientSeed}:${nonce}:${cursor}`)
 | 카지노 엔진 6종 + RPC + PF | `packages/game-engine`, `supabase`, `use-casino-round.ts` |
 | RG | `/responsible-gaming` + DB 가드 |
 
-### ⏳ 미완 (다음 작업)
+### ⏳ 미완 (다음 작업 — ZIP-1)
 
 | 우선순위 | 작업 |
 |---|---|
-| **P0** | Lovable ZIP 대기 → **6종 게임 UI** + `games/shared` + **카탈로그** 붙여넣기 |
+| **P0** | Lovable **ZIP-1** 대기 → **4종 풀 UI** (`mint_reels`, `gold_rush`, `roulette`, `blackjack`) + `/games` **카탈로그 10카드** paste |
+| **P0** | 기존 6종 (`crash`…`hilo`) **1px freeze** — ZIP-1에서 건드리지 않음 |
 | **P0** | `routes/casino.tsx` (**690줄**) → 어댑터 축소 + `<Imported*Game {...props} />` |
 | **P0** | `pixi.js@8`, `matter-js`, `@tanstack/react-virtual` — ZIP에 import 있으면 `apps/web`에 추가 |
 | **P1** | Earn/Home/Landing/Wallet/Auth/Trade Lovable 페이지 실제 UI 교체 |
@@ -146,10 +144,10 @@ HMAC-SHA256(key=serverSeed, message=`${clientSeed}:${nonce}:${cursor}`)
 | **P2** | 슬롯/라이브 UI shell, 인터랙티브 Crash/Mines (엔진 PR 후) |
 | **P3** | 신규 `game_code`, Storybook, ja/zh-CN i18n |
 
-### ⚠️ placeholder 상태 (Lovable 붙여넣기 전)
+### ⚠️ placeholder 상태 (Lovable ZIP-1 붙여넣기 전)
 
 모든 `presentation-import/pages/*-page.tsx`는 `PresentationImportPlaceholder` 표시 중.  
-`components/games/crash/imported-crash-game.tsx`도 placeholder.
+`components/games/*/imported-*-game.tsx` **10종 전부** placeholder (기존 6종 + 신규 4종).
 
 ---
 
@@ -258,6 +256,9 @@ src/routes/{home,earn,landing,account,...} 페이지 본문
 | Plinko | `{ rows: 8\|12\|16, risk }` | Matter.js=연출, 결과=서버 |
 | Limbo | `{ target: "2.00" }` | 원샷 |
 | Hilo | `{ startCard, guesses: [...] }` | 원샷 |
+| mint_reels / gold_rush | `{ lines: 1..20 }` | **turbo UI-only** — RPC selection에 `turbo` 금지 |
+| roulette | `{ bets: [{ type, value, stakeWeight }] }` | type union 엔진 고정. **split `value` = lower adjacent pocket (never sum)** — wins if `pocket === value` OR `pocket === value + 1` (예: 1\|2 → `value: 1`) |
+| blackjack | `{ actions: [{ seat, move }] }` | 원샷. 기본 `{ actions: [{ seat: 0, move: 'stand' }] }` |
 
 ### 게임 컴포넌트 Props
 

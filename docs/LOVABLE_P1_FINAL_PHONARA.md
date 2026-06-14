@@ -55,6 +55,7 @@ P1 v3 비전(A–G · 모바일 한손 · 데스크탑 단축키 · 6종 Stage/H
 - `routeTree.gen.ts` 생성/의존 금지, `/auth`·`games.$gameId`·카지노 동적 `gameId` 라우트 금지
 - `game_code` **10종** (`crash|dice|mines|plinko|limbo|hilo|mint_reels|gold_rush|roulette|blackjack`) — PHONARA 엔진·정산·PF **이미 구현됨**. Lovable은 UI/UX만 제공
 - Earn 보상 `rpc_spin_roulette`와 카지노 `roulette` **도메인 분리** (코드·RPC·i18n·metrics 혼용 금지)
+- **Roulette split `value` = lower adjacent pocket (never sum).** Wins if `pocket === value` OR `pocket === value + 1`. Example: 1|2 split → `value: 1` (not `3`). See `docs/GAMES-INTEGRATION.md`.
 - Wheel/Keno/Tower/Coinflip 등 **미엔진 게임**은 P2 UI shell만 (정산 금지)
 - `howler` 금지(WebAudio `useSound` only), 게임 폴더 내 Supabase/Cloud import **0건**
 - A–G 전부 presentational. 신규 `game_code`/RPC/도메인 수정 금지
@@ -88,6 +89,12 @@ P1 v3 비전(A–G · 모바일 한손 · 데스크탑 단축키 · 6종 Stage/H
 | `gold_rush` | 3×5 슬롯 | `{ lines: 1..20 }` | `/casino/gold-rush` |
 | `roulette` | 유럽식 PF 테이블 | `{ bets: [{ type, value, stakeWeight }] }` | `/casino/roulette` |
 | `blackjack` | PF 즉시 테이블 | `{ actions: [{ seat, move }] }` | `/casino/blackjack` |
+
+**Roulette defaults (PHONARA adapter):** `{ bets: [{ type: 'red', value: null, stakeWeight: 1 }] }` — empty `bets: []` requires client-side validation before submit.
+
+**Blackjack default (PHONARA adapter):** `{ actions: [{ seat: 0, move: 'stand' }] }`.
+
+**Slot selection:** `{ lines: number }` only (1..20). No `turbo` in RPC selection — turbo UI-only if shown.
 
 Lovable은 `ImportedGameSurfaceProps` + 표준 E2E testid 9개 + i18n `casino.game.{code}` 계약을 준수한다. 베팅은 **`onPlaceBet` callback만** — Supabase/RPC/정산 직접 호출 금지.
 
