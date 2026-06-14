@@ -301,15 +301,15 @@ secondaryLabel="라운드 준비"   // ← !ready 시 primary 와 중복
   - BetPanel: `casino-stake-input` · `casino-prepare-hash` · `casino-place-bet` · `casino-error`
   - Fairness open: `casino-client-seed-input` · `casino-fairness-verifier`
   - Confirm `open=true`: `casino-bet-confirm` · `casino-bet-confirm-confirm` · `casino-bet-confirm-cancel`
-  - Optional non-money: `casino-game-back` · `casino-presence-ghost`
-  - Mines: cashout 분리 없음 · `casino-currency-select` 없음 · ❌ `casino-cashout` · `casino-fairness-trigger`
+  - Optional non-money (3): `casino-game-back` · `casino-presence-ghost` · **`casino-game-rules`**
+  - Mines: cashout 분리 없음 (`casino-place-bet` 통합) · `casino-currency-select` 없음 · ❌ `casino-cashout` · `casino-fairness-trigger`
 
 #### §A 핵심
 
 | ID | 산출 |
 |----|------|
-| **A-1** | `RGGateProvider` wrap · `BetConfirmDialog` · **`GameRulesSheet`** (`casino-game-rules` on trigger — ❌ not `casino-fairness-verifier`) · **`ProvablyFairBadge`/`FairnessSheet`** (`casino-fairness-verifier` after open) · `useGameShortkeys` Space 2분기 + `1/2/5/Esc/?` |
-| **A-2** | feel 2지: `hitMine` → shake+lose · `!hitMine && revealed>0` → juice+celebrate · `tierOf(Number(minesMultiplier(...)))` ≥1.01 · `CelebrateOverlay` · `useReducedMotionGuard` |
+| **A-1** | `RGGateProvider` wrap · `BetConfirmDialog` · **`GameRulesSheet`** → **`data-testid="casino-game-rules"`** · **`FairnessSheet`** 별도 → `casino-fairness-verifier` + `casino-client-seed-input` · `useGameShortkeys` Space 2분기(0 tile no-op) + `1/2/5/Esc/?` |
+| **A-2** | `useEffect` on `bet.id`: `hitMine`→`screenShake`+lose · `!hitMine&&revealed>0`→`juice`+celebrate · `tierOf(Number(minesMultiplier(mineCount, revealed.length)))` ≥1.01 · `CelebrateOverlay` · `useReducedMotionGuard` |
 | **A-3** | `onPrimary`: ready+revealed → `await rg.gate("place_bet")` then `onOpenBetConfirm` · else `onPrepareRound` · `secondaryLabel="해시 커밋"` |
 | **A-4** | HUD `data-testid="casino-presence-ghost"` strip (Limbo 패턴) |
 | **A-5** | i18n `casino.field.next_multiplier` 등 (raw ko/en · key화 후속 PR) |
@@ -324,8 +324,8 @@ secondaryLabel="라운드 준비"   // ← !ready 시 primary 와 중복
 #### §C Closeout
 
 - **C-1:** `result.(mines|hit)` 0 · `rg "라운드 준비" src/games/mines/` 0 · `rg "casino-(cashout|currency-select|fairness-trigger)" src/games/mines/` 0 · red:grep ALL 0
-- **C-2:** `.lovable/memory/mines-checkpoint.md` — result shape · feel 2지 · tier ≥1.01 · 해시 커밋 · testid money 9 + optional 2 · `minesMultiplier` engine fn 통일
-- **C-3 §E 첫 줄:** `Mines v1 — RED({mines/hit}→{minePositions/hitMine}) + RGGate/Confirm/Shortkeys/Feel/Rules + 해시 커밋 + testid 정본`
+- **C-2:** `.lovable/memory/mines-checkpoint.md` — result shape · feel 2지 · tier ≥1.01 · 해시 커밋 · testid money 9 + optional 3 · `minesMultiplier(mineCount, revealCount)` · GameRules vs Fairness testid 분리
+- **C-3 §E 첫 줄:** `Mines v1 — RED({mines/hit}→{minePositions/hitMine}) + RGGate/Confirm/Shortkeys/Feel/Rules(casino-game-rules)/Fairness(casino-fairness-verifier) + 해시 커밋`
 
 **후속 (macro):** HiLo → Dice (Phase 3) → Roulette → Blackjack (Phase 4) → MintReels/GoldRush.
 
