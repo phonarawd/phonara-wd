@@ -32,6 +32,14 @@ const DECIMALS: Record<Currency, number> = {
   KRW: 0,
 };
 
+function currencyDecimals(currency: Currency): number {
+  const places = DECIMALS[currency];
+  if (places === undefined) {
+    throw new Error(`[money] unknown currency: ${currency}`);
+  }
+  return places;
+}
+
 // ─── Guards ──────────────────────────────────────────────────────────────────
 
 function assertValidDecimalString(value: string, label: string): void {
@@ -59,7 +67,7 @@ export function toDecimal(amount: string, label = 'amount'): Decimal {
  */
 export function toFixed(amount: Decimal | string, currency: Currency): string {
   const d = typeof amount === 'string' ? toDecimal(amount) : amount;
-  return d.toDecimalPlaces(DECIMALS[currency], Decimal.ROUND_DOWN).toFixed(DECIMALS[currency]);
+  return d.toDecimalPlaces(currencyDecimals(currency), Decimal.ROUND_DOWN).toFixed(currencyDecimals(currency));
 }
 
 export function money(amount: Decimal | string, currency: Currency): MoneyAmount {
@@ -180,7 +188,7 @@ export function convertWithFee(
  */
 export function format(amount: MoneyAmount): string {
   return toDecimal(amount.amount)
-    .toDecimalPlaces(DECIMALS[amount.currency], Decimal.ROUND_DOWN)
+    .toDecimalPlaces(currencyDecimals(amount.currency), Decimal.ROUND_DOWN)
     .toFixed();
 }
 

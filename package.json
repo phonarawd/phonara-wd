@@ -13,7 +13,7 @@
     "dev:admin": "bun --filter @phonara/admin dev",
     "build": "bun run build:packages && bun run build:apps",
     "build:apps": "bun --filter @phonara/web build && bun --filter @phonara/admin build",
-    "build:packages": "bun --filter './packages/*' build",
+    "build:packages": "tsc -b --force packages/shared-types packages/i18n packages/money packages/wallet-ledger packages/trading-engine packages/game-engine packages/ui",
     "typecheck": "tsc -b tsconfig.json",
     "typecheck:force": "tsc -b --force tsconfig.json",
     "lint": "eslint . --cache --cache-location node_modules/.cache/eslint/.eslintcache",
