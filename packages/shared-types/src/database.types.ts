@@ -7,6 +7,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -617,6 +622,120 @@ export type Database = {
             columns: ["matched_deposit_id"]
             isOneToOne: false
             referencedRelation: "krw_deposit_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crypto_deposit_addresses: {
+        Row: {
+          address: string
+          asset: Database["public"]["Enums"]["crypto_asset"]
+          chain: Database["public"]["Enums"]["crypto_chain"]
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          asset?: Database["public"]["Enums"]["crypto_asset"]
+          chain: Database["public"]["Enums"]["crypto_chain"]
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          asset?: Database["public"]["Enums"]["crypto_asset"]
+          chain?: Database["public"]["Enums"]["crypto_chain"]
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crypto_deposit_addresses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crypto_deposit_requests: {
+        Row: {
+          address_id: string
+          amount: string
+          asset: Database["public"]["Enums"]["crypto_asset"]
+          chain: Database["public"]["Enums"]["crypto_chain"]
+          confirmations_required: number
+          confirmations_seen: number
+          created_at: string
+          credited_at: string | null
+          expires_at: string
+          id: string
+          matched_at: string | null
+          status: Database["public"]["Enums"]["deposit_status"]
+          tx_hash: string | null
+          updated_at: string
+          user_id: string
+          wallet_id: string
+        }
+        Insert: {
+          address_id: string
+          amount: string
+          asset?: Database["public"]["Enums"]["crypto_asset"]
+          chain: Database["public"]["Enums"]["crypto_chain"]
+          confirmations_required?: number
+          confirmations_seen?: number
+          created_at?: string
+          credited_at?: string | null
+          expires_at?: string
+          id?: string
+          matched_at?: string | null
+          status?: Database["public"]["Enums"]["deposit_status"]
+          tx_hash?: string | null
+          updated_at?: string
+          user_id: string
+          wallet_id: string
+        }
+        Update: {
+          address_id?: string
+          amount?: string
+          asset?: Database["public"]["Enums"]["crypto_asset"]
+          chain?: Database["public"]["Enums"]["crypto_chain"]
+          confirmations_required?: number
+          confirmations_seen?: number
+          created_at?: string
+          credited_at?: string | null
+          expires_at?: string
+          id?: string
+          matched_at?: string | null
+          status?: Database["public"]["Enums"]["deposit_status"]
+          tx_hash?: string | null
+          updated_at?: string
+          user_id?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crypto_deposit_requests_address_id_fkey"
+            columns: ["address_id"]
+            isOneToOne: false
+            referencedRelation: "crypto_deposit_addresses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crypto_deposit_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crypto_deposit_requests_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "wallets"
             referencedColumns: ["id"]
           },
         ]
@@ -1361,6 +1480,56 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      on_chain_incoming_transfers: {
+        Row: {
+          amount: string
+          asset: Database["public"]["Enums"]["crypto_asset"]
+          chain: Database["public"]["Enums"]["crypto_chain"]
+          confirmations_seen: number
+          created_at: string
+          id: string
+          matched_deposit_id: string | null
+          received_at: string
+          reconciliation_job_id: string | null
+          to_address: string
+          tx_hash: string
+        }
+        Insert: {
+          amount: string
+          asset?: Database["public"]["Enums"]["crypto_asset"]
+          chain: Database["public"]["Enums"]["crypto_chain"]
+          confirmations_seen?: number
+          created_at?: string
+          id?: string
+          matched_deposit_id?: string | null
+          received_at?: string
+          reconciliation_job_id?: string | null
+          to_address: string
+          tx_hash: string
+        }
+        Update: {
+          amount?: string
+          asset?: Database["public"]["Enums"]["crypto_asset"]
+          chain?: Database["public"]["Enums"]["crypto_chain"]
+          confirmations_seen?: number
+          created_at?: string
+          id?: string
+          matched_deposit_id?: string | null
+          received_at?: string
+          reconciliation_job_id?: string | null
+          to_address?: string
+          tx_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "on_chain_incoming_transfers_matched_deposit_id_fkey"
+            columns: ["matched_deposit_id"]
+            isOneToOne: false
+            referencedRelation: "crypto_deposit_requests"
             referencedColumns: ["id"]
           },
         ]
@@ -2749,6 +2918,57 @@ export type Database = {
           },
         ]
       }
+      viral_mission_claims: {
+        Row: {
+          claimed_at: string
+          client_request_id: string | null
+          id: string
+          ledger_entry_id: string | null
+          metadata: Json
+          mission: Database["public"]["Enums"]["viral_mission_code"]
+          phon_awarded: string
+          user_id: string
+          window_key: string
+        }
+        Insert: {
+          claimed_at?: string
+          client_request_id?: string | null
+          id?: string
+          ledger_entry_id?: string | null
+          metadata?: Json
+          mission: Database["public"]["Enums"]["viral_mission_code"]
+          phon_awarded?: string
+          user_id: string
+          window_key: string
+        }
+        Update: {
+          claimed_at?: string
+          client_request_id?: string | null
+          id?: string
+          ledger_entry_id?: string | null
+          metadata?: Json
+          mission?: Database["public"]["Enums"]["viral_mission_code"]
+          phon_awarded?: string
+          user_id?: string
+          window_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "viral_mission_claims_ledger_entry_id_fkey"
+            columns: ["ledger_entry_id"]
+            isOneToOne: false
+            referencedRelation: "wallet_ledger"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "viral_mission_claims_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wallet_ledger: {
         Row: {
           amount: string
@@ -3063,6 +3283,18 @@ export type Database = {
       }
     }
     Views: {
+      casino_game_rtp_stats: {
+        Row: {
+          bet_count: number | null
+          currency: Database["public"]["Enums"]["currency"] | null
+          game: Database["public"]["Enums"]["game_code"] | null
+          measured_house_edge: number | null
+          measured_rtp: number | null
+          total_payout: number | null
+          total_stake: number | null
+        }
+        Relationships: []
+      }
       v_game_rounds_public: {
         Row: {
           created_at: string | null
@@ -3158,6 +3390,7 @@ export type Database = {
         Args: { p_user_id?: string }
         Returns: undefined
       }
+      _assert_admin_aal2: { Args: never; Returns: undefined }
       _assert_amount_text: { Args: { p_value: string }; Returns: undefined }
       _assert_feature_enabled: {
         Args: { p_feature: string }
@@ -3222,11 +3455,29 @@ export type Database = {
         Returns: undefined
       }
       _assert_system_live: { Args: never; Returns: undefined }
+      _assert_viral_mission_eligible: {
+        Args: {
+          p_mission: Database["public"]["Enums"]["viral_mission_code"]
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      _bj_card_value: { Args: { p_card: number }; Returns: number }
+      _bj_hand_value: { Args: { p_cards: number[] }; Returns: number }
+      _bj_play: {
+        Args: { p_floats: number[]; p_selection: Json }
+        Returns: number
+      }
+      _bj_shuffle: { Args: { p_floats: number[] }; Returns: number[] }
       _check_house_exposure_alert: {
         Args: { p_symbol: string }
         Returns: undefined
       }
       _compute_oracle_median: { Args: { p_symbol: string }; Returns: number }
+      _credit_crypto_deposit_internal: {
+        Args: { p_deposit_id: string; p_tx_hash: string }
+        Returns: string
+      }
       _credit_krw_deposit_internal: {
         Args: { p_deposit_id: string; p_transfer_id: string }
         Returns: string
@@ -3341,6 +3592,10 @@ export type Database = {
         }
         Returns: Json
       }
+      _generate_crypto_address: {
+        Args: { p_chain: Database["public"]["Enums"]["crypto_chain"] }
+        Returns: string
+      }
       _get_wallet_for_user: {
         Args: { p_user_id: string }
         Returns: {
@@ -3363,12 +3618,24 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      _gold_rush_paytable: { Args: never; Returns: Json }
+      _gold_rush_reels: { Args: never; Returns: number[] }
       _grant_mission: {
         Args: {
           p_mission: Database["public"]["Enums"]["mission_code"]
           p_user_id: string
         }
         Returns: undefined
+      }
+      _grant_viral_mission: {
+        Args: {
+          p_client_request_id?: string
+          p_metadata?: Json
+          p_mission: Database["public"]["Enums"]["viral_mission_code"]
+          p_user_id: string
+          p_window_key: string
+        }
+        Returns: string
       }
       _has_active_risk_flag: {
         Args: { p_flag_type: string; p_user_id: string }
@@ -3418,6 +3685,8 @@ export type Database = {
         Args: { p_mine_count: number; p_reveal_count: number }
         Returns: number
       }
+      _mint_reels_paytable: { Args: never; Returns: Json }
+      _mint_reels_reels: { Args: never; Returns: number[] }
       _normalize_person_name: { Args: { p_name: string }; Returns: string }
       _ops_build_health_snapshot: { Args: never; Returns: Json }
       _ops_relative_age: {
@@ -3548,6 +3817,15 @@ export type Database = {
         }
         Returns: number
       }
+      _roulette_evaluate: {
+        Args: { p_selection: Json; p_winning: number }
+        Returns: number
+      }
+      _roulette_leg_max_mult: { Args: { p_type: string }; Returns: number }
+      _roulette_leg_wins: {
+        Args: { p_type: string; p_value: number; p_winning: number }
+        Returns: boolean
+      }
       _roulette_roll_from_seed: {
         Args: { p_server_seed: string; p_spin_date: string; p_user_id: string }
         Returns: number
@@ -3585,7 +3863,31 @@ export type Database = {
         }
         Returns: Json
       }
+      _slot_line_mult: {
+        Args: { p_paytable: Json; p_symbols: number[] }
+        Returns: number
+      }
+      _slot_spin_multiplier: {
+        Args: {
+          p_floats: number[]
+          p_lines: number
+          p_paytable: Json
+          p_reels: number[]
+        }
+        Returns: number
+      }
+      _slot_stop: { Args: { p_f: number; p_strip: number[] }; Returns: number }
       _sync_ops_alerts_from_health: { Args: never; Returns: Json }
+      _try_match_crypto_deposit: {
+        Args: {
+          p_amount: string
+          p_chain: Database["public"]["Enums"]["crypto_chain"]
+          p_confirmations_seen?: number
+          p_to_address: string
+          p_tx_hash: string
+        }
+        Returns: Json
+      }
       _try_match_krw_deposit: {
         Args: {
           p_amount_krw: string
@@ -3606,6 +3908,25 @@ export type Database = {
         Returns: string
       }
       _uuid_from_md5: { Args: { p_value: string }; Returns: string }
+      _viral_mission_reward: {
+        Args: { p_mission: Database["public"]["Enums"]["viral_mission_code"] }
+        Returns: string
+      }
+      _viral_quota_max: {
+        Args: { p_mission: Database["public"]["Enums"]["viral_mission_code"] }
+        Returns: number
+      }
+      _viral_quota_used: {
+        Args: {
+          p_mission: Database["public"]["Enums"]["viral_mission_code"]
+          p_user_id: string
+        }
+        Returns: number
+      }
+      _viral_quota_window_key: {
+        Args: { p_mission: Database["public"]["Enums"]["viral_mission_code"] }
+        Returns: string
+      }
       _wl_row_hash: {
         Args: {
           p_amount: string
@@ -3635,6 +3956,16 @@ export type Database = {
         Args: { p_alert_id: string; p_reason: string }
         Returns: Json
       }
+      rpc_admin_match_crypto_deposit: {
+        Args: {
+          p_amount: string
+          p_chain: string
+          p_confirmations_seen?: number
+          p_to_address: string
+          p_tx_hash: string
+        }
+        Returns: Json
+      }
       rpc_admin_release_self_exclusion: {
         Args: { p_exclusion_id: string; p_reason: string }
         Returns: Json
@@ -3652,11 +3983,16 @@ export type Database = {
         Returns: Json
       }
       rpc_cancel_game_bet: { Args: { p_bet_id: string }; Returns: Json }
+      rpc_check_casino_rtp_drift: { Args: never; Returns: Json }
       rpc_check_onboarding_consent: { Args: never; Returns: Json }
       rpc_check_reserve_ratio: { Args: never; Returns: Json }
       rpc_claim_daily_reward: { Args: never; Returns: Json }
       rpc_claim_staking_reward: {
         Args: { p_position_id: string }
+        Returns: Json
+      }
+      rpc_claim_viral_mission: {
+        Args: { p_client_request_id?: string; p_mission: string }
         Returns: Json
       }
       rpc_claim_welcome_bonus: {
@@ -3679,6 +4015,15 @@ export type Database = {
           p_currency: string
           p_idempotency_key: string
           p_reason: string
+        }
+        Returns: Json
+      }
+      rpc_create_crypto_deposit_request: {
+        Args: {
+          p_amount: string
+          p_asset?: string
+          p_chain?: string
+          p_client_request_id?: string
         }
         Returns: Json
       }
@@ -3706,6 +4051,10 @@ export type Database = {
         Args: { p_interval: string; p_limit?: number; p_symbol: string }
         Returns: Json
       }
+      rpc_get_crypto_deposit_address: {
+        Args: { p_asset?: string; p_chain?: string }
+        Returns: Json
+      }
       rpc_get_ops_alerts: {
         Args: { p_resolved_days?: number; p_statuses?: string[] }
         Returns: Json
@@ -3715,6 +4064,7 @@ export type Database = {
         Args: { p_levels?: number; p_symbol: string }
         Returns: Json
       }
+      rpc_get_viral_mission_status: { Args: never; Returns: Json }
       rpc_liquidate_position: { Args: { p_position_id: string }; Returns: Json }
       rpc_lock_wallet: {
         Args: {
@@ -3762,6 +4112,16 @@ export type Database = {
           p_depositor_name: string
           p_reference_code: string
           p_transfer_id: string
+        }
+        Returns: Json
+      }
+      rpc_process_on_chain_transfer: {
+        Args: {
+          p_amount: string
+          p_chain: string
+          p_confirmations_seen?: number
+          p_to_address: string
+          p_tx_hash: string
         }
         Returns: Json
       }
@@ -3814,12 +4174,12 @@ export type Database = {
         Args: { p_queue_id: string; p_reason: string }
         Returns: Json
       }
-      rpc_resolve_sanctions_screening: {
-        Args: { p_decision: string; p_reason: string; p_screening_id: string }
-        Returns: Json
-      }
       rpc_resolve_ops_alert: {
         Args: { p_alert_id: string; p_reason: string }
+        Returns: Json
+      }
+      rpc_resolve_sanctions_screening: {
+        Args: { p_decision: string; p_reason: string; p_screening_id: string }
         Returns: Json
       }
       rpc_resume_market: {
@@ -3839,6 +4199,7 @@ export type Database = {
         Args: { p_settlement_date?: string }
         Returns: Json
       }
+      rpc_run_invariant_checks: { Args: never; Returns: Json }
       rpc_run_liquidations: { Args: never; Returns: Json }
       rpc_run_reconciliation: { Args: never; Returns: Json }
       rpc_set_affiliate_elite_override: {
@@ -3989,6 +4350,8 @@ export type Database = {
         | "trading_risk_acknowledgement"
         | "game_risk_acknowledgement"
         | "withdrawal_policy_acknowledgement"
+      crypto_asset: "USDT"
+      crypto_chain: "TRC20" | "ERC20"
       currency: "PHON" | "USDT" | "KRW"
       deposit_status:
         | "pending"
@@ -3999,7 +4362,17 @@ export type Database = {
         | "unmatched"
         | "disputed"
         | "admin_rejected"
-      game_code: "crash" | "limbo" | "dice" | "mines" | "hilo" | "plinko"
+      game_code:
+        | "crash"
+        | "limbo"
+        | "dice"
+        | "mines"
+        | "hilo"
+        | "plinko"
+        | "mint_reels"
+        | "gold_rush"
+        | "roulette"
+        | "blackjack"
       kyc_tier:
         | "anonymous"
         | "email_verified"
@@ -4022,6 +4395,12 @@ export type Database = {
       staking_status: "active" | "unstaked"
       staking_term: "flexible" | "days_7" | "days_30" | "days_90"
       user_role: "user" | "admin"
+      viral_mission_code:
+        | "share_referral_link"
+        | "share_story_template"
+        | "invite_friend_signup"
+        | "affiliate_content_post"
+        | "viral_streak_share"
       withdrawal_status:
         | "pending"
         | "approved"
@@ -4173,6 +4552,8 @@ export const Constants = {
         "game_risk_acknowledgement",
         "withdrawal_policy_acknowledgement",
       ],
+      crypto_asset: ["USDT"],
+      crypto_chain: ["TRC20", "ERC20"],
       currency: ["PHON", "USDT", "KRW"],
       deposit_status: [
         "pending",
@@ -4184,7 +4565,18 @@ export const Constants = {
         "disputed",
         "admin_rejected",
       ],
-      game_code: ["crash", "limbo", "dice", "mines", "hilo", "plinko"],
+      game_code: [
+        "crash",
+        "limbo",
+        "dice",
+        "mines",
+        "hilo",
+        "plinko",
+        "mint_reels",
+        "gold_rush",
+        "roulette",
+        "blackjack",
+      ],
       kyc_tier: [
         "anonymous",
         "email_verified",
@@ -4209,6 +4601,13 @@ export const Constants = {
       staking_status: ["active", "unstaked"],
       staking_term: ["flexible", "days_7", "days_30", "days_90"],
       user_role: ["user", "admin"],
+      viral_mission_code: [
+        "share_referral_link",
+        "share_story_template",
+        "invite_friend_signup",
+        "affiliate_content_post",
+        "viral_streak_share",
+      ],
       withdrawal_status: [
         "pending",
         "approved",
@@ -4221,4 +4620,3 @@ export const Constants = {
     },
   },
 } as const
-

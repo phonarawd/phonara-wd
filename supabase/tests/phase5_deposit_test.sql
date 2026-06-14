@@ -343,3 +343,123 @@ BEGIN
 END;
 $$;
 ROLLBACK;
+
+-- ── Test 4: USDT crypto deposit — duplicate tx_hash idempotent ─────────────────
+BEGIN;
+DO $$
+DECLARE
+  v_uid    UUID := gen_random_uuid();
+  v_wid    UUID;
+  v_addr   TEXT;
+  v_addr_id UUID;
+  v_dep_id UUID;
+  v_res1   JSONB;
+  v_res2   JSONB;
+  v_before NUMERIC;
+  v_after  NUMERIC;
+  v_sigma  NUMERIC;
+BEGIN
+  INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
+  VALUES (v_uid, 'authenticated', 'authenticated',
+          'crypto_dup_' || v_uid::TEXT || '@test.local', NOW(), NOW());
+
+  UPDATE app_config SET value = 'false'
+    WHERE key IN ('system_halt', 'system_readonly', 'consent_gate_enabled');
+  UPDATE app_config SET value = 'true' WHERE key = 'feature_deposit_enabled';
+
+  INSERT INTO sanctions_screenings (user_id, status, screened_at)
+  VALUES (v_uid, 'clear', NOW());
+
+  SELECT id INTO v_wid FROM wallets WHERE user_id = v_uid;
+
+  v_addr := 'T' || upper(substr(replace(gen_random_uuid()::TEXT, '-', ''), 1, 33));
+  INSERT INTO crypto_deposit_addresses (user_id, asset, chain, address)
+  VALUES (v_uid, 'USDT', 'TRC20', v_addr)
+  RETURNING id INTO v_addr_id;
+
+  INSERT INTO crypto_deposit_requests (
+    user_id, wallet_id, address_id, asset, chain, amount, status, expires_at
+  ) VALUES (
+    v_uid, v_wid, v_addr_id, 'USDT', 'TRC20', '100.000000', 'pending', NOW() + INTERVAL '1 hour'
+  ) RETURNING id INTO v_dep_id;
+
+  SELECT usdt_available::NUMERIC INTO v_before FROM wallets WHERE user_id = v_uid;
+
+  SELECT
+    (SELECT COALESCE(SUM(usdt_available::NUMERIC + usdt_locked::NUMERIC), 0) FROM wallets)
+    + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'USDT')
+  INTO v_sigma;
+
+  PERFORM set_config('request.jwt.claims', '{}', true);
+  v_res1 := rpc_process_on_chain_transfer('TX-CRYPTO-DUP-1', 'TRC20', v_addr, '100.000000', 1);
+  ASSERT (v_res1->>'ok')::BOOLEAN, format('first crypto match must succeed, got %s', v_res1);
+
+  BEGIN
+    v_res2 := rpc_process_on_chain_transfer('TX-CRYPTO-DUP-1', 'TRC20', v_addr, '100.000000', 1);
+    RAISE EXCEPTION 'duplicate tx_hash must raise';
+  EXCEPTION WHEN OTHERS THEN
+    IF SQLERRM <> 'duplicate_tx_hash' THEN
+      RAISE;
+    END IF;
+  END;
+
+  SELECT usdt_available::NUMERIC INTO v_after FROM wallets WHERE user_id = v_uid;
+  ASSERT v_after - v_before = 100,
+    format('crypto credit must be exactly 100 USDT, delta=%s', v_after - v_before);
+
+  ASSERT (
+    (SELECT COALESCE(SUM(usdt_available::NUMERIC + usdt_locked::NUMERIC), 0) FROM wallets)
+    + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'USDT')
+  ) = v_sigma,
+    'USDT grand total must be conserved after crypto deposit';
+
+  RAISE NOTICE 'CRYPTO DEPOSIT IDEMPOTENCY OK — duplicate tx_hash rejected, Σ=0 preserved';
+END;
+$$;
+ROLLBACK;
+
+-- ── Test 5: USDT crypto deposit happy path ────────────────────────────────────
+BEGIN;
+DO $$
+DECLARE
+  v_uid   UUID := gen_random_uuid();
+  v_res   JSONB;
+  v_addr  TEXT;
+  v_before NUMERIC;
+  v_after  NUMERIC;
+BEGIN
+  INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
+  VALUES (v_uid, 'authenticated', 'authenticated',
+          'crypto_ok_' || v_uid::TEXT || '@test.local', NOW(), NOW());
+
+  UPDATE app_config SET value = 'false'
+    WHERE key IN ('system_halt', 'system_readonly', 'consent_gate_enabled');
+  UPDATE app_config SET value = 'true' WHERE key = 'feature_deposit_enabled';
+
+  INSERT INTO sanctions_screenings (user_id, status, screened_at)
+  VALUES (v_uid, 'clear', NOW());
+
+  INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
+  SELECT v_uid, doc_type::consent_doc_type, 'v1', TRUE
+  FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']) AS doc_type
+  ON CONFLICT DO NOTHING;
+
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
+  v_res := rpc_create_crypto_deposit_request('50.000000', 'USDT', 'TRC20', 'crypto-req-' || v_uid::TEXT);
+  ASSERT (v_res->>'ok')::BOOLEAN, format('crypto deposit request must succeed, got %s', v_res);
+  v_addr := v_res->>'address';
+
+  SELECT usdt_available::NUMERIC INTO v_before FROM wallets WHERE user_id = v_uid;
+
+  PERFORM set_config('request.jwt.claims', '{}', true);
+  v_res := rpc_process_on_chain_transfer('TX-CRYPTO-OK-1', 'TRC20', v_addr, '50.000000', 1);
+  ASSERT (v_res->>'ok')::BOOLEAN, format('crypto match must succeed, got %s', v_res);
+
+  SELECT usdt_available::NUMERIC INTO v_after FROM wallets WHERE user_id = v_uid;
+  ASSERT v_after - v_before = 50,
+    format('expected 50 USDT credit, delta=%s', v_after - v_before);
+
+  RAISE NOTICE 'CRYPTO DEPOSIT OK — address match credits USDT';
+END;
+$$;
+ROLLBACK;

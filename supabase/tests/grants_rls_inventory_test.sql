@@ -169,6 +169,19 @@ BEGIN
      AND has_table_privilege('authenticated', 'public.push_subscriptions', 'DELETE'),
     'authenticated may manage own push_subscriptions through RLS';
 
+  ASSERT has_table_privilege('authenticated', 'public.crypto_deposit_addresses', 'SELECT'),
+    'authenticated may SELECT own crypto_deposit_addresses';
+  ASSERT NOT has_table_privilege('authenticated', 'public.crypto_deposit_addresses', 'INSERT'),
+    'authenticated must not INSERT crypto_deposit_addresses';
+  ASSERT has_table_privilege('authenticated', 'public.crypto_deposit_requests', 'SELECT'),
+    'authenticated may SELECT own crypto_deposit_requests';
+  ASSERT NOT has_table_privilege('authenticated', 'public.crypto_deposit_requests', 'INSERT'),
+    'authenticated must not INSERT crypto_deposit_requests';
+  ASSERT has_table_privilege('authenticated', 'public.viral_mission_claims', 'SELECT'),
+    'authenticated may SELECT own viral_mission_claims';
+  ASSERT NOT has_table_privilege('authenticated', 'public.viral_mission_claims', 'INSERT'),
+    'authenticated must not INSERT viral_mission_claims';
+
   -- ── RLS enabled on inventory tables ──────────────────────────────────────
   FOR r IN
     SELECT c.relname AS tbl
@@ -183,7 +196,9 @@ BEGIN
         'affiliate_commission_daily_aggregates',
         'affiliate_settlements', 'affiliate_settlement_events',
         'affiliate_commission_approvals',
-        'system_accounts', 'system_account_ledger'
+        'system_accounts', 'system_account_ledger',
+        'crypto_deposit_addresses', 'crypto_deposit_requests',
+        'on_chain_incoming_transfers', 'viral_mission_claims'
       )
       AND NOT c.relrowsecurity
   LOOP

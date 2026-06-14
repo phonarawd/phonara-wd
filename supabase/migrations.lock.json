@@ -97,6 +97,8 @@
     "20260614000093_slot_paytable_jsonb_fix.sql": "2aebf4996fa305f59056f5147ef9b4f13eb8d2b52e5699443f450522365586ff",
     "20260614000094_slot_reel_strip_extraction_fix.sql": "03c71519533812d46a9af5991dd512a64e056c98ef8e4859d2a8ac17fc551bf3",
     "20260614000095_slot_reel_strip_length_fix.sql": "b125decf5ab28dbc8678cfbbbe8999903eac07cd811205f9db40203bb615d231",
-    "20260614000096_blackjack_natural_payout_fix.sql": "47940aecad572e0a3cc3e17e321249d2c7884e9d43a1aba945c6614c399947e3"
+    "20260614000096_blackjack_natural_payout_fix.sql": "47940aecad572e0a3cc3e17e321249d2c7884e9d43a1aba945c6614c399947e3",
+    "20260615000097_engine100_crypto_rails.sql": "6c545a15028c7a10d5c089bff049037fcdfd09a34b246d31c1856ec39dce843b",
+    "20260615000098_engine100_viral_missions.sql": "ad45d223386cc09eb3169f6e81f2fbbde92ee2b82df63fe440dfe2acf4dde39d"
   }
 }

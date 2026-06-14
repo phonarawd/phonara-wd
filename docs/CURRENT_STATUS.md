@@ -8,7 +8,7 @@
 ## Last Verified Green Gates
 
 - Full local RC gate: `bun run check:full` → standard check, PWA, fresh DB reset, SQL 37/37, casino SQL parity, and browser E2E 41/41 passed on 2026-06-12.
-- Remote migration apply: locked Supabase project `yocjhjsdwoijfdrehzoq` is aligned through `20260611000079`.
+- Remote migration apply: locked Supabase project `yocjhjsdwoijfdrehzoq` is aligned through **`20260615000098`** (casino 088–096, crypto 097, viral 098).
 - Remote advisor/lint: `supabase db lint --linked --level error` green; MCP security/performance advisors show 0 ERROR.
 - RC read-only production smoke: remote flags safe, web/admin login surfaces and PWA/offline assets boot with the remote publishable key.
 - Launch-ops read-only check: cron jobs active; open ops alerts, pending queues, pending withdrawals, active risk flags, and open STR cases are all 0.
@@ -51,12 +51,15 @@ Next slices:
 
 ## Known Launch Notes
 
-- Remote migration history is aligned through `20260611000079`.
+- Remote migration history is aligned through **`20260615000098`** (`yocjhjsdwoijfdrehzoq`). Includes casino 088–096, crypto rails 097, viral missions 098.
+- `database.types.ts` regen from linked DB: **`game_code` 10 values**; `crypto_*` tables + `viral_mission_code` enum present.
+- Local SQL integration: **`bun run test:sql` → 41/41** after ENGINE 100 migrations (crypto deposit Σ=0, viral conservation).
+- Remote `db lint --linked --level error` and `check:advisors` → **0 ERROR** (2026-06-14).
+- Production **`rpc_run_reconciliation()`** executed once via linked query → all 5 check families **`is_match=true`**, `system_readonly` not set.
 - Local `check:advisors` still skips without `SUPABASE_ACCESS_TOKEN`, but MCP advisor checks currently show 0 ERROR.
 - `db diff --linked` default-direction output includes reverse drift/noise (`pg_net`); the desired `linked -> local` diff produced no SQL, and the generated reverse migration attempt was rejected by local SQL gates and deleted.
 - Production `auth.users=0`, so wallet/trading/casino/admin authenticated smoke was not executed. `setup/MANUAL_TASKS.md` now carries the first operator account and no-mutation smoke checklist.
-- Remote `reconciliation_log` is still empty after migration apply. AI MCP SQL runs as `supabase_read_only_user` and cannot execute service-role-only `rpc_run_reconciliation()`, so launch-ops requires a first Dashboard/service-role manual or scheduled reconciliation green check before launch-day operations can start.
 - Affiliate browser E2E and explicit locale-toggle E2E are not separate browser specs yet because the corresponding shipped user/admin UX is not exposed as a dedicated route. Current coverage is SQL/admin-pattern/check based and is documented in the E2E matrix.
 - If local Playwright global setup fails with `createUser failed: {}`, check `http://127.0.0.1:54444/auth/v1/health`. In the latest run this was a local Auth upstream issue and recovered with `supabase stop && supabase start`.
 - **Local manual signup/login**: `.env.local` must use `VITE_SUPABASE_URL=http://127.0.0.1:54444` and the publishable key from `supabase status`. Local `config.toml` disables email confirmation so signup goes straight to the dashboard. After `supabase db reset`, clear browser Local Storage (`sb-*` keys) once — stale refresh tokens otherwise spam `/auth/v1/token` with 400. Inbucket catches auth emails at http://127.0.0.1:54424 when testing magic links.
-- **Performance backlog (not a code defect)**: Under full-gate load (`check:full`, ~20 prior E2E specs), `rpc_spot_market_buy` was observed exceeding 45s once while isolated `core-flow` runs completed in ~7s. `useSpotActions` busy/ref teardown is correct; E2E now polls `spot_trades` for RPC completion. Recommend pre-launch load testing to measure spot/futures RPC p95 latency.
+- **Performance backlog (not a code defect)**: Under full-gate load (`check:full`, ~20 prior E2E specs), `rpc_spot_market_buy` was observed exceeding 45s once while isolated `core-flow` runs completed in ~7s. `useSpotActions` busy/ref teardown is correct; E2E now polls `spot_trades` for RPC completion. **ENGINE 100 scope:** oracle-perp excellence + documented p95 SLO is sufficient; **full Binance-grade CLOB is a separate multi-month program**, not a launch blocker for current architecture (display order book, not matching engine).

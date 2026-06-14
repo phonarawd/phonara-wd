@@ -119,7 +119,7 @@ BEGIN
   -- Every reward reason code currently passed to _credit_wallet_internal mints.
   FOREACH v_reason IN ARRAY ARRAY[
     'welcome_bonus','referral_bonus','daily_claim',
-    'roulette_spin','mission_reward','staking_reward'
+    'roulette_spin','mission_reward','viral_mission_reward','staking_reward'
   ] LOOP
     ASSERT _is_reward_issuance_reason(v_reason),
       format('reward reason %s must be classified as mint', v_reason);
@@ -137,6 +137,73 @@ BEGIN
   END LOOP;
 
   RAISE NOTICE 'REWARD ISSUANCE CLASSIFIER OK — exact whitelist, no substring collisions';
+END;
+$$;
+
+-- ── Test 4: viral mission claim conserves PHON + quota/idempotency ────────────
+DO $$
+DECLARE
+  v_uid          UUID := gen_random_uuid();
+  v_grand_before NUMERIC;
+  v_grand_after  NUMERIC;
+  v_wallet_before NUMERIC;
+  v_wallet_after  NUMERIC;
+  v_issuance_before NUMERIC;
+  v_issuance_after  NUMERIC;
+  v_res1 JSONB;
+  v_res2 JSONB;
+  v_blocked BOOLEAN := FALSE;
+BEGIN
+  INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
+  VALUES (v_uid, 'authenticated', 'authenticated',
+          'viral_' || v_uid::TEXT || '@test.local', NOW(), NOW());
+
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
+  INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
+  SELECT v_uid, doc_type::consent_doc_type, 'v1', TRUE
+  FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']) AS doc_type
+  ON CONFLICT DO NOTHING;
+
+  SELECT balance::NUMERIC INTO v_issuance_before FROM system_accounts WHERE code = 'reward_issuance_phon';
+  SELECT phon_available::NUMERIC + phon_locked::NUMERIC INTO v_wallet_before FROM wallets WHERE user_id = v_uid;
+  SELECT
+    (SELECT COALESCE(SUM(phon_available::NUMERIC + phon_locked::NUMERIC),0) FROM wallets)
+    + (SELECT COALESCE(SUM(balance::NUMERIC),0) FROM system_accounts WHERE currency='PHON')
+  INTO v_grand_before;
+
+  v_res1 := rpc_claim_viral_mission('share_referral_link', 'viral-idem-' || v_uid::TEXT);
+  ASSERT (v_res1->>'ok')::BOOLEAN, 'viral claim must succeed';
+
+  BEGIN
+    PERFORM rpc_claim_viral_mission('share_referral_link', 'viral-idem-' || v_uid::TEXT);
+    RAISE EXCEPTION 'duplicate client_request_id must raise';
+  EXCEPTION WHEN OTHERS THEN
+    IF SQLERRM <> 'duplicate_request' THEN RAISE; END IF;
+  END;
+
+  UPDATE app_config SET value = '1' WHERE key = 'viral_share_referral_link_max_per_day';
+
+  BEGIN
+    PERFORM rpc_claim_viral_mission('share_referral_link', 'viral-quota-' || v_uid::TEXT);
+    RAISE EXCEPTION 'quota exhausted must raise';
+  EXCEPTION WHEN OTHERS THEN
+    IF SQLERRM = 'viral_quota_exhausted' THEN v_blocked := TRUE; ELSE RAISE; END IF;
+  END;
+  ASSERT v_blocked, 'second claim after max=1 must raise viral_quota_exhausted';
+
+  SELECT balance::NUMERIC INTO v_issuance_after FROM system_accounts WHERE code = 'reward_issuance_phon';
+  SELECT phon_available::NUMERIC + phon_locked::NUMERIC INTO v_wallet_after FROM wallets WHERE user_id = v_uid;
+  SELECT
+    (SELECT COALESCE(SUM(phon_available::NUMERIC + phon_locked::NUMERIC),0) FROM wallets)
+    + (SELECT COALESCE(SUM(balance::NUMERIC),0) FROM system_accounts WHERE currency='PHON')
+  INTO v_grand_after;
+
+  ASSERT v_wallet_after > v_wallet_before, 'viral claim must credit PHON';
+  ASSERT (v_wallet_after - v_wallet_before) = (v_issuance_before - v_issuance_after),
+    'viral reward must debit reward_issuance_phon by wallet gain';
+  ASSERT v_grand_after = v_grand_before, 'PHON grand total must be conserved after viral claim';
+
+  RAISE NOTICE 'VIRAL MISSION CONSERVATION OK — Σ=0, idempotency, quota enforced';
 END;
 $$;
 
