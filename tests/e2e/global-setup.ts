@@ -112,6 +112,7 @@ async function globalSetup(): Promise<void> {
     'feature_game_gold_rush_enabled',
     'feature_game_roulette_enabled',
     'feature_game_blackjack_enabled',
+    'feature_sports_enabled',
   ]) {
     await admin.from('app_config').update({ value: 'true' }).eq('key', feature);
   }

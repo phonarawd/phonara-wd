@@ -1,6 +1,10 @@
+import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import {
+  CURSOR_ARCHIVAL_DIR_PATTERNS,
+  CURSOR_ARCHIVAL_DOC_GLOB_PREFIXES,
+  CURSOR_ARCHIVAL_DOC_PATHS,
   CURSORIGNORE_REQUIRED_PATTERNS,
   EPHEMERAL_AUTH_PATHS,
   SESSION_RESIDUE_DIRS,
@@ -9,6 +13,9 @@ import {
 } from './lib/workspace-artifacts';
 
 const violations: string[] = [];
+
+// Keep VS Code watcher/search excludes aligned with CURSOR_ARCHIVAL_DOC_PATHS.
+execSync('tsx scripts/sync-cursor-archival-excludes.ts', { stdio: 'pipe' });
 
 function readText(path: string): string {
   if (!existsSync(path)) {
@@ -30,6 +37,43 @@ function requirePatternsInFile(file: string, label: string, patterns: readonly s
 
 function checkCursorignore() {
   requirePatternsInFile('.cursorignore', '.cursorignore', CURSORIGNORE_REQUIRED_PATTERNS);
+  requirePatternsInFile('.cursorignore', '.cursorignore', CURSOR_ARCHIVAL_DOC_PATHS);
+  requirePatternsInFile('.cursorignore', '.cursorignore', CURSOR_ARCHIVAL_DIR_PATTERNS);
+  requirePatternsInFile('.cursorignore', '.cursorignore', CURSOR_ARCHIVAL_DOC_GLOB_PREFIXES);
+}
+
+function checkVscodeArchivalWatcherExclude() {
+  const raw = readText('.vscode/settings.json');
+  if (!raw) return;
+  try {
+    const settings = JSON.parse(raw) as {
+      files?: { watcherExclude?: Record<string, boolean> };
+      search?: { exclude?: Record<string, boolean> };
+    };
+    const watcher = settings.files?.watcherExclude ?? {};
+    const search = settings.search?.exclude ?? {};
+    for (const docPath of CURSOR_ARCHIVAL_DOC_PATHS) {
+      const watcherKey = `**/${docPath.replace(/\\/g, '/')}`;
+      if (!watcher[watcherKey]) {
+        violations.push(`.vscode/settings.json files.watcherExclude missing: ${watcherKey}`);
+      }
+      if (!search[watcherKey]) {
+        violations.push(`.vscode/settings.json search.exclude missing: ${watcherKey}`);
+      }
+    }
+    for (const dirPattern of CURSOR_ARCHIVAL_DIR_PATTERNS) {
+      const normalized = dirPattern.replace(/\\/g, '/').replace(/\/$/, '');
+      const watcherKey = `**/${normalized}/**`;
+      if (!watcher[watcherKey]) {
+        violations.push(`.vscode/settings.json files.watcherExclude missing: ${watcherKey}`);
+      }
+      if (!search[watcherKey]) {
+        violations.push(`.vscode/settings.json search.exclude missing: ${watcherKey}`);
+      }
+    }
+  } catch {
+    violations.push('.vscode/settings.json is not valid JSON');
+  }
 }
 
 function checkVscodeWatcherExclude() {
@@ -114,6 +158,7 @@ function checkWorkspaceRoots() {
 
 checkCursorignore();
 checkVscodeWatcherExclude();
+checkVscodeArchivalWatcherExclude();
 checkCleanArtifactsSync();
 checkSessionResidue();
 checkWorkspaceRoots();

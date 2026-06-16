@@ -11,6 +11,8 @@ export default defineConfig({
       '@phonara/wallet-ledger': path.resolve(root, 'packages/wallet-ledger/src'),
       '@phonara/trading-engine': path.resolve(root, 'packages/trading-engine/src'),
       '@phonara/game-engine': path.resolve(root, 'packages/game-engine/src'),
+      '@phonara/sportsbook-engine': path.resolve(root, 'packages/sportsbook-engine/src'),
+      '@phonara/sports-ingest': path.resolve(root, 'packages/sports-ingest/src'),
       '@phonara/i18n': path.resolve(root, 'packages/i18n/src'),
     },
   },

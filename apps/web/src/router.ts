@@ -37,6 +37,7 @@ import { Route as accountRoute } from './routes/account';
 import { Route as settingsRoute } from './routes/settings';
 import { Route as referralRoute } from './routes/referral';
 import { Route as responsibleGamingRoute } from './routes/responsible-gaming';
+import { Route as sportsRoute } from './routes/sports';
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -62,6 +63,7 @@ const routeTree = rootRoute.addChildren([
   settingsRoute,
   referralRoute,
   responsibleGamingRoute,
+  sportsRoute,
   casinoIndexRoute,
   casinoCrashRoute,
   casinoLimboRoute,

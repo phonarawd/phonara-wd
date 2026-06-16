@@ -6,6 +6,8 @@
     { "path": "./packages/wallet-ledger" },
     { "path": "./packages/trading-engine" },
     { "path": "./packages/game-engine" },
+    { "path": "./packages/sportsbook-engine" },
+    { "path": "./packages/sports-ingest" },
     { "path": "./packages/i18n" },
     { "path": "./packages/ui" },
     { "path": "./apps/web" },

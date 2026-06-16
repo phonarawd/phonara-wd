@@ -14,6 +14,7 @@ export const Route = createRoute({
 });
 
 const MORE_LINKS = [
+  { to: '/sports' as const, labelKey: 'more.sports' as const, icon: 'games' as const },
   { to: '/earn' as const, labelKey: 'more.earn' as const, icon: 'earn' as const },
   { to: '/staking' as const, labelKey: 'more.staking' as const, icon: 'staking' as const },
   { to: '/ledger' as const, labelKey: 'more.ledger' as const, icon: 'ledger' as const },

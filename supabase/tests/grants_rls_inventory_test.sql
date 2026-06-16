@@ -182,6 +182,57 @@ BEGIN
   ASSERT NOT has_table_privilege('authenticated', 'public.viral_mission_claims', 'INSERT'),
     'authenticated must not INSERT viral_mission_claims';
 
+  -- sportsbook (Wave-S1–S7 · 20260616000099–105)
+  ASSERT NOT has_table_privilege('anon', 'public.sports_fixtures', 'SELECT'),
+    'anon must NOT SELECT sports_fixtures directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.sports_fixtures', 'SELECT'),
+    'authenticated must NOT SELECT sports_fixtures directly';
+  ASSERT NOT has_table_privilege('anon', 'public.sports_markets', 'SELECT'),
+    'anon must NOT SELECT sports_markets directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.sports_markets', 'SELECT'),
+    'authenticated must NOT SELECT sports_markets directly';
+  ASSERT NOT has_table_privilege('anon', 'public.sports_outcomes', 'SELECT'),
+    'anon must NOT SELECT sports_outcomes directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.sports_outcomes', 'SELECT'),
+    'authenticated must NOT SELECT sports_outcomes directly';
+  ASSERT NOT has_table_privilege('anon', 'public.sports_odds_snapshots', 'SELECT'),
+    'anon must NOT SELECT sports_odds_snapshots directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.sports_odds_snapshots', 'SELECT'),
+    'authenticated must NOT SELECT sports_odds_snapshots directly';
+  ASSERT has_table_privilege('authenticated', 'public.sports_bets', 'SELECT'),
+    'authenticated must SELECT own sports_bets (RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.sports_bets', 'INSERT'),
+    'authenticated must NOT INSERT sports_bets directly';
+  ASSERT has_table_privilege('authenticated', 'public.sports_bet_legs', 'SELECT'),
+    'authenticated must SELECT own sports_bet_legs (RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.sports_bet_legs', 'INSERT'),
+    'authenticated must NOT INSERT sports_bet_legs directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.sports_ingest_cursors', 'SELECT'),
+    'authenticated must NOT SELECT sports_ingest_cursors';
+  ASSERT has_table_privilege('service_role', 'public.sports_ingest_cursors', 'SELECT'),
+    'service_role must SELECT sports_ingest_cursors';
+  ASSERT NOT has_table_privilege('authenticated', 'public.sports_ingest_health', 'SELECT'),
+    'authenticated must NOT SELECT sports_ingest_health';
+  ASSERT has_table_privilege('service_role', 'public.sports_ingest_health', 'SELECT'),
+    'service_role must SELECT sports_ingest_health';
+  ASSERT NOT has_function_privilege('authenticated', 'public.rpc_record_sports_ingest_health(jsonb)', 'EXECUTE'),
+    'authenticated must NOT EXECUTE rpc_record_sports_ingest_health';
+  ASSERT NOT has_function_privilege('authenticated', 'public.rpc_sync_sports_ingest_ops_alerts(bigint, bigint, bigint)', 'EXECUTE'),
+    'authenticated must NOT EXECUTE rpc_sync_sports_ingest_ops_alerts';
+  ASSERT has_table_privilege('authenticated', 'public.sports_fixture_events', 'SELECT'),
+    'authenticated may SELECT sports_fixture_events (admin RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.sports_fixture_events', 'INSERT'),
+    'authenticated must NOT INSERT sports_fixture_events directly';
+
+  ASSERT NOT has_function_privilege('authenticated', 'public.rpc_ingest_sports_c1(jsonb)', 'EXECUTE'),
+    'authenticated must NOT EXECUTE rpc_ingest_sports_c1';
+  ASSERT NOT has_function_privilege('authenticated', 'public.rpc_ingest_sports_c1_batch(jsonb)', 'EXECUTE'),
+    'authenticated must NOT EXECUTE rpc_ingest_sports_c1_batch';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_place_sports_bet(jsonb, text, text, text, text, text, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_place_sports_bet';
+  ASSERT has_function_privilege('anon', 'public.rpc_list_sports_fixtures(date, text, text)', 'EXECUTE'),
+    'anon must EXECUTE rpc_list_sports_fixtures';
+
   -- ── RLS enabled on inventory tables ──────────────────────────────────────
   FOR r IN
     SELECT c.relname AS tbl
@@ -198,7 +249,11 @@ BEGIN
         'affiliate_commission_approvals',
         'system_accounts', 'system_account_ledger',
         'crypto_deposit_addresses', 'crypto_deposit_requests',
-        'on_chain_incoming_transfers', 'viral_mission_claims'
+        'on_chain_incoming_transfers', 'viral_mission_claims',
+        'sports_fixtures', 'sports_markets', 'sports_outcomes', 'sports_odds_snapshots',
+        'sports_bets', 'sports_bet_legs', 'sports_ingest_cursors', 'sports_fixture_events',
+        'sports_ingest_health', 'sports_user_risk_profiles', 'sports_risk_events',
+        'sports_device_signals', 'sports_market_type_registry', 'sports_live_ttl_by_sport'
       )
       AND NOT c.relrowsecurity
   LOOP
@@ -208,7 +263,7 @@ BEGIN
   ASSERT v_rls_off = '',
     format('RLS must be enabled on inventory tables:%s', v_rls_off);
 
-  RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges match migrations 000045/053–055 and affiliate approvals';
+  RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges match migrations 000045/053–055, affiliate approvals, and sportsbook S1–S7';
 END;
 $$;
 

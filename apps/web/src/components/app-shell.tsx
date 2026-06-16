@@ -49,7 +49,7 @@ function resolveActive(pathname: string, override?: AppNavKey): AppNavKey {
   if (pathname.startsWith('/trade')) return 'trade';
   if (pathname.startsWith('/wallet')) return 'wallet';
   if (pathname.startsWith('/casino')) return 'games';
-  if (pathname.startsWith('/more') || pathname.startsWith('/staking') || pathname.startsWith('/ledger') || pathname.startsWith('/responsible-gaming')) {
+  if (pathname.startsWith('/more') || pathname.startsWith('/sports') || pathname.startsWith('/staking') || pathname.startsWith('/ledger') || pathname.startsWith('/responsible-gaming')) {
     return 'more';
   }
   return 'home';
