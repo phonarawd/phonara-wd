@@ -73,6 +73,19 @@ export async function verifyMfaFactor(input: {
     code: input.code.trim(),
   });
   if (error) throw error;
+
+  const { error: refreshError } = await supabase.auth.refreshSession();
+  if (refreshError) throw refreshError;
+}
+
+/** Wait until the client session reports MFA assurance level aal2. */
+export async function waitForAdminAal2(maxAttempts = 12, delayMs = 100): Promise<void> {
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const aal = await getAuthenticatorAssuranceLevel();
+    if (aal?.currentLevel === 'aal2') return;
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+  throw new Error('ERR_MFA_AAL2_TIMEOUT');
 }
 
 export function getVerifiedTotpFactor(factors: MfaFactors | null): MfaFactors['totp'][number] | null {

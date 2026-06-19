@@ -1,7 +1,7 @@
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { Route as rootRoute } from './__root';
-import { enrollTotpFactor, challengeMfaFactor, verifyMfaFactor } from '../domain/admin-auth';
+import { enrollTotpFactor, challengeMfaFactor, verifyMfaFactor, waitForAdminAal2 } from '../domain/admin-auth';
 import { useT } from '../lib/i18n';
 import { translateError } from '../lib/translate-error';
 import { signOut } from '../lib/auth';
@@ -57,6 +57,7 @@ function MfaEnrollPage() {
         challengeId,
         code,
       });
+      await waitForAdminAal2();
       void navigate({ to: '/overview' });
     } catch (err: unknown) {
       setSubmitErrorKey(translateError(err, 'admin.mfa.enroll.verifyError'));

@@ -6,6 +6,7 @@ import {
   listMfaFactors,
   getVerifiedTotpFactor,
   verifyMfaFactor,
+  waitForAdminAal2,
 } from '../domain/admin-auth';
 import { useT } from '../lib/i18n';
 import { translateError } from '../lib/translate-error';
@@ -75,6 +76,7 @@ function MfaChallengePage() {
         challengeId,
         code,
       });
+      await waitForAdminAal2();
       void navigate({ to: '/overview' });
     } catch (err: unknown) {
       setSubmitErrorKey(translateError(err, 'admin.mfa.challenge.verifyError'));
