@@ -1,7 +1,6 @@
-import { PresentationImportPlaceholder } from '../placeholder-page';
+import { Navigate } from '@tanstack/react-router';
 
+/** Lovable deprecated /games → /casino redirect (presentation-only). */
 export function ImportedGamesCatalogPage() {
-  return (
-    <PresentationImportPlaceholder path="apps/web/src/presentation-import/pages/games-catalog-page.tsx" />
-  );
+  return <Navigate to="/casino" replace />;
 }

@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import type { Currency } from '@phonara/shared-types';
 import { formatMoney, type FormatMoneyOptions } from '@phonara/ui';
 
+export { formatMoney, type FormatMoneyOptions };
+
 /**
  * Memoized, precision-safe money formatting for a raw decimal string.
  * Returns an em dash for null/undefined/invalid input so the UI never crashes

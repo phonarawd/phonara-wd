@@ -1,36 +1,7 @@
 @import "tw-animate-css";
 @import "./styles/surfaces.css";
 
-/* ─── Reset & base ─────────────────────────────────────────── */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Bridge layer: legacy var names alias to @theme tokens so that surviving
-   layout CSS picks up the canonical design-system values without a bulk rewrite. */
-:root {
-  --bg-base: var(--color-bg);
-  --bg-card: var(--color-surface);
-  --bg-elevated: var(--color-surface-elevated);
-  --bg-surface: color-mix(in srgb, var(--color-surface) 72%, transparent);
-  --border: var(--color-border);
-  --border-subtle: var(--color-border-subtle);
-  --border-h: var(--color-border-strong);
-  --text: var(--color-fg);
-  --text-primary: var(--color-fg);
-  --text-muted: var(--color-muted);
-  --blue: var(--color-primary);
-  --green: var(--color-up);
-  --red: var(--color-down);
-  --yellow: var(--color-warning);
-  --purple: var(--color-accent);
-  --radius: var(--radius-xl);
-  --radius-sm: 10px;
-}
+/* Lovable tokens + @layer base: lovable-globals.css (main.tsx). PHONARA helpers below only. */
 
 html,
 body,
@@ -640,7 +611,7 @@ textarea:focus-visible,
   width: 36px;
   height: 36px;
   border: 3px solid var(--border);
-  border-top-color: var(--blue);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -659,8 +630,8 @@ textarea:focus-visible,
   border-radius: 16px;
   background: linear-gradient(
     135deg,
-    var(--blue),
-    color-mix(in srgb, var(--blue) 72%, var(--text) 28%)
+    var(--primary),
+    color-mix(in srgb, var(--primary) 72%, var(--foreground) 28%)
   );
   font-size: 22px;
   font-weight: 900;
@@ -669,7 +640,7 @@ textarea:focus-visible,
 
 /* ─── Error ─────────────────────────────────────────────────── */
 .error-msg {
-  color: var(--red);
+  color: var(--down);
   font-size: 0.85rem;
   text-align: left;
 }
@@ -1134,75 +1105,6 @@ textarea:focus-visible,
   }
 }
 
-.app-shell-nav {
-  position: fixed;
-  inset-inline: 10px;
-  bottom: max(8px, env(safe-area-inset-bottom));
-  z-index: 50;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 4px;
-  padding: 7px;
-  border: 1px solid color-mix(in srgb, var(--color-border) 86%, transparent);
-  border-radius: 22px;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--color-surface-2) 86%, transparent),
-      color-mix(in srgb, var(--color-surface) 92%, transparent)
-    ),
-    var(--color-surface);
-  box-shadow: var(--elevation-sheet);
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
-}
-
-.app-shell-nav-item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  min-height: 52px;
-  border-radius: 16px;
-  text-decoration: none;
-  color: var(--color-muted);
-  font-size: 0.68rem;
-  font-weight: 600;
-  isolation: isolate;
-  transition:
-    color var(--motion-duration-confirmation) var(--motion-ease-standard),
-    background-color var(--motion-duration-confirmation) var(--motion-ease-standard),
-    transform var(--motion-duration-confirmation) var(--motion-ease-press);
-}
-
-.app-shell-nav-item.is-active {
-  color: var(--color-trust);
-  background: color-mix(in srgb, var(--color-trust) 14%, transparent);
-  transform: translateY(-2px);
-  box-shadow: var(--surface-highlight);
-}
-
-.app-shell-nav-item:active {
-  transform: scale(var(--motion-press-scale));
-}
-
-.app-shell-nav-label {
-  line-height: 1.2;
-  text-align: center;
-}
-
-.app-shell-nav-active {
-  position: absolute;
-  inset-inline: 18px;
-  bottom: 5px;
-  height: 2px;
-  border-radius: 999px;
-  background: var(--color-primary);
-  box-shadow: var(--primary-glow);
-}
-
 @media (min-width: 768px) {
   .app-shell-header {
     padding-inline: 24px;
@@ -1218,10 +1120,6 @@ textarea:focus-visible,
     display: flex;
   }
 
-  .app-shell-nav {
-    display: none;
-  }
-
   .app-shell-main {
     padding: 24px 24px max(24px, env(safe-area-inset-bottom));
   }
@@ -1234,7 +1132,6 @@ textarea:focus-visible,
 
 @media (prefers-reduced-motion: reduce) {
   .app-shell-top-nav-item,
-  .app-shell-nav-item,
   .app-shell-header-link,
   .app-shell-balance-pill,
   .casino-game-switcher-item,
@@ -1251,7 +1148,7 @@ textarea:focus-visible,
 .section-title {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 16px;
@@ -1269,7 +1166,7 @@ textarea:focus-visible,
 }
 
 .card-error {
-  color: var(--red);
+  color: var(--down);
   font-size: 0.82rem;
   text-align: center;
 }
@@ -1282,18 +1179,18 @@ textarea:focus-visible,
 }
 .field-row label {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
   white-space: nowrap;
 }
 .field-hint {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
   margin-top: -6px;
 }
 
 .input-suffix {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
 }
 
 /* Staking legacy layout helpers removed in UI Rebuild Phase 5 — use app-section + Tailwind grid in routes. */

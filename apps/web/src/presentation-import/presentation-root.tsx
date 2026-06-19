@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import './presentation-deps';
+import './styles/lovable-globals.css';
 
 type PresentationRootProps = {
   children: ReactNode;

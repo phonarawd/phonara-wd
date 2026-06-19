@@ -27,6 +27,8 @@ export interface ModalProps {
   dismissible?: boolean;
   /** Extra classes for the dialog panel. */
   className?: string;
+  /** Optional `data-testid` on the dialog panel (E2E anchors). */
+  testId?: string;
 }
 
 /**
@@ -36,7 +38,7 @@ export interface ModalProps {
  * overlay/focus logic.
  */
 export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
-  { open, onClose, children, labelledBy, describedBy, dismissible = true, className },
+  { open, onClose, children, labelledBy, describedBy, dismissible = true, className, testId },
   ref,
 ) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -102,6 +104,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
         aria-labelledby={labelledBy}
         aria-describedby={describedBy}
         tabIndex={-1}
+        data-testid={testId}
         onKeyDown={onKeyDown}
         className={cn(
           'w-full max-w-sm rounded-2xl border border-border bg-[var(--glass-panel-strong)] p-[var(--density-comfortable-panel-padding)] outline-none shadow-[var(--elevation-sheet)]',

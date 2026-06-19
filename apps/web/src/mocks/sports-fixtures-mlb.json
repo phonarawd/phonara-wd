@@ -1,0 +1,80 @@
+[
+  {
+    "fixture_id": "mlb-2026-01",
+    "league_code": "mlb",
+    "home_name": "New York Yankees",
+    "away_name": "Los Angeles Dodgers",
+    "kickoff_at": "2026-06-18T23:05:00Z",
+    "status": "live",
+    "match_1x2": {
+      "home": { "outcome_id": "mlb-2026-01-h", "odds": "1.85", "captured_at": "2026-06-16T08:00:00Z" },
+      "draw": { "outcome_id": "mlb-2026-01-d", "odds": "8.50", "captured_at": "2026-06-16T08:00:00Z" },
+      "away": { "outcome_id": "mlb-2026-01-a", "odds": "2.10", "captured_at": "2026-06-16T08:00:00Z" }
+    }
+  },
+  {
+    "fixture_id": "mlb-2026-02",
+    "league_code": "mlb",
+    "home_name": "Chicago Cubs",
+    "away_name": "Houston Astros",
+    "kickoff_at": "2026-06-19T00:10:00Z",
+    "status": "scheduled",
+    "match_1x2": {
+      "home": { "outcome_id": "mlb-2026-02-h", "odds": "2.20", "captured_at": "2026-06-16T08:00:00Z" },
+      "draw": { "outcome_id": "mlb-2026-02-d", "odds": "8.80", "captured_at": "2026-06-16T08:00:00Z" },
+      "away": { "outcome_id": "mlb-2026-02-a", "odds": "1.78", "captured_at": "2026-06-16T08:00:00Z" }
+    }
+  },
+  {
+    "fixture_id": "mlb-2026-03",
+    "league_code": "mlb",
+    "home_name": "Boston Red Sox",
+    "away_name": "San Francisco Giants",
+    "kickoff_at": "2026-06-19T23:10:00Z",
+    "status": "scheduled",
+    "match_1x2": {
+      "home": { "outcome_id": "mlb-2026-03-h", "odds": "1.95", "captured_at": "2026-06-16T08:00:00Z" },
+      "draw": { "outcome_id": "mlb-2026-03-d", "odds": "8.60", "captured_at": "2026-06-16T08:00:00Z" },
+      "away": { "outcome_id": "mlb-2026-03-a", "odds": "2.05", "captured_at": "2026-06-16T08:00:00Z" }
+    }
+  },
+  {
+    "fixture_id": "mlb-2026-04",
+    "league_code": "mlb",
+    "home_name": "Atlanta Braves",
+    "away_name": "Philadelphia Phillies",
+    "kickoff_at": "2026-06-20T23:20:00Z",
+    "status": "scheduled",
+    "match_1x2": {
+      "home": { "outcome_id": "mlb-2026-04-h", "odds": "2.05", "captured_at": "2026-06-16T08:00:00Z" },
+      "draw": { "outcome_id": "mlb-2026-04-d", "odds": "8.40", "captured_at": "2026-06-16T08:00:00Z" },
+      "away": { "outcome_id": "mlb-2026-04-a", "odds": "1.95", "captured_at": "2026-06-16T08:00:00Z" }
+    }
+  },
+  {
+    "fixture_id": "mlb-2026-05",
+    "league_code": "mlb",
+    "home_name": "San Diego Padres",
+    "away_name": "Seattle Mariners",
+    "kickoff_at": "2026-06-21T02:40:00Z",
+    "status": "scheduled",
+    "match_1x2": {
+      "home": { "outcome_id": "mlb-2026-05-h", "odds": "1.88", "captured_at": "2026-06-16T08:00:00Z" },
+      "draw": { "outcome_id": "mlb-2026-05-d", "odds": "8.70", "captured_at": "2026-06-16T08:00:00Z" },
+      "away": { "outcome_id": "mlb-2026-05-a", "odds": "2.12", "captured_at": "2026-06-16T08:00:00Z" }
+    }
+  },
+  {
+    "fixture_id": "mlb-2026-06",
+    "league_code": "mlb",
+    "home_name": "Texas Rangers",
+    "away_name": "Toronto Blue Jays",
+    "kickoff_at": "2026-06-22T00:05:00Z",
+    "status": "scheduled",
+    "match_1x2": {
+      "home": { "outcome_id": "mlb-2026-06-h", "odds": "2.00", "captured_at": "2026-06-16T08:00:00Z" },
+      "draw": { "outcome_id": "mlb-2026-06-d", "odds": "8.50", "captured_at": "2026-06-16T08:00:00Z" },
+      "away": { "outcome_id": "mlb-2026-06-a", "odds": "2.00", "captured_at": "2026-06-16T08:00:00Z" }
+    }
+  }
+]

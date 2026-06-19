@@ -4,13 +4,19 @@ import { CASINO_E2E_TESTIDS } from '../../features/casino/casino-e2e-testids';
 type CasinoE2EFairnessAnchorProps = {
   commitment: RoundCommitment | null;
   verification: VerificationEvidence | null;
+  settledResult?: Record<string, unknown> | null;
 };
 
 /** Playwright anchor — stays on adapter until Lovable FairnessSheet exposes the same test id. */
-export function CasinoE2EFairnessAnchor({ commitment, verification }: CasinoE2EFairnessAnchorProps) {
+export function CasinoE2EFairnessAnchor({
+  commitment,
+  verification,
+  settledResult = null,
+}: CasinoE2EFairnessAnchorProps) {
   const seedHash =
     verification?.server_seed_hash ?? commitment?.server_seed_hash ?? '';
-  const resultText = verification ? JSON.stringify(verification.result) : '';
+  const resultPayload = verification?.result ?? settledResult;
+  const resultText = resultPayload ? JSON.stringify(resultPayload) : '';
 
   return (
     <div

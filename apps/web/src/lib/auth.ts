@@ -5,7 +5,7 @@ export async function sendMagicLink(email: string): Promise<{ error: string | nu
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${window.location.origin}/dashboard`,
+      emailRedirectTo: `${window.location.origin}/home`,
     },
   });
   return { error: error?.message ?? null };
@@ -92,7 +92,7 @@ function mapSupabaseError(error: unknown): AuthErrorCode {
 }
 
 function dashboardRedirect(): string | undefined {
-  return typeof window !== 'undefined' ? `${window.location.origin}/dashboard` : undefined;
+  return typeof window !== 'undefined' ? `${window.location.origin}/home` : undefined;
 }
 
 function resetRedirect(): string | undefined {

@@ -1,1 +1,1 @@
-export { ImportedHiloGame } from './imported-hilo-game';
+export { ImportedHiloGame, HiloGame } from './imported-hilo-game';

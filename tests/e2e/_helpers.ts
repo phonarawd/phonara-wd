@@ -4,6 +4,7 @@ import { generateSync } from 'otplib';
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { readLocalSupabaseEnv } from '../../scripts/lib/db-connect';
 
 // E2E runs against the LOCAL Supabase stack (supabase start). The service-role
 // key must come from the local environment so no secret-shaped value is stored
@@ -14,21 +15,7 @@ export const ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
 
 function readLocalServiceKey(): string | undefined {
-  const result = spawnSync('supabase', ['status', '-o', 'env'], {
-    cwd: process.cwd(),
-    encoding: 'utf8',
-    shell: process.platform === 'win32',
-  });
-
-  if (result.status !== 0) return undefined;
-
-  const values = new Map<string, string>();
-  for (const line of result.stdout.split(/\r?\n/)) {
-    const match = line.match(/^([A-Z0-9_]+)=['"]?(.+?)['"]?$/);
-    if (match) values.set(match[1]!, match[2]!);
-  }
-
-  return values.get('SECRET_KEY') ?? values.get('SUPABASE_SERVICE_ROLE_KEY') ?? values.get('SERVICE_ROLE_KEY');
+  return readLocalSupabaseEnv()?.SUPABASE_SERVICE_ROLE_KEY;
 }
 
 export const SERVICE_ROLE_KEY = (
@@ -251,31 +238,8 @@ export function currencyTotals(_admin: SupabaseClient): CurrencyTotals {
       to_char(wallet_totals.phon + system_totals.phon, 'FM999999999999999999990.000000')
     FROM wallet_totals, system_totals;
   `;
-  const result = spawnSync(
-    'docker',
-    [
-      'exec',
-      '-i',
-      'supabase_db_yocjhjsdwoijfdrehzoq',
-      'psql',
-      '-U',
-      'postgres',
-      '-d',
-      'postgres',
-      '-At',
-      '-v',
-      'ON_ERROR_STOP=1',
-      '-F',
-      ',',
-    ],
-    { input: sql, encoding: 'utf8' },
-  );
-
-  if (result.status !== 0) {
-    throw new Error(result.stderr || result.stdout || 'currency totals SQL failed');
-  }
-
-  const [usdt, phon] = result.stdout.trim().split(',');
+  const output = dockerPsqlExec(sql, 'currency totals SQL failed', ['-F', ',']);
+  const [usdt, phon] = output.split(',');
   if (!usdt || !phon) {
     throw new Error('currency totals SQL returned no row');
   }
@@ -286,35 +250,58 @@ function sqlLiteral(value: string): string {
   return `'${value.replaceAll("'", "''")}'`;
 }
 
+function sleepSync(ms: number): void {
+  spawnSync('powershell', ['-NoProfile', '-Command', `Start-Sleep -Milliseconds ${ms}`], {
+    stdio: 'ignore',
+  });
+}
+
+/** Docker Desktop on low-spec Windows can hang or return transient 500s — cap wait per attempt. */
+const DOCKER_PSQL_TIMEOUT_MS = 20_000;
+
+function dockerPsqlExec(sql: string, errorLabel: string, extraArgs: string[] = []): string {
+  const args = [
+    'exec',
+    '-i',
+    'supabase_db_yocjhjsdwoijfdrehzoq',
+    'psql',
+    '-U',
+    'postgres',
+    '-d',
+    'postgres',
+    '-At',
+    '-v',
+    'ON_ERROR_STOP=1',
+    ...extraArgs,
+  ];
+  let lastError = errorLabel;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const result = spawnSync('docker', args, {
+      input: sql,
+      encoding: 'utf8',
+      timeout: DOCKER_PSQL_TIMEOUT_MS,
+    });
+    if (result.status === 0 && result.stdout.trim()) {
+      return result.stdout.trim();
+    }
+    if (result.error?.message.includes('ETIMEDOUT') || result.signal === 'SIGTERM') {
+      lastError = `docker psql timed out after ${DOCKER_PSQL_TIMEOUT_MS}ms`;
+    } else {
+      lastError = result.stderr || result.stdout || errorLabel;
+    }
+    if (attempt < 3) sleepSync(750 * attempt);
+  }
+  throw new Error(lastError);
+}
+
 export function gameBetCount(userId: string): number {
   const sql = `
     SELECT COUNT(*)::int
     FROM public.game_bets
     WHERE user_id = ${sqlLiteral(userId)};
   `;
-  const result = spawnSync(
-    'docker',
-    [
-      'exec',
-      '-i',
-      'supabase_db_yocjhjsdwoijfdrehzoq',
-      'psql',
-      '-U',
-      'postgres',
-      '-d',
-      'postgres',
-      '-At',
-      '-v',
-      'ON_ERROR_STOP=1',
-    ],
-    { input: sql, encoding: 'utf8' },
-  );
-
-  if (result.status !== 0) {
-    throw new Error(result.stderr || result.stdout || 'game bet count SQL failed');
-  }
-
-  const count = Number(result.stdout.trim());
+  const output = dockerPsqlExec(sql, 'game bet count SQL failed');
+  const count = Number(output);
   if (!Number.isInteger(count)) {
     throw new Error('game bet count SQL returned invalid output');
   }
@@ -347,28 +334,8 @@ export function fundE2EWallet(
     RETURNING user_id;
     COMMIT;
   `;
-  const result = spawnSync(
-    'docker',
-    [
-      'exec',
-      '-i',
-      'supabase_db_yocjhjsdwoijfdrehzoq',
-      'psql',
-      '-U',
-      'postgres',
-      '-d',
-      'postgres',
-      '-At',
-      '-v',
-      'ON_ERROR_STOP=1',
-    ],
-    { input: sql, encoding: 'utf8' },
-  );
-
-  if (result.status !== 0) {
-    throw new Error(result.stderr || result.stdout || 'fund wallet SQL failed');
-  }
-  if (!result.stdout.includes(userId)) {
+  const output = dockerPsqlExec(sql, 'fund wallet SQL failed');
+  if (!output.includes(userId)) {
     throw new Error('fund wallet failed: 0 rows updated');
   }
 }

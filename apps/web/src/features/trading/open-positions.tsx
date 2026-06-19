@@ -62,9 +62,10 @@ export function OpenPositions({
         : undefined;
 
   async function submitClose() {
-    if (!closing || closingTradeBlocked || !canConfirm) return;
-    await closePosition(closing.id);
+    if (!closing || closingTradeBlocked) return;
+    const positionId = closing.id;
     setClosing(null);
+    await closePosition(positionId);
   }
 
   function liquidationDistance(mark: string, liquidationPrice: string): string | null {

@@ -24,16 +24,34 @@ type RouterDomLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> 
   replace?: boolean;
   state?: unknown;
   reloadDocument?: boolean;
+  params?: Record<string, string>;
+  hash?: string;
+  preload?: false | 'intent' | 'render' | 'viewport';
 };
 
+function resolveToPath(to: string, params?: Record<string, string>, hash?: string): string {
+  let resolved = to;
+  if (params) {
+    for (const [key, value] of Object.entries(params)) {
+      resolved = resolved.replace(`$${key}`, value);
+    }
+  }
+  if (hash) {
+    resolved += hash.startsWith('#') ? hash : `#${hash}`;
+  }
+  return resolved;
+}
+
 export const Link = forwardRef(function ImportedPresentationLink(
-  { to, replace, className, children, onClick, ...rest }: RouterDomLinkProps,
+  { to, replace, className, children, onClick, params, hash, preload, ...rest }: RouterDomLinkProps,
   ref: Ref<HTMLAnchorElement>,
 ) {
+  const resolvedTo = resolveToPath(to, params, hash);
   return (
     <TanLink
-      to={to as '/'}
+      to={resolvedTo as '/'}
       replace={replace}
+      preload={preload}
       className={className}
       onClick={onClick}
       ref={ref}
@@ -48,11 +66,15 @@ Link.displayName = 'Link';
 export function useNavigate() {
   const navigate = useTanNavigate();
   return (
-    to: string | number,
+    to: string | number | { to: string; replace?: boolean; state?: unknown },
     options?: { replace?: boolean; state?: unknown },
   ) => {
     if (typeof to === 'number') {
       window.history.go(to);
+      return;
+    }
+    if (typeof to === 'object') {
+      void navigate({ to: to.to as '/', replace: to.replace });
       return;
     }
     void navigate({ to: to as '/', replace: options?.replace });
@@ -104,7 +126,7 @@ export function NavLink({ to, className, children, end, ...rest }: NavLinkProps)
 }
 
 export function Navigate({ to, replace }: { to: string; replace?: boolean }) {
-  return <TanNavigate to={to} replace={replace} />;
+  return <TanNavigate to={to as '/'} replace={replace} />;
 }
 
 export function Outlet() {
@@ -149,3 +171,6 @@ export function Routes({ children }: { children: ReactNode }) {
 export function Route({ element }: { path?: string; element?: ReactNode }) {
   return <>{element}</>;
 }
+
+/** Route tree introspection — read-only passthrough for presentation shell. */
+export { useRouterState, useRouter } from '@tanstack/react-router';

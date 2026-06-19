@@ -13,7 +13,7 @@ import {
 
 async function injectSession(page: Page, accessToken: string, refreshToken: string): Promise<void> {
   await injectBrowserSession(page, accessToken, refreshToken, {
-    postLoginPath: '/dashboard',
+    postLoginPath: '/home',
     unregisterServiceWorkers: true,
   });
 }
@@ -260,6 +260,7 @@ test.describe.serial('Wave 9.1 — deposits, withdrawals, gates', () => {
         entity_type: 'kyc_submission',
         entity_id: submissionId,
         user_id: auth.userId,
+        status: 'pending',
         reason: 'kyc_submitted',
         sla_due_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         payload: {
@@ -335,6 +336,7 @@ test.describe.serial('Wave 9.1 — deposits, withdrawals, gates', () => {
         entity_type: 'kyc_submission',
         entity_id: submissionId,
         user_id: auth.userId,
+        status: 'pending',
         reason: 'kyc_submitted',
         sla_due_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         payload: {
@@ -360,7 +362,29 @@ test.describe.serial('Wave 9.1 — deposits, withdrawals, gates', () => {
     await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456');
     await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
     await page.goto(`${ADMIN_BASE}/queues`);
-    await expect(page.getByTestId(`queue-kyc-approve-${submission!.id}`)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('admin-queues-page')).toBeVisible({ timeout: 20_000 });
+    try {
+      await page.waitForResponse(
+        (resp) => resp.url().includes('/rest/v1/admin_review_queue') && resp.status() === 200,
+        { timeout: 30_000 },
+      );
+    } catch {
+      // Admin queue REST can lag after concurrent wallet KYC flow.
+    }
+    await expect(async () => {
+      if (!(await page.getByTestId(`queue-kyc-approve-${submission!.id}`).isVisible())) {
+        await page.reload();
+        await page
+          .waitForResponse(
+            (resp) => resp.url().includes('/rest/v1/admin_review_queue') && resp.status() === 200,
+            { timeout: 10_000 },
+          )
+          .catch(() => undefined);
+      }
+      await expect(page.getByTestId(`queue-kyc-approve-${submission!.id}`)).toBeVisible({
+        timeout: 5_000,
+      });
+    }).toPass({ timeout: 60_000 });
     await page.getByTestId(`queue-kyc-approve-${submission!.id}`).click();
     await page.getByTestId('admin-queue-action-reason').fill('documents verified');
     await page.getByTestId('admin-queue-action-confirm').click();
@@ -414,6 +438,15 @@ test.describe.serial('Wave 9.1 — deposits, withdrawals, gates', () => {
     await page.goto('/wallet');
 
     await page.getByTestId('wallet-deposit-amount').fill('50000');
+    try {
+      await page.waitForResponse(
+        (resp) => resp.url().includes('/rest/v1/exchange_rate_snapshots') && resp.status() === 200,
+        { timeout: 30_000 },
+      );
+    } catch {
+      // Rate snapshot REST can lag after stack reset.
+    }
+    await expect(page.getByTestId('wallet-deposit-preview')).toBeVisible({ timeout: 30_000 });
     await page.getByTestId('wallet-deposit-submit').click();
     const depositConfirm = page.getByRole('dialog').filter({
       has: page.getByTestId('wallet-deposit-confirm'),
@@ -422,9 +455,16 @@ test.describe.serial('Wave 9.1 — deposits, withdrawals, gates', () => {
     expect(requestCount, 'opening deposit confirmation must not emit deposit RPC').toBe(0);
     await expect(depositConfirm.getByText(/50,?000(?:\.000000)? KRW|50000(?:\.000000)? KRW/)).toBeVisible();
     await expect(depositConfirm.getByText(/5,?000(?:\.000000)? PHON|5000(?:\.000000)? PHON/)).toBeVisible();
+    const depositRpc = page.waitForResponse(
+      (resp) =>
+        resp.url().includes('/rest/v1/rpc/rpc_create_krw_deposit_request') &&
+        resp.status() === 200,
+      { timeout: 30_000 },
+    );
     await page.getByTestId('wallet-deposit-confirm').click();
+    await depositRpc;
 
-    await expect(page.getByTestId('wallet-deposit-ref')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('wallet-deposit-ref')).toBeVisible({ timeout: 30_000 });
     expect(requestCount, 'confirming deposit must emit exactly one deposit RPC').toBe(1);
     const refCode = await page.getByTestId('wallet-deposit-ref').innerText();
     await expect(page.getByTestId('wallet-deposit-timeline')).toBeVisible();

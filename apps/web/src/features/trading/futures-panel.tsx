@@ -80,9 +80,9 @@ export function FuturesPanel({
       : undefined;
 
   async function submitOpen() {
-    if (!market || tradeBlocked || !canConfirm) return;
-    await openPosition({ market: market.symbol, side, marginCurrency, marginAmount: margin, leverage });
+    if (!market || tradeBlocked) return;
     setConfirmOpen(false);
+    await openPosition({ market: market.symbol, side, marginCurrency, marginAmount: margin, leverage });
   }
 
   const avail = marginCurrency === 'USDT' ? usdtAvail : phonAvail;

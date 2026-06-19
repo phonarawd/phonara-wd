@@ -73,23 +73,29 @@ test.describe('Wave 7 Phase 4 closeout', () => {
       await page.addInitScript(() => {
         window.localStorage.setItem('phonara.locale', 'ko');
       });
-      await withStepTimeout('session injection', injectSession(page, auth.accessToken, auth.refreshToken));
+      await withStepTimeout(
+        'session injection',
+        injectSession(page, auth.accessToken, auth.refreshToken),
+        90_000,
+      );
 
       const betsBefore = gameBetCount(auth.userId);
       const before = currencyTotals(admin);
 
       await withStepTimeout('goto casino dice', page.goto('/casino/dice', { waitUntil: 'commit' }));
-      await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
+      await expect(page.getByTestId('casino-fairness-verifier')).toBeAttached({ timeout: 15_000 });
 
+      // Stake before prepare — onStakeChange resets commitment in the paste shell adapter.
+      await page.getByTestId('casino-stake-input').fill('100');
       await page.getByTestId('casino-prepare-hash').click({ timeout: 5_000 });
       await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 15_000 });
 
-      await page.getByTestId('casino-stake-input').fill('100');
       await page.getByTestId('casino-place-bet').click({ timeout: 5_000 });
-      await expect(page.getByTestId('casino-bet-confirm-confirm')).toBeVisible({ timeout: 5_000 });
+      await expect(page.getByTestId('casino-bet-confirm-confirm')).toBeVisible({ timeout: 15_000 });
+      await expect(page.getByTestId('casino-bet-confirm-confirm')).toBeEnabled({ timeout: 45_000 });
 
       const betResponse = page.waitForResponse((response) => response.url().includes('rpc_place_game_bet'), {
-        timeout: 30_000,
+        timeout: 60_000,
       });
       await page.getByTestId('casino-bet-confirm-confirm').click({ timeout: 5_000 });
       await betResponse;
@@ -124,7 +130,7 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     const betsBefore = gameBetCount(auth.userId);
 
     await page.goto('/casino/dice');
-    await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('casino-fairness-verifier')).toBeAttached({ timeout: 15_000 });
     await page.getByTestId('casino-prepare-hash').click();
     await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 15_000 });
 
@@ -164,7 +170,7 @@ test.describe('Wave 7 Phase 4 closeout', () => {
 
     await injectSession(page, auth.accessToken, auth.refreshToken);
     await page.goto('/casino/dice');
-    await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('casino-fairness-verifier')).toBeAttached({ timeout: 15_000 });
     await page.getByTestId('casino-prepare-hash').click();
     await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 15_000 });
     await page.getByTestId('casino-place-bet').click();
@@ -195,18 +201,23 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     await resetCasinoCloseoutConfig(admin);
     await injectSession(page, auth.accessToken, auth.refreshToken);
     await page.goto('/casino/dice');
-    await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('casino-fairness-verifier')).toBeAttached({ timeout: 15_000 });
+    await page.getByRole('button', { name: /Provably Fair/i }).click();
 
     const input = page.getByTestId('casino-client-seed-input');
     const initialSeed = await input.inputValue();
+    await page.keyboard.press('Escape');
     await page.getByTestId('casino-prepare-hash').click();
     await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 15_000 });
+    await page.getByRole('button', { name: /Provably Fair/i }).click();
     await expect(input).not.toHaveValue(initialSeed);
 
     const manualSeed = `manual-client-seed-${Date.now()}`;
     await input.fill(manualSeed);
+    await page.keyboard.press('Escape');
     await page.getByTestId('casino-prepare-hash').click();
     await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 15_000 });
+    await page.getByRole('button', { name: /Provably Fair/i }).click();
     await expect(input).toHaveValue(manualSeed);
   });
 

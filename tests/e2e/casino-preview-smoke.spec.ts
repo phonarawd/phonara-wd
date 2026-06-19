@@ -56,8 +56,9 @@ test.describe('casino production preview smoke', () => {
     for (const game of GAME_CONFIGS) {
       await page.goto(casinoGamePath(game.code), { waitUntil: 'domcontentloaded' });
       await expect(page).toHaveURL(new RegExp(`${casinoGamePath(game.code)}$`));
-      await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 20_000 });
-      await expect(page.getByTestId('casino-stake-input')).toBeVisible();
+      // Lovable surface mounts a visually-hidden adapter anchor (opacity ~0) — attached, not visible.
+      await expect(page.getByTestId('casino-fairness-verifier')).toBeAttached({ timeout: 20_000 });
+      await expect(page.getByTestId('casino-stake-input')).toBeVisible({ timeout: 20_000 });
       await expect(page.getByTestId('casino-prepare-hash')).toBeVisible();
       await expect(page.getByTestId('casino-place-bet')).toBeVisible();
     }

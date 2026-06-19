@@ -6,10 +6,16 @@ import { signOut } from '../lib/auth';
 import { env } from '../lib/env';
 import { useT } from '../lib/i18n';
 import { Button, Card, Icon, buttonVariants } from '@phonara/ui';
+import { CommandPalette } from '@/components/casino/search/CommandPalette';
 import { GlobalNotificationSubscriptions } from '../components/global-notification-subscriptions';
 import { PwaShell } from '../components/pwa-shell';
+import { InstallPromptProvider } from '@/components/shell/InstallPromptProvider';
 import { SkipLink } from '../components/skip-link';
+import { CommandPaletteProvider } from '@/hooks/useCommandPalette';
 import { useRealtimeConnectionStore } from '../stores/realtime';
+import { OfflineIndicator } from '@/components/shell/OfflineIndicator';
+import { BootSplash } from '@/components/shell/BootSplash';
+import { Toaster } from '@/components/ui/sonner';
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -18,12 +24,20 @@ export const Route = createRootRoute({
 function RootLayout() {
   return (
     <AuthProvider>
-      <SkipLink />
-      <PwaShell />
-      <GlobalNotificationSubscriptions />
-      <AccountRestrictionBanner />
-      <RealtimeConnectionBanner />
-      <Outlet />
+      <InstallPromptProvider>
+        <CommandPaletteProvider>
+          <SkipLink />
+          <PwaShell />
+          <GlobalNotificationSubscriptions />
+          <OfflineIndicator />
+          <BootSplash />
+          <AccountRestrictionBanner />
+          <RealtimeConnectionBanner />
+          <CommandPalette />
+          <Outlet />
+          <Toaster richColors position="top-center" />
+        </CommandPaletteProvider>
+      </InstallPromptProvider>
     </AuthProvider>
   );
 }

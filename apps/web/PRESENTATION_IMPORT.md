@@ -59,6 +59,28 @@ All of the following PHONARA UI is **throwaway** once Lovable is pasted:
 
 Casino game widgets in `@phonara/ui` (`RocketCrashCanvas`, `MinesGrid`, …) stay until Lovable ships equivalent game surfaces; then swap visual only, pipeline hook unchanged.
 
+## L2 §GREEN — `@phonara/ui` allowlist (intentional exceptions)
+
+Lovable paste surfaces use `components/ui/*`. The following paths may still import `@phonara/ui` until a later slice replaces them — **not** a paste regression:
+
+| Path | Reason |
+|---|---|
+| `routes/__root.tsx` | Kill switch / restriction / realtime safety banners (engine state) |
+| `presentation-import/casino/casino-money-confirm.tsx` | High-risk bet confirm bridge (`ConfirmDialog` + `formatMoney`) |
+| `presentation-import/wallet/*-lovable-surface.tsx` | Wallet/staking confirm bridges |
+| `features/trading/*` | Trade engine panels (`TradeEngineBody`, spot/futures, positions) — operator §GREEN exception |
+| `components/pwa-shell.tsx` | PWA install/offline infra |
+| `components/error-boundary.tsx` | Global error recovery shell |
+| `hooks/use-money.ts` | Re-exports `formatMoney` from `@phonara/ui` for controllers/adapters |
+
+**§GREEN self-check:** controllers should prefer `@/hooks/use-money` for `formatMoney`; trade engine panels stay on `@phonara/ui` by design.
+
+```bash
+rg "from '@phonara/ui'" apps/web/src --glob '!features/trading/**' --glob '!**/__root.tsx' --glob '!**/pwa-shell.tsx' --glob '!**/error-boundary.tsx' --glob '!**/casino-money-confirm.tsx' --glob '!**/wallet/*-lovable-surface.tsx' --glob '!**/use-money.ts'
+```
+
+Review any unexpected hits before claiming §GREEN.
+
 ## Lovable → PHONARA paste map
 
 | Lovable path | Paste into |
@@ -168,6 +190,7 @@ Lovable/shadcn deps are **pre-installed** in `apps/web/package.json`. On a new m
 
 ## Paste workflow
 
+0. **Intake (before any file copy):** drop Lovable export ZIP in `.lovable-intake/incoming/`, then run `bun run lovable:intake -- --zip <path>`. See `docs/PHONARA_LOVABLE_ZIP_INTAKE_READY.md`. Actual paste requires operator **`PHONARA paste GO Wave-N`** — intake does not apply files.
 1. Export Lovable zip (demo labels removed in Lovable first if possible).
 2. Paste components into `components/*` zones — **no restyle**.
 3. Paste page bodies into `presentation-import/pages/*` — keep `Imported*Page` export names.

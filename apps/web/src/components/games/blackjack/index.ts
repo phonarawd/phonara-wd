@@ -1,1 +1,1 @@
-export { ImportedBlackjackGame } from './imported-blackjack-game';
+export { ImportedBlackjackGame, BlackjackGame } from './imported-blackjack-game';

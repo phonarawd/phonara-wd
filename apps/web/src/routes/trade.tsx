@@ -1,18 +1,18 @@
 import { createRoute } from '@tanstack/react-router';
+
 import { Route as rootRoute } from './__root';
-import { PresentationRoot } from '../presentation-import/presentation-root';
-import { ImportedTradePage } from '../presentation-import/pages/trade-page';
+
+import { TradeLovableSurface } from '../presentation-import/trading/trade-lovable-surface';
+
+
 
 export const Route = createRoute({
+
   getParentRoute: () => rootRoute,
+
   path: '/trade',
-  component: ImportedTradeRoute,
+
+  component: TradeLovableSurface,
+
 });
 
-function ImportedTradeRoute() {
-  return (
-    <PresentationRoot>
-      <ImportedTradePage />
-    </PresentationRoot>
-  );
-}

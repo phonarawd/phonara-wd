@@ -2,7 +2,8 @@ import { createRoute, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { Route as rootRoute } from './__root';
 import { useAuth } from '../contexts/auth-context';
-import { Card, Skeleton } from '@phonara/ui';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { PresentationRoot } from '../presentation-import/presentation-root';
 import { ImportedLandingPage } from '../presentation-import/pages/landing-page';
 
@@ -19,7 +20,7 @@ function IndexPage() {
   useEffect(() => {
     if (loading) return;
     if (session) {
-      void navigate({ to: '/dashboard' });
+      void navigate({ to: '/home' });
     }
   }, [session, loading, navigate]);
 

@@ -1,0 +1,123 @@
+﻿import { Link } from "@/shims/react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { t } from "@/i18n";
+import { LiveWinMarquee } from "../LiveWinMarquee";
+import { HomeCompactWalletStrip } from "../HomeCompactWalletStrip";
+import { HomeEarnPowerRow } from "../HomeEarnPowerRow";
+import { HomeCategoryRow, type CategoryCard } from "../HomeCategoryRow";
+import { TierProgressChip } from "../TierProgressChip";
+import posterCrash from "@/assets/casino/crash-poster";
+import posterPlinko from "@/assets/casino/plinko-poster";
+import posterMines from "@/assets/casino/mines-poster";
+import posterDice from "@/assets/casino/dice-poster";
+import posterRoulette from "@/assets/casino/roulette-poster";
+import posterBlackjack from "@/assets/casino/blackjack-poster";
+import posterHilo from "@/assets/casino/hilo-poster";
+import posterLimbo from "@/assets/casino/limbo-poster";
+import posterGold from "@/assets/casino/gold-rush-poster";
+import posterMint from "@/assets/casino/mint-reels-poster";
+import posterTournaments from "@/assets/casino/tournaments-poster";
+import posterFairness from "@/assets/casino/fairness-poster";
+import posterSpot from "@/assets/casino/spot-poster";
+import posterStaking from "@/assets/casino/staking-poster";
+import posterTier from "@/assets/casino/tier-poster";
+import posterSports from "@/assets/casino/sports-poster";
+
+const CASINO_CARDS: ReadonlyArray<CategoryCard> = [
+  { id: "crash", to: "/casino/crash", title: "Crash", badge: "HOT", poster: posterCrash.url },
+  { id: "plinko", to: "/casino/plinko", title: "Plinko", poster: posterPlinko.url },
+  { id: "mines", to: "/casino/mines", title: "Mines", poster: posterMines.url },
+  { id: "dice", to: "/casino/dice", title: "Dice", poster: posterDice.url },
+  { id: "roulette", to: "/casino/roulette", title: "Roulette", poster: posterRoulette.url },
+  { id: "blackjack", to: "/casino/blackjack", title: "Blackjack", poster: posterBlackjack.url },
+];
+
+const GAMES_CARDS: ReadonlyArray<CategoryCard> = [
+  { id: "hilo", to: "/casino/hilo", title: "Hi-Lo", poster: posterHilo.url },
+  { id: "limbo", to: "/casino/limbo", title: "Limbo", poster: posterLimbo.url },
+  { id: "gold", to: "/casino/gold-rush", title: "Gold Rush", badge: "NEW", poster: posterGold.url },
+  { id: "mint", to: "/casino/mint-reels", title: "Mint Reels", poster: posterMint.url },
+  { id: "tournaments", to: "/casino/tournaments", title: "Tournaments", poster: posterTournaments.url },
+  { id: "fairness", to: "/casino/fairness", title: "Fairness", poster: posterFairness.url },
+];
+
+const TRADE_CARDS: ReadonlyArray<CategoryCard> = [
+  { id: "trade", to: "/trade", title: "Spot", poster: posterSpot.url },
+  { id: "stake", to: "/staking", title: "Staking", poster: posterStaking.url },
+  { id: "tier", to: "/tier", title: "Tier", poster: posterTier.url },
+  { id: "sports", to: "/sports", title: "Sports", poster: posterSports.url },
+];
+
+export function HomeTodayPanel() {
+  return (
+    <div className="flex min-w-0 flex-col gap-3" data-hub-id="home-today">
+      {/* Compact wallet strip */}
+      <HomeCompactWalletStrip />
+
+      {/* Hero band ??single primary CTA */}
+      <section
+        className="relative isolate overflow-hidden rounded-xl border border-border p-4 md:p-5"
+        style={{
+          backgroundImage:
+            "radial-gradient(60% 80% at 15% 0%, color-mix(in oklab, var(--primary) 30%, transparent), transparent 60%), radial-gradient(50% 60% at 100% 20%, color-mix(in oklab, var(--violet) 22%, transparent), transparent 60%)",
+        }}
+      >
+        <div className="grid items-center gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-(--color-primary)">
+              {t("home.hero.eyebrow")}
+            </p>
+            <h1 className="mt-1 whitespace-pre-line text-lg font-bold leading-tight md:text-2xl">
+              {t("home.hero.headline")}
+            </h1>
+            <p className="mt-1 max-w-md text-xs text-muted-foreground md:text-sm">
+              {t("home.hero.subline")}
+            </p>
+          </div>
+          <Link
+            to="/earn/missions"
+            data-primary-cta="home-today-hero"
+            className="inline-flex h-11 w-full shrink-0 items-center justify-center gap-1.5 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground shadow-[var(--shadow-glow-cta)] transition active:scale-[0.98] md:w-auto"
+            style={{ backgroundImage: "var(--gradient-cta)" }}
+          >
+            {t("home.hero.cta")} <ArrowRight className="size-4 shrink-0" aria-hidden />
+          </Link>
+        </div>
+      </section>
+
+      {/* Earn power row ??stake-style horizontal scroll */}
+      <HomeEarnPowerRow />
+
+      {/* FOMO ticker ??exactly one */}
+      <section aria-label={t("home.fomo.lane.ticker.label")}>
+        <LiveWinMarquee />
+      </section>
+
+      {/* Tier chip ??1 row */}
+      <TierProgressChip />
+
+      {/* Below-fold stake-style rows */}
+      <HomeCategoryRow
+        titleKey="home.row.casino.title"
+        seeAllTo="/casino"
+        cards={CASINO_CARDS}
+        testId="home-row-casino"
+        variant="tile"
+      />
+      <HomeCategoryRow
+        titleKey="home.row.games.title"
+        seeAllTo="/games"
+        cards={GAMES_CARDS}
+        testId="home-row-games"
+        variant="tile"
+      />
+      <HomeCategoryRow
+        titleKey="home.row.trade.title"
+        seeAllTo="/trade"
+        cards={TRADE_CARDS}
+        testId="home-row-trade"
+        variant="tile"
+      />
+    </div>
+  );
+}

@@ -56,10 +56,10 @@ export function SpotPanel({
       : undefined;
 
   async function submit() {
-    if (tradeBlocked || !canConfirm) return;
+    if (tradeBlocked) return;
+    setConfirmOpen(false);
     setMsg(null);
     const r = tab === 'buy' ? await buy(amount) : await sell(amount);
-    setConfirmOpen(false);
     if (r) {
       setMsg(tab === 'buy'
         ? t('trade.buyDone', { amount: formatMoney(String(r['phon_received']), 'PHON') })

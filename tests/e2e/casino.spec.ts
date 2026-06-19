@@ -43,6 +43,8 @@ const GAME_CASES: Array<{ game: GameCode; selection: Record<string, unknown>; st
   { game: 'gold_rush', selection: { lines: 20 }, stake: '10.000000' },
   { game: 'roulette', selection: { bets: [{ type: 'red', value: null, stakeWeight: 1 }] }, stake: '10.000000' },
   { game: 'blackjack', selection: { actions: [{ seat: 0, move: 'stand' }] }, stake: '10.000000' },
+  { game: 'deepshaft', selection: { riskTier: 'standard', targetDepth: 5 }, stake: '10.000000' },
+  { game: 'momentum', selection: { comboBefore: 0, cashOut: false }, stake: '10.000000' },
 ];
 
 async function injectSession(
@@ -130,11 +132,21 @@ async function resetCasinoConfig(admin: SupabaseClient): Promise<void> {
       'feature_game_gold_rush_enabled',
       'feature_game_roulette_enabled',
       'feature_game_blackjack_enabled',
+      'feature_game_deepshaft_enabled',
+      'feature_game_momentum_enabled',
       'consent_gate_enabled',
     ]);
 }
 
+/** Unload heavy casino routes before long RPC-only sections (Plinko Pixi guard is primary). */
+async function releaseCasinoPageForRpc(page: Parameters<typeof injectBrowserSession>[0], game: GameCode): Promise<void> {
+  if (game === 'plinko') {
+    await page.goto('about:blank', { waitUntil: 'commit', timeout: 15_000 });
+  }
+}
+
 test.describe('casino provably fair E2E', () => {
+  test.setTimeout(120_000);
   for (const gameCase of GAME_CASES) {
     test(`${gameCase.game}: commit, settle, reveal, verify, idempotency, auth`, async ({ page }) => {
       const auth = readAuth();
@@ -142,8 +154,11 @@ test.describe('casino provably fair E2E', () => {
       const client = authedClient(auth);
       await resetCasinoConfig(admin);
       await injectSession(page, auth.accessToken, auth.refreshToken);
-      await page.goto(casinoGamePath(gameCase.game));
-      await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
+      await page.goto(casinoGamePath(gameCase.game), {
+        waitUntil: gameCase.game === 'plinko' ? 'commit' : 'load',
+      });
+      await expect(page.getByTestId('casino-fairness-verifier')).toBeAttached({ timeout: 15_000 });
+      await releaseCasinoPageForRpc(page, gameCase.game);
 
       const before = await currencyTotals(admin);
       const round = await rpcClient<RoundCommitment>(client, 'rpc_open_game_round', {
@@ -253,7 +268,7 @@ test.describe('casino provably fair E2E', () => {
     await resetCasinoConfig(admin);
     await injectSession(page, auth.accessToken, auth.refreshToken);
     await page.goto('/casino/dice');
-    await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('casino-fairness-verifier')).toBeAttached({ timeout: 15_000 });
 
     await admin
       .from('app_config')

@@ -5,6 +5,7 @@
 import { test, expect } from '@playwright/test';
 
 test('auth entry: signup then login reaches dashboard', async ({ page }) => {
+  test.setTimeout(180_000);
   const email = `ui_auth_${Date.now()}@phonara.local`;
   const password = 'Ui-Auth-Password-123456';
 
@@ -13,19 +14,25 @@ test('auth entry: signup then login reaches dashboard', async ({ page }) => {
   await page.locator('input#signup-email').fill(email);
   await page.locator('input#signup-password').fill(password);
   await page.locator('input#signup-confirm').fill(password);
-  await page.getByRole('button', { name: /계정 만들기|Create account/i }).click();
+  await page.getByRole('button', { name: /계정 만들기|create account|가입하고|sign up/i }).click();
 
   await expect(page.getByTestId('dashboard-page')).toBeVisible({ timeout: 20_000 });
 
-  await page.waitForFunction(() =>
-    Boolean((window as unknown as { __supabase?: unknown }).__supabase),
-  );
   await page.evaluate(async () => {
-    const sb = (window as unknown as { __supabase: { auth: { signOut: () => Promise<void> } } }).__supabase;
-    await sb.auth.signOut();
+    const sb = (window as unknown as {
+      __supabase?: { auth: { signOut: (opts?: { scope?: string }) => Promise<{ error: unknown }> } };
+    }).__supabase;
+    if (sb) await sb.auth.signOut({ scope: 'global' }).catch(() => undefined);
+    localStorage.clear();
+    sessionStorage.clear();
   });
-
-  await page.goto('/login');
+  await page.context().clearCookies();
+  await page.goto('/login', { waitUntil: 'load' });
+  const loginVisible = await page.locator('input#login-email').isVisible().catch(() => false);
+  if (!loginVisible) {
+    await page.goto('/login', { waitUntil: 'load' });
+  }
+  await expect(page).toHaveURL(/\/login/, { timeout: 15_000 });
   await expect(page.locator('input#login-email')).toBeVisible({ timeout: 15_000 });
   await page.locator('input#login-email').fill(email);
   await page.locator('input#login-password').fill(password);

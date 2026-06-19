@@ -19,6 +19,7 @@ import {
   currencyTotals,
   freshenOracle,
   fundE2EWallet,
+  injectBrowserSession,
   SUPABASE_URL,
   ANON_KEY,
 } from './_helpers';
@@ -43,30 +44,7 @@ async function injectSession(
   accessToken: string,
   refreshToken: string,
 ): Promise<void> {
-  await page.goto('/login');
-  await page.waitForFunction(() =>
-    Boolean((window as unknown as { __supabase?: unknown }).__supabase),
-  );
-  const errMsg = await page.evaluate(
-    async ([at, rt]) => {
-      const sb = (
-        window as unknown as {
-          __supabase: {
-            auth: {
-              setSession: (a: {
-                access_token: string;
-                refresh_token: string;
-              }) => Promise<{ error: { message?: string } | null }>;
-            };
-          };
-        }
-      ).__supabase;
-      const { error } = await sb.auth.setSession({ access_token: at, refresh_token: rt });
-      return error ? (error.message ?? 'setSession failed') : null;
-    },
-    [accessToken, refreshToken] as const,
-  );
-  expect(errMsg, 'setSession should succeed').toBeNull();
+  await injectBrowserSession(page, accessToken, refreshToken, { unregisterServiceWorkers: true });
 }
 
 test('funnel: signup → welcome bonus → futures open → liquidation (conserved)', async ({
@@ -184,25 +162,46 @@ test('funnel: signup → welcome bonus → futures open → liquidation (conserv
 
   // ── 6. Browser: inject session and navigate to /trade ────────────────────
   await injectSession(page, at, rt);
-  // After setSession, the login page auto-redirects to /dashboard.
   // Navigate explicitly to /trade for the futures test.
   await page.goto('/trade');
-  await expect(page.getByTestId('futures-open')).toBeVisible({ timeout: 20_000 });
+  await freshenOracle(admin);
+  await expect(page.getByTestId('futures-open')).toBeEnabled({ timeout: 45_000 });
 
   // ── 7. Open a futures position (default: PHON/USDT-PERP, long, 100 USDT, 10×) ──
   await page.getByTestId('futures-open').click();
   await expect(page.getByTestId('futures-open-confirm')).toBeVisible({ timeout: 5_000 });
-  await page.getByTestId('futures-open-confirm').click();
+  await expect(page.getByTestId('futures-open-confirm')).toBeEnabled({ timeout: 45_000 });
+
+  const openResponse = await Promise.all([
+    page.waitForResponse(
+      (r) => r.url().includes('rpc_open_futures_position') && r.status() < 500,
+      { timeout: 60_000 },
+    ),
+    page.getByTestId('futures-open-confirm').click(),
+  ]).then(([resp]) => resp);
+  expect(openResponse.status(), 'futures open RPC should succeed').toBeLessThan(400);
+
   await expect(page.getByTestId('futures-open-confirm')).toBeHidden({ timeout: 15_000 });
 
   // ── 8. Retrieve the opened position from DB ───────────────────────────────
+  await expect.poll(
+    async () => {
+      const { count } = await admin
+        .from('futures_positions')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('status', 'open');
+      return count ?? 0;
+    },
+    { timeout: 30_000, message: 'futures position was opened' },
+  ).toBeGreaterThan(0);
+
   const { data: openPositions } = await admin
     .from('futures_positions')
     .select('id, liquidation_price, side, market, status')
     .eq('user_id', userId)
     .eq('status', 'open');
 
-  expect(openPositions?.length, 'futures position was opened').toBeGreaterThan(0);
   const pos = openPositions![0]!;
 
   // ── 9. Move oracle price into the liquidation zone ────────────────────────

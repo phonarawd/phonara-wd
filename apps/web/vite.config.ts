@@ -84,6 +84,7 @@ export default defineConfig({
   envDir: '../..',
   resolve: {
     alias: {
+      '@/games': `${webSrc}/components/games`,
       '@': webSrc,
       'react-router-dom': `${webSrc}/shims/react-router-dom.tsx`,
     },

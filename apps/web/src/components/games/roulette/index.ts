@@ -1,1 +1,1 @@
-export { ImportedRouletteGame } from './imported-roulette-game';
+export { ImportedRouletteGame, RouletteGame } from './imported-roulette-game';

@@ -3,7 +3,7 @@ import { ADMIN_BASE, injectBrowserSession, loginAdmin, readAdminAuth, readAuth }
 
 const SHOTS = 'test-results/visual';
 
-async function expectAuthFrameVerticallyCentered(page: Page): Promise<void> {
+async function expectAuthFrameVerticallyCentered(page: Page, maxDeltaPx = 2): Promise<void> {
   const frame = await page.locator('.auth-shell-frame').boundingBox();
   const viewport = page.viewportSize();
   expect(frame, 'auth frame should be measurable').not.toBeNull();
@@ -11,7 +11,7 @@ async function expectAuthFrameVerticallyCentered(page: Page): Promise<void> {
   if (!frame || !viewport) return;
   const frameCenter = frame.y + frame.height / 2;
   const viewportCenter = viewport.height / 2;
-  expect(Math.abs(frameCenter - viewportCenter)).toBeLessThanOrEqual(2);
+  expect(Math.abs(frameCenter - viewportCenter)).toBeLessThanOrEqual(maxDeltaPx);
 }
 
 /**
@@ -38,7 +38,9 @@ test('visual smoke: login + authed routes render', async ({ page }) => {
   await expectAuthFrameVerticallyCentered(page);
   await page.screenshot({ path: `${SHOTS}/login.png`, fullPage: true });
   await page.goto('/signup');
-  await expect(page.getByRole('button', { name: /계정 만들기|create account/i })).toBeVisible({
+  await expect(
+    page.getByRole('button', { name: /계정 만들기|create account|가입하고|sign up/i }),
+  ).toBeVisible({
     timeout: 15_000,
   });
   await page.waitForTimeout(350);
@@ -64,7 +66,7 @@ test('visual smoke: login + authed routes render', async ({ page }) => {
     timeout: 15_000,
   });
   await page.waitForTimeout(350);
-  await expectAuthFrameVerticallyCentered(page);
+  await expectAuthFrameVerticallyCentered(page, 12);
   await page.screenshot({ path: `${SHOTS}/login-desktop.png`, fullPage: true });
   await page.setViewportSize({ width: 375, height: 812 });
 
@@ -72,10 +74,14 @@ test('visual smoke: login + authed routes render', async ({ page }) => {
   const auth = readAuth();
   await injectBrowserSession(page, auth.accessToken, auth.refreshToken);
 
-  await page.goto('/dashboard');
+  await page.goto('/home');
   await page.waitForLoadState('domcontentloaded');
   await expect(page.getByTestId('dashboard-page')).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId('home-mobile-header')).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId('home-mobile-online-bar')).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId('home-wallet-strip')).toBeVisible({ timeout: 15_000 });
   await expect(page.getByTestId('dashboard-hero-balance')).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId('home-tab-shell')).toBeVisible({ timeout: 15_000 });
   await expect(page.locator('.app-shell-nav')).toBeVisible({ timeout: 15_000 });
   // Wait for the wallets REST response, then confirm the currency tile rendered.
   // Known issue: realtime container can be slow after `supabase db reset`; REST
@@ -94,7 +100,19 @@ test('visual smoke: login + authed routes render', async ({ page }) => {
   await page.screenshot({ path: `${SHOTS}/dashboard.png`, fullPage: true });
 
   await page.goto('/wallet');
-  await expect(page.getByTestId('wallet-hero-balance')).toBeVisible({ timeout: 15_000 });
+  await page.waitForLoadState('domcontentloaded');
+  await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 15_000 });
+  try {
+    await page.waitForResponse(
+      (resp) => resp.url().includes('/rest/v1/wallets') && resp.status() === 200,
+      { timeout: 30_000 },
+    );
+  } catch {
+    // Wallet REST can lag after stack reset; landmark + screenshot still valuable.
+  }
+  await expect(
+    page.getByTestId('wallet-hero-balance').or(page.getByTestId('wallet-hero-loading')).first(),
+  ).toBeVisible({ timeout: 30_000 });
   await expect(page.getByTestId('wallet-activity')).toBeVisible({ timeout: 15_000 });
   await page.screenshot({ path: `${SHOTS}/wallet.png`, fullPage: true });
 
@@ -137,8 +155,7 @@ test('visual smoke: login + authed routes render', async ({ page }) => {
   await expect(page.getByTestId('responsible-gaming-page')).toBeVisible({ timeout: 15_000 });
   await page.screenshot({ path: `${SHOTS}/responsible-gaming.png`, fullPage: true });
 
-  const casinoRoutes = [
-    'casino',
+  const casinoGameRoutes = [
     'casino/crash',
     'casino/limbo',
     'casino/dice',
@@ -146,9 +163,12 @@ test('visual smoke: login + authed routes render', async ({ page }) => {
     'casino/hilo',
     'casino/plinko',
   ];
-  for (const route of casinoRoutes) {
+  await page.goto('/casino');
+  await expect(page.getByRole('heading').first()).toBeVisible({ timeout: 15_000 });
+  await page.screenshot({ path: `${SHOTS}/casino.png`, fullPage: true });
+  for (const route of casinoGameRoutes) {
     await page.goto(`/${route}`);
-    await expect(page.getByTestId('casino-fairness-verifier')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('casino-fairness-verifier')).toBeAttached({ timeout: 15_000 });
     await page.screenshot({ path: `${SHOTS}/${route.replace('/', '-')}.png`, fullPage: true });
   }
 

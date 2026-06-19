@@ -1,7 +1,6 @@
 import { createRoute } from '@tanstack/react-router';
 import { Route as rootRoute } from './__root';
-import { PresentationRoot } from '../presentation-import/presentation-root';
-import { ImportedHomePage } from '../presentation-import/pages/home-page';
+import { HomeLovableSurface } from '../presentation-import/home/home-lovable-surface';
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -10,9 +9,5 @@ export const Route = createRoute({
 });
 
 function ImportedHomeRoute() {
-  return (
-    <PresentationRoot>
-      <ImportedHomePage />
-    </PresentationRoot>
-  );
+  return <HomeLovableSurface />;
 }

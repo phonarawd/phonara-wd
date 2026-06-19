@@ -22,4 +22,7 @@ export { ImportedStakingPage } from './staking-page';
 export { ImportedMorePage } from './more-page';
 export { ImportedResponsibleGamingPage } from './responsible-gaming-page';
 export { ImportedShareRoundPage } from './share-round-page';
+export { ImportedFAQPage } from './faq-page';
+export { ImportedPWAInstallPage } from './install-page';
+export { ImportedPartnerPage } from './partner-page';
 export { PresentationRoot } from '../presentation-root';

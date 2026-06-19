@@ -1,1 +1,1 @@
-export { ImportedMintReelsGame } from './imported-mint-reels-game';
+export { ImportedMintReelsGame, MintReelsGame } from './imported-mint-reels-game';

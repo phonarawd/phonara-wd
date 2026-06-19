@@ -1,1 +1,1 @@
-export { ImportedGoldRushGame } from './imported-gold-rush-game';
+export { ImportedGoldRushGame, GoldRushGame } from './imported-gold-rush-game';

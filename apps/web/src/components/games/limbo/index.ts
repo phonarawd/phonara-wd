@@ -1,1 +1,1 @@
-export { ImportedLimboGame } from './imported-limbo-game';
+export { ImportedLimboGame, LimboGame } from './imported-limbo-game';

@@ -3,7 +3,7 @@
   min-height: 100dvh;
   background:
     radial-gradient(circle at 50% 0%, color-mix(in oklab, var(--color-primary) 14%, transparent), transparent 42%),
-    var(--color-bg);
+    var(--color-background);
 }
 
 .presentation-focus-ring:focus-visible {

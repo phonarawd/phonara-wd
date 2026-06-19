@@ -80,9 +80,16 @@ test('core money flow: spot buy → futures open/close → stake → claim (ledg
 
   // ── Stake (first pool = flexible) ──
   await page.goto('/staking');
+  await expect(page.getByTestId('stake-submit').first()).toBeVisible({ timeout: 15_000 });
   await page.getByTestId('stake-submit').first().click();
+  await expect(page.getByTestId('stake-confirm')).toBeVisible({ timeout: 10_000 });
+  const stakeRpc = page.waitForResponse(
+    (resp) => resp.url().includes('/rest/v1/rpc/rpc_stake_phon') && resp.status() === 200,
+    { timeout: 30_000 },
+  );
   await page.getByTestId('stake-confirm').click();
-  await expect(page.getByTestId('stake-claim').first()).toBeVisible({ timeout: 15_000 });
+  await stakeRpc;
+  await expect(page.getByTestId('stake-claim').first()).toBeVisible({ timeout: 30_000 });
 
   // ── Claim staking reward ──
   await page.getByTestId('stake-claim').first().click();

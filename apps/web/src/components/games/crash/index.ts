@@ -1,1 +1,1 @@
-export { ImportedCrashGame } from './imported-crash-game';
+export { ImportedCrashGame, CrashGame } from './imported-crash-game';

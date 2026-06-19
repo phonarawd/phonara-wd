@@ -42,3 +42,11 @@ export function isPositiveDecimalInput(value: string): boolean {
   if (!DECIMAL_AMOUNT_RE.test(value)) return false;
   return toDecimal(value).greaterThan(0);
 }
+
+/**
+ * Stake input stepper formatting only — trims trailing zeros after step up/down.
+ * Balance/payout display must use `@phonara/money` / controller formatted strings.
+ */
+export function formatStakeStep(value: number): string {
+  return value.toFixed(6).replace(/\.?0+$/, '');
+}

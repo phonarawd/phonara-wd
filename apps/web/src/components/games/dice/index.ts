@@ -1,1 +1,1 @@
-export { ImportedDiceGame } from './imported-dice-game';
+export { ImportedDiceGame, DiceGame } from './imported-dice-game';

@@ -1,1 +1,1 @@
-export { ImportedPlinkoGame } from './imported-plinko-game';
+export { ImportedPlinkoGame, PlinkoGame } from './imported-plinko-game';

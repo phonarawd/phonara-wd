@@ -85,6 +85,7 @@ export const ConfirmDialog = forwardRef<HTMLDivElement, ConfirmDialogProps>(func
       dismissible={!busy}
       labelledBy={titleId}
       describedBy={describedBy}
+      testId={testId}
     >
       <h2 id={titleId} className="text-[length:var(--text-subheading)] font-[var(--font-weight-heading)] leading-[var(--text-subheading--line-height)] text-fg">
         {title}

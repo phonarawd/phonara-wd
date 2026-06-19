@@ -2,20 +2,14 @@ import { expect, test, type Page } from '@playwright/test';
 import { injectBrowserSession, readAuth } from './_helpers';
 
 async function expectNamedButtons(page: Page): Promise<void> {
-  const unnamedButtons = await page
-    .locator('button')
-    .evaluateAll(
-      (buttons) =>
-        buttons
-          .map(
-            (button) =>
-              button.textContent?.trim() ||
-              button.getAttribute('aria-label') ||
-              button.getAttribute('title') ||
-              '',
-          )
-          .filter((name) => name.length === 0).length,
-    );
+  const unnamedButtons = await page.locator('button').evaluateAll((buttons) =>
+    buttons.filter((button) => {
+      const text = (button.textContent ?? '').replace(/\s+/g, ' ').trim();
+      const aria = button.getAttribute('aria-label')?.trim() ?? '';
+      const title = button.getAttribute('title')?.trim() ?? '';
+      return text.length === 0 && aria.length === 0 && title.length === 0;
+    }).length,
+  );
   expect(unnamedButtons, 'every button must have visible text or an accessible name').toBe(0);
 }
 
@@ -56,7 +50,7 @@ test('PWA and accessibility smoke: install metadata, offline fallback, named con
 
   const auth = readAuth();
   await injectBrowserSession(page, auth.accessToken, auth.refreshToken, {
-    postLoginPath: '/dashboard',
+    postLoginPath: '/home',
   });
   await expect(page.getByTestId('dashboard-page')).toBeVisible({ timeout: 15_000 });
   await expect(page.getByTestId('referral-dashboard')).toBeVisible({ timeout: 15_000 });

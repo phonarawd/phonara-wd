@@ -29,6 +29,9 @@ export function useConfirmSnapshot({
   }, [open]);
 
   const isDrifted = open && snapshot !== null && snapshot !== fingerprint;
+  // When the dialog opens, treat the current fingerprint as locked immediately
+  // (useEffect still persists snapshot for drift detection on the next frame).
+  const lockedSnapshot = open ? (snapshot ?? fingerprint) : null;
 
   useEffect(() => {
     if (isDrifted && !driftNotifiedRef.current) {
@@ -38,7 +41,7 @@ export function useConfirmSnapshot({
   }, [isDrifted, onDrift]);
 
   return {
-    canConfirm: open && snapshot !== null && snapshot === fingerprint,
+    canConfirm: open && lockedSnapshot !== null && lockedSnapshot === fingerprint,
     isDrifted,
   };
 }

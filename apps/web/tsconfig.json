@@ -6,6 +6,7 @@
     "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"],
+      "@/games/*": ["./src/components/games/*"],
       "react-router-dom": ["./src/shims/react-router-dom.tsx"],
       "@phonara/shared-types": ["../../packages/shared-types/src"],
       "@phonara/money": ["../../packages/money/src"],
@@ -17,7 +18,12 @@
       "@phonara/ui": ["../../packages/ui/src"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "src/**/*.asset.json", "src/mocks/**/*.json"],
+  "exclude": [
+    "src/**/__tests__/**",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx"
+  ],
   "references": [
     { "path": "../../packages/i18n" },
     { "path": "../../packages/money" },

@@ -1,1 +1,1 @@
-export { ImportedMinesGame } from './imported-mines-game';
+export { ImportedMinesGame, MinesGame } from './imported-mines-game';
