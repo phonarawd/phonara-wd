@@ -32,9 +32,17 @@ alwaysApply: true
 - Tests must not leave persistent mock data, temporary accounts, or generated artifacts in the repo.
 - Before marking work complete, run the narrowest reliable check first, then broader checks when appropriate.
 
+## Low-spec execution (mandatory — see `79-low-spec-pc.mdc` · **`80-absolute-gate-prohibitions.mdc`**)
+
+- Vitest: `maxWorkers: 1` · Playwright: `workers: 1`, serial specs.
+- **Never** run unit tests + E2E + `build` + `check:full` in parallel terminals.
+- Target failing Playwright specs before full `bun run test:e2e` — use `bun run test:e2e:casino -- tests/e2e/<spec>.spec.ts` first.
+- `bun run check:full` only after E2E is stable — foreground, one terminal.
+- No repo-root agent logs (`check-full-log.txt` etc.) — use terminal output only.
+
 ## E2E lifecycle (mandatory — see `77-e2e-lifecycle.mdc`)
 
-- Run E2E only via `bun run test:e2e` or `bun run test:e2e:casino-smoke` — never
+- Run E2E only via `bun run test:e2e`, `bun run test:e2e:casino`, or `bun run test:e2e:casino-smoke` — never
   raw `playwright test`.
 - Wait for full process exit; **never** background E2E in agent terminals.
 - After E2E: ports 3000/3001/3002 free (`bun run e2e:kill`), `check:hygiene` green.

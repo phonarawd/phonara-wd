@@ -67,6 +67,9 @@ const steps: GateStep[] = [
   { name: 'standard check', command: 'bun', args: ['run', 'check'], env: { PHONARA_ADVISORS_STRICT: '1' } },
   { name: 'pwa', command: 'bun', args: ['run', 'check:pwa'] },
   { name: 'supabase reset', command: 'supabase', args: ['db', 'reset'] },
+  // posttest/clean:artifacts from standard check wipes supabase/functions-sql/;
+  // regenerate from the freshly-reset DB before the strict drift check.
+  { name: 'functions mirror regenerate', command: 'bun', args: ['run', 'mirror:functions'] },
   // After a clean apply of all append-only migrations, the committed function
   // mirror must match the database exactly (strict: a missing DB is a failure here).
   {

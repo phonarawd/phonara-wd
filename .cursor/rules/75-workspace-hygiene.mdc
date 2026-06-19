@@ -9,7 +9,7 @@ Cursor lag is mostly **index/watcher noise** (file count + artifact churn), not
 git history size. Keep the workspace lean so the IDE stays responsive.
 
 See also: `76-cursor-performance.mdc` (agent terminal discipline, MCP, operator
-habits).
+habits) · **`78-cursor-auto-hygiene.mdc`** (hooks + lifecycle 자동화).
 
 ## Single source of truth
 
@@ -36,6 +36,7 @@ Run `bun run clean` (→ `scripts/clean-artifacts.ts`) **automatically** after:
 - Before reporting a task complete if build/E2E ran in that session
 
 Session start: `bun run cursor:preflight` (clean + config verify + snapshot).
+**자동:** Cursor `sessionStart` hook → `cursor:session-start`.
 Monthly: `bun run cursor:clean-metadata` (preview AI transcript / terminal log
 sizes outside repo; `--apply` to delete).
 
@@ -73,6 +74,8 @@ Cursor** so watchers rebuild without excluded paths.
 - One shell: Lovable `components/shell/*`, not parallel `presentation/shell`.
 
 ## Session end checklist (agents)
+
+**자동:** Cursor `stop` hook → `cursor:session-end`. Hook 실패 시 수동:
 
 Before closing an implementation session:
 

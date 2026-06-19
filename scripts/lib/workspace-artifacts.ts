@@ -6,6 +6,7 @@
 
 /** Dirs at repo root that must be cleaned and excluded from watchers/index. */
 export const ROOT_ARTIFACT_DIRS = [
+  '.lovable-intake/staging',
   '.turbo',
   '.vite',
   'blob-report',
@@ -14,21 +15,23 @@ export const ROOT_ARTIFACT_DIRS = [
   'test-results',
   'supabase/.temp',
   'supabase/.branches',
+  'supabase/functions-sql',
 ] as const;
 
 /** Files at repo root that must be cleaned. */
 export const ROOT_ARTIFACT_FILES = [
   '.eslintcache',
   'tsconfig.tsbuildinfo',
+  'check-full-log.txt',
+  'check-gate-log.txt',
+  'e2e-log.txt',
 ] as const;
 
-/** Artifact names under each apps/* and packages/* workspace. */
+/** Artifact names under each apps/* and packages/* workspace (session clean — no dist/build). */
 export const WORKSPACE_ARTIFACT_NAMES = [
   '.turbo',
   '.vite',
-  'build',
   'coverage',
-  'dist',
   'node_modules/.cache',
   'node_modules/.vite',
   'playwright-report',
@@ -53,12 +56,23 @@ export const CURSOR_EPHEMERAL_PATHS = ['.cursor/mcp-smoke-stderr.txt'] as const;
  * Archival doc trees — exclude entire dirs from Cursor index + watchers.
  * `docs/archive/` holds restored Lovable reference copies (38+ files).
  */
-export const CURSOR_ARCHIVAL_DIR_PATTERNS = ['docs/archive/'] as const;
+export const CURSOR_ARCHIVAL_DIR_PATTERNS = [
+  'docs/archive/',
+  'docs/checkpoints/',
+] as const;
 
 /** Bulk LOCK/EXECUTE docs — glob prefix in .cursorignore (tactical docs stay indexed). */
 export const CURSOR_ARCHIVAL_DOC_GLOB_PREFIXES = [
   'docs/LOVABLE_ZENITH_PHASE12_',
   'docs/PHONARA_CURSOR_PASTE_',
+  'docs/PHONARA_LOVABLE_',
+  'docs/PHONARA_ENGINE_WAVE_',
+  'docs/PHONARA_ENGINE_WORLD_',
+  'docs/LOVABLE_SPORTSBOOK_',
+  'docs/PHONARA_SPORTSBOOK_',
+  'docs/LOVABLE_WORLD_CRUSH_',
+  'docs/LOVABLE_ADMIN_',
+  'docs/LOVABLE_WALLET_',
 ] as const;
 
 /**
@@ -107,6 +121,13 @@ export const CURSOR_ARCHIVAL_DOC_PATHS = [
   'docs/PHONARA_CURSOR_PASTE_ROUTE_DEDUP_LOCK.md',
   'docs/LOVABLE_ZENITH_CRUSH_HANDOFF.md',
   'docs/LOVABLE_ZENITH_NEW_CHAT.md',
+  'docs/PHONARA_WORLD_CLASS_INTEGRATED_ROADMAP.md',
+  'docs/LOVABLE_SPORTSBOOK_UI_LOCK.md',
+  'docs/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md',
+  'docs/PHONARA_DEEPSHAFT_MOMENTUM_ENGINE_DELIVERABLE.md',
+  'docs/PHONARA_NEW_CHAT_HANDOFF_2026-06-16.md',
+  'docs/PHONARA_NEW_CHAT_HANDOFF_2026-06-17.md',
+  'docs/PHONARA_NEW_CHAT_HANDOFF_GAMES_POLISH_2026-06-17.md',
   'project_dump.md',
 ] as const;
 
@@ -128,8 +149,17 @@ export const CURSORIGNORE_REQUIRED_PATTERNS = [
   'packages/*/dist/',
   'supabase/functions-sql/',
   'engine-dump/',
+  '.lovable-intake/',
+  '.tmp-lovable-',
+  '.tmp-zip-extract/',
+  '.tmp-*/',
   'docs/archive/',
+  'docs/checkpoints/',
   'bun.lock',
+  'scripts/tmp-',
+  'check-full-log.txt',
+  'check-gate-log.txt',
+  'e2e-log.txt',
 ] as const;
 
 /**
@@ -143,7 +173,11 @@ export const VSCODE_WATCHER_EXCLUDE_REQUIRED = [
   '**/playwright-report/**',
   '**/packages/*/dist/**',
   '**/apps/*/dist/**',
+  '**/.lovable-intake/**',
+  '**/.tmp-zip-extract/**',
+  '**/.tmp-lovable-*/**',
   '**/docs/archive/**',
+  '**/docs/checkpoints/**',
   '**/engine-dump/**',
 ] as const;
 

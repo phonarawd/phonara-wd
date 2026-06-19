@@ -2,8 +2,14 @@
 # Does NOT touch workspace settings, extensions, or %APPDATA%\Cursor\User (2GB+ state).
 param(
   [switch]$Apply,
-  [switch]$IncludeCursorLogs
+  [switch]$IncludeCursorLogs,
+  [switch]$SkipTranscripts
 )
+
+# bun/npm pass GNU-style flags; normalize for PowerShell switches.
+if (-not $Apply -and ($args -contains '--apply')) { $Apply = $true }
+if (-not $IncludeCursorLogs -and ($args -contains '--include-cursor-logs')) { $IncludeCursorLogs = $true }
+if (-not $SkipTranscripts -and ($args -contains '--skip-transcripts')) { $SkipTranscripts = $true }
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
@@ -35,7 +41,7 @@ function Clear-DirContents {
     return 0
   }
   Get-ChildItem $Path -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-  Write-Host "  [ok] $Label — removed $before.Files file(s), $before.MB MB"
+  Write-Host "  [ok] $Label — removed $($before.Files) file(s), $($before.MB) MB"
   return $before.Files
 }
 
@@ -85,12 +91,24 @@ if (-not $Apply) {
 Write-Host 'Applying cleanup...'
 $removed = 0
 foreach ($item in $plan) {
+  if ($SkipTranscripts -and ($item.Label -match 'transcripts|terminal session logs')) {
+    Write-Host "  [skip] $($item.Label) — SkipTranscripts"
+    continue
+  }
   $removed += Clear-DirContents -Path $item.Path -Label $item.Label
 }
 
 Set-Location $repoRoot
-bun run clean:artifacts 2>$null | Out-Host
+$prevEap = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
+& bun run clean:artifacts 2>&1 | Out-Null
+$cleanExit = if ($null -ne $LASTEXITCODE) { $LASTEXITCODE } else { 0 }
+$ErrorActionPreference = $prevEap
 
 Write-Host ''
 Write-Host "Done. Removed $removed top-level metadata target(s)."
+if ($cleanExit -ne 0) {
+  Write-Host "Note: clean:artifacts exited $cleanExit (non-fatal for metadata cleanup)."
+}
 Write-Host 'Fully quit and reopen Cursor after large metadata cleanup.'
+exit 0

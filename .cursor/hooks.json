@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "bun run cursor:hook:session-start",
+        "timeout": 90
+      }
+    ],
+    "stop": [
+      {
+        "command": "bun run cursor:hook:session-stop",
+        "timeout": 90
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "bun run cursor:hook:before-shell",
+        "matcher": "bun run (test|build|check|test:e2e|check:full|stack:ensure|supabase)",
+        "timeout": 30
+      }
+    ],
+    "afterShellExecution": [
+      {
+        "command": "bun run cursor:hook:after-shell",
+        "matcher": "bun run (test|build|check|test:e2e|check:full|e2e:kill|stack:ensure|supabase)",
+        "timeout": 120
+      }
+    ]
+  }
+}

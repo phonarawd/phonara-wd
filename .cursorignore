@@ -1,4 +1,4 @@
-﻿# Dependencies and package manager caches (largest index noise)
+# Dependencies and package manager caches (largest index noise)
 node_modules/
 .bun/
 **/node_modules/
@@ -30,7 +30,7 @@ supabase/.temp/
 supabase/.branches/
 supabase/functions-sql/
 
-# E2E ephemeral auth (tokens — also in .gitignore)
+# E2E ephemeral auth (tokens ? also in .gitignore)
 tests/e2e/.auth.json
 tests/e2e/.admin-auth.json
 tests/e2e/.*auth*.json
@@ -38,13 +38,83 @@ tests/e2e/.*auth*.json
 # Lockfile is generated; exclude from semantic index (still on disk for installs)
 bun.lock
 
-# Large / archival / generated docs (duplicate index noise)
+# Large / archival docs ? sync with scripts/lib/workspace-artifacts.ts CURSOR_ARCHIVAL_DOC_PATHS
+docs/archive/
 project_dump.md
 docs/PHONARA_V2_MASTER_PLAN.md
+docs/PHONARA_UI_UX_MASTER.md
+docs/PHONARA_UI_UX_REBUILD_LOG.md
 docs/AUDIT_REPORT_2026-06-11.md
 docs/AUDIT_FINAL_REPORT.md
-docs/PHONARA_UI_UX_REBUILD_LOG.md
+docs/ENGINE_100_HANDOFF.md
+docs/WORK_LOG_2026-06-14.md
+docs/RUNBOOK.md
+docs/SCORECARD.md
+docs/CHAT_HANDOFF_2026-06-14.md
+docs/GAMES-INTEGRATION.md
+docs/GAMES-INTEGRATION.delta.md
+docs/LOVABLE_ZENITH_CHAT_HANDOFF.md
+docs/LOVABLE_ZENITH_SESSION_HANDOFF.md
+docs/LOVABLE_ZENITH_MASTER_PLAN.md
+docs/LOVABLE_P1_FINAL_PHONARA.md
+docs/LOVABLE_HANDOFF.md
+docs/LOVABLE_PRODUCT_PLATFORM_MANIFEST.md
+docs/LOVABLE_WORKSPACE_DUMP_REQUEST.md
+docs/LOVABLE_CRASH_CHECKPOINT.md
+docs/LOVABLE_ABSORPTION_PLAN_FINAL.md
+docs/LOVABLE_ZENITH_ROADMAP.md
+docs/LOVABLE_ZENITH_BOOTSTRAP_PASTE.md
+docs/LOVABLE_ZENITH_NEW_CHAT_PASTE.md
+docs/LOVABLE_ZENITH_PHASE12_PRODUCT_PLAN.md
+docs/LOVABLE_ZENITH_PHASE12_GAP_AUDIT.md
+docs/LOVABLE_ZENITH_PHASE12_FINAL_PARALLEL_LOCK.md
+docs/LOVABLE_ZENITH_PHASE12_E_LOCK.md
+docs/LOVABLE_ZENITH_PHASE12_B_LOCK.md
+docs/LOVABLE_ZENITH_PHASE12_C_LOCK.md
+docs/LOVABLE_ZENITH_PHASE12_D_LOCK.md
+docs/PHONARA_NORTH_STAR_PLAN.md
+docs/PHONARA_CURSOR_PASTE_CRUSH_LOCK.md
+docs/PHONARA_CURSOR_PASTE_CRUSH_P1_1_LOCK.md
+docs/PHONARA_CURSOR_PASTE_CRUSH_P1_3_LOCK.md
+docs/PHONARA_CURSOR_PASTE_CRUSH_P1_4_LOCK.md
+docs/PHONARA_CURSOR_PASTE_CRUSH_P1_5_LOCK.md
+docs/PHONARA_CURSOR_PASTE_CRUSH_P2_LOCK.md
+docs/PHONARA_CURSOR_PASTE_ROUTE_DEDUP_LOCK.md
 
 # Playwright screenshots/traces from local runs (if any escape test-results)
 **/*.png.snap
 **/trace.zip
+engine-dump/
+
+# Bulk Phase12 / paste LOCK globs (sync with workspace-artifacts.ts)
+docs/LOVABLE_ZENITH_PHASE12_*
+docs/PHONARA_CURSOR_PASTE_*
+docs/PHONARA_LOVABLE_*
+docs/PHONARA_ENGINE_WAVE_*
+docs/PHONARA_ENGINE_WORLD_*
+docs/LOVABLE_SPORTSBOOK_*
+docs/LOVABLE_ZENITH_CRUSH_HANDOFF.md
+docs/LOVABLE_ZENITH_NEW_CHAT.md
+docs/PHONARA_WORLD_CLASS_INTEGRATED_ROADMAP.md
+docs/LOVABLE_SPORTSBOOK_UI_LOCK.md
+docs/PHONARA_SPORTSBOOK_*
+# Auto-synced from scripts/lib/workspace-artifacts.ts (cursor:sync-excludes)
+docs/LOVABLE_ADMIN_*
+docs/LOVABLE_WALLET_*
+docs/LOVABLE_WORLD_CRUSH_*
+docs/PHONARA_DEEPSHAFT_MOMENTUM_ENGINE_DELIVERABLE.md
+docs/PHONARA_NEW_CHAT_HANDOFF_2026-06-16.md
+docs/PHONARA_NEW_CHAT_HANDOFF_2026-06-17.md
+docs/PHONARA_NEW_CHAT_HANDOFF_GAMES_POLISH_2026-06-17.md
+docs/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md
+docs/checkpoints/
+scripts/tmp-
+.lovable-intake/
+.tmp-lovable-
+# Auto-synced from scripts/lib/workspace-artifacts.ts (cursor:sync-excludes)
+check-full-log.txt
+check-gate-log.txt
+e2e-log.txt
+# Auto-synced from scripts/lib/workspace-artifacts.ts (cursor:sync-excludes)
+.tmp-*/
+.tmp-zip-extract/

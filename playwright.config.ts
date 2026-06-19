@@ -9,7 +9,9 @@ export default defineConfig({
   testMatch: ['e2e/**/*.spec.ts', 'smoke/**/*.spec.ts'],
   outputDir: 'test-results',
   timeout: 60_000,
-  fullyParallel: true,
+  /** Low-spec PC: one worker, serial specs — prevents port/CPU contention with Cursor. */
+  workers: 1,
+  fullyParallel: false,
   reporter: 'list',
   // Provisions a funded/consented test user against the local Supabase stack and
   // writes tests/e2e/.auth.json for the core-flow spec to inject.
@@ -36,6 +38,7 @@ export default defineConfig({
       env: {
         VITE_SUPABASE_URL: 'http://127.0.0.1:54444',
         VITE_SUPABASE_ANON_KEY: LOCAL_ANON_KEY,
+        VITE_PHONARA_E2E_ENGINE: '1',
       },
     },
     {
@@ -46,6 +49,7 @@ export default defineConfig({
       env: {
         VITE_SUPABASE_URL: 'http://127.0.0.1:54444',
         VITE_SUPABASE_ANON_KEY: LOCAL_ANON_KEY,
+        VITE_PHONARA_E2E_ENGINE: '1',
       },
     },
   ],

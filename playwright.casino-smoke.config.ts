@@ -8,6 +8,7 @@ export default defineConfig({
   testMatch: ['e2e/casino-preview-smoke.spec.ts'],
   outputDir: 'test-results',
   timeout: 45_000,
+  workers: 1,
   fullyParallel: false,
   reporter: 'list',
   globalSetup: './tests/e2e/global-setup.ts',

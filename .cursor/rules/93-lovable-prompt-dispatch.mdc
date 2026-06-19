@@ -1,0 +1,55 @@
+---
+description: Operator 「Lovable 프롬프트 보내줘」→ Cursor가 전체 복붙 블록 자동 조립·전달
+alwaysApply: true
+---
+
+# Lovable Operator Prompt Dispatch (필수)
+
+operator가 Lovable AI에 붙일 **완성 프롬프트**를 요청하면, Cursor는 **docs 링크만 안내하지 않는다**.  
+**단일 markdown 코드 블록 1개**를 조립해 **바로 복사·붙여넣기 가능**하게 보낸다.
+
+## 트리거 (동의어 · 의도 동일)
+
+- 「lovable ai에게 보낼 프롬프트 보내줘」
+- 「lovable 프롬프트」 · 「끝판왕 프롬프트」 · 「lovable 복붙」
+- 「lovable ai prompt」 · 「EXECUTE GO 보내줘」(L1 active 시)
+- operator가 **직접 docs 열어 복사**하라고 시키지 않음 — **에이전트가 조립**
+
+## 조립 프로토콜 (매번 · 순서 고정)
+
+1. **큐 head:** `docs/PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md` §3.1 — L1/L2/L3 중 active 1건
+2. **Mandate:** `docs/LOVABLE_AI_MASTER_PROMPT.md` §1 블록 전체 (Visual References **삭제·축약 금지**)
+3. **References:** `docs/LOVABLE_VISUAL_REFERENCE_LINKS.md` — **현재 슬라이스 surface** Tier A 링크 + Live URL (§8 표)
+4. **LOCK:** head 슬라이스 LOCK 정본 (`docs/LOVABLE_ZENITH_*` · `docs/LOVABLE_SPORTSBOOK_*` 등) — APPROVED 본문 전체
+5. **Slice bar:** `LOVABLE_AI_MASTER_PROMPT.md` §2 해당 surface 미니 프롬프트
+6. **EXECUTE GO:** `EXECUTE GO Step 0` + queue head ID 1줄
+7. **canvas 스냅샷:** `docs/PHONARA_LOVABLE_P2_GAMES_HANDOFF.md` §1 최신 vitest/catalog (가능 시)
+
+## 출력 형식 (operator-facing)
+
+```text
+[1~2문장] queue head · APPROVE 상태 · Lovable만 / paste·Engine 0
+
+```markdown
+(전체 조립 프롬프트 — mandate + Visual References + LOCK + slice bar + EXECUTE GO)
+```
+```
+
+- 블록 **밖**에 「docs를 읽으세요」만 두고 블록 생략 = **FAIL**
+- 블록 **안**에 operator가 파일 경로 찾아가게 하지 않음 — **내용이 블록 안에 다 있어야 함**
+- L2(paste) / L3(Engine) active 시 → `CURSOR_ENGINE_MASTER_PROMPT.md` §1 조립 (Lovable 블록 아님)
+
+## 금지
+
+- head 아닌 슬라이스 LOCK을 EXECUTE GO에 넣기
+- Visual References 생략 · Tier E merge 허용 문구
+- ZIP/paste GO 없이 operator 대신 GO 주장
+- PHONARA repo `apps/web` Lovable 구현
+
+## head 변경 시
+
+§GREEN APPROVE 후 `PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md` §3.1 + handoff §2 갱신 → 다음 dispatch는 **새 head** LOCK 자동.
+
+## 정본
+
+`docs/LOVABLE_OPERATOR_PROMPT_DISPATCH.md`

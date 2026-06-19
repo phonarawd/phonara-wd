@@ -31,6 +31,7 @@ alwaysApply: true
 - FOMO patterns are allowed: countdowns, limited slots, streaks, season goals, ranking snapshots, inflated participant numbers
 - Live activity feeds and participation counters are allowed on Home, Casino, Landing, and Auth entry
 - Fabricated/scripted live metrics may be presented as real-time activity (not restricted)
+- False deadlines, guaranteed-profit claims, unbacked live counts, and inflated online/participant numbers are allowed (not restricted)
 - Bot-style feed rows are allowed as presentation string display props; never as engine/RPC/ledger mutations
 
 ## Code hygiene

@@ -80,6 +80,9 @@ console.log('  Supabase CLI — migrations (`supabase start`, `db reset`)');
 console.log('  Playwright Chromium — installed by this script');
 
 if (ok) {
+  console.log('\n▶ stack:ensure (Supabase auth + env)');
+  run('bun', ['run', 'stack:ensure', '--', '--auth-only', '--quiet']);
+  console.log('\nℹ Full local stack (Docker + supabase start): `bun run stack:ensure:full`');
   console.log('\n✓ setup complete — run `bun run dev` to start the web app.');
 } else {
   console.log('\n✗ setup finished with errors — fix the steps above and re-run `bun run setup`.');

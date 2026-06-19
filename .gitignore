@@ -7,8 +7,18 @@ build
 coverage
 playwright-report
 test-results
+engine-dump
+.lovable-intake/staging/
+.lovable-intake/last-intake-report.json
+.lovable-intake/incoming/*.zip
+.tmp-lovable-*/
+.tmp-zip-extract/
+.tmp-*
 blob-report
 playwright-*.log
+check-full-log.txt
+check-gate-log.txt
+e2e-log.txt
 *.tsbuildinfo
 .eslintcache
 **/.vite
@@ -17,14 +27,16 @@ playwright-*.log
 .env
 .env.*
 .env.local
+.local-admin-dev.credentials.json
 !.env.example
 !.env.*.example
 .DS_Store
 Thumbs.db
 
-# Supabase CLI local state
+# Supabase CLI local state + generated RPC mirror
 supabase/.branches
 supabase/.temp
+supabase/functions-sql/
 
 # E2E ephemeral session (contains access tokens — never commit)
 tests/e2e/.auth.json
@@ -33,6 +45,9 @@ tests/e2e/.*auth*.json
 
 # Local backup rehearsal dumps (scripts/backup-rehearsal.ts)
 backups/
+
+# Optional one-time PAT vault (scripts/ensure-dev-stack.ts)
+setup/.env.secrets
 
 # MCP smoke test ephemeral stderr (scripts/test-supabase-mcp-smoke.ps1)
 .cursor/mcp-smoke-stderr.txt

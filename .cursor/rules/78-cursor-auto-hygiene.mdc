@@ -1,0 +1,85 @@
+---
+description: Cursor 렉 방지 자동화 — hooks + npm lifecycle + 에이전트 의무 프로토콜
+alwaysApply: true
+---
+
+# Cursor Auto Hygiene (자동 렉 방지)
+
+렉 방지는 **수동 기억에 의존하지 않는다**. 아래 자동화가 항상 1차 방어선이고,
+에이전트는 2차로 동일 규칙을 따른다.
+
+## 자동화 스택 (체크인됨 · operator 추가 작업 0)
+
+| 트리거 | 동작 | 스크립트 |
+|--------|------|----------|
+| **Cursor 채팅 세션 시작** | 고아 vitest/playwright 종료 → E2E 포트 sweep → `clean:artifacts` → (로그 80MB+) Cursor 로그만 자동 정리 → watcher exclude 동기화 | `.cursor/hooks.json` → `sessionStart` |
+| **에이전트 작업 종료 (`stop`)** | 고아 프로세스 종료 → E2E 포트 sweep → `clean:artifacts` | `stop` hook |
+| **무거운 shell 직전** | 고아/포트 선제 정리 (dist 유지) | `beforeShellExecution` matcher: `test\|build\|check\|test:e2e\|check:full` |
+| **무거운 shell 직후** | 고아 종료 → 포트 sweep → `clean:artifacts` | `afterShellExecution` (동일 matcher + `e2e:kill`) |
+| **`bun run test` 직전** | 고아 vitest/playwright 종료 | `pretest` → `cursor:kill-orphans` |
+| **`bun run test:e2e*` 직전** | 고아 종료 + `e2e:kill` | `pretest:e2e*` |
+| **`bun run test*` / E2E 직후** | `clean:artifacts` | 기존 `posttest` / `posttest:e2e*` |
+| **렉·hang 스파이크** | `cursor:status` → `cursor:emergency-reset` | operator·agent 수동 1회 |
+
+정본 설정: `.cursor/hooks.json` · 구현: `scripts/cursor-session-hygiene.ts` ·
+고아 탐지: `scripts/lib/cursor-dev-processes.ts` · **저사양 baseline:** `79-low-spec-pc.mdc`
+
+**sessionStart에서 제거됨 (저사양):** `stack:ensure` — Docker는 E2E/SQL pretest에서만.
+**hook 종료 시 제거됨:** `check:hygiene` 자동 실행 — hook 블로킹·중첩 방지.
+
+## 절대 건드리지 않는 것 (자동화 안전 경계)
+
+고아 종료 대상에서 **항상 제외**:
+
+- Cursor TypeScript server (`tsserver`)
+- Cursor IDE helper / extension host
+- `%APPDATA%\Cursor\User` (설정·상태)
+- `%USERPROFILE%\.cursor\extensions`
+- 현재 hygiene 스크립트 자체
+
+Cursor **로그·ai-tracking** 자동 정리(`sessionStart`, 80MB+):
+
+- `--skip-transcripts` — **과거 채팅 transcript는 유지**
+- 수동 전체 정리: `bun run cursor:clean-metadata -- --apply --include-cursor-logs`
+
+## 에이전트 의무 (hook 보조 · non-waivable)
+
+Hook이 실패해도 에이전트는 아래를 **직접** 지킨다:
+
+1. **무거운 gate 1개만** — `typecheck` / `lint` / `test` / `build` / `check` / E2E
+   를 병렬·백그라운드 shell에 동시 실행 **금지**
+2. **E2E** — `bun run test:e2e`만 사용 · 백그라운드 금지 · 종료 후 포트 3000–3002
+   비었는지 확인 (`bun run e2e:kill`)
+3. **작업 완료 보고 전** — build/E2E/check를 돌렸으면 `bun run cursor:session-end`
+   (또는 `bun run clean` + `bun run e2e:kill`) + `bun run check:hygiene`
+4. **진단 shell 금지** — `Get-Process` / 전체 repo 파일 카운트 등을
+   끝없이 돌려두지 않음
+5. **Docker** — 로컬 Supabase 미사용 시 Docker Desktop 종료 권고 (operator)
+6. **저사양 PC** — `79-low-spec-pc.mdc` 전 항목 준수 · 렉 시 `bun run cursor:emergency-reset`
+
+## operator 수동 (자동화 밖 · 필요 시만)
+
+- `.cursorignore` / `.vscode/settings.json` 변경 후 → Cursor **완전 재시작**
+- 월 1회: `bun run cursor:clean-metadata` (dry-run) → 필요 시 `--apply`
+- 렉 지속: `bun run cursor:preflight` (수동 full 진단 + dry-run metadata)
+
+## FAIL = 렉 방지 규칙 위반
+
+**정본:** `80-absolute-gate-prohibitions.mdc` G1·G2·G4·G12.
+
+- 에이전트가 vitest/E2E/check/build를 **2개 이상 동시** 실행
+- E2E를 background shell에 두고 다음 gate 진행
+- `test-results/` · `playwright-report/` · E2E auth token 잔존 상태로 완료 보고
+- hook/스크립트 추가 시 **Cursor tsserver** 를 kill 대상에 포함
+
+## self-check (변경 후)
+
+```bash
+rg "sessionStart|cursor:hook|cursor:kill-orphans|cursor:emergency-reset|pretest" .cursor/hooks.json package.json
+bun run cursor:status
+bun run cursor:kill-orphans
+bun run cursor:session-end
+bun run check:hygiene
+```
+
+See also: `75-workspace-hygiene.mdc` · `76-cursor-performance.mdc` · `77-e2e-lifecycle.mdc` · **`79-low-spec-pc.mdc`**

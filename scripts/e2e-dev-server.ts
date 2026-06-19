@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { requirePackagesDistOrExit } from './lib/ensure-packages-built';
 
 const app = process.argv[2];
 const port = process.argv[3];
@@ -8,28 +9,14 @@ if ((app !== 'web' && app !== 'admin') || !port) {
   process.exit(1);
 }
 
-function runBun(args: string[]): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const child = spawn(toCommand(['bun', ...args]), {
-      stdio: 'inherit',
-      shell: true,
-    });
-
-    child.once('exit', (code) => {
-      if (code === 0) resolve();
-      else reject(new Error(`bun ${args.join(' ')} exited with ${code ?? 'unknown'}`));
-    });
-    child.once('error', reject);
-  });
-}
+// pretest:e2e builds once; web+admin servers must not each run tsc --force in parallel.
+requirePackagesDistOrExit();
 
 function toCommand(parts: string[]): string {
   return parts
     .map((part) => (part.includes(' ') || part.includes('*') ? `"${part.replaceAll('"', '\\"')}"` : part))
     .join(' ');
 }
-
-await runBun(['run', 'build:packages']);
 
 const server = spawn(
   toCommand([

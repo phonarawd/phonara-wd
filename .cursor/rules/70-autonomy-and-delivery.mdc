@@ -45,9 +45,9 @@ end-to-end. This file is the operating contract for that grant.
   reset`, applying remote migrations, deploying edge functions, installing
   extensions, GRANT/REVOKE, refactors, dependency changes, and fixing risky or
   buggy code discovered along the way.
-- The ONLY non-waivable constraint is the single-project Supabase lock
-  (`yocjhjsdwoijfdrehzoq`) in `20-supabase-safety`. If any instruction implies a
-  different project/ref/URL, stop and ask in writing.
+- The ONLY non-waivable constraints are:
+  1. The single-project Supabase lock (`yocjhjsdwoijfdrehzoq`) in `20-supabase-safety`. If any instruction implies a different project/ref/URL, stop and ask in writing.
+  2. **Lovable ZIP publish gate** in `92-lovable-lock-execute.mdc` §ZIP 게이트: **no** `dist-phonara-package.zip` / admin ZIP / zip dry+real / CHANGELOG ZIP KB until the operator explicitly says **「ZIP 발행」** (or equivalent). Standing autonomy does **not** authorize ZIP. §GREEN without ZIP is complete.
 - Never weaken a security/money/conservation invariant to "make progress."
   Correctness and solvency outrank speed.
 
@@ -96,11 +96,13 @@ end-to-end. This file is the operating contract for that grant.
 
 - Use concise chat summaries and TODOs for session continuity. Do not require
   Build Log updates for ordinary implementation tasks.
+- **자동 렉 방지:** `.cursor/hooks.json` + `78-cursor-auto-hygiene.mdc` —
+  sessionStart/stop · heavy shell 전후 · `pretest`/`posttest` 가 정리를 실행.
 - Delete generated junk, dead files, and lag-inducing residue after each phase
   (`bun run clean` where applicable). Keep the repo lean. See
   `75-workspace-hygiene` for mandatory cleanup triggers and Cursor index rules.
 - Run `bun run clean` after every E2E run and before task closeout when build or
-  E2E executed in that session.
+  E2E executed in that session (hook `stop`/`afterShellExecution`이 선행).
 
 ## 7. Naming & structure (world-class defaults)
 

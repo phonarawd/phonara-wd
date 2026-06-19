@@ -1,0 +1,87 @@
+---
+description: 저사양 operator PC 기준 — 테스트·게이트·터미널 실행 프로토콜 (non-waivable)
+alwaysApply: true
+---
+
+# Low-Spec PC Execution Contract (operator baseline)
+
+PHONARA operator PC는 **저사양**이다. 모든 에이전트·hook·테스트 실행은 이 PC에서
+Cursor가 멈추지 않으면서 **게이트를 완주**할 수 있어야 한다. CI 병렬도와 다른
+로컬 규칙을 적용한다.
+
+> **절대 금지 정본:** [`80-absolute-gate-prohibitions.mdc`](80-absolute-gate-prohibitions.mdc) (G1–G12 · 위반 = FAIL)
+
+## 절대 금지 (요약 — 상세·FAIL 조건은 80 정본)
+
+| 금지 | 이유 |
+|------|------|
+| `check` / `build` / `test` / `test:e2e` / `check:full` **2개 이상 동시** | CPU·RAM·디스크 I/O 포화 → Cursor freeze |
+| Agent **background shell**에 무거운 gate | hang 시 orphan 누적 |
+| `check:full`을 E2E 안정화 전에 실행 | 30분+ 연쇄 실패 + Docker + Playwright 중첩 |
+| repo 루트에 `Tee-Object` / `> log.txt` 대용량 로그 | watcher·index 노이즈 |
+| sessionStart마다 Docker/Supabase 깨우기 | `stack:ensure`는 **pretest:e2e / pretest:sql** 에만 |
+| E2E 중 `dev:web` / `dev:admin` 수동 기동 | 포트 3000–3002 충돌 |
+| hung shell 방치 후 **새 터미널**로 gate 재시작 | orphan 2배 |
+| E2E 미안정인데 전체 `test:e2e`만 반복 (타겟 spec 생략) | 연쇄 hang |
+| `clean:artifacts`로 `packages/*/dist` 삭제 (dist를 WORKSPACE_ARTIFACT에 넣기) | 매 E2E마다 `tsc --force` 재빌드 |
+
+## 필수 실행 순서 (좁게 → 넓게 · 한 터미널)
+
+1. `bun run cursor:status` — 읽기 전용; orphan·포트·residue 확인
+2. orphan/residue 있으면 `bun run cursor:emergency-reset` (또는 `cursor:kill-orphans` + `e2e:kill` + `clean`)
+3. `bun run typecheck` → `bun run lint` (변경 범위에 맞게)
+4. 단위: `bun run test` (vitest **maxWorkers: 1** 고정)
+5. E2E: **`test:e2e:casino` 타겟 spec 먼저** → 전체 `bun run test:e2e` (playwright **workers: 1**)
+6. `bun run build` (세션 종료 직전 1회면 충분한 경우 많음)
+7. `bun run check:full` — **E2E 55+/58 안정 후**, foreground 1회만
+
+`bun run check` 전체 체인은 로컬에서 **최종 RC 직전**에만. 일상 작업은 위 단계별 gate.
+
+## 저사양 튜닝 (repo에 고정됨)
+
+| 도구 | 설정 | 파일 |
+|------|------|------|
+| Vitest | `maxWorkers: 1`, `pool: 'forks'` | `vitest.config.ts` |
+| Playwright | `workers: 1`, `fullyParallel: false` | `playwright.config.ts`, smoke config 동일 |
+| sessionStart hook | orphan kill + clean + sync-excludes **만** (Docker 0) | `cursor-session-hygiene.ts` |
+| Orphan kill | vite · run-full-gate · dev:web · Tee-Object 등 확장 | `cursor-dev-processes.ts` |
+
+## 렉·hang 복구 (operator · agent 공통)
+
+```bash
+bun run cursor:status
+bun run cursor:emergency-reset
+```
+
+- `cursor:emergency-reset`: orphan kill + E2E 포트 + artifact inline clean (**중첩 bun run 없음**)
+- UI still lag → Cursor **완전 종료** (트레이 포함) 후 재시작
+- Docker Desktop: SQL/E2E **아닐 때** 종료 권장
+
+## Docker / Supabase
+
+- `pretest:e2e` · `pretest:sql` · `check:full` SQL 단계에서만 stack 필요
+- E2E/SQL 없는 UI-only 작업: Docker **끄기** — RAM 확보
+- **`stack:ensure --full`은 Docker Desktop 자동 기동 금지** — operator가 수동 ON 후 E2E/SQL (Cursor freeze 방지)
+- **E2E/SQL 종료 후 `posttest:*` → `stack:stop`** — Supabase ~15 컨테이너 해제 + **safe docker prune** (stopped containers · dangling images · unused networks)
+- stack 유지: `PHONARA_KEEP_STACK=1` · docker prune skip: `PHONARA_SKIP_DOCKER_CLEAN=1`
+- 디스크 부족: `bun run stack:docker-clean --cache` (build cache) · `--images` (unused images, next start re-pull)
+- **DB 볼륨 삭제 금지 (자동):** `docker volume prune`는 `--volumes` + `PHONARA_DOCKER_PURGE_VOLUMES=1` 수동만 — 로컬 DB 소실
+- **RAM 렉 1순위:** E2E/SQL 끝나면 **Docker Desktop 종료** (WSL VM RAM 해제) — `stack:stop`만으로는 Desktop RAM은 남음
+- Plinko E2E: Pixi WebGL ticker는 `VITE_PHONARA_E2E_ENGINE=1`에서 **0** — casino.spec RPC 구간 중 CPU 포화 방지
+
+## 에이전트 완료 보고 전 (저사양 checklist)
+
+- [ ] 무거운 gate **1개**만 실행했고 foreground에서 **exit code** 확인
+- [ ] build/E2E/check 실행 시 `bun run cursor:session-end` 또는 `clean` + `e2e:kill`
+- [ ] `bun run check:hygiene` green (residue 0)
+- [ ] `bun run cursor:status` — orphan 0, 포트 3000–3002 free
+- [ ] background shell에 gate **없음**
+
+## self-check
+
+```bash
+rg "maxWorkers: 1|workers: 1|cursor:emergency-reset|79-low-spec" vitest.config.ts playwright.config.ts package.json .cursor/rules/
+bun run cursor:status
+```
+
+See also: `76-cursor-performance.mdc` · `77-e2e-lifecycle.mdc` · `78-cursor-auto-hygiene.mdc` · **`80-absolute-gate-prohibitions.mdc`**

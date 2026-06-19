@@ -8,6 +8,8 @@ alwaysApply: true
 E2E must **always end cleanly**: no orphan dev servers, browsers, terminals, or
 artifact residue. Lag and flaky reruns come from interrupted Playwright runs.
 
+> **절대 금지 정본:** [`80-absolute-gate-prohibitions.mdc`](80-absolute-gate-prohibitions.mdc) — G1·G2·G4·G5·G12
+
 See `scripts/lib/e2e-lifecycle.ts` and `scripts/run-e2e.ts`.
 
 ## How to run (agents + operators)
@@ -15,13 +17,16 @@ See `scripts/lib/e2e-lifecycle.ts` and `scripts/run-e2e.ts`.
 | Do | Don't |
 |----|-------|
 | `bun run test:e2e` | raw `playwright test` / `bunx playwright test` |
+| `bun run test:e2e:casino` (타겟·카지노/비주얼) | admin 3001 불필요한 전체 `test:e2e`로 타겟만 돌리기 |
 | `bun run test:e2e:casino-smoke` | ad-hoc preview server + manual browser |
 | `bun run e2e:kill` when ports stuck | leave 3000/3001/3002 listeners running |
 | wait for command to **fully exit** | background E2E in agent terminal without monitoring |
 | `bun run check:hygiene` after E2E session | mark task complete while `test-results/` exists |
 
-`test:e2e` runs: **pretest kill** → Playwright (+ `globalTeardown`) → **wrapper
+`test:e2e` runs: **`pretest` orphan kill + port kill** → Playwright (+ `globalTeardown`) → **wrapper
 teardown** → `posttest` clean. Triple belt — teardown must succeed.
+
+See **`78-cursor-auto-hygiene.mdc`** for full automation map.
 
 ## Mandatory agent behavior
 
@@ -34,6 +39,7 @@ teardown** → `posttest` clean. Triple belt — teardown must succeed.
 4. If E2E hangs: **Ctrl+C once**, wait for `[e2e] session finalized`, then
    `bun run e2e:kill` if ports still blocked. Do not open a second E2E terminal.
 5. Session end after E2E: `bun run clean` if anything still lingers.
+6. **Low-spec / stuck run:** `bun run cursor:emergency-reset` — see `79-low-spec-pc.mdc`.
 
 ## What teardown does
 

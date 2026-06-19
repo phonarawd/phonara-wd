@@ -1,0 +1,78 @@
+---
+description: Lovable Zenith LOCK·EXECUTE·§GREEN — 필수 FAIL 조건·모호함 금지 (operator↔Lovable)
+alwaysApply: true
+---
+
+# Lovable LOCK · EXECUTE · §GREEN (필수 규칙)
+
+PHONARA operator가 Lovable AI에 LOCK/EXECUTE/회신을 작성·검토할 때 적용한다.
+**Lovable canvas 쪽 AI도 동일 의미로 준수** — PHONARA `docs/LOVABLE_*` 정본을 따른다.
+
+## Operator·에이전트 문체 (절대 금지)
+
+다음 표현으로 요구사항을 **약화하지 않는다**:
+
+- 「막지 않음」 · 「BLOCK 아님」 · 「GO해도 됨」 · 「optional」 · 「nit」 · 「권장」만으로 끝내기
+- 「micro-amend」를 **선택 사항**처럼 서술하기
+
+**대신 반드시:**
+
+1. LOCK Footer **번호** (#N)로 추가
+2. **FAIL 조건** 1줄 (무엇이 hit이면 §GREEN 실패인지)
+3. **self-check 명령** (복붙 가능한 `rg`/`git diff` 한 블록)
+4. EXECUTE step **번호**에 배치 (어느 단계에서 고치는지)
+5. 모호한 런타임 동작은 **구현 스니펫** 또는 **의사코드**를 LOCK 본문에 고정
+
+검토 회신은 **「승인 / REVISE / REJECT」** 와 **「FAIL = …」** 만으로 판정한다.
+
+## LOCK 문서 최소 구조 (슬라이스마다)
+
+- Scope 1줄 · 아키텍처 · 산출물 · i18n · LOCK Footer · EXECUTE 0→N · §GREEN self-check **full block** · §GREEN template · Defer · paste adapter memo
+- EXECUTE step 8(또는 마지막 self-check step)에 **§GREEN full block 1회** 필수 — nav 일부만 rg하는 **부분 self-check 단독 마감 금지**
+
+## §GREEN 숫자·패턴 (모호 금지)
+
+| 항목 | 금지 | 필수 |
+|------|------|------|
+| JSON-LD | `wc -l = 8` 고정 단정 | (1) `BreadcrumbList` 등 **스키마명 route 파일 hit** (2) `wc -l` **실측 N** + baseline 대비 Δ를 §GREEN 본문에 기록 |
+| Query gate | `query ?? MOCK` 한 줄만 | `?partner=0`/`1` **문자열 파싱** 스니펫 LOCK 고정 · §GREEN에서 gate fallback **수동 1회** 확인 명시 |
+| 11-C PWA 캡처 | 축약 regex만 | LOCK 원문 `addEventListener\s*\(\s*['\"]beforeinstallprompt\|…` **그대로** · hit **InstallPromptProvider.tsx 1파일** §GREEN에 파일명 |
+| paste memo | `settlements.status` | **`affiliate_settlements.state`** (엔진 컬럼명) |
+
+## Phase 12-E 정본
+
+총판 Hub 슬라이스의 LOCK·EXECUTE·§GREEN **단일 정본**:
+
+- `docs/LOVABLE_ZENITH_PHASE12_E_LOCK.md`
+
+**World Crush (12-E 1줄 · North Star §4.6):** Stake agent portal — tier · depth-2 tree · commission 3-state · share · `/partner` gated noindex.
+
+다른 채팅·DRAFT·v0.1과 충돌 시 **위 파일이 우선**. v0.1 `/referral` partner wrap **폐기**.
+
+## World Crush Bar (Phase 12 전 슬라이스)
+
+- **정본:** `docs/PHONARA_NORTH_STAR_PLAN.md` **§4.6** · `docs/LOVABLE_ZENITH_PHASE12_PRODUCT_PLAN.md` **§5**
+- **FAIL:** generic/MVP feel · 첫 3초 urgency/reward/density 전무
+- **12-E만으로 전세계 압살 완성 아님** — 12-Z까지 12-B/C/A/D 필수
+
+## PHONARA repo 경계 (변경 없음)
+
+- Phase 12 진행 중 Lovable EXECUTE는 **Lovable workspace**에서만.
+- `apps/web` · `packages/*` · `supabase/*` paste 전 **0-touch** (12-Z GREEN 후 1회 paste).
+
+## ZIP 발행 게이트 (operator 전용 · non-negotiable)
+
+**FAIL = operator 「ZIP 발행」·동등 명시 없이 ZIP/CHANGELOG ZIP KB 실행·보고·§GREEN에 ZIP 포함 주장.**
+
+| 금지 (standing autonomy·EXECUTE Step 10·§GREEN 완료로도 **자동 허용 안 됨**) | 허용 |
+|----|------|
+| `dist-phonara-package.zip` · `dist-phonara-admin-package.zip` **생성·갱신·업로드** | operator **명시 한 줄** 후만 |
+| zip **dry+real** · package 빌드 **ZIP 목적** 실행 | operator가 「ZIP 발행」「ZIP GO」 등 **직접 지시** |
+| §GREEN/CHANGELOG/handoff에 **ZIP KB를 필수**로 적거나 「Step 9 ZIP 완료」 주장 | vitest · catalog · gate만으로 **§GREEN valid** |
+| 「operator 신호 시」를 **에이전트/Lovable이 스스로 GO**로 해석 | operator **무응답 = ZIP 금지** 유지 |
+
+**operator 명시 트리거 (예):** `ZIP 발행` · `ZIP GO` · `dist-phonara-package.zip 발행` — **이 외 문구는 GO 아님.**
+
+**Cursor · Lovable AI · PHONARA 에이전트:** EXECUTE Step 10 = **§GREEN 텍스트 + 다음 LOCK DRAFT**만. ZIP Step은 **defer 고정** · operator ZIP GO 전 **코드·스크립트·artifact 0**.
+
+**PHONARA paste ZIP:** 12-Z FINAL GREEN 후 **1회** — operator paste GO와 별도 · 중간 슬라이스 ZIP ≠ paste.

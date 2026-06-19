@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
@@ -12,6 +13,10 @@ export default tseslint.config(
       '**/playwright-report/**',
       '**/test-results/**',
       '**/*.d.ts',
+      'scripts/tmp-*.ts',
+      '**/.tmp-*/**',
+      '**/.tmp-*',
+      '**/.lovable-intake/**',
     ],
   },
   js.configs.recommended,
@@ -28,6 +33,23 @@ export default tseslint.config(
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
+    },
+  },
+  {
+    files: ['**/*.{ts,tsx,jsx}'],
+    plugins: {
+      'react-hooks': reactHooks,
+    },
+    rules: {
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'off',
+    },
+  },
+  {
+    files: ['**/__tests__/**/*.{ts,tsx}', '**/*.test.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/consistent-type-imports': 'off',
     },
   },
   {

@@ -1,0 +1,76 @@
+---
+description: 게이트·터미널·E2E 절대 금지 (non-waivable) — 위반 = FAIL
+alwaysApply: true
+---
+
+# 절대 금지 — 게이트·터미널·E2E (정본)
+
+> **non-waivable.** operator·에이전트·hook 모두 동일.  
+> 「막지 않음」「GO해도 됨」「optional」「백그라운드로 돌려놓고 진행」으로 **약화 금지**.  
+> 저사양 실행 순서·튜닝: **`79-low-spec-pc.mdc`** · E2E teardown: **`77-e2e-lifecycle.mdc`**
+
+## 위반 = FAIL (작업 미완료)
+
+아래 **어느 한 항목이라도 hit**이면 해당 세션 작업은 **FAIL**. 완료 보고·§GREEN·RC 주장 **금지**.
+
+| ID | 절대 금지 | FAIL = |
+|----|-----------|--------|
+| **G1** | `typecheck` / `lint` / `test` / `build` / `check` / `check:full` / `test:e2e` / `test:e2e:*` **2개 이상 동시** (다른 터미널·병렬 tool call·background shell 포함) | CPU/RAM 포화 · Cursor freeze · 게이트 결과 무효 |
+| **G2** | 무거한 gate를 Agent **background shell**에 실행하고 **exit code 확인 전** 다음 gate 진행 | orphan 누적 · 포트 점유 · hang 시 복구 불가 |
+| **G3** | E2E **미안정**(fail·skip·hang 잔존) 상태에서 `bun run check:full` | 30분+ 낭비 · Docker+Playwright+SQL 중첩 실패 |
+| **G4** | E2E/gate **hang** 후 `cursor:emergency-reset` / `e2e:kill` **없이** 새 터미널에서 동일 gate 재시작 | orphan **2배** · 3000–3002 충돌 |
+| **G5** | raw `playwright test` / `bunx playwright test` / 수동 `dev:web`·`dev:admin` + 브라우저 | teardown 우회 · 포트 3000–3002 충돌 |
+| **G6** | E2E 불안정한데 **전체** `bun run test:e2e`만 반복 (타겟 spec 선행 없음) | 저사양 PC에서 58 spec 연쇄 hang |
+| **G7** | E2E 통과를 위해 **engine** 수정 (`supabase/*`, `packages/*`, hooks/RPC/domain) | L2/L3 경계 위반 · paste §GREEN 무효 |
+| **G8** | operator **「ZIP 발행」** 명시 없이 ZIP/CHANGELOG ZIP KB 실행·보고 | `92-lovable-lock-execute.mdc` §ZIP 게이트 위반 |
+| **G9** | L2 §GREEN 전 **L2-S**(`/sports` wire) · **L3** Engine Wave 착수 | sequential contract 위반 |
+| **G10** | `pretest:e2e` / `stack:ensure --full` 없이 E2E 시작 (Docker/로컬 stack 미확인) | service key·Auth·RPC flake |
+| **G11** | E2E/SQL/`check:full` **아닐 때** Docker Desktop 상시 ON 권장 무시 (operator) · sessionStart에 `stack:ensure` 복원 | RAM·디스크 상시 포화 |
+| **G12** | `test-results/` · E2E auth token · 3000–3002 listener 잔존 채로 **완료 보고** | `check:hygiene` FAIL · 다음 E2E 충돌 |
+
+## 필수 (금지의 반대 — 반드시 지킬 것)
+
+1. **한 터미널 · 한 무거운 gate · foreground** — exit code 확인 후 다음 단계.
+2. **E2E hang 시:** Ctrl+C 1회 → `[e2e] session finalized` 대기 → `bun run e2e:kill` → 여전히 렉이면 `bun run cursor:emergency-reset` → **그 다음에만** 재시도.
+3. **타겟 spec 먼저** (저사양 · 카지노/비주얼):
+   - `bun run test:e2e:casino -- tests/e2e/casino-wave7-closeout.spec.ts`
+   - `bun run test:e2e:casino -- tests/e2e/casino.spec.ts -g plinko`
+   - `bun run test:e2e:casino -- tests/e2e/visual.spec.ts -g terms`
+   - 타겟 green 후 → `bun run test:e2e` (admin 포함 전체) **1회**
+4. **`check:full`** — E2E 전부 green(또는 skip 정당화) 후 **foreground 1회만**.
+5. **세션 clean** — `packages/*/dist`는 mid-session 유효 산출물; `clean:artifacts`가 **dist를 지우지 않음** (`workspace-artifacts.ts` `WORKSPACE_ARTIFACT_NAMES`에 dist 없음).
+6. **패키지 빌드** — E2E 전 `pretest:e2e`가 1회만 `build:packages`; webServer는 dist 확인만 (`e2e-dev-server.ts`).
+
+## 에이전트·operator 공통 치트시트
+
+```powershell
+Set-Location c:\Users\PC\Desktop\phonara-gb
+bun run cursor:status
+# orphan·포트·residue 있으면 (G4 방지):
+bun run cursor:emergency-reset
+
+# 좁게 → 넓게 (G1·G6 방지 — 한 줄씩 · exit code 확인 후 다음)
+bun run typecheck
+bun run test:e2e:casino -- tests/e2e/<target>.spec.ts
+bun run test:e2e
+bun run check:full
+
+# E2E 후 필수 (G12)
+bun run e2e:kill
+bun run check:hygiene
+```
+
+## self-check (규칙·구현 동기화)
+
+```bash
+rg "절대 금지|G1|G12|test:e2e:casino|ensure-e2e-packages|WORKSPACE_ARTIFACT_NAMES" .cursor/rules/80-absolute-gate-prohibitions.mdc .cursor/rules/79-low-spec-pc.mdc package.json scripts/lib/workspace-artifacts.ts
+bun run cursor:status
+```
+
+## 교차 참조
+
+- `79-low-spec-pc.mdc` — 저사양 baseline · 실행 순서
+- `77-e2e-lifecycle.mdc` — teardown · 포트 3000–3002
+- `78-cursor-auto-hygiene.mdc` — hooks · sessionStart/stop
+- `40-testing.mdc` — E2E 설계·보존 검증
+- `92-lovable-lock-execute.mdc` — ZIP 게이트 (G8)

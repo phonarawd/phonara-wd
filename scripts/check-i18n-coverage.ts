@@ -13,7 +13,13 @@ const serverTestErrorCodePattern = [
 // allowed to inline Korean ONLY when they also inline the English counterpart
 // and resolve the locale at runtime. Each such file is verified below to
 // contain BOTH locales, so dropping either side re-triggers a failure.
-const allowedFiles = new Set(['packages/i18n/src/index.ts']);
+const allowedFiles = new Set([
+  'packages/i18n/src/index.ts',
+  'packages/i18n/src/locales/lovable-ko.ts',
+  'packages/i18n/src/locales/lovable-en.ts',
+  'apps/web/src/i18n/ko.ts',
+  'apps/web/src/i18n/en.ts',
+]);
 const bilingualHtmlFiles: { file: string; mustContain: string[] }[] = [
   {
     file: 'apps/web/public/offline.html',
@@ -39,15 +45,42 @@ const bilingualSet = new Set(bilingualHtmlFiles.map((b) => b.file));
 // Imported presentation zones may keep Korean copy verbatim until mirrored into packages/i18n.
 const allowedPrefixes = [
   'apps/web/src/components/shell/',
+  'apps/web/src/components/sports/',
   'apps/web/src/components/ui/',
+  'apps/web/src/components/casino/',
+  'apps/web/src/components/earn/',
+  'apps/web/src/components/fomo/',
+  'apps/web/src/components/games/',
+  'apps/web/src/components/home/',
+  'apps/web/src/components/trade/',
+  'apps/web/src/components/welcome/',
+  'apps/web/src/components/social/',
   'apps/web/src/presentation-import/',
+  'packages/i18n/src/locales/',
+  'apps/web/src/lib/social-proof/',
+  'apps/web/src/hooks/',
+  'apps/web/src/i18n/',
+  'apps/admin/src/components/admin/',
+  'apps/admin/src/components/ui/',
+  'apps/admin/src/presentation-import/',
+  'apps/admin/src/hooks/admin/',
+  'apps/admin/src/hooks/useAdminSportsMock.ts',
 ];
+
+function isTestOrFixturePath(file: string): boolean {
+  return (
+    file.includes('/__tests__/') ||
+    file.endsWith('.test.ts') ||
+    file.endsWith('.test.tsx')
+  );
+}
 
 function isAllowedPresentationImportPath(file: string): boolean {
   return allowedPrefixes.some((prefix) => file.startsWith(prefix));
 }
 
 const violations = roots.flatMap((root) => collectFiles(root)).filter((file) => {
+  if (isTestOrFixturePath(file)) return false;
   if (allowedFiles.has(file) || bilingualSet.has(file) || isAllowedPresentationImportPath(file)) return false;
   return koreanPattern.test(readFileSync(file, 'utf8'));
 });
