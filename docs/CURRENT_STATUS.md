@@ -2,7 +2,7 @@
 
 > Derived dashboard only. The source of truth remains
 > [`PHONARA_V2_MASTER_PLAN.md`](PHONARA_V2_MASTER_PLAN.md), especially the Build
-> Log. Update this file from the master plan; do not use it to override product,
+> Log. **압살 North Star:** [`PHONARA_NORTH_STAR_PLAN.md`](PHONARA_NORTH_STAR_PLAN.md). Update this file from the master plan; do not use it to override product,
 > security, money, or launch decisions.
 
 ## Last Verified Green Gates
@@ -17,6 +17,8 @@
 - Focused i18n/admin/casino UI E2E: `admin.spec.ts` + `casino.spec.ts` + `visual.spec.ts` → 16/16 passed after local Auth restart.
 
 ## Launch Plan Position
+
+> **최종 목표 (Stake/Rollbit/Binance/Bybit/국내 앱테크):** [`PHONARA_NORTH_STAR_PLAN.md`](PHONARA_NORTH_STAR_PLAN.md)
 
 Completed launch-plan closeout items:
 
@@ -36,26 +38,125 @@ Completed launch-plan closeout items:
 
 Current slice:
 
-- `rc-smoke`: read-only production smoke is green; authenticated production flow smoke is blocked until a real operator/user account exists for no-mutation smoke.
+- **Cursor 전담 (2026-06-19):** Lovable canvas **종료** — 모든 UI/wiring/E2E는 PHONARA repo.
+- **C-0 Wiring:** i18n/typecheck/vitest **793 pass** · Earn 광고시청·설문 미션 **제거**.
+- **C-1 L2 E2E:** **51/58** (3 fail · 4 skip) — **Docker Desktop ON** 후 타겟 spec → 전체 `test:e2e`.
+- **C-2:** `check:full` — E2E green 후 foreground 1회.
+- **Earn 제품 정책:** 광고 시청·설문조사 리워드 **금지** (앱테크 대체: 출석·미션·룰렛·추천·데일리 퀴즈).
+- `rc-smoke`: read-only production smoke green; authenticated production flow smoke blocked until operator account exists.
 
 Next slices:
 
 - Launch operations loop.
 
-## Lovable Zenith UI (parallel track · Lovable workspace)
+## Lovable Zenith UI (**CLOSED · 2026-06-19**)
 
-> **새 채팅:** [`LOVABLE_ZENITH_CHAT_HANDOFF.md`](LOVABLE_ZENITH_CHAT_HANDOFF.md) · **장문:** [`LOVABLE_ZENITH_SESSION_HANDOFF.md`](LOVABLE_ZENITH_SESSION_HANDOFF.md) · **플랜:** [`LOVABLE_ZENITH_MASTER_PLAN.md`](LOVABLE_ZENITH_MASTER_PLAN.md)  
-> **PHONARA repo:** casino game UI = placeholder until Lovable ZIP paste (engine no-touch).
+> **operator:** Lovable 플랫폼 종료 — 이하 슬라이스는 **Cursor `apps/web` presentation**으로 이관.  
+> **Lovable Zenith:** [`LOVABLE_ZENITH_INDEX.md`](LOVABLE_ZENITH_INDEX.md) · handoff **v77** (archive)  
+> **통합 백로그 (DONE/UPGRADE/NOT DONE):** [`PHONARA_WORLD_CLASS_INTEGRATED_ROADMAP.md`](PHONARA_WORLD_CLASS_INTEGRATED_ROADMAP.md)  
+> **순차 실행 큐 head:** [`PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md`](PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md)
 
 | Item | Status (2026-06-15) |
 |------|---------------------|
-| Macro Phase 0–2 | ✅ GREEN (Lovable local) |
-| Macro Phase 3 (5 P1 games) | ✅ crash/plinko/limbo/mines/hilo/dice · **macro P3 DONE** |
-| Macro Phase 4–10 | 🟡 **Roulette §7 ACTIVE** · BJ/slots/shell ⏳ |
-| Casino games done | **6/10** · roulette ⏳ Lovable · vitest 266/266 |
-| Next | **Lovable §7 Roulette RED LOCK** · PHONARA handoff v11 · GREEN §E 대기 |
+| Macro Phase 0–4 | ✅ **10/10 games** · P4 DONE · vitest **356/356** · Auto **6/6** |
+| **§Phase 4.5** | **P1 CLOSE ✅** |
+| **Phase 5 슬라이스** | **5-A–D + macro 4슬라이스 ✅** (tier · faq · footer-banner) |
+| **Phase 5 macro** | **macro 슬라이스 완료** · Dashboard **후순위 defer** |
+| **Phase 6** | **CLOSE ✅** (5슬라이스) |
+| **Phase 7 · 7-earn-hub-i18n** | ✅ **§E v26 GREEN** (LOCK v1.2 · catalog **534→574**) |
+| **Phase 7 · 7-earn-missions-route** | ✅ **§E v26-micro GREEN** (LOCK v0 · `/earn` + `/earn/missions` · catalog **574→578**) |
+| **Phase 7 · 7-viral-referral-card-i18n** | ✅ **§E v27 GREEN** (LOCK v0 · catalog **578→587** · `referral.*` **16**) |
+| **Phase 7 viral defer** | `7-viral-referral-route` · `7-viral-mission-expand` |
+| **Phase 7 · 7-fomo-wheel-i18n** | ✅ **§E v28 GREEN** (LOCK v0 · catalog **577→584** keys · `fomo.*` **17**) |
+| **Phase 7 · 7-fomo-streak-i18n** | ✅ **§E v29 GREEN** (LOCK v0 · catalog **584→585** keys · `fomo.*` **18**) |
+| **Phase 7 · 7-fomo-leaderboard-i18n** | ✅ **§E v30 GREEN** (LOCK v0 FINAL · catalog **585→589** keys · `fomo.*` **22**) |
+| **Phase 7 · 7-fomo-tier-i18n** | ✅ **§E v31 GREEN** (LOCK v0 FINAL · catalog **589→592** keys · `fomo.*` **25**) |
+| **Phase 7 · mounted fomo** | ✅ **CLOSED** (wheel · streak · leaderboard · tier — 7 components) |
+| **Phase 7 · 7-route-seo-head-i18n** | ✅ **§E v32 GREEN** (head() only · catalog **602→605**) |
+| **Phase 7 · 7-phase7-closeout-i18n** | ✅ **§E v33 MEGA GREEN** (LOCK v0.1 · 14 files · mounted funnel 표면 **CLOSED**) |
+| **Phase 7 · G6 catalog parity** | ✅ **RESOLVED** — reporting bug (line-count vs key-count) · **TRUE PARITY keys ko=en=678** · Phase 8 BLOCKER **cleared** |
+| **Phase 7 · 7-phase7-defer-closeout** | ✅ **§E v34 MEGA GREEN** (LOCK v0.3 · 8 files · +110 keys · catalog **678→788**) |
+| **Phase 7 defer body** | ✅ **CLOSED** (legal · account · settings · trade · games detail) |
+| **Phase 7 defer (macro)** | viral UX/mission · **tier progression §E v35** |
+| **Phase 8 · §P8-1** | ✅ **LOCK v0.1 FINAL · GREEN** (8 surfaces · catalog **788→862** · G1–G12+G+ · vitest **356/356**) |
+| **Phase 8 · §P8-2** | ✅ **LOCK v0.1 · GREEN** (8 surfaces · catalog **862→935** · G1–G12+G+ · vitest **356/356**) |
+| **Phase 8 · §P8-3** | ✅ **LOCK v0.1 · GREEN** (8 surfaces · catalog **935→949** · G1–G12+G+ · **24/32면**) |
+| **Phase 8 · §P8-4** | ✅ **LOCK v0.1 · GREEN** (8 surfaces · catalog **949→982** · **Phase 8 32/32 COMPLETE**) |
+| **Phase 8 macro** | ✅ **CLOSE** — 4 clusters P8-1~4 · Imported* **32/32** route pages |
+| **Phase 9 · §P9 Admin** | ✅ **LOCK v0.1 · GREEN** (8 surfaces · catalog **982→1053** · `admin.*` +71 · `seo.admin*.*` +8 · admin ZIP **51 KB**) |
+| **Phase 10 · FINAL** | ✅ **GREEN** (verify-only · catalog **1053/1053** · user ZIP **103 KB** · admin ZIP **51 KB** · G12 dry+real ✓) |
+| **Phase 11-B · 표시 품질 sweep** | ✅ **GREEN** (LOCK v0.1 FINAL · route +0 · catalog **1053→1059** · `state.*` +6 · SEO·a11y·shell·PWA manifest 기초 · handoff **v61 baked**) |
+| **Phase 11-C · PWA Supremacy** | ✅ **GREEN** (route +0 · `/install` head 갱신 · catalog **1059→1075** · `pwa.*` +16 · handoff **v65 baked**) |
+| **Phase 12-E · Partner / 총판 Hub** | ✅ **GREEN** (E1 `/referral` + E2 `/partner` gated · catalog **1075→1099** · +24 `referral.partner.*` · sitemap **42** · JSON-LD **7→8** · ZIP user **104323 B** · admin **53109 B** · ReferralTree reuse · [`LOVABLE_ZENITH_PHASE12_E_LOCK.md`](LOVABLE_ZENITH_PHASE12_E_LOCK.md)) |
+| **Phase 12-B · Missions 6-Lane Full** | ✅ **GREEN** (EXECUTE v2.2 · 분기 A1 · catalog **1099→~1121** · [`LOVABLE_ZENITH_PHASE12_B_LOCK.md`](LOVABLE_ZENITH_PHASE12_B_LOCK.md)) |
+| **Phase 12-C · Home Hub scaffold** | ✅ **GREEN** (EXECUTE v0.2.2 FINAL · 1a·2a·3a · H1~H6 + Footer #19 · 9 신규 파일 · head Δ=0 · catalog **1121→1143** (Δ +22) · vitest **356/356** · sitemap **42** · JSON-LD **8** · FOMO/tier → **v0.3** · [`LOVABLE_ZENITH_PHASE12_C_LOCK.md`](LOVABLE_ZENITH_PHASE12_C_LOCK.md)) |
+| **Phase 12-D · Trade Surface Pro** | ✅ **GREEN** (scaffold v0.2 + **v0.1.1 route split** · 8 components + Footer #20 · `/trade`=ImportedTradePage · `/trade/hub`=TradeHub · catalog **1143→1165** (Δ +22) · sitemap **43** · JSON-LD **8** · vitest **356/356** · FOMO/tier/depth → **v0.2 defer** · [`LOVABLE_ZENITH_PHASE12_D_LOCK.md`](LOVABLE_ZENITH_PHASE12_D_LOCK.md)) |
+| **Phase 12 · Product Depth** | 12-E/B/C/D ✅ · **끝판왕 12-F→12-A→12-G EXECUTE** ([`LOVABLE_ZENITH_PHASE12_FINAL_PARALLEL_LOCK.md`](LOVABLE_ZENITH_PHASE12_FINAL_PARALLEL_LOCK.md)) · target catalog **1229** · **12-Z paste 게이트** |
+| **Lovable Zenith macro** | Phase 0–11-C ✅ · **12-E ✅** · **12-B ✅** · **12-C ✅** · **12-D ✅** · catalog **1165** · **ZIP = operator 「ZIP 발행」 명시 전까지 금지** ([`92-lovable-lock-execute.mdc`](../.cursor/rules/92-lovable-lock-execute.mdc) §ZIP 게이트) |
+| **Phase 10 defer** | 13 carry files (`lib/useCountUp` · `lib/confetti` · `trade/*` 9 · `casino.hilo` · `casino.limbo`) — P8 NO-TOUCH · **post-paste E2E** |
+| **casino-routing-hotfix** | ✅ GREEN · `casino.tsx` Outlet · `/casino/<game>` mount |
+| **Paste map 메모** | Lovable `/risk` → **`/responsible-gaming`** (file+URL · SiteFooter · MorePage) |
+| **품질 바** | SEO + Mission mandatory — North Star §**4.5** (Stake/Rollbit/Binance/Bybit) |
+| Lovable i18n catalog | **1165** keys ko=en strict · G6 DIFF=0 · DUP=0 · `trade.*` +22 net · `scripts/i18n-parity.sh` |
+| defer (Phase 6+) | scrim-soft · cva-base-dedup · toast-variants · tier §E v35 · viral UX |
+| Lovable guards | shell ko=0 **10** · ui/ ko=0 **49** · ui `@/i18n` **2** |
+| Backlog | 4.5-i18n · shortkey · e2e CI · Pixi 2.5 DEFER · Phase 10 i18n sync |
 | e2e pending | 5 games WRITTEN → CI/local PASS · back smoke 3 spec |
-| PHONARA paste | After Lovable Phase 10 export — HiLo UI placeholder until ZIP |
+| **§8-A rules i18n** | **✅ GREEN** · **§8-A-bis v3 ✅** (Lovable ko/en **134키** · mint/gold `?` wired) |
+| **PHONARA paste + Crush v4** | ⏳ 12-Z + operator paste GO — [`PHONARA_CURSOR_PASTE_CRUSH_LOCK.md`](PHONARA_CURSOR_PASTE_CRUSH_LOCK.md) |
+| **P2-Games Controls (Lovable canvas)** | ✅ **10/10 §GREEN** (2026-06-16) · [`PHONARA_LOVABLE_P2_GAMES_HANDOFF.md`](PHONARA_LOVABLE_P2_GAMES_HANDOFF.md) |
+| **§A Theme 12-H v0.1 (Lovable canvas)** | ✅ **§GREEN** · styles.css hex 0 · oklch SOT · checkpoint `theme-h/` |
+| **§Y FOMO · §B Bento · 12-A · 12-G (canvas)** | ✅ 감사 §GREEN (12-G leaf 전수 별건) · INDEX §3 |
+| **preview blackjack test fix** | ✅ **§GREEN** (2026-06-16) · vitest 82/2 files · 384/4 tests |
+| **12-Z PRODUCT FINAL** | **다음** · verify-only plan--create |
+| **Lovable canvas catalog (실측)** | **1454/1454** ko=en · (`1165` 행 = 구 Phase 12-E 시점 · **canvas는 1454가 정본**) |
+
+### Operator 워크플로 (2026-06-16 · canvas 감사 반영)
+
+> **ZIP 발행:** operator가 **Lovable 전체 100% 완료**로 판단 + **「ZIP 발행 GO」** 명시 시 1회. P2-Games 10/10만으로 ZIP GO **아님**.  
+> **PHONARA paste:** ZIP 수령 후 operator **「PHONARA paste GO Wave-1」** 1회.  
+> **Lovable 진행판 정본:** [`PHONARA_LOVABLE_P2_GAMES_HANDOFF.md`](PHONARA_LOVABLE_P2_GAMES_HANDOFF.md) · [`LOVABLE_ZENITH_INDEX.md`](LOVABLE_ZENITH_INDEX.md)
+
+| 순서 | Lovable | PHONARA |
+|------|---------|---------|
+| 1–8 | ~~Phase 0–10~~ · **11-B** ✅ | handoff v60–**v61** |
+| 9 | **Phase 11-C** ✅ GREEN (PWA Supremacy) | handoff **v65 baked** (11-C GREEN · paste adapter memo) |
+| 10 | **12-E** Partner / **총판 Hub** ✅ GREEN | handoff **v67 baked** |
+| 11 | **12-B** Missions 6-Lane Full ✅ GREEN | handoff **v69 baked** |
+| 12 | **12-C** Home Hub scaffold ✅ GREEN | handoff **v71 baked** |
+| 13 | **12-D** Trade Surface Pro ✅ GREEN (v0.1.1 route split) | handoff **v73 baked** |
+| 14 | **12-H §A + 12-F.2 §B** | ✅ canvas §GREEN (2026-06-16) |
+| 15 | **12-Z** PRODUCT FINAL verify-only | ✅ **§GREEN** (2026-06-16) · SEO 54 routes · vitest baseline |
+| 16 | **12-A v0.2** TournamentStrip · RecentlyPlayed | ✅ **§GREEN** (2026-06-16) · catalog **1459** |
+| 17 | **12-C v0.3** FOMO/tier | ✅ **§GREEN** (2026-06-16) · catalog **1470** |
+| 18 | **12-D v0.2** Trade depth | **HEAD** · LOCK DRAFT |
+| 17 | — | **PHONARA ZIP paste** 1회 (operator GO 후) |
+
+**ZIP (historical · Phase 12-E):** `dist-phonara-package.zip` **104323 B** · admin **53109 B** — **신규 ZIP는 operator 「ZIP 발행」 전까지 발행하지 않음**
+
+### Paste adapter memo (PHONARA paste 슬라이스 · **12-Z FINAL** 후)
+
+| Lovable (ZIP) | PHONARA paste 시 |
+|---------------|------------------|
+| `public/og/*.jpg` 상대 경로 (`/og/root.jpg` 등) | head `og:image` · `twitter:image` **절대 URL** 치환 (`VITE_APP_ORIGIN` 또는 prod origin) |
+| `public/icon-192.png` | `pwa-192x192.png` |
+| `public/icon-512.png` | `pwa-512x512.png` |
+| `public/icon-maskable-512.png` | `pwa-512x512.png` + manifest `purpose: maskable` |
+| `public/apple-touch-icon.png` | `apple-touch-icon.png` (또는 `pwa-192x192.png` link) |
+| `public/sitemap.xml` `BASE_URL=""` TODO | prod origin 주입 |
+| JSON-LD · canonical · og:url 상대 경로 | paste 시 origin prefix (og:image/twitter:image 우선) |
+| `shell/EmptyState` · `shell/LoadingShell` | `apps/web/src/components/shell/` 흡수 · carry wiring은 paste 후 별도 슬라이스 |
+| `state.empty.*` · `state.loading.*` (+6) | `@phonara/i18n` merge |
+| `pwa.*` (+16) | `@phonara/i18n` merge · flat `pwa.install.{title,description,action,dismiss}` vs Lovable `why.*`/`cta.*` **병존** |
+| LS `pwa.install.dismissed=1` | `phonara.pwa.installDismissed` 통일 |
+| `public/offline.html` (영문 fallback) | `@phonara/i18n` copy 치환 |
+| `InstallPromptProvider` · `PwaInstallBanner` | **`PwaShell` ↔ merge 결정** (paste slice) · `__root` Provider wrap 흡수 · SW → PHONARA `sw.ts` |
+| manifest shortcuts×4 · screenshots×4 | PHONARA manifest merge · start_url/scope/display **불변** |
+| `/install` JSON-LD (WebApplication + BreadcrumbList) | head 흡수 · og 절대 URL swap |
+| **12-E** `referral.partner.*` · E1/E2 `/referral`+`/partner` | `@phonara/i18n` merge · affiliate RPC wire · `affiliate_settlements.state` enum map · downline slice 12-Z 후 |
+| **12-B** `mission.lane.subtitle.*` · `mission.footer.*` · C~F rows | `@phonara/i18n` merge · paste slice 12-Z 후 |
+| **12-C** `home.hub.hero.*` · `home.section.*` · `home.footer.*` · `components/home/*` | `@phonara/i18n` merge · `HomeHub` route paste · 12-Z 후 |
+| **12-D** `trade.hub.*` · `trade.section.*` · `trade.footer.*` · `components/trade/*` · `/trade/hub` | `@phonara/i18n` merge · `/trade` ImportedTradePage 유지 · TradeHub paste · 12-Z 후 |
 
 ## Current Evidence Map
 
@@ -63,6 +164,20 @@ Next slices:
 - Operator incident flow: [`RUNBOOK.md`](RUNBOOK.md).
 - Observability and secret policy: [`OBSERVABILITY_PRIVACY.md`](OBSERVABILITY_PRIVACY.md).
 - Supabase access/RLS inventory notes: [`SUPABASE_ACCESS_MATRIX.md`](SUPABASE_ACCESS_MATRIX.md).
+
+## World Crush Platform UI (L1-16~18 · PLAN · 2026-06-17)
+
+> **정본:** [`PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`](PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md) · sequential §3.1.4
+
+| 슬라이스 | scope | 상태 |
+|---------|--------|------|
+| **L1-16** | Home tab IA · G-WC1 | **✅ §GREEN** · 529/533 · 2552 |
+| **L1-17** | Trade Spot \| Futures \| Staking · G-WC2 | **HEAD · PLAN** |
+| **L1-18** | FOMO motion V2 · G-WC3 | PLAN |
+
+**ZIP 게이트:** L1-15-UX ✅ + **L1-16 ✅** + L1-17~18 §GREEN 후 operator 「ZIP 발행 GO」.
+
+**Remaining gap:** Trade 무기한 1면 · motion hierarchy (L1-17~18).
 
 ## Known Launch Notes
 

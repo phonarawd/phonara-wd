@@ -12,6 +12,8 @@ Always read `docs/PHONARA_V2_MASTER_PLAN.md`, `docs/QUALITY_GATES.md`, and for U
 - **Operator/work docs** (`docs/**`, handoff, rules): **Korean** so the operator can verify; English for code/RPC/key tokens only — no Chinese/Japanese in work docs (see `61-script-locale-hygiene.mdc`). Product i18n may add `zh`/`ja` locales later in catalog files only.
 - Keep user app and admin app separated: `apps/web` and `apps/admin`.
 - Never expose `SUPABASE_SERVICE_ROLE_KEY` to browser code or `VITE_` env vars.
+- **Lovable ZIP 발행 금지 (operator 명시 전):** `dist-phonara-package.zip` · admin ZIP · CHANGELOG ZIP KB · zip dry/real 스크립트 실행 — operator가 **「ZIP 발행」** 등으로 **명시할 때까지** Cursor·Lovable AI·에이전트 모두 **0**. §GREEN은 ZIP 없이 완료 가능. (`92-lovable-lock-execute.mdc` §ZIP 게이트)
+- **게이트·터미널 절대 금지 (non-waivable):** 무거운 gate 병렬/background · hang 후 reset 없이 재시작 · E2E 미안정 시 `check:full` — 정본 `.cursor/rules/80-absolute-gate-prohibitions.mdc` (G1–G12)
 - Normal operations should be automated; humans handle exceptions through Admin.
 
 ## Current Focus

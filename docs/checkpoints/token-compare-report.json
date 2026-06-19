@@ -1,0 +1,3130 @@
+{
+  "zipSource": "FALLBACK:apps/web/src/presentation-import/styles/lovable-globals.css (ZIP src/styles.css absent on disk)",
+  "counts": {
+    "zip": 156,
+    "theme": 207,
+    "lovable": 156,
+    "diffs": 327
+  },
+  "cascade": [
+    "main.tsx import order: theme.css -> lovable-globals.css -> styles.css",
+    "theme.css: @import tailwindcss + @theme (static PHONARA tokens)",
+    "lovable-globals.css: @theme inline (maps --color-* to :root Lovable vars) + :root oklch SOT",
+    "Tailwind v4: later @theme/@theme inline merges; lovable @theme inline should override matching --color-* keys from theme.css",
+    "BUT theme.css-only tokens (--color-trust, --elevation-*, --glass-*, rocket-*, auth-*) remain from theme.css unless redefined in lovable",
+    "styles.css helpers reference theme.css PHONARA names (--color-trust, --elevation-sheet, --color-bg) not Lovable :root names"
+  ],
+  "gradients": {
+    "--gradient-hero": {
+      "zip": "linear-gradient(135deg, color-mix(in oklab, var(--primary) 10%, var(--surface)) 0%, var(--surface-elev) 100%)",
+      "theme": null,
+      "lovable": "linear-gradient(135deg, color-mix(in oklab, var(--primary) 10%, var(--surface)) 0%, var(--surface-elev) 100%)"
+    },
+    "--gradient-aurora": {
+      "zip": "linear-gradient(135deg, oklch(0.78 0.18 145) 0%, oklch(0.82 0.16 150) 100%)",
+      "theme": "linear-gradient(135deg, var(--color-primary) 0%, var(--color-violet) 55%, #f5c84c 100%)",
+      "lovable": "linear-gradient(135deg, oklch(0.78 0.18 145) 0%, oklch(0.82 0.16 150) 100%)"
+    },
+    "--gradient-ember": {
+      "zip": "linear-gradient(135deg, oklch(0.78 0.18 145), oklch(0.84 0.16 150))",
+      "theme": null,
+      "lovable": "linear-gradient(135deg, oklch(0.78 0.18 145), oklch(0.84 0.16 150))"
+    },
+    "--gradient-sunset": {
+      "zip": "linear-gradient(180deg, oklch(0.14 0.025 235), oklch(0.22 0.025 235))",
+      "theme": null,
+      "lovable": "linear-gradient(180deg, oklch(0.14 0.025 235), oklch(0.22 0.025 235))"
+    },
+    "--gradient-cta": {
+      "zip": "linear-gradient(135deg, var(--primary) 0%, oklch(0.82 0.16 150) 100%)",
+      "theme": null,
+      "lovable": "linear-gradient(135deg, var(--primary) 0%, oklch(0.82 0.16 150) 100%)"
+    }
+  },
+  "conflictBothThemeLovable": [
+    {
+      "name": "--color-accent",
+      "zip": "var(--accent)",
+      "theme": "var(--color-trust)",
+      "lovable": "var(--accent)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-background",
+      "zip": "var(--background)",
+      "theme": "var(--color-bg)",
+      "lovable": "var(--background)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-border",
+      "zip": "var(--border)",
+      "theme": "oklch(0.56 0.02 258 / 0.34)",
+      "lovable": "var(--border)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-card",
+      "zip": "var(--card)",
+      "theme": "var(--color-surface)",
+      "lovable": "var(--card)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-destructive",
+      "zip": "var(--destructive)",
+      "theme": "var(--color-danger)",
+      "lovable": "var(--destructive)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-down",
+      "zip": "var(--down)",
+      "theme": "var(--color-negative)",
+      "lovable": "var(--down)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-foreground",
+      "zip": "var(--foreground)",
+      "theme": "var(--color-fg)",
+      "lovable": "var(--foreground)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-info",
+      "zip": "var(--info)",
+      "theme": "oklch(0.78 0.115 226)",
+      "lovable": "var(--info)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-muted",
+      "zip": "var(--muted)",
+      "theme": "oklch(0.755 0.014 258)",
+      "lovable": "var(--muted)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-muted-foreground",
+      "zip": "var(--muted-foreground)",
+      "theme": "var(--color-muted)",
+      "lovable": "var(--muted-foreground)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-primary",
+      "zip": "var(--primary)",
+      "theme": "var(--color-trust)",
+      "lovable": "var(--primary)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-primary-foreground",
+      "zip": "var(--primary-foreground)",
+      "theme": "var(--color-primary-fg)",
+      "lovable": "var(--primary-foreground)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-secondary",
+      "zip": "var(--secondary)",
+      "theme": "var(--color-surface-2)",
+      "lovable": "var(--secondary)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-secondary-foreground",
+      "zip": "var(--secondary-foreground)",
+      "theme": "var(--color-fg)",
+      "lovable": "var(--secondary-foreground)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-surface",
+      "zip": "var(--surface)",
+      "theme": "oklch(0.155 0.014 258)",
+      "lovable": "var(--surface)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-up",
+      "zip": "var(--up)",
+      "theme": "var(--color-positive)",
+      "lovable": "var(--up)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-violet",
+      "zip": "var(--violet)",
+      "theme": "#8b5cf6",
+      "lovable": "var(--violet)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--gradient-aurora",
+      "zip": "linear-gradient(135deg, oklch(0.78 0.18 145) 0%, oklch(0.82 0.16 150) 100%)",
+      "theme": "linear-gradient(135deg, var(--color-primary) 0%, var(--color-violet) 55%, #f5c84c 100%)",
+      "lovable": "linear-gradient(135deg, oklch(0.78 0.18 145) 0%, oklch(0.82 0.16 150) 100%)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--primary",
+      "zip": "oklch(0.78 0.18 145)",
+      "theme": "162 82% 62%",
+      "lovable": "oklch(0.78 0.18 145)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--primary-glow",
+      "zip": "oklch(0.84 0.16 150)",
+      "theme": "0 0 28px oklch(0.84 0.15 166 / 0.28)",
+      "lovable": "oklch(0.84 0.16 150)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--radius-2xl",
+      "zip": "calc(var(--radius) + 8px)",
+      "theme": "24px",
+      "lovable": "calc(var(--radius) + 8px)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--radius-lg",
+      "zip": "var(--radius)",
+      "theme": "18px",
+      "lovable": "var(--radius)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--radius-md",
+      "zip": "calc(var(--radius) - 2px)",
+      "theme": "14px",
+      "lovable": "calc(var(--radius) - 2px)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--radius-sm",
+      "zip": "calc(var(--radius) - 4px)",
+      "theme": "10px",
+      "lovable": "calc(var(--radius) - 4px)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--radius-xl",
+      "zip": "calc(var(--radius) + 4px)",
+      "theme": "20px",
+      "lovable": "calc(var(--radius) + 4px)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--text-display",
+      "zip": "clamp(2rem, 6vw, 3.5rem)",
+      "theme": "clamp(2.75rem, 6vw, 5rem)",
+      "lovable": "clamp(2rem, 6vw, 3.5rem)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    }
+  ],
+  "themeOnlyUsedByUi": [
+    {
+      "token": "--color-bg",
+      "themeValue": "oklch(0.115 0.012 258)"
+    },
+    {
+      "token": "--color-border-strong",
+      "themeValue": "oklch(0.68 0.022 258 / 0.5)"
+    },
+    {
+      "token": "--color-danger",
+      "themeValue": "oklch(0.56 0.19 24)"
+    },
+    {
+      "token": "--color-danger-fg",
+      "themeValue": "oklch(0.98 0.006 24)"
+    },
+    {
+      "token": "--color-divider",
+      "themeValue": "var(--color-border-strong)"
+    },
+    {
+      "token": "--color-fg",
+      "themeValue": "oklch(0.965 0.006 258)"
+    },
+    {
+      "token": "--color-negative",
+      "themeValue": "oklch(0.6 0.19 24)"
+    },
+    {
+      "token": "--color-positive",
+      "themeValue": "oklch(0.79 0.16 158)"
+    },
+    {
+      "token": "--color-risk",
+      "themeValue": "oklch(0.82 0.15 74)"
+    },
+    {
+      "token": "--color-rocket-bg",
+      "themeValue": "oklch(0.08 0.028 285)"
+    },
+    {
+      "token": "--color-rocket-cyan",
+      "themeValue": "oklch(0.83 0.16 208)"
+    },
+    {
+      "token": "--color-rocket-danger",
+      "themeValue": "oklch(0.64 0.24 25)"
+    },
+    {
+      "token": "--color-rocket-gold",
+      "themeValue": "oklch(0.88 0.17 86)"
+    },
+    {
+      "token": "--color-rocket-green",
+      "themeValue": "oklch(0.78 0.18 150)"
+    },
+    {
+      "token": "--color-rocket-magenta",
+      "themeValue": "oklch(0.75 0.28 328)"
+    },
+    {
+      "token": "--color-rocket-violet",
+      "themeValue": "oklch(0.72 0.21 303)"
+    },
+    {
+      "token": "--color-surface-inset",
+      "themeValue": "oklch(0.09 0.01 258)"
+    },
+    {
+      "token": "--color-text-subtle",
+      "themeValue": "oklch(0.61 0.014 258)"
+    },
+    {
+      "token": "--color-trust",
+      "themeValue": "oklch(0.84 0.15 166)"
+    },
+    {
+      "token": "--color-trust-ink",
+      "themeValue": "oklch(0.145 0.026 166)"
+    },
+    {
+      "token": "--color-up-fg",
+      "themeValue": "var(--color-positive-fg)"
+    },
+    {
+      "token": "--color-warning",
+      "themeValue": "var(--color-risk)"
+    },
+    {
+      "token": "--density-comfortable-control",
+      "themeValue": "2.75rem"
+    },
+    {
+      "token": "--density-comfortable-control-lg",
+      "themeValue": "3.25rem"
+    },
+    {
+      "token": "--density-comfortable-panel-padding",
+      "themeValue": "1.25rem"
+    },
+    {
+      "token": "--density-comfortable-row",
+      "themeValue": "3.25rem"
+    },
+    {
+      "token": "--density-compact-control",
+      "themeValue": "2.25rem"
+    },
+    {
+      "token": "--density-compact-panel-padding",
+      "themeValue": "1rem"
+    },
+    {
+      "token": "--density-compact-row",
+      "themeValue": "2.5rem"
+    },
+    {
+      "token": "--focus-ring-color",
+      "themeValue": "oklch(0.89 0.135 166 / 0.9)"
+    },
+    {
+      "token": "--focus-ring-offset",
+      "themeValue": "2px"
+    },
+    {
+      "token": "--focus-ring-width",
+      "themeValue": "2px"
+    },
+    {
+      "token": "--font-weight-heading",
+      "themeValue": "700"
+    },
+    {
+      "token": "--font-weight-label",
+      "themeValue": "650"
+    },
+    {
+      "token": "--font-weight-numeric",
+      "themeValue": "650"
+    },
+    {
+      "token": "--glass-blur",
+      "themeValue": "18px"
+    },
+    {
+      "token": "--glass-panel-strong",
+      "themeValue": "oklch(0.225 0.018 258 / 0.88)"
+    },
+    {
+      "token": "--leading-title",
+      "themeValue": "var(--text-title--line-height)"
+    },
+    {
+      "token": "--money-default-weight",
+      "themeValue": "500"
+    },
+    {
+      "token": "--money-hero-size",
+      "themeValue": "clamp(2.5rem, 6vw, 4rem)"
+    },
+    {
+      "token": "--money-hero-weight",
+      "themeValue": "600"
+    },
+    {
+      "token": "--money-muted-opacity",
+      "themeValue": "0.72"
+    },
+    {
+      "token": "--motion-duration-2",
+      "themeValue": "200ms"
+    },
+    {
+      "token": "--motion-duration-anticipation",
+      "themeValue": "var(--motion-duration-1)"
+    },
+    {
+      "token": "--motion-duration-confirmation",
+      "themeValue": "var(--motion-duration-2)"
+    },
+    {
+      "token": "--motion-duration-reveal",
+      "themeValue": "var(--motion-duration-3)"
+    },
+    {
+      "token": "--motion-duration-settlement",
+      "themeValue": "var(--motion-duration-4)"
+    },
+    {
+      "token": "--motion-ease-spring",
+      "themeValue": "cubic-bezier(0.16, 1, 0.3, 1)"
+    },
+    {
+      "token": "--motion-ease-standard",
+      "themeValue": "cubic-bezier(0.2, 0.7, 0.2, 1)"
+    },
+    {
+      "token": "--motion-press-scale",
+      "themeValue": "0.98"
+    },
+    {
+      "token": "--overlay-scrim",
+      "themeValue": "oklch(0.06 0.012 258 / 0.72)"
+    },
+    {
+      "token": "--surface-highlight",
+      "themeValue": "inset 0 1px 0 oklch(1 0 0 / 0.055)"
+    },
+    {
+      "token": "--surface-inset-shadow",
+      "themeValue": "inset 0 1px 3px oklch(0 0 0 / 0.5)"
+    },
+    {
+      "token": "--text-body",
+      "themeValue": "0.9375rem"
+    },
+    {
+      "token": "--text-caption",
+      "themeValue": "0.75rem"
+    },
+    {
+      "token": "--text-caption--line-height",
+      "themeValue": "1.35"
+    },
+    {
+      "token": "--text-heading",
+      "themeValue": "clamp(1.5rem, 2.6vw, 2.125rem)"
+    },
+    {
+      "token": "--text-label",
+      "themeValue": "0.8125rem"
+    },
+    {
+      "token": "--text-subheading",
+      "themeValue": "1.125rem"
+    },
+    {
+      "token": "--text-subheading--line-height",
+      "themeValue": "1.32"
+    },
+    {
+      "token": "--text-title",
+      "themeValue": "clamp(2rem, 4vw, 3.25rem)"
+    },
+    {
+      "token": "--tracking-heading",
+      "themeValue": "var(--text-heading--letter-spacing)"
+    },
+    {
+      "token": "--tracking-numeric",
+      "themeValue": "var(--text-numeric--letter-spacing)"
+    },
+    {
+      "token": "--tracking-title",
+      "themeValue": "var(--text-title--letter-spacing)"
+    }
+  ],
+  "allDiffs": [
+    {
+      "name": "--accent",
+      "zip": "oklch(0.28 0.025 235)",
+      "theme": null,
+      "lovable": "oklch(0.28 0.025 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--accent-foreground",
+      "zip": "oklch(0.86 0.012 240)",
+      "theme": null,
+      "lovable": "oklch(0.86 0.012 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--background",
+      "zip": "oklch(0.18 0.025 235)",
+      "theme": null,
+      "lovable": "oklch(0.18 0.025 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--bet-accent",
+      "zip": "oklch(0.60 0.18 252)",
+      "theme": null,
+      "lovable": "oklch(0.60 0.18 252)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--bet-accent-fg",
+      "zip": "oklch(1 0 0)",
+      "theme": null,
+      "lovable": "oklch(1 0 0)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--bet-primary",
+      "zip": "oklch(0.83 0.27 142)",
+      "theme": null,
+      "lovable": "oklch(0.83 0.27 142)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--bet-primary-fg",
+      "zip": "oklch(0.28 0.10 142)",
+      "theme": null,
+      "lovable": "oklch(0.28 0.10 142)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--boot-splash-accent",
+      "zip": "oklch(0.78 0.18 145)",
+      "theme": null,
+      "lovable": "oklch(0.78 0.18 145)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--boot-splash-bg",
+      "zip": "oklch(0.18 0.025 235)",
+      "theme": null,
+      "lovable": "oklch(0.18 0.025 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--boot-splash-fg",
+      "zip": "oklch(0.86 0.012 240)",
+      "theme": null,
+      "lovable": "oklch(0.86 0.012 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--boot-splash-glow",
+      "zip": "oklch(0.84 0.16 150)",
+      "theme": null,
+      "lovable": "oklch(0.84 0.16 150)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--border",
+      "zip": "oklch(0.30 0.022 235)",
+      "theme": null,
+      "lovable": "oklch(0.30 0.022 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--card",
+      "zip": "oklch(0.22 0.025 235)",
+      "theme": null,
+      "lovable": "oklch(0.22 0.025 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--card-foreground",
+      "zip": "oklch(0.86 0.012 240)",
+      "theme": null,
+      "lovable": "oklch(0.86 0.012 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--chart-1",
+      "zip": "oklch(0.78 0.18 145)",
+      "theme": null,
+      "lovable": "oklch(0.78 0.18 145)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--chart-2",
+      "zip": "oklch(0.62 0.014 240)",
+      "theme": null,
+      "lovable": "oklch(0.62 0.014 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--chart-3",
+      "zip": "oklch(0.74 0.11 240)",
+      "theme": null,
+      "lovable": "oklch(0.74 0.11 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--chart-4",
+      "zip": "oklch(0.68 0.18 22)",
+      "theme": null,
+      "lovable": "oklch(0.68 0.18 22)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--chart-5",
+      "zip": "oklch(0.82 0.12 88)",
+      "theme": null,
+      "lovable": "oklch(0.82 0.12 88)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-accent",
+      "zip": "var(--accent)",
+      "theme": "var(--color-trust)",
+      "lovable": "var(--accent)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-accent-foreground",
+      "zip": "var(--accent-foreground)",
+      "theme": null,
+      "lovable": "var(--accent-foreground)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-accent-hover",
+      "zip": null,
+      "theme": "var(--color-primary-hover)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-accent-secondary",
+      "zip": null,
+      "theme": "oklch(0.55 0.18 280)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-auth-bg",
+      "zip": null,
+      "theme": "oklch(0.12 0.012 260)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-auth-blue",
+      "zip": null,
+      "theme": "oklch(0.58 0.14 250)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-auth-cyan",
+      "zip": null,
+      "theme": "oklch(0.78 0.12 200)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-auth-indigo",
+      "zip": null,
+      "theme": "oklch(0.52 0.14 270)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-auth-live",
+      "zip": null,
+      "theme": "oklch(0.72 0.18 145)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-auth-pink",
+      "zip": null,
+      "theme": "oklch(0.62 0.2 350)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-auth-violet",
+      "zip": null,
+      "theme": "oklch(0.55 0.18 280)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-auth-violet-bright",
+      "zip": null,
+      "theme": "oklch(0.65 0.16 280)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-background",
+      "zip": "var(--background)",
+      "theme": "var(--color-bg)",
+      "lovable": "var(--background)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-bet-accent",
+      "zip": "var(--bet-accent)",
+      "theme": null,
+      "lovable": "var(--bet-accent)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-bet-accent-fg",
+      "zip": "var(--bet-accent-fg)",
+      "theme": null,
+      "lovable": "var(--bet-accent-fg)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-bet-primary",
+      "zip": "var(--bet-primary)",
+      "theme": null,
+      "lovable": "var(--bet-primary)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-bet-primary-fg",
+      "zip": "var(--bet-primary-fg)",
+      "theme": null,
+      "lovable": "var(--bet-primary-fg)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-bg",
+      "zip": null,
+      "theme": "oklch(0.115 0.012 258)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-border",
+      "zip": "var(--border)",
+      "theme": "oklch(0.56 0.02 258 / 0.34)",
+      "lovable": "var(--border)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-border-strong",
+      "zip": null,
+      "theme": "oklch(0.68 0.022 258 / 0.5)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-border-subtle",
+      "zip": null,
+      "theme": "oklch(0.48 0.018 258 / 0.22)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-card",
+      "zip": "var(--card)",
+      "theme": "var(--color-surface)",
+      "lovable": "var(--card)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-card-foreground",
+      "zip": "var(--card-foreground)",
+      "theme": null,
+      "lovable": "var(--card-foreground)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-danger",
+      "zip": null,
+      "theme": "oklch(0.56 0.19 24)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-danger-fg",
+      "zip": null,
+      "theme": "oklch(0.98 0.006 24)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-destructive",
+      "zip": "var(--destructive)",
+      "theme": "var(--color-danger)",
+      "lovable": "var(--destructive)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-destructive-foreground",
+      "zip": "var(--destructive-foreground)",
+      "theme": null,
+      "lovable": "var(--destructive-foreground)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-divider",
+      "zip": null,
+      "theme": "var(--color-border-strong)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-down",
+      "zip": "var(--down)",
+      "theme": "var(--color-negative)",
+      "lovable": "var(--down)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-down-fg",
+      "zip": null,
+      "theme": "var(--color-negative-fg)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-earn-accent",
+      "zip": "var(--earn-accent)",
+      "theme": null,
+      "lovable": "var(--earn-accent)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-earn-bg",
+      "zip": "var(--earn-bg)",
+      "theme": null,
+      "lovable": "var(--earn-bg)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-earn-border",
+      "zip": "var(--earn-border)",
+      "theme": null,
+      "lovable": "var(--earn-border)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-earn-muted",
+      "zip": "var(--earn-muted)",
+      "theme": null,
+      "lovable": "var(--earn-muted)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-earn-surface",
+      "zip": "var(--earn-surface)",
+      "theme": null,
+      "lovable": "var(--earn-surface)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-earn-surface-elev",
+      "zip": "var(--earn-surface-elev)",
+      "theme": null,
+      "lovable": "var(--earn-surface-elev)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-earn-text",
+      "zip": "var(--earn-text)",
+      "theme": null,
+      "lovable": "var(--earn-text)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-fg",
+      "zip": null,
+      "theme": "oklch(0.965 0.006 258)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-foreground",
+      "zip": "var(--foreground)",
+      "theme": "var(--color-fg)",
+      "lovable": "var(--foreground)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-gold",
+      "zip": "var(--gold)",
+      "theme": null,
+      "lovable": "var(--gold)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-info",
+      "zip": "var(--info)",
+      "theme": "oklch(0.78 0.115 226)",
+      "lovable": "var(--info)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-info-fg",
+      "zip": null,
+      "theme": "oklch(0.13 0.025 226)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-input",
+      "zip": "var(--input)",
+      "theme": null,
+      "lovable": "var(--input)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-muted",
+      "zip": "var(--muted)",
+      "theme": "oklch(0.755 0.014 258)",
+      "lovable": "var(--muted)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-muted-foreground",
+      "zip": "var(--muted-foreground)",
+      "theme": "var(--color-muted)",
+      "lovable": "var(--muted-foreground)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-negative",
+      "zip": null,
+      "theme": "oklch(0.6 0.19 24)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-negative-fg",
+      "zip": null,
+      "theme": "oklch(0.98 0.006 24)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-overlay",
+      "zip": "var(--overlay)",
+      "theme": null,
+      "lovable": "var(--overlay)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-popover",
+      "zip": "var(--popover)",
+      "theme": null,
+      "lovable": "var(--popover)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-popover-foreground",
+      "zip": "var(--popover-foreground)",
+      "theme": null,
+      "lovable": "var(--popover-foreground)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-positive",
+      "zip": null,
+      "theme": "oklch(0.79 0.16 158)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-positive-fg",
+      "zip": null,
+      "theme": "oklch(0.135 0.025 158)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-primary",
+      "zip": "var(--primary)",
+      "theme": "var(--color-trust)",
+      "lovable": "var(--primary)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-primary-active",
+      "zip": null,
+      "theme": "oklch(0.76 0.15 166)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-primary-bright",
+      "zip": null,
+      "theme": "var(--color-primary-luminous)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-primary-fg",
+      "zip": null,
+      "theme": "var(--color-trust-ink)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-primary-foreground",
+      "zip": "var(--primary-foreground)",
+      "theme": "var(--color-primary-fg)",
+      "lovable": "var(--primary-foreground)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-primary-hover",
+      "zip": null,
+      "theme": "oklch(0.89 0.135 166)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-primary-luminous",
+      "zip": null,
+      "theme": "oklch(0.93 0.105 166)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-ring",
+      "zip": "var(--ring)",
+      "theme": null,
+      "lovable": "var(--ring)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-ring-offset-background",
+      "zip": "var(--background)",
+      "theme": null,
+      "lovable": "var(--background)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-risk",
+      "zip": null,
+      "theme": "oklch(0.82 0.15 74)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-risk-fg",
+      "zip": null,
+      "theme": "oklch(0.16 0.03 74)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-rocket-bg",
+      "zip": null,
+      "theme": "oklch(0.08 0.028 285)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-rocket-cyan",
+      "zip": null,
+      "theme": "oklch(0.83 0.16 208)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-rocket-danger",
+      "zip": null,
+      "theme": "oklch(0.64 0.24 25)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-rocket-gold",
+      "zip": null,
+      "theme": "oklch(0.88 0.17 86)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-rocket-green",
+      "zip": null,
+      "theme": "oklch(0.78 0.18 150)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-rocket-magenta",
+      "zip": null,
+      "theme": "oklch(0.75 0.28 328)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-rocket-panel",
+      "zip": null,
+      "theme": "oklch(0.17 0.045 286 / 0.86)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-rocket-panel-deep",
+      "zip": null,
+      "theme": "oklch(0.11 0.035 286 / 0.9)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-rocket-violet",
+      "zip": null,
+      "theme": "oklch(0.72 0.21 303)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-scrim-soft",
+      "zip": "var(--scrim-soft)",
+      "theme": null,
+      "lovable": "var(--scrim-soft)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-secondary",
+      "zip": "var(--secondary)",
+      "theme": "var(--color-surface-2)",
+      "lovable": "var(--secondary)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-secondary-foreground",
+      "zip": "var(--secondary-foreground)",
+      "theme": "var(--color-fg)",
+      "lovable": "var(--secondary-foreground)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-sidebar",
+      "zip": "var(--sidebar)",
+      "theme": null,
+      "lovable": "var(--sidebar)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-sidebar-accent",
+      "zip": "var(--sidebar-accent)",
+      "theme": null,
+      "lovable": "var(--sidebar-accent)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-sidebar-accent-foreground",
+      "zip": "var(--sidebar-accent-foreground)",
+      "theme": null,
+      "lovable": "var(--sidebar-accent-foreground)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-sidebar-border",
+      "zip": "var(--sidebar-border)",
+      "theme": null,
+      "lovable": "var(--sidebar-border)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-sidebar-foreground",
+      "zip": "var(--sidebar-foreground)",
+      "theme": null,
+      "lovable": "var(--sidebar-foreground)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-sidebar-primary",
+      "zip": "var(--sidebar-primary)",
+      "theme": null,
+      "lovable": "var(--sidebar-primary)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-sidebar-primary-foreground",
+      "zip": "var(--sidebar-primary-foreground)",
+      "theme": null,
+      "lovable": "var(--sidebar-primary-foreground)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-sidebar-ring",
+      "zip": "var(--sidebar-ring)",
+      "theme": null,
+      "lovable": "var(--sidebar-ring)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-skin-bg",
+      "zip": "var(--skin-bg)",
+      "theme": null,
+      "lovable": "var(--skin-bg)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-skin-border",
+      "zip": "var(--skin-border)",
+      "theme": null,
+      "lovable": "var(--skin-border)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-skin-danger",
+      "zip": "var(--skin-danger)",
+      "theme": null,
+      "lovable": "var(--skin-danger)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-skin-fg",
+      "zip": "var(--skin-fg)",
+      "theme": null,
+      "lovable": "var(--skin-fg)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-skin-fg-dim",
+      "zip": "var(--skin-fg-dim)",
+      "theme": null,
+      "lovable": "var(--skin-fg-dim)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-skin-fg-muted",
+      "zip": "var(--skin-fg-muted)",
+      "theme": null,
+      "lovable": "var(--skin-fg-muted)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-skin-success",
+      "zip": "var(--skin-success)",
+      "theme": null,
+      "lovable": "var(--skin-success)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-skin-surface",
+      "zip": "var(--skin-surface)",
+      "theme": null,
+      "lovable": "var(--skin-surface)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-skin-surface-2",
+      "zip": "var(--skin-surface-2)",
+      "theme": null,
+      "lovable": "var(--skin-surface-2)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-surface",
+      "zip": "var(--surface)",
+      "theme": "oklch(0.155 0.014 258)",
+      "lovable": "var(--surface)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-surface-1",
+      "zip": null,
+      "theme": "var(--color-surface)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-surface-2",
+      "zip": null,
+      "theme": "oklch(0.19 0.016 258)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-surface-elev",
+      "zip": "var(--surface-elev)",
+      "theme": null,
+      "lovable": "var(--surface-elev)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-surface-elevated",
+      "zip": null,
+      "theme": "oklch(0.225 0.018 258)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-surface-inset",
+      "zip": null,
+      "theme": "oklch(0.09 0.01 258)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-surface-raised",
+      "zip": null,
+      "theme": "oklch(0.265 0.018 258)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-text",
+      "zip": null,
+      "theme": "var(--color-fg)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-text-muted",
+      "zip": null,
+      "theme": "var(--color-muted)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-text-subtle",
+      "zip": null,
+      "theme": "oklch(0.61 0.014 258)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-trust",
+      "zip": null,
+      "theme": "oklch(0.84 0.15 166)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-trust-ink",
+      "zip": null,
+      "theme": "oklch(0.145 0.026 166)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-up",
+      "zip": "var(--up)",
+      "theme": "var(--color-positive)",
+      "lovable": "var(--up)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-up-fg",
+      "zip": null,
+      "theme": "var(--color-positive-fg)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--color-violet",
+      "zip": "var(--violet)",
+      "theme": "#8b5cf6",
+      "lovable": "var(--violet)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--color-warn",
+      "zip": "var(--warn)",
+      "theme": null,
+      "lovable": "var(--warn)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--color-warning",
+      "zip": null,
+      "theme": "var(--color-risk)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--density-comfortable-control",
+      "zip": null,
+      "theme": "2.75rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--density-comfortable-control-lg",
+      "zip": null,
+      "theme": "3.25rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--density-comfortable-gap",
+      "zip": null,
+      "theme": "1rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--density-comfortable-panel-padding",
+      "zip": null,
+      "theme": "1.25rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--density-comfortable-row",
+      "zip": null,
+      "theme": "3.25rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--density-compact-control",
+      "zip": null,
+      "theme": "2.25rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--density-compact-control-lg",
+      "zip": null,
+      "theme": "2.75rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--density-compact-gap",
+      "zip": null,
+      "theme": "0.625rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--density-compact-panel-padding",
+      "zip": null,
+      "theme": "1rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--density-compact-row",
+      "zip": null,
+      "theme": "2.5rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--destructive",
+      "zip": "oklch(0.68 0.18 22)",
+      "theme": null,
+      "lovable": "oklch(0.68 0.18 22)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--destructive-foreground",
+      "zip": "oklch(0.96 0.008 240)",
+      "theme": null,
+      "lovable": "oklch(0.96 0.008 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--down",
+      "zip": "oklch(0.68 0.18 22)",
+      "theme": null,
+      "lovable": "oklch(0.68 0.18 22)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--earn-accent",
+      "zip": "oklch(0.62 0.14 45)",
+      "theme": null,
+      "lovable": "oklch(0.62 0.14 45)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--earn-bg",
+      "zip": "oklch(0.97 0.015 85)",
+      "theme": null,
+      "lovable": "oklch(0.97 0.015 85)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--earn-border",
+      "zip": "oklch(0.92 0.02 80)",
+      "theme": null,
+      "lovable": "oklch(0.92 0.02 80)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--earn-muted",
+      "zip": "oklch(0.48 0.03 285)",
+      "theme": null,
+      "lovable": "oklch(0.48 0.03 285)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--earn-surface",
+      "zip": "oklch(0.99 0.008 85)",
+      "theme": null,
+      "lovable": "oklch(0.99 0.008 85)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--earn-surface-elev",
+      "zip": "oklch(1 0 0)",
+      "theme": null,
+      "lovable": "oklch(1 0 0)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--earn-text",
+      "zip": "oklch(0.18 0.03 285)",
+      "theme": null,
+      "lovable": "oklch(0.18 0.03 285)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--ease-out-quart",
+      "zip": "cubic-bezier(0.25, 1, 0.5, 1)",
+      "theme": null,
+      "lovable": "cubic-bezier(0.25, 1, 0.5, 1)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--focus-ring-color",
+      "zip": null,
+      "theme": "oklch(0.89 0.135 166 / 0.9)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--focus-ring-offset",
+      "zip": null,
+      "theme": "2px",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--focus-ring-width",
+      "zip": null,
+      "theme": "2px",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--font-display",
+      "zip": "var(--font-sans)",
+      "theme": null,
+      "lovable": "var(--font-sans)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--font-numeric",
+      "zip": null,
+      "theme": "var(--font-sans)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--font-sans",
+      "zip": null,
+      "theme": "Pretendard, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--font-skin-display",
+      "zip": "var(--font-sans)",
+      "theme": null,
+      "lovable": "var(--font-sans)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--font-skin-sans",
+      "zip": "var(--font-sans)",
+      "theme": null,
+      "lovable": "var(--font-sans)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--font-weight-body",
+      "zip": null,
+      "theme": "480",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--font-weight-caption",
+      "zip": null,
+      "theme": "560",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--font-weight-display",
+      "zip": null,
+      "theme": "780",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--font-weight-heading",
+      "zip": null,
+      "theme": "700",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--font-weight-label",
+      "zip": null,
+      "theme": "650",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--font-weight-numeric",
+      "zip": null,
+      "theme": "650",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--font-weight-subheading",
+      "zip": null,
+      "theme": "640",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--font-weight-title",
+      "zip": null,
+      "theme": "740",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--foreground",
+      "zip": "oklch(0.86 0.012 240)",
+      "theme": null,
+      "lovable": "oklch(0.86 0.012 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--glass-blur",
+      "zip": null,
+      "theme": "18px",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--glass-panel",
+      "zip": null,
+      "theme": "oklch(0.19 0.016 258 / 0.78)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--glass-panel-strong",
+      "zip": null,
+      "theme": "oklch(0.225 0.018 258 / 0.88)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--glass-saturation",
+      "zip": null,
+      "theme": "150%",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--gold",
+      "zip": "oklch(0.82 0.12 88)",
+      "theme": null,
+      "lovable": "oklch(0.82 0.12 88)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--gradient-aurora",
+      "zip": "linear-gradient(135deg, oklch(0.78 0.18 145) 0%, oklch(0.82 0.16 150) 100%)",
+      "theme": "linear-gradient(135deg, var(--color-primary) 0%, var(--color-violet) 55%, #f5c84c 100%)",
+      "lovable": "linear-gradient(135deg, oklch(0.78 0.18 145) 0%, oklch(0.82 0.16 150) 100%)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--gradient-cta",
+      "zip": "linear-gradient(135deg, var(--primary) 0%, oklch(0.82 0.16 150) 100%)",
+      "theme": null,
+      "lovable": "linear-gradient(135deg, var(--primary) 0%, oklch(0.82 0.16 150) 100%)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--gradient-ember",
+      "zip": "linear-gradient(135deg, oklch(0.78 0.18 145), oklch(0.84 0.16 150))",
+      "theme": null,
+      "lovable": "linear-gradient(135deg, oklch(0.78 0.18 145), oklch(0.84 0.16 150))",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--gradient-hero",
+      "zip": "linear-gradient(135deg, color-mix(in oklab, var(--primary) 10%, var(--surface)) 0%, var(--surface-elev) 100%)",
+      "theme": null,
+      "lovable": "linear-gradient(135deg, color-mix(in oklab, var(--primary) 10%, var(--surface)) 0%, var(--surface-elev) 100%)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--gradient-sunset",
+      "zip": "linear-gradient(180deg, oklch(0.14 0.025 235), oklch(0.22 0.025 235))",
+      "theme": null,
+      "lovable": "linear-gradient(180deg, oklch(0.14 0.025 235), oklch(0.22 0.025 235))",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--info",
+      "zip": "oklch(0.74 0.11 240)",
+      "theme": null,
+      "lovable": "oklch(0.74 0.11 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--input",
+      "zip": "oklch(0.24 0.022 235)",
+      "theme": null,
+      "lovable": "oklch(0.24 0.022 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--leading-body",
+      "zip": null,
+      "theme": "var(--text-body--line-height)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--leading-display",
+      "zip": null,
+      "theme": "var(--text-display--line-height)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--leading-heading",
+      "zip": null,
+      "theme": "var(--text-heading--line-height)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--leading-title",
+      "zip": null,
+      "theme": "var(--text-title--line-height)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--money-default-weight",
+      "zip": null,
+      "theme": "500",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--money-hero-size",
+      "zip": null,
+      "theme": "clamp(2.5rem, 6vw, 4rem)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--money-hero-weight",
+      "zip": null,
+      "theme": "600",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--money-muted-opacity",
+      "zip": null,
+      "theme": "0.72",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-duration-1",
+      "zip": null,
+      "theme": "120ms",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-duration-2",
+      "zip": null,
+      "theme": "200ms",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-duration-3",
+      "zip": null,
+      "theme": "320ms",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-duration-4",
+      "zip": null,
+      "theme": "480ms",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-duration-anticipation",
+      "zip": null,
+      "theme": "var(--motion-duration-1)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-duration-confirmation",
+      "zip": null,
+      "theme": "var(--motion-duration-2)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-duration-instant",
+      "zip": null,
+      "theme": "80ms",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-duration-reveal",
+      "zip": null,
+      "theme": "var(--motion-duration-3)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-duration-settlement",
+      "zip": null,
+      "theme": "var(--motion-duration-4)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-ease-emphasized",
+      "zip": null,
+      "theme": "cubic-bezier(0.2, 0.9, 0.1, 1)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-ease-linear",
+      "zip": null,
+      "theme": "linear",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-ease-press",
+      "zip": null,
+      "theme": "cubic-bezier(0.32, 0, 0.67, 0)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-ease-spring",
+      "zip": null,
+      "theme": "cubic-bezier(0.16, 1, 0.3, 1)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-ease-standard",
+      "zip": null,
+      "theme": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-press-scale",
+      "zip": null,
+      "theme": "0.98",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--motion-stagger-step",
+      "zip": null,
+      "theme": "48ms",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--muted",
+      "zip": "oklch(0.26 0.020 235)",
+      "theme": null,
+      "lovable": "oklch(0.26 0.020 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--muted-foreground",
+      "zip": "oklch(0.62 0.014 240)",
+      "theme": null,
+      "lovable": "oklch(0.62 0.014 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--noise-opacity",
+      "zip": null,
+      "theme": "0.025",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--overlay",
+      "zip": "oklch(0.06 0.015 235 / 0.78)",
+      "theme": null,
+      "lovable": "oklch(0.06 0.015 235 / 0.78)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--overlay-scrim",
+      "zip": null,
+      "theme": "oklch(0.06 0.012 258 / 0.72)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--popover",
+      "zip": "oklch(0.26 0.025 235)",
+      "theme": null,
+      "lovable": "oklch(0.26 0.025 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--popover-foreground",
+      "zip": "oklch(0.86 0.012 240)",
+      "theme": null,
+      "lovable": "oklch(0.86 0.012 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--primary",
+      "zip": "oklch(0.78 0.18 145)",
+      "theme": "162 82% 62%",
+      "lovable": "oklch(0.78 0.18 145)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--primary-foreground",
+      "zip": "oklch(0.16 0.02 235)",
+      "theme": null,
+      "lovable": "oklch(0.16 0.02 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--primary-glow",
+      "zip": "oklch(0.84 0.16 150)",
+      "theme": "0 0 28px oklch(0.84 0.15 166 / 0.28)",
+      "lovable": "oklch(0.84 0.16 150)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--primary-glow-strong",
+      "zip": null,
+      "theme": "0 0 44px oklch(0.89 0.135 166 / 0.38)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--radius",
+      "zip": "1rem",
+      "theme": null,
+      "lovable": "1rem",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--radius-2xl",
+      "zip": "calc(var(--radius) + 8px)",
+      "theme": "24px",
+      "lovable": "calc(var(--radius) + 8px)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--radius-3xl",
+      "zip": "calc(var(--radius) + 12px)",
+      "theme": null,
+      "lovable": "calc(var(--radius) + 12px)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--radius-4xl",
+      "zip": "calc(var(--radius) + 16px)",
+      "theme": null,
+      "lovable": "calc(var(--radius) + 16px)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--radius-lg",
+      "zip": "var(--radius)",
+      "theme": "18px",
+      "lovable": "var(--radius)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--radius-md",
+      "zip": "calc(var(--radius) - 2px)",
+      "theme": "14px",
+      "lovable": "calc(var(--radius) - 2px)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--radius-pill",
+      "zip": null,
+      "theme": "999px",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--radius-sm",
+      "zip": "calc(var(--radius) - 4px)",
+      "theme": "10px",
+      "lovable": "calc(var(--radius) - 4px)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--radius-xl",
+      "zip": "calc(var(--radius) + 4px)",
+      "theme": "20px",
+      "lovable": "calc(var(--radius) + 4px)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--radius-xs",
+      "zip": null,
+      "theme": "6px",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--rgb-accent-secondary",
+      "zip": null,
+      "theme": "139 92 246",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--rgb-auth-black",
+      "zip": null,
+      "theme": "0 0 0",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--rgb-auth-blue",
+      "zip": null,
+      "theme": "59 130 246",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--rgb-auth-cyan",
+      "zip": null,
+      "theme": "34 211 238",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--rgb-auth-indigo",
+      "zip": null,
+      "theme": "99 102 241",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--rgb-auth-live",
+      "zip": null,
+      "theme": "34 197 94",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--rgb-auth-pink",
+      "zip": null,
+      "theme": "236 72 153",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--rgb-auth-violet",
+      "zip": null,
+      "theme": "139 92 246",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--rgb-auth-violet-bright",
+      "zip": null,
+      "theme": "167 139 250",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--rgb-auth-white",
+      "zip": null,
+      "theme": "255 255 255",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--rgb-primary",
+      "zip": null,
+      "theme": "77 231 184",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--rgb-primary-bright",
+      "zip": null,
+      "theme": "137 245 213",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--ring",
+      "zip": "oklch(0.78 0.18 145)",
+      "theme": null,
+      "lovable": "oklch(0.78 0.18 145)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--scrim-soft",
+      "zip": "oklch(0.06 0.015 235 / 0.62)",
+      "theme": null,
+      "lovable": "oklch(0.06 0.015 235 / 0.62)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--secondary",
+      "zip": "oklch(0.26 0.022 235)",
+      "theme": null,
+      "lovable": "oklch(0.26 0.022 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--secondary-foreground",
+      "zip": "oklch(0.86 0.012 240)",
+      "theme": null,
+      "lovable": "oklch(0.86 0.012 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--shadow-card-hover",
+      "zip": "0 12px 32px oklch(0.08 0.02 235 / 0.55)",
+      "theme": null,
+      "lovable": "0 12px 32px oklch(0.08 0.02 235 / 0.55)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--shadow-elev-1",
+      "zip": "0 1px 2px oklch(0.08 0.02 235 / 0.45)",
+      "theme": null,
+      "lovable": "0 1px 2px oklch(0.08 0.02 235 / 0.45)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--shadow-elev-2",
+      "zip": "0 4px 16px oklch(0.08 0.02 235 / 0.5)",
+      "theme": null,
+      "lovable": "0 4px 16px oklch(0.08 0.02 235 / 0.5)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--shadow-ember",
+      "zip": "0 8px 30px -10px color-mix(in oklab, oklch(0.78 0.18 145) 12%, transparent)",
+      "theme": null,
+      "lovable": "0 8px 30px -10px color-mix(in oklab, oklch(0.78 0.18 145) 12%, transparent)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--shadow-glow-cta",
+      "zip": "0 0 0 1px oklch(0.78 0.18 145 / 0.25), 0 6px 20px oklch(0.78 0.18 145 / 0.15)",
+      "theme": null,
+      "lovable": "0 0 0 1px oklch(0.78 0.18 145 / 0.25), 0 6px 20px oklch(0.78 0.18 145 / 0.15)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--shadow-glow-gold",
+      "zip": "0 0 20px oklch(0.82 0.12 88 / 0.18)",
+      "theme": null,
+      "lovable": "0 0 20px oklch(0.82 0.12 88 / 0.18)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--shadow-glow-primary",
+      "zip": "0 0 24px oklch(0.78 0.18 145 / 0.15)",
+      "theme": null,
+      "lovable": "0 0 24px oklch(0.78 0.18 145 / 0.15)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--shadow-soft",
+      "zip": "0 4px 18px -8px oklch(0.08 0.02 235 / 0.45)",
+      "theme": null,
+      "lovable": "0 4px 18px -8px oklch(0.08 0.02 235 / 0.45)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--sidebar",
+      "zip": "oklch(0.14 0.025 235)",
+      "theme": null,
+      "lovable": "oklch(0.14 0.025 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--sidebar-accent",
+      "zip": "oklch(0.18 0.022 235)",
+      "theme": null,
+      "lovable": "oklch(0.18 0.022 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--sidebar-accent-foreground",
+      "zip": "oklch(0.84 0.012 240)",
+      "theme": null,
+      "lovable": "oklch(0.84 0.012 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--sidebar-border",
+      "zip": "oklch(0.22 0.022 235)",
+      "theme": null,
+      "lovable": "oklch(0.22 0.022 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--sidebar-foreground",
+      "zip": "oklch(0.84 0.012 240)",
+      "theme": null,
+      "lovable": "oklch(0.84 0.012 240)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--sidebar-primary",
+      "zip": "oklch(0.78 0.18 145)",
+      "theme": null,
+      "lovable": "oklch(0.78 0.18 145)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--sidebar-primary-foreground",
+      "zip": "oklch(0.16 0.02 235)",
+      "theme": null,
+      "lovable": "oklch(0.16 0.02 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--sidebar-ring",
+      "zip": "oklch(0.78 0.18 145)",
+      "theme": null,
+      "lovable": "oklch(0.78 0.18 145)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--skin-bg",
+      "zip": "oklch(0.22 0.03 235)",
+      "theme": null,
+      "lovable": "oklch(0.22 0.03 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--skin-border",
+      "zip": "oklch(0.42 0.028 230)",
+      "theme": null,
+      "lovable": "oklch(0.42 0.028 230)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--skin-danger",
+      "zip": "oklch(0.65 0.22 18)",
+      "theme": null,
+      "lovable": "oklch(0.65 0.22 18)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--skin-fg",
+      "zip": "oklch(1 0 0)",
+      "theme": null,
+      "lovable": "oklch(1 0 0)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--skin-fg-dim",
+      "zip": "oklch(0.78 0.025 265)",
+      "theme": null,
+      "lovable": "oklch(0.78 0.025 265)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--skin-fg-muted",
+      "zip": "oklch(0.60 0.04 260)",
+      "theme": null,
+      "lovable": "oklch(0.60 0.04 260)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--skin-success",
+      "zip": "oklch(0.83 0.27 142)",
+      "theme": null,
+      "lovable": "oklch(0.83 0.27 142)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--skin-surface",
+      "zip": "oklch(0.29 0.028 235)",
+      "theme": null,
+      "lovable": "oklch(0.29 0.028 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--skin-surface-2",
+      "zip": "oklch(0.34 0.028 230)",
+      "theme": null,
+      "lovable": "oklch(0.34 0.028 230)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--space-1",
+      "zip": null,
+      "theme": "0.25rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--space-10",
+      "zip": null,
+      "theme": "2.5rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--space-12",
+      "zip": null,
+      "theme": "3rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--space-2",
+      "zip": null,
+      "theme": "0.5rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--space-3",
+      "zip": null,
+      "theme": "0.75rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--space-4",
+      "zip": null,
+      "theme": "1rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--space-5",
+      "zip": null,
+      "theme": "1.25rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--space-6",
+      "zip": null,
+      "theme": "1.5rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--space-8",
+      "zip": null,
+      "theme": "2rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface",
+      "zip": "oklch(0.22 0.025 235)",
+      "theme": null,
+      "lovable": "oklch(0.22 0.025 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--surface-earn-control",
+      "zip": null,
+      "theme": "3rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-earn-control-lg",
+      "zip": null,
+      "theme": "3.25rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-earn-gap",
+      "zip": null,
+      "theme": "1.125rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-earn-padding",
+      "zip": null,
+      "theme": "1.375rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-earn-radius",
+      "zip": null,
+      "theme": "var(--radius-2xl)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-earn-row",
+      "zip": null,
+      "theme": "3.5rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-elev",
+      "zip": "oklch(0.26 0.025 235)",
+      "theme": null,
+      "lovable": "oklch(0.26 0.025 235)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--surface-games-control",
+      "zip": null,
+      "theme": "2.75rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-games-gap",
+      "zip": null,
+      "theme": "0.875rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-games-padding",
+      "zip": null,
+      "theme": "1.125rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-highlight",
+      "zip": null,
+      "theme": "inset 0 1px 0 oklch(1 0 0 / 0.055)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-highlight-strong",
+      "zip": null,
+      "theme": "inset 0 1px 0 oklch(1 0 0 / 0.09)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-inset-shadow",
+      "zip": null,
+      "theme": "inset 0 1px 3px oklch(0 0 0 / 0.5)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-trade-control",
+      "zip": null,
+      "theme": "var(--density-compact-control)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-trade-gap",
+      "zip": null,
+      "theme": "var(--density-compact-gap)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-trade-padding",
+      "zip": null,
+      "theme": "var(--density-compact-panel-padding)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-trade-row",
+      "zip": null,
+      "theme": "var(--density-compact-row)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-wallet-gap",
+      "zip": null,
+      "theme": "1rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--surface-wallet-padding",
+      "zip": null,
+      "theme": "1.25rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-body",
+      "zip": null,
+      "theme": "0.9375rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-body--letter-spacing",
+      "zip": null,
+      "theme": "-0.012em",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-body--line-height",
+      "zip": null,
+      "theme": "1.55",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-caption",
+      "zip": null,
+      "theme": "0.75rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-caption--letter-spacing",
+      "zip": null,
+      "theme": "0.01em",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-caption--line-height",
+      "zip": null,
+      "theme": "1.35",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-display",
+      "zip": "clamp(2rem, 6vw, 3.5rem)",
+      "theme": "clamp(2.75rem, 6vw, 5rem)",
+      "lovable": "clamp(2rem, 6vw, 3.5rem)",
+      "zipVsTheme": "DIFF",
+      "themeVsLovable": "DIFF"
+    },
+    {
+      "name": "--text-display--letter-spacing",
+      "zip": null,
+      "theme": "-0.06em",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-display--line-height",
+      "zip": null,
+      "theme": "0.92",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-heading",
+      "zip": null,
+      "theme": "clamp(1.5rem, 2.6vw, 2.125rem)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-heading--letter-spacing",
+      "zip": null,
+      "theme": "-0.04em",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-heading--line-height",
+      "zip": null,
+      "theme": "1.08",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-hero--letter-spacing",
+      "zip": null,
+      "theme": "-0.06em",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-hero--line-height",
+      "zip": null,
+      "theme": "0.92",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-label",
+      "zip": null,
+      "theme": "0.8125rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-label--letter-spacing",
+      "zip": null,
+      "theme": "-0.005em",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-label--line-height",
+      "zip": null,
+      "theme": "1.25",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-numeric",
+      "zip": null,
+      "theme": "0.9375rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-numeric--letter-spacing",
+      "zip": null,
+      "theme": "-0.018em",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-numeric--line-height",
+      "zip": null,
+      "theme": "1.2",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-subheading",
+      "zip": null,
+      "theme": "1.125rem",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-subheading--letter-spacing",
+      "zip": null,
+      "theme": "-0.025em",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-subheading--line-height",
+      "zip": null,
+      "theme": "1.32",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-title",
+      "zip": null,
+      "theme": "clamp(2rem, 4vw, 3.25rem)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-title--letter-spacing",
+      "zip": null,
+      "theme": "-0.05em",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--text-title--line-height",
+      "zip": null,
+      "theme": "0.98",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--touch-target-min",
+      "zip": null,
+      "theme": "44px",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--tracking-display",
+      "zip": null,
+      "theme": "var(--text-display--letter-spacing)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--tracking-heading",
+      "zip": null,
+      "theme": "var(--text-heading--letter-spacing)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--tracking-numeric",
+      "zip": null,
+      "theme": "var(--text-numeric--letter-spacing)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--tracking-title",
+      "zip": null,
+      "theme": "var(--text-title--letter-spacing)",
+      "lovable": null,
+      "zipVsTheme": "THEME_ONLY",
+      "themeVsLovable": "THEME_ONLY"
+    },
+    {
+      "name": "--up",
+      "zip": "oklch(0.78 0.18 145)",
+      "theme": null,
+      "lovable": "oklch(0.78 0.18 145)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--violet",
+      "zip": "oklch(0.62 0.14 295)",
+      "theme": null,
+      "lovable": "oklch(0.62 0.14 295)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    },
+    {
+      "name": "--warn",
+      "zip": "oklch(0.82 0.14 80)",
+      "theme": null,
+      "lovable": "oklch(0.82 0.14 80)",
+      "zipVsTheme": "ZIP_ONLY",
+      "themeVsLovable": "LOVABLE_ONLY"
+    }
+  ]
+}

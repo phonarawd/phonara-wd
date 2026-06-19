@@ -120,6 +120,14 @@ Engine: `packages/game-engine/src/games/roulette.ts` (`legWins`, `case 'split'`)
 ```
 One-shot submission (like mines). Engine replays legality + dealer S17.
 
+**Result (settle):** `{ totalMultiplier: number }` — engine/SQL emit `{ totalMultiplier }` only. Wire JSON may serialize as number or string; UI adapter normalizes (`toFixed(6)` on mock). Engine: `packages/game-engine/src/games/blackjack.ts` · SQL `_bj_play` / `_game_result` blackjack branch (**51 floats**).
+
+**Celebrate / feel (Lovable §8):** **`Number(totalMultiplier) >= 1.01`** juice · **`=== 1`** push neutral · **`< 1`** shake. Top-level **`bet.multiplier = Number(totalMultiplier)`** on mock/paste. **Forbidden in `bet.result`:** `payout`, `won`, `cards`, `dealerScore`, `playerScore`. **Do not use** RPC wrapper top-level `won` for UI (push `1` may set `won=true`).
+
+**v1 Lovable UI:** `insurance` move **not exposed** (engine supports; UI unmount + never send). Selection **`actions` REPLACE** array (no push). **§1-H reset N/A.**
+
+**Local mirror (Lovable):** `playBlackjack.ts` — engine static import 0.
+
 ---
 
 ## ImportedGameSurfaceProps

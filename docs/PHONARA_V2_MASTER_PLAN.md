@@ -4930,3 +4930,15 @@ otice, and row emphasis="hero". Added [pps/web/src/hooks/use-confirm-snapshot.t
 - `bunx playwright test tests/e2e/visual.spec.ts` PASS: mobile/desktop KO route render and screenshot smoke across landing/auth/legal/dashboard/wallet/ledger/trade/staking/responsible-gaming/casino/admin.
 
 **Errors fixed:** The first `quality.spec.ts` run timed out during inline browser `auth.setSession`; root cause was duplicated older session-injection logic lacking the shared bounded retry/timeout helper. Fixed quality and visual specs to call `injectBrowserSession`, then both E2E smokes passed.
+
+---
+
+## North Star (압살 목표 · 2026-06-15)
+
+Stake·Rollbit·Binance·Bybit·국내 앱테크 대비 최종 승부 전략·6층 모델·체크리스트는 별도 정본:
+
+**[PHONARA_NORTH_STAR_PLAN.md](PHONARA_NORTH_STAR_PLAN.md)**
+
+- Earn first · Casino · Wallet · Trade last
+- ENGINE 100 = 금고(①) · Lovable Phase 5–10 = 껍데기·설명서·FOMO(③–⑦)
+- Binance급 CLOB/유동성 = 별도 프로그램 (launch blocker 아님)

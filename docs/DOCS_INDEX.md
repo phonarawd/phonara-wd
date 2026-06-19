@@ -1,0 +1,71 @@
+# PHONARA · 문서 인덱스 (paste / engine)
+
+> **갱신:** 2026-06-18 · `docs/` 루트 **슬림화** — 완료 LOCK·구 handoff는 [`archive/`](archive/MANIFEST.json)  
+> **Lovable 상세 인덱스:** [`LOVABLE_ZENITH_INDEX.md`](LOVABLE_ZENITH_INDEX.md)
+
+---
+
+## 1. 지금 (paste 직전)
+
+| 문서 | 용도 |
+|------|------|
+| [`PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md`](PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md) | 큐 head · L1→L2→L3 |
+| [`PHONARA_LOVABLE_ZIP_INTAKE_READY.md`](PHONARA_LOVABLE_ZIP_INTAKE_READY.md) | Lovable ZIP → intake → paste GO |
+| [`../apps/web/PRESENTATION_IMPORT.md`](../apps/web/PRESENTATION_IMPORT.md) | paste map · adapter |
+| [`PHONARA_CURSOR_PASTE_CRUSH_LOCK.md`](PHONARA_CURSOR_PASTE_CRUSH_LOCK.md) | Crush P0–P7 |
+| [`PHONARA_CURSOR_PASTE_CRUSH_P2_0_PASTE_MAP.md`](PHONARA_CURSOR_PASTE_CRUSH_P2_0_PASTE_MAP.md) | 게임 allowlist |
+| [`PHONARA_CURSOR_PASTE_CRUSH_P2_LOCK.md`](PHONARA_CURSOR_PASTE_CRUSH_P2_LOCK.md) | Trade paste |
+| [`PHONARA_LOVABLE_P2_GAMES_HANDOFF.md`](PHONARA_LOVABLE_P2_GAMES_HANDOFF.md) | canvas vitest/i18n 스냅샷 |
+| [`PHONARA_NEW_CHAT_HANDOFF_GAMES_POLISH_2026-06-18.md`](PHONARA_NEW_CHAT_HANDOFF_GAMES_POLISH_2026-06-18.md) | 최신 handoff |
+
+---
+
+## 2. Lovable dispatch
+
+| 문서 | 용도 |
+|------|------|
+| [`LOVABLE_AI_MASTER_PROMPT.md`](LOVABLE_AI_MASTER_PROMPT.md) | Lovable mandate |
+| [`LOVABLE_OPERATOR_PROMPT_DISPATCH.md`](LOVABLE_OPERATOR_PROMPT_DISPATCH.md) | 프롬프트 조립 규칙 |
+| [`LOVABLE_VISUAL_REFERENCE_LINKS.md`](LOVABLE_VISUAL_REFERENCE_LINKS.md) | Tier A 참고 링크 |
+| [`LOVABLE_ABSORPTION_PLAN_FINAL.md`](LOVABLE_ABSORPTION_PLAN_FINAL.md) | 흡수 계약 |
+| [`LOVABLE_ZENITH_PHASE12_E_LOCK.md`](LOVABLE_ZENITH_PHASE12_E_LOCK.md) | 12-E Partner 정본 |
+
+---
+
+## 3. 엔진 (NO-TOUCH 경계)
+
+| 문서 | 용도 |
+|------|------|
+| [`PHONARA_V2_MASTER_PLAN.md`](PHONARA_V2_MASTER_PLAN.md) | 제품 정본 |
+| [`ENGINE_100_HANDOFF.md`](ENGINE_100_HANDOFF.md) | 엔진 handoff |
+| [`GAMES-INTEGRATION.md`](GAMES-INTEGRATION.md) | 카지노 게임 wire |
+| [`PHONARA_DEEPSHAFT_MOMENTUM_ENGINE_DELIVERABLE.md`](PHONARA_DEEPSHAFT_MOMENTUM_ENGINE_DELIVERABLE.md) | 신규 게임 엔진 |
+| [`PHONARA_SPORTSBOOK_MASTER_PLAN.md`](PHONARA_SPORTSBOOK_MASTER_PLAN.md) | 스포츠북 마스터 |
+| [`PHONARA_SPORTSBOOK_ENGINE_STANDARD.md`](PHONARA_SPORTSBOOK_ENGINE_STANDARD.md) | 엔진 표준 |
+| [`PHONARA_SPORTSBOOK_ENGINE_TIER_STRATEGY.md`](PHONARA_SPORTSBOOK_ENGINE_TIER_STRATEGY.md) | tier 전략 |
+| [`PHONARA_ENGINE_WAVE_S_SPORTSBOOK_PLAN.md`](PHONARA_ENGINE_WAVE_S_SPORTSBOOK_PLAN.md) | Wave S 개요 |
+| [`PHONARA_ENGINE_WAVE_S1_SPORTSBOOK_LOCK.md`](PHONARA_ENGINE_WAVE_S1_SPORTSBOOK_LOCK.md) … S5 | Wave S LOCK |
+| [`PHONARA_ENGINE_WORLD_CRUSH_GAP_ROADMAP.md`](PHONARA_ENGINE_WORLD_CRUSH_GAP_ROADMAP.md) | UI vs 엔진 갭 |
+| [`CURSOR_ENGINE_MASTER_PROMPT.md`](CURSOR_ENGINE_MASTER_PROMPT.md) | L3 Engine mandate |
+
+---
+
+## 4. 운영 · 게이트
+
+| 문서 | 용도 |
+|------|------|
+| [`QUALITY_GATES.md`](QUALITY_GATES.md) | check 체인 |
+| [`CURRENT_STATUS.md`](CURRENT_STATUS.md) | 스냅샷 |
+| [`RUNBOOK.md`](RUNBOOK.md) | 운영 |
+| [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md) | 로컬 셋업 · **stack:ensure** |
+| [`SUPABASE_ACCESS_MATRIX.md`](SUPABASE_ACCESS_MATRIX.md) | RLS/RPC |
+| [`THREAT_MODEL.md`](THREAT_MODEL.md) | 보안 |
+
+---
+
+## 5. archive
+
+완료 §GREEN LOCK · 구 handoff · audit · superseded plan → **`docs/archive/`**  
+이동 목록: [`archive/MANIFEST.json`](archive/MANIFEST.json)
+
+**규칙:** EXECUTE는 **docs/ 루트 정본만** — archive LOCK으로 GO **금지** (이미 §GREEN된 audit용).
