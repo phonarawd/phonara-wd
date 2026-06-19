@@ -13,6 +13,8 @@ import '../games/mint-reels';
 import '../games/gold-rush';
 import '../games/roulette';
 import '../games/blackjack';
+import '../games/deepshaft';
+import '../games/momentum';
 
 export type { GameCode };
 

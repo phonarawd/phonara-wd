@@ -3974,6 +3974,26 @@ export type Database = {
         Args: { p_bet_id: string; p_reason: string }
         Returns: Json
       }
+      rpc_admin_list_unsettled_sports_fixtures: {
+        Args: { p_limit?: number }
+        Returns: Json[]
+      }
+      rpc_admin_suspend_sports_market: {
+        Args: {
+          p_market_id: string
+          p_duration_ms: number
+          p_reason?: string
+        }
+        Returns: Json
+      }
+      rpc_admin_list_sports_exposure: {
+        Args: { p_currency?: string }
+        Returns: Json[]
+      }
+      rpc_admin_list_sports_risk_events: {
+        Args: { p_limit?: number }
+        Returns: Json[]
+      }
       rpc_approve_affiliate_commission: {
         Args: { p_approval_id: string; p_reason: string }
         Returns: Json
@@ -4373,6 +4393,8 @@ export type Database = {
         | "gold_rush"
         | "roulette"
         | "blackjack"
+        | "deepshaft"
+        | "momentum"
       kyc_tier:
         | "anonymous"
         | "email_verified"
@@ -4576,6 +4598,8 @@ export const Constants = {
         "gold_rush",
         "roulette",
         "blackjack",
+        "deepshaft",
+        "momentum",
       ],
       kyc_tier: [
         "anonymous",

@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._is_liquidation_breached(p_side position_side,
  RETURNS boolean
  LANGUAGE sql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
   SELECT CASE
     WHEN p_side = 'long'::position_side THEN p_mark <= p_liquidation_price

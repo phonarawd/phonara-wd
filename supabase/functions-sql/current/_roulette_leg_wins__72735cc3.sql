@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._roulette_leg_wins(p_type text, p_value intege
  RETURNS boolean
  LANGUAGE plpgsql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
 BEGIN
   IF p_winning = 0 THEN RETURN p_type = 'straight' AND p_value = 0; END IF;

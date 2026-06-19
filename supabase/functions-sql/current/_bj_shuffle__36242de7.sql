@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._bj_shuffle(p_floats double precision[])
  RETURNS integer[]
  LANGUAGE plpgsql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
 DECLARE
   v_deck INT[] := ARRAY(SELECT generate_series(1, 52));

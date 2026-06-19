@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._normalize_person_name(p_name text)
  RETURNS text
  LANGUAGE sql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
   SELECT lower(regexp_replace(btrim(COALESCE(p_name, '')), '\s+', '', 'g'));
 $function$

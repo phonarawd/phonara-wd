@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._bj_play(p_selection jsonb, p_floats double pr
  RETURNS numeric
  LANGUAGE plpgsql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
 DECLARE
   v_deck INT[];

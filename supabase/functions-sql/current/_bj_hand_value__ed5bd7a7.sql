@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._bj_hand_value(p_cards integer[])
  RETURNS integer
  LANGUAGE plpgsql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
 DECLARE
   v_total INT := 0;

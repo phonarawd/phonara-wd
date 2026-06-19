@@ -134,6 +134,45 @@ export const GAME_CONFIGS: GameConfig[] = [
     defaultSelection: { actions: [{ seat: 0, move: 'stand' }] },
     fields: [],
   },
+  {
+    code: 'deepshaft',
+    labelKey: 'casino.game.deepshaft',
+    descriptionKey: 'casino.game.deepshaft.desc',
+    defaultStake: '10',
+    defaultSelection: { riskTier: 'standard', targetDepth: 5 },
+    fields: [
+      {
+        kind: 'select',
+        key: 'riskTier',
+        labelKey: 'casino.field.riskTier',
+        options: [
+          { value: 'safe', labelKey: 'casino.option.safe' },
+          { value: 'standard', labelKey: 'casino.option.standard' },
+          { value: 'deep', labelKey: 'casino.option.deep' },
+        ],
+      },
+      { kind: 'number', key: 'targetDepth', labelKey: 'casino.field.targetDepth', min: 1, max: 15 },
+    ],
+  },
+  {
+    code: 'momentum',
+    labelKey: 'casino.game.momentum',
+    descriptionKey: 'casino.game.momentum.desc',
+    defaultStake: '10',
+    defaultSelection: { comboBefore: 0, cashOut: false },
+    fields: [
+      { kind: 'number', key: 'comboBefore', labelKey: 'casino.field.comboBefore', min: 0, max: 15 },
+      {
+        kind: 'select',
+        key: 'cashOut',
+        labelKey: 'casino.field.cashOut',
+        options: [
+          { value: 'false', labelKey: 'casino.option.playRound' },
+          { value: 'true', labelKey: 'casino.option.cashOut' },
+        ],
+      },
+    ],
+  },
 ];
 
 export const GAME_BY_CODE = Object.fromEntries(

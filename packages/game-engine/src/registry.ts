@@ -13,6 +13,8 @@ export const GAME_CODES = [
   'gold_rush',
   'roulette',
   'blackjack',
+  'deepshaft',
+  'momentum',
 ] as const;
 
 export type GameCode = (typeof GAME_CODES)[number];
@@ -44,7 +46,7 @@ export interface GameDefinition<Sel, Res> {
    */
   settle(stake: Decimal, selection: Sel, result: Res): { payout: Decimal; houseEdgeLeg: Decimal };
   /** Optional closed-form RTP for harness verification (Decimal in [0,1] range as fraction). */
-  theoreticalRtp?(): Decimal;
+  theoreticalRtp?(selection?: Sel): Decimal;
   /** Max payout multiplier for exposure-cap checks (paytable / leg ceiling). */
   maxPayoutMultiplier?(selection: Sel): number;
 }

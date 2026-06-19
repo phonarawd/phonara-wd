@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._roulette_leg_max_mult(p_type text)
  RETURNS numeric
  LANGUAGE sql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
   SELECT CASE p_type
     WHEN 'straight' THEN 36 WHEN 'split' THEN 18

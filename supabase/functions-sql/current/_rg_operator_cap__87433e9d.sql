@@ -11,7 +11,7 @@ DECLARE
   v_key TEXT;
 BEGIN
   IF p_limit_kind = 'loss' THEN
-    IF p_domain NOT IN ('game', 'trading') OR p_currency NOT IN ('PHON', 'USDT') THEN
+    IF p_domain NOT IN ('game', 'trading', 'sports') OR p_currency NOT IN ('PHON', 'USDT') THEN
       RAISE EXCEPTION 'rg_invalid_limit_scope';
     END IF;
     v_key := 'rg_operator_loss_cap_' || p_domain || '_' || lower(p_currency::TEXT);

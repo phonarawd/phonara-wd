@@ -125,6 +125,20 @@ BEGIN
   ASSERT (v_result->'result'->>'bucket')::INT = 7, 'plinko 16 bucket parity failed';
   ASSERT v_result->'result'->>'bucketMultiplier' = '0.3', 'plinko 16 multiplier parity failed';
 
+  v_result := _game_result('deepshaft', v_seed, v_client, v_nonce, '{"riskTier":"standard","targetDepth":5}'::JSONB);
+  ASSERT (v_result->'result'->>'reachedDepth')::INT = 5, 'deepshaft reached depth parity failed';
+  ASSERT (v_result->'result'->>'caveIn')::BOOLEAN = FALSE, 'deepshaft caveIn parity failed';
+  ASSERT (v_result->'result'->>'totalMultiplier')::NUMERIC = 1.51, 'deepshaft payout parity failed';
+  ASSERT jsonb_array_length(v_result->'result'->'levels') = 5, 'deepshaft levels parity failed';
+
+  v_result := _game_result('momentum', v_seed, v_client, v_nonce, '{"comboBefore":0,"cashOut":false}'::JSONB);
+  ASSERT (v_result->'result'->>'won')::BOOLEAN = FALSE, 'momentum play won parity failed';
+  ASSERT (v_result->'result'->>'roll')::NUMERIC = 18.37, 'momentum play roll parity failed';
+
+  v_result := _game_result('momentum', v_seed, v_client, v_nonce, '{"comboBefore":3,"cashOut":true}'::JSONB);
+  ASSERT (v_result->'result'->>'cashedOut')::BOOLEAN = TRUE, 'momentum cashout parity failed';
+  ASSERT (v_result->'result'->>'totalMultiplier')::NUMERIC = 16.29, 'momentum cashout mult parity failed';
+
   FOR v_case IN 1..2000 LOOP
     v_seed := encode(extensions.digest('part-c-existing-result:' || v_case::TEXT, 'sha256'), 'hex');
     v_client := 'part_c_client_' || (v_case % 97)::TEXT;

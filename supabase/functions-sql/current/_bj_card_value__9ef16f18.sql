@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._bj_card_value(p_card integer)
  RETURNS integer
  LANGUAGE sql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
   SELECT CASE WHEN ((p_card - 1) % 13) + 1 >= 10 THEN 10 ELSE ((p_card - 1) % 13) + 1 END;
 $function$

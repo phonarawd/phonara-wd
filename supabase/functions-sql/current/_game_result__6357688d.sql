@@ -181,6 +181,16 @@ BEGIN
       v_multiplier := _bj_play(p_selection, v_floats);
       v_result := jsonb_build_object('totalMultiplier', v_multiplier);
 
+    WHEN 'deepshaft' THEN
+      v_floats := _game_float_stream(p_server_seed, p_client_seed, p_nonce, 15);
+      v_result := _deepshaft_evaluate(p_selection, v_floats);
+      v_multiplier := (v_result->>'totalMultiplier')::NUMERIC;
+
+    WHEN 'momentum' THEN
+      v_floats := _game_float_stream(p_server_seed, p_client_seed, p_nonce, 1);
+      v_result := _momentum_evaluate(p_selection, v_floats);
+      v_multiplier := (v_result->>'totalMultiplier')::NUMERIC;
+
     ELSE
       RAISE EXCEPTION 'invalid_game_code';
   END CASE;

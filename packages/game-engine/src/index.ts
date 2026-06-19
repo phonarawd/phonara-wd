@@ -35,3 +35,5 @@ export * from './games/mint-reels';
 export * from './games/gold-rush';
 export * from './games/roulette';
 export * from './games/blackjack';
+export * from './games/deepshaft';
+export * from './games/momentum';

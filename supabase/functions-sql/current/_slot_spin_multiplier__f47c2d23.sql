@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._slot_spin_multiplier(p_reels integer[], p_pay
  RETURNS numeric
  LANGUAGE plpgsql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
 DECLARE
   v_paylines INT[][] := ARRAY[

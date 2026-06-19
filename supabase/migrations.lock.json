@@ -99,6 +99,21 @@
     "20260614000095_slot_reel_strip_length_fix.sql": "b125decf5ab28dbc8678cfbbbe8999903eac07cd811205f9db40203bb615d231",
     "20260614000096_blackjack_natural_payout_fix.sql": "47940aecad572e0a3cc3e17e321249d2c7884e9d43a1aba945c6614c399947e3",
     "20260615000097_engine100_crypto_rails.sql": "6c545a15028c7a10d5c089bff049037fcdfd09a34b246d31c1856ec39dce843b",
-    "20260615000098_engine100_viral_missions.sql": "ad45d223386cc09eb3169f6e81f2fbbde92ee2b82df63fe440dfe2acf4dde39d"
+    "20260615000098_engine100_viral_missions.sql": "ad45d223386cc09eb3169f6e81f2fbbde92ee2b82df63fe440dfe2acf4dde39d",
+    "20260616000099_wave_s1_sportsbook_schema.sql": "4869ce2a54e48d0aabd8c3d74abfd012699b25a49492caddd1daa4d5cb396e1c",
+    "20260616000100_wave_s2_sportsbook_ingest.sql": "84d1850b8fe1bd80660ccd23867f76e07f7103bc7ceea4cadba9455b2cd33186",
+    "20260616000101_wave_s3_sportsbook_place_bet.sql": "c42ce1783743288dec5f46fd8e87511af8afe18a94b539778ffaaa4b1b88e9e6",
+    "20260616000102_wave_s4_sportsbook_settle.sql": "bad79c233e6b97b0cc91e04143c0e27f385f1b7365c12d0618c8d0a671c79c23",
+    "20260616000103_wave_s5_sports_rg_domain.sql": "2ab6a0b2a44710f87430297f2714b3bea716b1b483a6865159e9fb75dbdb2dee",
+    "20260616000104_wave_s6_sportsbook_major_hardening.sql": "2ce3724640bf158a59c723e56b9462d015062ad78d6659f1e0152772657341ad",
+    "20260616000105_wave_s7_sportsbook_inplay_engine.sql": "db2c6ec997e4f72ea884a4dfd34c6030f8a937d7088d0837dbc891db0dc9ccd7",
+    "20260616000106_wave_s8_sports_rg_schema.sql": "e98a2c9b964c8b64988719d2bf05cbab354de202cfc33dbd8dc3c354cb063ad3",
+    "20260616000107_wave_s11_sports_ingest_ops.sql": "24ceec1c9b9abbecebbfd2635959eabeb4bbc7344c2779ffe855dab0f7195ad4",
+    "20260616000108_wave_s13_sportsbook_anti_arb_defense.sql": "74d64faf66578e05beb72967f079e0fe0b73a6665a318e309d834c3eb9901618",
+    "20260616000109_wave_s14_sportsbook_multi_account_defense.sql": "cbaf69a05ef17bf5d2c3f6aafd6cc51402b6c5e81d44225859060687bfe506ef",
+    "20260616000110_wave_s15_sportsbook_world_markets.sql": "9206cb2401e3fdad1f8ff9a0678debb96202effa461259395be515897fe009e1",
+    "20260616000111_wave_s16_s22_sportsbook_world_engine.sql": "7e69fcc6acb49022d84a1c4e766775519f4f35842bd2446cd9facd6ba8d6c25b",
+    "20260617000120_game_code_enum_deepshaft_momentum.sql": "35399185a61cf1c9bcb474f038eb55ecf9ece206df5c5df62f87d4db5bdd24b7",
+    "20260617000121_deepshaft_momentum_engine.sql": "f9cf6ea9cbe87b3c552c6db0ed32304ad8a2b84fa98c28f98323df1721509e46"
   }
 }

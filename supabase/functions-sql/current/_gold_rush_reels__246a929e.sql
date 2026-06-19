@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._gold_rush_reels()
  RETURNS integer[]
  LANGUAGE sql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
   SELECT ARRAY[
     ARRAY[0,0,1,1,2,2,3,4,4,5,5,6,0,1,2,3,4,5,6,7],

@@ -13,6 +13,8 @@ import '../games/mint-reels';
 import '../games/gold-rush';
 import '../games/roulette';
 import '../games/blackjack';
+import '../games/deepshaft';
+import '../games/momentum';
 
 export interface RtpHarnessOptions {
   seeds: number;
@@ -53,6 +55,10 @@ function defaultSelectionFor(def: GameDefinition<unknown, unknown>): unknown {
       return { bets: [{ type: 'red', value: null, stakeWeight: 1 }] };
     case 'blackjack':
       return { actions: [{ seat: 0, move: 'stand' }] };
+    case 'deepshaft':
+      return { riskTier: 'standard', targetDepth: 8 };
+    case 'momentum':
+      return { comboBefore: 0, cashOut: false };
     default:
       return {};
   }
@@ -69,8 +75,8 @@ export async function runRtpHarness(opts: RtpHarnessOptions): Promise<RtpHarness
     const def = getGame(code);
     if (!def.theoreticalRtp) continue;
 
-    const theoretical = def.theoreticalRtp().toNumber();
     const selection = opts.defaultSelections[code] ?? defaultSelectionFor(def);
+    const theoretical = def.theoreticalRtp(selection as never)!.toNumber();
     let totalReturn = 0;
 
     for (let i = 0; i < opts.seeds; i += 1) {

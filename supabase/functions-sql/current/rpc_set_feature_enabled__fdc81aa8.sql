@@ -15,25 +15,23 @@ BEGIN
   IF NOT _is_admin() THEN
     RAISE EXCEPTION 'forbidden';
   END IF;
-  PERFORM _assert_admin_aal2();
   IF p_reason IS NULL OR length(btrim(p_reason)) = 0 THEN
     RAISE EXCEPTION 'reason_required';
   END IF;
-  IF p_feature NOT IN ('spot','futures','staking','game','referral','deposit','withdrawal') THEN
+  IF p_feature NOT IN ('spot','futures','staking','game','referral','deposit','withdrawal','sports') THEN
     RAISE EXCEPTION 'invalid_feature' USING HINT = p_feature;
   END IF;
 
   v_key := 'feature_' || p_feature || '_enabled';
-  UPDATE app_config
-     SET value = CASE WHEN p_enabled THEN 'true' ELSE 'false' END, updated_at = NOW()
-   WHERE key = v_key;
+  UPDATE app_config SET value = CASE WHEN p_enabled THEN 'true' ELSE 'false' END, updated_at = NOW()
+  WHERE key = v_key;
   GET DIAGNOSTICS v_rows = ROW_COUNT;
   IF v_rows = 0 THEN
     RAISE EXCEPTION 'invalid_feature' USING HINT = p_feature;
   END IF;
 
-  INSERT INTO audit_logs (actor_id, action, entity_type, payload)
-  VALUES (v_actor, 'feature_toggle', 'app_config',
+  INSERT INTO audit_logs (actor_id, action, entity_type, entity_id, payload)
+  VALUES (v_actor, 'feature_toggle', 'app_config', NULL,
     jsonb_build_object('feature', p_feature, 'enabled', p_enabled, 'reason', p_reason));
 
   RETURN jsonb_build_object('feature', p_feature, 'enabled', p_enabled);

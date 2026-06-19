@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._gold_rush_paytable()
  RETURNS jsonb
  LANGUAGE sql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
   SELECT '{"0":[1,2,4],"1":[1,3,5],"2":[2,4,7],"3":[2,5,9],"4":[3,7,14],"5":[4,9,20],"6":[12,35,80]}'::JSONB;
 $function$

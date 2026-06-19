@@ -45,6 +45,8 @@ export function useCasinoRoundPipeline({
   const [commitment, setCommitment] = useState<RoundCommitment | null>(null);
   const [bet, setBet] = useState<BetResponse | null>(null);
   const [verificationEvidence, setVerificationEvidence] = useState<VerificationEvidence | null>(null);
+  /** Persists last settled result for E2E fairness anchor across prepareRound. */
+  const [settledResult, setSettledResult] = useState<Record<string, unknown> | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [errorKey, setErrorKey] = useState<MessageKey | null>(null);
@@ -76,6 +78,7 @@ export function useCasinoRoundPipeline({
     setCommitment(null);
     setBet(null);
     setVerificationEvidence(null);
+    setSettledResult(null);
     setConfirmOpen(false);
     setErrorKey(null);
     setToastKey(null);
@@ -116,6 +119,7 @@ export function useCasinoRoundPipeline({
     setBusy(true);
     setErrorKey(null);
     setVerificationEvidence(null);
+    setConfirmOpen(false);
     try {
       const placed = await callRpc('rpc_place_game_bet', {
         p_round_id: commitment.round_id,
@@ -125,6 +129,7 @@ export function useCasinoRoundPipeline({
         p_client_seed: clientSeed,
         p_idempotency_key: idempotencyKey,
       }) as unknown as BetResponse;
+      setSettledResult(placed.result);
       const revealed = await callRpc('rpc_reveal_game_round', { p_round_id: commitment.round_id }) as unknown as RevealResponse;
       const verified = await verifyRound({
         game: gameCode,
@@ -185,6 +190,7 @@ export function useCasinoRoundPipeline({
     commitment,
     bet,
     verificationEvidence,
+    settledResult,
     confirmOpen,
     busy,
     errorKey,

@@ -21,6 +21,8 @@ DECLARE
   v_leg JSONB;
   v_weight_sum NUMERIC := 0;
   v_type TEXT;
+  v_tier TEXT;
+  v_depth INT;
 BEGIN
   CASE p_game
     WHEN 'crash' THEN
@@ -77,6 +79,17 @@ BEGIN
       RETURN v_max;
     WHEN 'blackjack' THEN
       RETURN 2.5;
+    WHEN 'deepshaft' THEN
+      v_tier := p_selection->>'riskTier';
+      v_depth := (p_selection->>'targetDepth')::INT;
+      IF v_tier NOT IN ('safe', 'standard', 'deep') THEN RAISE EXCEPTION 'invalid_deepshaft_tier'; END IF;
+      IF v_depth < 1 OR v_depth > 15 THEN RAISE EXCEPTION 'invalid_deepshaft_depth'; END IF;
+      RETURN _deepshaft_payout_mult(v_tier, v_depth);
+    WHEN 'momentum' THEN
+      IF COALESCE((p_selection->>'cashOut')::BOOLEAN, FALSE) THEN
+        RETURN _momentum_cash_payout_mult((p_selection->>'comboBefore')::INT);
+      END IF;
+      RETURN 0;
     ELSE
       RAISE EXCEPTION 'invalid_game_code';
   END CASE;

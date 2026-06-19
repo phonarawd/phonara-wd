@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._slot_stop(p_strip integer[], p_f double preci
  RETURNS integer
  LANGUAGE sql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
   SELECT floor(p_f * cardinality(p_strip))::INT;
 $function$

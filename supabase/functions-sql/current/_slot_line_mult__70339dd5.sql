@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._slot_line_mult(p_symbols integer[], p_paytabl
  RETURNS numeric
  LANGUAGE plpgsql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
 DECLARE
   v_base INT := NULL;

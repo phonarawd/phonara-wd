@@ -22,6 +22,17 @@ BEGIN
        AND status IN ('won', 'lost')
        AND settled_at >= v_month_start
        AND settled_at < v_month_end;
+  ELSIF p_domain = 'sports' THEN
+    SELECT COALESCE(SUM((
+      stake::NUMERIC - CASE WHEN status = 'won' THEN potential_payout::NUMERIC ELSE 0 END
+    )), 0)
+      INTO v_realized
+      FROM sports_bets
+     WHERE user_id = p_user_id
+       AND currency = p_currency
+       AND status IN ('won', 'lost')
+       AND settled_at >= v_month_start
+       AND settled_at < v_month_end;
   ELSIF p_domain = 'trading' THEN
     SELECT COALESCE(SUM(
       CASE

@@ -15,7 +15,7 @@ BEGIN
     SELECT DISTINCT user_id, domain, currency
       FROM rg_user_limits
      WHERE limit_kind = 'loss'
-       AND domain IN ('game', 'trading')
+       AND domain IN ('game', 'trading', 'sports')
        AND currency IN ('PHON', 'USDT')
   LOOP
     PERFORM _rg_try_refresh_user_month_loss(r.user_id, r.domain, r.currency, p_month_start);

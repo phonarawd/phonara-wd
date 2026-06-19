@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public._roulette_evaluate(p_selection jsonb, p_winnin
  RETURNS numeric
  LANGUAGE plpgsql
  IMMUTABLE
+ SET search_path TO 'public', 'pg_temp'
 AS $function$
 DECLARE
   v_leg JSONB;

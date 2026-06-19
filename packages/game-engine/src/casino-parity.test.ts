@@ -6,6 +6,8 @@ import { hiloDefinition } from './games/hilo';
 import { limboDefinition } from './games/limbo';
 import { minesDefinition } from './games/mines';
 import { plinkoDefinition } from './games/plinko';
+import { deepshaftDefinition } from './games/deepshaft';
+import { momentumDefinition } from './games/momentum';
 import type { GameDefinition } from './registry';
 
 const SERVER_SEED = 'deadbeef00112233445566778899aabbccddeeff00112233445566778899aabb';
@@ -98,6 +100,45 @@ describe('casino TS parity vectors', () => {
       path: [0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1],
       bucket: 7,
       bucketMultiplier: '0.3',
+    });
+  });
+
+  it('locks Deepshaft descent constants', async () => {
+    await expect(
+      resultFor(deepshaftDefinition, { riskTier: 'standard', targetDepth: 5 }),
+    ).resolves.toEqual({
+      levels: [
+        { depth: 1, outcome: 'gold', levelMultiplier: 1.06 },
+        { depth: 2, outcome: 'gold', levelMultiplier: 1.24 },
+        { depth: 3, outcome: 'gold', levelMultiplier: 1.59 },
+        { depth: 4, outcome: 'gold', levelMultiplier: 2.27 },
+        { depth: 5, outcome: 'gold', levelMultiplier: 3.56 },
+      ],
+      reachedDepth: 5,
+      caveIn: false,
+      totalMultiplier: 1.51,
+      won: true,
+    });
+  });
+
+  it('locks Momentum play and cash-out constants', async () => {
+    await expect(resultFor(momentumDefinition, { comboBefore: 0, cashOut: false })).resolves.toEqual({
+      won: false,
+      roll: 18.37,
+      comboBefore: 0,
+      comboAfter: 0,
+      comboMultiplier: 0,
+      cashedOut: false,
+      totalMultiplier: 0,
+    });
+    await expect(resultFor(momentumDefinition, { comboBefore: 3, cashOut: true })).resolves.toEqual({
+      won: true,
+      roll: 0,
+      comboBefore: 3,
+      comboAfter: 0,
+      comboMultiplier: 16.46,
+      cashedOut: true,
+      totalMultiplier: 16.29,
     });
   });
 });

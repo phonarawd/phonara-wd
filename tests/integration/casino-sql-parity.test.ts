@@ -44,6 +44,9 @@ const CASE_DEFS: CaseDef[] = [
     selection: { bets: [{ type: 'red', value: null, stakeWeight: 1 }] },
   },
   { game: 'blackjack', selection: { actions: [{ seat: 0, move: 'stand' }] } },
+  { game: 'deepshaft', selection: { riskTier: 'standard', targetDepth: 5 } },
+  { game: 'momentum', selection: { comboBefore: 0, cashOut: false } },
+  { game: 'momentum', selection: { comboBefore: 3, cashOut: true } },
 ];
 
 function stableStringify(value: unknown): string {
