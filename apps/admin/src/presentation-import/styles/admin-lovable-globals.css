@@ -1,0 +1,309 @@
+/* Auto-pasted from Lovable styles.css — shell/CSS restore Phase A (global SOT) */
+/*
+ * PHONARA design tokens (:root + @layer base).
+ *
+ * Tailwind @theme inline bridge lives in lovable-theme-inline.css, imported
+ * from theme.css immediately after @import "tailwindcss" (ZIP parity).
+ *
+ * - Dark-only base. Earn surface uses separate brighter tokens via
+ *   `[data-density="earn"]` scope.
+ * - `--primary` (mint CTA) is strictly separated from `--up` (rise/long).
+ * - All numeric UI uses tabular-nums globally.
+ * - Surface density is toggled via data-density="earn|app|trade".
+ */
+
+:root {
+  --radius: 1rem;
+
+  /* ===== Stake/Roobet-grade (12-H-Theme.2 · 딥 네이비 + 단일 그린 CTA) ===== */
+  /* Base — cool deep navy (chroma ≤ 0.030, 본문 영역 무채색에 가깝게) */
+  --background: oklch(0.18 0.025 235);
+  --foreground: oklch(0.86 0.012 240);
+  --surface: oklch(0.22 0.025 235);
+  --surface-elev: oklch(0.26 0.025 235);
+  --overlay: oklch(0.06 0.015 235 / 0.78);
+  --scrim-soft: oklch(0.06 0.015 235 / 0.62);
+  --card: oklch(0.22 0.025 235);
+  --card-foreground: oklch(0.86 0.012 240);
+  --popover: oklch(0.26 0.025 235);
+  --popover-foreground: oklch(0.86 0.012 240);
+  --border: oklch(0.30 0.022 235);
+  --input: oklch(0.24 0.022 235);
+  --ring: oklch(0.78 0.18 145);
+  --muted: oklch(0.26 0.020 235);
+  --muted-foreground: oklch(0.62 0.014 240);
+  --accent: oklch(0.28 0.025 235);
+  --accent-foreground: oklch(0.86 0.012 240);
+  --secondary: oklch(0.26 0.022 235);
+  --secondary-foreground: oklch(0.86 0.012 240);
+
+  /* CTA / semantic — Stake signature mint-green (단일 액센트) */
+  --primary: oklch(0.78 0.18 145);
+  --primary-foreground: oklch(0.16 0.02 235);
+  --primary-glow: oklch(0.84 0.16 150);
+  --up: oklch(0.78 0.18 145);
+  --down: oklch(0.68 0.18 22);
+  --warn: oklch(0.82 0.14 80);
+  --info: oklch(0.74 0.11 240);
+  --gold: oklch(0.82 0.12 88);
+  --violet: oklch(0.62 0.14 295);
+  --destructive: oklch(0.68 0.18 22);
+  --destructive-foreground: oklch(0.96 0.008 240);
+
+  /* Earn density — warm cream surface scope (not a theme; density override) */
+  --earn-bg: oklch(0.97 0.015 85);
+  --earn-surface: oklch(0.99 0.008 85);
+  --earn-surface-elev: oklch(1 0 0);
+  --earn-text: oklch(0.18 0.03 285);
+  --earn-muted: oklch(0.48 0.03 285);
+  --earn-border: oklch(0.92 0.02 80);
+  --earn-accent: oklch(0.62 0.14 45);
+
+  /* Sidebar — 더 짙은 네이비 */
+  --sidebar: oklch(0.14 0.025 235);
+  --sidebar-foreground: oklch(0.84 0.012 240);
+  --sidebar-primary: oklch(0.78 0.18 145);
+  --sidebar-primary-foreground: oklch(0.16 0.02 235);
+  --sidebar-accent: oklch(0.18 0.022 235);
+  --sidebar-accent-foreground: oklch(0.84 0.012 240);
+  --sidebar-border: oklch(0.22 0.022 235);
+  --sidebar-ring: oklch(0.78 0.18 145);
+
+  /* Charts — green primary + neutral + 1포인트 */
+  --chart-1: oklch(0.78 0.18 145);
+  --chart-2: oklch(0.62 0.014 240);
+  --chart-3: oklch(0.74 0.11 240);
+  --chart-4: oklch(0.68 0.18 22);
+  --chart-5: oklch(0.82 0.12 88);
+
+  /* Boot splash — first-paint safe tokens (P0-1) */
+  --boot-splash-bg: oklch(0.18 0.025 235);
+  --boot-splash-fg: oklch(0.86 0.012 240);
+  --boot-splash-accent: oklch(0.78 0.18 145);
+  --boot-splash-glow: oklch(0.84 0.16 150);
+
+  /* 12-H §A — oklch SOT for skin/bet palette (mobile-crush; Stake reference).
+   * oklch literals live ONLY here. Components use bg-skin-* / bg-bet-* via
+   * the [data-skin="mobile-crush"] consumer mapping below. */
+  --skin-bg: oklch(0.22 0.03 235);
+  --skin-surface: oklch(0.29 0.028 235);
+  --skin-surface-2: oklch(0.34 0.028 230);
+  --skin-border: oklch(0.42 0.028 230);
+  --skin-fg: oklch(1 0 0);
+  --skin-fg-dim: oklch(0.78 0.025 265);
+  --skin-fg-muted: oklch(0.60 0.04 260);
+  --bet-primary: oklch(0.83 0.27 142);
+  --bet-primary-fg: oklch(0.28 0.10 142);
+  --bet-accent: oklch(0.60 0.18 252);
+  --bet-accent-fg: oklch(1 0 0);
+  --skin-success: oklch(0.83 0.27 142);
+  --skin-danger: oklch(0.65 0.22 18);
+}
+
+/* L1-10-W-D V2 Ledger — wallet-scoped tokens.
+ * Scoped via [data-wallet="v2"]. Does NOT override global --background or
+ * any @theme color. Hex literals appear only inside this block.
+ */
+[data-wallet="v2"] {
+  --wallet-bg: var(--background);
+  --wallet-surface: var(--surface);
+  --wallet-border: var(--border);
+  --wallet-cta: var(--primary);
+  --wallet-cta-fg: var(--primary-foreground);
+  --wallet-pos: var(--up);
+  --wallet-neg: var(--down);
+  --wallet-fg: var(--foreground);
+  --wallet-fg-dim: var(--muted-foreground);
+}
+
+/* Skin scope: only inside this scope do tokens override semantic colors. */
+[data-skin="mobile-crush"] {
+  --background: var(--skin-bg);
+  --foreground: var(--skin-fg);
+  --card: var(--skin-surface);
+  --card-foreground: var(--skin-fg);
+  --popover: var(--skin-surface-2);
+  --popover-foreground: var(--skin-fg);
+  --border: var(--skin-border);
+  --input: var(--skin-surface-2);
+  --muted: var(--skin-surface-2);
+  --muted-foreground: var(--skin-fg-muted);
+  --secondary: var(--skin-surface-2);
+  --secondary-foreground: var(--skin-fg);
+  --accent: var(--skin-surface-2);
+  --accent-foreground: var(--skin-fg);
+  --surface: var(--skin-surface);
+  --surface-elev: var(--skin-surface-2);
+  --primary: var(--bet-primary);
+  --primary-foreground: var(--bet-primary-fg);
+  font-family: var(--font-skin-sans);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    font-size: 16px; /* L1-24 · Stake parity — root stays 16px mobile + desktop */
+  }
+  html,
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum", "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    touch-action: manipulation;
+  }
+  /* L1-24 · Stake type scale. weight 400/600 only. */
+  h1 { font-size: 2.5rem;  font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; }
+  h2 { font-size: 1.5rem;  font-weight: 600; line-height: 1.25; letter-spacing: -0.005em; }
+  h3 { font-size: 1.25rem; font-weight: 600; line-height: 1.3; }
+  h4 { font-size: 1rem;    font-weight: 600; line-height: 1.4; }
+  p  { font-size: 1rem;    font-weight: 400; line-height: 1.5; }
+  small, .text-meta { font-size: 0.75rem; font-weight: 400; line-height: 1.5; }
+  button { font-size: 0.875rem; font-weight: 600; }
+  .font-money { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+
+  /* Stake-style boot splash dots */
+  @keyframes splash-dot {
+    0%, 80%, 100% { opacity: 0.25; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1.15); }
+  }
+
+
+
+  /* Density scopes */
+  [data-density="earn"] {
+    --background: var(--earn-bg);
+    --foreground: var(--earn-text);
+    --card: var(--earn-surface);
+    --card-foreground: var(--earn-text);
+    --muted: oklch(0.94 0.015 85);
+    --muted-foreground: var(--earn-muted);
+    --border: var(--earn-border);
+    --input: var(--earn-border);
+    --secondary: oklch(0.94 0.015 85);
+    --secondary-foreground: var(--earn-text);
+    --accent: oklch(0.94 0.015 85);
+    --accent-foreground: var(--earn-text);
+    --popover: var(--earn-surface);
+    --popover-foreground: var(--earn-text);
+    --primary: var(--earn-accent);
+    --primary-foreground: oklch(0.99 0.005 85);
+  }
+  [data-density="trade"] {
+    font-size: 13px;
+    line-height: 1.35;
+    --density-pad-x: 0.5rem;
+    --density-pad-y: 0.25rem;
+    --density-gap: 0.375rem;
+    --density-radius: 0.375rem;
+    --density-row-h: 1.5rem;
+  }
+  [data-density="trade"] .row-tight {
+    padding-block: var(--density-pad-y);
+  }
+  [data-density="trade"] .cell-tight {
+    padding-inline: var(--density-pad-x);
+    padding-block: var(--density-pad-y);
+  }
+  [data-density="trade"] .grid-tight {
+    gap: var(--density-gap);
+  }
+  [data-density="trade"] table {
+    font-variant-numeric: tabular-nums;
+  }
+  [data-density="trade"] th,
+  [data-density="trade"] td {
+    padding: var(--density-pad-y) var(--density-pad-x);
+  }
+
+  /* Diff flash for trade rows */
+  @keyframes flash-up {
+    0% {
+      background-color: rgb(0 214 154 / 0.25);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+  @keyframes flash-down {
+    0% {
+      background-color: rgb(255 77 109 / 0.25);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+  .flash-up {
+    animation: flash-up 0.6s ease-out;
+  }
+  .flash-down {
+    animation: flash-down 0.6s ease-out;
+  }
+
+  /* P1.5-B — Live win row entry. GPU-only. */
+  @keyframes slide-down-fade {
+    0% {
+      transform: translate3d(0, -6px, 0);
+      opacity: 0;
+    }
+    100% {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+  }
+  .slide-down-fade {
+    animation: slide-down-fade 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  /* LIVE presence marquee — duplicated track loops via -50% translate */
+  @keyframes presence-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .animate-presence-marquee {
+    animation: presence-marquee 32s linear infinite;
+    will-change: transform;
+  }
+
+  /* L1-18 FOMO motion V2 — single-shot 120–320ms, global reduced-motion guard covers it */
+  @keyframes fomo-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.92; transform: scale(1.02); }
+  }
+  @keyframes fomo-tick {
+    from { opacity: 0.55; }
+    to   { opacity: 1; }
+  }
+  .animate-fomo-pulse { animation: fomo-pulse 200ms ease-out 1; }
+  .animate-fomo-tick  { animation: fomo-tick 160ms ease-out 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  /* Focus rings */
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+

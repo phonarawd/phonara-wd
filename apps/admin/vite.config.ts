@@ -1,3 +1,4 @@
+import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
@@ -5,7 +6,16 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   envDir: '../..',
+  // Share web public assets (fonts, favicon) — no duplicate binaries in apps/admin.
+  publicDir: fileURLToPath(new URL('../web/public', import.meta.url)),
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
   server: {
     port: 3001,
+    strictPort: true,
+    host: '127.0.0.1',
   },
 });

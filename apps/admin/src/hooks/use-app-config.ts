@@ -20,7 +20,8 @@ export function useAppConfig() {
       }
       return map;
     },
-    staleTime: 10_000,
+    staleTime: 0,
+    refetchOnMount: 'always',
     refetchInterval: 30_000,
   });
 }

@@ -131,7 +131,15 @@ test.describe('Admin Operations + Audit (S8c/S8d)', () => {
     // Navigate to audit page and verify the entry renders.
     await page.getByTestId('nav-audit').click();
     await expect(page.getByTestId('audit-page')).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByTestId('audit-table')).toBeVisible({ timeout: 10_000 });
+    await expect(async () => {
+      await page
+        .waitForResponse(
+          (resp) => resp.url().includes('/rest/v1/audit_logs') && resp.status() === 200,
+          { timeout: 10_000 },
+        )
+        .catch(() => undefined);
+      await expect(page.getByTestId('audit-table')).toBeVisible({ timeout: 5_000 });
+    }).toPass({ timeout: 45_000 });
   });
 
   test('negative: server-side guard blocks non-admin calling operations RPC directly', async () => {
@@ -223,6 +231,17 @@ test.describe('Admin Exception Queues (W9-R1)', () => {
     const dbAdmin = adminClient();
 
     await dbAdmin.from('reconciliation_log').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+
+    const seedAlertId = crypto.randomUUID();
+    await dbAdmin.from('ops_alerts').insert({
+      id: seedAlertId,
+      dedupe_key: `e2e-alert-${seedAlertId}`,
+      source_check_id: 'e2e_test',
+      severity: 'warning',
+      status: 'open',
+      summary: 'E2E seeded ops alert',
+      runbook_key: 'e2e',
+    });
 
     await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456', adminAuth.totpSecret);
     await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });

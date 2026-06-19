@@ -3,9 +3,22 @@
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "../../node_modules/.cache/tsbuild/admin.tsbuildinfo",
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@phonara/shared-types": ["../../packages/shared-types/src"],
+      "@phonara/money": ["../../packages/money/src"],
+      "@phonara/i18n": ["../../packages/i18n/src"],
+      "@phonara/i18n/react": ["../../packages/i18n/src/react"],
+      "@phonara/ui": ["../../packages/ui/src"]
+    }
   },
   "include": ["src", "vite.config.ts"],
+  "exclude": [
+    "src/**/__tests__/**",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx"
+  ],
   "references": [
     { "path": "../../packages/i18n" },
     { "path": "../../packages/money" },

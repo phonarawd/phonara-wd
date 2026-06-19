@@ -1,207 +1,49 @@
 @import "tailwindcss";
+@source "../../src";
+@import "tw-animate-css";
+@import "./presentation-import/styles/lovable-theme-inline.css";
 
-/* Scan the shared design-system package. */
-@source "../../../packages/ui/src";
-
-/*
- * PHONARA Admin design tokens — mirrors apps/web Midnight Vault set.
- */
-@theme {
-  --color-bg: oklch(0.115 0.012 258);
-  --color-surface-inset: oklch(0.09 0.01 258);
-  --color-surface: oklch(0.155 0.014 258);
-  --color-surface-2: oklch(0.19 0.016 258);
-  --color-surface-elevated: oklch(0.225 0.018 258);
-  --color-surface-raised: oklch(0.265 0.018 258);
-  --color-surface-1: var(--color-surface);
-
-  --color-border-subtle: oklch(0.48 0.018 258 / 0.22);
-  --color-border: oklch(0.56 0.02 258 / 0.34);
-  --color-border-strong: oklch(0.68 0.022 258 / 0.5);
-  --color-divider: var(--color-border-strong);
-
-  --color-fg: oklch(0.965 0.006 258);
-  --color-muted: oklch(0.755 0.014 258);
-  --color-text: var(--color-fg);
-  --color-text-muted: var(--color-muted);
-  --color-text-subtle: oklch(0.61 0.014 258);
-
-  --color-trust: oklch(0.84 0.15 166);
-  --color-trust-ink: oklch(0.145 0.026 166);
-  --color-primary: var(--color-trust);
-  --color-primary-hover: oklch(0.89 0.135 166);
-  --color-primary-active: oklch(0.76 0.15 166);
-  --color-primary-luminous: oklch(0.93 0.105 166);
-  --color-primary-bright: var(--color-primary-luminous);
-  --color-primary-fg: var(--color-trust-ink);
-  --color-primary-foreground: var(--color-primary-fg);
-  --color-accent: var(--color-trust);
-  --color-accent-hover: var(--color-primary-hover);
-  --primary-glow: 0 0 28px oklch(0.84 0.15 166 / 0.28);
-  --primary-glow-strong: 0 0 44px oklch(0.89 0.135 166 / 0.38);
-
-  --color-risk: oklch(0.82 0.15 74);
-  --color-risk-fg: oklch(0.16 0.03 74);
-  --color-danger: oklch(0.56 0.19 24);
-  --color-danger-fg: oklch(0.98 0.006 24);
-  --color-positive: oklch(0.79 0.16 158);
-  --color-positive-fg: oklch(0.135 0.025 158);
-  --color-negative: oklch(0.6 0.19 24);
-  --color-negative-fg: oklch(0.98 0.006 24);
-  --color-info: oklch(0.78 0.115 226);
-  --color-info-fg: oklch(0.13 0.025 226);
-  --color-up: var(--color-positive);
-  --color-up-fg: var(--color-positive-fg);
-  --color-down: var(--color-negative);
-  --color-down-fg: var(--color-negative-fg);
-  --color-destructive: var(--color-danger);
-  --color-warning: var(--color-risk);
-
-  --money-hero-size: clamp(2.5rem, 6vw, 4rem);
-  --money-hero-weight: 600;
-  --money-default-weight: 500;
-  --money-muted-opacity: 0.72;
-
-  --focus-ring-color: oklch(0.89 0.135 166 / 0.9);
-  --focus-ring-width: 2px;
-  --focus-ring-offset: 2px;
-
-  --surface-highlight: inset 0 1px 0 oklch(1 0 0 / 0.055);
-  --surface-highlight-strong: inset 0 1px 0 oklch(1 0 0 / 0.09);
-  --surface-inset-shadow: inset 0 1px 3px oklch(0 0 0 / 0.5);
-  --elevation-1:
-    var(--surface-highlight),
-    0 1px 2px oklch(0 0 0 / 0.42),
-    0 10px 24px oklch(0 0 0 / 0.18);
-  --elevation-2:
-    var(--surface-highlight-strong),
-    0 12px 30px oklch(0 0 0 / 0.42),
-    0 1px 0 oklch(1 0 0 / 0.035);
-  --elevation-sheet:
-    var(--surface-highlight-strong),
-    0 28px 80px oklch(0 0 0 / 0.62),
-    0 0 0 1px oklch(1 0 0 / 0.04);
-  --overlay-scrim: oklch(0.06 0.012 258 / 0.72);
-  --glass-panel: oklch(0.19 0.016 258 / 0.78);
-  --glass-panel-strong: oklch(0.225 0.018 258 / 0.88);
-  --glass-blur: 18px;
-  --glass-saturation: 150%;
-  --ambient-mint-glow: radial-gradient(
-    circle at 50% 0%,
-    oklch(0.84 0.15 166 / 0.18),
-    transparent 42%
-  );
-  --ambient-edge-glow: radial-gradient(
-    circle at 100% 0%,
-    oklch(0.89 0.135 166 / 0.1),
-    transparent 36%
-  );
-  --noise-opacity: 0.025;
-
-  --motion-duration-instant: 80ms;
-  --motion-duration-1: 120ms;
-  --motion-duration-2: 200ms;
-  --motion-duration-3: 320ms;
-  --motion-duration-4: 480ms;
-  --motion-duration-anticipation: var(--motion-duration-1);
-  --motion-duration-reveal: var(--motion-duration-3);
-  --motion-duration-confirmation: var(--motion-duration-2);
-  --motion-duration-settlement: var(--motion-duration-4);
-  --motion-ease-linear: linear;
-  --motion-ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
-  --motion-ease-emphasized: cubic-bezier(0.2, 0.9, 0.1, 1);
-  --motion-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-  --motion-ease-press: cubic-bezier(0.32, 0, 0.67, 0);
-  --motion-stagger-step: 48ms;
-  --motion-press-scale: 0.98;
-
-  --font-sans: Pretendard, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-numeric: var(--font-sans);
-
-  --text-display: clamp(2.75rem, 6vw, 5rem);
-  --text-display--line-height: 0.92;
-  --text-display--letter-spacing: -0.06em;
-  --text-title: clamp(2rem, 4vw, 3.25rem);
-  --text-title--line-height: 0.98;
-  --text-title--letter-spacing: -0.05em;
-  --text-heading: clamp(1.5rem, 2.6vw, 2.125rem);
-  --text-heading--line-height: 1.08;
-  --text-heading--letter-spacing: -0.04em;
-  --text-subheading: 1.125rem;
-  --text-subheading--line-height: 1.32;
-  --text-subheading--letter-spacing: -0.025em;
-  --text-body: 0.9375rem;
-  --text-body--line-height: 1.55;
-  --text-body--letter-spacing: -0.012em;
-  --text-label: 0.8125rem;
-  --text-label--line-height: 1.25;
-  --text-label--letter-spacing: -0.005em;
-  --text-caption: 0.75rem;
-  --text-caption--line-height: 1.35;
-  --text-caption--letter-spacing: 0.01em;
-  --text-numeric: 0.9375rem;
-  --text-numeric--line-height: 1.2;
-  --text-numeric--letter-spacing: -0.018em;
-
-  --font-weight-display: 780;
-  --font-weight-title: 740;
-  --font-weight-heading: 700;
-  --font-weight-subheading: 640;
-  --font-weight-body: 480;
-  --font-weight-label: 650;
-  --font-weight-caption: 560;
-  --font-weight-numeric: 650;
-
-  --leading-display: var(--text-display--line-height);
-  --leading-title: var(--text-title--line-height);
-  --leading-heading: var(--text-heading--line-height);
-  --leading-body: var(--text-body--line-height);
-  --tracking-display: var(--text-display--letter-spacing);
-  --tracking-title: var(--text-title--letter-spacing);
-  --tracking-heading: var(--text-heading--letter-spacing);
-  --tracking-numeric: var(--text-numeric--letter-spacing);
-
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-
-  --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
-  --radius-xl: 20px;
-  --radius-2xl: 24px;
-  --radius-pill: 999px;
-
-  --density-compact-control: 2.25rem;
-  --density-compact-control-lg: 2.75rem;
-  --density-compact-row: 2.5rem;
-  --density-compact-gap: 0.625rem;
-  --density-compact-panel-padding: 1rem;
-  --density-comfortable-control: 2.75rem;
-  --density-comfortable-control-lg: 3.25rem;
-  --density-comfortable-row: 3.25rem;
-  --density-comfortable-gap: 1rem;
-  --density-comfortable-panel-padding: 1.25rem;
-  --touch-target-min: 44px;
+/* Pretendard — self-hosted (OFL). Variable first; static weights as legacy fallback. */
+@font-face {
+  font-family: "Pretendard Variable";
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
 }
 
-html {
-  background-color: var(--color-bg);
-  color: var(--color-fg);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  font-feature-settings: "tnum" 1, "ss01" 1;
-  font-variant-numeric: tabular-nums;
+@font-face {
+  font-family: Pretendard;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+3131-318E, U+AC00-D7A3;
+  src: url("/fonts/Pretendard-Regular.woff2") format("woff2");
 }
 
-body {
-  margin: 0;
-  min-height: 100dvh;
+@font-face {
+  font-family: Pretendard;
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+3131-318E, U+AC00-D7A3;
+  src: url("/fonts/Pretendard-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Pretendard;
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+3131-318E, U+AC00-D7A3;
+  src: url("/fonts/Pretendard-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Pretendard;
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+3131-318E, U+AC00-D7A3;
+  src: url("/fonts/Pretendard-Bold.woff2") format("woff2");
 }
