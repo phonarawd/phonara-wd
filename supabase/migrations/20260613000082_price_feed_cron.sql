@@ -15,7 +15,7 @@
 SET search_path = public, pg_temp;
 
 CREATE EXTENSION IF NOT EXISTS pg_cron;
-CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;
+CREATE EXTENSION IF NOT EXISTS pg_net;
 CREATE EXTENSION IF NOT EXISTS supabase_vault;
 
 SELECT cron.unschedule('phonara_price_feed')

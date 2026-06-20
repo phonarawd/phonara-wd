@@ -2,7 +2,6 @@ import { AppShell } from "@/components/shell/AppShell";
 import type { PriceDir } from "../../features/trading/format-oracle-price-display";
 import type { TradePageController } from "../../features/trading/use-trade-page-controller";
 import { TradeModeShell } from "@/components/trade/TradeModeShell";
-import { TradeEngineBody } from "../trading/trade-engine-body";
 
 export type ImportedTradePageProps = {
   priceDisplay?: string;
@@ -27,7 +26,6 @@ export function ImportedTradePage({
         priceDir={priceDir}
         engine={engine}
       />
-      {engine ? <TradeEngineBody controller={engine} /> : null}
     </AppShell>
   );
 }

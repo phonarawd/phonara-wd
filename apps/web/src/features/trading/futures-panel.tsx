@@ -19,7 +19,7 @@ const LazyTradingChart = lazy(() => import('../../components/trading-chart-loade
 
 export function FuturesPanel({
   markets, marketsLoading, prices, phonAvail, usdtAvail, walletLoading, isPriceStale, onTraded,
-  realtimeDisconnected,
+  realtimeDisconnected, selectedSymbol,
 }: {
   markets: FuturesMarket[];
   marketsLoading: boolean;
@@ -30,6 +30,7 @@ export function FuturesPanel({
   isPriceStale: (symbol: string | null | undefined) => boolean;
   onTraded: () => void;
   realtimeDisconnected: boolean;
+  selectedSymbol?: string | null;
 }) {
   const t = useT();
   const ticket = useFuturesOrderTicket({
@@ -37,6 +38,7 @@ export function FuturesPanel({
     prices,
     isPriceStale,
     realtimeDisconnected,
+    selectedSymbol,
   });
   const { openPosition, busy, error } = useFuturesActions(onTraded);
   const riskAck = useTradingRiskAcknowledgement();
@@ -106,7 +108,7 @@ export function FuturesPanel({
   }), [t]);
   const chartDisclosure = market?.symbol === 'PHON_USDT' || market?.base_label === 'PHON'
     ? t('trade.chart.internalReferenceDisclosure')
-    : undefined;
+    : t('trade.chart.displayFeedDisclosure');
   const orderBookLabels = useMemo(() => ({
     loading: t('trade.orderBook.loading'),
     emptyTitle: t('trade.orderBook.emptyTitle'),

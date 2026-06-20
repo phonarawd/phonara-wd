@@ -102,4 +102,46 @@ export function computeSpotSell(params: SpotSellParams): SpotSellResult {
   };
 }
 
+/** Market buy major: spend stake currency, receive base asset qty (fee on base). */
+export interface MajorSpotBuyParams extends SpotQuoteParams {
+  readonly stakeCurrency: 'USDT' | 'PHON';
+  readonly stakeAmount: string;
+  /** USDT per 1 PHON when stakeCurrency is PHON */
+  readonly phonUsdtPrice?: string;
+}
+
+export interface MajorSpotBuyResult {
+  readonly stakeCurrency: 'USDT' | 'PHON';
+  readonly stakeSpent: string;
+  readonly price: string;
+  readonly grossBase: string;
+  readonly feeBase: string;
+  readonly netBase: string;
+}
+
+export function computeMajorSpotBuy(params: MajorSpotBuyParams): MajorSpotBuyResult {
+  const price = dec(params.price, 'price');
+  const feeRate = dec(params.feeRate || DEFAULT_SPOT_FEE, 'feeRate');
+  const stake = dec(params.stakeAmount, 'stakeAmount');
+  assertPositive(stake, 'stakeAmount', 'INVALID_AMOUNT');
+  validate(price, feeRate);
+
+  const usdtSpent = params.stakeCurrency === 'USDT'
+    ? stake
+    : stake.mul(dec(params.phonUsdtPrice ?? '0', 'phonUsdtPrice'));
+
+  const grossBase = usdtSpent.div(price);
+  const feeBase = grossBase.mul(feeRate);
+  const netBase = grossBase.minus(feeBase);
+
+  return {
+    stakeCurrency: params.stakeCurrency,
+    stakeSpent: toFixed(stake, params.stakeCurrency),
+    price: price.toFixed(),
+    grossBase: grossBase.toFixed(6),
+    feeBase: toFixed(feeBase, 'USDT'),
+    netBase: netBase.toFixed(6),
+  };
+}
+
 export { DEFAULT_SPOT_FEE };

@@ -1,5 +1,4 @@
 import { AppShell } from "@/components/shell/AppShell";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GateBanner } from "@/components/ui/gate-banner";
 import { formatMoney } from "@phonara/ui";
@@ -36,10 +35,13 @@ export function ImportedStakingPage({
 }: ImportedStakingPageProps) {
   return (
     <AppShell density="app">
-      <div className="mx-auto grid max-w-4xl gap-4 p-4 md:p-6" data-testid="staking-page">
-        <header className="grid gap-1">
-          <h1 className="text-2xl font-medium">{t("wallet.staking.title")}</h1>
-          <p className="text-sm text-muted-foreground">{t("wallet.staking.subtitle")}</p>
+      <div
+        className="trade-terminal mx-auto grid w-full max-w-5xl gap-0 border border-border"
+        data-testid="staking-page"
+      >
+        <header className="trade-terminal__ticker grid gap-1 p-4">
+          <h1 className="text-lg font-semibold">{t("wallet.staking.title")}</h1>
+          <p className="text-xs text-muted-foreground">{t("wallet.staking.subtitle")}</p>
           {balanceDisplay ? (
             <p className="text-sm tabular-nums text-(--color-primary)" data-testid="staking-hero-balance">
               {balanceDisplay}
@@ -47,30 +49,28 @@ export function ImportedStakingPage({
           ) : null}
         </header>
         <GateBanner kind="kyc" />
-        <div className="grid gap-3 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">{t("wallet.staking.apr")}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-3xl font-medium text-(--color-primary) tabular-nums">
+        <div className="grid border-t border-border sm:grid-cols-2">
+          <div className="trade-terminal__panel border-r border-border p-4">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              {t("wallet.staking.apr")}
+            </div>
+            <div className="mt-1 text-3xl font-semibold tabular-nums text-(--color-up)">
               {aprDisplay}
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">{t("wallet.staking.rewards")}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-3xl font-medium tabular-nums">
-              {rewardsDisplay}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
+          <div className="trade-terminal__panel p-4">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              {t("wallet.staking.rewards")}
+            </div>
+            <div className="mt-1 text-3xl font-semibold tabular-nums">{rewardsDisplay}</div>
+          </div>
         </div>
         {errorMessage ? (
-          <p className="text-sm text-(--color-destructive)" role="alert">
+          <p className="border-t border-border px-4 py-2 text-sm text-(--color-destructive)" role="alert">
             {errorMessage}
           </p>
         ) : null}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 border-t border-border p-4">
           <Button
             disabled={busy || !canStake || !onRequestStake}
             data-testid="stake-submit"
@@ -88,31 +88,34 @@ export function ImportedStakingPage({
           </Button>
         </div>
         {activePositions.length > 0 ? (
-          <section className="grid gap-2" data-testid="staking-positions">
-            <h2 className="text-sm font-medium text-muted-foreground">{t("staking.myStaking")}</h2>
+          <section className="border-t border-border" data-testid="staking-positions">
+            <div className="trade-terminal__panel-header">{t("staking.myStaking")}</div>
             {activePositions.map((position) => (
-              <Card key={position.id}>
-                <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
-                  <div className="grid gap-1 text-sm">
-                    <span className="font-medium">{t(stakingTermLabelKey(position.term))}</span>
-                    <span className="tabular-nums text-muted-foreground">
-                      {formatMoney(position.principal, "PHON")} PHON
-                    </span>
-                  </div>
-                  <Button
-                    size="sm"
-                    disabled={busy || !onRequestClaim}
-                    data-testid="stake-claim"
-                    onClick={() => onRequestClaim?.(position.id)}
-                  >
-                    {t("staking.claimReward")}
-                  </Button>
-                </CardContent>
-              </Card>
+              <div
+                key={position.id}
+                className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 text-sm"
+              >
+                <div className="grid gap-1">
+                  <span className="font-medium">{t(stakingTermLabelKey(position.term))}</span>
+                  <span className="tabular-nums text-muted-foreground">
+                    {formatMoney(position.principal, "PHON")} PHON
+                  </span>
+                </div>
+                <Button
+                  size="sm"
+                  disabled={busy || !onRequestClaim}
+                  data-testid="stake-claim"
+                  onClick={() => onRequestClaim?.(position.id)}
+                >
+                  {t("staking.claimReward")}
+                </Button>
+              </div>
             ))}
           </section>
         ) : null}
-        <p className="text-xs text-muted-foreground">{t("wallet.staking.note")}</p>
+        <p className="border-t border-border px-4 py-3 text-xs text-muted-foreground">
+          {t("wallet.staking.note")}
+        </p>
       </div>
     </AppShell>
   );

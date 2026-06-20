@@ -19,6 +19,7 @@ import {
   formatOraclePriceDisplay,
   type PriceDir,
 } from './format-oracle-price-display';
+import { useExchangeDisplayPrice } from './display-chart/use-exchange-display-price';
 
 export type TradePageController = {
   t: ReturnType<typeof useT>;
@@ -45,12 +46,15 @@ export type TradePageController = {
   isPriceStale: (symbol: string | null | undefined) => boolean;
   realtimeDisconnected: boolean;
   priceDisplay: string;
+  oraclePriceDisplay: string;
   priceDir: PriceDir;
   futuresActions: ReturnType<typeof useFuturesActions>;
   spotActions: ReturnType<typeof useSpotActions>;
   tradeNotifications: ReturnType<typeof useTradeNotifications>;
   refreshMarkets: () => void;
   refreshFuturesPositions: () => void;
+  setSelectedFuturesSymbol: (symbol: string) => void;
+  setSelectedSpotSymbol: (symbol: string) => void;
 };
 
 export function useTradePageController(): TradePageController {
@@ -75,26 +79,51 @@ export function useTradePageController(): TradePageController {
   // `usePrices` owns oracle realtime; do not open a duplicate channel.
   const realtimeDisconnected = false;
 
+  const [selectedFuturesSymbol, setSelectedFuturesSymbol] = useState<string | null>(null);
+  const [selectedSpotSymbol, setSelectedSpotSymbol] = useState<string | null>(null);
+
   const selectedFuturesMarket = useMemo(
-    () => futuresMarkets[0] ?? null,
-    [futuresMarkets],
+    () =>
+      futuresMarkets.find((m) => m.symbol === selectedFuturesSymbol) ??
+      futuresMarkets.find((m) => m.symbol === 'BTCUSDT-SIM') ??
+      futuresMarkets[0] ??
+      null,
+    [futuresMarkets, selectedFuturesSymbol],
   );
   const selectedSpotMarket = useMemo(
-    () => spotMarkets.find((market) => market.symbol === 'PHON_USDT') ?? spotMarkets[0] ?? null,
-    [spotMarkets],
+    () =>
+      spotMarkets.find((m) => m.symbol === selectedSpotSymbol) ??
+      spotMarkets.find((m) => m.symbol === 'BTC_USDT') ??
+      spotMarkets.find((m) => m.symbol === 'PHON_USDT') ??
+      spotMarkets[0] ??
+      null,
+    [spotMarkets, selectedSpotSymbol],
   );
 
   const rawPrice = selectedFuturesMarket ? (prices[selectedFuturesMarket.symbol] ?? '0') : '0';
-  const priceDisplay = formatOraclePriceDisplay(rawPrice === '0' ? undefined : rawPrice, '63,548.7');
+  const oraclePriceDisplay = formatOraclePriceDisplay(
+    rawPrice === '0' ? undefined : rawPrice,
+    '63,548.7',
+  );
 
-  const prevPriceRef = useRef<string | null>(null);
-  const [priceDir, setPriceDir] = useState<PriceDir>('flat');
+  const {
+    exchangePriceDisplay,
+    exchangePriceDir,
+  } = useExchangeDisplayPrice(selectedFuturesMarket?.symbol ?? null);
+
+  const priceDisplay = exchangePriceDisplay ?? oraclePriceDisplay;
+
+  const prevOracleRef = useRef<string | null>(null);
+  const [oracleDir, setOracleDir] = useState<PriceDir>('flat');
 
   useEffect(() => {
+    if (exchangePriceDisplay) return;
     if (!rawPrice || rawPrice === '0') return;
-    setPriceDir(comparePriceDir(rawPrice, prevPriceRef.current));
-    prevPriceRef.current = rawPrice;
-  }, [rawPrice]);
+    setOracleDir(comparePriceDir(rawPrice, prevOracleRef.current));
+    prevOracleRef.current = rawPrice;
+  }, [exchangePriceDisplay, rawPrice]);
+
+  const priceDir = exchangePriceDisplay ? exchangePriceDir : oracleDir;
 
   const refreshMarkets = () => {
     void refetchPrices();
@@ -127,11 +156,14 @@ export function useTradePageController(): TradePageController {
     isPriceStale,
     realtimeDisconnected,
     priceDisplay,
+    oraclePriceDisplay,
     priceDir,
     futuresActions,
     spotActions,
     tradeNotifications,
     refreshMarkets,
     refreshFuturesPositions,
+    setSelectedFuturesSymbol,
+    setSelectedSpotSymbol,
   };
 }

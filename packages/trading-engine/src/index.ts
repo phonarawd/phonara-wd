@@ -45,8 +45,16 @@ export {
   type RewardEstimate,
 } from './staking';
 
-export const TRADING_MARKETS = ['PHONUSDT-PERP', 'BTCUSDT-SIM', 'ETHUSDT-SIM'] as const;
-export type TradingMarketSymbol = (typeof TRADING_MARKETS)[number];
+export {
+  TIER1_LAUNCH_ASSETS,
+  TRADING_MARKETS,
+  SPOT_MARKETS,
+  futuresSymbolForBase,
+  spotSymbolForBase,
+  type Tier1LaunchAsset,
+  type TradingMarketSymbol,
+  type SpotMarketSymbol,
+} from './markets';
 
-export const SPOT_MARKETS = ['PHON_USDT'] as const;
-export type SpotMarketSymbol = (typeof SPOT_MARKETS)[number];
+export { isStopTriggered } from './stop-trigger';
+export { computeFundingPayment } from './funding';

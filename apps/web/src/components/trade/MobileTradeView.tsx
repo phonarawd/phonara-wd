@@ -9,6 +9,7 @@ import type { PriceDir } from "@/features/trading/format-oracle-price-display";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GateBanner } from "@/components/ui/gate-banner";
 import { t } from "@/i18n";
+import { ExchangeLiveChart } from "@/features/trading/display-chart/exchange-live-chart";
 
 const BASE_PRICE_DISPLAY = "63,548.7";
 
@@ -38,15 +39,30 @@ export interface MobileTradeViewProps {
   priceDisplay?: string;
   priceDir?: PriceDir;
   readOnly?: boolean;
+  baseLabel?: string;
+  pairLabel?: string;
+  /** Platform oracle symbol for live exchange chart (display-only). */
+  marketSymbol?: string | null;
+  /** Formatted oracle settlement price for chart mark line. */
+  oraclePriceDisplay?: string;
+  /** Raw oracle price for chart settlement line. */
+  oraclePriceRaw?: string;
 }
 
 export function MobileTradeView({
   priceDisplay: priceDisplayProp,
   priceDir: priceDirProp,
   readOnly = false,
+  baseLabel = "BTC",
+  pairLabel = "BTC/USDT",
+  marketSymbol: marketSymbolProp,
+  oraclePriceDisplay: oraclePriceDisplayProp,
+  oraclePriceRaw,
 }: MobileTradeViewProps = {}) {
   const priceDisplay = priceDisplayProp ?? BASE_PRICE_DISPLAY;
   const dir = priceDirProp ?? "flat";
+  const chartSymbol = marketSymbolProp ?? `${baseLabel}USDT-SIM`;
+  const chartOracleDisplay = oraclePriceDisplayProp ?? priceDisplay;
 
   // Sheet UI state (display strings only — no calculations performed anywhere).
   const [sheet, setSheet] = useState<{
@@ -78,7 +94,8 @@ export function MobileTradeView({
         <div className="sticky top-0 z-20 -mx-3 px-3 backdrop-blur supports-[backdrop-filter]:bg-background/70 md:top-14">
           <div className="relative">
             <MobileMarketHeader
-              symbol="BTC/USDT"
+              symbol={pairLabel}
+              baseLabel={baseLabel}
               lastPriceDisplay={priceDisplay}
               changeDir={dir === "flat" ? "up" : dir}
               changePctDisplay="+2.35%"
@@ -95,23 +112,15 @@ export function MobileTradeView({
         </div>
         <TradeRulesSheet open={rulesOpen} onOpenChange={setRulesOpen} />
 
-        {/* Mini chart (decorative SVG placeholder, no random data on render) */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between py-2">
-            <CardTitle className="text-xs">차트</CardTitle>
-            <div className="flex gap-1 text-[10px] text-muted-foreground">
-              {["1m", "5m", "15m", "1h", "4h", "1D"].map((tf) => (
-                <button
-                  key={tf}
-                  className="min-h-8 rounded px-2 hover:bg-(--color-surface-elev) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-ring)"
-                >
-                  {tf}
-                </button>
-              ))}
-            </div>
-          </CardHeader>
           <CardContent className="p-0">
-            <MockMiniChart />
+            <ExchangeLiveChart
+              marketSymbol={chartSymbol}
+              oraclePrice={chartOracleDisplay}
+              oraclePriceRaw={oraclePriceRaw}
+              compact
+              heightClass="min-h-[220px]"
+            />
           </CardContent>
         </Card>
 
@@ -188,49 +197,5 @@ export function MobileTradeView({
         }}
       />
     </div>
-  );
-}
-
-/** Static (non-random) decorative chart so SSR === CSR. */
-function MockMiniChart() {
-  // Deterministic candle pattern — no Math.random.
-  const candles = [
-    [50, 56, 48, 54], [54, 58, 52, 53], [53, 55, 49, 50], [50, 52, 46, 47],
-    [47, 51, 45, 50], [50, 54, 49, 53], [53, 57, 52, 56], [56, 60, 54, 58],
-    [58, 62, 55, 56], [56, 59, 52, 53], [53, 55, 48, 49], [49, 53, 47, 52],
-    [52, 56, 51, 55], [55, 59, 53, 57], [57, 61, 55, 60], [60, 64, 58, 62],
-    [62, 65, 59, 60], [60, 62, 55, 56], [56, 58, 52, 53], [53, 57, 51, 55],
-    [55, 59, 53, 58], [58, 62, 56, 60], [60, 63, 57, 58], [58, 60, 54, 55],
-    [55, 58, 52, 56], [56, 60, 54, 59], [59, 63, 57, 61], [61, 64, 58, 59],
-    [59, 61, 55, 56], [56, 60, 54, 58],
-  ];
-  const W = 360, H = 220;
-  const cw = W / candles.length;
-  const all = candles.flat();
-  const max = Math.max(...all), min = Math.min(...all);
-  const y = (v: number) => ((max - v) / (max - min)) * (H - 20) + 10;
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="h-[220px] w-full" preserveAspectRatio="none">
-      {candles.map((raw, i) => {
-        const o = raw[0] ?? 0;
-        const h = raw[1] ?? 0;
-        const l = raw[2] ?? 0;
-        const c = raw[3] ?? 0;
-        const up = c >= o;
-        const x = i * cw + cw / 2;
-        const color = up ? "var(--color-up)" : "var(--color-down)";
-        return (
-          <g key={i} stroke={color} fill={color}>
-            <line x1={x} x2={x} y1={y(h)} y2={y(l)} strokeWidth="1" />
-            <rect
-              x={i * cw + 1}
-              y={y(Math.max(o, c))}
-              width={cw - 2}
-              height={Math.max(1, Math.abs(y(o) - y(c)))}
-            />
-          </g>
-        );
-      })}
-    </svg>
   );
 }

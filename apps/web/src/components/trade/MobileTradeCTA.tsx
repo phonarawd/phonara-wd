@@ -22,14 +22,14 @@ export function MobileTradeCTA({
   return (
     <div
       className={cn(
-        "pointer-events-none fixed inset-x-0 bottom-0 z-50 md:hidden",
+        "trade-terminal__cta-root pointer-events-none fixed inset-x-0 bottom-0 z-50 lg:hidden",
         className,
       )}
     >
       {/* fade above CTA for separation from content */}
       <div className="h-6 bg-gradient-to-t from-background to-transparent" />
       <div
-        className="pointer-events-auto border-t-2 border-border bg-background px-3 pt-3 shadow-[0_-8px_24px_rgb(0_0_0/0.4)]"
+        className="trade-terminal__cta-inner pointer-events-auto border-t-2 border-border bg-background px-3 pt-3 shadow-[0_-8px_24px_rgb(0_0_0/0.4)]"
         style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
       >
         <div className="grid grid-cols-2 gap-3">
@@ -37,7 +37,7 @@ export function MobileTradeCTA({
             type="button"
             onClick={buyDisabled ? undefined : onBuy}
             disabled={buyDisabled}
-            className="flex min-h-14 items-center justify-center rounded-xl bg-(--color-up) text-base font-bold tracking-tight text-black transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-ring) disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex min-h-14 items-center justify-center rounded-xl bg-(--color-up) text-base font-bold tracking-tight whitespace-nowrap text-black transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-ring) disabled:cursor-not-allowed disabled:opacity-60"
           >
             {t("trade.mobile.buyLong")}
           </button>
@@ -45,7 +45,7 @@ export function MobileTradeCTA({
             type="button"
             onClick={sellDisabled ? undefined : onSell}
             disabled={sellDisabled}
-            className="flex min-h-14 items-center justify-center rounded-xl bg-(--color-down) text-base font-bold tracking-tight text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-ring) disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex min-h-14 items-center justify-center rounded-xl bg-(--color-down) text-base font-bold tracking-tight whitespace-nowrap text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-ring) disabled:cursor-not-allowed disabled:opacity-60"
           >
             {t("trade.mobile.sellShort")}
           </button>

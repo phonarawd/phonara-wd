@@ -1,0 +1,48 @@
+/* Trade z-index stack — pointer-events contract (§O.2) */
+
+@layer components {
+  .trade-terminal {
+    --tt-z-ticker: 20;
+    --tt-z-chart-controls: 10;
+    --tt-z-cta: 50;
+    --tt-z-sheet: 50;
+    --tt-z-sheet-overlay: 49;
+  }
+
+  .trade-terminal__mobile-tab[data-active="true"] {
+    z-index: 1;
+  }
+
+  .trade-terminal__chart-overlay {
+    position: relative;
+    z-index: var(--tt-z-chart-controls);
+    pointer-events: auto;
+  }
+
+  .trade-terminal__chart-canvas {
+    position: relative;
+    z-index: 0;
+  }
+
+  .trade-terminal__cta-root {
+    z-index: var(--tt-z-cta);
+    pointer-events: none;
+  }
+
+  .trade-terminal__cta-inner {
+    pointer-events: auto;
+  }
+
+  .trade-terminal__sheet-overlay {
+    z-index: var(--tt-z-sheet-overlay);
+  }
+
+  .trade-terminal__sheet {
+    z-index: var(--tt-z-sheet);
+  }
+
+  .trade-terminal--sheet-open .trade-terminal__cta-root {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}

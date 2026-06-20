@@ -1,0 +1,134 @@
+/* CEX trade terminal density — seamless panels (Bybit/Binance hybrid) */
+
+@layer components {
+  .trade-terminal {
+    --tt-ob-width: 280px;
+    --tt-ticket-width: 320px;
+    --tt-spot-ticket-width: 300px;
+    --tt-dock-height: 240px;
+    --tt-font-xs: 10px;
+    --tt-font-sm: 11px;
+    --tt-font-base: 12px;
+    --tt-row-h: 22px;
+    --tt-header-h: 40px;
+    --tt-divider: 1px solid var(--color-border);
+    --tt-bg: var(--color-surface);
+    --tt-bg-elev: var(--color-surface-2);
+    --tt-price-hero: 1.25rem;
+    --tt-tab: 0.75rem;
+    --tt-label: 0.625rem;
+    --tt-ob-row-h: 1.375rem;
+    --tt-cta-h: 2.75rem;
+    --tt-cta-font: 0.875rem;
+    font-size: var(--tt-font-sm);
+    overflow-x: hidden;
+  }
+
+  @media (max-width: 1023px) {
+    .trade-terminal {
+      --tt-price-hero: 1.375rem;
+      --tt-tab: 0.8125rem;
+      --tt-label: 0.6875rem;
+      --tt-ob-row-h: 2.75rem;
+      --tt-cta-h: 3.5rem;
+      --tt-cta-font: 1rem;
+    }
+  }
+
+  .trade-terminal__panel {
+    background: var(--tt-bg);
+    border: var(--tt-divider);
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .trade-terminal__panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: var(--tt-header-h);
+    padding: 0 12px;
+    border-bottom: var(--tt-divider);
+    font-size: var(--tt-font-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-muted);
+  }
+
+  /* Desktop-only grids — never apply on mobile (unlayered display:grid broke Tailwind hidden). */
+  @media (min-width: 1024px) {
+    .trade-terminal__grid-futures {
+      display: grid;
+      grid-template-columns: var(--tt-ob-width) minmax(480px, 1fr) var(--tt-ticket-width);
+      gap: 0;
+      min-height: 420px;
+    }
+
+    .trade-terminal__grid-spot {
+      display: grid;
+      grid-template-columns: 260px minmax(400px, 1fr) var(--tt-spot-ticket-width);
+      gap: 0;
+      min-height: 400px;
+    }
+  }
+
+  .trade-terminal__dock {
+    min-height: var(--tt-dock-height);
+    max-height: 320px;
+    border-top: var(--tt-divider);
+  }
+
+  .trade-terminal__ob-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: var(--tt-ob-row-h);
+    padding: 0 12px;
+    align-items: center;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .trade-terminal__ob-row:hover {
+    background: color-mix(in srgb, var(--color-surface-2) 60%, transparent);
+  }
+
+  .trade-terminal__ticker {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 12px;
+    border-bottom: var(--tt-divider);
+    background: var(--tt-bg);
+    font-size: var(--tt-font-sm);
+  }
+
+  .trade-terminal__mobile-tab {
+    min-height: 40px;
+    font-size: var(--tt-tab);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .trade-terminal__mobile-surface {
+    display: block;
+  }
+
+  @media (min-width: 1024px) {
+    .trade-terminal__mobile-surface {
+      display: none !important;
+    }
+  }
+
+  .trade-terminal__desktop-surface {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .trade-terminal__desktop-surface {
+      display: grid;
+    }
+  }
+}

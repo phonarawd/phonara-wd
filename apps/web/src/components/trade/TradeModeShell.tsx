@@ -3,9 +3,8 @@ import { t } from "@/i18n";
 import { cn } from "@/lib/utils";
 import type { PriceDir } from "@/features/trading/format-oracle-price-display";
 import type { TradePageController } from "@/features/trading/use-trade-page-controller";
-import { TradeSpotPanel } from "./panels/TradeSpotPanel";
-import { TradeFuturesPanel } from "./panels/TradeFuturesPanel";
-import { TradeStakingPanel } from "./panels/TradeStakingPanel";
+import { MarketDataStatus } from "@/features/trading/market-data-status";
+import { TradeTerminalShell } from "@/components/trade/terminal/TradeTerminalShell";
 
 /**
  * L1-17 T17-1 — TradeModeShell
@@ -64,11 +63,11 @@ export function TradeModeShell({
   };
 
   return (
-    <div data-testid="trade-mode-shell" className="grid gap-3">
+    <div data-testid="trade-mode-shell" className="grid gap-2 lg:gap-3">
       <div
         role="tablist"
         aria-label={t("trade.mode.aria")}
-        className="sticky top-0 z-10 flex gap-1 border-b border-border bg-background/80 px-3 py-2 backdrop-blur md:top-14"
+        className="sticky top-0 z-10 flex gap-1 border-b border-border bg-background/80 px-2 py-1.5 backdrop-blur sm:px-3 sm:py-2 md:top-14"
       >
         {MODES.map((m) => {
           const active = mode === m.id;
@@ -94,11 +93,55 @@ export function TradeModeShell({
         })}
       </div>
 
-      {mode === "spot" && !engine && <TradeSpotPanel readOnly />}
-      {mode === "futures" && !engine && (
-        <TradeFuturesPanel priceDisplay={priceDisplay} priceDir={priceDir} readOnly />
+      {engine ? (
+        <>
+          <MarketDataStatus
+            pricesError={engine.pricesError}
+            positionsError={engine.positionsError}
+            marketsError={engine.marketsError}
+            pricesFetching={engine.pricesFetching}
+            positionsFetching={engine.positionsFetching}
+            pricesUpdatedAt={engine.pricesUpdatedAt}
+            positionsUpdatedAt={engine.positionsUpdatedAt}
+            oracleStale={engine.oracleStale}
+            onRetry={engine.refreshMarkets}
+          />
+          {mode === "spot" && (
+            <TradeTerminalShell
+              mode="spot"
+              engine={engine}
+              readOnly={!engine}
+            />
+          )}
+          {mode === "futures" && (
+            <TradeTerminalShell
+              mode="futures"
+              engine={engine}
+              priceDisplay={priceDisplay}
+              priceDir={priceDir}
+              readOnly={!engine}
+            />
+          )}
+          {mode === "staking" && (
+            <TradeTerminalShell mode="staking" engine={engine} readOnly={!engine} />
+          )}
+        </>
+      ) : (
+        <>
+          {mode === "spot" && (
+            <TradeTerminalShell mode="spot" readOnly />
+          )}
+          {mode === "futures" && (
+            <TradeTerminalShell
+              mode="futures"
+              priceDisplay={priceDisplay}
+              priceDir={priceDir}
+              readOnly
+            />
+          )}
+          {mode === "staking" && <TradeTerminalShell mode="staking" readOnly />}
+        </>
       )}
-      {mode === "staking" && <TradeStakingPanel readOnly={!engine} />}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { ChevronDown, Star } from "lucide-react";
 
 export interface MobileMarketHeaderProps {
   symbol: string;
+  baseLabel?: string;
   lastPriceDisplay: string;
   changePctDisplay: string;
   changeDir: "up" | "down" | "flat";
@@ -15,6 +16,7 @@ export interface MobileMarketHeaderProps {
 
 export function MobileMarketHeader({
   symbol,
+  baseLabel = "BTC",
   lastPriceDisplay,
   changePctDisplay,
   changeDir,
@@ -38,7 +40,7 @@ export function MobileMarketHeader({
           className="flex min-h-12 items-center gap-2 rounded-md px-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-ring)"
         >
           <span className="rounded bg-(--color-surface-elev) px-2 py-0.5 text-[11px] font-medium text-[#F7931A]">
-            BTC
+            {baseLabel}
           </span>
           <span className="text-sm font-semibold">{symbol}</span>
           <span className="text-[10px] text-muted-foreground">무기한</span>

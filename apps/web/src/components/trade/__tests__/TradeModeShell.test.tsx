@@ -8,9 +8,18 @@ vi.mock("@tanstack/react-router", () => ({
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
 
-// Heavy 12-D mobile view pulls many sub-components; stub for unit speed.
-vi.mock("@/components/trade/MobileTradeView", () => ({
-  MobileTradeView: () => <div data-testid="mock-mobile-trade-view" />,
+vi.mock("@/features/trading/display-chart/exchange-live-chart", () => ({
+  ExchangeLiveChart: () => <div data-testid="mock-exchange-chart" />,
+}));
+
+vi.mock("@/components/trade/terminal/staking/StakingDiscoverGrid", () => ({
+  StakingDiscoverGrid: ({ readOnly }: { readOnly?: boolean }) => (
+    <div data-testid="trade-panel-staking">
+      {readOnly ? (
+        <span data-testid="trade-staking-display-only-label">display-only</span>
+      ) : null}
+    </div>
+  ),
 }));
 
 describe("L1-17 TradeModeShell", () => {

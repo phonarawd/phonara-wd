@@ -22,10 +22,11 @@ export function TradeEngineBody({ controller }: TradeEngineBodyProps) {
     prices,
     futuresMarkets,
     futuresMarketsLoading,
+    selectedFuturesMarket,
     selectedSpotMarket,
+    futuresPositions,
     isPriceStale,
     realtimeDisconnected,
-    futuresPositions,
     refreshFuturesPositions,
     tradeNotifications,
     pricesError,
@@ -91,6 +92,7 @@ export function TradeEngineBody({ controller }: TradeEngineBodyProps) {
         walletLoading={walletLoading}
         isPriceStale={isPriceStale}
         realtimeDisconnected={realtimeDisconnected}
+        selectedSymbol={selectedFuturesMarket?.symbol ?? null}
         onTraded={refreshFuturesPositions}
       />
 
