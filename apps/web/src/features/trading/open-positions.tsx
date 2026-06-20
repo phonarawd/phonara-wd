@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { useFuturesActions, type FuturesPosition } from '../../hooks/use-trading';
 import { useConfirmSnapshot } from '../../hooks/use-confirm-snapshot';
 import { computePnl } from '@phonara/trading-engine';
-import { toDecimal } from '@phonara/money';
+import { formatLiquidationDistance } from '../../lib/format-liquidation-distance';
 import {
   formatMoney,
   ConfirmDialog,
@@ -68,21 +68,6 @@ export function OpenPositions({
     await closePosition(positionId);
   }
 
-  function liquidationDistance(mark: string, liquidationPrice: string): string | null {
-    try {
-      const markDecimal = toDecimal(mark);
-      if (!markDecimal.greaterThan(0)) return null;
-      const distance = markDecimal
-        .minus(toDecimal(liquidationPrice))
-        .abs()
-        .div(markDecimal)
-        .mul(100);
-      return `${distance.toFixed(2)}%`;
-    } catch {
-      return null;
-    }
-  }
-
   return (
     <section className="app-section px-5 pb-6">
       <h2 className="section-title">{t('trade.myPositions')}</h2>
@@ -102,7 +87,7 @@ export function OpenPositions({
           : realtimeDisconnected
             ? realtimeReason
             : undefined;
-        const liqDistance = liquidationDistance(mark, pos.liquidation_price);
+        const liqDistance = formatLiquidationDistance(mark, pos.liquidation_price);
         return (
           <Card key={pos.id} className="mb-3 flex flex-col gap-2.5 p-4">
             <div className="flex items-center gap-2">

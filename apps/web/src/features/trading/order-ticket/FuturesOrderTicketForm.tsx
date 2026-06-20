@@ -1,5 +1,7 @@
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { t } from "@/i18n";
+import { toDecimal } from "@phonara/money";
 import type { FuturesTerminalWire } from "@/components/trade/terminal/useFuturesTerminalWire";
 import { MarginModeSegment } from "./MarginModeSegment";
 import { OrderTypeTabs } from "./OrderTypeTabs";
@@ -42,6 +44,7 @@ export function FuturesOrderTicketForm({
     slPrice,
     setSlPrice,
     preview,
+    avail,
     busy,
     error,
     walletLoading,
@@ -65,6 +68,16 @@ export function FuturesOrderTicketForm({
   } = wire;
 
   const compact = variant === "sheet";
+
+  const insufficientAvail = useMemo(() => {
+    if (!preview) return false;
+    try {
+      const required = toDecimal(margin).plus(toDecimal(preview.openFee));
+      return toDecimal(avail).lessThan(required);
+    } catch {
+      return false;
+    }
+  }, [avail, margin, preview]);
 
   return (
     <div className={cn("grid gap-2", compact ? "text-sm" : "text-xs", className)}>
@@ -215,6 +228,10 @@ export function FuturesOrderTicketForm({
         <p className="text-[11px] text-(--color-down)">{t(error ?? marginModeError!)}</p>
       ) : null}
 
+      {insufficientAvail && preview ? (
+        <p className="text-[11px] text-(--color-down)">{t("error.INSUFFICIENT_BALANCE")}</p>
+      ) : null}
+
       {onSubmit ? (
         <button
           type="button"
@@ -226,7 +243,8 @@ export function FuturesOrderTicketForm({
             (orderType === "market" && !preview) ||
             !orderPricesReady ||
             tradeBlocked ||
-            (isHighLeverage && !riskAck.acknowledged)
+            (isHighLeverage && !riskAck.acknowledged) ||
+            insufficientAvail
           }
           onClick={onSubmit}
           className={cn(

@@ -760,6 +760,7 @@ export const koMessages = {
   'trade.confirm.review': '주문을 확인하세요',
   'trade.confirm.priceChanged': '가격이 변경되었습니다 — 다시 확인하세요',
   'trade.confirm.staleBlocked': '가격이 지연 중입니다 — 연결 안정 후 다시 시도하세요',
+  'trade.confirm.liqAfterFill': '체결가 기준 — 체결 후 확정',
   'trade.orderBook.title': '오더북',
   'trade.orderBook.referenceBadge': '참고',
   'trade.orderBook.disclosure':
@@ -868,6 +869,7 @@ export const koMessages = {
   // ── Confirm dialog (high-risk actions) ───────────────────────────────────────
   'confirm.futuresOpen.title': '포지션 개설 확인',
   'confirm.futuresClose.title': '포지션 종료 확인',
+  'confirm.futuresPartialClose.title': '50% 포지션 종료 확인',
   'confirm.spotBuy.title': 'PHON 매수 확인',
   'confirm.spotSell.title': 'PHON 매도 확인',
   'confirm.stake.title': '스테이킹 확인',
@@ -885,6 +887,8 @@ export const koMessages = {
   'confirm.row.term': '기간',
   'confirm.row.amount': '수량',
   'confirm.row.markPrice': '기준가',
+  'confirm.row.closeRatio': '종료 비율',
+  'confirm.row.estRealizedPnl': '예상 실현 손익',
 
   // ── Ledger ───────────────────────────────────────────────────────────────────
   'ledger.title': '원장 내역',
@@ -2084,6 +2088,7 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'trade.confirm.review': 'Review your order',
   'trade.confirm.priceChanged': 'Price changed — review again',
   'trade.confirm.staleBlocked': 'Price is delayed — wait for a stable feed before confirming',
+  'trade.confirm.liqAfterFill': 'Based on fill price — confirmed after fill',
   'trade.orderBook.title': 'Order book',
   'trade.orderBook.referenceBadge': 'Reference',
   'trade.orderBook.disclosure':
@@ -2190,6 +2195,7 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
 
   'confirm.futuresOpen.title': 'Confirm position',
   'confirm.futuresClose.title': 'Confirm close',
+  'confirm.futuresPartialClose.title': 'Confirm 50% close',
   'confirm.spotBuy.title': 'Confirm PHON buy',
   'confirm.spotSell.title': 'Confirm PHON sell',
   'confirm.stake.title': 'Confirm staking',
@@ -2207,6 +2213,8 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'confirm.row.term': 'Term',
   'confirm.row.amount': 'Amount',
   'confirm.row.markPrice': 'Mark price',
+  'confirm.row.closeRatio': 'Close ratio',
+  'confirm.row.estRealizedPnl': 'Est. realized PnL',
 
   'ledger.title': 'Ledger history',
   'ledger.empty': 'No transactions yet.',

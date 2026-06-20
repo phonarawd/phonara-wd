@@ -17,6 +17,64 @@ export function FuturesOrderTicket({ wire }: { wire: FuturesTerminalWire }) {
   );
 }
 
+function buildOpenConfirmRows(wire: FuturesTerminalWire) {
+  const {
+    side,
+    market,
+    price,
+    margin,
+    marginCurrency,
+    leverage,
+    preview,
+    orderType,
+  } = wire;
+
+  const baseRows = [
+    {
+      label: t("confirm.row.market"),
+      value: market?.display_name ?? market?.symbol ?? "",
+    },
+    {
+      label: t("confirm.row.side"),
+      value: t(side === "long" ? "trade.long" : "trade.short"),
+    },
+    { label: t("confirm.row.leverage"), value: `${leverage}x` },
+    { label: t("confirm.row.markPrice"), value: formatMoney(price, "USDT") },
+    {
+      label: t("trade.margin"),
+      value: `${formatMoney(margin, marginCurrency)} ${marginCurrency}`,
+    },
+  ];
+
+  if (orderType === "market" && preview) {
+    return [
+      ...baseRows,
+      {
+        label: t("trade.liquidationPrice"),
+        value: formatMoney(preview.liquidationPrice, "USDT"),
+        tone: "danger" as const,
+      },
+      {
+        label: t("trade.openFee"),
+        value: `${formatMoney(preview.openFee, marginCurrency)} ${marginCurrency}`,
+      },
+    ];
+  }
+
+  if (orderType !== "market") {
+    return [
+      ...baseRows,
+      {
+        label: t("trade.liquidationPrice"),
+        value: t("trade.confirm.liqAfterFill"),
+        wrap: true,
+      },
+    ];
+  }
+
+  return baseRows;
+}
+
 export function FuturesConfirmDialog({ wire }: { wire: FuturesTerminalWire }) {
   const {
     confirmOpen,
@@ -26,12 +84,6 @@ export function FuturesConfirmDialog({ wire }: { wire: FuturesTerminalWire }) {
     canConfirm,
     busy,
     side,
-    market,
-    price,
-    margin,
-    marginCurrency,
-    leverage,
-    preview,
     submitOpen,
   } = wire;
 
@@ -43,26 +95,7 @@ export function FuturesConfirmDialog({ wire }: { wire: FuturesTerminalWire }) {
       notice={confirmNotice}
       noticeTone={tradeBlocked ? "danger" : "warning"}
       tone={side === "long" ? "primary" : "danger"}
-      rows={
-        preview
-          ? [
-              {
-                label: t("confirm.row.market"),
-                value: market?.display_name ?? market?.symbol ?? "",
-              },
-              {
-                label: t("confirm.row.side"),
-                value: t(side === "long" ? "trade.long" : "trade.short"),
-              },
-              { label: t("confirm.row.leverage"), value: `${leverage}x` },
-              { label: t("confirm.row.markPrice"), value: formatMoney(price, "USDT") },
-              {
-                label: t("trade.margin"),
-                value: `${formatMoney(margin, marginCurrency)} ${marginCurrency}`,
-              },
-            ]
-          : []
-      }
+      rows={confirmOpen ? buildOpenConfirmRows(wire) : []}
       confirmLabel={t(side === "long" ? "trade.openLongPosition" : "trade.openShortPosition")}
       cancelLabel={t("common.cancel")}
       processingLabel={t("common.processing")}
