@@ -42,6 +42,11 @@ describe("HomeTodayPanel (L1-16c stake-lobby)", () => {
     expect(container.querySelectorAll("[data-primary-cta]").length).toBe(1);
   });
 
+  it("renders GoldenEarthHero in fold0", () => {
+    const { container } = render(<HomeTodayPanel />);
+    expect(container.querySelector('[data-testid="golden-earth-hero"]')).toBeTruthy();
+  });
+
   it("does NOT render the full TierProgressPanel (chip only)", () => {
     const { container } = render(<HomeTodayPanel />);
     expect(container.querySelector('[data-testid="fomo-tier-panel"]')).toBeNull();

@@ -50,13 +50,13 @@ Current slice:
 - **C-0 Wiring:** ✅ i18n/typecheck/vitest green · Earn 광고시청·설문 미션 **제거**.
 - **C-1 L2 E2E:** ✅ **58/58 skip 0** · F1 dice · F2 plinko · F3 `/terms` · evidence `6840d0e` `7646133`.
 - **C-2:** ✅ **개별 gate green** (vitest 931 · migrations 133 · mirror 309 · guard 118/0 gaps · sql 66/66 · E2E 60/60) · **통합 `check:full` 1-shot defer** (저사양) · closeout `e800bd5`.
-- **ACTIVE HEAD C-3:** L1-20 K1 황금 지구 + L1-21 K3 생존 신고 — Cursor LOCK draft → APPROVE → EXECUTE.
+- **ACTIVE HEAD C-3:** L1-20 K1 황금 지구 + L1-21 K3 생존 신고 — L1-20 **EXECUTE §GREEN** · L1-21 LOCK next.
 - **Earn 제품 정책:** 광고 시청·설문조사 리워드 **금지** (앱테크 대체: 출석·미션·룰렛·추천·데일리 퀴즈).
 - `rc-smoke`: read-only production smoke green; authenticated production flow smoke blocked until operator account exists.
 
 Next slices:
 
-- **C-3** L1-20/21 presentation (LOCK draft pending).
+- **C-3** L1-20/21 presentation — L1-20 **EXECUTE complete** · [`LOVABLE_WORLD_CRUSH_L1-20_GOLDEN_EARTH_LOCK.md`](LOVABLE_WORLD_CRUSH_L1-20_GOLDEN_EARTH_LOCK.md) APPROVED D3=50.
 - Launch operations loop.
 
 ## Operator Backlog (post-C-3)
@@ -194,7 +194,7 @@ Next slices:
 | **L1-16** | Home tab IA · G-WC1 | **✅ §GREEN** · 529/533 · 2552 |
 | **L1-17** | Trade Spot \| Futures \| Staking · G-WC2 | **✅ §GREEN** |
 | **L1-18** | FOMO motion V2 · G-WC3 | **✅ §GREEN** |
-| **L1-20** | K1 · 황금 지구 | **C-3 HEAD · LOCK draft pending** |
+| **L1-20** | K1 · 황금 지구 | **✅ §GREEN** · APPROVED D3=50 · [`LOVABLE_WORLD_CRUSH_L1-20_GOLDEN_EARTH_LOCK.md`](LOVABLE_WORLD_CRUSH_L1-20_GOLDEN_EARTH_LOCK.md) |
 | **L1-21** | K3 · 생존 신고 | **C-3 · operator 확정** |
 
 **ZIP 게이트:** defer · operator 「ZIP 발행 GO」 명시 전 0.

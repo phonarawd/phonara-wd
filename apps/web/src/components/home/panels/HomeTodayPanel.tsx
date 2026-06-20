@@ -1,8 +1,7 @@
-﻿import { Link } from "@/shims/react-router-dom";
-import { ArrowRight } from "lucide-react";
-import { t } from "@/i18n";
+﻿import { t } from "@/i18n";
 import { LiveWinMarquee } from "../LiveWinMarquee";
 import { HomeCompactWalletStrip } from "../HomeCompactWalletStrip";
+import { GoldenEarthHero } from "../golden-earth";
 import { HomeEarnPowerRow } from "../HomeEarnPowerRow";
 import { HomeCategoryRow, type CategoryCard } from "../HomeCategoryRow";
 import { TierProgressChip } from "../TierProgressChip";
@@ -54,36 +53,7 @@ export function HomeTodayPanel() {
       {/* Compact wallet strip */}
       <HomeCompactWalletStrip />
 
-      {/* Hero band ??single primary CTA */}
-      <section
-        className="relative isolate overflow-hidden rounded-xl border border-border p-4 md:p-5"
-        style={{
-          backgroundImage:
-            "radial-gradient(60% 80% at 15% 0%, color-mix(in oklab, var(--primary) 30%, transparent), transparent 60%), radial-gradient(50% 60% at 100% 20%, color-mix(in oklab, var(--violet) 22%, transparent), transparent 60%)",
-        }}
-      >
-        <div className="grid items-center gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
-          <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-(--color-primary)">
-              {t("home.hero.eyebrow")}
-            </p>
-            <h1 className="mt-1 whitespace-pre-line text-lg font-bold leading-tight md:text-2xl">
-              {t("home.hero.headline")}
-            </h1>
-            <p className="mt-1 max-w-md text-xs text-muted-foreground md:text-sm">
-              {t("home.hero.subline")}
-            </p>
-          </div>
-          <Link
-            to="/earn/missions"
-            data-primary-cta="home-today-hero"
-            className="inline-flex h-11 w-full shrink-0 items-center justify-center gap-1.5 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground shadow-[var(--shadow-glow-cta)] transition active:scale-[0.98] md:w-auto"
-            style={{ backgroundImage: "var(--gradient-cta)" }}
-          >
-            {t("home.hero.cta")} <ArrowRight className="size-4 shrink-0" aria-hidden />
-          </Link>
-        </div>
-      </section>
+      <GoldenEarthHero />
 
       {/* Earn power row ??stake-style horizontal scroll */}
       <HomeEarnPowerRow />
