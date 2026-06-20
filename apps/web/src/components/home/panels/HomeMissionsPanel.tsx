@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { t } from "@/i18n";
-import { HomeCheckInMirrorCard } from "../HomeCheckInMirrorCard";
+import { SurvivalCheckinCard } from "../survival";
 import { LimitedDropCard } from "../LimitedDropCard";
 import { HomeMissionTeaserCard } from "../HomeMissionTeaserCard";
 import { StreakBonusCallout } from "@/components/fomo/StreakBonusCallout";
@@ -39,7 +39,7 @@ export function HomeMissionsPanel() {
       </div>
       {sub === "checkin" && (
         <div className="flex flex-col gap-3">
-          <HomeCheckInMirrorCard />
+          <SurvivalCheckinCard />
           <StreakBonusCallout />
         </div>
       )}
