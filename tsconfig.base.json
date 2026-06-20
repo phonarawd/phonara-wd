@@ -28,7 +28,8 @@
       "@phonara/sports-ingest": ["./packages/sports-ingest/src"],
       "@phonara/i18n": ["./packages/i18n/src"],
       "@phonara/i18n/react": ["./packages/i18n/src/react"],
-      "@phonara/ui": ["./packages/ui/src"]
+      "@phonara/ui": ["./packages/ui/src"],
+      "@phonara/market-display": ["./packages/market-display/src"]
     }
   }
 }

@@ -111,7 +111,6 @@ export function OperationsDeskHub() {
     setKillFilters,
     confirmKillSwitch,
     confirmBulkKillSwitch,
-    bulkSetKillSwitch,
     opsAudit,
     configReady,
   } = useAdminOperations();

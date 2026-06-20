@@ -10,6 +10,7 @@
     { "path": "./packages/sports-ingest" },
     { "path": "./packages/i18n" },
     { "path": "./packages/ui" },
+    { "path": "./packages/market-display" },
     { "path": "./apps/web" },
     { "path": "./apps/admin" }
   ]

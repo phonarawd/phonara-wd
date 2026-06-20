@@ -13,7 +13,6 @@ import type {
   KycTier,
   RiskFilters,
   RiskFlagType,
-  RiskStatus,
   StrCaseType,
   StrFilters,
   StrStatus,
@@ -354,7 +353,7 @@ export function useAdminCompliance() {
     [invalidate],
   );
 
-  const noopMutation = useCallback(async (_id: string, _reason: string) => false, []);
+  const noopMutation = useCallback(async () => false, []);
 
   return {
     kyc,

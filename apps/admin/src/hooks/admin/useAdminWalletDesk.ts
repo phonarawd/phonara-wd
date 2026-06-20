@@ -11,7 +11,6 @@ import type {
   DepositMethod,
   DepositStatus,
   WithdrawFilters,
-  WithdrawMethod,
   WithdrawStatus,
 } from './useAdminWalletDeskMock';
 import { callRpc } from '../../lib/rpc';
@@ -284,7 +283,11 @@ export function useAdminWalletDesk() {
     rejectWithdraw,
     markSent,
     matchDeposit,
-    flagDeposit: (_id: string, _reason: string) => undefined,
+    flagDeposit: (id: string, reason: string) => {
+      void id;
+      void reason;
+      return undefined;
+    },
     resetForTest: () => {
       setWithdrawFilters({ search: '', status: [], method: [] });
       setDepositFilters({ search: '', status: [], method: [] });

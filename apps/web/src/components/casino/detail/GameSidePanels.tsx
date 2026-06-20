@@ -10,7 +10,7 @@ import { getGameMeta, type CasinoGameId } from "@/data/casino-game-meta";
 import { formatFeedAmount } from "@/data/casino-feed";
 import { t } from "@/i18n";
 
-/* ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€ Live Win Theater ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€ */
+/* Live Win Theater */
 
 export const LiveWinTheater = memo(function LiveWinTheater({
   gameId,
@@ -55,7 +55,7 @@ export const LiveWinTheater = memo(function LiveWinTheater({
   );
 });
 
-/* ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€ Hot Multipliers ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€ */
+/* Hot Multipliers */
 
 export const HotMultiplierStrip = memo(function HotMultiplierStrip({
   gameId,
@@ -91,7 +91,8 @@ export const HotMultiplierStrip = memo(function HotMultiplierStrip({
                     : "text-muted-foreground"
               }`}
             >
-              Ã—{m.value.toFixed(m.value >= 10 ? 1 : 2)}
+              {"\u00D7"}
+              {m.value.toFixed(m.value >= 10 ? 1 : 2)}
             </div>
             <div className="truncate text-[10px] text-muted-foreground">
               {m.user}
@@ -103,7 +104,7 @@ export const HotMultiplierStrip = memo(function HotMultiplierStrip({
   );
 });
 
-/* ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€ Top Win 24h ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€ */
+/* Top Win 24h */
 
 export const TopWin24hCard = memo(function TopWin24hCard({
   gameId,
@@ -135,7 +136,8 @@ export const TopWin24hCard = memo(function TopWin24hCard({
         <div className="flex items-center justify-between text-[12px]">
           <span className="font-mono text-muted-foreground">{w.user}</span>
           <span className="font-mono font-semibold tabular-nums text-emerald-500">
-            Ã—{w.multiplier.toFixed(2)}
+            {"\u00D7"}
+            {w.multiplier.toFixed(2)}
           </span>
         </div>
       </div>
@@ -143,7 +145,7 @@ export const TopWin24hCard = memo(function TopWin24hCard({
   );
 });
 
-/* ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€ How To Play ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€ */
+/* How To Play */
 
 export const HowToPlayCard = memo(function HowToPlayCard({
   gameId,
@@ -173,7 +175,7 @@ export const HowToPlayCard = memo(function HowToPlayCard({
   );
 });
 
-/* ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€ Fairness ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€ */
+/* Fairness */
 
 export const FairnessCard = memo(function FairnessCard() {
   return (
@@ -197,7 +199,7 @@ export const FairnessCard = memo(function FairnessCard() {
   );
 });
 
-/* ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€ Paired Games Rail ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€ */
+/* Paired Games Rail */
 
 export const PairedGamesRail = memo(function PairedGamesRail({
   gameId,

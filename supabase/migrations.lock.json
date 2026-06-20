@@ -114,6 +114,19 @@
     "20260616000110_wave_s15_sportsbook_world_markets.sql": "9206cb2401e3fdad1f8ff9a0678debb96202effa461259395be515897fe009e1",
     "20260616000111_wave_s16_s22_sportsbook_world_engine.sql": "7e69fcc6acb49022d84a1c4e766775519f4f35842bd2446cd9facd6ba8d6c25b",
     "20260617000120_game_code_enum_deepshaft_momentum.sql": "35399185a61cf1c9bcb474f038eb55ecf9ece206df5c5df62f87d4db5bdd24b7",
-    "20260617000121_deepshaft_momentum_engine.sql": "f9cf6ea9cbe87b3c552c6db0ed32304ad8a2b84fa98c28f98323df1721509e46"
+    "20260617000121_deepshaft_momentum_engine.sql": "f9cf6ea9cbe87b3c552c6db0ed32304ad8a2b84fa98c28f98323df1721509e46",
+    "20260619000122_advisor_security_sportsbook_wave_cleanup.sql": "d09c8ca30fcaa2df55eb3496504d8f82ed8aab3e5f8135e95f18a5d60ad16f3e",
+    "20260619000123_advisor_rls_auth_initplan_wrap.sql": "3c2f3efb6fe29b4def17a7a2d3f3a5356185c318f242f1eddee3f01797db2905",
+    "20260619000124_advisor_unindexed_foreign_keys.sql": "4b1dfdab6330022f4f947947dcb8ecf0be10802e33420124aac4acc073fe60ac",
+    "20260619000125_advisor_unindexed_foreign_keys_residual.sql": "18dfb05147cd8229e578cac6a76e63ad542e2596e1219e9ecbe38491799bf320",
+    "20260619000126_advisor_pg_net_extensions_schema.sql": "12bd29a9242fa70d530d914ca9f60545a711b9c69b862f4a61dbc2356bc41f9f",
+    "20260619000127_advisor_rls_policy_consolidation.sql": "9def268c3a0d91b046f529f85ebbe935a69b1a43a946b73481247ff2eb17cb1f",
+    "20260620000128_trade_majors_tier1_futures.sql": "205624c50e4cdb095ef9cf2fbcf9edd5a10335aa85ade04769e0ed983a90ada4",
+    "20260620000129_trade_majors_spot_holdings.sql": "af67f56d0c966eb440cde27ac262454797ffcef0f55758b87fc997aa6a71c210",
+    "20260620000130_trade_majors_staking.sql": "2cbe919235dec937e506b542ca78043684b8cd6f0a04c4d86f94843ffac1499d",
+    "20260620000131_trade_e1_funding_sltp.sql": "429b201b6ba2269a9ca8edb5b134e2f2ee105cd31e216ec1800aad4c2907fbd4",
+    "20260620000132_trade_spot_grants_min_notional.sql": "4f9a528c817e5382ff94319a5635a5fb36abbc6cc467aa575bb4a6dc6e6b6319",
+    "20260620000133_trade_e2_open_orders.sql": "eaa54d8d7b7a31d6dc6c50c1ffb50a9e02f448ff9709a1daeb0efe5f593f2425",
+    "20260620000134_trade_e3_cross_margin.sql": "1aa54ac67ea4cb0ad793e86d78d1d7b22e2870fb5ed6b7d64c0a86e7d52bbcb6"
   }
 }

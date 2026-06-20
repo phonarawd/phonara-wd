@@ -56,6 +56,7 @@ export class PlinkoBoard {
       canvas: this.canvas,
       antialias: true,
       backgroundAlpha: 0,
+      hello: false,
       resolution: Math.min(globalThis.devicePixelRatio || 1, 2),
       autoDensity: true,
       resizeTo: this.container,

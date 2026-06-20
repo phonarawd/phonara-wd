@@ -99,7 +99,10 @@ test('candles expose global spot volume (not user-local)', async ({ page }) => {
 
   await injectSession(page, auth.accessToken, auth.refreshToken);
   await page.goto('/trade');
-  await expect(page.getByTestId('trading-chart-success').or(page.getByTestId('trading-chart-empty')).first()).toBeVisible({ timeout: 20_000 });
+  await page.getByTestId('trade-mode-futures').click();
+  await expect(
+    page.locator('[data-testid="trading-chart-success"]:visible, [data-testid="trading-chart-empty"]:visible').first(),
+  ).toBeVisible({ timeout: 20_000 });
 
   const uiVolume = await page.evaluate(async (expectedBucket) => {
     const sb = (window as unknown as { __supabase: { rpc: (n: string, a: object) => Promise<{ data: unknown }> } }).__supabase;

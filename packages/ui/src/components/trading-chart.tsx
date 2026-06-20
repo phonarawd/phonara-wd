@@ -72,7 +72,9 @@ function themeColor(name: `--${string}`): string {
 
 function toChartNumber(value: string): number | null {
   try {
-    const decimal = toDecimal(value);
+    const normalized = value.replace(/,/g, '').replace(/\u2014/g, '').trim();
+    if (!normalized || normalized === '—' || normalized === '-') return null;
+    const decimal = toDecimal(normalized);
     if (!decimal.isFinite() || decimal.isNegative() || decimal.isZero()) return null;
     return decimal.toNumber();
   } catch {
@@ -237,13 +239,13 @@ export const TradingChart = forwardRef<HTMLDivElement, TradingChartProps>(functi
   const [chartReady, setChartReady] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
 
-  const hasOracle = toChartNumber(oraclePrice) !== null;
   const chartPoints = useMemo(() => points ?? [], [points]);
   const chartCandles = useMemo(() => candles ?? [], [candles]);
   const validCandles = useMemo(() => normalizeCandles(chartCandles), [chartCandles]);
   const validPoints = useMemo(() => normalizePoints(chartPoints), [chartPoints]);
   const displayError = externalError || error;
-  const isEmpty = !loading && !displayError && (!hasOracle || (chartPoints.length === 0 && chartCandles.length === 0));
+  const isEmpty =
+    !loading && !displayError && chartPoints.length === 0 && chartCandles.length === 0;
   const approachingLiquidation = useMemo(
     () => isApproachingLiquidation(oraclePrice, liquidationPrice, approachThreshold),
     [approachThreshold, liquidationPrice, oraclePrice],

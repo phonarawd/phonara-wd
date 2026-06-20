@@ -18,4 +18,16 @@ export default defineConfig({
     strictPort: true,
     host: '127.0.0.1',
   },
+  build: {
+    rolldownOptions: {
+      output: {
+        minify: {
+          compress: {
+            dropConsole: true,
+            dropDebugger: true,
+          },
+        },
+      },
+    },
+  },
 });

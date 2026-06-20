@@ -144,19 +144,18 @@ export function CrashCashoutSlot({ p }: { p: CrashControlsProps }) {
         : t("casino.crash.autoAt", { mult: p.selection.autoCashout });
 
   return (
-    <button
-      type="button"
+    <div
+      role="status"
       data-testid="casino-cashout"
       data-cta-mode="auto"
       data-cta-state={state}
       data-game-id="crash-cashout-slot"
-      disabled
-      aria-disabled="true"
+      aria-label={t("games.crash.autoCashout")}
       aria-live="polite"
-      className={`min-h-12 w-full rounded-xl border text-sm font-semibold uppercase tracking-wider transition-colors disabled:cursor-not-allowed disabled:opacity-90 ${tone}`}
+      className={`flex min-h-12 w-full items-center justify-center rounded-xl border text-sm font-semibold uppercase tracking-wider ${tone}`}
     >
       {label}
-    </button>
+    </div>
   );
 }
 

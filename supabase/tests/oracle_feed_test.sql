@@ -43,6 +43,13 @@ BEGIN
   ASSERT v_phon_seed_count = 0, format('PHON markets must not be external-feed mapped, got %s', v_phon_seed_count);
 
   SELECT COUNT(*)::INT INTO v_seed_count
+    FROM market_sources
+   WHERE internal_symbol = 'SOLUSDT-SIM'
+     AND provider IN ('binance', 'bybit', 'okx')
+     AND enabled = TRUE;
+  ASSERT v_seed_count = 3, format('SOL must have exactly three enabled sources, got %s', v_seed_count);
+
+  SELECT COUNT(*)::INT INTO v_seed_count
     FROM oracle_source_prices
    WHERE symbol IN ('BTCUSDT-SIM', 'ETHUSDT-SIM')
      AND source_name = 'legacy';

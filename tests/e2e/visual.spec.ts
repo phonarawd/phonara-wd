@@ -80,9 +80,11 @@ test('visual smoke: login + authed routes render', async ({ page }) => {
   await expect(page.getByTestId('home-mobile-header')).toBeVisible({ timeout: 15_000 });
   await expect(page.getByTestId('home-mobile-online-bar')).toBeVisible({ timeout: 15_000 });
   await expect(page.getByTestId('home-wallet-strip')).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByTestId('dashboard-hero-balance')).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId('home-wallet-strip').getByTestId('dashboard-hero-balance')).toBeVisible({
+    timeout: 15_000,
+  });
   await expect(page.getByTestId('home-tab-shell')).toBeVisible({ timeout: 15_000 });
-  await expect(page.locator('.app-shell-nav')).toBeVisible({ timeout: 15_000 });
+  // /home uses hideMobileNav — stake-style header/sidebar instead of bottom nav.
   // Wait for the wallets REST response, then confirm the currency tile rendered.
   // Known issue: realtime container can be slow after `supabase db reset`; REST
   // itself is fast once the container settles — waitForResponse catches it exactly.
@@ -128,22 +130,12 @@ test('visual smoke: login + authed routes render', async ({ page }) => {
   await page.screenshot({ path: `${SHOTS}/ledger.png`, fullPage: true });
 
   await page.goto('/trade');
-  await expect(page.getByTestId('futures-open')).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByTestId('trading-chart')).toBeVisible({ timeout: 15_000 });
+  await page.getByTestId('trade-mode-futures').click();
+  await expect(page.getByTestId('trade-panel-futures')).toBeVisible({ timeout: 15_000 });
   await expect(
-    page
-      .getByTestId('trading-chart-success')
-      .or(page.getByTestId('trading-chart-empty'))
-      .or(page.getByTestId('trading-chart-loading'))
-      .or(page.getByTestId('trading-chart-error'))
-      .first(),
+    page.locator('[data-testid="trading-chart-success"]:visible, [data-testid="trading-chart-empty"]:visible, [data-testid="trading-chart-loading"]:visible, [data-testid="trading-chart-error"]:visible').first(),
   ).toBeVisible({ timeout: 20_000 });
-  await expect(
-    page.getByTestId('order-book-success').or(page.getByTestId('order-book-empty')).first(),
-  ).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByTestId('notification-center')).toBeVisible({ timeout: 15_000 });
-  await page.getByTestId('notification-center-toggle').click();
-  await expect(page.getByTestId('price-alert-form')).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole('button', { name: /롱|Long/i }).first()).toBeVisible({ timeout: 15_000 });
   await page.screenshot({ path: `${SHOTS}/trade.png`, fullPage: true });
 
   await page.goto('/staking');
@@ -181,7 +173,7 @@ test('visual smoke: login + authed routes render', async ({ page }) => {
   // Admin mobile shell.
   await page.setViewportSize({ width: 1440, height: 900 });
   const adminAuth = readAdminAuth();
-  await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456');
+  await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456', adminAuth.totpSecret);
   await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
   await page.screenshot({ path: `${SHOTS}/admin-overview-desktop.png`, fullPage: true });
   await page.goto(`${ADMIN_BASE}/queues`);

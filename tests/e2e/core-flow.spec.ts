@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { adminClient, readAuth, currencyTotals, freshenOracle, injectBrowserSession } from './_helpers';
+import { adminClient, readAuth, currencyTotals, freshenOracle, injectBrowserSession, selectTradeTab } from './_helpers';
 
 test.setTimeout(180_000);
 
@@ -59,6 +59,7 @@ test('core money flow: spot buy → futures open/close → stake → claim (ledg
     .eq('user_id', auth.userId);
   await page.goto('/trade');
   await freshenOracle(admin);
+  await selectTradeTab(page, 'spot');
   await expect(page.getByTestId('spot-submit')).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
   await page.getByTestId('spot-submit').click();
   await page.getByTestId('spot-confirm').click();
@@ -66,6 +67,7 @@ test('core money flow: spot buy → futures open/close → stake → claim (ledg
 
   // ── Futures open (default market, long, USDT margin) ──
   await freshenOracle(admin);
+  await selectTradeTab(page, 'futures');
   await expect(page.getByTestId('futures-open')).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
   await page.getByTestId('futures-open').click();
   await page.getByTestId('futures-open-confirm').click();
@@ -156,6 +158,7 @@ test('confirm dialog: cancel closes without executing any action', async ({ page
   // ── Spot cancel ──
   await page.goto('/trade');
   await freshenOracle(admin);
+  await selectTradeTab(page, 'spot');
   await expect(page.getByTestId('spot-submit')).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
   await page.getByTestId('spot-submit').click();
   await expect(page.getByTestId('spot-confirm')).toBeVisible({ timeout: 5_000 });
@@ -164,6 +167,7 @@ test('confirm dialog: cancel closes without executing any action', async ({ page
 
   // ── Futures open cancel ──
   await freshenOracle(admin);
+  await selectTradeTab(page, 'futures');
   await expect(page.getByTestId('futures-open')).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
   // Capture the existing open-position count so the assertion is stable when
   // prior tests left behind open futures positions.
@@ -240,7 +244,7 @@ test('futures risk caps reject in browser without moving money', async ({ page }
   await admin
     .from('futures_markets')
     .update({ max_user_positions: 100, max_open_interest: '1.000000', max_leverage: '10' })
-    .eq('symbol', 'PHONUSDT-PERP');
+    .eq('symbol', 'BTCUSDT-SIM');
 
   await expect(page.getByTestId('futures-open')).toBeEnabled({ timeout: ORACLE_ACTION_TIMEOUT });
   await page.getByTestId('futures-open').click();

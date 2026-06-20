@@ -1,5 +1,7 @@
 @import "tw-animate-css";
 @import "./styles/surfaces.css";
+@import "./components/trade/terminal/tokens/trade-terminal.css";
+@import "./components/trade/terminal/tokens/trade-z-stack.css";
 
 /* Lovable tokens + @layer base: lovable-globals.css (main.tsx). PHONARA helpers below only. */
 

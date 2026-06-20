@@ -725,7 +725,7 @@ BEGIN;
 DO $$
 DECLARE
   v_uid    UUID := gen_random_uuid();
-  v_cases  TEXT[] := ARRAY['NaN','Infinity','-Infinity','1e5','-5','abc',''];
+  v_cases  TEXT[] := ARRAY['NaN','Infinity','-Infinity','1e5','-5','abc','','0'];
   v_c      TEXT;
   v_raised BOOLEAN;
 BEGIN
@@ -757,11 +757,17 @@ BEGIN
   BEGIN PERFORM _assert_amount_text('NaN'); EXCEPTION WHEN OTHERS THEN v_raised := TRUE; END;
   ASSERT v_raised, '_assert_amount_text accepted NaN';
 
-  -- ...and accepts well-formed decimals.
+  v_raised := FALSE;
+  BEGIN PERFORM _assert_amount_text('0'); EXCEPTION WHEN OTHERS THEN v_raised := TRUE; END;
+  ASSERT v_raised, '_assert_amount_text accepted zero';
+
+  -- ...and accepts well-formed positive decimals (including sub-unit amounts).
   PERFORM _assert_amount_text('1000.000000');
+  PERFORM _assert_amount_text('100');
+  PERFORM _assert_amount_text('0.5');
   PERFORM _assert_amount_text('10');
 
-  RAISE NOTICE 'INPUT GUARD OK — NaN/Infinity/sci-notation/garbage rejected, decimals pass';
+  RAISE NOTICE 'INPUT GUARD OK — NaN/Infinity/zero/garbage rejected, positive decimals pass';
 END;
 $$;
 ROLLBACK;

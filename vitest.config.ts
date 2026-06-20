@@ -15,6 +15,7 @@ const packageAliases = {
   '@phonara/i18n': path.resolve(root, 'packages/i18n/src'),
   '@phonara/i18n/react': path.resolve(root, 'packages/i18n/src/react'),
   '@phonara/ui': path.resolve(root, 'packages/ui/src'),
+  '@phonara/market-display': path.resolve(root, 'packages/market-display/src'),
 };
 
 export default defineConfig({

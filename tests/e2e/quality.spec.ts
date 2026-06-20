@@ -53,7 +53,7 @@ test('PWA and accessibility smoke: install metadata, offline fallback, named con
     postLoginPath: '/home',
   });
   await expect(page.getByTestId('dashboard-page')).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByTestId('referral-dashboard')).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId('home-wallet-strip')).toBeVisible({ timeout: 15_000 });
   await expect(page.locator('#main-content')).toBeVisible();
   await expectNamedButtons(page);
 });

@@ -77,7 +77,7 @@ describe("CrashGame — frozen contract", () => {
   it("emits onSelectionChange with a clean autoCashout when edited", () => {
     const props = makeProps();
     render(<CrashGame {...props} />);
-    const auto = screen.getByLabelText(/자동 캐시아웃/);
+    const auto = screen.getByDisplayValue("2.00");
     fireEvent.change(auto, { target: { value: "3.50x" } });
     expect(props.onSelectionChange).toHaveBeenCalledWith({ autoCashout: "3.50" });
   });

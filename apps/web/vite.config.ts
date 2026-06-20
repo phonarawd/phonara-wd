@@ -118,6 +118,16 @@ export default defineConfig({
     port: 3000,
   },
   build: {
+    rolldownOptions: {
+      output: {
+        minify: {
+          compress: {
+            dropConsole: true,
+            dropDebugger: true,
+          },
+        },
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks(id) {

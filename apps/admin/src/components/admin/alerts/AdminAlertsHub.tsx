@@ -101,11 +101,6 @@ export function AdminAlertsHub() {
     [alerts],
   );
 
-  const openSelected = new Set(
-    Array.from(selected).filter((id) =>
-      alerts.find((a) => a.id === id && a.status === "open"),
-    ),
-  );
   const resolvableSelected = new Set(
     Array.from(selected).filter((id) =>
       alerts.find((a) => a.id === id && a.status !== "resolved"),
@@ -335,7 +330,8 @@ export function AdminAlertsHub() {
             onToggle: (k) =>
               setSelected((p) => {
                 const n = new Set(p);
-                n.has(k) ? n.delete(k) : n.add(k);
+                if (n.has(k)) n.delete(k);
+                else n.add(k);
                 return n;
               }),
             onToggleAll: (keys) =>

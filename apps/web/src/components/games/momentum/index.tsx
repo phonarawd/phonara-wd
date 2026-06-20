@@ -21,6 +21,7 @@ import { Stage } from "./Stage";
 import { HUD } from "./HUD";
 import { ControlsMobile } from "./Controls.mobile";
 import { ControlsDesktop } from "./Controls.desktop";
+import { useMomentumOnPrimary } from "./Controls.shared";
 import type { MomentumSurfaceProps } from "./types";
 
 export function ImportedMomentumGame(props: MomentumSurfaceProps) {
@@ -56,11 +57,12 @@ function MomentumSurface(p: MomentumSurfaceProps) {
     [p],
   );
 
+  const { onPrimary } = useMomentumOnPrimary(p);
+
   const onSpace = useCallback(() => {
     if (p.confirmOpen) return;
-    if (!p.commitment) p.onPrepareRound();
-    else p.onOpenBetConfirm();
-  }, [p]);
+    void onPrimary();
+  }, [p.confirmOpen, onPrimary]);
 
   useGameShortkeys(
     {

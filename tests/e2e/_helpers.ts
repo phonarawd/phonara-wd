@@ -44,6 +44,14 @@ export function adminClient(): SupabaseClient {
   });
 }
 
+/** Lovable TradeModeShell tab — spot | futures | staking */
+export async function selectTradeTab(
+  page: Page,
+  mode: 'spot' | 'futures' | 'staking',
+): Promise<void> {
+  await page.getByTestId(`trade-mode-${mode}`).click();
+}
+
 export function readAuth(): E2EAuth {
   return JSON.parse(readFileSync(AUTH_FILE, 'utf8')) as E2EAuth;
 }
@@ -53,6 +61,16 @@ export function readAdminAuth(): E2EAuth {
 }
 
 export const ADMIN_BASE = 'http://127.0.0.1:3001';
+
+/** Direct admin route navigation — avoids flaky sidebar/mobile sheet clicks under load. */
+export async function gotoAdminPage(
+  page: Page,
+  path: string,
+  pageTestId: string,
+): Promise<void> {
+  await page.goto(`${ADMIN_BASE}${path}`);
+  await expect(page.getByTestId(pageTestId)).toBeVisible({ timeout: 20_000 });
+}
 
 function resolveAdminTotpSecret(email: string, totpSecret?: string): string | undefined {
   if (totpSecret) return totpSecret;

@@ -7,6 +7,7 @@ import { LogOut } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { signOut } from "@/lib/auth";
 import { useHandedness, type Handed } from "@/hooks/useHandedness";
 
 const TRADE_CONFIRM_KEY = "phonara.settings.trade.confirmDialog";
@@ -261,7 +262,9 @@ export function ImportedSettingsPage() {
         <div className="mt-2 border-t border-border/50 pt-4">
           <button
             type="button"
-            onClick={() => toast.success(t("account.toast.logoutDone"))}
+            onClick={() => {
+              void signOut().then(() => toast.success(t("shell.account.loggedOut")));
+            }}
             aria-label={t("account.action.logout")}
             className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-(--color-down)/40 bg-transparent text-sm font-semibold text-(--color-down) hover:bg-(--color-down)/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-ring)"
           >

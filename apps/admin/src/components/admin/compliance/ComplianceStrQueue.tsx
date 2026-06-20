@@ -259,7 +259,8 @@ export function ComplianceStrQueue() {
             onToggle: (k) =>
               setSelected((p) => {
                 const n = new Set(p);
-                n.has(k) ? n.delete(k) : n.add(k);
+                if (n.has(k)) n.delete(k);
+                else n.add(k);
                 return n;
               }),
             onToggleAll: (keys) =>

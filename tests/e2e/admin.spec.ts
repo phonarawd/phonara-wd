@@ -18,6 +18,7 @@ import {
   ANON_KEY,
   currencyTotals,
   loginAdmin,
+  gotoAdminPage,
   ADMIN_BASE,
 } from './_helpers';
 import { createClient } from '@supabase/supabase-js';
@@ -32,21 +33,13 @@ test.describe('Admin RBAC', () => {
     await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
     await expect(page.getByTestId('admin-sidebar')).toBeVisible();
 
-    // Navigate to audit log.
+    // Sidebar link smoke (one click) then direct routes for stability under full-suite load.
     await page.getByTestId('nav-audit').click();
-    await expect(page.getByTestId('audit-page')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId('audit-page')).toBeVisible({ timeout: 20_000 });
 
-    // Navigate to ops alerts.
-    await page.getByTestId('nav-alerts').click();
-    await expect(page.getByTestId('admin-alerts-page')).toBeVisible({ timeout: 10_000 });
-
-    // Navigate to exception queues.
-    await page.getByTestId('nav-queues').click();
-    await expect(page.getByTestId('admin-queues-page')).toBeVisible({ timeout: 10_000 });
-
-    // Navigate to operations.
-    await page.getByTestId('nav-operations').click();
-    await expect(page.getByTestId('operations-page')).toBeVisible({ timeout: 10_000 });
+    await gotoAdminPage(page, '/alerts', 'admin-alerts-page');
+    await gotoAdminPage(page, '/queues', 'admin-queues-page');
+    await gotoAdminPage(page, '/operations', 'operations-page');
 
     // No forbidden message should appear.
     await expect(page.getByTestId('admin-forbidden')).not.toBeVisible();
@@ -83,9 +76,7 @@ test.describe('Admin Operations + Audit (S8c/S8d)', () => {
     await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456', adminAuth.totpSecret);
     await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
 
-    // Navigate to operations.
-    await page.getByTestId('nav-operations').click();
-    await expect(page.getByTestId('operations-page')).toBeVisible({ timeout: 10_000 });
+    await gotoAdminPage(page, '/operations', 'operations-page');
 
     // Count audit log entries before the action.
     const { count: auditBefore } = await dbAdmin
@@ -128,9 +119,7 @@ test.describe('Admin Operations + Audit (S8c/S8d)', () => {
     await page.getByTestId('ops-confirm-confirm').click();
     await expect(page.getByTestId('ops-confirm-confirm')).not.toBeVisible({ timeout: 10_000 });
 
-    // Navigate to audit page and verify the entry renders.
-    await page.getByTestId('nav-audit').click();
-    await expect(page.getByTestId('audit-page')).toBeVisible({ timeout: 10_000 });
+    await gotoAdminPage(page, '/audit', 'audit-page');
     await expect(async () => {
       await page
         .waitForResponse(
@@ -197,8 +186,8 @@ test.describe('Admin Exception Queues (W9-R1)', () => {
 
     await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456', adminAuth.totpSecret);
     await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
-    await page.getByTestId('nav-queues').click();
-    await expect(page.getByTestId('admin-withdrawals-table')).toBeVisible({ timeout: 10_000 });
+    await gotoAdminPage(page, '/queues', 'admin-queues-page');
+    await expect(page.getByTestId('admin-withdrawals-table')).toBeVisible({ timeout: 20_000 });
 
     await page.getByTestId(`queue-withdraw-reject-${withdrawalId}`).click();
     await expect(page.getByTestId('admin-queue-action-reason')).toBeVisible({ timeout: 5_000 });
@@ -246,10 +235,9 @@ test.describe('Admin Exception Queues (W9-R1)', () => {
     await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456', adminAuth.totpSecret);
     await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
 
-    await page.getByTestId('nav-alerts').click();
-    await expect(page.getByTestId('admin-alerts-page')).toBeVisible({ timeout: 10_000 });
-
-    await page.getByTestId('ops-alerts-sync').click();
+    await gotoAdminPage(page, '/alerts', 'admin-alerts-page');
+    await page.keyboard.press('Escape');
+    await page.getByTestId('ops-alerts-sync').click({ timeout: 15_000 });
 
     const alertRow = page.locator('[data-testid^="alert-ack-"]').first();
     await expect(alertRow).toBeVisible({ timeout: 15_000 });

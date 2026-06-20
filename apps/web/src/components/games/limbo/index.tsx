@@ -34,7 +34,7 @@ function LimboSurface(p: ImportedGameSurfaceProps<"limbo">) {
   const isMobile = useIsMobile();
   const Controls = isMobile ? ControlsMobile : ControlsDesktop;
   const [rulesOpen, setRulesOpen] = useState(false);
-  const showShellConfirm = p.pasteShellConfirm !== true; (½, 2×, MAX). MAX caps at availableBalance.
+  const showShellConfirm = p.pasteShellConfirm !== true;
   const applyStake = useCallback(
     (mult: number) => {
       const cur = Number(p.stake) || 0;

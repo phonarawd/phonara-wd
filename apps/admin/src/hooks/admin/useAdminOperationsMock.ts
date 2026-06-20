@@ -370,7 +370,6 @@ export function useAdminOperationsMock(): UseAdminOperations {
     if (healthTick === 0) return SEED_HEALTH;
     const observedAt = nowIso();
     return SEED_HEALTH.map((r) => ({ ...r, observedAt }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [healthTick]);
 
   const filteredHealth = useMemo(

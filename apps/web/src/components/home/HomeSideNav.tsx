@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { t } from "@/i18n";
 import { cn } from "@/lib/utils";
+import { useCommandPalette } from "@/hooks/useCommandPalette";
 
 // L1-16e · Slimmed to 5 page-level destinations.
 // /games entry removed ??it just redirected to /casino (duplicate label).
@@ -33,6 +34,9 @@ export interface HomeSideNavProps {
 
 export function HomeSideNav({ drawer = false, onClose }: HomeSideNavProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { setOpen } = useCommandPalette();
+
+  const openSearch = () => setOpen(true);
 
   return (
     <aside
@@ -66,9 +70,14 @@ export function HomeSideNav({ drawer = false, onClose }: HomeSideNavProps) {
         <Search className="absolute left-3 size-4 text-muted-foreground" aria-hidden />
         <input
           type="search"
+          role="searchbox"
+          readOnly
           data-testid="home-side-search"
           placeholder={t("home.side.search.placeholder")}
-          className="h-10 w-full rounded-lg border border-border bg-(--color-background)/60 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-2 focus:outline-(--color-primary)"
+          aria-label={t("casino.search.trigger.aria")}
+          onFocus={openSearch}
+          onClick={openSearch}
+          className="h-10 w-full cursor-pointer rounded-lg border border-border bg-(--color-background)/60 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-2 focus:outline-(--color-primary)"
         />
       </label>
 

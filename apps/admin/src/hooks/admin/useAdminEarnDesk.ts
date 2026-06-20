@@ -5,7 +5,6 @@ import type { AdminAuditEvent } from '@/components/admin/primitives';
 import { callRpc } from '../../lib/rpc';
 import { supabase } from '../../lib/supabase';
 import type {
-  AdminEarnAgentRow,
   AdminEarnSettlementRow,
   AgentFilters,
   AgentStatus,
@@ -27,7 +26,6 @@ export type {
   UseAdminEarnDesk,
 } from './useAdminEarnDeskMock';
 
-const MIN_REASON = 4;
 const SETTLEMENT_STATES: SettlementState[] = ['pending', 'approved', 'paid'];
 const AGENT_TIERS: AgentTier[] = ['bronze', 'silver', 'gold', 'platinum'];
 const AGENT_STATUSES: AgentStatus[] = ['pending', 'active', 'suspended'];

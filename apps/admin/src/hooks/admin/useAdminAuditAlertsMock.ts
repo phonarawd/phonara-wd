@@ -345,8 +345,6 @@ export function useAdminAuditAlertsMock(): UseAdminAuditAlerts {
 
   const auditFeed = useMemo(
     () => mergeFeed(SEED_AUDIT_FEED, parseDeskAudit()),
-    // feedTick lets refreshAuditFeed re-pull desk storage.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [feedTick],
   );
 
@@ -360,7 +358,8 @@ export function useAdminAuditAlertsMock(): UseAdminAuditAlerts {
   }, []);
 
   const ackAlert = useCallback(
-    (id: string, _reason: string) => {
+    (id: string, reason: string) => {
+      void reason;
       const row = alertsMock.allRows.find((r) => r.id === id);
       if (!row || row.status !== "open") return;
       alertsMock.patchRow(

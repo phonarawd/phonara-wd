@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Bell, ChevronLeft, Headphones } from "lucide-react";
 import { Link, useRouter, useRouterState } from "@/shims/react-router-dom";
-import { toast } from "sonner";
 import { t } from "@/i18n";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { fmtKRW } from "@/lib/format";
 import { userInitial } from "@/lib/user-display";
 import { useAuth } from "@/contexts/auth-context";
@@ -170,14 +170,23 @@ export function TopBar({ assets = 0, hideAssets = false, onSupportOpen }: TopBar
               <Headphones className="size-4" />
             </button>
           )}
-          <button
-            type="button"
-            aria-label={t("shell.topbar.notif")}
-            onClick={() => toast(t("shell.topbar.noNotif"))}
-            className="grid size-10 place-items-center rounded-md text-muted-foreground hover:bg-(--color-surface-elev) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-ring)"
-          >
-            <Bell className="size-4" />
-          </button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                aria-label={t("shell.topbar.notif")}
+                className="grid size-10 place-items-center rounded-md text-muted-foreground hover:bg-(--color-surface-elev) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-ring)"
+              >
+                <Bell className="size-4" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-64 p-4" data-testid="topbar-notif-empty">
+              <div className="flex flex-col items-center gap-2 py-2 text-center text-sm text-muted-foreground">
+                <Bell className="size-5 opacity-50" aria-hidden />
+                <p>{t("shell.topbar.noNotif")}</p>
+              </div>
+            </PopoverContent>
+          </Popover>
           <button
             type="button"
             onClick={() => setAccountOpen(true)}
