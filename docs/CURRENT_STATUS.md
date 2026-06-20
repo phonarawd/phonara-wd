@@ -7,7 +7,15 @@
 
 ## Last Verified Green Gates
 
-- Full local RC gate: `bun run check:full` → standard check, PWA, fresh DB reset, SQL 37/37, casino SQL parity, and browser E2E 41/41 passed on 2026-06-12.
+### Cursor C-track (2026-06-21 · current)
+
+- **C-1 L2 E2E:** `bun run test:e2e` → **58/58 skip 0** · F1 dice confirm (`6840d0e`) · F2 plinko · F3 `/terms` visual smoke (`7646133`).
+- **C-2 check:full 하위 gate (개별 green · 통합 1-shot defer):** standard check vitest **931** · `supabase db reset` **133** migrations · functions-mirror **309** · guard-coverage **118** rpc **0 gaps** · `test:sql` **66/66** · casino-sql-parity · E2E **60/60** · closeout fixes `e800bd5` (migration lock LF · lint · deepshaft LAW1).
+- **Trade/security 토대 (C-2 세션):** launch funding/cross gates · futures UI/launch gate 정합 · migrations 138–140 freeze · guard-coverage CI (`96c435a` `6f26219` `3d0d509` `82f625b`).
+
+### Historical (2026-06-12 and earlier)
+
+- Full local RC gate (2026-06-12): `bun run check:full` → standard check, PWA, fresh DB reset, SQL 37/37, casino SQL parity, and browser E2E 41/41 passed.
 - Remote migration apply: locked Supabase project `yocjhjsdwoijfdrehzoq` is aligned through **`20260615000098`** (casino 088–096, crypto 097, viral 098).
 - Remote advisor/lint: `supabase db lint --linked --level error` green; MCP security/performance advisors show 0 ERROR.
 - RC read-only production smoke: remote flags safe, web/admin login surfaces and PWA/offline assets boot with the remote publishable key.
@@ -39,15 +47,27 @@ Completed launch-plan closeout items:
 Current slice:
 
 - **Cursor 전담 (2026-06-19):** Lovable canvas **종료** — 모든 UI/wiring/E2E는 PHONARA repo.
-- **C-0 Wiring:** i18n/typecheck/vitest **793 pass** · Earn 광고시청·설문 미션 **제거**.
-- **C-1 L2 E2E:** **51/58** (3 fail · 4 skip) — **Docker Desktop ON** 후 타겟 spec → 전체 `test:e2e`.
-- **C-2:** `check:full` — E2E green 후 foreground 1회.
+- **C-0 Wiring:** ✅ i18n/typecheck/vitest green · Earn 광고시청·설문 미션 **제거**.
+- **C-1 L2 E2E:** ✅ **58/58 skip 0** · F1 dice · F2 plinko · F3 `/terms` · evidence `6840d0e` `7646133`.
+- **C-2:** ✅ **개별 gate green** (vitest 931 · migrations 133 · mirror 309 · guard 118/0 gaps · sql 66/66 · E2E 60/60) · **통합 `check:full` 1-shot defer** (저사양) · closeout `e800bd5`.
+- **ACTIVE HEAD C-3:** L1-20 K1 황금 지구 + L1-21 K3 생존 신고 — Cursor LOCK draft → APPROVE → EXECUTE.
 - **Earn 제품 정책:** 광고 시청·설문조사 리워드 **금지** (앱테크 대체: 출석·미션·룰렛·추천·데일리 퀴즈).
 - `rc-smoke`: read-only production smoke green; authenticated production flow smoke blocked until operator account exists.
 
 Next slices:
 
+- **C-3** L1-20/21 presentation (LOCK draft pending).
 - Launch operations loop.
+
+## Operator Backlog (post-C-3)
+
+> operator 약속 2026-06-21 · C-3 §GREEN 전 착수 **금지**.
+
+- **Trade UI/UX 전면 재설계** (`/trade` · PC+모바일 최적화 · 장수 디자인).
+- **시점:** C-3 (K1 황금 지구 + K3 생존 신고) §GREEN 후.
+- **전제 완료:** 엔진·UI 정합·거래 안전 · funding/cross launch gates · guard-coverage (`96c435a`–`e800bd5`).
+
+> **§9 정본 위치 (2026-06-21):** `docs/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md` active 경로 **없음**. 유일 사본: [`archive/superseded-plans/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`](archive/superseded-plans/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md) §9. **active 복원 = operator 판단.** C-3 LOCK은 archive §9 근거로 작성 가능.
 
 ## Lovable Zenith UI (**CLOSED · 2026-06-19**)
 
@@ -165,19 +185,21 @@ Next slices:
 - Observability and secret policy: [`OBSERVABILITY_PRIVACY.md`](OBSERVABILITY_PRIVACY.md).
 - Supabase access/RLS inventory notes: [`SUPABASE_ACCESS_MATRIX.md`](SUPABASE_ACCESS_MATRIX.md).
 
-## World Crush Platform UI (L1-16~18 · PLAN · 2026-06-17)
+## World Crush Platform UI (L1-16~18 · C-3 scope · 2026-06-21)
 
-> **정본:** [`PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`](PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md) · sequential §3.1.4
+> **정본:** [`PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`](PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md) — active `docs/` **없음** · [`archive/superseded-plans/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`](archive/superseded-plans/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md) §9 · sequential §3.1.4
 
 | 슬라이스 | scope | 상태 |
 |---------|--------|------|
 | **L1-16** | Home tab IA · G-WC1 | **✅ §GREEN** · 529/533 · 2552 |
-| **L1-17** | Trade Spot \| Futures \| Staking · G-WC2 | **HEAD · PLAN** |
-| **L1-18** | FOMO motion V2 · G-WC3 | PLAN |
+| **L1-17** | Trade Spot \| Futures \| Staking · G-WC2 | **✅ §GREEN** |
+| **L1-18** | FOMO motion V2 · G-WC3 | **✅ §GREEN** |
+| **L1-20** | K1 · 황금 지구 | **C-3 HEAD · LOCK draft pending** |
+| **L1-21** | K3 · 생존 신고 | **C-3 · operator 확정** |
 
-**ZIP 게이트:** L1-15-UX ✅ + **L1-16 ✅** + L1-17~18 §GREEN 후 operator 「ZIP 발행 GO」.
+**ZIP 게이트:** defer · operator 「ZIP 발행 GO」 명시 전 0.
 
-**Remaining gap:** Trade 무기한 1면 · motion hierarchy (L1-17~18).
+**Post-C-3 backlog:** `/trade` UI/UX 전면 재설계 (operator 약속 · 엔진 토대 완료).
 
 ## Known Launch Notes
 

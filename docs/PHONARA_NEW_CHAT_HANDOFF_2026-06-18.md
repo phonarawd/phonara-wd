@@ -1,6 +1,7 @@
 # PHONARA · 새 채팅 인계문 (끝판왕 · 2026-06-18)
 
-> **목적:** 새 Cursor 채팅에서 **중단 없이** L2 Wave-1 마감 → `check:full` GREEN → §GREEN 동기화까지 완주.  
+> **목적:** 새 Cursor 채팅에서 **중단 없이** C-3 (L1-20 K1 + L1-21 K3) LOCK draft → EXECUTE까지 이어감.  
+> **갱신:** 2026-06-21 · **C-1 ✅ 58/58** · **C-2 ✅ 개별 gate green** (통합 `check:full` defer) · **HEAD C-3**
 > **operator PC:** 저사양 — **`79-low-spec-pc.mdc`** 필수.  
 > **Supabase lock:** `yocjhjsdwoijfdrehzoq` 단일 프로젝트만.
 
@@ -9,29 +10,31 @@
 ## 0. 새 채팅 첫 메시지 (복붙)
 
 ```text
-PHONARA L2 Wave-1 마감 이어서.
+PHONARA C-3 착수 — L1-20 K1 황금 지구 LOCK draft.
 
 정본: docs/PHONARA_NEW_CHAT_HANDOFF_2026-06-18.md
-큐: docs/PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md §3.2 L2
+큐: docs/PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md · ACTIVE HEAD C-3
+
+선행 완료: C-1 E2E 58/58 · C-2 개별 gate green (통합 check:full defer)
 
 순서:
 1) cursor:status → 필요 시 cursor:emergency-reset
-2) build:packages (dist 없으면)
-3) E2E 잔여 3건 수정 (presentation/test-only · engine 0-touch)
-4) bun run test:e2e foreground 1회 (workers:1)
-5) bun run check:full foreground 1회
-6) L2 §GREEN + SEQUENTIAL_EXECUTION_CONTRACT 갱신
+2) archive §9 scope 확인 (docs/archive/superseded-plans/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md)
+3) L1-20_GOLDEN_EARTH_LOCK draft — scope 1줄 · FAIL= · self-check
+4) operator APPROVE → EXECUTE GO (presentation only · engine 0-touch)
+5) L1-21 K3 LOCK — L1-20 §GREEN 후
+6) §GREEN + SEQUENTIAL_EXECUTION_CONTRACT · CURRENT_STATUS 갱신
 
-절대: gate 병렬/background 금지 · engine/supabase/RPC 0-touch · ZIP operator GO 전 0
+절대: gate 병렬/background 금지 · engine/supabase/RPC 0-touch · ZIP operator GO 전 0 · Lovable canvas 0
 ```
 
 ---
 
 ## 1. 지금 어디까지 왔나 (한 줄)
 
-**L2 PHONARA paste Wave-1** — presentation 흡수·표준 gate 대부분 GREEN · **E2E 51/58 통과(3 fail · 4 skip)** · **`check:full` 미완** · **L2 §GREEN doc 미동기화**.
+**L2 PHONARA paste Wave-1** — ✅ presentation 흡수 · **C-1 E2E 58/58 skip 0** · **C-2 개별 gate green** (통합 `check:full` defer) · doc sync **2026-06-21**.
 
-**L1 (Lovable canvas)** — HEAD **L1-20 K1 PLAN** · L1-GP G#1–G#10 ✅ · **PHONARA repo에서 L1 구현 0**.
+**ACTIVE HEAD C-3** — L1-20 K1 황금 지구 + L1-21 K3 생존 신고 · **Cursor presentation** · Lovable canvas **중단**.
 
 ---
 
@@ -39,9 +42,9 @@ PHONARA L2 Wave-1 마감 이어서.
 
 | 트랙 | 지금 | PHONARA repo | Lovable canvas |
 |------|------|--------------|----------------|
-| **L1** | L1-20 PLAN | **구현 0** · dispatch/§GREEN만 | EXECUTE |
-| **L2** | **ACTIVE HEAD** | paste 흡수 · E2E · check:full | **0-touch** |
-| **L3** | L2 GREEN 후 | Engine Wave · operator GO | **0** |
+| **L1** | C-3 L1-20/21 | **Cursor presentation** · LOCK→EXECUTE | **중단 · 0** |
+| **L2** | ✅ Wave-1 · C-1/C-2 | paste · E2E · gate evidence | **0-touch** |
+| **L3** | defer (C-6) | Engine Wave · operator GO | **0** |
 
 **FAIL =** L2 중 engine migration/RPC 수정 · L1을 PHONARA `apps/web`에서 구현 · operator 「ZIP 발행」 없이 ZIP.
 
@@ -57,12 +60,12 @@ PHONARA L2 Wave-1 마감 이어서.
 | L2-04 | Crush P2 Trade | ✅ | Imported trade surfaces |
 | L2-05 | Game adapters P2.0c | ✅ | `components/games/*` imported |
 | L2-06 | i18n · og · PWA merge | ✅ | `check:i18n` green |
-| **L2-07** | **E2E G9** | **🟡 51 pass · 3 fail · 4 skip** | 아래 §5 |
-| **L2-08** | **check:full** | **⏳** | L2-07 안정 후 **foreground 1회** |
+| **L2-07** | **E2E G9** | **✅ 58/58 skip 0** | F1/F2/F3 · `6840d0e` `7646133` |
+| **L2-08** | **check:full** | **✅ 개별 gate green · 통합 defer** | `e800bd5` + gate evidence · 저사양 |
 | L2-S | /sports hook wire | **defer** | operator Engine GO · mock→RPC |
 | L2-A | Admin Sports Desk | **defer** | L1-15-A Lovable §GREEN 후 |
 
-**L2 §GREEN 조건:** L2-07 E2E 전부 green(또는 skip 정당화) + L2-08 `check:full` exit 0 + evidence + `PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md` L2 행 갱신.
+**L2/C-track §GREEN (2026-06-21):** C-1 58/58 + C-2 개별 gate green + evidence + `PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md` · `CURRENT_STATUS.md` 갱신 완료. **통합 `check:full` 1-shot = defer.**
 
 ---
 
@@ -114,21 +117,19 @@ PHONARA L2 Wave-1 마감 이어서.
 
 ---
 
-## 5. L2-07 잔여 E2E — **C-1 green** (2026-06-20)
+## 5. C-1 E2E — **✅ complete** (2026-06-21)
 
-**타겟 검증:** F1(dice) · F2(plinko) · F3(visual `/terms`) 모두 green. 전체 58 run은 저사양으로 생략 — 산술 58/58.
+**Full run:** `bun run test:e2e` → **58/58 skip 0**.
 
-**이전 full run:** 51 passed · 3 failed · 4 skipped (wave7 serial skip cascade)
+| # | item | 결과 | evidence |
+|---|------|------|----------|
+| F1 | dice confirm timing | ✅ | `6840d0e` · regression tests |
+| F2 | plinko hang / CPU | ✅ | Stage E2E guard · `about:blank` · `e800bd5` casino.spec |
+| F3 | `/terms` legal-page visual smoke | ✅ | `7646133` |
 
-| # | spec | 증상 | 수정 방향 (engine 0-touch) |
-|---|------|------|---------------------------|
-| F1 | `casino-wave7-closeout.spec.ts` | dice — `casino-bet-confirm-confirm` **not visible** | imported dice controls에 confirm dialog testid/wiring · 또는 E2E wait 조건 |
-| F2 | `casino.spec.ts` | **plinko** timeout / 10min+ hang | **원인:** Plinko Pixi 60fps ticker + RPC 구간 동시 실행 → CPU 포화 · **수정:** Stage E2E guard + `about:blank` unload · `stack:stop` posttest |
-| F3 | `visual.spec.ts` | `/terms` legal-page — **green** (2026-06-20, `-g "visual smoke"` 1 passed · 1.6m) | `data-testid="legal-page"` on terms/privacy |
+**이전 상태 (해소됨):** 51 passed · 3 failed · 4 skipped (wave7 serial skip cascade)
 
-**Skipped 4:** wave7 serial — F1 fix 후 연쇄 해소 기대.
-
-### E2E 실행 (저사양 · mandatory)
+### E2E 재실행 (저사양 · reference only)
 
 ```powershell
 Set-Location c:\Users\PC\Desktop\phonara-gb
@@ -148,7 +149,7 @@ bun run test:e2e -- tests/e2e/visual.spec.ts -g "visual smoke"
 bun run test:e2e
 ```
 
-**완료 기준:** 55–58/58 pass (skip 0 또는 문서화된 defer만) · `e2e:kill` · `check:hygiene` green · **`stack:stop`으로 Supabase 컨테이너 해제** (렉 잔존 방지).
+**완료 기준 (달성):** 58/58 pass · skip 0 · `e2e:kill` · `check:hygiene` green · `stack:stop`
 
 ### Plinko hang · Docker 렉 (2026-06-18 root cause)
 
@@ -161,36 +162,53 @@ bun run test:e2e
 
 ---
 
-## 6. L2-08 check:full (E2E green 후 1회)
+## 6. C-2 check:full — **✅ 개별 gate green** (통합 1-shot defer · 2026-06-21)
+
+**판정:** 저사양 PC에서 `bun run check:full` 통합 1-shot **미실행(defer)** · 하위 gate **개별 foreground green**.
+
+| gate | 결과 |
+|------|------|
+| standard check (vitest) | **931** pass |
+| build | green |
+| `supabase db reset` | **133** migrations |
+| functions-mirror | **309** |
+| guard-coverage | **118** rpc · **0 gaps** |
+| `test:sql` | **66/66** |
+| casino-sql-parity | green |
+| E2E | **60/60** |
+
+**초기 실패 3건 (수정 완료 · `e800bd5`):** migration lock LF · lint 20 · deepshaft LAW1 assertion.
+
+**Trade/security (동일 세션):** `96c435a` `6f26219` `3d0d509` `82f625b` — funding/cross launch gates · futures UI 정합 · migrations 138–140 freeze.
+
+### 통합 check:full (defer · operator 저사양)
 
 ```powershell
 Set-Location c:\Users\PC\Desktop\phonara-gb
-bun run cursor:status          # orphan 0 확인
-bun run build:packages         # typecheck/dist 선행
-bun run check:full             # foreground · 30–60min · 중단 금지
+bun run cursor:status
+bun run build:packages
+bun run check:full   # E2E 안정 + RAM 여유 시 foreground 1회만
 ```
 
-**체인:** `check`(strict advisors) → PWA → `supabase db reset` → `mirror:functions` → `check:functions-mirror` → `test:sql` → casino SQL parity → **`test:e2e`**
-
-**FAIL 시:** 어느 step에서 죽었는지 로그 1줄 + **engine touch 없이** 해당 layer만 수정.
+**체인:** `check`(strict advisors) → PWA → `supabase db reset` → `mirror:functions` → `check:functions-mirror` → `check:guard-coverage` → `test:sql` → casino SQL parity → **`test:e2e`**
 
 ---
 
-## 7. §GREEN 마감 체크리스트 (L2 Wave-1)
+## 7. §GREEN 마감 체크리스트 (L2 Wave-1 · C-1/C-2)
 
-- [ ] `bun run typecheck` green
-- [ ] `bun run lint` green
-- [ ] `bun run check` green (일반 RC chain)
-- [ ] `bun run test:e2e` — full green
-- [ ] `bun run check:full` — exit 0
-- [ ] `bun run check:hygiene` green · `cursor:status` orphan 0 · ports 3000–3002 free
-- [ ] `docs/PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md` — L2-07/L2-08 ✅ · L2-S defer 명시
-- [ ] (선택) `docs/CURRENT_STATUS.md` — E2E/check:full 날짜 갱신
+- [x] `bun run typecheck` green
+- [x] `bun run lint` green
+- [x] `bun run check` green (일반 RC chain · vitest 931)
+- [x] `bun run test:e2e` — **58/58 skip 0** (C-1)
+- [ ] `bun run check:full` — **통합 1-shot defer** (개별 gate ✅)
+- [x] `bun run check:hygiene` green · `cursor:status` orphan 0 · ports 3000–3002 free
+- [x] `docs/PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md` — C-1/C-2 ✅ · HEAD C-3
+- [x] `docs/CURRENT_STATUS.md` — C-1/C-2 · backlog · §9 note
 
-**§GREEN template (목표 1줄):**
+**§GREEN template (기록):**
 
 ```text
-L2 Wave-1 §GREEN — paste P0–P2 + adapters + i18n merge — E2E N/N — check:full OK — engine 0-touch — L2-S defer operator GO — ZIP defer operator GO
+C-1/C-2 §GREEN — L2 paste Wave-1 — E2E 58/58 (C-1) · 개별 gate green (C-2 · E2E 60/60) · 통합 check:full defer — engine 0-touch — HEAD C-3 L1-20/21 — trade UI redesign backlog post-C-3
 ```
 
 ---
@@ -218,28 +236,30 @@ lib/{auth,rpc,supabase}.ts
 |---|------|--------|
 | O1 | **Cursor 완전 재시작** | `.cursorignore` / hooks 변경 후 (렉 패키지 적용됨) |
 | O2 | **Docker ON/OFF** | E2E/SQL/check:full 때만 ON · 평소 OFF (RAM) |
-| O3 | Lovable **L1-20 K1** EXECUTE | Lovable canvas · LOCK draft 후 GO |
+| O3 | **C-3 L1-20 K1** LOCK draft → APPROVE → EXECUTE | **Cursor** · archive §9 scope · Lovable **0** |
 | O4 | 「**ZIP 발행**」 | Lovable 100% 판단 후 · **명시 1줄 전 ZIP 0** |
 | O5 | L2-S 「스포츠 Engine GO」 | L2 §GREEN 후 · `/sports` RPC wire |
 | O6 | L3 Engine Wave GO | L2 §GREEN 후 |
 
 ---
 
-## 10. L1 병렬 (Cursor는 Plan/dispatch만)
+## 10. Cursor 전담 · C-3 HEAD (Lovable **중단**)
 
-- **HEAD:** L1-20 K1 황금 지구 (LOCK draft pending)
-- **완료:** L1-GP G#1–G#10 · vitest 658/658 · i18n 2712/2712
-- **Cursor:** `93-lovable-prompt-dispatch.mdc` — Lovable paste GO 블록 조립
-- **PHONARA `apps/web`:** L1 구현 **0**
+- **HEAD:** C-3 — L1-20 K1 황금 지구 + L1-21 K3 생존 신고 · LOCK draft → APPROVE → EXECUTE
+- **완료 carry:** L1-GP G#1–G#10 · L2 paste Wave-1 · C-1/C-2
+- **Lovable canvas / dispatch:** **0** — UI 포함 **전부 Cursor** (`presentation-import` · adapter · wiring)
+- **§9 scope:** [`archive/superseded-plans/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`](archive/superseded-plans/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md) §9 · active `docs/` 복원 = operator 판단
+
+**Post-C-3 backlog (operator 약속 2026-06-21):** `/trade` UI/UX 전면 재설계 — PC+모바일 · 장수 디자인 · C-3 §GREEN 후 · 엔진·UI 정합 토대 완료 (`96c435a`–`e800bd5`)
 
 ---
 
-## 11. L2 GREEN 후 다음 head (미리 보기 · 착수 금지)
+## 11. C-3 이후 head (미리 보기 · C-3 §GREEN 전 착수 금지)
 
-1. **L2-S** — `/sports` mock 삭제 · `use-sports-betting` wire · sports E2E Σ=0 · **operator GO**
-2. **L1-10-W** — Wallet UI Lovable → paste (G3 L2 §GREEN 선행)
-3. **L1-15-A → L2-A** — Admin Sports Desk Lovable → admin paste → wire
-4. **L3-01** — Wave-1 Crash live · **Wave-S3 병렬 금지**
+1. **C-4** — wire sweep
+2. **C-5 L2-S / L2-A** — `/sports` hook wire · Admin Sports Desk · **operator GO**
+3. **C-6 L3** — Engine Wave · **operator GO 각각**
+4. **Post-C-3 backlog** — `/trade` UI/UX 전면 재설계 (operator 약속)
 
 ---
 
@@ -259,11 +279,12 @@ bun run cursor:emergency-reset   # hang·orphan·포트·artifact
 
 ---
 
-## 13. Git / branch 상태 (2026-06-18)
+## 13. Git / branch 상태 (2026-06-21)
 
-- **Branch:** `main` (로컬 · **대량 uncommitted** presentation paste)
-- **최근 commit:** `058a165` sportsbook engine (paste UI는 working tree)
-- **Commit:** operator 명시 요청 시만 · GREEN 후 milestone commit 권장
+- **Branch:** `main` (로컬)
+- **HEAD:** `e800bd5` — C-2 closeout (migration lock LF · lint · deepshaft LAW1)
+- **C-1/C-2 milestone commits:** `6840d0e` · `7646133` · `96c435a` · `6f26219` · `3d0d509` · `82f625b` · `e800bd5`
+- **Commit:** operator 명시 요청 시만
 
 ---
 
@@ -278,7 +299,7 @@ bun run cursor:emergency-reset   # hang·orphan·포트·artifact
 | full gate | `scripts/run-full-gate.ts` |
 | quality gates | `docs/QUALITY_GATES.md` |
 | engine master (L3) | `docs/CURSOR_ENGINE_MASTER_PROMPT.md` |
-| Lovable dispatch | `docs/LOVABLE_OPERATOR_PROMPT_DISPATCH.md` |
+| Lovable dispatch | ~~`docs/LOVABLE_OPERATOR_PROMPT_DISPATCH.md`~~ · **Cursor 전담 · dispatch 0** |
 | 저사양 규칙 | `.cursor/rules/79-low-spec-pc.mdc` |
 
 ---
@@ -296,4 +317,4 @@ bun run cursor:emergency-reset   # hang·orphan·포트·artifact
 
 ---
 
-**끝.** — 이 문서 + §0 첫 메시지로 새 채팅 시작하면 L2 Wave-1 완주 경로가 닫힌다.
+**끝.** — C-1/C-2 doc sync 완료. 다음: **C-3 L1-20 LOCK draft** (archive §9 scope).

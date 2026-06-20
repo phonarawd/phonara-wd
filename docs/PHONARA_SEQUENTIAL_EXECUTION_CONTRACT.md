@@ -1,7 +1,7 @@
 # PHONARA · 순차 실행 정본 (Sequential Execution Contract)
 
 > **목적:** 모든 작업을 **기존 플랜 순서대로** · **안 한 것부터** · **세계 1위 개발팀 방식**으로만 진행.  
-> **갱신:** 2026-06-19 · **operator: Lovable 플랫폼 종료 → Cursor 전담** · ACTIVE HEAD **C-1 L2 E2E** (51/58 · Docker 필요) · vitest **793/794** · Earn **광고시청·설문 미션 제거**  
+> **갱신:** 2026-06-21 · **operator: Lovable 플랫폼 종료 → Cursor 전담** · ACTIVE HEAD **C-3** L1-20/21 (Cursor presentation) · **C-1 ✅ 58/58** · **C-2 ✅ 개별 gate green** (통합 `check:full` defer) · Earn **광고시청·설문 미션 제거**  
 > **상위:** [`PHONARA_WORLD_CLASS_INTEGRATED_ROADMAP.md`](PHONARA_WORLD_CLASS_INTEGRATED_ROADMAP.md)
 
 ---
@@ -33,9 +33,21 @@
 **Cursor 단일 큐 head (순서):**
 
 ```text
-C-0 Wiring GREEN → C-1 L2 E2E 58 → C-2 check:full → C-3 L1-20/21 presentation
+C-0 ✅ → C-1 ✅ 58/58 → C-2 ✅ (개별 gate · 통합 defer) → **C-3 HEAD** L1-20/21
 → C-4 wire sweep → C-5 L2-S/L2-A (GO) → C-6 L3 Engine (GO 각각)
 ```
+
+### Cursor C-track (2026-06-19~)
+
+| ID | scope | 상태 | evidence |
+|----|-------|------|----------|
+| C-0 | Wiring · Earn 정책 | ✅ | vitest green · 광고/설문 제거 |
+| C-1 | L2 E2E | ✅ **58/58 skip 0** | F1 dice · F2 plinko · F3 `/terms` · `6840d0e` `7646133` |
+| C-2 | `check:full` 하위 gate | ✅ **개별 green · 통합 1-shot defer** | standard check vitest **931** · migrations **133** · mirror **309** · guard **118/0 gaps** · sql **66/66** · casino-sql-parity · E2E **60/60** · `e800bd5` |
+| C-3 | L1-20 K1 + L1-21 K3 | **HEAD** | LOCK draft → APPROVE → EXECUTE · archive §9 scope |
+| C-4~C-6 | wire sweep · L2-S/L2-A · L3 | defer | C-3 §GREEN 후 |
+
+> **§9 정본 위치 (2026-06-21):** 계약이 참조하는 `docs/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`는 active 경로에 없음. 유일 사본: [`archive/superseded-plans/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`](archive/superseded-plans/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md) §9 (K1 황금 지구 · K3 생존 신고). **active 복원 여부 = operator 판단.** C-3 LOCK draft는 archive §9를 scope 근거로 작성 가능.
 
 ---
 
@@ -62,12 +74,11 @@ C-0 Wiring GREEN → C-1 L2 E2E 58 → C-2 check:full → C-3 L1-20/21 presentat
 ## 2. 3트랙 게이트 (순서 고정)
 
 ```text
-[L1 · Lovable canvas]  ← 지금 (paste/ZIP/Engine 모두 대기)
-  … 큐 §3.1 전부 §GREEN …
-  → operator 「Lovable 100%」판단
-  → operator 「ZIP 발행 GO」 1회
+[L1 · CLOSED · Cursor presentation]  ← Lovable canvas 종료 · C-3 HEAD L1-20/21
+  … 큐 §3.1 L1-GP ✅ · paste Wave-1 ✅ · C-1/C-2 ✅ …
+  → operator 「ZIP 발행 GO」 1회 (defer · Lovable 100% 판단 시)
 
-[L2 · PHONARA paste]  ← L1+ZIP 후만
+[L2 · PHONARA paste]  ← Wave-1 ✅ · C-1/C-2 ✅
   operator 「PHONARA paste GO Wave-1」
   → Paste-0 → Crush P0–P7 → P1.x → P2 → adapters → E2E G9 → check:full
 
@@ -77,8 +88,8 @@ C-0 Wiring GREEN → C-1 L2 E2E 58 → C-2 check:full → C-3 L1-20/21 presentat
   → (operator 「스포츠 GO」+ LEGAL) Wave-S1→S5 → /sports wire
 ```
 
-**Cursor는 L1이 끝나기 전:** Plan review · doc sync · **구현 0**.  
-**Lovable은 L2/L3:** **항상 0**.
+**Cursor (2026-06-19~):** L1 미구현 슬라이스 = **PHONARA presentation** · L2 paste/E2E · L3 Engine.  
+**Lovable canvas:** **중단** — L2/L3 **항상 0**.
 
 ---
 
@@ -178,16 +189,21 @@ C-0 Wiring GREEN → C-1 L2 E2E 58 → C-2 check:full → C-3 L1-20/21 presentat
 | **L1-17** | Trade Spot \| Futures \| Staking · G-WC2 | **✅ §GREEN** | [`LOVABLE_WORLD_CRUSH_L1-17_TRADE_SPLIT_LOCK.md`](LOVABLE_WORLD_CRUSH_L1-17_TRADE_SPLIT_LOCK.md) · vitest **577/577** (+5) · catalog **Δ=+26** |
 | **L1-18** | FOMO motion V2 · platform rhythm | **✅ §GREEN** | [`LOVABLE_WORLD_CRUSH_L1-18_FOMO_MOTION_LOCK.md`](LOVABLE_WORLD_CRUSH_L1-18_FOMO_MOTION_LOCK.md) · vitest **580/580** (+3) · catalog **Δ=0** |
 | L1-19 | Shell density (optional) | **defer** | — |
-| **L1-20** | K1 · 황금 지구 전국민 탭 (시그니처) | **PLAN · HEAD** | §9 · LOCK draft pending · `L1-20_GOLDEN_EARTH_LOCK` |
-| **L1-21** | K3 · 7시 생존 신고 + 친구 랭킹 | **PLAN** | §9 · L1-20 §GREEN 후 |
+| **L1-20** | K1 · 황금 지구 전국민 탭 (시그니처) | **C-3 HEAD · Cursor** | archive §9 · LOCK draft → APPROVE → EXECUTE · `L1-20_GOLDEN_EARTH_LOCK` |
+| **L1-21** | K3 · 7시 생존 신고 + 친구 랭킹 | **C-3 · Cursor** | archive §9 · L1-20 §GREEN 후 · operator 확정 |
 | **L1-22** | K2 · 홈 위젯 펫 | **defer** | §9 · PWA+/네이티브 |
 | **L1-23** | K4 · 클립보드/스크린줍 (웹 축소안) | **defer** | §9 · privacy |
 | **L1-10-W-T** | Wallet tone · navy+mint SOT rebind | **✅ §GREEN** | [`LOVABLE_WALLET_TONE_UNIFY_LOCK.md`](LOVABLE_WALLET_TONE_UNIFY_LOCK.md) · CSS-only · violet hex 0 · 580/580 carry |
 | **L1-24** | Stake-equivalent typography · system-ui+Pretendard | **✅ §GREEN + Pass 1.1** | [`LOVABLE_WORLD_CRUSH_L1-24_STAKE_TYPOGRAPHY_LOCK.md`](LOVABLE_WORLD_CRUSH_L1-24_STAKE_TYPOGRAPHY_LOCK.md) · 586/586 · KO=2620 · D1 held |
 
-**Earn Killer Missions 정본:** [`PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`](PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md) **§9**
+**Earn Killer Missions 정본:** [`PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`](PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md) **§9** — active `docs/` 경로 **없음** · [`archive/superseded-plans/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`](archive/superseded-plans/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md) §9 only · operator 복원 판단 대기
 
-**큐 순서 (1 head):** … → L1-24 ✅ → **L1-GP G#1–G#10 ✅ FINAL** → **L1-20** (K1 · HEAD) → L1-21 → operator 「Lovable 100%」→ ZIP GO · **L1-16f 제외**
+**큐 순서 (1 head):** … → L1-24 ✅ → **L1-GP G#1–G#10 ✅ FINAL** → **C-3: L1-20** (K1 · HEAD) → **L1-21** (K3) → C-4~6 · **L1-16f 제외**
+
+### Operator backlog (post-C-3)
+
+- **Trade UI/UX 전면 재설계** (`/trade` · PC+모바일 · 장수 디자인) — **C-3 §GREEN 후** 착수
+- 근거: operator 약속 2026-06-21 · 엔진·UI 정합·거래 안전 토대 완료 (`96c435a` `6f26219` `3d0d509` `82f625b` `6840d0e` `e800bd5`)
 
 #### 3.1.5 L1-GP · Games Polish Sub-Queue (12 originals · operator priority parallel)
 
@@ -347,7 +363,11 @@ C-0 Wiring GREEN → C-1 L2 E2E 58 → C-2 check:full → C-3 L1-20/21 presentat
 | 2026-06-17 | **L1-16b** | Home density §GREEN · WalletSnapshot · tier→rank/vip · hideAssets |
 | 2026-06-17 | L1-16 | G-WC1 · vitest 529/533 · catalog 2552 |
 | 2026-06-17 | L1-15-UX | World Crush L1-16~18 PLAN 등록 · ZIP 전 G-WC 게이트 |
+| 2026-06-19 | **C-0** | Cursor 전담 · Lovable canvas 종료 · Earn 광고/설문 제거 |
+| 2026-06-21 | **C-1** | L2 E2E **58/58 skip 0** · F1/F2/F3 · `6840d0e` `7646133` |
+| 2026-06-21 | **C-2** | 개별 gate green (vitest 931 · migrations 133 · E2E 60/60 등) · 통합 `check:full` defer · `e800bd5` |
+| 2026-06-21 | **C-3 HEAD** | L1-20 K1 + L1-21 K3 · Cursor LOCK draft pending · trade UI redesign backlog |
 
 ---
 
-*operator 정본 · 순서 변경 시 본 파일 + INTEGRATED_ROADMAP §4·§5 + [`PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`](PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md) 동시 갱신*
+*operator 정본 · 순서 변경 시 본 파일 + INTEGRATED_ROADMAP §4·§5 + [`PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md`](PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md) (또는 archive §9) 동시 갱신*
