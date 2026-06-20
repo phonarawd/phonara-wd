@@ -171,7 +171,8 @@ DECLARE
   v_value TEXT;
 BEGIN
   SELECT value INTO v_value FROM app_config WHERE key = 'consent_gate_enabled';
-  ASSERT v_value = 'true', 'consent_gate_enabled must default true';
+  ASSERT v_value = 'true',
+    format('consent_gate_enabled must default true (migration 000030), got: %s', COALESCE(v_value, '<null>'));
   RAISE NOTICE 'CONSENT GATE OK — default enabled';
 END;
 $$;

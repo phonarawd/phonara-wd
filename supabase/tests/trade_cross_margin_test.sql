@@ -61,6 +61,18 @@ BEGIN
 
   PERFORM rpc_close_futures_position(v_pos_id);
 
+  -- Launch gate: cross blocked while feature_cross_margin_enabled=false
+  BEGIN
+    PERFORM rpc_set_margin_mode('cross');
+    RAISE EXCEPTION 'expected cross_margin_not_available when flag false';
+  EXCEPTION WHEN OTHERS THEN
+    IF SQLERRM NOT LIKE '%cross_margin_not_available%' THEN
+      RAISE;
+    END IF;
+  END;
+
+  -- E3 RPC path still works when operator enables cross (reversible flag)
+  UPDATE app_config SET value = 'true' WHERE key = 'feature_cross_margin_enabled';
   v_mode := rpc_set_margin_mode('cross');
   IF v_mode->>'margin_mode' <> 'cross' THEN
     RAISE EXCEPTION 'expected cross margin mode, got %', v_mode->>'margin_mode';
@@ -71,6 +83,8 @@ BEGIN
   ) THEN
     RAISE EXCEPTION 'margin_accounts row missing after set_margin_mode';
   END IF;
+
+  UPDATE app_config SET value = 'false' WHERE key = 'feature_cross_margin_enabled';
 
   SELECT
     (SELECT COALESCE(SUM(usdt_available::NUMERIC + usdt_locked::NUMERIC), 0) FROM wallets)

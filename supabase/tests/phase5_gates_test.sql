@@ -84,7 +84,11 @@ DECLARE
   v_round_id UUID;
   v_dep JSONB;
   v_ref TEXT;
-  v_msg TEXT;
+  v_spot_err TEXT;
+  v_futures_err TEXT;
+  v_stake_err TEXT;
+  v_game_err TEXT;
+  v_withdraw_err TEXT;
   v_spot_blocked BOOLEAN := FALSE;
   v_futures_blocked BOOLEAN := FALSE;
   v_stake_blocked BOOLEAN := FALSE;
@@ -145,22 +149,22 @@ BEGIN
   BEGIN
     PERFORM rpc_spot_market_buy('1.000000');
   EXCEPTION WHEN OTHERS THEN
-    GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
-    IF v_msg = 'account_activity_frozen' THEN v_spot_blocked := TRUE; END IF;
+    GET STACKED DIAGNOSTICS v_spot_err = MESSAGE_TEXT;
+    IF v_spot_err = 'account_activity_frozen' THEN v_spot_blocked := TRUE; END IF;
   END;
 
   BEGIN
     PERFORM rpc_open_futures_position('PHONUSDT-PERP', 'long', 'USDT', '1.000000', '2');
   EXCEPTION WHEN OTHERS THEN
-    GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
-    IF v_msg = 'account_activity_frozen' THEN v_futures_blocked := TRUE; END IF;
+    GET STACKED DIAGNOSTICS v_futures_err = MESSAGE_TEXT;
+    IF v_futures_err = 'account_activity_frozen' THEN v_futures_blocked := TRUE; END IF;
   END;
 
   BEGIN
     PERFORM rpc_stake_phon('flexible', '1.000000', 'sanc-hit-stake-' || v_uid::TEXT);
   EXCEPTION WHEN OTHERS THEN
-    GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
-    IF v_msg = 'account_activity_frozen' THEN v_stake_blocked := TRUE; END IF;
+    GET STACKED DIAGNOSTICS v_stake_err = MESSAGE_TEXT;
+    IF v_stake_err = 'account_activity_frozen' THEN v_stake_blocked := TRUE; END IF;
   END;
 
   BEGIN
@@ -170,15 +174,15 @@ BEGIN
       'sanc-hit-seed', 'sanc-hit-game-' || v_uid::TEXT
     );
   EXCEPTION WHEN OTHERS THEN
-    GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
-    IF v_msg = 'account_activity_frozen' THEN v_game_blocked := TRUE; END IF;
+    GET STACKED DIAGNOSTICS v_game_err = MESSAGE_TEXT;
+    IF v_game_err = 'account_activity_frozen' THEN v_game_blocked := TRUE; END IF;
   END;
 
   BEGIN
     PERFORM rpc_request_withdrawal('PHON', '1.000000', '{}'::JSONB, 'sanc-hit-wd-' || v_uid::TEXT, NULL);
   EXCEPTION WHEN OTHERS THEN
-    GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
-    IF v_msg = 'account_activity_frozen' THEN v_withdraw_blocked := TRUE; END IF;
+    GET STACKED DIAGNOSTICS v_withdraw_err = MESSAGE_TEXT;
+    IF v_withdraw_err = 'account_activity_frozen' THEN v_withdraw_blocked := TRUE; END IF;
   END;
 
   PERFORM set_config('request.jwt.claims', '{}', true);
@@ -186,12 +190,12 @@ BEGIN
   v_deposit_blocked := COALESCE((v_dep->>'exception')::BOOLEAN, FALSE)
     AND v_dep->>'reason' = 'sanctions_or_freeze';
 
-  ASSERT v_spot_blocked, 'sanctions hit must block spot trade';
-  ASSERT v_futures_blocked, 'sanctions hit must block futures trade';
-  ASSERT v_stake_blocked, 'sanctions hit must block staking';
-  ASSERT v_game_blocked, 'sanctions hit must block game bet';
-  ASSERT v_withdraw_blocked, 'sanctions hit must block withdrawal';
-  ASSERT v_deposit_blocked, 'sanctions hit must block deposit credit';
+  ASSERT v_spot_blocked, format('sanctions hit must block spot trade, got: %s', COALESCE(v_spot_err, '<none>'));
+  ASSERT v_futures_blocked, format('sanctions hit must block futures trade, got: %s', COALESCE(v_futures_err, '<none>'));
+  ASSERT v_stake_blocked, format('sanctions hit must block staking, got: %s', COALESCE(v_stake_err, '<none>'));
+  ASSERT v_game_blocked, format('sanctions hit must block game bet, got: %s', COALESCE(v_game_err, '<none>'));
+  ASSERT v_withdraw_blocked, format('sanctions hit must block withdrawal, got: %s', COALESCE(v_withdraw_err, '<none>'));
+  ASSERT v_deposit_blocked, format('sanctions hit must block deposit credit, got: %s', COALESCE(v_dep->>'reason', '<none>'));
   ASSERT EXISTS (
     SELECT 1 FROM risk_flags
      WHERE user_id = v_uid AND flag_type = 'sanctions_hit' AND status = 'active'
