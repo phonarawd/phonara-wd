@@ -18,14 +18,17 @@ export function FuturesDesktopGrid({ wire }: { wire: FuturesTerminalWire }) {
         selectedSymbol={wire.market?.symbol ?? ""}
         onMarketChange={wire.onMarketChange}
         marketsLoading={wire.futuresMarketsLoading}
-        priceDisplay={wire.priceDisplay}
-        priceToneClass={wire.tone}
+        lastPriceDisplay={wire.lastPriceDisplay}
+        lastPriceToneClass={wire.tone}
+        markPriceDisplay={wire.markPriceDisplay}
+        markPriceUnavailable={wire.oracleMarkUnavailable}
         change24Display="+2.35%"
         change24Tone="up"
         high24Display="64,112.3"
         low24Display="61,203.5"
         vol24Display="12.3K"
-        fundingDisplay="0.0125%"
+        fundingDisplay={wire.fundingDisplay}
+        fundingToneClass={wire.fundingToneClass}
         openInterestDisplay="2.41B"
         trailing={
           <>

@@ -49,14 +49,16 @@ export function TradeFuturesDisplayFallback({
           markets={[{ symbol: "BTCUSDT-SIM", display_name: "BTCUSDT Perp" }]}
           selectedSymbol="BTCUSDT-SIM"
           onMarketChange={() => {}}
-          priceDisplay={priceDisplay}
-          priceToneClass={tone}
+          lastPriceDisplay={priceDisplay}
+          lastPriceToneClass={tone}
+          markPriceDisplay="—"
+          markPriceUnavailable
           change24Display="+2.35%"
           change24Tone="up"
           high24Display="64,112.3"
           low24Display="61,203.5"
           vol24Display="12.3K"
-          fundingDisplay="0.0125%"
+          fundingDisplay="0.00%"
         />
 
         <div className="flex border-b border-border">
@@ -114,14 +116,16 @@ export function TradeFuturesDisplayFallback({
           markets={[{ symbol: "BTCUSDT-SIM", display_name: "BTCUSDT Perp" }]}
           selectedSymbol="BTCUSDT-SIM"
           onMarketChange={() => {}}
-          priceDisplay={priceDisplay}
-          priceToneClass={tone}
+          lastPriceDisplay={priceDisplay}
+          lastPriceToneClass={tone}
+          markPriceDisplay="—"
+          markPriceUnavailable
           change24Display="+2.35%"
           change24Tone="up"
           high24Display="64,112.3"
           low24Display="61,203.5"
           vol24Display="12.3K"
-          fundingDisplay="0.0125%"
+          fundingDisplay="0.00%"
           trailing={
             <span
               data-testid="trade-futures-display-only-label"

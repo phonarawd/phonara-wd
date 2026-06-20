@@ -102,7 +102,7 @@ export function MobileTradeView({
               high24Display="64,112.3"
               low24Display="61,203.5"
               vol24Display="12.3K BTC"
-              fundingDisplay="0.0125%"
+              fundingDisplay="0.00%"
             />
             <TradeRulesTrigger
               onClick={() => setRulesOpen(true)}

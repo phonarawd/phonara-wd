@@ -47,6 +47,7 @@ export type TradePageController = {
   realtimeDisconnected: boolean;
   priceDisplay: string;
   oraclePriceDisplay: string;
+  oracleMarkUnavailable: boolean;
   priceDir: PriceDir;
   futuresActions: ReturnType<typeof useFuturesActions>;
   spotActions: ReturnType<typeof useSpotActions>;
@@ -101,9 +102,10 @@ export function useTradePageController(): TradePageController {
   );
 
   const rawPrice = selectedFuturesMarket ? (prices[selectedFuturesMarket.symbol] ?? '0') : '0';
+  const oracleMarkUnavailable =
+    !rawPrice || rawPrice === '0' || isPriceStale(selectedFuturesMarket?.symbol);
   const oraclePriceDisplay = formatOraclePriceDisplay(
-    rawPrice === '0' ? undefined : rawPrice,
-    '63,548.7',
+    oracleMarkUnavailable ? undefined : rawPrice,
   );
 
   const {
@@ -157,6 +159,7 @@ export function useTradePageController(): TradePageController {
     realtimeDisconnected,
     priceDisplay,
     oraclePriceDisplay,
+    oracleMarkUnavailable,
     priceDir,
     futuresActions,
     spotActions,

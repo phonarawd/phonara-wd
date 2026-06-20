@@ -61,6 +61,7 @@ export function FuturesOrderTicketForm({
     setMarginMode,
     marginModeBusy,
     crossMarginEnabled,
+    marginModeError,
   } = wire;
 
   const compact = variant === "sheet";
@@ -133,7 +134,12 @@ export function FuturesOrderTicketForm({
         </label>
       ) : null}
 
-      <Field label={t("trade.order.price")} value={oracleMarkDisplay} />
+      <Field
+        label={t("trade.markPrice")}
+        value={oracleMarkDisplay}
+        hint={t("trade.chart.oracleLineDescription")}
+        unavailable={wire.oracleMarkUnavailable}
+      />
 
       <div className="grid grid-cols-2 gap-1">
         <button
@@ -205,7 +211,9 @@ export function FuturesOrderTicketForm({
         </button>
       ) : null}
 
-      {error ? <p className="text-[11px] text-(--color-down)">{t(error)}</p> : null}
+      {error || marginModeError ? (
+        <p className="text-[11px] text-(--color-down)">{t(error ?? marginModeError!)}</p>
+      ) : null}
 
       {onSubmit ? (
         <button
@@ -238,11 +246,24 @@ export function FuturesOrderTicketForm({
   );
 }
 
-function Field({ label, value }: { label: string; value: string }) {
+function Field({
+  label,
+  value,
+  hint,
+  unavailable,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+  unavailable?: boolean;
+}) {
   return (
-    <div className="rounded border border-border bg-(--color-surface) px-2 py-1.5">
+    <div
+      className="rounded border border-border bg-(--color-surface) px-2 py-1.5"
+      title={hint}
+    >
       <div className="text-[10px] text-muted-foreground">{label}</div>
-      <div className="tabular-nums">{value}</div>
+      <div className={cn("tabular-nums", unavailable && "text-muted-foreground")}>{value}</div>
     </div>
   );
 }

@@ -37,8 +37,20 @@ export function FuturesOrderSheet({
             </DrawerPrimitive.Title>
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <div className="text-[10px] text-muted-foreground">{t("trade.mobile.lastPrice")}</div>
-                <div className={cn("text-sm tabular-nums", sideAccent)}>{wire.priceDisplay}</div>
+                <div className="text-[10px] text-muted-foreground">{t("trade.chart.livePrice")}</div>
+                <div className={cn("text-sm tabular-nums", sideAccent)}>{wire.lastPriceDisplay}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-[10px] text-muted-foreground">{t("trade.oracleSettlementPrice")}</div>
+                <div
+                  className={cn(
+                    "text-sm tabular-nums",
+                    wire.oracleMarkUnavailable ? "text-muted-foreground" : sideAccent,
+                  )}
+                  title={t("trade.chart.oracleLineDescription")}
+                >
+                  {wire.markPriceDisplay}
+                </div>
               </div>
               <button
                 type="button"

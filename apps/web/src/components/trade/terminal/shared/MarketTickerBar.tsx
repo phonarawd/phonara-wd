@@ -9,8 +9,12 @@ export type MarketTickerBarProps = {
   selectedSymbol: string;
   onMarketChange: (symbol: string) => void;
   marketsLoading?: boolean;
-  priceDisplay: string;
-  priceToneClass: string;
+  /** Exchange live feed — display reference (Last). */
+  lastPriceDisplay: string;
+  lastPriceToneClass: string;
+  /** Server oracle mark — settlement / order fill reference. */
+  markPriceDisplay: string;
+  markPriceUnavailable?: boolean;
   showPerp?: boolean;
   change24Display?: string;
   change24Tone?: "up" | "down";
@@ -18,6 +22,7 @@ export type MarketTickerBarProps = {
   low24Display?: string;
   vol24Display?: string;
   fundingDisplay?: string;
+  fundingToneClass?: string;
   openInterestDisplay?: string;
   trailing?: React.ReactNode;
 };
@@ -29,15 +34,18 @@ export function MarketTickerBar({
   selectedSymbol,
   onMarketChange,
   marketsLoading,
-  priceDisplay,
-  priceToneClass,
+  lastPriceDisplay,
+  lastPriceToneClass,
+  markPriceDisplay,
+  markPriceUnavailable = false,
   showPerp = true,
   change24Display = "+0.00%",
   change24Tone = "up",
   high24Display = "—",
   low24Display = "—",
   vol24Display = "—",
-  fundingDisplay = "0.0100%",
+  fundingDisplay = "0.00%",
+  fundingToneClass = "text-muted-foreground",
   openInterestDisplay,
   trailing,
 }: MarketTickerBarProps) {
@@ -80,15 +88,27 @@ export function MarketTickerBar({
           </button>
         </div>
 
-        <div className={cn("text-base font-semibold tabular-nums md:text-lg", priceToneClass)}>
-          {priceDisplay}
+        <div className="flex flex-wrap items-end gap-3 md:gap-4">
+          <PriceBlock
+            label={t("trade.chart.livePrice")}
+            value={lastPriceDisplay}
+            toneClass={lastPriceToneClass}
+            title={t("trade.chart.displayFeedDisclosure")}
+          />
+          <PriceBlock
+            label={t("trade.oracleSettlementPrice")}
+            value={markPriceDisplay}
+            toneClass={markPriceUnavailable ? "text-muted-foreground" : lastPriceToneClass}
+            title={t("trade.chart.oracleLineDescription")}
+            emphasize={markPriceUnavailable}
+          />
         </div>
 
         <TickerStat label={t("trade.change24")} value={change24Display} toneClass={changeTone} />
         <TickerStat label={t("trade.high24")} value={high24Display} />
         <TickerStat label={t("trade.low24")} value={low24Display} />
         <TickerStat label={t("trade.vol24")} value={vol24Display} />
-        <TickerStat label={t("trade.funding")} value={fundingDisplay} toneClass="text-(--color-up)" />
+        <TickerStat label={t("trade.funding")} value={fundingDisplay} toneClass={fundingToneClass} />
         {openInterestDisplay ? (
           <TickerStat label={t("trade.openInterest")} value={openInterestDisplay} />
         ) : null}
@@ -96,6 +116,35 @@ export function MarketTickerBar({
         {trailing ? <div className="ml-auto flex items-center gap-2">{trailing}</div> : null}
       </div>
       <div className="mt-1 text-[10px] text-muted-foreground lg:hidden">{pairLabel}</div>
+    </div>
+  );
+}
+
+function PriceBlock({
+  label,
+  value,
+  toneClass,
+  title,
+  emphasize,
+}: {
+  label: string;
+  value: string;
+  toneClass: string;
+  title?: string;
+  emphasize?: boolean;
+}) {
+  return (
+    <div className="flex flex-col" title={title}>
+      <span className="text-[10px] text-muted-foreground">{label}</span>
+      <span
+        className={cn(
+          "text-base font-semibold tabular-nums md:text-lg",
+          toneClass,
+          emphasize && "opacity-70",
+        )}
+      >
+        {value}
+      </span>
     </div>
   );
 }

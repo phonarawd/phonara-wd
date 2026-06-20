@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
+import { env } from '../lib/env';
 import type { Tables } from '@phonara/shared-types';
 import type { MessageKey } from '@phonara/i18n';
 import { computeOpenPosition, TradingError, type PositionSide } from '@phonara/trading-engine';
@@ -63,6 +64,7 @@ export const tradingKeys = {
   stakingPositions: (userId: string | null) => ['staking-positions', userId] as const,
   openOrders: (userId: string | null) => ['trading-open-orders', userId] as const,
   marginAccount: (userId: string | null) => ['margin-account', userId] as const,
+  fundingRate: (market: string | null) => ['funding-rate', market] as const,
 };
 
 export type MarginAccount = {
@@ -338,6 +340,36 @@ export function useMarginAccount() {
   }, [qc, userId]);
 
   return { marginMode, account, loading, busy, error, setMarginMode, refetch };
+}
+
+export function useFundingRate(market: string | null) {
+  const { session } = useAuth();
+  const userId = session?.user.id ?? null;
+
+  const { data, isLoading } = useQuery({
+    queryKey: tradingKeys.fundingRate(market),
+    queryFn: async (): Promise<string> => {
+      const token = session?.access_token;
+      if (!token || !market) return '0';
+      const params = new URLSearchParams({
+        select: 'rate',
+        market: `eq.${market}`,
+      });
+      const res = await fetch(`${env.VITE_SUPABASE_URL}/rest/v1/funding_rates?${params}`, {
+        headers: {
+          apikey: env.VITE_SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error(`funding_rates fetch failed: ${res.status}`);
+      const rows = (await res.json()) as { rate: string }[];
+      return rows[0]?.rate ?? '0';
+    },
+    enabled: !!userId && !!market,
+    staleTime: 30_000,
+  });
+
+  return { rate: data ?? null, loading: isLoading };
 }
 
 export function useFuturesOrderTicket({

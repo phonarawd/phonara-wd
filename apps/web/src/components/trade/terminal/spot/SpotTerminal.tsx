@@ -34,8 +34,9 @@ function SpotDesktopGrid({ wire }: { wire: SpotTerminalWire }) {
         }))}
         selectedSymbol={wire.market?.symbol ?? ""}
         onMarketChange={wire.onMarketChange}
-        priceDisplay={wire.priceDisplay}
-        priceToneClass="text-(--color-primary)"
+        lastPriceDisplay={wire.priceDisplay}
+        lastPriceToneClass="text-(--color-primary)"
+        markPriceDisplay={wire.oraclePriceDisplay}
         showPerp={false}
       />
       <div className="trade-terminal__grid-spot border-x border-border">
@@ -82,8 +83,9 @@ function SpotMobileTerminal({ wire }: { wire: SpotTerminalWire }) {
         }))}
         selectedSymbol={wire.market?.symbol ?? ""}
         onMarketChange={wire.onMarketChange}
-        priceDisplay={wire.priceDisplay}
-        priceToneClass="text-(--color-primary)"
+        lastPriceDisplay={wire.priceDisplay}
+        lastPriceToneClass="text-(--color-primary)"
+        markPriceDisplay={wire.oraclePriceDisplay}
         showPerp={false}
       />
       <div className="flex border-b border-border">

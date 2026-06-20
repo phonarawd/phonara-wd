@@ -8,10 +8,13 @@ import {
   useFuturesActions,
   useOpenOrders,
   useMarginAccount,
+  useFundingRate,
   useTradingRiskAcknowledgement,
   useSyntheticBook,
   type SyntheticBookLevel,
 } from "@/hooks/use-trading";
+import { useTradeLaunchFlags } from "@/hooks/use-trade-launch-flags";
+import { formatFundingRateDisplay } from "@/lib/format-funding-rate-display";
 import { useConfirmSnapshot } from "@/hooks/use-confirm-snapshot";
 import { formatOraclePriceDisplay } from "@/features/trading/format-oracle-price-display";
 import { normalizeDecimalInput } from "@/lib/money-input";
@@ -40,6 +43,7 @@ export function useFuturesTerminalWire(engine: TradePageController) {
     realtimeDisconnected,
     priceDisplay,
     oraclePriceDisplay,
+    oracleMarkUnavailable,
     priceDir,
     futuresPositions,
     refreshFuturesPositions,
@@ -56,6 +60,15 @@ export function useFuturesTerminalWire(engine: TradePageController) {
   const { orders: openOrders, loading: openOrdersLoading, refresh: refreshOpenOrders } =
     useOpenOrders();
   const marginAccount = useMarginAccount();
+  const tradeLaunchFlags = useTradeLaunchFlags();
+  const fundingMarketSymbol =
+    ticket.market?.symbol ?? selectedFuturesMarket?.symbol ?? null;
+  const { rate: fundingRateRaw } = useFundingRate(fundingMarketSymbol);
+
+  const fundingFormatted = useMemo(
+    () => formatFundingRateDisplay(fundingRateRaw ?? "0"),
+    [fundingRateRaw],
+  );
 
   const onTradingChange = useCallback(() => {
     refreshFuturesPositions();
@@ -198,7 +211,17 @@ export function useFuturesTerminalWire(engine: TradePageController) {
     market,
     price,
     priceDisplay,
+    lastPriceDisplay: priceDisplay,
     oracleMarkDisplay: oraclePriceDisplay,
+    oracleMarkUnavailable,
+    markPriceDisplay: oraclePriceDisplay,
+    fundingDisplay: fundingFormatted.display,
+    fundingToneClass:
+      fundingFormatted.tone === "up"
+        ? "text-(--color-up)"
+        : fundingFormatted.tone === "down"
+          ? "text-(--color-down)"
+          : "text-muted-foreground",
     priceDir,
     tone,
     baseLabel,
@@ -226,6 +249,7 @@ export function useFuturesTerminalWire(engine: TradePageController) {
     preview,
     busy,
     error,
+    marginModeError: marginAccount.error,
     walletLoading,
     tradeBlocked,
     isHighLeverage,
@@ -257,7 +281,7 @@ export function useFuturesTerminalWire(engine: TradePageController) {
     marginMode: marginAccount.marginMode,
     setMarginMode: marginAccount.setMarginMode,
     marginModeBusy: marginAccount.busy,
-    crossMarginEnabled: true,
+    crossMarginEnabled: tradeLaunchFlags.crossMarginEnabled,
   };
 }
 
