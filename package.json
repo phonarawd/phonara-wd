@@ -15,6 +15,7 @@
     "seed:local-admin": "tsx scripts/seed-local-admin-dev.ts",
     "pentest:money-path": "tsx scripts/pentest/p0-money-path-dynamic.ts",
     "pentest:law1-game-integrity": "tsx scripts/pentest/law1-game-integrity-dynamic.ts",
+    "gameday:drill": "tsx scripts/game-day/gameday-drill.ts",
     "build": "bun run build:packages && bun run build:apps",
     "build:apps": "bun --filter @phonara/web build && bun --filter @phonara/admin build",
     "build:packages": "tsc -b --force packages/shared-types packages/i18n packages/money packages/wallet-ledger packages/trading-engine packages/market-display packages/game-engine packages/sportsbook-engine packages/sports-ingest packages/ui",

@@ -56,7 +56,7 @@ BEGIN
     '75.000000', 'PHON', 'sports-void-' || v_uid::TEXT
   )->>'bet_id')::UUID;
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   PERFORM rpc_void_sports_bet(v_bet_id, 'test_void_refund');
 
   SELECT

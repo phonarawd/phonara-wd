@@ -84,7 +84,7 @@ BEGIN
   UPDATE wallets SET phon_available = '5000.000000' WHERE user_id = v_uid;
   UPDATE app_config SET value = 'true' WHERE key = 'feature_sports_enabled';
 
-  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT)::TEXT, true);
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
   PERFORM rpc_admin_set_sports_risk_tier(v_uid, 'banned', 'test ban');
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
 
