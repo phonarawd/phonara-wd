@@ -78,6 +78,12 @@ const steps: GateStep[] = [
     args: ['run', 'check:functions-mirror'],
     env: { PHONARA_FUNCTIONS_MIRROR_STRICT: '1' },
   },
+  {
+    name: 'guard coverage',
+    command: 'bun',
+    args: ['run', 'check:guard-coverage'],
+    env: { PHONARA_GUARD_COVERAGE_STRICT: '1' },
+  },
   { name: 'sql', command: 'bun', args: ['run', 'test:sql'] },
   {
     name: 'casino sql parity',

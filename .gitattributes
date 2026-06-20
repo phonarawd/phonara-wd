@@ -1,0 +1,2 @@
+# Migration append-only lock hashes SHA-256 raw file bytes — force LF on all platforms.
+supabase/migrations/*.sql text eol=lf

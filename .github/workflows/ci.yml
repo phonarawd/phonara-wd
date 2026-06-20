@@ -25,6 +25,7 @@ jobs:
       - run: bun run check:hygiene
       - run: bun run check:i18n
       - run: bun run check:release
+      - run: bun run check:migrations
       - run: bun run typecheck
       - run: bun run lint
       - run: bun run test
@@ -86,6 +87,10 @@ jobs:
         run: supabase start
       - name: Apply all migrations on a fresh database
         run: supabase db reset
+      - name: Guard coverage gate (AAL2 + system_live)
+        env:
+          PHONARA_GUARD_COVERAGE_STRICT: "1"
+        run: bun run check:guard-coverage
       - name: Run SQL integration tests (conservation + hardening)
         env:
           SUPABASE_DB_URL: postgresql://postgres:postgres@127.0.0.1:54442/postgres

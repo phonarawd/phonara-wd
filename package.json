@@ -65,6 +65,7 @@
     "check:migrations": "tsx scripts/check-migrations.ts",
     "check:games": "tsx scripts/check-game-registration.ts",
     "check:determinism": "tsx scripts/check-determinism.ts",
+    "check:guard-coverage": "tsx scripts/check/guard-coverage.ts",
     "lock:migrations": "tsx scripts/check-migrations.ts --write",
     "check:functions-mirror": "tsx scripts/generate-functions-mirror.ts --check",
     "mirror:functions": "tsx scripts/generate-functions-mirror.ts",

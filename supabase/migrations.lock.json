@@ -127,6 +127,11 @@
     "20260620000131_trade_e1_funding_sltp.sql": "429b201b6ba2269a9ca8edb5b134e2f2ee105cd31e216ec1800aad4c2907fbd4",
     "20260620000132_trade_spot_grants_min_notional.sql": "4f9a528c817e5382ff94319a5635a5fb36abbc6cc467aa575bb4a6dc6e6b6319",
     "20260620000133_trade_e2_open_orders.sql": "eaa54d8d7b7a31d6dc6c50c1ffb50a9e02f448ff9709a1daeb0efe5f593f2425",
-    "20260620000134_trade_e3_cross_margin.sql": "1aa54ac67ea4cb0ad793e86d78d1d7b22e2870fb5ed6b7d64c0a86e7d52bbcb6"
+    "20260620000134_trade_e3_cross_margin.sql": "1aa54ac67ea4cb0ad793e86d78d1d7b22e2870fb5ed6b7d64c0a86e7d52bbcb6",
+    "20260620000135_assert_amount_text_positive.sql": "d18b13ec12cb3ad314bd6c43264f95b85692865a005241a77a8b52a3622d9029",
+    "20260620000136_mines_client_result_leak_fix.sql": "affd109a69004c62676a659b428838be6e36aaecdec77bd3e9b87f8d1fcbbc1c",
+    "20260620000137_game_bets_client_result_view.sql": "e37ef102450c8914470301173cc03cfdc1eb522500d6c09456e7fb955667ca50",
+    "20260620000138_gameday_halt_aal2_guard_symmetry.sql": "cea403a9bc35443c9ee345cd6f3a96d0a038ca83f98acb49a6eb40df00c3208e",
+    "20260620000139_guard_symmetry_aal2_systemlive_sweep.sql": "0e23bddd4fb5b8a6265ecfc6a0e4423cb431466d4dff2054c1ea6189fced9ba0"
   }
 }
