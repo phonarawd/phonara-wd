@@ -195,7 +195,16 @@ test.describe('casino provably fair E2E', () => {
         p_round_id: round.round_id,
       });
       expect(reveal.server_seed_hash, `${gameCase.game}: reveal hash`).toBe(round.server_seed_hash);
-      if (gameCase.game !== 'mines') {
+      if (gameCase.game === 'deepshaft') {
+        expect(bet.result, `${gameCase.game}: bet masks levels`).not.toHaveProperty('levels');
+        expect(reveal.result, `${gameCase.game}: reveal includes levels`).toHaveProperty('levels');
+        expect(bet.result, `${gameCase.game}: bet matches masked reveal fields`).toEqual({
+          reachedDepth: reveal.result?.reachedDepth,
+          caveIn: reveal.result?.caveIn,
+          totalMultiplier: reveal.result?.totalMultiplier,
+          won: reveal.result?.won,
+        });
+      } else if (gameCase.game !== 'mines') {
         expect(reveal.result, `${gameCase.game}: reveal result`).toEqual(bet.result);
       }
 

@@ -207,7 +207,7 @@ export function isThinRpcWrapper(def: string): boolean {
   return /^RETURN\s+rpc_/i.test(trimmed) && !hasDirectBalanceSignal(body);
 }
 
-export function isThinWrapper(def: string, ctx?: DetectionContext): boolean {
+export function isThinWrapper(def: string): boolean {
   const body = extractFunctionBody(def);
   const thinCallee = extractThinWrapperCallee(body);
   if (!thinCallee) return false;

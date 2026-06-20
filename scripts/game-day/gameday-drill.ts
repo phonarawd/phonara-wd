@@ -50,14 +50,10 @@ import {
   waitForDbReady,
 } from './lib/restore-drill.ts';
 import { captureSnapshot } from './lib/snapshot.ts';
-import { sqlAsAdmin, sqlAsAdminAal1, sqlAsUser, sqlExec } from './lib/sql-claims.ts';
+import { sqlAsAdminAal1, sqlAsUser, sqlExec } from './lib/sql-claims.ts';
 import { seedOracleAndMarkets } from '../pentest/lib/deposit-path.ts';
 import type { PentestFixture } from '../pentest/lib/fixture.ts';
 import type { PentestConfig } from '../pentest/lib/config.ts';
-
-function probeFailures(probes: ProbeResult[]): ProbeResult[] {
-  return probes.filter((p) => !p.passed);
-}
 
 function haltLeaks(probes: ProbeResult[]): ProbeResult[] {
   return probes.filter((p) => p.expected === 'reject' && p.ok);
@@ -206,7 +202,7 @@ async function runDrill2Readonly(
   const blockProbes = await runMoneyProbeMatrix(config, fixture, 'reject');
   const roLeaksList = haltLeaks(blockProbes);
 
-  const roOff = setSystemMode(fixture.adminId, false, false, 'gameday drill 2 recovery');
+  void setSystemMode(fixture.adminId, false, false, 'gameday drill 2 recovery');
   ensureLivePlatform();
 
   const recoveryProbes = await runMoneyProbeMatrix(config, fixture, 'allow');
@@ -287,7 +283,7 @@ async function runDrill3Partial(
   if (diceFlag !== 'false') failures.push(`3b dice flag not auto-off: ${diceFlag}`);
 
   sqlExec(`UPDATE app_config SET value = 'true' WHERE key = 'feature_game_dice_enabled';`);
-  const otherGameBet = await placeDiceBet(config, fixture, 'd3b-after-restore');
+  await placeDiceBet(config, fixture, 'd3b-after-restore');
   // mines test in 3c — use dice for "other" after parity on dice only
   setPerGameEnabled('dice', true);
 
@@ -511,8 +507,8 @@ async function runDrill5Restore(
   ensureLivePlatform();
   const snapshotBefore = capturePreRestoreSnapshot(fixture.userA.id);
 
-  let dumpPath = '';
-  let dumpCommands: string[] = [];
+  let dumpPath: string;
+  let dumpCommands: string[];
   try {
     const dump = createLocalDump('gameday-restore');
     dumpPath = dump.dumpPath;

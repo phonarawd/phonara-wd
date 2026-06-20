@@ -241,7 +241,7 @@ export async function runMoneyProbeMatrix(
 
   // Bank transfer (service_role) — create matching deposit if request succeeded
   let bankOk = false;
-  let bankErr = '';
+  let bankErr: string;
   let bankData: unknown = null;
   if (depReq.ok && depReq.data) {
     const ref = String((depReq.data as Record<string, unknown>)['reference_code'] ?? '');
