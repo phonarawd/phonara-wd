@@ -11,6 +11,7 @@ import {
   currencyTotals,
   type E2EAuth,
 } from './_helpers';
+import type { BetResponse } from '../../apps/web/src/features/casino/types';
 
 const ROULETTE_PRIZES = [10, 20, 30, 50, 100, 300, 500, 1000] as const;
 const DEFAULT_MAX_PAYOUT_PHON = '1000000.000000';
@@ -51,6 +52,18 @@ async function withStepTimeout<T>(label: string, work: Promise<T>, timeoutMs = 2
   }
 }
 
+/** Wait for rpc_open_game_round + committed UI before opening the shell confirm dialog. */
+async function prepareDiceRound(page: Page): Promise<void> {
+  const openRound = page.waitForResponse(
+    (response) => response.url().includes('rpc_open_game_round') && response.status() < 500,
+    { timeout: 30_000 },
+  );
+  await page.getByTestId('casino-prepare-hash').click({ timeout: 15_000 });
+  await openRound;
+  await expect(page.getByTestId('casino-prepare-hash')).toBeDisabled({ timeout: 15_000 });
+  await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 15_000 });
+}
+
 test.describe.configure({ mode: 'serial', timeout: 120_000 });
 
 test.describe('Wave 7 Phase 4 closeout', () => {
@@ -87,17 +100,16 @@ test.describe('Wave 7 Phase 4 closeout', () => {
 
       // Stake before prepare — onStakeChange resets commitment in the paste shell adapter.
       await page.getByTestId('casino-stake-input').fill('100');
-      await page.getByTestId('casino-prepare-hash').click({ timeout: 5_000 });
-      await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 15_000 });
+      await prepareDiceRound(page);
 
       await page.getByTestId('casino-place-bet').click({ timeout: 5_000 });
-      await expect(page.getByTestId('casino-bet-confirm-confirm')).toBeVisible({ timeout: 15_000 });
+      await expect(page.getByTestId('casino-bet-confirm')).toBeVisible({ timeout: 15_000 });
       await expect(page.getByTestId('casino-bet-confirm-confirm')).toBeEnabled({ timeout: 45_000 });
 
       const betResponse = page.waitForResponse((response) => response.url().includes('rpc_place_game_bet'), {
         timeout: 60_000,
       });
-      await page.getByTestId('casino-bet-confirm-confirm').click({ timeout: 5_000 });
+      await page.getByTestId('casino-bet-confirm-confirm').click({ timeout: 30_000 });
       await betResponse;
       await expect(page.getByTestId('casino-error')).toBeVisible({ timeout: 15_000 });
 
@@ -131,8 +143,7 @@ test.describe('Wave 7 Phase 4 closeout', () => {
 
     await page.goto('/casino/dice');
     await expect(page.getByTestId('casino-fairness-verifier')).toBeAttached({ timeout: 15_000 });
-    await page.getByTestId('casino-prepare-hash').click();
-    await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 15_000 });
+    await prepareDiceRound(page);
 
     await page.getByTestId('casino-place-bet').click();
     await expect(page.getByTestId('casino-bet-confirm-cancel')).toBeVisible({ timeout: 5_000 });
@@ -171,8 +182,7 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     await injectSession(page, auth.accessToken, auth.refreshToken);
     await page.goto('/casino/dice');
     await expect(page.getByTestId('casino-fairness-verifier')).toBeAttached({ timeout: 15_000 });
-    await page.getByTestId('casino-prepare-hash').click();
-    await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 15_000 });
+    await prepareDiceRound(page);
     await page.getByTestId('casino-place-bet').click();
     await expect(page.getByTestId('casino-bet-confirm-confirm')).toBeVisible({ timeout: 5_000 });
 
@@ -183,14 +193,20 @@ test.describe('Wave 7 Phase 4 closeout', () => {
       button?.click();
     });
     const response = await responsePromise;
-    const placed = await response.json() as { result?: Record<string, unknown> };
-    const resultText = JSON.stringify(placed.result ?? {});
+    const placed = (await response.json()) as BetResponse;
+    expect(placed.result, 'bet RPC must return a dice result payload').toBeTruthy();
+    const resultSnippet = JSON.stringify(placed.result).slice(0, 24);
+
+    await page.waitForResponse(
+      (resp) => resp.url().includes('rpc_reveal_game_round') && resp.status() < 500,
+      { timeout: 60_000 },
+    );
 
     await expect(page.getByTestId('casino-bet-confirm-confirm')).toBeHidden({ timeout: 30_000 });
     expect(betRequestCount, 'double confirm must emit one casino bet RPC').toBe(1);
     await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 30_000 });
-    await expect(page.getByTestId('casino-fairness-verifier')).toContainText(resultText.slice(0, 24), {
-      timeout: 15_000,
+    await expect(page.getByTestId('casino-fairness-verifier')).toContainText(resultSnippet, {
+      timeout: 30_000,
     });
   });
 
@@ -207,16 +223,14 @@ test.describe('Wave 7 Phase 4 closeout', () => {
     const input = page.getByTestId('casino-client-seed-input');
     const initialSeed = await input.inputValue();
     await page.keyboard.press('Escape');
-    await page.getByTestId('casino-prepare-hash').click();
-    await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 15_000 });
+    await prepareDiceRound(page);
     await page.getByRole('button', { name: /Provably Fair/i }).click();
     await expect(input).not.toHaveValue(initialSeed);
 
     const manualSeed = `manual-client-seed-${Date.now()}`;
     await input.fill(manualSeed);
     await page.keyboard.press('Escape');
-    await page.getByTestId('casino-prepare-hash').click();
-    await expect(page.getByTestId('casino-place-bet')).toBeEnabled({ timeout: 15_000 });
+    await prepareDiceRound(page);
     await page.getByRole('button', { name: /Provably Fair/i }).click();
     await expect(input).toHaveValue(manualSeed);
   });
