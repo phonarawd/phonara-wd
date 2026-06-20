@@ -292,7 +292,10 @@ BEGIN
      SET real_balance = '1000000.000000', buffer_pct = 10
    WHERE currency = 'PHON';
 
-  -- No reconciliation within 24h → must block
+  -- Test-local stale precondition: no fresh PHON reconciliation visible in this txn
+  DELETE FROM reconciliation_log WHERE currency = 'PHON';
+
+  -- No fresh PHON reconciliation within 24h → must block
   BEGIN
     PERFORM _assert_solvency_withdrawal_gate('PHON');
   EXCEPTION WHEN OTHERS THEN

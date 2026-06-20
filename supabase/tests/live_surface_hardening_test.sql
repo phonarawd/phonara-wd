@@ -78,6 +78,8 @@ DO $$
 DECLARE
   v_admin UUID := gen_random_uuid();
   v_result JSONB;
+  v_blocked BOOLEAN := FALSE;
+  v_msg TEXT;
 BEGIN
   INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
   VALUES (v_admin, 'authenticated', 'authenticated',
@@ -85,6 +87,12 @@ BEGIN
   UPDATE profiles SET role = 'admin' WHERE id = v_admin;
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
+
+  -- Test-local PHON treasury baseline (direct UPDATE — not the RPC under test)
+  UPDATE treasury_reserves
+     SET real_balance = '1000000.000000', buffer_pct = 10, payout_cap_pct = 50
+   WHERE currency = 'PHON';
+
   v_result := rpc_update_treasury_reserve('PHON', '1000000.000000', 10, 50, 'monthly reserve attestation');
 
   ASSERT (v_result->>'ok')::BOOLEAN = TRUE, 'reserve update must succeed for admin';
@@ -93,7 +101,25 @@ BEGIN
     WHERE actor_id = v_admin AND action = 'treasury_reserve_update'
   ), 'reserve update must write audit row';
 
-  RAISE NOTICE 'RESERVE ADMIN OK — admin reason and audit enforced';
+  -- Large delta without confirm must fail
+  v_blocked := FALSE;
+  BEGIN
+    PERFORM rpc_update_treasury_reserve(
+      'PHON', '5000000.000000', 10, 50, 'large delta requires confirm', FALSE);
+  EXCEPTION WHEN OTHERS THEN
+    GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
+    IF v_msg = 'attested_change_requires_confirm' THEN v_blocked := TRUE; END IF;
+  END;
+  ASSERT v_blocked,
+    format('large treasury delta must require confirm, got: %s', COALESCE(v_msg, '<none>'));
+
+  -- Confirmed large delta must succeed
+  v_result := rpc_update_treasury_reserve(
+    'PHON', '5000000.000000', 10, 50, 'confirmed large delta', TRUE);
+  ASSERT (v_result->>'ok')::BOOLEAN,
+    'confirmed large treasury update must succeed';
+
+  RAISE NOTICE 'RESERVE ADMIN OK — admin reason, audit, and large-delta confirm enforced';
 END;
 $$;
 ROLLBACK;
