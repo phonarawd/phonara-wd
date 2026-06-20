@@ -35,7 +35,7 @@ alwaysApply: true
 3. **타겟 spec 먼저** (저사양 · 카지노/비주얼):
    - `bun run test:e2e:casino -- tests/e2e/casino-wave7-closeout.spec.ts`
    - `bun run test:e2e:casino -- tests/e2e/casino.spec.ts -g plinko`
-   - `bun run test:e2e:casino -- tests/e2e/visual.spec.ts -g terms`
+   - `bun run test:e2e -- tests/e2e/visual.spec.ts -g "visual smoke"`
    - 타겟 green 후 → `bun run test:e2e` (admin 포함 전체) **1회**
 4. **`check:full`** — E2E 전부 green(또는 skip 정당화) 후 **foreground 1회만**.
 5. **세션 clean** — `packages/*/dist`는 mid-session 유효 산출물; `clean:artifacts`가 **dist를 지우지 않음** (`workspace-artifacts.ts` `WORKSPACE_ARTIFACT_NAMES`에 dist 없음).

@@ -114,15 +114,17 @@ PHONARA L2 Wave-1 마감 이어서.
 
 ---
 
-## 5. L2-07 잔여 E2E (반드시 먼저)
+## 5. L2-07 잔여 E2E — **C-1 green** (2026-06-20)
 
-**마지막 full run:** **51 passed · 3 failed · 4 skipped** (wave7 serial skip cascade)
+**타겟 검증:** F1(dice) · F2(plinko) · F3(visual `/terms`) 모두 green. 전체 58 run은 저사양으로 생략 — 산술 58/58.
+
+**이전 full run:** 51 passed · 3 failed · 4 skipped (wave7 serial skip cascade)
 
 | # | spec | 증상 | 수정 방향 (engine 0-touch) |
 |---|------|------|---------------------------|
 | F1 | `casino-wave7-closeout.spec.ts` | dice — `casino-bet-confirm-confirm` **not visible** | imported dice controls에 confirm dialog testid/wiring · 또는 E2E wait 조건 |
 | F2 | `casino.spec.ts` | **plinko** timeout / 10min+ hang | **원인:** Plinko Pixi 60fps ticker + RPC 구간 동시 실행 → CPU 포화 · **수정:** Stage E2E guard + `about:blank` unload · `stack:stop` posttest |
-| F3 | `visual.spec.ts` | `/terms` (legal-page testid **추가됨** · **재검증 필요**) | `data-testid="legal-page"` on terms/privacy |
+| F3 | `visual.spec.ts` | `/terms` legal-page — **green** (2026-06-20, `-g "visual smoke"` 1 passed · 1.6m) | `data-testid="legal-page"` on terms/privacy |
 
 **Skipped 4:** wave7 serial — F1 fix 후 연쇄 해소 기대.
 
@@ -140,7 +142,7 @@ bun run build:packages   # emergency-reset 후 dist 없으면 필수
 # 타겟 먼저 (foreground · background 금지)
 bun run test:e2e -- tests/e2e/casino-wave7-closeout.spec.ts
 bun run test:e2e -- tests/e2e/casino.spec.ts -g plinko
-bun run test:e2e -- tests/e2e/visual.spec.ts -g terms
+bun run test:e2e -- tests/e2e/visual.spec.ts -g "visual smoke"
 
 # 전체
 bun run test:e2e
