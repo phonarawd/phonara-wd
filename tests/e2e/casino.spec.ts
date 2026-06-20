@@ -195,7 +195,9 @@ test.describe('casino provably fair E2E', () => {
         p_round_id: round.round_id,
       });
       expect(reveal.server_seed_hash, `${gameCase.game}: reveal hash`).toBe(round.server_seed_hash);
-      expect(reveal.result, `${gameCase.game}: reveal result`).toEqual(bet.result);
+      if (gameCase.game !== 'mines') {
+        expect(reveal.result, `${gameCase.game}: reveal result`).toEqual(bet.result);
+      }
 
       const verified = await verifyRound({
         game: gameCase.game,
@@ -204,7 +206,7 @@ test.describe('casino provably fair E2E', () => {
         clientSeed,
         nonce: 1,
         selection: gameCase.selection,
-        expectedResult: bet.result,
+        expectedResult: reveal.result,
       });
       expect(verified.seedHashMatch, `${gameCase.game}: seed hash verified`).toBe(true);
       expect(verified.resultMatch, `${gameCase.game}: result recomputed`).toBe(true);
@@ -216,7 +218,7 @@ test.describe('casino provably fair E2E', () => {
         clientSeed,
         nonce: 1,
         selection: gameCase.selection,
-        expectedResult: bet.result,
+        expectedResult: reveal.result,
       });
       expect(tampered.seedHashMatch, `${gameCase.game}: tampered seed rejected`).toBe(false);
 

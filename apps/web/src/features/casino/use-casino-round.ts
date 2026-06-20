@@ -131,6 +131,7 @@ export function useCasinoRoundPipeline({
       }) as unknown as BetResponse;
       setSettledResult(placed.result);
       const revealed = await callRpc('rpc_reveal_game_round', { p_round_id: commitment.round_id }) as unknown as RevealResponse;
+      const fullResult = revealed.result as Record<string, unknown>;
       const verified = await verifyRound({
         game: gameCode,
         serverSeed: revealed.server_seed,
@@ -138,13 +139,13 @@ export function useCasinoRoundPipeline({
         clientSeed,
         nonce: 1,
         selection,
-        expectedResult: placed.result,
+        expectedResult: fullResult,
       });
       setBet(placed);
       setVerificationEvidence({
         server_seed_hash: commitment.server_seed_hash,
         server_seed: revealed.server_seed,
-        result: placed.result,
+        result: fullResult,
         verification: verified,
       });
       setConfirmOpen(false);

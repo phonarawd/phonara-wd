@@ -23,8 +23,11 @@ interface Case {
   name: string;
   mineCount: number;
   revealedCells: number[];
+  /** Ground-truth layout for leak assertions (may be omitted from bet.result). */
   minePositions: number[];
   hitMine: boolean;
+  /** Server-sanitized partial cashout — bet.result omits minePositions. */
+  omitClientMinePositions?: boolean;
   /** Tiles expected to show as "bust" face. */
   bust: number[];
   /** Tiles expected to show as "revealed-gem" face. */
@@ -59,13 +62,27 @@ const CASES: Case[] = [
     bust: [3, 7, 12],
     gems: [1],
   },
+  {
+    name: "D · partial cashout sanitized bet (no minePositions in result)",
+    mineCount: 3,
+    revealedCells: [0],
+    minePositions: [3, 7, 12],
+    hitMine: false,
+    omitClientMinePositions: true,
+    bust: [],
+    gems: [0],
+  },
 ];
 
 function makeProps(c: Case) {
+  const result: { hitMine: boolean; minePositions?: number[] } = { hitMine: c.hitMine };
+  if (!c.omitClientMinePositions) {
+    result.minePositions = c.minePositions;
+  }
   const bet: UiBetView = {
     status: c.hitMine ? "lost" : "won",
     payout: c.hitMine ? "0" : "100",
-    result: { minePositions: c.minePositions, hitMine: c.hitMine },
+    result,
   };
   return {
     gameCode: "mines" as const,

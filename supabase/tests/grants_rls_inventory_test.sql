@@ -182,6 +182,12 @@ BEGIN
   ASSERT NOT has_table_privilege('authenticated', 'public.viral_mission_claims', 'INSERT'),
     'authenticated must not INSERT viral_mission_claims';
 
+  -- casino client bet reads (20260620000137)
+  ASSERT NOT has_table_privilege('authenticated', 'public.game_bets', 'SELECT'),
+    'authenticated must NOT SELECT game_bets directly (use v_game_bets_client)';
+  ASSERT has_table_privilege('authenticated', 'public.v_game_bets_client', 'SELECT'),
+    'authenticated must SELECT v_game_bets_client';
+
   -- sportsbook (Wave-S1–S7 · 20260616000099–105)
   ASSERT NOT has_table_privilege('anon', 'public.sports_fixtures', 'SELECT'),
     'anon must NOT SELECT sports_fixtures directly';
@@ -230,6 +236,32 @@ BEGIN
     'authenticated must NOT EXECUTE rpc_ingest_sports_c1_batch';
   ASSERT has_function_privilege('authenticated', 'public.rpc_place_sports_bet(jsonb, text, text, text, text, text, text)', 'EXECUTE'),
     'authenticated must EXECUTE rpc_place_sports_bet';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_place_limit_order(text, text, text, text, text, text, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_place_limit_order';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_place_stop_order(text, text, text, text, text, text, text, text, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_place_stop_order';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_cancel_order(uuid)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_cancel_order';
+  ASSERT NOT has_function_privilege('authenticated', 'public.rpc_run_open_order_fills()', 'EXECUTE'),
+    'authenticated must NOT EXECUTE rpc_run_open_order_fills';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_set_margin_mode(text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_set_margin_mode';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_adjust_isolated_margin(uuid, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_adjust_isolated_margin';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_partial_close_futures(uuid, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_partial_close_futures';
+  ASSERT has_table_privilege('authenticated', 'public.margin_accounts', 'SELECT'),
+    'authenticated must SELECT margin_accounts (own-row RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.margin_accounts', 'INSERT'),
+    'authenticated must NOT INSERT margin_accounts directly';
+  ASSERT has_table_privilege('authenticated', 'public.trading_open_orders', 'SELECT'),
+    'authenticated must SELECT trading_open_orders (own-row RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.trading_open_orders', 'INSERT'),
+    'authenticated must NOT INSERT trading_open_orders directly';
+  ASSERT has_table_privilege('authenticated', 'public.trading_order_fills', 'SELECT'),
+    'authenticated must SELECT trading_order_fills (own-row RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.trading_order_fills', 'INSERT'),
+    'authenticated must NOT INSERT trading_order_fills directly';
   ASSERT has_function_privilege('anon', 'public.rpc_list_sports_fixtures(date, text, text)', 'EXECUTE'),
     'anon must EXECUTE rpc_list_sports_fixtures';
 
@@ -253,7 +285,8 @@ BEGIN
         'sports_fixtures', 'sports_markets', 'sports_outcomes', 'sports_odds_snapshots',
         'sports_bets', 'sports_bet_legs', 'sports_ingest_cursors', 'sports_fixture_events',
         'sports_ingest_health', 'sports_user_risk_profiles', 'sports_risk_events',
-        'sports_device_signals', 'sports_market_type_registry', 'sports_live_ttl_by_sport'
+        'sports_device_signals', 'sports_market_type_registry', 'sports_live_ttl_by_sport',
+        'trading_open_orders', 'trading_order_fills', 'margin_accounts'
       )
       AND NOT c.relrowsecurity
   LOOP

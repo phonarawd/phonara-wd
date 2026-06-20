@@ -1439,6 +1439,38 @@ export type Database = {
         }
         Relationships: []
       }
+      margin_accounts: {
+        Row: {
+          cross_collateral_phon: string
+          cross_collateral_usdt: string
+          margin_mode: Database["public"]["Enums"]["margin_mode"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cross_collateral_phon?: string
+          cross_collateral_usdt?: string
+          margin_mode?: Database["public"]["Enums"]["margin_mode"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cross_collateral_phon?: string
+          cross_collateral_usdt?: string
+          margin_mode?: Database["public"]["Enums"]["margin_mode"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "margin_accounts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       missions: {
         Row: {
           completed_at: string | null
@@ -2522,29 +2554,76 @@ export type Database = {
       staking_pools: {
         Row: {
           created_at: string
+          display_name: string | null
           estimated_apr: string
           id: string
           is_active: boolean
           lock_days: number
+          reference_asset: string
+          reward_currency: Database["public"]["Enums"]["currency"]
+          sort_order: number
+          stake_currency: Database["public"]["Enums"]["currency"]
           term: Database["public"]["Enums"]["staking_term"]
         }
         Insert: {
           created_at?: string
+          display_name?: string | null
           estimated_apr: string
           id?: string
           is_active?: boolean
           lock_days?: number
+          reference_asset: string
+          reward_currency?: Database["public"]["Enums"]["currency"]
+          sort_order?: number
+          stake_currency: Database["public"]["Enums"]["currency"]
           term: Database["public"]["Enums"]["staking_term"]
         }
         Update: {
           created_at?: string
+          display_name?: string | null
           estimated_apr?: string
           id?: string
           is_active?: boolean
           lock_days?: number
+          reference_asset?: string
+          reward_currency?: Database["public"]["Enums"]["currency"]
+          sort_order?: number
+          stake_currency?: Database["public"]["Enums"]["currency"]
           term?: Database["public"]["Enums"]["staking_term"]
         }
         Relationships: []
+      }
+      spot_holdings: {
+        Row: {
+          base_asset: string
+          id: string
+          quantity: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          base_asset: string
+          id?: string
+          quantity?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          base_asset?: string
+          id?: string
+          quantity?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spot_holdings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       staking_positions: {
         Row: {
@@ -2797,6 +2876,116 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      trading_open_orders: {
+        Row: {
+          client_request_id: string
+          created_at: string
+          filled_quantity: string
+          id: string
+          leverage: string
+          margin_amount: string
+          margin_currency: Database["public"]["Enums"]["currency"]
+          margin_mode: Database["public"]["Enums"]["margin_mode"]
+          market: string
+          order_type: Database["public"]["Enums"]["order_type"]
+          price: string | null
+          quantity: string
+          side: Database["public"]["Enums"]["position_side"]
+          status: Database["public"]["Enums"]["order_status"]
+          stop_price: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          client_request_id: string
+          created_at?: string
+          filled_quantity?: string
+          id?: string
+          leverage: string
+          margin_amount: string
+          margin_currency: Database["public"]["Enums"]["currency"]
+          margin_mode?: Database["public"]["Enums"]["margin_mode"]
+          market: string
+          order_type: Database["public"]["Enums"]["order_type"]
+          price?: string | null
+          quantity: string
+          side: Database["public"]["Enums"]["position_side"]
+          status?: Database["public"]["Enums"]["order_status"]
+          stop_price?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          client_request_id?: string
+          created_at?: string
+          filled_quantity?: string
+          id?: string
+          leverage?: string
+          margin_amount?: string
+          margin_currency?: Database["public"]["Enums"]["currency"]
+          margin_mode?: Database["public"]["Enums"]["margin_mode"]
+          market?: string
+          order_type?: Database["public"]["Enums"]["order_type"]
+          price?: string | null
+          quantity?: string
+          side?: Database["public"]["Enums"]["position_side"]
+          status?: Database["public"]["Enums"]["order_status"]
+          stop_price?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trading_open_orders_market_fkey"
+            columns: ["market"]
+            isOneToOne: false
+            referencedRelation: "futures_markets"
+            referencedColumns: ["symbol"]
+          },
+          {
+            foreignKeyName: "trading_open_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trading_order_fills: {
+        Row: {
+          created_at: string
+          fee: string
+          fill_price: string
+          fill_quantity: string
+          id: string
+          order_id: string
+        }
+        Insert: {
+          created_at?: string
+          fee: string
+          fill_price: string
+          fill_quantity: string
+          id?: string
+          order_id: string
+        }
+        Update: {
+          created_at?: string
+          fee?: string
+          fill_price?: string
+          fill_quantity?: string
+          id?: string
+          order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trading_order_fills_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "trading_open_orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       treasury_reserves: {
         Row: {
@@ -3324,6 +3513,45 @@ export type Database = {
           status?: Database["public"]["Enums"]["round_status"] | null
         }
         Relationships: []
+      }
+      v_game_bets_client: {
+        Row: {
+          client_seed: string | null
+          created_at: string | null
+          currency: Database["public"]["Enums"]["currency"] | null
+          game: Database["public"]["Enums"]["game_code"] | null
+          house_ledger_transfer_id: string | null
+          id: string | null
+          idempotency_key: string | null
+          nonce: number | null
+          parity_hold: boolean | null
+          payout: string | null
+          payout_ledger_id: string | null
+          result_payload: Json | null
+          round_id: string | null
+          selection: Json | null
+          settled_at: string | null
+          stake: string | null
+          stake_lock_id: string | null
+          status: Database["public"]["Enums"]["bet_status"] | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_bets_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "v_game_rounds_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_bets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       v_user_consent_latest: {
         Row: {
@@ -4002,7 +4230,12 @@ export type Database = {
         Args: { p_reason: string; p_withdrawal_id: string }
         Returns: Json
       }
+      rpc_adjust_isolated_margin: {
+        Args: { p_delta: string; p_position_id: string }
+        Returns: Json
+      }
       rpc_cancel_game_bet: { Args: { p_bet_id: string }; Returns: Json }
+      rpc_cancel_order: { Args: { p_order_id: string }; Returns: Json }
       rpc_check_casino_rtp_drift: { Args: never; Returns: Json }
       rpc_check_onboarding_consent: { Args: never; Returns: Json }
       rpc_check_reserve_ratio: { Args: never; Returns: Json }
@@ -4124,6 +4357,36 @@ export type Database = {
           p_selection: Json
           p_stake: string
         }
+        Returns: Json
+      }
+      rpc_place_limit_order: {
+        Args: {
+          p_client_request_id: string
+          p_leverage: string
+          p_limit_price: string
+          p_margin_amount: string
+          p_margin_currency: string
+          p_market: string
+          p_side: string
+        }
+        Returns: Json
+      }
+      rpc_place_stop_order: {
+        Args: {
+          p_client_request_id?: string
+          p_leverage: string
+          p_limit_price?: string
+          p_margin_amount: string
+          p_margin_currency: string
+          p_market: string
+          p_order_type: string
+          p_side: string
+          p_stop_price: string
+        }
+        Returns: Json
+      }
+      rpc_partial_close_futures: {
+        Args: { p_close_ratio: string; p_position_id: string }
         Returns: Json
       }
       rpc_process_bank_transfer: {
@@ -4251,6 +4514,7 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_set_margin_mode: { Args: { p_mode: string }; Returns: Json }
       rpc_set_rg_limit: {
         Args: {
           p_amount: string
@@ -4274,11 +4538,33 @@ export type Database = {
       }
       rpc_spin_roulette: { Args: never; Returns: Json }
       rpc_spot_market_buy: {
-        Args: { p_client_request_id?: string; p_usdt_spent: string }
+        Args: {
+          p_amount?: string
+          p_client_request_id?: string
+          p_market?: string
+          p_stake_currency?: string
+          p_usdt_spent?: string
+        }
         Returns: Json
       }
       rpc_spot_market_sell: {
-        Args: { p_client_request_id?: string; p_phon_sold: string }
+        Args: {
+          p_base_amount?: string
+          p_client_request_id?: string
+          p_market?: string
+          p_phon_sold?: string
+          p_stake_currency?: string
+        }
+        Returns: Json
+      }
+      rpc_stake: {
+        Args: {
+          p_amount: string
+          p_client_request_id?: string
+          p_reference_asset: string
+          p_stake_currency: string
+          p_term: string
+        }
         Returns: Json
       }
       rpc_stake_phon: {
@@ -4410,6 +4696,15 @@ export type Database = {
         | "invite_3_friends"
         | "streak_7_days"
         | "streak_30_days"
+      margin_mode: "isolated" | "cross"
+      order_status:
+        | "pending"
+        | "open"
+        | "partially_filled"
+        | "filled"
+        | "cancelled"
+        | "triggered"
+      order_type: "market" | "limit" | "stop_market" | "stop_limit"
       position_side: "long" | "short"
       position_status: "open" | "closed" | "liquidated"
       round_status: "open" | "settled" | "cancelled"
