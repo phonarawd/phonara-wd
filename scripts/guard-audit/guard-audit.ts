@@ -4,7 +4,15 @@
  */
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { isAllowlisted } from '../check/guard-coverage-allowlist.ts';
+import {
+  BALANCE_CALLEE_HELPERS,
+  balanceMovingSqlPattern,
+  buildDetectionContext,
+  isAllowlisted,
+  isBalanceMoving,
+  isGuardedByCalleeOrSelf,
+  type RpcDefRow,
+} from '../check/guard-coverage-allowlist.ts';
 import { adminClient, loadPentestConfig } from '../pentest/lib/config.ts';
 import { createPentestFixture } from '../pentest/lib/fixture.ts';
 import { seedOracleAndMarkets } from '../pentest/lib/deposit-path.ts';
@@ -20,28 +28,63 @@ const MIG_DIR = join(process.cwd(), 'supabase', 'migrations');
 interface RpcRow {
   name: string;
   args: string;
+  def: string;
   is_admin: boolean;
   aal2: boolean;
   system_live: boolean;
   balance_moving: boolean;
+  effectively_guarded: boolean;
 }
 
-function loadLiveMatrix(): RpcRow[] {
+function loadHelperDefs(): RpcDefRow[] {
+  const names = BALANCE_CALLEE_HELPERS.map((n) => `'${n}'`).join(', ');
   const raw = sqlExec(`
     SELECT json_agg(row_to_json(t) ORDER BY t.name, t.args)
     FROM (
       SELECT p.proname AS name,
              pg_get_function_identity_arguments(p.oid) AS args,
+             pg_get_functiondef(p.oid) AS def
+      FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+      WHERE n.nspname='public' AND p.proname IN (${names})
+    ) t;
+  `);
+  if (!raw.ok) return [];
+  return JSON.parse(raw.stdout.trim() || '[]') as RpcDefRow[];
+}
+
+function loadLiveMatrix(): RpcRow[] {
+  const pattern = balanceMovingSqlPattern();
+  const raw = sqlExec(`
+    SELECT json_agg(row_to_json(t) ORDER BY t.name, t.args)
+    FROM (
+      SELECT p.proname AS name,
+             pg_get_function_identity_arguments(p.oid) AS args,
+             pg_get_functiondef(p.oid) AS def,
              pg_get_functiondef(p.oid) LIKE '%_is_admin()%' AS is_admin,
              pg_get_functiondef(p.oid) LIKE '%_assert_admin_aal2()%' AS aal2,
              pg_get_functiondef(p.oid) LIKE '%_assert_system_live()%' AS system_live,
-             pg_get_functiondef(p.oid) ~* '_credit_wallet|_debit_wallet|_lock_wallet|_unlock_wallet|_debit_locked' AS balance_moving
+             pg_get_functiondef(p.oid) ~* '${pattern}' AS balance_moving_sql
       FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
       WHERE n.nspname='public' AND p.proname LIKE 'rpc_%'
     ) t;
   `);
   if (!raw.ok) throw new Error(`matrix query: ${raw.error}`);
-  return JSON.parse(raw.stdout.trim() || '[]') as RpcRow[];
+  const rows = JSON.parse(raw.stdout.trim() || '[]') as Array<
+    RpcRow & { balance_moving_sql: boolean }
+  >;
+  const helperRows = loadHelperDefs();
+  const ctx = buildDetectionContext(rows, helperRows);
+
+  return rows.map((r) => ({
+    name: r.name,
+    args: r.args,
+    def: r.def,
+    is_admin: r.is_admin,
+    aal2: r.aal2,
+    system_live: r.system_live,
+    balance_moving: isBalanceMoving(r.def, ctx),
+    effectively_guarded: isGuardedByCalleeOrSelf(r.def, r.name, ctx),
+  }));
 }
 
 function lastDefMigration(rpcName: string): string {
@@ -127,7 +170,7 @@ function filterActionableSystemLiveGaps(rows: RpcRow[]): RpcRow[] {
   return rows.filter(
     (r) =>
       r.balance_moving &&
-      !r.system_live &&
+      !r.effectively_guarded &&
       !isAllowlisted(r.name, r.args, 'system-live-exempt'),
   );
 }
@@ -188,12 +231,20 @@ async function main(): Promise<void> {
 
   ensureHaltOff();
 
+  const haltProbes: Record<string, { ok: boolean; error: string; leaked: boolean; call: string }> = {};
+
   const stakeRes = sqlAsUser<{ position_id?: string }>(
     fixture.userA.id,
     `rpc_stake_phon('flexible', '100.000000', 'guard-audit-stake')`,
   );
 
-  const haltProbes: Record<string, { ok: boolean; error: string; leaked: boolean; call: string }> = {};
+  haltProbes.rpc_stake_phon = {
+    ...probeHaltUser(
+      fixture.userA.id,
+      `rpc_stake_phon('flexible', '50.000000', 'guard-audit-stake-halt')`,
+    ),
+    call: "rpc_stake_phon('flexible', '50.000000', 'guard-audit-stake-halt') [thin wrapper]",
+  };
 
   const minesBetId = seedMinesCancelProbe(fixture.userA.id);
   if (minesBetId) {

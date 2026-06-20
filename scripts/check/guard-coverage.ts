@@ -8,15 +8,15 @@ import { join } from 'node:path';
 import { findSupabaseDbContainer } from '../lib/db-connect.ts';
 import { sqlExec } from '../pentest/lib/sql-rpc.ts';
 import {
+  BALANCE_CALLEE_HELPERS,
+  buildDetectionContext,
   isAllowlisted,
   isBalanceMoving,
-  isThinWrapper,
+  isGuardedByCalleeOrSelf,
+  type RpcDefRow,
 } from './guard-coverage-allowlist.ts';
 
-interface RpcRow {
-  name: string;
-  args: string;
-  def: string;
+interface RpcRow extends RpcDefRow {
   authenticated: boolean;
 }
 
@@ -30,6 +30,23 @@ interface Violation {
 const MIRROR_DIR = join(process.cwd(), 'supabase', 'functions-sql', 'current');
 const selfTest = process.argv.includes('--self-test');
 const strict = process.env.PHONARA_GUARD_COVERAGE_STRICT === '1';
+
+function loadHelpersFromLiveDb(): RpcDefRow[] {
+  const names = BALANCE_CALLEE_HELPERS.map((n) => `'${n}'`).join(', ');
+  const raw = sqlExec(`
+    SELECT json_agg(row_to_json(t) ORDER BY t.name, t.args)
+    FROM (
+      SELECT p.proname AS name,
+             pg_get_function_identity_arguments(p.oid) AS args,
+             pg_get_functiondef(p.oid) AS def
+      FROM pg_proc p
+      JOIN pg_namespace n ON n.oid = p.pronamespace
+      WHERE n.nspname = 'public' AND p.proname IN (${names})
+    ) t;
+  `);
+  if (!raw.ok) return [];
+  return JSON.parse(raw.stdout.trim() || '[]') as RpcDefRow[];
+}
 
 function loadFromLiveDb(): RpcRow[] | null {
   if (!findSupabaseDbContainer() && !process.env.SUPABASE_DB_URL) return null;
@@ -75,7 +92,8 @@ function loadFromMirror(): RpcRow[] | null {
   return rows.length ? rows.sort((a, b) => a.name.localeCompare(b.name)) : null;
 }
 
-function scanRows(rows: RpcRow[]): Violation[] {
+function scanRows(rows: RpcRow[], helperRows: RpcDefRow[] = []): Violation[] {
+  const ctx = buildDetectionContext(rows, helperRows);
   const violations: Violation[] = [];
 
   for (const row of rows) {
@@ -92,14 +110,13 @@ function scanRows(rows: RpcRow[]): Violation[] {
       }
     }
 
-    if (isBalanceMoving(def) && !def.includes('_assert_system_live()')) {
-      if (isThinWrapper(def)) continue;
+    if (isBalanceMoving(def, ctx) && !isGuardedByCalleeOrSelf(def, name, ctx)) {
       if (!isAllowlisted(name, args, 'system-live-exempt')) {
         violations.push({
           rule: 'missing-system-live',
           name,
           args,
-          detail: 'balance-moving RPC lacks _assert_system_live()',
+          detail: 'balance-moving RPC lacks _assert_system_live() (self or guarded callee)',
         });
       }
     }
@@ -109,6 +126,15 @@ function scanRows(rows: RpcRow[]): Violation[] {
 }
 
 function runSelfTest(): void {
+  const unguardedStakeDef = `
+CREATE OR REPLACE FUNCTION rpc_stake(text, text, text, text, text)
+RETURNS jsonb LANGUAGE plpgsql AS $function$
+BEGIN
+  PERFORM _lock_wallet_internal(auth.uid(), 'PHON'::currency, '1', 'staking_lock', 'x');
+  RETURN '{}'::jsonb;
+END;
+$function$;`;
+
   const synthetic: RpcRow[] = [
     {
       name: 'rpc_synthetic_missing_aal2',
@@ -122,15 +148,103 @@ END;
 $function$;`,
       authenticated: true,
     },
+    {
+      name: 'rpc_synthetic_settle_delegate',
+      args: 'p_position_id uuid',
+      def: `
+CREATE OR REPLACE FUNCTION rpc_synthetic_settle_delegate(p_position_id uuid)
+RETURNS jsonb LANGUAGE plpgsql AS $function$
+BEGIN
+  RETURN _settle_futures_position(p_position_id, 1, 'closed', 'close');
+END;
+$function$;`,
+      authenticated: true,
+    },
+    {
+      name: 'rpc_synthetic_system_account',
+      args: 'p_amount text',
+      def: `
+CREATE OR REPLACE FUNCTION rpc_synthetic_system_account(p_amount text)
+RETURNS void LANGUAGE plpgsql AS $function$
+BEGIN
+  PERFORM _credit_system_account('house_liquidity_usdt', p_amount, 'test', auth.uid(), 'k', gen_random_uuid());
+END;
+$function$;`,
+      authenticated: true,
+    },
+    {
+      name: 'rpc_synthetic_direct_wallet',
+      args: 'p_amount text',
+      def: `
+CREATE OR REPLACE FUNCTION rpc_synthetic_direct_wallet(p_amount text)
+RETURNS void LANGUAGE plpgsql AS $function$
+BEGIN
+  UPDATE wallets SET phon_available = p_amount WHERE user_id = auth.uid();
+END;
+$function$;`,
+      authenticated: true,
+    },
+    {
+      name: 'rpc_synthetic_unguarded_wrapper',
+      args: 'p_term text, p_amount text',
+      def: `
+CREATE OR REPLACE FUNCTION rpc_synthetic_unguarded_wrapper(p_term text, p_amount text)
+RETURNS jsonb LANGUAGE plpgsql AS $function$
+BEGIN
+  RETURN rpc_stake('PHON', 'PHON', p_term, p_amount, NULL);
+END;
+$function$;`,
+      authenticated: true,
+    },
+    {
+      name: 'rpc_stake',
+      args: 'p_reference_asset text, p_stake_currency text, p_term text, p_amount text, p_client_request_id text',
+      def: unguardedStakeDef,
+      authenticated: true,
+    },
   ];
 
-  const violations = scanRows(synthetic);
-  if (violations.length === 0) {
-    console.error('[check:guard-coverage] --self-test FAIL: synthetic gap was not detected');
+  const helperRows: RpcDefRow[] = [
+    {
+      name: '_settle_futures_position',
+      args: 'p_position_id uuid, p_exit numeric, p_status position_status, p_reason text',
+      def: `
+CREATE OR REPLACE FUNCTION _settle_futures_position(uuid, numeric, position_status, text)
+RETURNS jsonb LANGUAGE plpgsql AS $function$
+BEGIN
+  PERFORM _unlock_wallet_internal(auth.uid(), 'USDT'::currency, '1', 'x', 'y');
+  RETURN '{}'::jsonb;
+END;
+$function$;`,
+    },
+  ];
+
+  const violations = scanRows(synthetic, helperRows);
+  const rules = new Set(violations.map((v) => v.rule));
+  const names = new Set(violations.map((v) => v.name));
+
+  const expectedSystemLive = [
+    'rpc_synthetic_settle_delegate',
+    'rpc_synthetic_system_account',
+    'rpc_synthetic_direct_wallet',
+    'rpc_synthetic_unguarded_wrapper',
+  ];
+  const missingSystemLive = expectedSystemLive.filter((n) => !names.has(n));
+
+  if (!rules.has('missing-aal2') || missingSystemLive.length > 0) {
+    console.error('[check:guard-coverage] --self-test FAIL: synthetic gaps not fully detected');
+    if (!rules.has('missing-aal2')) {
+      console.error('  - missing-aal2 not detected');
+    }
+    for (const n of missingSystemLive) {
+      console.error(`  - missing-system-live not detected for ${n}`);
+    }
     process.exit(1);
   }
 
-  console.log('[check:guard-coverage] --self-test OK — synthetic gap detected as expected');
+  console.log(
+    `[check:guard-coverage] --self-test OK — ${violations.length} synthetic gaps detected (aal2 + ${expectedSystemLive.length} system_live patterns)`,
+  );
 }
 
 function main(): void {
@@ -151,7 +265,8 @@ function main(): void {
     return;
   }
 
-  const violations = scanRows(rows);
+  const helperRows = loadHelpersFromLiveDb();
+  const violations = scanRows(rows, helperRows);
   if (violations.length > 0) {
     console.error('[check:guard-coverage] FAIL — guard gaps detected:');
     for (const v of violations) {

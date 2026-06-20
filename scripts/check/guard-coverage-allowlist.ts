@@ -72,6 +72,11 @@ export const GUARD_COVERAGE_ALLOWLIST: readonly GuardCoverageAllowlistEntry[] = 
     reason: 'service/cron stop-order runner',
   },
   {
+    name: 'rpc_run_stop_orders',
+    rule: 'system-live-exempt',
+    reason: 'service/cron stop-order runner — must execute during halt like run_liquidations',
+  },
+  {
     name: 'rpc_run_liquidations',
     rule: 'aal2-exempt',
     reason: 'service/cron liquidation batch runner',
@@ -119,10 +124,47 @@ export const GUARD_COVERAGE_ALLOWLIST: readonly GuardCoverageAllowlistEntry[] = 
     rule: 'system-live-exempt',
     reason: 'thin wrapper delegates to guarded 4-arg rpc_spot_market_buy',
   },
+  {
+    name: 'rpc_admin_match_crypto_deposit',
+    rule: 'system-live-exempt',
+    reason: 'admin/service crypto deposit match — feature guard only, not user halt surface',
+  },
+  {
+    name: 'rpc_process_on_chain_transfer',
+    rule: 'system-live-exempt',
+    reason: 'service_role on-chain deposit rail — same class as rpc_process_bank_transfer',
+  },
+  {
+    name: 'rpc_approve_affiliate_commission',
+    rule: 'system-live-exempt',
+    reason: 'admin commission payout — incident/finance path during halt',
+  },
+  {
+    name: 'rpc_contribute_insurance_capital',
+    rule: 'system-live-exempt',
+    reason: 'admin insurance capital attestation — not user balance-moving entry',
+  },
+  {
+    name: 'rpc_update_treasury_reserve',
+    rule: 'system-live-exempt',
+    reason: 'admin treasury attestation — solvency ops during halt',
+  },
 ] as const;
 
-const BALANCE_MOVING_RE =
-  /_credit_wallet|_debit_wallet|_lock_wallet|_unlock_wallet|_debit_locked/i;
+export {
+  BALANCE_CALLEE_HELPERS,
+  BALANCE_HELPER_RE,
+  type DetectionContext,
+  type RpcDefRow,
+  balanceMovingSqlPattern,
+  buildDetectionContext,
+  hasDirectBalanceSignal,
+  hasSystemLiveGuard,
+  isBalanceMoving,
+  isGuardedByCalleeOrSelf,
+  isThinRpcWrapper,
+  isThinWrapper,
+} from './guard-coverage-detect.ts';
 
 export function isAllowlisted(
   name: string,
@@ -135,14 +177,4 @@ export function isAllowlisted(
       entry.rule === rule &&
       (entry.args === undefined || entry.args === args),
   );
-}
-
-export function isBalanceMoving(def: string): boolean {
-  return BALANCE_MOVING_RE.test(def);
-}
-
-export function isThinWrapper(def: string): boolean {
-  const body = def.replace(/^[\s\S]*?\$function\$\s*/i, '').replace(/\s*\$function\$[\s\S]*$/, '');
-  const trimmed = body.replace(/\s+/g, ' ').trim();
-  return /^RETURN\s+rpc_/i.test(trimmed) && !BALANCE_MOVING_RE.test(trimmed);
 }
