@@ -96,13 +96,34 @@
 
   .trade-terminal__ticker {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 16px;
+    flex-direction: column;
+    gap: 0;
     padding: 8px 12px;
     border-bottom: var(--tt-divider);
     background: var(--tt-bg);
     font-size: var(--tt-font-sm);
+  }
+
+  .trade-terminal__ticker-primary {
+    width: 100%;
+  }
+
+  .trade-terminal__ticker-advanced {
+    width: 100%;
+    padding-top: 8px;
+    margin-top: 4px;
+    border-top: var(--tt-divider);
+    transition: opacity 0.2s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .trade-terminal__ticker-advanced {
+      transition: none;
+    }
+  }
+
+  .trade-terminal__ticker-advanced-toggle {
+    flex-shrink: 0;
   }
 
   .trade-terminal__mobile-tab {

@@ -155,7 +155,7 @@ export function TradeFuturesDisplayFallback({
               to="/login"
               className="min-h-11 rounded-md bg-(--color-primary) px-6 py-2 text-sm font-bold text-(--color-primary-foreground) hover:opacity-90"
             >
-              {t("trade.loginRequired")}
+              {t("auth.signIn")}
             </Link>
           </div>
         </div>
