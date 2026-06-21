@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/shell/AppShell";
+import { SocialProofStrip } from "@/components/social/SocialProofStrip";
 import { HomeShellFrame } from "@/components/home/HomeShellFrame";
 import { HomeWalletSnapshotCard } from "@/components/home/HomeWalletSnapshotCard";
 import { HomeTabShell } from "@/components/home/HomeTabShell";
@@ -12,6 +13,12 @@ export function ImportedHomePage() {
       density="app"
       hideAssets
       hideSideNav
+      hideMobileTopBar
+      socialProofSlot={
+        <div className="hidden md:block">
+          <SocialProofStrip />
+        </div>
+      }
     >
       <HomeShellFrame>
         <div

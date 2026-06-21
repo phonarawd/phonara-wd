@@ -25,6 +25,8 @@ export interface AppShellProps {
   hideAssets?: boolean;
   /** Hide outer desktop SideNav (e.g. /home owns its own stake-style sidebar). */
   hideSideNav?: boolean;
+  /** Suppress AppShell TopBar below md (/home HomeShellFrame owns mobile chrome). */
+  hideMobileTopBar?: boolean;
   /** Wave 1 P0-0 slot: override social-proof strip. Default = <SocialProofStrip />. */
   socialProofSlot?: ReactNode;
 }
@@ -37,6 +39,7 @@ export function AppShell({
   assets,
   hideAssets = false,
   hideSideNav = false,
+  hideMobileTopBar = false,
   socialProofSlot,
 }: AppShellProps) {
   // Support sheet state lives in AppShell so AccountSheet "고객센터" row
@@ -63,7 +66,9 @@ export function AppShell({
           </aside>
         )}
         <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar assets={assets} hideAssets={hideAssets} onSupportOpen={openSupport} />
+          <div className={hideMobileTopBar ? "hidden md:block" : undefined}>
+            <TopBar assets={assets} hideAssets={hideAssets} onSupportOpen={openSupport} />
+          </div>
           <PlatformGateBanner />
           {socialProofSlot ?? <SocialProofStrip />}
           <main id="main-content" className={hideMobileNav ? "flex-1" : "flex-1 pb-20 md:pb-0"}>

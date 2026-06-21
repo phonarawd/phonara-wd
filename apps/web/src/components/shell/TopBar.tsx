@@ -88,7 +88,10 @@ export function TopBar({ assets = 0, hideAssets = false, onSupportOpen }: TopBar
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-border bg-(--color-surface)/95 px-2 backdrop-blur md:px-6">
+      <header
+        data-testid="app-shell-topbar"
+        className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-border bg-(--color-surface)/95 px-2 backdrop-blur md:px-6"
+      >
         <div className="flex min-w-0 items-center gap-1 md:hidden">
           {isRoot ? (
             <Link
