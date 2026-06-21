@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import type { Currency } from '@phonara/shared-types';
@@ -14,6 +14,14 @@ import { useWalletData } from './use-wallet-data';
 import { isPositiveDecimalInput, normalizeDecimalInput } from '../../lib/money-input';
 
 export type WalletTab = 'deposit' | 'withdraw' | 'staking' | 'history';
+
+function parseWalletTabFromSearch(searchStr: string): WalletTab | undefined {
+  const raw = new URLSearchParams(searchStr).get('tab');
+  if (raw === 'deposit' || raw === 'withdraw' || raw === 'staking' || raw === 'history') {
+    return raw;
+  }
+  return undefined;
+}
 
 function newRequestId(): string {
   const c = globalThis.crypto;
@@ -45,13 +53,15 @@ function formatMoneyDisplay(amount: string, currency: Currency, showCurrency = f
 export function useWalletPageController() {
   const t = useT();
   const navigate = useNavigate();
+  const searchStr = useRouterState({ select: (s) => s.location.searchStr });
+  const tabFromSearch = useMemo(() => parseWalletTabFromSearch(searchStr), [searchStr]);
   const qc = useQueryClient();
   const { session, loading: authLoading } = useAuth();
   const { wallet, loading: walletLoading } = useWallet();
   const { profile, kycVerified } = useProfile();
   const userId = session?.user.id ?? null;
 
-  const [tab, setTab] = useState<WalletTab>('deposit');
+  const [tab, setTab] = useState<WalletTab>(() => tabFromSearch ?? 'deposit');
   const [depositAmount, setDepositAmount] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [withdrawAddress, setWithdrawAddress] = useState('');
@@ -77,6 +87,10 @@ export function useWalletPageController() {
   useEffect(() => {
     if (!authLoading && !session) void navigate({ to: '/login' });
   }, [session, authLoading, navigate]);
+
+  useEffect(() => {
+    setTab(tabFromSearch ?? 'deposit');
+  }, [tabFromSearch]);
 
   const { deposits, withdrawalEnabled, activePhonKrwRate, depositRateError } = useWalletData(userId);
 
@@ -272,11 +286,16 @@ export function useWalletPageController() {
     setWithdrawAmount(normalizeDecimalInput(value));
   }, []);
 
-  const onTabChange = useCallback((value: string) => {
-    if (value === 'deposit' || value === 'withdraw' || value === 'staking' || value === 'history') {
-      setTab(value);
-    }
-  }, []);
+  const onTabChange = useCallback(
+    (value: string) => {
+      if (value === 'deposit' || value === 'withdraw' || value === 'staking' || value === 'history') {
+        setTab(value);
+        const href = value === 'deposit' ? '/wallet' : `/wallet?tab=${value}`;
+        void navigate({ to: href as '/wallet', replace: true });
+      }
+    },
+    [navigate],
+  );
 
   return {
     t,

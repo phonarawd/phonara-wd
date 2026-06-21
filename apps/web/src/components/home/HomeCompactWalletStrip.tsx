@@ -54,7 +54,7 @@ export function HomeCompactWalletStrip() {
         </div>
 
         <Link
-          to="/wallet/withdraw"
+          to="/wallet?tab=withdraw"
           className="ml-auto inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-border bg-(--color-surface-elev) px-3 text-xs font-semibold text-foreground hover:bg-(--color-surface-elev)/80"
         >
           <ArrowDownCircle className="size-4" aria-hidden />
