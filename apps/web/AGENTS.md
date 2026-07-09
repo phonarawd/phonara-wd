@@ -1,7 +1,7 @@
 # apps/web — Phase R scope
 
-> **Phase R:** Presentation rebuild in progress — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `da-w5-gate-domain-cards` (#195) · DA W5 `[x]` · DA W4 GATE `[x]` · DA W4 `[x]` · DA W3 GATE `[x]` · preflight: ACTIVE_WORK_SSOT.
-> **SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../docs/SSOT/ACTIVE_WORK_SSOT.md) · Plan **278 ids** · completed **194** · pending **77** (52차)
+> **Phase R:** Presentation rebuild in progress — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `p10-sports-fiat-hint-wire` (#196) · DA W5 GATE `[x]` · DA W5 `[x]` · DA W4 GATE `[x]` · DA W4 `[x]` · DA W3 GATE `[x]` · preflight: ACTIVE_WORK_SSOT.
+> **SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../docs/SSOT/ACTIVE_WORK_SSOT.md) · Plan **278 ids** · completed **195** · pending **76** (52차)
 
 ## KEEP (engine glue)
 

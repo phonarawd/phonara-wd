@@ -102,10 +102,7 @@ describe('shell elevation §34.10–34.11', () => {
     expect(nav).toHaveAttribute('data-floating', 'true');
     expect(nav.className).toContain('ds-shell-bottomnav');
 
-    const chrome = readFileSync(
-      join(import.meta.dirname, '..', 'shell-chrome.css'),
-      'utf8',
-    );
+    const chrome = readFileSync(join(import.meta.dirname, '..', 'shell-chrome.css'), 'utf8');
     expect(chrome).toContain('backdrop-filter: blur(16px)');
     expect(chrome).toContain('box-shadow: var(--ds-shadow-2)');
     expect(chrome).toContain('z-index: var(--ds-z-chrome)');
@@ -144,7 +141,7 @@ describe('shell elevation §34.10–34.11', () => {
     const layoutPath = join(import.meta.dirname, '../../tokens/layout.css');
     expect(existsSync(layoutPath)).toBe(true);
     const css = readFileSync(layoutPath, 'utf8');
-    expect(css).toContain("grid-template-columns: repeat(12, minmax(0, 1fr))");
+    expect(css).toContain('grid-template-columns: repeat(12, minmax(0, 1fr))');
     expect(css).toContain('.ds-shell-col-span-8');
     expect(css).toContain('.ds-shell-col-span-4');
     expect(css).toContain('grid-column: span 8');

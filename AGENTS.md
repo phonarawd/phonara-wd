@@ -3,7 +3,7 @@
 > **Active SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](docs/SSOT/ACTIVE_WORK_SSOT.md)  
 > **Engine:** `[x] FULLY CLOSED` (2026-07-03) — status [`ENGINE_APEX_CLOSEOUT.md`](docs/ENGINE_APEX_CLOSEOUT.md) only · **구현 큐 0**  
 > **Demolition:** `[x] DONE` — batch 재실행 없음  
-> **Next:** Phase R — [`REBUILD_PLAN_v1.md`](docs/PRODUCT/REBUILD_PLAN_v1.md) · **`da-w5-gate-domain-cards`** (#195) · DA W5 `[x]` · DA W4 GATE `[x]` · DA W4 `[x]` · DA W3 GATE `[x]` · DA W3 `[x]` · DA W2 GATE `[x]` · DA W2 shell `[x]` · DA W1 GATE `[x]` · DA W1 DS `[x]` · DA W0 `[x]` · R0 forensic `[x]`
+> **Next:** Phase R — [`REBUILD_PLAN_v1.md`](docs/PRODUCT/REBUILD_PLAN_v1.md) · **`p10-sports-fiat-hint-wire`** (#196) · DA W5 GATE `[x]` · DA W5 `[x]` · DA W4 GATE `[x]` · DA W4 `[x]` · DA W3 GATE `[x]` · DA W3 `[x]` · DA W2 GATE `[x]` · DA W2 shell `[x]` · DA W1 GATE `[x]` · DA W1 DS `[x]` · DA W0 `[x]` · R0 forensic `[x]`
 
 Rules: `.cursor/rules/00-post-closeout-active-ssot.mdc` · denylist [`DEPRECATED_DOC_DENYLIST.md`](docs/SSOT/DEPRECATED_DOC_DENYLIST.md)
 
@@ -38,11 +38,11 @@ bun run ci:watch
 gh pr create --base main --head $(git branch --show-current)
 ```
 
-| 브랜치 | 용도 |
-|--------|------|
-| `main` | merge-ready only · 직접 작업/push **금지** |
-| `phase-r/<topic>-<date>` | Phase R 구현 큐 (정본) |
-| `wip/<topic>` | 레거시 WIP (허용) |
+| 브랜치                   | 용도                                       |
+| ------------------------ | ------------------------------------------ |
+| `main`                   | merge-ready only · 직접 작업/push **금지** |
+| `phase-r/<topic>-<date>` | Phase R 구현 큐 (정본)                     |
+| `wip/<topic>`            | 레거시 WIP (허용)                          |
 
 ## Gates
 
@@ -59,14 +59,14 @@ gh pr create --base main --head $(git branch --show-current)
 
 - `bun run test:e2e` / `test:sql` / `supabase db reset` / `check:full` / `gate:phase-r` **직접** 실행
 
-| Gate                      | 로컬 (Cursor)                              | 비고           |
-| ------------------------- | ------------------------------------------ | -------------- |
+| Gate                      | 로컬 (Cursor)                                                         | 비고                                      |
+| ------------------------- | --------------------------------------------------------------------- | ----------------------------------------- |
 | Implemented closeout      | `gate:ai-impl -- --test <path> --closeout <todo-id> --evidence "..."` | L0~L4 green 후 **Plan YAML·§82 doc 자동** |
-| Plan todo only            | `closeout:todo -- <todo-id> --evidence "..."` | gate 이미 green일 때 |
-| **전체 테스트**           | `gate:local-autopilot` · `@test-autopilot` | 저사양 순차    |
-| typecheck · lint · vitest | L0~L4                                      | 항상 OK        |
-| test:e2e/sql 직접         | ❌                                         | orchestrator만 |
-| CI (선택)                 | `ci:watch` after push                      | GitHub         |
+| Plan todo only            | `closeout:todo -- <todo-id> --evidence "..."`                         | gate 이미 green일 때                      |
+| **전체 테스트**           | `gate:local-autopilot` · `@test-autopilot`                            | 저사양 순차                               |
+| typecheck · lint · vitest | L0~L4                                                                 | 항상 OK                                   |
+| test:e2e/sql 직접         | ❌                                                                    | orchestrator만                            |
+| CI (선택)                 | `ci:watch` after push                                                 | GitHub                                    |
 
 ### 로컬 전체 테스트 (operator 기본)
 

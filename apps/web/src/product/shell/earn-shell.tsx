@@ -51,11 +51,7 @@ export function EarnSideRailDesktop() {
   if (!active) return null;
 
   return (
-    <aside
-      className="ds-shell-earn-side-rail"
-      data-testid="earn-side-rail-desktop"
-      aria-hidden
-    />
+    <aside className="ds-shell-earn-side-rail" data-testid="earn-side-rail-desktop" aria-hidden />
   );
 }
 

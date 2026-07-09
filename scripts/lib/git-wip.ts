@@ -100,9 +100,7 @@ export function isProtectedBranch(branch: string): boolean {
 export function isFeatureBranch(branch: string): boolean {
   if (isProtectedBranch(branch)) return false;
   return (
-    branch.startsWith('phase-r/') ||
-    branch.startsWith('wip/') ||
-    branch.startsWith('closeout/')
+    branch.startsWith('phase-r/') || branch.startsWith('wip/') || branch.startsWith('closeout/')
   );
 }
 

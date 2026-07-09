@@ -12,10 +12,7 @@ import { MOTION_MS } from '@/product/tokens/motion';
 export type { DaW4MotionTier };
 
 /** True when Signal Pulse count-up may run (L0/L1 · not reduced-motion · not L2). */
-export function allowsCountUpMotion(
-  tier: DaW4MotionTier,
-  prefersReducedMotion: boolean,
-): boolean {
+export function allowsCountUpMotion(tier: DaW4MotionTier, prefersReducedMotion: boolean): boolean {
   if (prefersReducedMotion) return false;
   if (tier === 'L2') return false;
   return true;

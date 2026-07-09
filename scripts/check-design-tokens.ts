@@ -166,8 +166,7 @@ function checkTokenSot(): Finding[] {
   if (!existsSync(AURORA_TSX) || !existsSync(AURORA_CSS)) {
     out.push({
       id: 'missing-aurora-background',
-      message:
-        'Missing aurora-background.tsx+css under product/shell (§34.10 Shell elevation)',
+      message: 'Missing aurora-background.tsx+css under product/shell (§34.10 Shell elevation)',
       hard: true,
     });
   }

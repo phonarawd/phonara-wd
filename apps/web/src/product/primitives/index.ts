@@ -98,10 +98,7 @@ export {
   type MoneyDisplayWithFiatHintSlotProps,
 } from './money-display-with-fiat-hint';
 export { HowItWorks, type HowItWorksProps } from './how-it-works';
-export {
-  CollapsibleSection,
-  type CollapsibleSectionProps,
-} from './collapsible-section';
+export { CollapsibleSection, type CollapsibleSectionProps } from './collapsible-section';
 export { HelpTip, type HelpTipAction, type HelpTipProps } from './help-tip';
 export { howItWorksStepKeys } from './lib/how-it-works-keys';
 export { Skeleton } from './skeleton';
@@ -128,9 +125,5 @@ export {
   resolveCountUpDurationMs,
   type DaW4MotionTier,
 } from './lib/motion-tier';
-export {
-  formatCountUpGrouped,
-  useCountUp,
-  type UseCountUpOptions,
-} from './lib/use-count-up';
+export { formatCountUpGrouped, useCountUp, type UseCountUpOptions } from './lib/use-count-up';
 export { usePrefersReducedMotion } from './lib/use-prefers-reduced-motion';

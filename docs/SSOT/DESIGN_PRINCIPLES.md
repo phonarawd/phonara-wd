@@ -103,17 +103,17 @@ Digital Aurora brand · emotion · tech stack은 [`PRODUCT_EXPERIENCE_CANON.md`]
 
 ### Allowed motion
 
-| Use                         | Token / pattern                            | Max duration           |
-| --------------------------- | ------------------------------------------ | ---------------------- |
-| Press · hover · dismiss     | `--ds-motion-press` (120ms)                | ≤200ms                 |
-| Field focus · border        | `--ds-motion-field` (150ms)                | ≤200ms                 |
-| Toggle · pill switch        | `--ds-motion-toggle` (150ms)               | ≤200ms                 |
-| Surface · badge · progress  | `--ds-motion-surface` (200ms)              | ≤300ms                 |
-| Overlay · sheet/dialog open | `--ds-motion-overlay` (320ms) · L-B spring | ≤320ms                 |
-| Page enter (shell)          | `pageEnter` / `usePageEnterVariants`       | ≤250ms                 |
-| Toast · inline feedback     | slide/fade in-out                          | ≤300ms                 |
+| Use                         | Token / pattern                                                   | Max duration           |
+| --------------------------- | ----------------------------------------------------------------- | ---------------------- |
+| Press · hover · dismiss     | `--ds-motion-press` (120ms)                                       | ≤200ms                 |
+| Field focus · border        | `--ds-motion-field` (150ms)                                       | ≤200ms                 |
+| Toggle · pill switch        | `--ds-motion-toggle` (150ms)                                      | ≤200ms                 |
+| Surface · badge · progress  | `--ds-motion-surface` (200ms)                                     | ≤300ms                 |
+| Overlay · sheet/dialog open | `--ds-motion-overlay` (320ms) · L-B spring                        | ≤320ms                 |
+| Page enter (shell)          | `pageEnter` / `usePageEnterVariants`                              | ≤250ms                 |
+| Toast · inline feedback     | slide/fade in-out                                                 | ≤300ms                 |
 | Count-up (display only)     | `useCountUp` · `--ds-motion-count-up` 400ms · RPC value unchanged | ≤400ms                 |
-| Game/canvas feel            | engine stage hooks · GPU tier caps         | per `packages/game-ui` |
+| Game/canvas feel            | engine stage hooks · GPU tier caps                                | per `packages/game-ui` |
 
 ### Forbidden motion
 

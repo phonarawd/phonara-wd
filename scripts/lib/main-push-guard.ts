@@ -66,7 +66,10 @@ function readCurrentBranchSafe(): string | undefined {
 }
 
 /** Cursor shell hook — block agent/operator `git push` to main from the IDE terminal. */
-export function checkShellPushCommandForHook(command: string): { allowed: boolean; reason?: string } {
+export function checkShellPushCommandForHook(command: string): {
+  allowed: boolean;
+  reason?: string;
+} {
   if (isMainPushAllowed()) return { allowed: true };
 
   if (!/\bgit\s+push\b/i.test(command)) {

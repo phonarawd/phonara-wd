@@ -1,12 +1,7 @@
 /**
  * Move dirty WIP off main onto a dedicated branch — standard before long slices.
  */
-import {
-  currentBranch,
-  defaultWipBranchName,
-  git,
-  isProtectedBranch,
-} from './lib/git-wip';
+import { currentBranch, defaultWipBranchName, git, isProtectedBranch } from './lib/git-wip';
 
 const topic = process.argv.slice(2).join(' ').trim() || undefined;
 const branch = defaultWipBranchName(topic);

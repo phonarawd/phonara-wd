@@ -4,13 +4,13 @@
 
 ## 현재 상태
 
-| 영역                          | 상태                                         | AI 행동                                                                                                                                                                                                                                            |
-| ----------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Engine Apex**               | `[x] FULLY CLOSED`                           | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어 예외만)                                                                                                                                                        |
-| **Phase D Demolition**        | `[x] DONE`                                   | 삭제 확장 **금지**                                                                                                                                                                                                                                 |
-| **Phase R UI Rebuild**        | **IN PROGRESS (§34 DA W5 GATE)**             | **왕초보 큐:** To-do **위→아래** · completed **스킵** · **첫 pending 1개** (`da-w5-gate-domain-cards` #195) · DA W5 `#194` **`[x]` DONE** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`** |
-| **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                        |
-| **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                           |
+| 영역                          | 상태                                         | AI 행동                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ----------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Engine Apex**               | `[x] FULLY CLOSED`                           | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어 예외만)                                                                                                                                                                                                                                                                                                                                                                                  |
+| **Phase D Demolition**        | `[x] DONE`                                   | 삭제 확장 **금지**                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **Phase R UI Rebuild**        | **IN PROGRESS (§34 DA → P10)**               | **왕초보 큐:** To-do **위→아래** · completed **스킵** · **첫 pending 1개** (`p10-sports-fiat-hint-wire` #196) · DA W5 GATE `#195` **`[x]` DONE** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`** |
+| **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                                                                                                                                                                                                                                                  |
+| **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                                                                                                                                                                                                                                                     |
 
 ## Trade Desk Remediation (Plan `trade_desk_remediation_v3` · execute SSOT)
 
@@ -70,13 +70,13 @@
 
 **Implemented (Phase E):** `rpc_set_trailing_stop` · `rpc_clear_trailing_stop` · `time_in_force` · `display_quantity` iceberg slices · `rpc_run_stop_orders` trailing peak · `rpc_run_open_order_fills` IOC/FOK expiry
 
-**NEXT:** **`da-w5-gate-domain-cards`** (#195) · DA W5 `#194` **`[x]` DONE** 2026-07-10 · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
+**NEXT:** **`p10-sports-fiat-hint-wire`** (#196) · DA W5 GATE `#195` **`[x]` DONE** 2026-07-10 · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
 
 ## 읽을 것 (active)
 
 1. 본 문서 (`ACTIVE_WORK_SSOT.md`)
 2. Phase R 실행: [`docs/PRODUCT/REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md)
-3. YAML todo 정본: Cursor Plan `phase_r_super-app_8bdf2c10` (frontmatter · **278 ids** · Track A **243** + Track B **35** · completed **188** · pending **83** · cancelled **7** · §20.6.1–§20.6.3 · §20.13 · §20.13.2 Fiat# · **§20.13.3 Sports#·CasinoR#** · **§20.14 Launch** · **§35 Forensic R0** · **§34 DA W2 GATE** · §25.12.9.1-D · §22.2.4 · **§22.2.5 Sports Parity** · **§23.2.1 Casino one-shot replay** · **§32.7** · **52차** 2026-07-09 · orchestration SSOT=본 plan · execute sibling=`trade_desk_*`·`phonara_수렴_*`)
+3. YAML todo 정본: Cursor Plan `phase_r_super-app_8bdf2c10` (frontmatter · **278 ids** · Track A **243** + Track B **35** · completed **195** · pending **76** · cancelled **7** · §20.6.1–§20.6.3 · §20.13 · §20.13.2 Fiat# · **§20.13.3 Sports#·CasinoR#** · **§20.14 Launch** · **§35 Forensic R0** · **§34 DA W5 GATE** · §25.12.9.1-D · §22.2.4 · **§22.2.5 Sports Parity** · **§23.2.1 Casino one-shot replay** · **§32.7** · **52차** 2026-07-10 · orchestration SSOT=본 plan · execute sibling=`trade_desk_*`·`phonara_수렴_*`)
 4. 엔진 **상태 한 줄만**: [`docs/ENGINE_APEX_CLOSEOUT.md`](../ENGINE_APEX_CLOSEOUT.md) (게이트 수치 · 재착수 금지)
 5. UX **의도 참조** (실행 큐 아님): `docs/SSOT/*_UX_CANON.md` · `UX_REFERENCE_CANON.md`
 6. 경계: [`ENGINE_BOUNDARY.md`](ENGINE_BOUNDARY.md) · [`OPERATOR_GATES.md`](OPERATOR_GATES.md) · [`CI_GATE_AUTHORITY.md`](CI_GATE_AUTHORITY.md)
@@ -118,7 +118,7 @@ bun run check:advisors
 
 **P1 Foundation** → **P2 Admin** → P3 Auth → P4 Money → P5 Security → P6 Shell → **P7 Growth** → **P8 Core** → P9–P12 Product → P13 Soft Launch → E0–E7 Engine Wave
 
-**현재 NEXT:** **`da-w5-gate-domain-cards`** — §34.17 DA YAML **#195** · DA W5 `#194` **`[x]` DONE** 2026-07-10 · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
+**현재 NEXT:** **`p10-sports-fiat-hint-wire`** — §20.13.2 Fiat#10 YAML **#196** · DA W5 GATE `#195` **`[x]` DONE** 2026-07-10 · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
 
 **왕초보 작업법 (43차 · 이것만):**
 
@@ -231,84 +231,96 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **P1 engine 큐 (F와 병행 · RED STOP):** `launch-engine-e5-realtime-publication` **`[x]`** 2026-07-09
 
+## Digital Aurora W5 GATE (`da-w5-gate-domain-cards` · §34.17 · YAML #195) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w5-cards-domain-variants` **`[x]`** · **후행:** `p10-sports-fiat-hint-wire` (#196)
+
+| Todo                          | 상태           | 완료일         | 증거                                                                                                                                                    |
+| ----------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w5-gate-domain-cards`** | **`[x]` DONE** | **2026-07-10** | 0.2s scan distinguish · mission-card + wallet-hero + casino tile · `da-w5-gate-domain-cards-display-contract` · `gate:ai-impl` **40/40** · engine **0** |
+
+**Implemented:** Domain cards GATE — unique scan cues · CVA fingerprints · Mission/Wallet/Casino owner wires verified
+
+**다음 todo:** **`p10-sports-fiat-hint-wire`** (#196)
+
 ## Digital Aurora W5 Domain Cards (`da-w5-cards-domain-variants` · §34.17 · YAML #194) — `[x]` DONE · 재착수 금지
 
-> **선행:** `da-w4-gate-motion` **`[x]`** · **후행:** `da-w5-gate-domain-cards` (#195)
+> **선행:** `da-w4-gate-motion` **`[x]`** · **후행:** `da-w5-gate-domain-cards` (#195) **`[x]`**
 
-| Todo | 상태 | 완료일 | 증거 |
-| ---- | ---- | ------ | ---- |
+| Todo                              | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
+| --------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`da-w5-cards-domain-variants`** | **`[x]` DONE** | **2026-07-10** | Card CVA 6 personalities · `domain-card-personalities.css` · mission/wallet/vip/trade/sports/casino wires · `da-w5-cards-domain-variants-display-contract` · `gate:ai-impl` **49/49** · engine **0** |
 
 **Implemented:** Domain card personalities — Mission(ring+glow) · Wallet-hero(aurora edge) · VIP(tier ramp) · Trade-dense(line-first) · Sports-odds(heatmap) · Casino-play(hover glow) · CVA only
 
-**다음 todo:** **`da-w5-gate-domain-cards`** (#195)
+**다음 todo:** **`p10-sports-fiat-hint-wire`** (#196) — DA W5 GATE **`[x]`**
 
 ## Digital Aurora W4 GATE (`da-w4-gate-motion` · §34.15–34.16 · YAML #193) — `[x]` DONE · 재착수 금지
 
 > **선행:** `da-w4-motion-system-bundle` **`[x]`** · **후행:** `da-w5-cards-domain-variants` (#194) **`[x]`**
 
-| Todo | 상태 | 완료일 | 증거 |
-| ---- | ---- | ------ | ---- |
+| Todo                    | 상태           | 완료일         | 증거                                                                                                                                                          |
+| ----------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`da-w4-gate-motion`** | **`[x]` DONE** | **2026-07-10** | `use-prefers-reduced-motion` regression · `motion-presets` instant + CSS 0ms · `da-w4-gate-motion-display-contract` · `gate:ai-impl` **38/38** · engine **0** |
 
 **Implemented:** reduced-motion GATE — hook media-query SOT · instant variants · aurora static · count-up L2/reduced instant verified
 
-**다음 todo:** **`da-w5-gate-domain-cards`** (#195) — DA W5 **`[x]`**
+**다음 todo:** **`p10-sports-fiat-hint-wire`** (#196) — DA W5 GATE **`[x]`**
 
 ## Digital Aurora W4 Motion BUNDLE (`da-w4-motion-system-bundle` · §34.15–34.16 · YAML #192) — `[x]` DONE · 재착수 금지
 
 > **선행:** `da-w3-gate-ia-progressive` **`[x]`** · **후행:** `da-w4-gate-motion` (#193) **`[x]`**
 
-| Todo | 상태 | 완료일 | 증거 |
-| ---- | ---- | ------ | ---- |
+| Todo                             | 상태           | 완료일         | 증거                                                                                                                                                                                                                         |
+| -------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`da-w4-motion-system-bundle`** | **`[x]` DONE** | **2026-07-10** | `useCountUp` · `MoneyDisplay countUp` · `--ds-motion-count-up` 400ms · wallet balance · Earn XP · futures PnL · L2/reduced-motion instant · `da-w4-motion-system-display-contract` · `gate:ai-impl` **47/47** · engine **0** |
 
 **Implemented:** interaction grammar wire · Signal Pulse display-only · reduced-motion instant
 
-**다음 todo:** **`da-w5-gate-domain-cards`** (#195) — DA W5 **`[x]`**
+**다음 todo:** **`p10-sports-fiat-hint-wire`** (#196) — DA W5 GATE **`[x]`**
 
 ## Digital Aurora W3 GATE (`da-w3-gate-ia-progressive` · §34.12–34.14 · YAML #191) — `[x]` DONE · 재착수 금지
 
 > **선행:** `da-w3-ia-progressive-bundle` **`[x]`** · **후행:** `da-w4-motion-system-bundle` (#192) **`[x]`**
 
-| Todo | 상태 | 완료일 | 증거 |
-| ---- | ---- | ------ | ---- |
+| Todo                            | 상태           | 완료일         | 증거                                                                                                                                                                                                             |
+| ------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`da-w3-gate-ia-progressive`** | **`[x]` DONE** | **2026-07-10** | `/home` above-fold ≤3 · `da-w3-gate-ia-progressive-display-contract` · `gate:ai-impl` **63/63** (home+wallet+trade) · 390/768/1024 VISUAL advisory · `typecheck` · `check:i18n` · `check:release` · engine **0** |
 
 **Implemented:** Progressive disclosure GATE — Fold1–2 above-fold · Fold3 collapsed · wallet-hero/trade ticket collapse verified
 
-**다음 todo:** **`da-w5-gate-domain-cards`** (#195) — DA W5 **`[x]`**
+**다음 todo:** **`p10-sports-fiat-hint-wire`** (#196) — DA W5 GATE **`[x]`**
 
 ## Digital Aurora W3 Progressive IA (`da-w3-ia-progressive-bundle` · §34.12–34.14 · YAML #190) — `[x]` DONE · 재착수 금지
 
 > **선행:** `da-w2-gate-shell-elevation` **`[x]`** · **후행:** `da-w3-gate-ia-progressive` (#191) **`[x]`**
 
-| Todo | 상태 | 완료일 | 증거 |
-| ---- | ---- | ------ | ---- |
+| Todo                              | 상태           | 완료일         | 증거                                                                                                                                                                      |
+| --------------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`da-w3-ia-progressive-bundle`** | **`[x]` DONE** | **2026-07-09** | `CollapsibleSection` · `/home` Fold1–5 · missions max3 · wallet-hero accordion · trade mobile ticket collapse · `HOME_UX_CANON` · `gate:ai-impl` **34/34** · engine **0** |
 
 **Implemented:** Progressive disclosure — Fold1 status+next · Fold2 money open · Fold3 collapsed · Fold4 missions≤3 · Fold5 navigate-only
 
-**다음 todo:** **`da-w5-gate-domain-cards`** (#195) — DA W5 **`[x]`**
+**다음 todo:** **`p10-sports-fiat-hint-wire`** (#196) — DA W5 GATE **`[x]`**
 
 ## Digital Aurora W2 GATE (`da-w2-gate-shell-elevation` · §34.10–34.11 · YAML #189) — `[x]` DONE · 재착수 금지
 
 > **선행:** `da-w2-shell-elevation-infra` **`[x]`** · **후행:** `da-w3-ia-progressive-bundle` (#190) **`[x]`**
 
-| Todo | 상태 | 완료일 | 증거 |
-| ---- | ---- | ------ | ---- |
+| Todo                             | 상태           | 완료일         | 증거                                                                                                                                                                                             |
+| -------------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **`da-w2-gate-shell-elevation`** | **`[x]` DONE** | **2026-07-09** | `check:ui-architecture --strict` green · `gate:ai-impl` shell **42/42** · 390/768/1024 smoke · 5탭 IA unchanged · `typecheck` · `check:i18n` · `check:release` · §82 NEXT=`da-w3` · engine **0** |
 
 **Implemented:** Shell elevation GATE — aurora · floating BottomNav · Orbit Grid verified
 
-**다음 todo:** **`da-w5-gate-domain-cards`** (#195) — DA W5 **`[x]`**
+**다음 todo:** **`p10-sports-fiat-hint-wire`** (#196) — DA W5 GATE **`[x]`**
 
 ## Digital Aurora W2 Shell Elevation (`da-w2-shell-elevation-infra` · §34.10–34.11 · YAML #188) — `[x]` DONE · 재착수 금지
 
 > **선행:** `da-w1-gate-ds-2` **`[x]`** · **후행:** `da-w2-gate-shell-elevation` (#189)
 
-| Todo                               | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
-| ---------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Todo                              | 상태           | 완료일         | 증거                                                                                                                                                                                                     |
+| --------------------------------- | -------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`da-w2-shell-elevation-infra`** | **`[x]` DONE** | **2026-07-09** | `aurora-background.tsx+css` · floating BottomNav (blur+shadow-2) · layout.css 12-col + col-span-8/4 · Earn lg+ side rails · reduced-motion static · `gate:ai-impl` shell+tokens **47/47** · engine **0** |
 
 **Implemented:** Aurora Mesh (Earn/Wallet low · Trade off) · floating BottomNav · Orbit Grid 12-col · Earn side rails · `check:design-tokens` aurora/orbit hard checks

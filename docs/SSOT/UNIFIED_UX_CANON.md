@@ -157,6 +157,7 @@ Pre-demolition `@phonara/ui` / `components/ui` 복구 **금지**.
 - [x] da-w4: Motion system BUNDLE (`da-w4-motion-system-bundle`) — `useCountUp` · MoneyDisplay countUp · wallet/XP/PnL
 - [x] da-w4-gate: Motion GATE (`da-w4-gate-motion`) — `use-prefers-reduced-motion` regression · `motion-presets` instant · CSS 0ms
 - [x] da-w5: Domain card personalities (`da-w5-cards-domain-variants`) — Mission/Wallet/VIP/Trade/Sports/Casino CVA + signature CSS
+- [x] da-w5-gate: Domain cards GATE (`da-w5-gate-domain-cards`) — 0.2s scan distinguish · mission-card+wallet+casino tile · `gate:ai-impl` **40/40**
 - [ ] High-risk flows use shared ConfirmDialog pattern
 - [ ] Status states share token semantics across wallet/trade/admin
 - [ ] Decision Log entry if intentional surface-specific deviation

@@ -22,12 +22,7 @@ describe('CollapsibleSection', () => {
 
   it('honors defaultOpen and shows summary only when collapsed', () => {
     render(
-      <CollapsibleSection
-        title="Details"
-        defaultOpen
-        summary="3 items"
-        testId="open-fold"
-      >
+      <CollapsibleSection title="Details" defaultOpen summary="3 items" testId="open-fold">
         <p>Body</p>
       </CollapsibleSection>,
     );

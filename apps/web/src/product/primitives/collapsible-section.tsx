@@ -47,9 +47,7 @@ export function CollapsibleSection({
     onOpenChange?.(next);
   };
 
-  const ariaLabel = open
-    ? (collapseLabel ?? title)
-    : (expandLabel ?? title);
+  const ariaLabel = open ? (collapseLabel ?? title) : (expandLabel ?? title);
 
   const trigger = (
     <button

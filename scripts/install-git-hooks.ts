@@ -1,7 +1,14 @@
 /**
  * Install repo git hooks (pre-push main guard).
  */
-import { chmodSync, copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  chmodSync,
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
 import { join } from 'node:path';
 import { gitHooksDir } from './lib/main-push-guard';
 

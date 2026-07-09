@@ -1,10 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  formatCountUpGrouped,
-  useCountUp,
-} from '@/product/primitives/lib/use-count-up';
+import { formatCountUpGrouped, useCountUp } from '@/product/primitives/lib/use-count-up';
 import { resolveCountUpDurationMs } from '@/product/primitives/lib/motion-tier';
 
 const matchMediaMock = vi.fn();

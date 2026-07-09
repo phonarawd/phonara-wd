@@ -15,10 +15,7 @@ import { ProgressRing } from '@/product/primitives/progress-ring';
 import { Skeleton } from '@/product/primitives/skeleton';
 import { Text } from '@/product/primitives/text';
 import { cn } from '@/product/primitives/lib/cn';
-import {
-  formatCountUpGrouped,
-  useCountUp,
-} from '@/product/primitives/lib/use-count-up';
+import { formatCountUpGrouped, useCountUp } from '@/product/primitives/lib/use-count-up';
 import { EarnMissionReward } from '@/product/surfaces/home/earn-mission-reward';
 
 /** Canonical `/home` Earn hub — progressive Fold1–5 (§34.12 · P8). */
@@ -209,10 +206,7 @@ export function EarnHomePage() {
             {wallet ? (
               <div className="border-line mt-3 flex items-center justify-between gap-3 border-t pt-3">
                 <span className="text-sm">{t('earn.home.entry.wallet.title')}</span>
-                <span
-                  className="font-semibold tabular-nums"
-                  data-testid="earn-home-wallet-balance"
-                >
+                <span className="font-semibold tabular-nums" data-testid="earn-home-wallet-balance">
                   {wallet.phonBalanceLabel}
                 </span>
               </div>
@@ -243,7 +237,9 @@ export function EarnHomePage() {
                 <CardTitle className="text-base">{t('earn.home.todayOpportunity.title')}</CardTitle>
               </CardHeader>
               <CardBody className="flex flex-col gap-3 text-sm">
-                <p className="text-foreground-muted m-0">{t('earn.home.todayOpportunity.subtitle')}</p>
+                <p className="text-foreground-muted m-0">
+                  {t('earn.home.todayOpportunity.subtitle')}
+                </p>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between gap-3">
                     <span>{t('earn.home.todayOpportunity.attendance')}</span>

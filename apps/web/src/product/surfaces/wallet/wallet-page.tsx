@@ -113,7 +113,9 @@ export function WalletPage() {
         details={
           <div className="grid gap-4 sm:grid-cols-2" data-testid="wallet-hero-breakdown">
             <div className="space-y-2">
-              <p className="text-foreground m-0 text-sm font-semibold">{t('wallet.currency.phon')}</p>
+              <p className="text-foreground m-0 text-sm font-semibold">
+                {t('wallet.currency.phon')}
+              </p>
               <BalanceRow
                 label={t('wallet.available')}
                 amount={engine.phonAvailableDisplay}
@@ -146,7 +148,9 @@ export function WalletPage() {
               ) : null}
             </div>
             <div className="space-y-2">
-              <p className="text-foreground m-0 text-sm font-semibold">{t('wallet.currency.usdt')}</p>
+              <p className="text-foreground m-0 text-sm font-semibold">
+                {t('wallet.currency.usdt')}
+              </p>
               <BalanceRow
                 label={t('desk.wallet.available')}
                 amount={engine.usdtAvailableDisplay}

@@ -36,9 +36,10 @@ function signOf(amount: string): 'up' | 'down' | 'flat' {
   return 'flat';
 }
 
-function resolveCountUpOptions(
-  countUp: boolean | MoneyDisplayCountUpOptions | undefined,
-): { enabled: boolean; tier: DaW4MotionTier } {
+function resolveCountUpOptions(countUp: boolean | MoneyDisplayCountUpOptions | undefined): {
+  enabled: boolean;
+  tier: DaW4MotionTier;
+} {
   if (!countUp) return { enabled: false, tier: 'L1' };
   if (countUp === true) return { enabled: true, tier: 'L1' };
   return {
@@ -94,12 +95,7 @@ export function MoneyDisplay({
   }
 
   return (
-    <span
-      data-sign={sign}
-      data-money-display
-      data-count-up={countUpAttr}
-      className={rootClasses}
-    >
+    <span data-sign={sign} data-money-display data-count-up={countUpAttr} className={rootClasses}>
       <span className={cn('money-display__group', amountClasses)}>
         <span className="money-display__amount">{amountText}</span>
         <span className="money-display__suffix suffix">{t(suffixKey)}</span>

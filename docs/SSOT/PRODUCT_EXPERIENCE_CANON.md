@@ -151,16 +151,16 @@ Interaction 표: [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md) §Interaction Gram
 
 ## 9. Wave ownership (구현은 후속 todo)
 
-| Wave   | Todo                                             | Scope                                                              |
-| ------ | ------------------------------------------------ | ------------------------------------------------------------------ |
-| **W0** | `da-w0-foundation-ssot-bundle`                   | 본 문서 · ADR-009 · UNIFIED/DESIGN sync (**DOC**)                  |
-| **W1** | `da-w1-ds-foundation-bundle` · `da-w1-gate-ds-2` | Text · elevation.css · Card CVA · spacing ratchet · GATE **`[x]`** |
-| **W2** | `da-w2-shell-elevation-infra` · `da-w2-gate-shell-elevation` | Aurora · floating BottomNav · 12-col · Earn rails · GATE **`[x]`** |
-| **W3** | `da-w3-ia-progressive-bundle` · `da-w3-gate-ia-progressive` | `/home` Fold1–5 · wallet-hero · trade ticket · GATE above-fold ≤3 **`[x]`** |
-| **W4** | `da-w4-motion-system-bundle` · `da-w4-gate-motion` | `useCountUp` · reduced-motion instant · motion-presets GATE **`[x]`** |
-| **W5** | `da-w5-cards-domain-variants` **`[x]`** · `da-w5-gate-domain-cards` | Domain card personalities CVA **`[x]`** · GATE pending |
-| W6–W8  | `da-w6`…`da-w8`                                  | brand · signature · enforcement            |
-| W7     | `da-w7-enforcement-strict-tokens`                | `check:design-tokens --strict`                                     |
+| Wave   | Todo                                                                          | Scope                                                                       |
+| ------ | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| **W0** | `da-w0-foundation-ssot-bundle`                                                | 본 문서 · ADR-009 · UNIFIED/DESIGN sync (**DOC**)                           |
+| **W1** | `da-w1-ds-foundation-bundle` · `da-w1-gate-ds-2`                              | Text · elevation.css · Card CVA · spacing ratchet · GATE **`[x]`**          |
+| **W2** | `da-w2-shell-elevation-infra` · `da-w2-gate-shell-elevation`                  | Aurora · floating BottomNav · 12-col · Earn rails · GATE **`[x]`**          |
+| **W3** | `da-w3-ia-progressive-bundle` · `da-w3-gate-ia-progressive`                   | `/home` Fold1–5 · wallet-hero · trade ticket · GATE above-fold ≤3 **`[x]`** |
+| **W4** | `da-w4-motion-system-bundle` · `da-w4-gate-motion`                            | `useCountUp` · reduced-motion instant · motion-presets GATE **`[x]`**       |
+| **W5** | `da-w5-cards-domain-variants` **`[x]`** · `da-w5-gate-domain-cards` **`[x]`** | Domain card personalities CVA **`[x]`** · 0.2s scan GATE **`[x]`**          |
+| W6–W8  | `da-w6`…`da-w8`                                                               | brand · signature · enforcement                                             |
+| W7     | `da-w7-enforcement-strict-tokens`                                             | `check:design-tokens --strict`                                              |
 
 ---
 
