@@ -223,8 +223,7 @@ export async function clickWalletPrimaryAction(page: Page, testId: string): Prom
   await action.evaluate((el) => {
     const clearancePx = 112;
     const rect = el.getBoundingClientRect();
-    const targetTop =
-      window.scrollY + rect.top - (window.innerHeight - rect.height - clearancePx);
+    const targetTop = window.scrollY + rect.top - (window.innerHeight - rect.height - clearancePx);
     window.scrollTo({ top: Math.max(0, targetTop), behavior: 'instant' });
   });
   await action.evaluate((el) => {
