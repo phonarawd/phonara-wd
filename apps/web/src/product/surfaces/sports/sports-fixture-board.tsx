@@ -2,6 +2,7 @@ import type { SportsFixtureSummary } from '@/features/sports/use-sports-betting'
 import type { SportsSlipSelection } from '@/features/sports/use-sports-bet-slip-state';
 import { resolveSportsLeagueLabelKey } from '@/domain/sports-page-display-contract';
 import { Button } from '@/product/primitives/button';
+import { Card } from '@/product/primitives/card';
 import { cn } from '@/product/primitives/lib/cn';
 import type { MessageKey } from '@phonara/i18n';
 
@@ -100,9 +101,10 @@ export function SportsFixtureBoard({
         const odds = fixture.match_1x2;
         const kickoff = formatKickoff(fixture.kickoff_at, 'ko');
         return (
-          <article
+          <Card
             key={fixture.fixture_id}
-            className="border-line bg-surface grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-(--ds-radius-md) border px-3 py-2"
+            variant="sports-odds"
+            className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2"
             data-testid={`sports-fixture-row-${fixture.fixture_id}`}
           >
             <div className="min-w-0">
@@ -155,7 +157,7 @@ export function SportsFixtureBoard({
                 );
               })}
             </div>
-          </article>
+          </Card>
         );
       })}
     </div>

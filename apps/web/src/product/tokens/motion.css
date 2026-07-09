@@ -10,6 +10,8 @@
   --ds-motion-toggle: 150ms;
   --ds-motion-surface: 200ms;
   --ds-motion-overlay: 320ms;
+  /* Signal Pulse — display-only count-up budget (§34.15 · useCountUp) */
+  --ds-motion-count-up: 400ms;
   --ds-ease-standard: cubic-bezier(0.2, 0, 0, 1);
 
   /* Deprecated alias — P13 removal · do not reference in new code */
@@ -25,6 +27,7 @@
     --ds-motion-toggle: 0ms;
     --ds-motion-surface: 0ms;
     --ds-motion-overlay: 0ms;
+    --ds-motion-count-up: 0ms;
     --ds-motion-fast: 0ms;
     --ds-motion-base: 0ms;
     --ds-motion-slow: 0ms;

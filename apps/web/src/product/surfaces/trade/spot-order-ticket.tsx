@@ -17,6 +17,7 @@ import { toDecimal } from '@phonara/money';
 import type { Currency } from '@phonara/shared-types';
 import { Button } from '@/product/primitives/button';
 import { ConfirmDialog } from '@/product/primitives/confirm-dialog';
+import { Card } from '@/product/primitives/card';
 import { Input } from '@/product/primitives/input';
 import { MoneyDisplay } from '@/product/primitives/money-display';
 import { cn } from '@/product/primitives/lib/cn';
@@ -142,12 +143,10 @@ export function SpotOrderTicket({
   const amountCurrency = side === 'buy' ? buyStakeCurrency : baseLabel;
 
   return (
-    <section
+    <Card
+      variant="trade-dense"
       data-testid="spot-order-ticket"
-      className={cn(
-        'border-line bg-surface flex min-h-0 flex-col rounded-(--ds-radius-lg) border',
-        className,
-      )}
+      className={cn('flex min-h-0 flex-col', className)}
     >
       <header className="border-line border-b px-3 py-2">
         <div className="flex items-start justify-between gap-2">
@@ -367,7 +366,7 @@ export function SpotOrderTicket({
       </div>
 
       <SpotConfirmDialog wire={wire} amountCurrency={amountCurrency} />
-    </section>
+    </Card>
   );
 }
 

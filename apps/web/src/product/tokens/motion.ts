@@ -11,6 +11,8 @@ export const MOTION_MS = {
   overlay: 320,
   /** L-B page enter budget (≤250ms) — not an L-A CSS token. */
   pageEnter: 250,
+  /** Signal Pulse count-up (≤400ms · §34.15) — L1; L2/reduced = 0 via useCountUp. */
+  countUp: 400,
 } as const;
 
 export const motionMsToSec = (ms: number): number => ms / 1000;

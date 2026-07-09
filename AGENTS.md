@@ -1,9 +1,9 @@
-# PHONARA — Cursor Agents Entry
+﻿# PHONARA — Cursor Agents Entry
 
 > **Active SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](docs/SSOT/ACTIVE_WORK_SSOT.md)  
 > **Engine:** `[x] FULLY CLOSED` (2026-07-03) — status [`ENGINE_APEX_CLOSEOUT.md`](docs/ENGINE_APEX_CLOSEOUT.md) only · **구현 큐 0**  
 > **Demolition:** `[x] DONE` — batch 재실행 없음  
-> **Next:** Phase R — [`REBUILD_PLAN_v1.md`](docs/PRODUCT/REBUILD_PLAN_v1.md) · **`da-w2-gate-shell-elevation`** (#189) · DA W2 shell `[x]` · DA W1 GATE `[x]` · DA W1 DS `[x]` · DA W0 `[x]` · R0 forensic `[x]`
+> **Next:** Phase R — [`REBUILD_PLAN_v1.md`](docs/PRODUCT/REBUILD_PLAN_v1.md) · **`da-w5-gate-domain-cards`** (#195) · DA W5 `[x]` · DA W4 GATE `[x]` · DA W4 `[x]` · DA W3 GATE `[x]` · DA W3 `[x]` · DA W2 GATE `[x]` · DA W2 shell `[x]` · DA W1 GATE `[x]` · DA W1 DS `[x]` · DA W0 `[x]` · R0 forensic `[x]`
 
 Rules: `.cursor/rules/00-post-closeout-active-ssot.mdc` · denylist [`DEPRECATED_DOC_DENYLIST.md`](docs/SSOT/DEPRECATED_DOC_DENYLIST.md)
 
@@ -61,7 +61,8 @@ gh pr create --base main --head $(git branch --show-current)
 
 | Gate                      | 로컬 (Cursor)                              | 비고           |
 | ------------------------- | ------------------------------------------ | -------------- |
-| Implemented closeout      | `gate:ai-impl -- --test <path>`            | 가벼움         |
+| Implemented closeout      | `gate:ai-impl -- --test <path> --closeout <todo-id> --evidence "..."` | L0~L4 green 후 **Plan YAML·§82 doc 자동** |
+| Plan todo only            | `closeout:todo -- <todo-id> --evidence "..."` | gate 이미 green일 때 |
 | **전체 테스트**           | `gate:local-autopilot` · `@test-autopilot` | 저사양 순차    |
 | typecheck · lint · vitest | L0~L4                                      | 항상 OK        |
 | test:e2e/sql 직접         | ❌                                         | orchestrator만 |
@@ -81,8 +82,8 @@ bun run gate:local-autopilot
 Operator 「푸시 전 완벽하게」 / 「CI green까지」 시 skill **`ci-push-fix-loop`** · rule **`94-ci-push-fix-loop.mdc`**:
 
 ```powershell
-# 1) Pre-push L0~L4
-bun run gate:ai-impl -- --test <owner-vitest-path>
+# 1) Pre-push L0~L4 + Plan closeout (operator 수동 체크 0)
+bun run gate:ai-impl -- --test <owner-vitest-path> --closeout <todo-id> --evidence "gate:ai-impl ... green · N/N"
 bun run format:check
 
 # 2) Commit + push (operator 명시 시)

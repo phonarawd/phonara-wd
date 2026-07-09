@@ -116,7 +116,9 @@ export const EARN_HOME_P7_SUBNAV_MANIFEST_ROUTES = [
 
 export const EARN_HOME_REDIRECT_ALIASES = ['/earn', '/dashboard'] as const;
 
-/** Hub mission preview rows — LIVE catalog subset (§25.12.8 card grid). */
+/** Hub mission preview rows — Fold4 max 3 (§34.12 · §25.12.8). */
+
+export const EARN_HOME_HUB_MISSION_PREVIEW_MAX = 3 as const;
 
 export const EARN_HOME_HUB_MISSION_PREVIEW_IDS = [
   'daily-todaySpin',
@@ -124,8 +126,6 @@ export const EARN_HOME_HUB_MISSION_PREVIEW_IDS = [
   'daily-quiz',
 
   'viral-shareLink',
-
-  'growth-completeProfile',
 ] as const;
 
 export type EarnHomeHubMissionPreviewId = (typeof EARN_HOME_HUB_MISSION_PREVIEW_IDS)[number];

@@ -3,6 +3,11 @@ import { forwardRef, type HTMLAttributes } from 'react';
 
 import { cn } from '@/product/primitives/lib/cn';
 
+/**
+ * Card CVA — elevation ladder (§34.7–34.8) + domain personalities (§34.17).
+ * Domain variants: mission · wallet-hero · vip · trade-dense · sports-odds · casino-play.
+ * Signature CSS: `tokens/domain-card-personalities.css` (glow / aurora edge / heatmap).
+ */
 export const cardVariants = cva(
   'rounded-(--ds-radius-lg) border border-line bg-surface text-foreground',
   {
@@ -14,15 +19,17 @@ export const cardVariants = cva(
         raised: 'bg-surface-raised shadow-1',
         /** Translucent panel */
         glass: 'border-line/60 bg-surface/70 shadow-1 backdrop-blur-md',
-        /** Earn mission cue — accent ring */
-        mission: 'border-accent/45 bg-surface-raised shadow-1 ring-1 ring-accent/25 ring-inset',
-        /** Wallet balance hero — aurora edge */
-        'wallet-hero': 'border-accent/35 bg-surface-raised shadow-1 ring-1 ring-accent/20',
-        /** VIP / tier ramp border */
-        vip: 'border-2 border-[color:var(--ds-tier-gold)] bg-surface-raised shadow-1',
-        /** Trade dense — line-first, no raise */
+        /** Earn mission — accent ring + progress glow (§34.17) */
+        mission: 'border-accent/45 bg-surface-raised shadow-1 ring-1 ring-accent/30 ring-inset',
+        /** Wallet balance hero — mono + aurora edge (§34.17) */
+        'wallet-hero': 'border-accent/40 bg-surface-raised shadow-1 ring-1 ring-accent/25',
+        /** VIP / tier ramp border (§34.17) — set --ds-card-tier on host */
+        vip: 'border-2 border-[color:var(--ds-card-tier,var(--ds-tier-gold))] bg-surface-raised shadow-1',
+        /** Trade dense — line-first, no raise (§34.17) */
         'trade-dense': 'rounded-(--ds-radius-sm) border-line bg-surface shadow-none',
-        /** Casino tile — float on hover (L1) */
+        /** Sports odds — heatmap movement bg (§34.17) */
+        'sports-odds': 'rounded-(--ds-radius-md) border-line bg-surface shadow-none',
+        /** Casino tile — hover glow + float L1 (§34.17) */
         'casino-play':
           'bg-surface-raised shadow-1 transition-[transform,box-shadow] duration-(--ds-motion-surface) hover:-translate-y-0.5 hover:shadow-2 motion-reduce:transform-none motion-reduce:hover:translate-y-0',
       },

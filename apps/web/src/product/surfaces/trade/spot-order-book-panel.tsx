@@ -17,6 +17,7 @@ import {
   type SyntheticBookRow,
 } from '@/features/trading/order-book-display';
 import { TradeHelpTip } from '@/features/trading/trade-beginner-help/trade-help-tip';
+import { Card } from '@/product/primitives/card';
 import { cn } from '@/product/primitives/lib/cn';
 import {
   Select,
@@ -95,12 +96,10 @@ export function SpotOrderBookPanel({
   );
 
   return (
-    <section
+    <Card
+      variant="trade-dense"
       data-testid="spot-order-book-panel"
-      className={cn(
-        'border-line bg-surface flex min-h-0 flex-col overflow-hidden rounded-(--ds-radius-lg) border',
-        className,
-      )}
+      className={cn('flex min-h-0 flex-col overflow-hidden', className)}
     >
       <header className="border-line border-b px-3 py-2">
         <div className="flex items-start justify-between gap-2">
@@ -244,7 +243,7 @@ export function SpotOrderBookPanel({
       ) : (
         <p className="text-foreground-muted m-0 px-3 py-6 text-center text-sm">—</p>
       )}
-    </section>
+    </Card>
   );
 }
 

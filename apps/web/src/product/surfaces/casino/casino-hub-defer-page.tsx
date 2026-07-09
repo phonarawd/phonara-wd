@@ -8,6 +8,7 @@ import {
 } from '@/domain/dead-controls-display-contract';
 import { CASINO_HUB_ROUTE } from '@/domain/tournaments-pf-admin-display-contract';
 import { useT } from '@/product/i18n';
+import { Card, CardBody } from '@/product/primitives/card';
 import { EmptyState } from '@/product/primitives/empty-state';
 
 /** Canonical `/casino` hub — P10 defer stub until game surfaces mount (`p10-casino-replay-and-infra`). */
@@ -33,15 +34,19 @@ export function CasinoHubDeferPage() {
         </p>
       </header>
 
-      <EmptyState
-        title={t('casino.hub.defer.title')}
-        description={t(resolveCasinoHubDeferReasonKey())}
-        actionLabel={t('nav.earn')}
-        onAction={() => {
-          window.location.assign('/home');
-        }}
-        icon={<Dices className="size-8" aria-hidden />}
-      />
+      <Card variant="casino-play" data-testid="casino-hub-play-tile">
+        <CardBody className="p-0">
+          <EmptyState
+            title={t('casino.hub.defer.title')}
+            description={t(resolveCasinoHubDeferReasonKey())}
+            actionLabel={t('nav.earn')}
+            onAction={() => {
+              window.location.assign('/home');
+            }}
+            icon={<Dices className="size-8" aria-hidden />}
+          />
+        </CardBody>
+      </Card>
 
       <p className="text-foreground-muted m-0 text-xs leading-relaxed" role="status">
         {t('casino.hub.defer.routeNote', { route: CASINO_HUB_ROUTE })}

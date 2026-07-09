@@ -11,6 +11,7 @@ import {
   EARN_HOME_ENGINE_BRANCHES,
   EARN_HOME_ENTRY_CARDS,
   EARN_HOME_HUB_MISSION_PREVIEW_IDS,
+  EARN_HOME_HUB_MISSION_PREVIEW_MAX,
   EARN_HOME_P6_SUBNAV_MANIFEST_ROUTES,
   EARN_HOME_P7_SUBNAV_MANIFEST_ROUTES,
   EARN_HOME_P8_CONTROLLER_OWNER,
@@ -112,7 +113,8 @@ describe('earn-home-display-contract §20.13 #103', () => {
 
     expect(formatEarnHomeCatalogRewardsLabel(sum)).toMatch(/^\+[\d,]+P$/);
 
-    expect(EARN_HOME_HUB_MISSION_PREVIEW_IDS.length).toBeGreaterThanOrEqual(3);
+    expect(EARN_HOME_HUB_MISSION_PREVIEW_IDS.length).toBe(EARN_HOME_HUB_MISSION_PREVIEW_MAX);
+    expect(EARN_HOME_HUB_MISSION_PREVIEW_MAX).toBe(3);
 
     expect(EARN_HOME_ENTRY_CARDS.map((card) => card.id)).toEqual([
       'missions',

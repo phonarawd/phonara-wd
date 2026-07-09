@@ -71,11 +71,11 @@
 
 ## Next (유일한 구현 큐)
 
-**Phase R UI Rebuild** — [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) · **`da-w2-shell-elevation-infra` `[x]` DONE** 2026-07-09 · **NEXT** `da-w2-gate-shell-elevation` #189 · §34 · preflight: [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
+**Phase R UI Rebuild** — [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) · **`da-w5-cards-domain-variants` `[x]` DONE** 2026-07-10 · **NEXT** `da-w5-gate-domain-cards` #195 · §34 · preflight: [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
 
 **Trade 결함 0 수렴 (형제 큐)** — Plan `트레이딩_결함_0_수렴` · Phase A–C **`[x]` impl** 2026-07-08 · **NEXT** Phase D `phase-d-fills-pagination` (D1) → `phase-d-depth-chart` (D2) · preflight: [`ENGINE_UI_FULL_AUDIT_2026-07-08.md`](audit/ENGINE_UI_FULL_AUDIT_2026-07-08.md)
 
-## §AI Todo Sync (Phase R · YAML 정본 미러 · completed **188**/278 · pending **83** · cancelled **7** · 48차)
+## §AI Todo Sync (Phase R · YAML 정본 미러 · completed **191**/278 · pending **80** · cancelled **7** · 48차)
 
 > **정본:** Cursor Plan `phase_r_super-app_8bdf2c10` frontmatter · **278 ids** · `bun run check:plan-doc-sync` green 필수 · 기존 surface gate 증거 행은 유지 · 신규 id만 placeholder
 
@@ -269,12 +269,12 @@
 | `da-w1-ds-foundation-bundle` | `[x]` DONE | — | YAML #186 completed · surface/gate evidence pending doc sync |
 | `da-w1-gate-ds-2` | `[x]` DONE | — | YAML #187 completed · surface/gate evidence pending doc sync |
 | `da-w2-shell-elevation-infra` | `[x]` DONE | 2026-07-09 | YAML #188 · aurora-background · floating BottomNav · 12-col Orbit Grid · Earn side rails · reduced-motion static · `gate:ai-impl` shell+tokens **47/47** |
-| `da-w2-gate-shell-elevation` | `[ ]` NEXT | — | YAML #189 pending |
-| `da-w3-ia-progressive-bundle` | `[ ]` NEXT | — | YAML #190 pending |
-| `da-w3-gate-ia-progressive` | `[ ]` NEXT | — | YAML #191 pending |
-| `da-w4-motion-system-bundle` | `[ ]` NEXT | — | YAML #192 pending |
-| `da-w4-gate-motion` | `[ ]` NEXT | — | YAML #193 pending |
-| `da-w5-cards-domain-variants` | `[ ]` NEXT | — | YAML #194 pending |
+| `da-w2-gate-shell-elevation` | `[x]` DONE | 2026-07-09 | YAML #189 · `check:ui-architecture --strict` · `gate:ai-impl` shell **42/42** · 390/768/1024 smoke · 5탭 IA unchanged |
+| `da-w3-ia-progressive-bundle` | `[x]` DONE | 2026-07-09 | YAML #190 · `CollapsibleSection` · `/home` Fold1–5 · wallet-hero accordion · trade ticket collapse · `HOME_UX_CANON` · `gate:ai-impl` **34/34** |
+| `da-w3-gate-ia-progressive` | `[x]` DONE | 2026-07-10 | YAML #191 · above-fold ≤3 · `gate:ai-impl` **63/63** home+wallet+trade · VISUAL advisory 390/768/1024 |
+| `da-w4-motion-system-bundle` | `[x]` DONE | 2026-07-10 | YAML #192 · `useCountUp` · MoneyDisplay countUp · wallet/XP/PnL · L2/reduced instant · `gate:ai-impl` **47/47** |
+| `da-w4-gate-motion` | `[x]` DONE | 2026-07-10 | YAML #193 · `use-prefers-reduced-motion` regression · `motion-presets` instant+CSS 0ms · `gate:ai-impl` **38/38** |
+| `da-w5-cards-domain-variants` | `[x]` DONE | 2026-07-10 | YAML #194 · Card CVA 6 personalities · `domain-card-personalities.css` · mission/wallet/vip/trade/sports/casino wires · `gate:ai-impl` **49/49** |
 | `da-w5-gate-domain-cards` | `[ ]` NEXT | — | YAML #195 pending |
 | `p10-sports-fiat-hint-wire` | `[ ]` NEXT | — | YAML #196 pending |
 | `p10-sports-hub-pages` | `[ ]` NEXT | — | YAML #197 pending |
@@ -360,4 +360,4 @@
 | `p2-defer-admin-vip` | `[x]` cancelled | — | YAML cancelled · DEFER — 구현 금지 |
 | `p2-defer-admin-support` | `[x]` cancelled | — | YAML cancelled · DEFER — 구현 금지 |
 
-§AI Todo Sync · YAML canonical **188/278 completed** · **NEXT:** `da-w2-gate-shell-elevation` (#189) · **preflight:** [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
+§AI Todo Sync · YAML canonical **194/278 completed** · **NEXT:** `da-w5-gate-domain-cards` (#195) · **preflight:** [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)

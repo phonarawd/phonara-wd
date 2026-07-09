@@ -1,0 +1,109 @@
+/**
+ * Domain card personalities — Digital Aurora §34.17 · da-w5.
+ * CVA variants own structure; this file owns signature glow / edge / heatmap.
+ * Neural Glow = hero edge whisper only (wallet-hero) — not every card.
+ */
+
+/* Mission — accent ring + progress glow (0.2s scan: in-progress cue) */
+[data-card-variant='mission'] {
+  box-shadow:
+    var(--ds-shadow-1),
+    0 0 0 1px color-mix(in oklch, var(--ds-accent) 22%, transparent),
+    0 0 20px color-mix(in oklch, var(--ds-accent) 14%, transparent);
+}
+
+[data-card-variant='mission'][data-mission-state='completed'] {
+  box-shadow: var(--ds-shadow-1);
+}
+
+/* Wallet hero — mono balance surface + aurora edge whisper */
+[data-card-variant='wallet-hero'] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  box-shadow:
+    var(--ds-shadow-1),
+    0 0 0 1px color-mix(in oklch, var(--ds-accent) 28%, transparent);
+}
+
+[data-card-variant='wallet-hero']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      ellipse 70% 55% at 12% 0%,
+      color-mix(in oklch, var(--ds-accent) 16%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 55% 45% at 92% 100%,
+      color-mix(in oklch, var(--ds-accent) 10%, transparent),
+      transparent 68%
+    );
+  opacity: 0.9;
+}
+
+[data-card-variant='wallet-hero'] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* VIP — tier ramp border (override --ds-card-tier per surface) */
+[data-card-variant='vip'] {
+  border-color: var(--ds-card-tier, var(--ds-tier-gold));
+  box-shadow:
+    var(--ds-shadow-1),
+    0 0 0 1px color-mix(in oklch, var(--ds-card-tier, var(--ds-tier-gold)) 35%, transparent);
+}
+
+/* Trade dense — line-first; no decorative glow */
+[data-card-variant='trade-dense'] {
+  box-shadow: none;
+}
+
+/* Sports odds — heatmap movement background (display-only cue) */
+[data-card-variant='sports-odds'] {
+  background-image: linear-gradient(
+    105deg,
+    color-mix(in oklch, var(--ds-market-up) 8%, var(--ds-surface)) 0%,
+    var(--ds-surface) 42%,
+    color-mix(in oklch, var(--ds-market-down) 7%, var(--ds-surface)) 100%
+  );
+  background-size: 200% 100%;
+  background-position: 50% 0;
+  transition:
+    background-position var(--ds-motion-surface) var(--ds-ease-standard),
+    border-color var(--ds-motion-surface) var(--ds-ease-standard);
+}
+
+[data-card-variant='sports-odds'][data-odds-move='up'] {
+  background-position: 0% 0;
+  border-color: color-mix(in oklch, var(--ds-market-up) 45%, var(--ds-line));
+}
+
+[data-card-variant='sports-odds'][data-odds-move='down'] {
+  background-position: 100% 0;
+  border-color: color-mix(in oklch, var(--ds-market-down) 45%, var(--ds-line));
+}
+
+/* Casino play — hover glow + float (L1; reduced-motion: no transform) */
+[data-card-variant='casino-play']:hover {
+  box-shadow:
+    var(--ds-shadow-2),
+    0 0 24px color-mix(in oklch, var(--ds-accent) 22%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-card-variant='sports-odds'] {
+    transition: none;
+    background-position: 50% 0;
+  }
+
+  [data-card-variant='casino-play']:hover {
+    transform: none;
+  }
+}

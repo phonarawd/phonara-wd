@@ -141,6 +141,10 @@ describe('SportsPage', () => {
     );
 
     fireEvent.click(screen.getByTestId('sports-odds-fx-1-home'));
+    expect(screen.getByTestId('sports-fixture-row-fx-1')).toHaveAttribute(
+      'data-card-variant',
+      'sports-odds',
+    );
     expect(toggleSelection).toHaveBeenCalledWith(
       expect.objectContaining({
         outcomeId: 'home-1',

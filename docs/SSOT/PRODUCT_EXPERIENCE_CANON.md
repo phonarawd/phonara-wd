@@ -77,7 +77,7 @@ Copy tone: [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md) · Earn FOMO 허용 �
 | 3 Overlay | Dialog · Sheet        | `--ds-shadow-overlay` / `--ds-shadow-3`   |
 | 4 Toast   | system toast          | `--ds-z-toast` · `--ds-shadow-4`          |
 
-**구현:** `product/tokens/elevation.css` · `Card` CVA (`default|raised|glass|mission|wallet-hero|vip|trade-dense|casino-play`) · `Text` primitive.
+**구현:** `product/tokens/elevation.css` · `Card` CVA (`default|raised|glass|mission|wallet-hero|vip|trade-dense|sports-odds|casino-play`) · `Text` primitive · `domain-card-personalities.css` (§34.17 signatures).
 
 ---
 
@@ -92,7 +92,11 @@ Copy tone: [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md) · Earn FOMO 허용 �
 Semantic CSS roles: [`DESIGN_PRINCIPLES.md`](DESIGN_PRINCIPLES.md) §3 (`--ds-motion-press` 120ms 등).  
 Interaction 표: [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md) §Interaction Grammar.
 
+**구현 (`da-w4-motion-system-bundle`):** `useCountUp` · `MoneyDisplay countUp` · `--ds-motion-count-up` 400ms · wire = wallet balance · Earn XP · futures PnL.
+
 `prefers-reduced-motion: reduce` → instant variants · static aurora · no count-up.
+
+**GATE (`da-w4-gate-motion`):** `usePrefersReducedMotion` media-query SOT · `instantMotionVariants` · CSS token 0ms · `gate:ai-impl` **38/38**.
 
 ---
 
@@ -151,8 +155,11 @@ Interaction 표: [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md) §Interaction Gram
 | ------ | ------------------------------------------------ | ------------------------------------------------------------------ |
 | **W0** | `da-w0-foundation-ssot-bundle`                   | 본 문서 · ADR-009 · UNIFIED/DESIGN sync (**DOC**)                  |
 | **W1** | `da-w1-ds-foundation-bundle` · `da-w1-gate-ds-2` | Text · elevation.css · Card CVA · spacing ratchet · GATE **`[x]`** |
-| **W2** | `da-w2-shell-elevation-infra`                    | Aurora backdrop · floating BottomNav · 12-col · Earn side rails    |
-| W3–W8  | `da-w3`…`da-w8`                                  | IA · motion · domain cards · brand · signature                     |
+| **W2** | `da-w2-shell-elevation-infra` · `da-w2-gate-shell-elevation` | Aurora · floating BottomNav · 12-col · Earn rails · GATE **`[x]`** |
+| **W3** | `da-w3-ia-progressive-bundle` · `da-w3-gate-ia-progressive` | `/home` Fold1–5 · wallet-hero · trade ticket · GATE above-fold ≤3 **`[x]`** |
+| **W4** | `da-w4-motion-system-bundle` · `da-w4-gate-motion` | `useCountUp` · reduced-motion instant · motion-presets GATE **`[x]`** |
+| **W5** | `da-w5-cards-domain-variants` **`[x]`** · `da-w5-gate-domain-cards` | Domain card personalities CVA **`[x]`** · GATE pending |
+| W6–W8  | `da-w6`…`da-w8`                                  | brand · signature · enforcement            |
 | W7     | `da-w7-enforcement-strict-tokens`                | `check:design-tokens --strict`                                     |
 
 ---

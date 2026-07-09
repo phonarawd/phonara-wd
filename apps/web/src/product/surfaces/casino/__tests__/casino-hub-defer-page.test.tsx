@@ -29,6 +29,10 @@ describe('CasinoHubDeferPage', () => {
     );
 
     expect(screen.getByTestId('casino-hub-defer-page')).toBeInTheDocument();
+    expect(screen.getByTestId('casino-hub-play-tile')).toHaveAttribute(
+      'data-card-variant',
+      'casino-play',
+    );
     expect(screen.getByText('카지노 게임 준비 중')).toBeInTheDocument();
     expect(screen.getByTestId('casino-hub-defer-home-link')).toHaveAttribute('href', '/home');
     expect(screen.getByRole('button', { name: '돈벌기' })).toBeInTheDocument();

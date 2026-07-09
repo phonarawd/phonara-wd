@@ -54,6 +54,26 @@ Status Summary · Balance/Reward Snapshot · Next Best Action · Product Entry C
 
 ---
 
+## Progressive disclosure (§34.12–34.14 · `da-w3-ia-progressive-bundle` · GATE `da-w3-gate-ia-progressive`)
+
+`/home` uses **Fold1–5** so above-fold stays ≤3 modules (status · next action · money). IA tabs unchanged — narrative only.
+
+**GATE:** `da-w3-gate-ia-progressive` — `gate:ai-impl` home+wallet+trade owner tests · operator VISUAL advisory (390/768/1024).
+
+| Fold | Default | Content |
+|------|---------|---------|
+| **Fold1** | always open | Status (tier) + **Next action 1개** |
+| **Fold2** | open | Money snapshot (claimable · wallet balance display) |
+| **Fold3** | **collapsed** | Today opportunity · Season · Trust · ambient ticker |
+| **Fold4** | open | Missions **max 3** → 「전체 보기」→ `/home/missions` |
+| **Fold5** | open | Entry cards — **navigate only** (no embed) |
+
+**Primitive:** `CollapsibleSection` (`product/primitives/collapsible-section.tsx`) — shared with wallet-hero accordion · trade mobile ticket collapse.
+
+**Forbidden:** parallel Earn hub · above-fold dump of Today+Season+Trust+missions+entries · mission preview >3 without view-all.
+
+---
+
 ## Interaction · density · trust
 
 | Dimension     | Rule                                                                                                        |

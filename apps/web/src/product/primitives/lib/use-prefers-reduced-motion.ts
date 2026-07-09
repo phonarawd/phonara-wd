@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
-const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+import { DA_W4_REDUCED_MOTION_MEDIA_QUERY } from '@/domain/da-w4-gate-motion-display-contract';
 
 function readPrefersReducedMotion(): boolean {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
     return false;
   }
-  return window.matchMedia(REDUCED_MOTION_QUERY).matches;
+  return window.matchMedia(DA_W4_REDUCED_MOTION_MEDIA_QUERY).matches;
 }
 
 /** OS a11y setting — avoids motion/react `useReducedMotion` dev console noise. */
@@ -15,7 +15,7 @@ export function usePrefersReducedMotion(): boolean {
 
   useEffect(() => {
     if (typeof window.matchMedia !== 'function') return;
-    const media = window.matchMedia(REDUCED_MOTION_QUERY);
+    const media = window.matchMedia(DA_W4_REDUCED_MOTION_MEDIA_QUERY);
     const sync = () => setPrefersReduced(media.matches);
     sync();
     media.addEventListener('change', sync);

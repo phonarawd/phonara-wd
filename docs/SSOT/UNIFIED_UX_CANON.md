@@ -73,7 +73,7 @@ Trade만 Binance · Wallet만 Toss · Earn만 앱테크 앱처럼 **완전 분�
 | Success / Reward | reward burst CSS · optional Lottie slot                | **L0 Earn only**                           |
 | Error            | field-adjacent + Zone B toast                          | L2 financial                               |
 | Navigation       | BottomNav pill morph · View Transitions (mobile)       | L1                                         |
-| Number change    | `useCountUp` ≤400ms                                    | L1 · **L2 instant** on withdraw/bet/submit |
+| Number change    | `useCountUp` ≤400ms (`--ds-motion-count-up`)           | L1 · **L2 instant** on withdraw/bet/submit |
 
 ### Motion tier policy (cross-surface)
 
@@ -82,6 +82,8 @@ Trade만 Binance · Wallet만 Toss · Earn만 앱테크 앱처럼 **완전 분�
 | **L0 Ambient**   | decorative / ambient OK | Landing · Earn · Casino lobby                      |
 | **L1 Surface**   | feedback · nav · hover  | all non-submit                                     |
 | **L2 Financial** | **instant only**        | withdraw · bet · trade submit · admin money adjust |
+
+**Wire (`da-w4-motion-system-bundle`):** wallet-hero balance · `/home` tier XP · futures unrealized/realized PnL — display-only · RPC 값 불변.
 
 `prefers-reduced-motion: reduce` → all tiers collapse to instant / static ([`DESIGN_PRINCIPLES.md`](DESIGN_PRINCIPLES.md) §3 · §7).
 
@@ -148,9 +150,15 @@ Pre-demolition `@phonara/ui` / `components/ui` 복구 **금지**.
 - [x] DA W0: Interaction Grammar + Product Experience SSOT (`da-w0-foundation-ssot-bundle`)
 - [x] da-w1: Text · elevation · Card CVA alignment (`da-w1-ds-foundation-bundle`)
 - [x] da-w1-gate: DS 2.0 bundle gate green (`da-w1-gate-ds-2`)
+- [x] da-w2: Shell elevation infra (`da-w2-shell-elevation-infra`)
+- [x] da-w2-gate: Shell elevation gate green (`da-w2-gate-shell-elevation`) — `check:ui-architecture` · 390/768/1024 · 5탭 IA
+- [x] da-w3: Progressive IA (`da-w3-ia-progressive-bundle`) — `/home` Fold1–5 · wallet-hero accordion · trade ticket collapse · `CollapsibleSection`
+- [x] da-w3-gate: Progressive disclosure GATE (`da-w3-gate-ia-progressive`) — above-fold ≤3 · `gate:ai-impl` home+wallet+trade · VISUAL advisory
+- [x] da-w4: Motion system BUNDLE (`da-w4-motion-system-bundle`) — `useCountUp` · MoneyDisplay countUp · wallet/XP/PnL
+- [x] da-w4-gate: Motion GATE (`da-w4-gate-motion`) — `use-prefers-reduced-motion` regression · `motion-presets` instant · CSS 0ms
+- [x] da-w5: Domain card personalities (`da-w5-cards-domain-variants`) — Mission/Wallet/VIP/Trade/Sports/Casino CVA + signature CSS
 - [ ] High-risk flows use shared ConfirmDialog pattern
 - [ ] Status states share token semantics across wallet/trade/admin
-- [ ] No new `check:ui-architecture` shell violations
 - [ ] Decision Log entry if intentional surface-specific deviation
 
 ---

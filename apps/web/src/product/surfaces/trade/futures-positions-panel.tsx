@@ -171,6 +171,7 @@ function PositionPnlMoney({
   className?: string;
   signed?: boolean;
 }) {
+  /** Signal Pulse on PnL display — L1 · reduced-motion/L2 instant (§34.15). */
   if (isTradeFiatHintEligibleCurrency(currency)) {
     return (
       <TradeMoneyWithFiatHint
@@ -178,6 +179,7 @@ function PositionPnlMoney({
         currency={currency as 'USDT' | 'PHON'}
         showCurrency
         signed={signed}
+        countUp
         className={className}
       />
     );
@@ -188,6 +190,7 @@ function PositionPnlMoney({
       currency={currency as 'USDT' | 'PHON'}
       showCurrency
       signed={signed}
+      countUp
       className={className}
     />
   );

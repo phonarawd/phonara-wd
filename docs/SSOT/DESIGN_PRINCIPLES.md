@@ -112,7 +112,7 @@ Digital Aurora brand · emotion · tech stack은 [`PRODUCT_EXPERIENCE_CANON.md`]
 | Overlay · sheet/dialog open | `--ds-motion-overlay` (320ms) · L-B spring | ≤320ms                 |
 | Page enter (shell)          | `pageEnter` / `usePageEnterVariants`       | ≤250ms                 |
 | Toast · inline feedback     | slide/fade in-out                          | ≤300ms                 |
-| Count-up (display only)     | `useCountUp` · RPC value unchanged         | ≤400ms                 |
+| Count-up (display only)     | `useCountUp` · `--ds-motion-count-up` 400ms · RPC value unchanged | ≤400ms                 |
 | Game/canvas feel            | engine stage hooks · GPU tier caps         | per `packages/game-ui` |
 
 ### Forbidden motion
@@ -326,6 +326,7 @@ rg "text-\[\d+px\]|p-\[\d|gap-\[\d|rounded-\[\d|shadow-\[" <phase-r-ui-path>
 - [x] §7 Accessibility Elevation · 4-tier smoke · motion tier cross-ref (`da-w0-foundation-ssot-bundle`)
 - [x] da-w1: Text · elevation · Card CVA · spacing ratchet (`da-w1-ds-foundation-bundle`)
 - [x] da-w1-gate: `gate:ai-impl` primitives+tokens · `check:design-tokens` advisory (`da-w1-gate-ds-2`)
+- [x] da-w4-gate: `use-prefers-reduced-motion` regression · `motion-presets` instant · CSS 0ms (`da-w4-gate-motion`)
 - [ ] da-w7: `check:design-tokens --strict`
 
 ---

@@ -86,6 +86,10 @@ describe('SpotOrderTicket density', () => {
   it('renders balance percent chips and separate est receive / est fee rows', () => {
     renderTicket();
 
+    expect(screen.getByTestId('spot-order-ticket')).toHaveAttribute(
+      'data-card-variant',
+      'trade-dense',
+    );
     expect(screen.getByTestId('order-ticket-balance-chips')).toBeInTheDocument();
     expect(screen.getByTestId('spot-ticket-est-receive')).toBeInTheDocument();
     expect(screen.getByTestId('spot-ticket-est-fee')).toBeInTheDocument();

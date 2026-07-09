@@ -105,7 +105,11 @@ export function TierMePage() {
           </p>
         </header>
 
-        <Card data-testid="tier-me-progress-card">
+        <Card
+          variant="vip"
+          data-testid="tier-me-progress-card"
+          style={{ ['--ds-card-tier' as string]: `var(${tierColorVar})` }}
+        >
           <CardBody className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <ProgressRing
               value={tierProgress.progressPercent}

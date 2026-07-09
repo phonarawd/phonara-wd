@@ -20,6 +20,7 @@ import { supportsEntryTpSlOnOrderType } from '@/domain/trade-order-states-displa
 import { TRADE_FUTURES_UI_CAPABILITIES } from '@/features/trading/trade-rpc-capabilities';
 import type { FuturesTimeInForce } from '@/domain/trade-order-states-display-contract';
 import { Button } from '@/product/primitives/button';
+import { Card } from '@/product/primitives/card';
 import { ConfirmDialog } from '@/product/primitives/confirm-dialog';
 import { Input } from '@/product/primitives/input';
 import { SpendCurrencySelector } from '@/product/primitives/spend-currency-selector';
@@ -130,12 +131,10 @@ export function FuturesOrderTicket({
   });
 
   return (
-    <section
+    <Card
+      variant="trade-dense"
       data-testid="futures-order-ticket"
-      className={cn(
-        'border-line bg-surface flex min-h-0 flex-col rounded-(--ds-radius-lg) border',
-        className,
-      )}
+      className={cn('flex min-h-0 flex-col', className)}
     >
       <header className="border-line border-b px-3 py-2">
         <div className="flex items-start justify-between gap-2">
@@ -492,7 +491,7 @@ export function FuturesOrderTicket({
       </div>
 
       <FuturesConfirmDialog wire={wire} />
-    </section>
+    </Card>
   );
 }
 
