@@ -227,12 +227,9 @@ export async function clickWalletPrimaryAction(page: Page, testId: string): Prom
       window.scrollY + rect.top - (window.innerHeight - rect.height - clearancePx);
     window.scrollTo({ top: Math.max(0, targetTop), behavior: 'instant' });
   });
-  try {
-    await action.click({ timeout: 10_000, trial: true });
-    await action.click({ timeout: 30_000 });
-  } catch {
-    await action.click({ timeout: 30_000, force: true });
-  }
+  await action.evaluate((el) => {
+    (el as HTMLElement).click();
+  });
 }
 
 export async function waitForKrwWithdrawFormReady(page: Page): Promise<void> {
