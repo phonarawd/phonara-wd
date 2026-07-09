@@ -8,7 +8,7 @@
 | ----------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Engine Apex**               | `[x] FULLY CLOSED`                           | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어 예외만)                                                                                     |
 | **Phase D Demolition**        | `[x] DONE`                                   | 삭제 확장 **금지**                                                                                                                                                              |
-| **Phase R UI Rebuild**        | **IN PROGRESS (P10 Betting · §22.2.5)**      | **왕초보 큐:** To-do **위→아래** · completed **스킵** · **첫 pending 1개** (`p10-sports-fiat-hint-wire` #180) · PQA §33 **`[x]` DONE** (#169–179) · **`p10-page-sports` `[x]`** |
+| **Phase R UI Rebuild**        | **IN PROGRESS (§35 R0 forensic)**            | **왕초보 큐:** To-do **위→아래** · completed **스킵** · **첫 pending 1개** (`r0-forensic-ssot-honesty-bundle` #180) · PQA §33 **`[x]` DONE** (#169–179) · R0 → DA W0 · **`p10-page-sports` `[x]`** |
 | **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                     |
 | **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                        |
 
@@ -70,13 +70,13 @@
 
 **Implemented (Phase E):** `rpc_set_trailing_stop` · `rpc_clear_trailing_stop` · `time_in_force` · `display_quantity` iceberg slices · `rpc_run_stop_orders` trailing peak · `rpc_run_open_order_fills` IOC/FOK expiry
 
-**NEXT:** P10 **`p10-sports-fiat-hint-wire`** (#180) · PQA §33 gate **`[x]` DONE** 2026-07-09
+**NEXT:** **`r0-forensic-ssot-honesty-bundle`** (#180 · §35) · PQA §33 gate **`[x]` DONE** 2026-07-09 · R0 green 후 `da-w0-foundation-ssot-bundle`
 
 ## 읽을 것 (active)
 
 1. 본 문서 (`ACTIVE_WORK_SSOT.md`)
 2. Phase R 실행: [`docs/PRODUCT/REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md)
-3. YAML todo 정본: Cursor Plan `phase_r_super-app_8bdf2c10` (frontmatter · **346 ids** · Track A **269** + Track B **77** · completed **179** · pending **160** · cancelled **7** · §20.6.1–§20.6.3 · §20.13 · §20.13.2 Fiat# · **§20.13.3 Sports#·CasinoR#** · **§20.14 Launch** · §25.12.9.1-D · §22.2.4 · **§22.2.5 Sports Parity** · **§23.2.1 Casino one-shot replay** · **§32.7** · §25.12.9.2 audit remediation · **48차** 2026-07-08 · sibling orchestration plan **0**)
+3. YAML todo 정본: Cursor Plan `phase_r_super-app_8bdf2c10` (frontmatter · **278 ids** · Track A **243** + Track B **35** · completed **179** · pending **92** · cancelled **7** · §20.6.1–§20.6.3 · §20.13 · §20.13.2 Fiat# · **§20.13.3 Sports#·CasinoR#** · **§20.14 Launch** · **§35 Forensic R0** · §25.12.9.1-D · §22.2.4 · **§22.2.5 Sports Parity** · **§23.2.1 Casino one-shot replay** · **§32.7** · **52차** 2026-07-09 · orchestration SSOT=본 plan · execute sibling=`trade_desk_*`·`phonara_수렴_*`)
 4. 엔진 **상태 한 줄만**: [`docs/ENGINE_APEX_CLOSEOUT.md`](../ENGINE_APEX_CLOSEOUT.md) (게이트 수치 · 재착수 금지)
 5. UX **의도 참조** (실행 큐 아님): `docs/SSOT/*_UX_CANON.md` · `UX_REFERENCE_CANON.md`
 6. 경계: [`ENGINE_BOUNDARY.md`](ENGINE_BOUNDARY.md) · [`OPERATOR_GATES.md`](OPERATOR_GATES.md) · [`CI_GATE_AUTHORITY.md`](CI_GATE_AUTHORITY.md)
@@ -118,7 +118,7 @@ bun run check:advisors
 
 **P1 Foundation** → **P2 Admin** → P3 Auth → P4 Money → P5 Security → P6 Shell → **P7 Growth** → **P8 Core** → P9–P12 Product → P13 Soft Launch → E0–E7 Engine Wave
 
-**현재 NEXT:** **`p10-sports-fiat-hint-wire`** — P10 YAML **#180** · PQA §33 gate **`[x]` DONE** 2026-07-09 · **`p10-page-sports` `[x]`**
+**현재 NEXT:** **`r0-forensic-ssot-honesty-bundle`** — §35 R0 YAML **#180** · PQA §33 gate **`[x]` DONE** 2026-07-09 · **`p10-page-sports` `[x]`** · R0 후 `da-w0`
 
 **왕초보 작업법 (43차 · 이것만):**
 
@@ -231,7 +231,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **P1 engine 큐 (F와 병행 · RED STOP):** `launch-engine-e5-realtime-publication` **`[x]`** 2026-07-09
 
-**다음 todo:** **`p10-sports-fiat-hint-wire`** (#180) — P10 Fiat#10 · PQA gate **`[x]`** unblock
+**다음 todo:** **`r0-forensic-ssot-honesty-bundle`** (#180 · §35) — Forensic R0 · PQA gate **`[x]`** · R0 후 DA W0 → P10 Fiat#10
 
 ## Settings Fiat Hint Toggle (`p5-page-settings-fiat-reference` · §13.1.4.3 · §20.13.2 Fiat#9 · YAML #166) — `[x]` DONE · 재착수 금지
 
@@ -280,7 +280,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 5. dead control 0 · axe critical 0 (브라우저 DevTools)
 6. 채팅 **`VISUAL APPROVED: p9-operator-visual-signoff`** → Plan YAML `completed` + §82 doc sync
 
-**다음 todo:** `p10-sports-fiat-hint-wire` (#169)
+**다음 todo:** `r0-forensic-ssot-honesty-bundle` (#180 · §35) · (이력: Fiat/P10 page `[x]`)
 
 ## Wallet/Ledger Fiat Hint (`p4-page-wallet-fiat-hint` · §13.1.4.4 · §20.13.2 Fiat#6 · YAML #163) — `[x]` DONE · 재착수 금지
 

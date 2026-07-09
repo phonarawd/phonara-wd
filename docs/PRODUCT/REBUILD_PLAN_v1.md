@@ -1,7 +1,7 @@
 # Phase R — PrimeForge Super-App Rebuild (v1)
 
-> **상태:** `[x] operator 승인` (2026-07-04) · **실행 중** — PQA §33 gate **`[x]` DONE** (2026-07-09) · **NEXT** `p10-sports-fiat-hint-wire` (Fiat#10 · YAML #180)  
-> **정본 큐:** Cursor Plan `phase_r_super-app_8bdf2c10` (YAML frontmatter · **346 ids** · §20.6.1: Track A **269** + Track B **77** · completed **179** · pending **160** · cancelled **7** · **48차** 2026-07-08 — §22.2.5 Sports Parity · §23.2.1 Casino replay · E22/E23)  
+> **상태:** `[x] operator 승인` (2026-07-04) · **실행 중** — PQA §33 gate **`[x]` DONE** (2026-07-09) · **NEXT** `r0-forensic-ssot-honesty-bundle` (§35 · YAML #180)
+> **정본 큐:** Cursor Plan `phase_r_super-app_8bdf2c10` (YAML frontmatter · **278 ids** · §20.6.1: Track A **243** + Track B **35** · completed **179** · pending **92** · cancelled **7** · **52차** 2026-07-09 — §35 Forensic R0 · §22.2.5 Sports Parity · §23.2.1 Casino replay · E22/E23)
 > **World-Class:** §32 · E0–**E10** · §32.5 operator trust pages  
 > **Active SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md)
 
@@ -163,7 +163,7 @@ apps/web/src/product/
 | `p9-trade-audit-remediation-a1` | `[x]` DONE | 2026-07-06 | spot whitelist filter+cancel · `cancel-spot-open-order` · §12.19 isolation · `trade_audit_a1_a2_fix` plan |
 | `p9-trade-audit-remediation-a2` | `[x]` DONE | 2026-07-06 | `useTradeDeskViewport` · chart single mount · A2 desk tests · `trade_audit_a1_a2_fix` plan |
 
-**현재 NEXT:** **`p10-page-sports`** (#168) · Fiat#9G **`p4-gate-fiat-reference-world-class` `[x]`** · READ: [`ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md) · P10 page gate unblock (`p9-gate-trade-world-class` + Fiat#9G green)
+**현재 NEXT:** **`r0-forensic-ssot-honesty-bundle`** (#180 · §35) · PQA/Fiat/p10-page-sports **`[x]`** · READ: [`ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md) · R0 green 후 `da-w0-foundation-ssot-bundle`
 
 **Phase R money/trade 정본 (Plan §13.1):**
 
@@ -174,7 +174,7 @@ apps/web/src/product/
 | §13.1.3 | Trade·Staking 초등어 · 초보 가이드 — HowItWorks · HelpTip · subnav help                | `TRADE_BEGINNER_LANGUAGE_CANON.md` · `trade-beginner-language-display-contract.ts` · `p9-trade-beginner-help-layer`      |
 | §13.1.4 | Fiat Reference Money Stack — display-only hint · 3-tier rate · Fiat#1–12               | `fiat-reference-display-contract.ts` · §20.13.2 · **`p4-gate-fiat-reference-world-class` `[x]`** (Fiat#9G · P10 unblock) |
 
-**YAML todo 정본:** Cursor Plan `phase_r_super-app_8bdf2c10` frontmatter — repo에 복사하지 않음. **수치:** §20.6.1 (**346 ids**) · **P9 step:** §25.12.9.1-D + §25.12.9.2 remediation · **Fiat:** §20.13.2 · **실행 #N:** §20.13 · drift: §20.6.2 · **§29.5:** Admin 초등어 · **§32.5–32.6:** trust + Admin operator completeness
+**YAML todo 정본:** Cursor Plan `phase_r_super-app_8bdf2c10` frontmatter — repo에 복사하지 않음. **수치:** §20.6.1 (**278 ids**) · **P9 step:** §25.12.9.1-D + §25.12.9.2 remediation · **Fiat:** §20.13.2 · **실행 #N:** §20.13 · drift: §20.6.2 · **§29.5:** Admin 초등어 · **§32.5–32.6:** trust + Admin operator completeness
 
 ## 참고 (읽지 말 것)
 
