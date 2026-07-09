@@ -240,6 +240,10 @@
     var(--ds-shell-bottomnav-height) + var(--ds-space-2) + env(safe-area-inset-bottom, 0px) +
       var(--ds-space-6)
   );
+  scroll-padding-bottom: calc(
+    var(--ds-shell-bottomnav-height) + var(--ds-space-2) + env(safe-area-inset-bottom, 0px) +
+      var(--ds-space-6)
+  );
 }
 
 @media (min-width: 1024px) {

@@ -279,6 +279,27 @@ export async function openMobileTradePanelIfNeeded(page: Page): Promise<void> {
     await expect(page.getByTestId('trade-desk-mobile-panel-trade')).toBeVisible({
       timeout: 20_000,
     });
+    await expandMobileTicketFoldIfNeeded(page);
+  }
+}
+
+/** DA W3 Fold3 — mobile order ticket starts collapsed; expand before ticket interactions. */
+export async function expandMobileTicketFoldIfNeeded(page: Page): Promise<void> {
+  const spotTicket = page.getByTestId('spot-order-ticket');
+  const futuresTicket = page.getByTestId('futures-order-ticket');
+  if (
+    (await spotTicket.isVisible().catch(() => false)) ||
+    (await futuresTicket.isVisible().catch(() => false))
+  ) {
+    return;
+  }
+
+  const foldToggle = page.getByTestId('trade-mobile-ticket-fold-toggle');
+  if (await foldToggle.isVisible().catch(() => false)) {
+    await foldToggle.click();
+    await expect(page.getByTestId('trade-mobile-ticket-fold-panel')).toBeVisible({
+      timeout: 15_000,
+    });
   }
 }
 

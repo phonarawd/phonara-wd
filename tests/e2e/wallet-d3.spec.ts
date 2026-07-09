@@ -15,6 +15,7 @@ import {
   setPhonTrackBalances,
   waitForKrwDepositFormReady,
   waitForKrwWithdrawFormReady,
+  clickWalletPrimaryAction,
   type WalletE2EFixture,
 } from './fixtures/wallet-money';
 
@@ -60,7 +61,7 @@ test.describe('P4 wallet-d3 money gate', () => {
     await waitForKrwDepositFormReady(page);
     await page.getByTestId('krw-deposit-amount-input').fill('10000');
     await expect(page.getByTestId('krw-deposit-rate-card')).toBeVisible({ timeout: 20_000 });
-    await page.getByTestId('krw-deposit-submit').click();
+    await clickWalletPrimaryAction(page, 'krw-deposit-submit');
     await expect(page.getByTestId('krw-deposit-confirm-dialog')).toBeVisible({ timeout: 15_000 });
 
     const depositRpc = page.waitForResponse(
@@ -94,7 +95,7 @@ test.describe('P4 wallet-d3 money gate', () => {
 
     await page.getByTestId('krw-withdraw-amount-input').fill('25');
     await page.getByTestId('krw-withdraw-account-input').fill('110123456789');
-    await page.getByTestId('krw-withdraw-submit').click();
+    await clickWalletPrimaryAction(page, 'krw-withdraw-submit');
     await expect(page.getByTestId('krw-withdraw-confirm-dialog')).toBeVisible({ timeout: 15_000 });
 
     const withdrawRpc = page.waitForResponse(

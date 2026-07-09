@@ -215,6 +215,13 @@ export async function waitForKrwDepositFormReady(page: Page): Promise<void> {
   await expect(page.getByTestId('krw-deposit-amount-input')).toBeEnabled({ timeout: 30_000 });
 }
 
+/** Scroll wallet primary CTA above floating BottomNav before click (§34.10 chrome). */
+export async function clickWalletPrimaryAction(page: Page, testId: string): Promise<void> {
+  const action = page.getByTestId(testId);
+  await action.scrollIntoViewIfNeeded();
+  await action.click({ timeout: 30_000 });
+}
+
 export async function waitForKrwWithdrawFormReady(page: Page): Promise<void> {
   await expect(page.getByTestId('krw-withdraw-page')).toBeVisible({ timeout: 20_000 });
   await page
