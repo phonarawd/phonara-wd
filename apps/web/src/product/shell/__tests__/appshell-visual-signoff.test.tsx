@@ -142,6 +142,7 @@ describe('appshell visual sign-off §20.12 · §12.19.5', () => {
 
     const bottomNav = screen.getByTestId('bottom-nav');
     expect(bottomNav.className).toContain('ds-shell-bottomnav');
+    expect(bottomNav).toHaveAttribute('data-floating', 'true');
 
     const earnSubnav = screen.getByTestId('earn-subnav-mobile');
     expect(earnSubnav.querySelector('.ds-shell-subnav-scroller')).toBeTruthy();
@@ -149,6 +150,8 @@ describe('appshell visual sign-off §20.12 · §12.19.5', () => {
 
     const desktopNav = screen.getByTestId('earn-subnav-desktop');
     expect(desktopNav.className).toContain('ds-shell-earn-sidenav');
+    expect(screen.getByTestId('earn-side-rail-desktop')).toBeTruthy();
+    expect(screen.getByTestId('aurora-background')).toHaveAttribute('data-intensity', 'low');
 
     const activeEarnTab = within(bottomNav).getByRole('link', {
       name: translate('ko', 'nav.earn'),

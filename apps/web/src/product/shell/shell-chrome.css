@@ -45,11 +45,19 @@
   box-sizing: border-box;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  height: calc(var(--ds-shell-bottomnav-height) + env(safe-area-inset-bottom, 0px));
+  /* Floating chrome — §34.10–34.11 · blur + shadow-2 · z-chrome */
+  z-index: var(--ds-z-chrome);
+  height: var(--ds-shell-bottomnav-height);
   min-height: var(--ds-shell-bottomnav-height);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  border-top: 1px solid var(--ds-line);
-  background: var(--ds-surface);
+  margin-inline: max(var(--ds-shell-gutter), env(safe-area-inset-left, 0px))
+    max(var(--ds-shell-gutter), env(safe-area-inset-right, 0px));
+  margin-bottom: max(var(--ds-space-2), env(safe-area-inset-bottom, 0px));
+  border: 1px solid color-mix(in oklch, var(--ds-line) 80%, transparent);
+  border-radius: var(--ds-radius-lg);
+  background: color-mix(in oklch, var(--ds-surface) 82%, transparent);
+  box-shadow: var(--ds-shadow-2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .ds-shell-bottomnav-tab {
@@ -75,7 +83,7 @@
 .ds-shell-bottomnav-tab[data-active='true']::after {
   content: '';
   position: absolute;
-  bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+  bottom: 6px;
   left: 50%;
   width: 4px;
   height: 4px;
@@ -171,14 +179,42 @@
 
 .ds-shell-earn-sidenav {
   box-sizing: border-box;
+  /* Earn lg+ side rails — floating panel (§34.11) */
   width: var(--ds-shell-sidenav-expanded);
   flex-shrink: 0;
-  border-right: 1px solid var(--ds-line);
-  background: var(--ds-surface);
+  align-self: stretch;
+  margin: var(--ds-space-3) 0 var(--ds-space-3) var(--ds-space-3);
+  border: 1px solid color-mix(in oklch, var(--ds-line) 80%, transparent);
+  border-radius: var(--ds-radius-lg);
+  background: color-mix(in oklch, var(--ds-surface) 88%, transparent);
+  box-shadow: var(--ds-shadow-1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .ds-shell-earn-sidenav[data-collapsed='true'] {
   width: var(--ds-shell-sidenav-collapsed);
+}
+
+.ds-shell-earn-side-rail {
+  box-sizing: border-box;
+  display: none;
+  width: var(--ds-shell-sidenav-collapsed);
+  flex-shrink: 0;
+  align-self: stretch;
+  margin: var(--ds-space-3) var(--ds-space-3) var(--ds-space-3) 0;
+  border: 1px solid color-mix(in oklch, var(--ds-line) 80%, transparent);
+  border-radius: var(--ds-radius-lg);
+  background: color-mix(in oklch, var(--ds-surface) 72%, transparent);
+  box-shadow: var(--ds-shadow-1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@media (min-width: 1024px) {
+  .ds-shell-earn-side-rail {
+    display: block;
+  }
 }
 
 .ds-shell-earn-sidenav-link {
@@ -199,11 +235,26 @@
 }
 
 .ds-shell-main-with-bottomnav {
-  padding-bottom: calc(var(--ds-shell-bottomnav-height) + env(safe-area-inset-bottom, 0px));
+  /* Floating nav clearance: height + float margin + safe-area */
+  padding-bottom: calc(
+    var(--ds-shell-bottomnav-height) + var(--ds-space-2) + env(safe-area-inset-bottom, 0px) +
+      var(--ds-space-2)
+  );
 }
 
 @media (min-width: 1024px) {
   .ds-shell-main-with-bottomnav {
     padding-bottom: 0;
   }
+}
+
+/* AppShell stack — aurora sits behind chrome + content */
+.ds-shell-appshell-root {
+  position: relative;
+  isolation: isolate;
+}
+
+.ds-shell-appshell-chrome {
+  position: relative;
+  z-index: 1;
 }

@@ -36,6 +36,8 @@ Apple 여백 + Stripe 정보 설계 + Linear 미니멀 + Arc 미래감
 | Quad Stream colors | `apps/web/src/domain/brand-display-contract.ts`                        |
 | Motion tokens      | `apps/web/src/product/tokens/motion.css`                               |
 | Panel grid         | `apps/web/src/product/tokens/layout.css` `.ds-shell-panel-grid`        |
+| Aurora Mesh        | `apps/web/src/product/shell/aurora-background.tsx` (+ `.css`)          |
+| Orbit col-span     | `layout.css` `.ds-shell-col-span-8` / `.ds-shell-col-span-4`           |
 | Viewport smoke     | `apps/web/src/product/tokens/viewport-contract.ts` (390/768/1024/2560) |
 
 ---
@@ -149,7 +151,7 @@ Interaction 표: [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md) §Interaction Gram
 | ------ | ------------------------------------------------ | ------------------------------------------------------------------ |
 | **W0** | `da-w0-foundation-ssot-bundle`                   | 본 문서 · ADR-009 · UNIFIED/DESIGN sync (**DOC**)                  |
 | **W1** | `da-w1-ds-foundation-bundle` · `da-w1-gate-ds-2` | Text · elevation.css · Card CVA · spacing ratchet · GATE **`[x]`** |
-| W2     | `da-w2-shell-elevation-infra`                    | Aurora backdrop · 12-col shell                                     |
+| **W2** | `da-w2-shell-elevation-infra`                    | Aurora backdrop · floating BottomNav · 12-col · Earn side rails    |
 | W3–W8  | `da-w3`…`da-w8`                                  | IA · motion · domain cards · brand · signature                     |
 | W7     | `da-w7-enforcement-strict-tokens`                | `check:design-tokens --strict`                                     |
 

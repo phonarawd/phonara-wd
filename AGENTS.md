@@ -3,7 +3,7 @@
 > **Active SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](docs/SSOT/ACTIVE_WORK_SSOT.md)  
 > **Engine:** `[x] FULLY CLOSED` (2026-07-03) — status [`ENGINE_APEX_CLOSEOUT.md`](docs/ENGINE_APEX_CLOSEOUT.md) only · **구현 큐 0**  
 > **Demolition:** `[x] DONE` — batch 재실행 없음  
-> **Next:** Phase R — [`REBUILD_PLAN_v1.md`](docs/PRODUCT/REBUILD_PLAN_v1.md) · **`da-w2-shell-elevation-infra`** (#188) · DA W1 GATE `[x]` · DA W1 DS `[x]` · DA W0 `[x]` · R0 forensic `[x]`
+> **Next:** Phase R — [`REBUILD_PLAN_v1.md`](docs/PRODUCT/REBUILD_PLAN_v1.md) · **`da-w2-gate-shell-elevation`** (#189) · DA W2 shell `[x]` · DA W1 GATE `[x]` · DA W1 DS `[x]` · DA W0 `[x]` · R0 forensic `[x]`
 
 Rules: `.cursor/rules/00-post-closeout-active-ssot.mdc` · denylist [`DEPRECATED_DOC_DENYLIST.md`](docs/SSOT/DEPRECATED_DOC_DENYLIST.md)
 

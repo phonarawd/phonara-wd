@@ -17,7 +17,10 @@ const COLORS_CSS = join(root, 'apps/web/src/product/tokens/colors.css');
 const THEME_CSS = join(root, 'apps/web/src/product/tokens/theme.css');
 const MOTION_CSS = join(root, 'apps/web/src/product/tokens/motion.css');
 const ELEVATION_CSS = join(root, 'apps/web/src/product/tokens/elevation.css');
+const LAYOUT_CSS = join(root, 'apps/web/src/product/tokens/layout.css');
 const INDEX_CSS = join(root, 'apps/web/src/product/tokens/index.css');
+const AURORA_TSX = join(root, 'apps/web/src/product/shell/aurora-background.tsx');
+const AURORA_CSS = join(root, 'apps/web/src/product/shell/aurora-background.css');
 
 const SURFACE_DIRS = ['apps/web/src/product/surfaces', 'apps/admin/src/product/surfaces'] as const;
 
@@ -134,6 +137,39 @@ function checkTokenSot(): Finding[] {
         hard: true,
       });
     }
+  }
+
+  if (!existsSync(LAYOUT_CSS)) {
+    out.push({
+      id: 'missing-layout-css',
+      message: 'Missing apps/web/src/product/tokens/layout.css (§34.10 Orbit Grid)',
+      hard: true,
+    });
+  } else {
+    const layout = read(LAYOUT_CSS);
+    if (!layout.includes('repeat(12, minmax(0, 1fr))')) {
+      out.push({
+        id: 'missing-orbit-12col',
+        message: 'layout.css missing desktop 12-col Orbit Grid (§34.10–34.11)',
+        hard: true,
+      });
+    }
+    if (!layout.includes('.ds-shell-col-span-8') || !layout.includes('.ds-shell-col-span-4')) {
+      out.push({
+        id: 'missing-orbit-col-span',
+        message: 'layout.css missing .ds-shell-col-span-8/4 helpers (§34.10–34.11)',
+        hard: true,
+      });
+    }
+  }
+
+  if (!existsSync(AURORA_TSX) || !existsSync(AURORA_CSS)) {
+    out.push({
+      id: 'missing-aurora-background',
+      message:
+        'Missing aurora-background.tsx+css under product/shell (§34.10 Shell elevation)',
+      hard: true,
+    });
   }
 
   const colors = read(COLORS_CSS);

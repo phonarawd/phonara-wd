@@ -1,7 +1,7 @@
 # Phase R — PrimeForge Super-App Rebuild (v1)
 
-> **상태:** `[x] operator 승인` (2026-07-04) · **실행 중** — DA W1 GATE **`[x]` DONE** (2026-07-09) · **NEXT** `da-w2-shell-elevation-infra` (YAML #188)
-> **정본 큐:** Cursor Plan `phase_r_super-app_8bdf2c10` (YAML frontmatter · **278 ids** · §20.6.1: Track A **243** + Track B **35** · completed **187** · pending **84** · cancelled **7** · **52차** 2026-07-09 — §35 Forensic R0 · §34 DA W2 · §22.2.5 Sports Parity · §23.2.1 Casino replay · E22/E23)
+> **상태:** `[x] operator 승인` (2026-07-04) · **실행 중** — DA W2 shell **`[x]` DONE** (2026-07-09) · **NEXT** `da-w2-gate-shell-elevation` (YAML #189)
+> **정본 큐:** Cursor Plan `phase_r_super-app_8bdf2c10` (YAML frontmatter · **278 ids** · §20.6.1: Track A **243** + Track B **35** · completed **188** · pending **83** · cancelled **7** · **52차** 2026-07-09 — §35 Forensic R0 · §34 DA W2 GATE · §22.2.5 Sports Parity · §23.2.1 Casino replay · E22/E23)
 > **World-Class:** §32 · E0–**E10** · §32.5 operator trust pages  
 > **Active SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md)
 
@@ -163,7 +163,7 @@ apps/web/src/product/
 | `p9-trade-audit-remediation-a1` | `[x]` DONE | 2026-07-06 | spot whitelist filter+cancel · `cancel-spot-open-order` · §12.19 isolation · `trade_audit_a1_a2_fix` plan |
 | `p9-trade-audit-remediation-a2` | `[x]` DONE | 2026-07-06 | `useTradeDeskViewport` · chart single mount · A2 desk tests · `trade_audit_a1_a2_fix` plan |
 
-**현재 NEXT:** **`da-w2-shell-elevation-infra`** (#188) · DA W1 GATE `#187` / DA W1 `#186` / DA W0 `#185` / R0 `#180–184` / PQA / Fiat / `p10-page-sports` **`[x]`** · READ: [`ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md)
+**현재 NEXT:** **`da-w2-gate-shell-elevation`** (#189) · DA W2 `#188` / DA W1 GATE `#187` / DA W1 `#186` / DA W0 `#185` / R0 `#180–184` / PQA / Fiat / `p10-page-sports` **`[x]`** · READ: [`ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md)
 
 **Phase R money/trade 정본 (Plan §13.1):**
 
