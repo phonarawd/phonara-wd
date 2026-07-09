@@ -6,12 +6,15 @@ import type { MessageKey } from '@phonara/i18n';
 
 import { useAdminAuditAlerts } from '@/hooks/admin/useAdminAuditAlerts';
 import type { AdminAlertRow } from '@/hooks/admin/useAdminAuditAlerts';
+import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
 import {
   useAdminOperations,
+  type AdminKillSwitchRow,
   type AdminOpsHealthRow,
   type AdminTradeMarketBreakerRow,
   type OpsHealthCategory,
   type OpsHealthStatus,
+  type OpsKillCategory,
 } from '@/hooks/admin/useAdminOperations';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
@@ -23,6 +26,7 @@ import { Input } from '@/product/primitives/input';
 import { cn } from '@/product/primitives/lib/cn';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 import { healthStatusClass } from '@/product/surfaces/admin-alert-action-dialog';
+import { ADMIN_RBAC_DENIED_KEY, adminRbacActionProps } from '@/product/surfaces/admin-rbac-action';
 import { AdminQueueActionDialog } from '@/product/surfaces/admin-queue-action-dialog';
 
 const HEALTH_STATUS_KEYS: Record<OpsHealthStatus, MessageKey> = {
@@ -36,6 +40,14 @@ const HEALTH_CATEGORY_KEYS: Record<OpsHealthCategory, MessageKey> = {
   queue: 'admin.operations.health.category.queue',
   budget: 'admin.operations.health.category.budget',
   infra: 'admin.operations.health.category.infra',
+};
+
+const KILL_CATEGORY_KEYS: Record<OpsKillCategory, MessageKey> = {
+  system: 'admin.operations.kill.category.system',
+  wallet: 'admin.operations.kill.category.wallet',
+  trading: 'admin.operations.kill.category.trading',
+  sports: 'admin.operations.kill.category.sports',
+  earn: 'admin.operations.kill.category.earn',
 };
 
 function formatWhen(iso: string | null | undefined, locale: string): string {
@@ -73,14 +85,22 @@ interface TradeMarketActionTarget {
   row: AdminTradeMarketBreakerRow;
 }
 
+interface KillSwitchActionTarget {
+  row: AdminKillSwitchRow;
+  enabled: boolean;
+}
+
 function marketStatusState(isHalted: boolean): MoneyStatusState {
   return isHalted ? 'halted' : 'settled';
 }
 
-/** Admin ops desk (`/ops`) — read-only health + alerts via `useAdminOperations` (§29.2 · no Temporal). */
+/** Admin ops desk (`/ops`) — health · kill switches · market halt via `useAdminOperations` (§29.2). */
 export function AdminOpsPage() {
   const t = useT();
   const goTo = useAdminRouteNavigate();
+  const { can } = useAdminOperatorRbac();
+  const canKillSwitch = can('operations.kill_switch');
+  const rbacDenied = t(ADMIN_RBAC_DENIED_KEY);
   const locale = typeof document !== 'undefined' ? document.documentElement.lang || 'ko' : 'ko';
 
   const {
@@ -90,6 +110,11 @@ export function AdminOpsPage() {
     setHealthFilters,
     refreshHealth,
     healthCategories,
+    filteredKillSwitches,
+    killFilters,
+    setKillFilters,
+    killCategories,
+    confirmKillSwitch,
     tradeMarkets,
     confirmHaltTradeMarket,
     confirmResumeTradeMarket,
@@ -100,6 +125,8 @@ export function AdminOpsPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [marketAction, setMarketAction] = useState<TradeMarketActionTarget | null>(null);
   const [marketActionLoading, setMarketActionLoading] = useState(false);
+  const [killAction, setKillAction] = useState<KillSwitchActionTarget | null>(null);
+  const [killActionLoading, setKillActionLoading] = useState(false);
 
   const metrics = useMemo(() => {
     const critical = health.filter((row) => row.status === 'critical').length;
@@ -119,7 +146,7 @@ export function AdminOpsPage() {
   };
 
   const handleMarketActionSubmit = async (reason: string): Promise<boolean> => {
-    if (!marketAction) return false;
+    if (!marketAction || !canKillSwitch) return false;
     setMarketActionLoading(true);
     try {
       if (marketAction.kind === 'halt') {
@@ -128,6 +155,16 @@ export function AdminOpsPage() {
       return (await confirmResumeTradeMarket?.(marketAction.row.symbol, reason)) ?? false;
     } finally {
       setMarketActionLoading(false);
+    }
+  };
+
+  const handleKillActionSubmit = async (reason: string): Promise<boolean> => {
+    if (!killAction || !canKillSwitch || !confirmKillSwitch) return false;
+    setKillActionLoading(true);
+    try {
+      return await confirmKillSwitch(killAction.row.id, killAction.enabled, reason);
+    } finally {
+      setKillActionLoading(false);
     }
   };
 
@@ -307,12 +344,128 @@ export function AdminOpsPage() {
         )}
       </section>
 
+      <section aria-labelledby="admin-ops-kill-heading" className="space-y-3">
+        <div>
+          <h3 id="admin-ops-kill-heading" className="text-foreground m-0 text-lg font-semibold">
+            {t('admin.operations.kill.title')}
+          </h3>
+          <p className="text-foreground-muted m-0 text-sm">{t('admin.operations.kill.subtitle')}</p>
+          <p className="text-foreground-muted m-0 text-sm">{t('admin.operations.kill.desc')}</p>
+          {!canKillSwitch ? (
+            <p
+              className="text-foreground-muted m-0 text-sm"
+              data-testid="admin-ops-kill-rbac-denied"
+            >
+              {rbacDenied}
+            </p>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <Input
+            value={killFilters.search}
+            onChange={(event) =>
+              setKillFilters((prev) => ({ ...prev, search: event.target.value }))
+            }
+            placeholder={t('admin.operations.kill.search.placeholder')}
+            aria-label={t('admin.operations.kill.search.placeholder')}
+            className="max-w-md"
+          />
+          <FilterSelect
+            label={t('admin.operations.kill.col.category')}
+            value={killFilters.category}
+            onChange={(value) =>
+              setKillFilters((prev) => ({
+                ...prev,
+                category: value as OpsKillCategory | 'all',
+              }))
+            }
+            options={[
+              { value: 'all', label: t('admin.operations.kill.category.all') },
+              ...killCategories.map((category) => ({
+                value: category,
+                label: t(KILL_CATEGORY_KEYS[category]),
+              })),
+            ]}
+          />
+        </div>
+
+        {filteredKillSwitches.length === 0 ? (
+          <EmptyState
+            title={t('admin.operations.kill.empty')}
+            description={t('admin.operations.kill.desc')}
+            actionLabel={t('admin.operations.health.refresh')}
+            onAction={handleRefresh}
+          />
+        ) : (
+          <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
+            <table className="w-full min-w-[880px] border-collapse text-left text-sm">
+              <thead className="bg-surface-raised text-foreground-muted">
+                <tr>
+                  <th className="px-4 py-3 font-medium">{t('admin.operations.kill.col.label')}</th>
+                  <th className="px-4 py-3 font-medium">
+                    {t('admin.operations.kill.col.category')}
+                  </th>
+                  <th className="px-4 py-3 font-medium">{t('admin.operations.kill.col.status')}</th>
+                  <th className="px-4 py-3 font-medium">{t('admin.operations.kill.col.action')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredKillSwitches.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="border-line border-t"
+                    data-testid={`admin-kill-${row.id}`}
+                  >
+                    <td className="text-foreground px-4 py-3">
+                      <p className="m-0 font-medium">{t(row.labelKey as MessageKey)}</p>
+                      <p className="text-foreground-muted m-0 font-mono text-xs">{row.switchKey}</p>
+                    </td>
+                    <td className="text-foreground-muted px-4 py-3">
+                      {t(KILL_CATEGORY_KEYS[row.category])}
+                    </td>
+                    <td className="px-4 py-3">
+                      <StatusBadge
+                        state={row.enabled ? 'settled' : 'halted'}
+                        label={
+                          row.enabled
+                            ? t('admin.operations.kill.status.on')
+                            : t('admin.operations.kill.status.off')
+                        }
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <Button
+                        size="sm"
+                        variant={row.enabled ? 'outline' : 'primary'}
+                        {...adminRbacActionProps(canKillSwitch, rbacDenied)}
+                        onClick={() => {
+                          if (!canKillSwitch) return;
+                          setKillAction({ row, enabled: !row.enabled });
+                        }}
+                      >
+                        {row.enabled
+                          ? t('admin.operations.kill.action.disable')
+                          : t('admin.operations.kill.action.enable')}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
       <section aria-labelledby="admin-ops-markets-heading" className="space-y-3">
         <div>
           <h3 id="admin-ops-markets-heading" className="text-foreground m-0 text-lg font-semibold">
             {t('admin.ops.markets.title')}
           </h3>
           <p className="text-foreground-muted m-0 text-sm">{t('admin.ops.markets.subtitle')}</p>
+          {!canKillSwitch ? (
+            <p className="text-foreground-muted m-0 text-sm">{rbacDenied}</p>
+          ) : null}
         </div>
 
         {tradeMarkets.length === 0 ? (
@@ -361,7 +514,11 @@ export function AdminOpsPage() {
                         <Button
                           size="sm"
                           variant="primary"
-                          onClick={() => setMarketAction({ kind: 'resume', row })}
+                          {...adminRbacActionProps(canKillSwitch, rbacDenied)}
+                          onClick={() => {
+                            if (!canKillSwitch) return;
+                            setMarketAction({ kind: 'resume', row });
+                          }}
                         >
                           {t('admin.ops.markets.action.resume')}
                         </Button>
@@ -369,7 +526,11 @@ export function AdminOpsPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => setMarketAction({ kind: 'halt', row })}
+                          {...adminRbacActionProps(canKillSwitch, rbacDenied)}
+                          onClick={() => {
+                            if (!canKillSwitch) return;
+                            setMarketAction({ kind: 'halt', row });
+                          }}
                         >
                           {t('admin.ops.markets.action.halt')}
                         </Button>
@@ -475,6 +636,31 @@ export function AdminOpsPage() {
         loading={marketActionLoading}
         destructive={marketAction?.kind === 'halt'}
         onSubmit={handleMarketActionSubmit}
+      />
+
+      <AdminQueueActionDialog
+        open={killAction !== null}
+        onOpenChange={(open) => {
+          if (!open) setKillAction(null);
+        }}
+        titleKey={
+          killAction?.enabled
+            ? 'admin.operations.kill.dialog.enable.title'
+            : 'admin.operations.kill.dialog.disable.title'
+        }
+        confirmKey={
+          killAction?.enabled
+            ? 'admin.operations.kill.action.enable'
+            : 'admin.operations.kill.action.disable'
+        }
+        summary={
+          killAction ? (
+            <p className="text-foreground m-0 text-sm font-mono">{killAction.row.switchKey}</p>
+          ) : null
+        }
+        loading={killActionLoading}
+        destructive={killAction?.enabled === false}
+        onSubmit={handleKillActionSubmit}
       />
     </div>
   );

@@ -4,7 +4,7 @@
 > **Master map:** [`UX_REFERENCE_CANON.md`](UX_REFERENCE_CANON.md) §Earn  
 > **Home hub:** [`HOME_UX_CANON.md`](HOME_UX_CANON.md)  
 > **Blueprint:** [`SURFACE_BLUEPRINTS.md`](SURFACE_BLUEPRINTS.md) §Earn · §Home  
-> **Routes:** `/home` (canonical Earn hub) · `/home/missions` · `/dashboard` · `/events` — [`ROUTE_CANONICAL_REGISTRY.md`](ROUTE_CANONICAL_REGISTRY.md)
+> **Routes:** `/home` (canonical Earn hub) · `/home/missions` · `/referral` · `/tier/*` · `/earn/**` · `/share/earnings` · `/staking` · `/staking/positions` — [`ROUTE_CANONICAL_REGISTRY.md`](ROUTE_CANONICAL_REGISTRY.md) · `r0-staking-domain-sot-sync`
 
 ## 목표 경험
 

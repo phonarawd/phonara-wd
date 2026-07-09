@@ -25,8 +25,12 @@ import type { AdminWithdrawRow } from '@/hooks/admin/useAdminWalletDesk';
 import { isKycOverdue } from '@/hooks/admin/useAdminCompliance';
 import { isOverdueSla } from '@/hooks/admin/useAdminWalletDesk';
 
+import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
+
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+
+import { ADMIN_RBAC_DENIED_KEY, adminRbacActionProps } from '@/product/surfaces/admin-rbac-action';
 
 import { HowItWorks } from '@/product/primitives/how-it-works';
 
@@ -163,6 +167,11 @@ function activeRisk(rows: AdminRiskRgRow[]): AdminRiskRgRow[] {
 export function AdminQueuesPage() {
   const t = useT();
   const goTo = useAdminRouteNavigate();
+  const { can } = useAdminOperatorRbac();
+  const canApproveWithdraw = can('queues.withdraw.approve');
+  const canRejectWithdraw = can('queues.withdraw.reject');
+  const canReviewKyc = can('queues.kyc.review');
+  const rbacDenied = t(ADMIN_RBAC_DENIED_KEY);
 
   const locale = typeof document !== 'undefined' ? document.documentElement.lang || 'ko' : 'ko';
 
@@ -509,7 +518,9 @@ export function AdminQueuesPage() {
                           <Button
                             variant="primary"
                             size="sm"
-                            onClick={() =>
+                            {...adminRbacActionProps(canApproveWithdraw, rbacDenied)}
+                            onClick={() => {
+                              if (!canApproveWithdraw) return;
                               openAction({
                                 kind: 'approveWithdraw',
 
@@ -520,8 +531,8 @@ export function AdminQueuesPage() {
                                 confirmKey: 'admin.queues.action.approve',
 
                                 summary: `${row.userId} · ${formatMoney(row.amount, row.currency)}`,
-                              })
-                            }
+                              });
+                            }}
                           >
                             {t('admin.queues.action.approve')}
                           </Button>
@@ -529,7 +540,9 @@ export function AdminQueuesPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() =>
+                            {...adminRbacActionProps(canRejectWithdraw, rbacDenied)}
+                            onClick={() => {
+                              if (!canRejectWithdraw) return;
                               openAction({
                                 kind: 'rejectWithdraw',
 
@@ -542,8 +555,8 @@ export function AdminQueuesPage() {
                                 destructive: true,
 
                                 summary: `${row.userId} · ${formatMoney(row.amount, row.currency)}`,
-                              })
-                            }
+                              });
+                            }}
                           >
                             {t('admin.queues.action.reject')}
                           </Button>
@@ -554,7 +567,9 @@ export function AdminQueuesPage() {
                         <Button
                           variant="primary"
                           size="sm"
-                          onClick={() =>
+                          {...adminRbacActionProps(canApproveWithdraw, rbacDenied)}
+                          onClick={() => {
+                            if (!canApproveWithdraw) return;
                             openAction({
                               kind: 'markSent',
 
@@ -565,8 +580,8 @@ export function AdminQueuesPage() {
                               confirmKey: 'admin.queues.action.markSent',
 
                               summary: `${row.userId} · ${formatMoney(row.amount, row.currency)}`,
-                            })
-                          }
+                            });
+                          }}
                         >
                           {t('admin.queues.action.markSent')}
                         </Button>
@@ -618,7 +633,9 @@ export function AdminQueuesPage() {
                       <Button
                         variant="primary"
                         size="sm"
-                        onClick={() =>
+                        {...adminRbacActionProps(canReviewKyc, rbacDenied)}
+                        onClick={() => {
+                          if (!canReviewKyc) return;
                           openAction({
                             kind: 'approveKyc',
 
@@ -629,8 +646,8 @@ export function AdminQueuesPage() {
                             confirmKey: 'admin.queues.action.approve',
 
                             summary: `${row.userId} · ${row.documentSummary}`,
-                          })
-                        }
+                          });
+                        }}
                       >
                         {t('admin.queues.action.approve')}
                       </Button>
@@ -638,7 +655,9 @@ export function AdminQueuesPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() =>
+                        {...adminRbacActionProps(canReviewKyc, rbacDenied)}
+                        onClick={() => {
+                          if (!canReviewKyc) return;
                           openAction({
                             kind: 'rejectKyc',
 
@@ -651,8 +670,8 @@ export function AdminQueuesPage() {
                             destructive: true,
 
                             summary: `${row.userId} · ${row.documentSummary}`,
-                          })
-                        }
+                          });
+                        }}
                       >
                         {t('admin.queues.action.reject')}
                       </Button>

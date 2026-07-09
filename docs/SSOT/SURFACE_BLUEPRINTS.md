@@ -151,8 +151,9 @@ Completion signals:
 
 ## Trade
 
-**Routes:** `/trade` · `/trade/futures` · `/trade/spot/$pair` · `/trade/positions` · `/trade/orders` · `/staking` · `/staking/positions` — [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) §12.19 · §13.1.2  
-**Domain canon:** [`TRADE_UX_CANON.md`](TRADE_UX_CANON.md)
+**Routes:** `/trade` · `/trade/futures` · `/trade/spot/$pair` · `/trade/positions` · `/trade/orders` — [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) §12.19 · §13.1.2  
+**Domain canon:** [`TRADE_UX_CANON.md`](TRADE_UX_CANON.md)  
+**Note:** `/staking` · `/staking/positions` = **Earn** chapter (`r0-staking-domain-sot-sync`) — not Trade.
 
 **Primary reference:** Binance Desktop  
 **Secondary reference:** Bybit Unified Trading · OKX · Coinbase motion
@@ -329,7 +330,7 @@ Completion signals:
 
 ## Wallet
 
-**Routes:** `/wallet` · `/ledger` · `/staking`  
+**Routes:** `/wallet` · `/ledger` · `/rewards`  
 **Domain canon:** [`WALLET_UX_CANON.md`](WALLET_UX_CANON.md)
 
 **Primary reference:** Toss  
@@ -390,8 +391,9 @@ Completion signals:
 
 ## Earn
 
-**Routes:** `/home` (hub) · `/home/missions` · `/dashboard` · `/events` — **`/earn` redirect-only**  
-**Domain canon:** [`EARN_UX_CANON.md`](EARN_UX_CANON.md)
+**Routes:** `/home` (hub) · `/home/missions` · `/referral` · `/tier/*` · `/earn/**` · `/share/earnings` · `/staking` · `/staking/positions` — **`/earn` hub redirect-only**  
+**Domain canon:** [`EARN_UX_CANON.md`](EARN_UX_CANON.md)  
+**Staking:** Earn subnav chip · `surface-domain-boundary` `earn` (`r0-staking-domain-sot-sync`)
 
 **Primary reference:** Toss  
 **Secondary reference:** Cashwalk · PanelNow · Obey · Coupang Partners · reward apps
@@ -644,7 +646,8 @@ Per-game forbidden/completion detail: [`CASINO_UX_CANON.md`](CASINO_UX_CANON.md)
 | Trade         | `/trade` · `/trade/futures` · `/trade/positions` · `/trade/orders` — Trade-only subnav |
 | Sports        | `/sports` · `/sports/fixture/$fixtureId` · sports subnav (§12.19)                      |
 | Casino        | `/casino` · `/games/*` · 12 `/casino/*` game routes                                    |
-| Wallet        | `/wallet` · `/ledger` · `/staking`                                                     |
+| Wallet        | `/wallet` · `/ledger` · `/rewards`                                                     |
+| Earn staking  | `/staking` · `/staking/positions` — Earn subnav (`r0-staking-domain-sot-sync`)         |
 | Admin         | `/admin/*` per registry                                                                |
 
 **Mismatch** (blueprint module without route owner · orphan route without blueprint) → [`DECISION_LOG.md`](DECISION_LOG.md) before U-phase.

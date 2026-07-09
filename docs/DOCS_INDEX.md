@@ -48,14 +48,15 @@
 
 ## Product OS (Landing CVR pass · Phase 0 동결)
 
-| Doc                                                                                                | Role                                             |
-| -------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [`PRODUCT/PRODUCT_OPERATING_SYSTEM.md`](PRODUCT/PRODUCT_OPERATING_SYSTEM.md)                       | Product OS 루트 · doc freeze · 구현 우선순위     |
-| [`PRODUCT/LANDING_PRODUCT_SPEC.md`](PRODUCT/LANDING_PRODUCT_SPEC.md)                               | CVR-first fold IA · 컴포넌트 매핑                |
-| [`PRODUCT/DESIGN_CHARTER.md`](PRODUCT/DESIGN_CHARTER.md)                                           | Voice · Motion · timeless tokens                 |
-| [`PRODUCT/SUCCESS_METRICS.md`](PRODUCT/SUCCESS_METRICS.md)                                         | North Star · landing funnel events               |
-| [`PRODUCT/SCOPE_TRACK3_DECISION.md`](PRODUCT/SCOPE_TRACK3_DECISION.md)                             | Track 3 스코프 (3a/3c 활성) · operator 서명 대기 |
-| [`PRODUCT/ADR/003-landing-timeless-conversion.md`](PRODUCT/ADR/003-landing-timeless-conversion.md) | CVR pass 구현 ADR                                |
+| Doc                                                                                                | Role                                               |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| [`PRODUCT/PRODUCT_OPERATING_SYSTEM.md`](PRODUCT/PRODUCT_OPERATING_SYSTEM.md)                       | Product OS 루트 · doc freeze · 구현 우선순위       |
+| [`PRODUCT/LANDING_PRODUCT_SPEC.md`](PRODUCT/LANDING_PRODUCT_SPEC.md)                               | CVR-first fold IA · 컴포넌트 매핑                  |
+| [`PRODUCT/DESIGN_CHARTER.md`](PRODUCT/DESIGN_CHARTER.md)                                           | Voice · Motion · timeless tokens · DA brand memory |
+| [`PRODUCT/SUCCESS_METRICS.md`](PRODUCT/SUCCESS_METRICS.md)                                         | North Star · landing funnel events                 |
+| [`PRODUCT/SCOPE_TRACK3_DECISION.md`](PRODUCT/SCOPE_TRACK3_DECISION.md)                             | Track 3 스코프 (3a/3c 활성) · operator 서명 대기   |
+| [`PRODUCT/ADR/003-landing-timeless-conversion.md`](PRODUCT/ADR/003-landing-timeless-conversion.md) | CVR pass 구현 ADR                                  |
+| [`PRODUCT/ADR/009-digital-aurora-brand-dna.md`](PRODUCT/ADR/009-digital-aurora-brand-dna.md)       | Digital Aurora 5문법 · elevation · motion L0–L2    |
 
 ## ADR
 
@@ -65,6 +66,7 @@
 | [`PRODUCT/ADR/001-pg-less-funding-rails.md`](PRODUCT/ADR/001-pg-less-funding-rails.md)                                |
 | [`PRODUCT/ADR/002-crypto-custody-signing.md`](PRODUCT/ADR/002-crypto-custody-signing.md)                              |
 | [`PRODUCT/ADR/003-landing-timeless-conversion.md`](PRODUCT/ADR/003-landing-timeless-conversion.md) — Landing CVR pass |
+| [`PRODUCT/ADR/009-digital-aurora-brand-dna.md`](PRODUCT/ADR/009-digital-aurora-brand-dna.md) — Digital Aurora DA W0   |
 | [`PRODUCT/ADR/ENGINE_GAP_ADR.md`](PRODUCT/ADR/ENGINE_GAP_ADR.md) — Track B E0–E10 gap index (draft · E0 승인 대기)    |
 | [`ADR/0001-quality-gates.md`](ADR/0001-quality-gates.md) … [`0006`](ADR/0006-wallet-sigma-rule.md)                    |
 
@@ -79,9 +81,15 @@
 
 > `rebuild/NEXT_STEP.md` · `RELEASE_ROADMAP.md` — 2026-07-04 삭제된 문서 (deleted · git history) · 실행 큐 = [`SSOT/ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
 
-## UX canon (Phase R intent — Plan 승인 전 구현 큐 아님)
+## UX canon (Phase R · Digital Aurora)
 
-`SSOT/*_UX_CANON.md` · `UX_REFERENCE_CANON.md` · `SURFACE_BLUEPRINTS.md` · `PRODUCT_PRINCIPLES.md` · `COPYWRITING_CANON.md` · `DESIGN_PRINCIPLES.md` · `I18N_FIRST.md`
+| Doc                                                                    | Role                                                                     |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [`SSOT/PRODUCT_EXPERIENCE_CANON.md`](SSOT/PRODUCT_EXPERIENCE_CANON.md) | **DA W0** Emotion · Brand Memory · elevation · motion · §35.1 Tech Stack |
+| [`SSOT/UNIFIED_UX_CANON.md`](SSOT/UNIFIED_UX_CANON.md)                 | Interaction Grammar · high-risk confirm                                  |
+| [`SSOT/DESIGN_PRINCIPLES.md`](SSOT/DESIGN_PRINCIPLES.md)               | D0 + §7 Accessibility Elevation                                          |
+
+`SSOT/*_UX_CANON.md` · `UX_REFERENCE_CANON.md` · `SURFACE_BLUEPRINTS.md` · `PRODUCT_PRINCIPLES.md` · `COPYWRITING_CANON.md` · `I18N_FIRST.md`
 
 ## Platform canon (§32 · Track A narrative · engine 0)
 

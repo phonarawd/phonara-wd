@@ -1,14 +1,13 @@
 # Design Principles (D0)
 
-> **상태:** Phase R intent · pre-demolition implementation paths are not active (2026-07-03)  
-> **Authority:** [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) (Phase R) · v2 SSOT archived — [`DEPRECATED_DOC_DENYLIST.md`](DEPRECATED_DOC_DENYLIST.md)  
-> **Pre-demolition token 기록:** `apps/web/src/theme.css` · `apps/web/src/ui/design/design-system.css` · `packages/ui`는 v5 Demolition에서 삭제됨. Phase R token SOT는 새 plan/ADR에서 재정의.
+> **상태:** Phase R active · DA W0 Accessibility Elevation (2026-07-09)  
+> **Authority:** [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) (Phase R) · [`ADR-009`](../PRODUCT/ADR/009-digital-aurora-brand-dna.md) · [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md)  
+> **Token SOT:** `apps/web/src/product/tokens/*` (`--ds-*`) · pre-demolition `theme.css` / `@phonara/ui` **복구 금지**  
+> **v2 archived:** [`DEPRECATED_DOC_DENYLIST.md`](DEPRECATED_DOC_DENYLIST.md)
 
 D0는 mockup·픽셀 diff 없이 **제품 구조·사용자 흐름** 기준으로 presentation rebuild의 공통 원칙을 고정합니다.  
-Surface별 reference·layout·module은 D1~D2 canon을 따릅니다.
-
-이 문서의 route · shell · token · component 명칭은 Phase R intent 또는 pre-demolition 기록이다.
-현재 실행 UI 경로로 import/use 하라는 지시가 아니다.
+Surface별 reference·layout·module은 D1~D2 canon을 따릅니다.  
+Digital Aurora brand · emotion · tech stack은 [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md)가 정본이다.
 
 ---
 
@@ -86,7 +85,8 @@ Surface별 reference·layout·module은 D1~D2 canon을 따릅니다.
 
 ## 3. Motion language
 
-**목표:** 장식 motion 0 — **상태 전환·피드백 설명**만 허용.
+**목표:** 장식 motion 0 — **상태 전환·피드백 설명**만 허용.  
+**Surface tier (L0/L1/L2):** [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md) §5 · Interaction 표 [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md) §4.
 
 > **구현 SOT:** [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) §25.3 · `apps/web/src/product/tokens/motion.css` · `motion.ts`  
 > Semantic role 이름이 정본 — `--ds-motion-fast` / `--ds-motion-base` / `--ds-motion-slow`는 deprecated alias (P13 제거).
@@ -133,14 +133,17 @@ Surface별 reference·layout·module은 D1~D2 canon을 따릅니다.
 
 **목표:** mobile 집중형 · desktop exchange-grade 다중 패널.
 
-### Breakpoints (정본)
+### Breakpoints (정본 · 4-tier smoke)
 
-| Tier    | Min width        | Token                   | Layout                                 |
-| ------- | ---------------- | ----------------------- | -------------------------------------- |
-| Mobile  | 390 (narrow 320) | `--ds-bp-mobile-narrow` | single column · thumb-safe CTA         |
-| Tablet  | 768              | `--ds-bp-tablet`        | stacked or 2-col · max-w tablet column |
-| Desktop | 1024             | `--ds-bp-desktop`       | multi-panel where domain expects       |
-| Wide    | 1280+            | `--ds-bp-wide`          | trade/admin density unlock             |
+| Tier    | Min width        | Token / smoke                          | Layout                                 |
+| ------- | ---------------- | -------------------------------------- | -------------------------------------- |
+| Mobile  | 390 (narrow 320) | smoke **390**                          | single column · thumb-safe CTA         |
+| Tablet  | 768              | smoke **768**                          | stacked or 2-col · max-w tablet column |
+| Desktop | 1024             | smoke **1024** · **12-col** Orbit Grid | multi-panel · `.ds-shell-panel-grid`   |
+| Wide    | 1280+            | `--ds-bp-wide`                         | trade/admin density unlock             |
+| Ultra   | 2560             | smoke **2560**                         | panel min preserved                    |
+
+정본 상수: `apps/web/src/product/tokens/viewport-contract.ts` · Orbit Grid: [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md) §7.
 
 ### Density by domain
 
@@ -155,7 +158,7 @@ Surface별 reference·layout·module은 D1~D2 canon을 따릅니다.
 
 ### Rules
 
-- **No single mockup width** as only layout target — 390 / 768 / 1024 smoke 필수.
+- **No single mockup width** as only layout target — 390 / 768 / 1024 / **2560** smoke 필수.
 - Financial tables: horizontal scroll OK; **font shrink below readable caption** 금지.
 - Empty states: explain next action — blank panel 금지.
 
@@ -215,18 +218,30 @@ Surface별 reference·layout·module은 D1~D2 canon을 따릅니다.
 
 ---
 
-## 7. Accessibility
+## 7. Accessibility Elevation (DA W0 · §34.5)
 
-UI rebuild **완료 조건**에 포함 — surface checklist 필수.
+UI rebuild **완료 조건**에 포함 — surface / DA wave checklist 필수.  
+Brand Memory·Emotion과 함께 Product Experience 축 — [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md) §6.
 
-| Requirement    | Implementation                                                 |
-| -------------- | -------------------------------------------------------------- |
-| Keyboard       | focus order logical · modals trap focus · Esc closes           |
-| Focus visible  | token ring · no `outline-none` without replacement             |
-| Contrast       | `check:contrast` · WCAG AA body · AAA where feasible for money |
-| Touch          | 48px min interactive · safe-area (`env(safe-area-inset-*)`)    |
-| Reduced motion | §3 — instant variants · static alternatives                    |
-| Screen reader  | aria labels on icon-only chrome · live regions for settlement  |
+| Requirement    | Implementation                                                               |
+| -------------- | ---------------------------------------------------------------------------- |
+| Keyboard       | focus order logical · modals **trap focus** · **Esc** dismiss                |
+| Focus visible  | token ring (`--ds-focus`) · bare `outline-none` **금지**                     |
+| Contrast       | `check:contrast` · WCAG AA body · AAA where feasible for money               |
+| Touch          | 48px min (`--ds-touch-target-min`) · safe-area (`env(safe-area-inset-*)`)    |
+| Reduced motion | §3 — instant variants · **static aurora** · no count-up                      |
+| Screen reader  | aria on icon-only chrome · **live regions** for settlement · reward claim    |
+| Motion tier L2 | financial submit already instant — decorative must not reappear under reduce |
+| Wave gate      | axe critical **0** per `da-w*` gate · operator VISUAL when §20.12            |
+
+### Elevation of a11y vs baseline
+
+| Baseline (D0)    | Elevation (DA W0+)                                    |
+| ---------------- | ----------------------------------------------------- |
+| Esc closes modal | + focus trap verified in ConfirmDialog / Sheet owners |
+| Reduced motion   | + aurora mesh static · Signal Pulse off               |
+| Settlement SR    | + reward claim · kill-switch banner live regions      |
+| Per-surface axe  | + **wave gate** axe critical 0 (not advisory-only)    |
 
 ---
 
@@ -304,21 +319,26 @@ rg "text-\[\d+px\]|p-\[\d|gap-\[\d|rounded-\[\d|shadow-\[" <phase-r-ui-path>
 
 ---
 
-## Verification (D0 done)
+## Verification (D0 + DA W0)
 
 - [x] 본 문서 D0 narrative (v2 wave archived — [`DEPRECATED_DOC_DENYLIST.md`](DEPRECATED_DOC_DENYLIST.md))
 - [x] [`DECISION_LOG.md`](DECISION_LOG.md) Decision 009
-- [ ] U0~U8: surface별 strict-style ratchet (Phase R implementation)
+- [x] §7 Accessibility Elevation · 4-tier smoke · motion tier cross-ref (`da-w0-foundation-ssot-bundle`)
+- [x] da-w1: Text · elevation · Card CVA · spacing ratchet (`da-w1-ds-foundation-bundle`)
+- [x] da-w1-gate: `gate:ai-impl` primitives+tokens · `check:design-tokens` advisory (`da-w1-gate-ds-2`)
+- [ ] da-w7: `check:design-tokens --strict`
 
 ---
 
 ## 교차 참조
 
-| 주제                | 문서                                                  |
-| ------------------- | ----------------------------------------------------- |
-| Unified grammar     | [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md)          |
-| UX reference (D1)   | [`UX_REFERENCE_CANON.md`](UX_REFERENCE_CANON.md)      |
-| Layout modules (D2) | [`SURFACE_BLUEPRINTS.md`](SURFACE_BLUEPRINTS.md)      |
-| Copy/tone (D4)      | [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md)        |
-| Routes              | Phase R route registry TBD                            |
-| Phase R queue       | [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) |
+| 주제                | 문서                                                         |
+| ------------------- | ------------------------------------------------------------ |
+| Product Experience  | [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md) |
+| Unified grammar     | [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md)                 |
+| Brand DNA ADR       | [`ADR-009`](../PRODUCT/ADR/009-digital-aurora-brand-dna.md)  |
+| UX reference (D1)   | [`UX_REFERENCE_CANON.md`](UX_REFERENCE_CANON.md)             |
+| Layout modules (D2) | [`SURFACE_BLUEPRINTS.md`](SURFACE_BLUEPRINTS.md)             |
+| Copy/tone (D4)      | [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md)               |
+| Routes              | Phase R route registry · `surface-domain-boundary.ts`        |
+| Phase R queue       | [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md)        |

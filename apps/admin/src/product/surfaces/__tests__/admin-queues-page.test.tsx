@@ -4,6 +4,15 @@ import { describe, expect, it, vi } from 'vitest';
 import { I18nProvider } from '@/product/i18n';
 import { AdminQueuesPage } from '@/product/surfaces/admin-queues-page';
 
+vi.mock('@/hooks/admin/useAdminOperatorRbac', () => ({
+  useAdminOperatorRbac: () => ({
+    role: 'owner',
+    can: () => true,
+    setPreviewRole: vi.fn(),
+    roleLabelKey: 'admin.access.role.owner.label',
+  }),
+}));
+
 vi.mock('@/hooks/admin/useAdminExceptionQueueSummary', () => ({
   useAdminExceptionQueueSummary: () => ({
     autoOk: '12',

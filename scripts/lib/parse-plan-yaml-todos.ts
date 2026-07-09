@@ -1,9 +1,19 @@
 import { readFileSync } from 'node:fs';
 
+export type PlanTodoStatus = 'completed' | 'pending' | 'cancelled';
+
 export interface PlanTodo {
   id: string;
-  status: 'completed' | 'pending' | 'cancelled';
+  status: PlanTodoStatus;
   content: string;
+}
+
+/** Cursor UI may set `in_progress` mid-session — treat as pending for counts/gates. */
+export function normalizePlanTodoStatus(raw: string): PlanTodoStatus | null {
+  const s = raw.trim();
+  if (s === 'completed' || s === 'pending' || s === 'cancelled') return s;
+  if (s === 'in_progress') return 'pending';
+  return null;
 }
 
 export function parsePlanYamlTodos(planPath: string): PlanTodo[] {
@@ -61,9 +71,13 @@ export function parsePlanYamlTodos(planPath: string): PlanTodo[] {
       continue;
     }
 
-    const statusMatch = line.match(/^\s+status:\s*(completed|pending|cancelled)/);
+    const statusMatch = line.match(/^\s+status:\s*(\S+)/);
     if (statusMatch) {
-      current.status = statusMatch[1] as PlanTodo['status'];
+      const normalized = normalizePlanTodoStatus(statusMatch[1]);
+      if (!normalized) {
+        throw new Error(`todo "${current.id}": unknown status "${statusMatch[1]}"`);
+      }
+      current.status = normalized;
     }
   }
   flush();

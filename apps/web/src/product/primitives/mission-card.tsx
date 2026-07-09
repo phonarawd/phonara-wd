@@ -47,6 +47,7 @@ export function MissionCard({
 
   return (
     <Card
+      variant="mission"
       className={cn(
         'transition-[border-color,opacity] duration-(--ds-motion-surface)',
         state === 'completed' && 'border-success/40 opacity-90',

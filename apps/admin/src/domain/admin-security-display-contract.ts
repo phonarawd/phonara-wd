@@ -1,8 +1,8 @@
 /**
- * Admin Phase 9 — security gate S1–S4 + route/desk wire contract.
+ * Admin security gate S1–S4 + live desk route wire contract.
  *
- * Authority: `MASTER_TODO.md` §Phase 9 · `ROUTE_ENGINE_CONTRACT.md` Phase 9
- * · `p9-gate-security-s1-s4` · `p9-gate-exit`
+ * Desk paths must match `apps/admin/src/routes/` + `admin-nav.tsx`.
+ * Stale Phase-9 ghosts (`/casino`, `/cms`, `/operations`, `/overview`) removed — R0.
  */
 
 /** Standalone admin SPA paths (ZIP `/admin/*` → apps/admin). */
@@ -20,43 +20,49 @@ export const ADMIN_MFA_ROUTES = [
 
 export type AdminMfaRoute = (typeof ADMIN_MFA_ROUTES)[number];
 
+/** Live AdminShell desk routes (no `/casino` · `/cms` · `/operations` ghosts). */
 export const ADMIN_DESK_ROUTES = [
-  '/overview',
-  '/alerts',
+  '/',
   '/queues',
-  '/audit',
-  '/operations',
-  '/users',
-  '/settings',
+  '/deposits',
+  '/withdrawals',
   '/sports',
-  '/casino',
   '/earn',
+  '/earn/referrals',
+  '/earn/missions',
+  '/earn/rewards',
+  '/viral-stats',
+  '/users',
+  '/tiers',
+  '/risk',
   '/staking',
-  '/cms',
+  '/audit',
+  '/settings',
+  '/ops',
   ADMIN_MFA_POLICY_ROUTE,
 ] as const;
 
 export type AdminDeskRoute = (typeof ADMIN_DESK_ROUTES)[number];
 
-/** Route file → page component mapping (13 desk surfaces under AdminShell). */
-export const ADMIN_DESK_ROUTE_PAGES: Readonly<
-  Record<
-    Exclude<AdminDeskRoute, typeof ADMIN_MFA_POLICY_ROUTE> | typeof ADMIN_MFA_POLICY_ROUTE,
-    string
-  >
-> = {
-  '/overview': 'AdminOverviewPage',
-  '/alerts': 'AdminAlertsPage',
+/** Route → page component mapping (surfaces under AdminShell). */
+export const ADMIN_DESK_ROUTE_PAGES: Readonly<Record<AdminDeskRoute, string>> = {
+  '/': 'AdminHomePage',
   '/queues': 'AdminQueuesPage',
-  '/audit': 'AdminAuditPage',
-  '/operations': 'AdminOperationsPage',
-  '/users': 'AdminUsersPage',
-  '/settings': 'AdminSettingsPage',
+  '/deposits': 'AdminDepositsPage',
+  '/withdrawals': 'AdminWithdrawalsPage',
   '/sports': 'AdminSportsPage',
-  '/casino': 'AdminCasinoPage',
   '/earn': 'AdminEarnPage',
+  '/earn/referrals': 'AdminEarnReferralsPage',
+  '/earn/missions': 'AdminEarnMissionsPage',
+  '/earn/rewards': 'AdminEarnRewardsPage',
+  '/viral-stats': 'AdminViralStatsPage',
+  '/users': 'AdminUsersPage',
+  '/tiers': 'AdminTiersPage',
+  '/risk': 'AdminRiskPage',
   '/staking': 'AdminStakingPage',
-  '/cms': 'AdminCmsPage',
+  '/audit': 'AdminAuditPage',
+  '/settings': 'AdminSettingsPage',
+  '/ops': 'AdminOpsPage',
   '/mfa/policy': 'AdminMfaPage',
 };
 
@@ -88,17 +94,21 @@ export const ADMIN_DEPOSIT_RECON_RPCS = {
   flag: 'rpc_admin_flag_deposit',
 } as const;
 
-/** User ↔ admin 1:1 correspondence (subset — full matrix in operator docs). */
+/**
+ * User ↔ admin correspondence.
+ * No dedicated `/casino` or `/cms` admin desks — casino feature kill lives on `/ops`;
+ * landing/CMS-style config is read via `/settings`.
+ */
 export const ADMIN_USER_CORRESPONDENCE: Readonly<
   Array<{ userSurface: string; adminRoute: AdminDeskRoute; wireStatus: 'wired' }>
 > = [
   { userSurface: '/wallet', adminRoute: '/queues', wireStatus: 'wired' },
-  { userSurface: '/casino', adminRoute: '/casino', wireStatus: 'wired' },
+  { userSurface: '/casino', adminRoute: '/ops', wireStatus: 'wired' },
   { userSurface: '/sports', adminRoute: '/sports', wireStatus: 'wired' },
   { userSurface: '/home', adminRoute: '/earn', wireStatus: 'wired' },
   { userSurface: '/staking', adminRoute: '/staking', wireStatus: 'wired' },
   { userSurface: '/account', adminRoute: '/users', wireStatus: 'wired' },
-  { userSurface: '/', adminRoute: '/cms', wireStatus: 'wired' },
+  { userSurface: '/', adminRoute: '/settings', wireStatus: 'wired' },
 ];
 
 export const ADMIN_ROUTE_WIRE_STATUS: Readonly<Record<AdminMfaRoute | AdminDeskRoute, 'wired'>> = {
@@ -106,33 +116,45 @@ export const ADMIN_ROUTE_WIRE_STATUS: Readonly<Record<AdminMfaRoute | AdminDeskR
   '/mfa/enroll': 'wired',
   '/mfa/challenge': 'wired',
   '/mfa/policy': 'wired',
-  '/overview': 'wired',
-  '/alerts': 'wired',
+  '/': 'wired',
   '/queues': 'wired',
-  '/audit': 'wired',
-  '/operations': 'wired',
-  '/users': 'wired',
-  '/settings': 'wired',
+  '/deposits': 'wired',
+  '/withdrawals': 'wired',
   '/sports': 'wired',
-  '/casino': 'wired',
   '/earn': 'wired',
+  '/earn/referrals': 'wired',
+  '/earn/missions': 'wired',
+  '/earn/rewards': 'wired',
+  '/viral-stats': 'wired',
+  '/users': 'wired',
+  '/tiers': 'wired',
+  '/risk': 'wired',
   '/staking': 'wired',
-  '/cms': 'wired',
+  '/audit': 'wired',
+  '/settings': 'wired',
+  '/ops': 'wired',
 };
 
+/** Route modules that exist on disk (redirects omitted). */
 export const ADMIN_DESK_SURFACES = [
-  'apps/admin/src/routes/overview.tsx',
-  'apps/admin/src/routes/alerts.tsx',
+  'apps/admin/src/routes/index.tsx',
   'apps/admin/src/routes/queues.tsx',
-  'apps/admin/src/routes/audit.tsx',
-  'apps/admin/src/routes/operations.tsx',
-  'apps/admin/src/routes/users.tsx',
-  'apps/admin/src/routes/settings.tsx',
+  'apps/admin/src/routes/deposits.tsx',
+  'apps/admin/src/routes/withdrawals.tsx',
   'apps/admin/src/routes/sports.tsx',
-  'apps/admin/src/routes/casino.tsx',
   'apps/admin/src/routes/earn.tsx',
+  'apps/admin/src/routes/earn/index.tsx',
+  'apps/admin/src/routes/earn/referrals.tsx',
+  'apps/admin/src/routes/earn/missions.tsx',
+  'apps/admin/src/routes/earn/rewards.tsx',
+  'apps/admin/src/routes/viral-stats.tsx',
+  'apps/admin/src/routes/users.tsx',
+  'apps/admin/src/routes/tiers.tsx',
+  'apps/admin/src/routes/risk.tsx',
   'apps/admin/src/routes/staking.tsx',
-  'apps/admin/src/routes/cms.tsx',
+  'apps/admin/src/routes/audit.tsx',
+  'apps/admin/src/routes/settings.tsx',
+  'apps/admin/src/routes/ops.tsx',
   'apps/admin/src/routes/mfa/policy.tsx',
 ] as const;
 
@@ -143,4 +165,12 @@ export const ADMIN_MFA_AUTH_SURFACES = [
   'apps/admin/src/routes/mfa/policy.tsx',
   'apps/admin/src/routes/__root.tsx',
   'apps/admin/src/hooks/use-admin-route-gate.ts',
+] as const;
+
+/** Ghost paths removed in R0 — must not reappear as wired desks. */
+export const ADMIN_STALE_DESK_ROUTES_REMOVED = [
+  '/casino',
+  '/cms',
+  '/operations',
+  '/overview',
 ] as const;

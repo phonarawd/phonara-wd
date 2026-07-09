@@ -1,16 +1,17 @@
 # Unified UX Canon (D3)
 
-> **상태:** Phase R intent · pre-demolition implementation paths are not active (2026-07-03)  
-> **Authority:** [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) (Phase R) · Decision 013  
-> **Pre-demolition design tokens:** `apps/web/src/theme.css` · `apps/web/src/ui/design/design-system.css`는 v5 Demolition에서 삭제됨. Phase R token SOT는 새 plan/ADR에서 재정의.  
+> **상태:** Phase R active · DA W0 Interaction Grammar 확장 (2026-07-09)  
+> **Authority:** [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) (Phase R) · Decision 013 · [`ADR-009`](../PRODUCT/ADR/009-digital-aurora-brand-dna.md)  
+> **Product Experience:** [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md) (Emotion · Brand Memory · Tech Stack)  
+> **Token SOT:** `apps/web/src/product/tokens/*` (`--ds-*`) · pre-demolition `theme.css` / `@phonara/ui`는 **복구 금지**  
 > **D0 principles:** [`DESIGN_PRINCIPLES.md`](DESIGN_PRINCIPLES.md)  
 > **Product tone:** [`PRODUCT_PRINCIPLES.md`](PRODUCT_PRINCIPLES.md)
 
 D3 Unified UX Canon은 Trading · Sports · Casino · Earn · Wallet · Admin이 **각각 다른 앱처럼 보이면 실패**입니다.  
 Surface reference는 [`UX_REFERENCE_CANON.md`](UX_REFERENCE_CANON.md)에서 달라도 **PHONARA interaction grammar**는 하나입니다.
 
-이 문서의 `@phonara/ui`, `theme.css`, `ui/design`, shell 명칭은 pre-demolition 기록 또는
-Phase R intent다. 현재 실행 경로로 import/use 하라는 지시가 아니다.
+이 문서의 `@phonara/ui`, pre-demolition `theme.css`, `ui/design` 명칭은 **역사**다.  
+실행 경로는 `apps/web/src/product/primitives` · `product/tokens` · Digital Aurora SSOT다.
 
 ---
 
@@ -59,7 +60,34 @@ Trade만 Binance · Wallet만 Toss · Earn만 앱테크 앱처럼 **완전 분�
 
 ---
 
-## 4. Cross-surface patterns
+## 4. Interaction Grammar (Digital Aurora · §34.3)
+
+> **정본 확장:** Plan §34.3 · [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md) §5 motion tiers.  
+> Semantic CSS: `apps/web/src/product/tokens/motion.css`.
+
+| Interaction      | Token / Pattern                                        | Tier                                       |
+| ---------------- | ------------------------------------------------------ | ------------------------------------------ |
+| Press            | `--ds-motion-press` 120ms · `active:scale-[0.98]`      | L1                                         |
+| Hover card       | `translateY(-2px)` + elevation `--ds-shadow-2` (da-w1) | L1                                         |
+| Loading          | Skeleton fixed height · shimmer (`skeleton-shimmer`)   | L1                                         |
+| Success / Reward | reward burst CSS · optional Lottie slot                | **L0 Earn only**                           |
+| Error            | field-adjacent + Zone B toast                          | L2 financial                               |
+| Navigation       | BottomNav pill morph · View Transitions (mobile)       | L1                                         |
+| Number change    | `useCountUp` ≤400ms                                    | L1 · **L2 instant** on withdraw/bet/submit |
+
+### Motion tier policy (cross-surface)
+
+| Tier             | Meaning                 | Surfaces                                           |
+| ---------------- | ----------------------- | -------------------------------------------------- |
+| **L0 Ambient**   | decorative / ambient OK | Landing · Earn · Casino lobby                      |
+| **L1 Surface**   | feedback · nav · hover  | all non-submit                                     |
+| **L2 Financial** | **instant only**        | withdraw · bet · trade submit · admin money adjust |
+
+`prefers-reduced-motion: reduce` → all tiers collapse to instant / static ([`DESIGN_PRINCIPLES.md`](DESIGN_PRINCIPLES.md) §3 · §7).
+
+---
+
+## 5. Cross-surface patterns
 
 ### High-risk action (unified)
 
@@ -67,7 +95,8 @@ Trade만 Binance · Wallet만 Toss · Earn만 앱테크 앱처럼 **완전 분�
 Trigger → Confirm dialog (recap + warning) → RPC → Success/Error toast
 ```
 
-Applies to: withdraw · large trade · admin manual credit · kill switch override (where permitted).
+Applies to: withdraw · large trade · admin manual credit · kill switch override (where permitted).  
+Toast만으로 high-risk를 끝내지 않음 — Confirm **선행**.
 
 ### Money status (unified)
 
@@ -75,46 +104,50 @@ Pending · reviewing · confirmed · failed · rejected · cancelled — **same 
 
 ### Shell (unified)
 
-- Mobile: `AppShell` · `BottomNav` · single mobile header owner는 Phase R shell intent ([`DESIGN_PRINCIPLES.md`](DESIGN_PRINCIPLES.md) §Navigation)
-- Desktop: `.shell-content-column` · side nav consistency는 Phase R shell intent
-- Consolidation C0–C5: no stacked mobile chrome (`88-ui-consolidation-wave`)
+- Mobile: `AppShell` · `BottomNav` · single mobile header owner ([`DESIGN_PRINCIPLES.md`](DESIGN_PRINCIPLES.md) §Navigation)
+- Desktop: Orbit Grid 12-col · `.ds-shell-panel-grid` ([`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md) §7)
+- Subnav owner = `AppShell` only — surface 내부 parallel subnav **금지** (rule `97`)
 
 ---
 
-## 5. U0 design system linkage
+## 6. Design system linkage (Phase R)
 
-Token naming · breakpoints · shell — [`DESIGN_PRINCIPLES.md`](DESIGN_PRINCIPLES.md) · Phase R U0 in [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md).
+Token naming · breakpoints · shell — [`DESIGN_PRINCIPLES.md`](DESIGN_PRINCIPLES.md) · Digital Aurora [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md) · [`ADR-009`](../PRODUCT/ADR/009-digital-aurora-brand-dna.md).
 
-Pre-demolition `@phonara/ui` API compat 기록은 현재 active implementation target이 아니다. Phase R에서 shared primitive package 여부를 새로 결정한다.
-
-Pre-demolition presentation paste zone (`components/ui`) ↔ `@phonara/ui` 병합 정책은 역사 기록이다. Phase R에서는 새 semantic overlap 기준을 다시 정의한다.
+**Active paths:** `apps/web/src/product/tokens` · `product/primitives`.  
+Pre-demolition `@phonara/ui` / `components/ui` 복구 **금지**.
 
 ---
 
-## 6. Forbidden
+## 7. Forbidden
 
 - Per-surface duplicate button systems (new `*Button` families without decision)
 - Per-surface incompatible modal grammar (different confirm button order/meaning)
 - Wallet deposit vs casino deposit **different interaction** without Decision Log
 - Same state (pending/error) with incompatible color · copy · action placement
 - Surface-specific hardcoded hex bypassing tokens
+- L2 financial submit에 L0 decorative / reward burst
+- High-risk를 toast-only로 종료 (Confirm 생략)
 
 ---
 
-## 7. Verification
+## 8. Verification
 
-| Gate                            | When                                            |
-| ------------------------------- | ----------------------------------------------- |
-| `bun run check:design-tokens`   | advisory U0 · `--strict-style` surface closeout |
-| `bun run check:ui-architecture` | no new duplicate chrome/shell                   |
-| Multi-viewport review           | 390 / 768 / 1024 per surface                    |
-| Visual consistency spot-check   | confirm · toast · error across 2+ surfaces      |
+| Gate                            | When                                       |
+| ------------------------------- | ------------------------------------------ |
+| `bun run check:design-tokens`   | advisory · da-w7 `--strict`                |
+| `bun run check:ui-architecture` | no new duplicate chrome/shell              |
+| `bun run check:phase-r-guards`  | domain isolation · layout debt             |
+| Multi-viewport review           | 390 / 768 / 1024 / **2560** per surface    |
+| Visual consistency spot-check   | confirm · toast · error across 2+ surfaces |
 
 ---
 
-## 8. Completion signals (U0 + per-surface)
+## 9. Completion signals
 
-- [ ] U0: Phase R shared primitive 위치와 token alignment policy 재정의
+- [x] DA W0: Interaction Grammar + Product Experience SSOT (`da-w0-foundation-ssot-bundle`)
+- [x] da-w1: Text · elevation · Card CVA alignment (`da-w1-ds-foundation-bundle`)
+- [x] da-w1-gate: DS 2.0 bundle gate green (`da-w1-gate-ds-2`)
 - [ ] High-risk flows use shared ConfirmDialog pattern
 - [ ] Status states share token semantics across wallet/trade/admin
 - [ ] No new `check:ui-architecture` shell violations
@@ -126,7 +159,9 @@ Pre-demolition presentation paste zone (`components/ui`) ↔ `@phonara/ui` 병�
 
 | 주제                             | 문서                                                             |
 | -------------------------------- | ---------------------------------------------------------------- |
+| Product Experience / Brand DNA   | [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md)     |
 | Payment method UI                | [`PAYMENT_ARCHITECTURE_CANON.md`](PAYMENT_ARCHITECTURE_CANON.md) |
 | Admin exception UX               | [`ADMIN_UX_CANON.md`](ADMIN_UX_CANON.md)                         |
 | i18n labels in shared components | [`I18N_FIRST.md`](I18N_FIRST.md)                                 |
 | Regional eligibility UI          | [`GLOBAL_EXPANSION.md`](GLOBAL_EXPANSION.md)                     |
+| Digital Aurora ADR               | [`ADR-009`](../PRODUCT/ADR/009-digital-aurora-brand-dna.md)      |

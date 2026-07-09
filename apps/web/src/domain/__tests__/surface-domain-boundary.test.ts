@@ -32,7 +32,8 @@ describe('surface-domain-boundary §12.19', () => {
     expect(resolveDomainForRoute('/home/missions')).toBe('earn');
     expect(resolveDomainForRoute('/wallet/deposit')).toBe('wallet');
     expect(resolveDomainForRoute('/trade/futures')).toBe('trade');
-    expect(resolveDomainForRoute('/staking')).toBe('trade');
+    expect(resolveDomainForRoute('/staking')).toBe('earn');
+    expect(resolveDomainForRoute('/staking/positions')).toBe('earn');
     expect(resolveDomainForRoute('/sports/live')).toBe('sports');
     expect(resolveDomainForRoute('/casino/plinko')).toBe('casino');
     expect(resolveDomainForRoute('/settings/security')).toBe('account');
@@ -43,7 +44,8 @@ describe('surface-domain-boundary §12.19', () => {
     expect(isAllowedCrossSurfaceImport('trade', 'casino')).toBe(false);
     expect(isAllowedCrossSurfaceImport('sports', 'wallet')).toBe(false);
     expect(isAllowedCrossSurfaceImport('home', 'referral')).toBe(true);
-    expect(isAllowedCrossSurfaceImport('trade', 'staking')).toBe(true);
+    expect(isAllowedCrossSurfaceImport('trade', 'staking')).toBe(false);
+    expect(isAllowedCrossSurfaceImport('home', 'staking')).toBe(true);
     expect(isAllowedCrossSurfaceImport('home', 'shell')).toBe(true);
   });
 
@@ -51,7 +53,9 @@ describe('surface-domain-boundary §12.19', () => {
     expect(isAllowedFeatureImport('home', 'trading')).toBe(false);
     expect(isAllowedFeatureImport('home', 'casino')).toBe(false);
     expect(isAllowedFeatureImport('trade', 'trading')).toBe(true);
+    expect(isAllowedFeatureImport('trade', 'earn')).toBe(false);
     expect(isAllowedFeatureImport('staking', 'earn')).toBe(true);
+    expect(isAllowedFeatureImport('staking', 'trading')).toBe(true);
     expect(isAllowedFeatureImport('wallet', 'wallet')).toBe(true);
   });
 
@@ -59,5 +63,7 @@ describe('surface-domain-boundary §12.19', () => {
     for (const folder of ['home', 'trade', 'staking', 'wallet', 'sports', 'casino']) {
       expect(resolveDomainForSurfaceFolder(folder)).not.toBeNull();
     }
+    expect(resolveDomainForSurfaceFolder('staking')).toBe('earn');
+    expect(resolveDomainForSurfaceFolder('trade')).toBe('trade');
   });
 });

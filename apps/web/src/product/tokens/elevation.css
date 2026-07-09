@@ -1,0 +1,27 @@
+/**
+ * Phase R elevation ladder — Digital Aurora §34.6–34.9 · ADR-009.
+ * Levels: 0 flat (no token) · 1 raised · 2 float · 3 overlay · 4 toast.
+ */
+
+:root {
+  --ds-shadow-1:
+    0 1px 2px color-mix(in oklch, var(--ds-bg) 55%, black),
+    0 4px 12px color-mix(in oklch, var(--ds-bg) 40%, black);
+  --ds-shadow-2:
+    0 2px 4px color-mix(in oklch, var(--ds-bg) 50%, black),
+    0 8px 24px color-mix(in oklch, var(--ds-bg) 35%, black);
+  --ds-shadow-3:
+    0 8px 24px color-mix(in oklch, var(--ds-bg) 40%, black),
+    0 16px 48px color-mix(in oklch, var(--ds-bg) 30%, black);
+  --ds-shadow-4:
+    0 12px 32px color-mix(in oklch, var(--ds-bg) 35%, black),
+    0 24px 64px color-mix(in oklch, var(--ds-bg) 25%, black);
+
+  /* Dialog/Sheet bridge — same ladder step as shadow-3 */
+  --ds-shadow-overlay: var(--ds-shadow-3);
+
+  /* Stacking — chrome under overlays under toasts */
+  --ds-z-chrome: 40;
+  --ds-z-overlay: 50;
+  --ds-z-toast: 60;
+}

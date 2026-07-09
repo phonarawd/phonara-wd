@@ -12,8 +12,12 @@ import {
   type WithdrawMethod,
 } from '@/hooks/admin/useAdminWalletDesk';
 
+import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
+
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+
+import { ADMIN_RBAC_DENIED_KEY, adminRbacActionProps } from '@/product/surfaces/admin-rbac-action';
 
 import { HowItWorks } from '@/product/primitives/how-it-works';
 
@@ -90,6 +94,10 @@ function actionableWithdrawals(rows: AdminWithdrawRow[]): AdminWithdrawRow[] {
 export function AdminWithdrawalsPage() {
   const t = useT();
   const goTo = useAdminRouteNavigate();
+  const { can } = useAdminOperatorRbac();
+  const canApproveWithdraw = can('queues.withdraw.approve');
+  const canRejectWithdraw = can('queues.withdraw.reject');
+  const rbacDenied = t(ADMIN_RBAC_DENIED_KEY);
 
   const locale = typeof document !== 'undefined' ? document.documentElement.lang || 'ko' : 'ko';
 
@@ -367,7 +375,9 @@ export function AdminWithdrawalsPage() {
                                   <Button
                                     variant="primary"
                                     size="sm"
-                                    onClick={() =>
+                                    {...adminRbacActionProps(canApproveWithdraw, rbacDenied)}
+                                    onClick={() => {
+                                      if (!canApproveWithdraw) return;
                                       openAction({
                                         kind: 'approveWithdraw',
 
@@ -378,8 +388,8 @@ export function AdminWithdrawalsPage() {
                                         confirmKey: 'admin.withdrawals.action.approve',
 
                                         summary: formatRowSummary(row),
-                                      })
-                                    }
+                                      });
+                                    }}
                                   >
                                     {t('admin.withdrawals.action.approve')}
                                   </Button>
@@ -387,7 +397,9 @@ export function AdminWithdrawalsPage() {
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() =>
+                                    {...adminRbacActionProps(canRejectWithdraw, rbacDenied)}
+                                    onClick={() => {
+                                      if (!canRejectWithdraw) return;
                                       openAction({
                                         kind: 'rejectWithdraw',
 
@@ -400,8 +412,8 @@ export function AdminWithdrawalsPage() {
                                         destructive: true,
 
                                         summary: formatRowSummary(row),
-                                      })
-                                    }
+                                      });
+                                    }}
                                   >
                                     {t('admin.withdrawals.action.reject')}
                                   </Button>
@@ -412,7 +424,9 @@ export function AdminWithdrawalsPage() {
                                 <Button
                                   variant="primary"
                                   size="sm"
-                                  onClick={() =>
+                                  {...adminRbacActionProps(canApproveWithdraw, rbacDenied)}
+                                  onClick={() => {
+                                    if (!canApproveWithdraw) return;
                                     openAction({
                                       kind: 'markSent',
 
@@ -423,8 +437,8 @@ export function AdminWithdrawalsPage() {
                                       confirmKey: 'admin.withdrawals.action.markSent',
 
                                       summary: formatRowSummary(row),
-                                    })
-                                  }
+                                    });
+                                  }}
                                 >
                                   {t('admin.withdrawals.action.markSent')}
                                 </Button>

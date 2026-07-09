@@ -24,11 +24,11 @@
 Earn (0원 시작)  →  Wallet (PHON 단일)  →  Trade · Sports · Casino (실활동 연동)
 ```
 
-| Pillar     | 유저 인식               | Canonical routes                              |
-| ---------- | ----------------------- | --------------------------------------------- |
-| **Earn**   | 오늘 할 일 1가지        | `/home` · `/home/missions`                    |
-| **Wallet** | 내 돈의 단일 진실       | `/wallet` · `/ledger`                         |
-| **Play**   | 전문 도메인 (tone 분리) | `/trade` · `/sports` · `/casino` · `/staking` |
+| Pillar     | 유저 인식               | Canonical routes                        |
+| ---------- | ----------------------- | --------------------------------------- |
+| **Earn**   | 오늘 할 일 1가지        | `/home` · `/home/missions` · `/staking` |
+| **Wallet** | 내 돈의 단일 진실       | `/wallet` · `/ledger`                   |
+| **Play**   | 전문 도메인 (tone 분리) | `/trade` · `/sports` · `/casino`        |
 
 **Play 정산 (§13.1.2):** Trade·Sports·Casino·Staking 베팅/거래는 **PHONARA 플랫폼 내부**에서만 정산 — UX는 거래소급(실시간 차트·order book) · 외부 거래소 체결/API 연동 카피 **금지** · USDT+PHON(§13.1.1)
 

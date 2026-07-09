@@ -9,6 +9,7 @@
 
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { normalizePlanTodoStatus } from './lib/parse-plan-yaml-todos';
 
 interface TodoEntry {
   id: string;
@@ -80,9 +81,13 @@ function parseFrontmatter(planPath: string): TodoEntry[] {
       continue;
     }
 
-    const statusMatch = line.match(/^\s+status:\s*(completed|pending|cancelled)/);
+    const statusMatch = line.match(/^\s+status:\s*(\S+)/);
     if (statusMatch) {
-      current.status = statusMatch[1] as TodoEntry['status'];
+      const normalized = normalizePlanTodoStatus(statusMatch[1]);
+      if (!normalized) {
+        throw new Error(`todo "${current.id}": unknown status "${statusMatch[1]}"`);
+      }
+      current.status = normalized;
     }
   }
   flush();

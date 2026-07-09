@@ -18,9 +18,12 @@ import {
   isSystemSlipPlaceReady,
   resolveSportsBetPolicyStatus,
   resolveSportsLaunchGateExposure,
+  resolveSportsPlaceBetLaunchAllowed,
+  resolveSportsSlipPlaceCtaExposure,
   shouldDeferSlipPolicyBadges,
   shouldShowSportsCashoutCard,
 } from '../sports-cashout-combo-display-contract';
+import { LAUNCH_GATES } from '../../lib/launch-gates';
 
 describe('sports-cashout-combo-display-contract', () => {
   it('locks sports slip and cashout to /sports canonical route', () => {
@@ -49,12 +52,37 @@ describe('sports-cashout-combo-display-contract', () => {
   });
 
   it('defaults all four sports launch gates to false (built-hidden/disabled)', () => {
+    expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsBetting).toBe(LAUNCH_GATES.sportsBetting);
+    expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsComboBetting).toBe(LAUNCH_GATES.sportsComboBetting);
+    expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsSystemBetting).toBe(LAUNCH_GATES.sportsSystemBetting);
+    expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsCashout).toBe(LAUNCH_GATES.sportsCashout);
     expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsBetting).toBe(false);
-    expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsComboBetting).toBe(false);
-    expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsSystemBetting).toBe(false);
-    expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsCashout).toBe(false);
     expect(resolveSportsLaunchGateExposure('sportsCashout')).toBe('built_hidden');
     expect(resolveSportsLaunchGateExposure('sportsBetting')).toBe('built_disabled');
+    expect(resolveSportsSlipPlaceCtaExposure()).toBe('built_disabled');
+  });
+
+  it('ANDs LAUNCH_GATES.sportsBetting with feature_sports kill-switch for place eligibility', () => {
+    expect(
+      resolveSportsPlaceBetLaunchAllowed({
+        sportsBettingGate: false,
+        sportsKillSwitchBlocked: false,
+      }),
+    ).toEqual({ placeCtaExposure: 'built_disabled', launchPlaceAllowed: false });
+
+    expect(
+      resolveSportsPlaceBetLaunchAllowed({
+        sportsBettingGate: true,
+        sportsKillSwitchBlocked: true,
+      }),
+    ).toEqual({ placeCtaExposure: 'live', launchPlaceAllowed: false });
+
+    expect(
+      resolveSportsPlaceBetLaunchAllowed({
+        sportsBettingGate: true,
+        sportsKillSwitchBlocked: false,
+      }),
+    ).toEqual({ placeCtaExposure: 'live', launchPlaceAllowed: true });
   });
 
   it('documents server EXISTS stake/payout/leg-cap policies', () => {

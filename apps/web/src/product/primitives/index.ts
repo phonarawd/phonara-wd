@@ -5,7 +5,17 @@
 
 export { Button, buttonVariants, type ButtonProps } from './button';
 export { IconButton, type IconButtonProps } from './icon-button';
-export { Card, CardBody, CardDescription, CardFooter, CardHeader, CardTitle } from './card';
+export {
+  Card,
+  CardBody,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  cardVariants,
+  type CardProps,
+} from './card';
+export { Text, textVariants, type TextProps } from './text';
 export {
   Dialog,
   DialogClose,

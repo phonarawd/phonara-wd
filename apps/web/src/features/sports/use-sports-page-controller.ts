@@ -3,6 +3,10 @@ import type { MessageKey } from '@phonara/i18n';
 import { isGreaterThan, isPositive, money } from '@phonara/money';
 
 import {
+  resolveSportsPlaceBetLaunchAllowed,
+  type SportsCashoutExposureMode,
+} from '@/domain/sports-cashout-combo-display-contract';
+import {
   leagueFilterToRpcParam,
   resolveSportsPageModeStatusFilter,
   type SportsLeagueFilter,
@@ -12,6 +16,7 @@ import { useAuth } from '@/contexts/auth-context';
 import { usePlatformGates } from '@/hooks/use-platform-gates';
 import { useClientGatePrechecks } from '@/hooks/use-client-gate-prechecks';
 import { useWallet } from '@/hooks/use-wallet';
+import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { translateError } from '@/lib/translate-error';
 import { usePhonBalanceBreakdown } from '@/features/wallet/use-phon-balance-breakdown';
 import { useT } from '@/product/i18n';
@@ -36,6 +41,8 @@ export type SportsPageControllerView = {
   setLeagueFilter: (value: SportsLeagueFilter) => void;
   sportsBlocked: boolean;
   sportsBlockedKey: MessageKey;
+  /** `LAUNCH_GATES.sportsBetting` → contract exposure (`built_disabled` until soft-launch flip). */
+  placeCtaExposure: SportsCashoutExposureMode;
   phonAvail: string;
   usdtAvail: string;
   phonBonusAvailable: string | null;
@@ -95,15 +102,19 @@ export function useSportsPageController(mode: SportsPageMode = 'home'): SportsPa
     }
   }, [availForCurrency, slip.stake, slip.stakeCurrency]);
 
-  const entryBlocked = sportsBlocked || consentBlocked;
-  const entryBlockedKey: MessageKey = sportsBlocked
-    ? 'sports.gate.feature_off'
-    : consentBlocked
-      ? consentBlockedKey
-      : 'sports.gate.feature_off';
+  const { placeCtaExposure, launchPlaceAllowed } = resolveSportsPlaceBetLaunchAllowed({
+    sportsBettingGate: LAUNCH_GATES.sportsBetting,
+    sportsKillSwitchBlocked: sportsBlocked,
+  });
+
+  const entryBlocked = sportsBlocked || consentBlocked || placeCtaExposure === 'built_disabled';
+  const entryBlockedKey: MessageKey = consentBlocked
+    ? consentBlockedKey
+    : 'sports.gate.feature_off';
 
   const canPlaceBet =
-    !entryBlocked &&
+    launchPlaceAllowed &&
+    !consentBlocked &&
     Boolean(session?.user) &&
     slip.selections.length > 0 &&
     stakeReady &&
@@ -157,6 +168,7 @@ export function useSportsPageController(mode: SportsPageMode = 'home'): SportsPa
     setLeagueFilter,
     sportsBlocked: entryBlocked,
     sportsBlockedKey: entryBlockedKey,
+    placeCtaExposure,
     phonAvail,
     usdtAvail,
     phonBonusAvailable,

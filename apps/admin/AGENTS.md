@@ -1,12 +1,17 @@
-# apps/admin — Phase D scope
+# apps/admin — Phase R
 
-> **Phase D:** Admin presentation (`components/`, `ui/`, `routes/`) is **DELETE per inventory**.  
-> **SSOT:** [`docs/PRODUCT/DEMOLITION_PLAN.md`](../../docs/PRODUCT/DEMOLITION_PLAN.md)
+> **Phase R:** Admin desks live — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `da-w2-shell-elevation-infra` (#188) · DA W1 GATE `[x]` · DA W1 `[x]` · DA W0 `[x]` · R0 forensic `[x]`.
 
-## KEEP (engine glue)
+## KEEP (engine glue + product desks)
 
-`hooks/admin/` · `domain/` · `contracts/` · `lib/auth.ts` · `contexts/auth-context.tsx`
+`hooks/admin/` · `domain/` · `contracts/` · `lib/auth.ts` · `contexts/auth-context.tsx` · `product/surfaces/` · `routes/`
 
-## Gates (Phase D)
+## High-risk RBAC (R0)
 
-Engine packages + `check:engine-demolition:packages` when needed — not admin UI typecheck as DONE criteria.
+- `useAdminOperatorRbac` / `canPerformAdminAction` gate queues · withdrawals · rewards · ops kill/halt
+- Kill switches mounted on `/ops` via `confirmKillSwitch`
+- Desk route SOT: `domain/admin-security-display-contract.ts` (no `/casino` · `/cms` ghosts)
+
+## Gates
+
+`bun run gate:ai-impl -- --test apps/admin/src/...`

@@ -56,6 +56,7 @@ function makeEngine(overrides: Partial<SportsPageControllerView> = {}): SportsPa
     setLeagueFilter: vi.fn(),
     sportsBlocked: false,
     sportsBlockedKey: 'sports.gate.feature_off',
+    placeCtaExposure: 'built_disabled',
     phonAvail: '1000.000000',
     usdtAvail: '250.000000',
     phonBonusAvailable: '100.000000',

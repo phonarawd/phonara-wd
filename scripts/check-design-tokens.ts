@@ -16,6 +16,8 @@ const advisory = !strict;
 const COLORS_CSS = join(root, 'apps/web/src/product/tokens/colors.css');
 const THEME_CSS = join(root, 'apps/web/src/product/tokens/theme.css');
 const MOTION_CSS = join(root, 'apps/web/src/product/tokens/motion.css');
+const ELEVATION_CSS = join(root, 'apps/web/src/product/tokens/elevation.css');
+const INDEX_CSS = join(root, 'apps/web/src/product/tokens/index.css');
 
 const SURFACE_DIRS = ['apps/web/src/product/surfaces', 'apps/admin/src/product/surfaces'] as const;
 
@@ -30,6 +32,8 @@ const LEGACY_CLASS =
   /\b(?:text-primary|text-muted-foreground|bg-primary(?:\/[\d]+)?|border-primary(?:\/[\d]+)?)\b/g;
 const MOTION_REF = /(?:duration|transition(?:-[\w-]+)?)-\(--ds-motion-([a-z-]+)\)/g;
 const SURFACE_HOVER_UTILITY = /\b(?:hover:)?bg-surface-hover\b/;
+/** §34.9 8pt spacing ratchet — page stacks should prefer gap-ds-8+; raw gap-6 is advisory. */
+const RAW_GAP_6 = /\bgap-6\b/;
 
 /** P3 baseline — legacy shadcn classes absorbed until P13 purge (§25.8.1). */
 const P3_LEGACY_ALLOWLIST = new Set([
@@ -98,6 +102,39 @@ function checkTokenSot(): Finding[] {
     });
     return out;
   }
+  if (!existsSync(ELEVATION_CSS)) {
+    out.push({
+      id: 'missing-elevation-css',
+      message: 'Missing apps/web/src/product/tokens/elevation.css (§34.6–34.9)',
+      hard: true,
+    });
+  } else {
+    const elevation = read(ELEVATION_CSS);
+    for (const token of [
+      '--ds-shadow-1',
+      '--ds-shadow-2',
+      '--ds-shadow-3',
+      '--ds-shadow-4',
+      '--ds-z-chrome',
+      '--ds-z-overlay',
+      '--ds-z-toast',
+    ]) {
+      if (!new RegExp(`${token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*:`).test(elevation)) {
+        out.push({
+          id: `missing-elevation-token:${token}`,
+          message: `elevation.css missing ${token}`,
+          hard: true,
+        });
+      }
+    }
+    if (existsSync(INDEX_CSS) && !read(INDEX_CSS).includes('elevation.css')) {
+      out.push({
+        id: 'elevation-not-imported',
+        message: 'tokens/index.css must @import elevation.css',
+        hard: true,
+      });
+    }
+  }
 
   const colors = read(COLORS_CSS);
   const theme = read(THEME_CSS);
@@ -114,6 +151,9 @@ function checkTokenSot(): Finding[] {
     { token: '--color-surface-hover' },
     { token: '--color-primary', note: 'legacy bridge (P3 only)' },
     { token: '--color-muted-foreground', note: 'legacy bridge (P3 only)' },
+    { token: '--shadow-1', note: 'elevation ladder (§34.6)' },
+    { token: '--shadow-2', note: 'elevation ladder (§34.6)' },
+    { token: '--z-index-toast', note: 'elevation z ladder (§34.6)' },
   ];
 
   for (const { token, note } of requiredThemeBridges) {
@@ -138,6 +178,24 @@ function checkTokenSot(): Finding[] {
   }
 
   return out;
+}
+
+function checkSpacingRatchet(findings: Finding[]): void {
+  for (const dir of SURFACE_DIRS) {
+    for (const file of collectFiles(dir, '.tsx')) {
+      const path = rel(file);
+      const lines = read(file).split('\n');
+      lines.forEach((line, index) => {
+        if (line.includes('design-token-allow:')) return;
+        if (!RAW_GAP_6.test(line)) return;
+        findings.push({
+          id: 'raw-gap-6',
+          message: `${path}:${index + 1}  [spacing-ratchet] prefer gap-ds-8+ on page stacks (raw gap-6 · §34.9)`,
+          hard: false,
+        });
+      });
+    }
+  }
 }
 
 function parseKnownMotionTokens(): Set<string> {
@@ -320,6 +378,7 @@ function main(): void {
   checkSurfaces(findings);
   checkLegacyClasses(findings);
   checkUnknownMotionRefs(findings, parseKnownMotionTokens());
+  checkSpacingRatchet(findings);
 
   const hard = findings.filter((f) => f.hard);
   const soft = findings.filter((f) => !f.hard);
@@ -347,7 +406,7 @@ function main(): void {
 
   const mode = strict ? 'strict' : 'advisory';
   console.log(
-    `check:design-tokens OK - token SOT, surface-hover bridge, legacy diff scan, motion refs (${mode})`,
+    `check:design-tokens OK - token SOT, elevation, surface-hover bridge, legacy diff, motion, spacing ratchet (${mode})`,
   );
 
   if (soft.length > 0) {

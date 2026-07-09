@@ -4,13 +4,13 @@
 
 ## 현재 상태
 
-| 영역                          | 상태                                         | AI 행동                                                                                                                                                                         |
-| ----------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Engine Apex**               | `[x] FULLY CLOSED`                           | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어 예외만)                                                                                     |
-| **Phase D Demolition**        | `[x] DONE`                                   | 삭제 확장 **금지**                                                                                                                                                              |
-| **Phase R UI Rebuild**        | **IN PROGRESS (§35 R0 forensic)**            | **왕초보 큐:** To-do **위→아래** · completed **스킵** · **첫 pending 1개** (`r0-forensic-ssot-honesty-bundle` #180) · PQA §33 **`[x]` DONE** (#169–179) · R0 → DA W0 · **`p10-page-sports` `[x]`** |
-| **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                     |
-| **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                        |
+| 영역                          | 상태                                         | AI 행동                                                                                                                                                                                                                                            |
+| ----------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Engine Apex**               | `[x] FULLY CLOSED`                           | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어 예외만)                                                                                                                                                        |
+| **Phase D Demolition**        | `[x] DONE`                                   | 삭제 확장 **금지**                                                                                                                                                                                                                                 |
+| **Phase R UI Rebuild**        | **IN PROGRESS (§34 DA W2)**                  | **왕초보 큐:** To-do **위→아래** · completed **스킵** · **첫 pending 1개** (`da-w2-shell-elevation-infra` #188) · DA W1 GATE `#187` **`[x]` DONE** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`** |
+| **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                        |
+| **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                           |
 
 ## Trade Desk Remediation (Plan `trade_desk_remediation_v3` · execute SSOT)
 
@@ -70,13 +70,13 @@
 
 **Implemented (Phase E):** `rpc_set_trailing_stop` · `rpc_clear_trailing_stop` · `time_in_force` · `display_quantity` iceberg slices · `rpc_run_stop_orders` trailing peak · `rpc_run_open_order_fills` IOC/FOK expiry
 
-**NEXT:** **`r0-forensic-ssot-honesty-bundle`** (#180 · §35) · PQA §33 gate **`[x]` DONE** 2026-07-09 · R0 green 후 `da-w0-foundation-ssot-bundle`
+**NEXT:** **`da-w2-shell-elevation-infra`** (#188) · DA W1 GATE `#187` **`[x]` DONE** 2026-07-09 · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
 
 ## 읽을 것 (active)
 
 1. 본 문서 (`ACTIVE_WORK_SSOT.md`)
 2. Phase R 실행: [`docs/PRODUCT/REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md)
-3. YAML todo 정본: Cursor Plan `phase_r_super-app_8bdf2c10` (frontmatter · **278 ids** · Track A **243** + Track B **35** · completed **179** · pending **92** · cancelled **7** · §20.6.1–§20.6.3 · §20.13 · §20.13.2 Fiat# · **§20.13.3 Sports#·CasinoR#** · **§20.14 Launch** · **§35 Forensic R0** · §25.12.9.1-D · §22.2.4 · **§22.2.5 Sports Parity** · **§23.2.1 Casino one-shot replay** · **§32.7** · **52차** 2026-07-09 · orchestration SSOT=본 plan · execute sibling=`trade_desk_*`·`phonara_수렴_*`)
+3. YAML todo 정본: Cursor Plan `phase_r_super-app_8bdf2c10` (frontmatter · **278 ids** · Track A **243** + Track B **35** · completed **187** · pending **84** · cancelled **7** · §20.6.1–§20.6.3 · §20.13 · §20.13.2 Fiat# · **§20.13.3 Sports#·CasinoR#** · **§20.14 Launch** · **§35 Forensic R0** · **§34 DA W2** · §25.12.9.1-D · §22.2.4 · **§22.2.5 Sports Parity** · **§23.2.1 Casino one-shot replay** · **§32.7** · **52차** 2026-07-09 · orchestration SSOT=본 plan · execute sibling=`trade_desk_*`·`phonara_수렴_*`)
 4. 엔진 **상태 한 줄만**: [`docs/ENGINE_APEX_CLOSEOUT.md`](../ENGINE_APEX_CLOSEOUT.md) (게이트 수치 · 재착수 금지)
 5. UX **의도 참조** (실행 큐 아님): `docs/SSOT/*_UX_CANON.md` · `UX_REFERENCE_CANON.md`
 6. 경계: [`ENGINE_BOUNDARY.md`](ENGINE_BOUNDARY.md) · [`OPERATOR_GATES.md`](OPERATOR_GATES.md) · [`CI_GATE_AUTHORITY.md`](CI_GATE_AUTHORITY.md)
@@ -118,7 +118,7 @@ bun run check:advisors
 
 **P1 Foundation** → **P2 Admin** → P3 Auth → P4 Money → P5 Security → P6 Shell → **P7 Growth** → **P8 Core** → P9–P12 Product → P13 Soft Launch → E0–E7 Engine Wave
 
-**현재 NEXT:** **`r0-forensic-ssot-honesty-bundle`** — §35 R0 YAML **#180** · PQA §33 gate **`[x]` DONE** 2026-07-09 · **`p10-page-sports` `[x]`** · R0 후 `da-w0`
+**현재 NEXT:** **`da-w2-shell-elevation-infra`** — §34.10–34.11 DA YAML **#188** · DA W1 GATE `#187` **`[x]` DONE** 2026-07-09 · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
 
 **왕초보 작업법 (43차 · 이것만):**
 
@@ -127,7 +127,7 @@ bun run check:advisors
 3. **첫 `pending`(빈 원) 1개만** 한다 — agent impl 완료 후 operator **`VISUAL APPROVED: p9-operator-visual-signoff`** → YAML #152 completed → **28번 gate**
 4. 끝나면 다음 pending — **순서 바꾸지 않음** · **병렬 없음**
 
-**직선 큐 (pending 구간):** … Fiat (#158–167) → `p10-page-sports` (#168) → **PQA audit+fix (#169–179)** → P10 잔여 (#180+) → P11 → P12 → P13 → T1/T2 → Engine Wave
+**직선 큐 (pending 구간):** … Fiat (#158–167) → `p10-page-sports` (#168) → **PQA (#169–179 `[x]`)** → **§35 R0 (#180–184 `[x]`)** → **DA W0+ (#185+)** → P10 잔여 → P11 → P12 → P13 → T1/T2 → Engine Wave
 
 **품질 바 (운영자):** §13.1.2 — UX=거래소급 · 정산=플랫폼 내부 only · chart/WS **display-only** · §32.7 — 노출=동작|disabled+reason|hidden · §22.2.4 표시=RPC · dead control 0
 
@@ -231,7 +231,57 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **P1 engine 큐 (F와 병행 · RED STOP):** `launch-engine-e5-realtime-publication` **`[x]`** 2026-07-09
 
-**다음 todo:** **`r0-forensic-ssot-honesty-bundle`** (#180 · §35) — Forensic R0 · PQA gate **`[x]`** · R0 후 DA W0 → P10 Fiat#10
+## Digital Aurora W1 GATE (`da-w1-gate-ds-2` · §34.6–34.9 · YAML #187) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w1-ds-foundation-bundle` **`[x]`** · **후행:** `da-w2-shell-elevation-infra` (#188)
+
+| Todo                  | 상태           | 완료일         | 증거                                                                                                                                      |
+| --------------------- | -------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w1-gate-ds-2`** | **`[x]` DONE** | **2026-07-09** | `gate:ai-impl` primitives+tokens **76/76** · `typecheck` · `check:i18n` · `check:design-tokens` advisory OK (94 notes) · §82 NEXT=`da-w2` |
+
+**Implemented:** DS 2.0 bundle gate green — Text · elevation · Card CVA · spacing ratchet verified · engine touch **0**
+
+**다음 todo:** **`da-w2-shell-elevation-infra`** (#188)
+
+## Digital Aurora W1 DS Foundation (`da-w1-ds-foundation-bundle` · §34.6–34.9 · YAML #186) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w0-foundation-ssot-bundle` **`[x]`** · **후행:** `da-w1-gate-ds-2` (#187) **`[x]`**
+
+| Todo                             | 상태           | 완료일         | 증거                                                                                                                                                 |
+| -------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w1-ds-foundation-bundle`** | **`[x]` DONE** | **2026-07-09** | `Text` · `elevation.css` · `Card` CVA 8 variants · spacing ratchet in `check:design-tokens` · `gate:ai-impl` primitives+tokens · parallel card **0** |
+
+**Implemented:** `product/primitives/text.tsx` (display…money-mono) · `tokens/elevation.css` (`--ds-shadow-1`–`4` · `--ds-z-chrome|overlay|toast`) · `cardVariants` · MissionCard `variant="mission"` · theme bridges · advisory `gap-6` warn
+
+**다음 todo:** **`da-w2-shell-elevation-infra`** (#188) — DA W1 GATE **`[x]`**
+
+## Digital Aurora W0 Foundation (`da-w0-foundation-ssot-bundle` · §34 · YAML #185) — `[x]` DONE · 재착수 금지
+
+> **선행:** `r0-gate-forensic-remediation` **`[x]`** · **후행:** `da-w1-ds-foundation-bundle` (#186) **`[x]`**
+
+| Todo                               | 상태           | 완료일         | 증거                                                                                                                                                                                      |
+| ---------------------------------- | -------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w0-foundation-ssot-bundle`** | **`[x]` DONE** | **2026-07-09** | ADR-009 Digital Aurora · `PRODUCT_EXPERIENCE_CANON.md` · UNIFIED §Interaction Grammar · DESIGN_PRINCIPLES §7 · DESIGN_CHARTER Phase4 defer 해제 · §35.1 Tech Stack · `check:ai-reference` |
+
+**Implemented:** Brand DNA 5문법 · Emotion Map · Brand Memory · Accessibility Elevation · elevation ladder · motion L0/L1/L2 · PC 12-col Orbit Grid · Tech Stack SSOT · **UI/engine code 0** (DOC only)
+
+**다음 todo:** **`da-w2-shell-elevation-infra`** (#188) — DA W1 GATE **`[x]`**
+
+## Forensic Remediation Gate (`r0-gate-forensic-remediation` · §35 · YAML #184) — `[x]` DONE · 재착수 금지
+
+> **선행:** `#180–183` DOC/WIRE/INFRA **`[x]`** · **후행:** `da-w0-foundation-ssot-bundle` (#185) **`[x]`**
+
+| Todo                               | 상태           | 완료일         | 증거                                                                                                                                              |
+| ---------------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `r0-forensic-ssot-honesty-bundle`  | **`[x]` DONE** | 2026-07-09     | §35 SSOT 정직화 · plan-yaml/doc-sync                                                                                                              |
+| `r0-sports-launch-gate-wire`       | **`[x]` DONE** | 2026-07-09     | `LAUNCH_GATES.sportsBetting` + kill-switch AND                                                                                                    |
+| `r0-admin-rbac-ops-wire`           | **`[x]` DONE** | 2026-07-09     | RBAC desks + `confirmKillSwitch`                                                                                                                  |
+| `r0-staking-domain-sot-sync`       | **`[x]` DONE** | 2026-07-09     | `/staking` boundary=`earn` · rule `97`                                                                                                            |
+| **`r0-gate-forensic-remediation`** | **`[x]` DONE** | **2026-07-09** | `check:plan-yaml --track-a-only` · `check:plan-doc-sync` · `check:phase-r-guards --strict` · `typecheck` · R0 vitest **26/26** · §82 NEXT=`da-w0` |
+
+**Implemented:** R0 #180–184 전건 green · YAML completed **187**/278 · pending **84** · first pending = `da-w2-shell-elevation-infra`
+
+**다음 todo:** **`da-w2-shell-elevation-infra`** (#188) — DA W1 GATE **`[x]`**
 
 ## Settings Fiat Hint Toggle (`p5-page-settings-fiat-reference` · §13.1.4.3 · §20.13.2 Fiat#9 · YAML #166) — `[x]` DONE · 재착수 금지
 
@@ -280,7 +330,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 5. dead control 0 · axe critical 0 (브라우저 DevTools)
 6. 채팅 **`VISUAL APPROVED: p9-operator-visual-signoff`** → Plan YAML `completed` + §82 doc sync
 
-**다음 todo:** `r0-forensic-ssot-honesty-bundle` (#180 · §35) · (이력: Fiat/P10 page `[x]`)
+**다음 todo:** `da-w2-shell-elevation-infra` (#188 · §34) · (이력: DA W1 GATE / DA W1 DS / DA W0 / R0 forensic / staking SOT / admin RBAC / sports launch / R0 DOC / Fiat / P10 page `[x]`)
 
 ## Wallet/Ledger Fiat Hint (`p4-page-wallet-fiat-hint` · §13.1.4.4 · §20.13.2 Fiat#6 · YAML #163) — `[x]` DONE · 재착수 금지
 

@@ -1,15 +1,47 @@
+import { cva, type VariantProps } from 'class-variance-authority';
 import { forwardRef, type HTMLAttributes } from 'react';
 
 import { cn } from '@/product/primitives/lib/cn';
 
-export const Card = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
+export const cardVariants = cva(
+  'rounded-(--ds-radius-lg) border border-line bg-surface text-foreground',
+  {
+    variants: {
+      variant: {
+        /** Level 0 flat — border only */
+        default: 'shadow-none',
+        /** Level 1 raised content */
+        raised: 'bg-surface-raised shadow-1',
+        /** Translucent panel */
+        glass: 'border-line/60 bg-surface/70 shadow-1 backdrop-blur-md',
+        /** Earn mission cue — accent ring */
+        mission: 'border-accent/45 bg-surface-raised shadow-1 ring-1 ring-accent/25 ring-inset',
+        /** Wallet balance hero — aurora edge */
+        'wallet-hero': 'border-accent/35 bg-surface-raised shadow-1 ring-1 ring-accent/20',
+        /** VIP / tier ramp border */
+        vip: 'border-2 border-[color:var(--ds-tier-gold)] bg-surface-raised shadow-1',
+        /** Trade dense — line-first, no raise */
+        'trade-dense': 'rounded-(--ds-radius-sm) border-line bg-surface shadow-none',
+        /** Casino tile — float on hover (L1) */
+        'casino-play':
+          'bg-surface-raised shadow-1 transition-[transform,box-shadow] duration-(--ds-motion-surface) hover:-translate-y-0.5 hover:shadow-2 motion-reduce:transform-none motion-reduce:hover:translate-y-0',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  },
+);
+
+export interface CardProps
+  extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {}
+
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn(
-        'rounded-(--ds-radius-lg) border border-line bg-surface text-foreground shadow-sm',
-        className,
-      )}
+      data-card-variant={variant ?? 'default'}
+      className={cn(cardVariants({ variant, className }))}
       {...props}
     />
   ),

@@ -6,6 +6,8 @@
  * Authority: `docs/ENGINE_APEX_CLOSEOUT.md` (frozen) · `docs/SSOT/ENGINE_BOUNDARY.md` §E15 · §E2 launch gates · plan §14.2
  */
 
+import { LAUNCH_GATES } from '../lib/launch-gates';
+
 export const SPORTS_PLACE_BET_RPC = 'rpc_place_sports_bet' as const;
 export const SPORTS_SYSTEM_BET_RPC = 'rpc_place_sports_system_bet' as const;
 export const SPORTS_PREVIEW_CASHOUT_RPC = 'rpc_preview_sports_cashout' as const;
@@ -37,12 +39,12 @@ export type SportsPolicyEngineStatus = 'exists' | 'partial' | 'missing';
 
 export type SportsCashoutExposureMode = 'live' | 'built_hidden' | 'built_disabled' | 'defer_stub';
 
-/** E2 launch gates controlling sports slip / cashout exposure (compile-time). */
+/** E2 launch gates controlling sports slip / cashout exposure — SOT = `LAUNCH_GATES`. */
 export const SPORTS_LAUNCH_GATE_DEFAULTS: Readonly<Record<SportsLaunchGateKey, boolean>> = {
-  sportsBetting: false,
-  sportsComboBetting: false,
-  sportsSystemBetting: false,
-  sportsCashout: false,
+  sportsBetting: LAUNCH_GATES.sportsBetting,
+  sportsComboBetting: LAUNCH_GATES.sportsComboBetting,
+  sportsSystemBetting: LAUNCH_GATES.sportsSystemBetting,
+  sportsCashout: LAUNCH_GATES.sportsCashout,
 };
 
 export const SPORTS_CASHOUT_ENGINE_BRANCHES: Readonly<
@@ -325,6 +327,34 @@ export function resolveSportsLaunchGateExposure(
   if (gateValue) return 'live';
   if (gate === 'sportsBetting') return 'built_disabled';
   return 'built_hidden';
+}
+
+/**
+ * Place CTA wire status from `LAUNCH_GATES.sportsBetting` (default = built_disabled).
+ * Kill-switch `feature_sports_enabled` is applied separately via AND in the controller.
+ */
+export function resolveSportsSlipPlaceCtaExposure(
+  sportsBettingGate: boolean = LAUNCH_GATES.sportsBetting,
+): SportsCashoutExposureMode {
+  return resolveSportsLaunchGateExposure('sportsBetting', sportsBettingGate);
+}
+
+/**
+ * Soft-launch place eligibility: launch exposure must be `live` AND kill-switch must not block.
+ * Session/stake/selection readiness is layered by the page controller.
+ */
+export function resolveSportsPlaceBetLaunchAllowed(input: {
+  sportsBettingGate?: boolean;
+  /** `true` when `feature_sports_enabled` is off or system halt (platform `sportsBlocked`). */
+  sportsKillSwitchBlocked: boolean;
+}): { placeCtaExposure: SportsCashoutExposureMode; launchPlaceAllowed: boolean } {
+  const placeCtaExposure = resolveSportsSlipPlaceCtaExposure(
+    input.sportsBettingGate ?? LAUNCH_GATES.sportsBetting,
+  );
+  return {
+    placeCtaExposure,
+    launchPlaceAllowed: placeCtaExposure === 'live' && !input.sportsKillSwitchBlocked,
+  };
 }
 
 /** Only cashout branches participate in §7 Money Rollout Canary. */

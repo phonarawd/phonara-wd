@@ -4,7 +4,8 @@
 > **Master map:** [`UX_REFERENCE_CANON.md`](UX_REFERENCE_CANON.md) §Trade  
 > **Blueprint:** [`SURFACE_BLUEPRINTS.md`](SURFACE_BLUEPRINTS.md) §Trade  
 > **Display contract:** [`DISPLAY_DATA_CONTRACT.md`](DISPLAY_DATA_CONTRACT.md) — Trade rows  
-> **Routes:** `/trade` · `/trade/futures` · `/trade/spot/$pair` · `/trade/positions` · `/trade/orders` · `/staking` · `/staking/positions` — [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) §12.19 · §13.1.2
+> **Routes:** `/trade` · `/trade/futures` · `/trade/spot/$pair` · `/trade/positions` · `/trade/orders` — [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) §12.19 · §13.1.2  
+> **Staking:** `/staking` · `/staking/positions` = **Earn** domain (`r0-staking-domain-sot-sync`) — not Trade chapter.
 
 ## 목표 경험
 

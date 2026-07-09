@@ -12,6 +12,7 @@ import {
 import type { AdminUserRow } from '@/hooks/admin/useAdminUsersDesk';
 import { formatAmountString } from '@/hooks/admin/useAdminWalletDesk';
 import { userBalanceSummaryParts } from '@/hooks/admin/useAdminUsersDesk';
+import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
 import { HowItWorks } from '@/product/primitives/how-it-works';
@@ -22,6 +23,7 @@ import { Input } from '@/product/primitives/input';
 import { cn } from '@/product/primitives/lib/cn';
 import { Skeleton } from '@/product/primitives/skeleton';
 import { StatusBadge } from '@/product/primitives/status-badge';
+import { ADMIN_RBAC_DENIED_KEY, adminRbacActionProps } from '@/product/surfaces/admin-rbac-action';
 import { AdminQueueActionDialog } from '@/product/surfaces/admin-queue-action-dialog';
 
 const CURRENCIES: RewardCurrency[] = ['PHON', 'USDT', 'KRW'];
@@ -73,6 +75,9 @@ function formatAdjustSummary(
 export function AdminEarnRewardsPage() {
   const t = useT();
   const goTo = useAdminRouteNavigate();
+  const { can } = useAdminOperatorRbac();
+  const canWalletAdjust = can('users.wallet_adjust');
+  const rbacDenied = t(ADMIN_RBAC_DENIED_KEY);
   const locale = typeof document !== 'undefined' ? document.documentElement.lang || 'ko' : 'ko';
 
   const {
@@ -99,7 +104,7 @@ export function AdminEarnRewardsPage() {
     [filteredUsers, selectedUserId],
   );
 
-  const canSubmit = selectedUser !== null && isValidAmount(amount);
+  const canSubmit = canWalletAdjust && selectedUser !== null && isValidAmount(amount);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -111,7 +116,7 @@ export function AdminEarnRewardsPage() {
   };
 
   const handleActionSubmit = async (reason: string): Promise<boolean> => {
-    if (!selectedUser || !canSubmit) return false;
+    if (!canWalletAdjust || !selectedUser || !canSubmit) return false;
     setActionLoading(true);
     try {
       return await manualAdjust(selectedUser.id, {
@@ -306,11 +311,18 @@ export function AdminEarnRewardsPage() {
                 <Button
                   variant={direction === 'debit' ? 'destructive' : 'primary'}
                   size="md"
+                  {...adminRbacActionProps(canWalletAdjust, rbacDenied)}
                   disabled={!canSubmit}
-                  onClick={() => setDialogOpen(true)}
+                  onClick={() => {
+                    if (!canWalletAdjust) return;
+                    setDialogOpen(true);
+                  }}
                 >
                   {t('admin.rewards.action.adjust')}
                 </Button>
+                {!canWalletAdjust ? (
+                  <p className="text-foreground-muted m-0 text-xs">{rbacDenied}</p>
+                ) : null}
               </div>
             )}
           </section>

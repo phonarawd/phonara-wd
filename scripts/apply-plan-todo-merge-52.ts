@@ -450,7 +450,11 @@ function main(): void {
   const base = already ? before.filter((t) => !t.id.startsWith('r0-')) : before;
   if (!already && base.length !== EXPECTED.beforeIds) {
     console.error(
-      JSON.stringify({ fail: 'beforeIds', got: base.length, expected: EXPECTED.beforeIds }, null, 2),
+      JSON.stringify(
+        { fail: 'beforeIds', got: base.length, expected: EXPECTED.beforeIds },
+        null,
+        2,
+      ),
     );
     process.exit(1);
   }
@@ -462,7 +466,8 @@ function main(): void {
   const dup = ids.filter((id, i) => ids.indexOf(id) !== i);
   const errors: string[] = [];
   if (dup.length) errors.push(`dup=${[...new Set(dup)].join(',')}`);
-  if (summary.ids !== EXPECTED.afterIds) errors.push(`ids=${summary.ids} want ${EXPECTED.afterIds}`);
+  if (summary.ids !== EXPECTED.afterIds)
+    errors.push(`ids=${summary.ids} want ${EXPECTED.afterIds}`);
   if (summary.pending !== EXPECTED.pending)
     errors.push(`pending=${summary.pending} want ${EXPECTED.pending}`);
   if (summary.completed !== EXPECTED.completed)

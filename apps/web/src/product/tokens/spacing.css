@@ -22,7 +22,4 @@
   --ds-radius-full: 9999px;
 
   --ds-touch-target-min: 48px;
-
-  /* Overlay 층만 — 다크 depth는 surface ladder + line */
-  --ds-shadow-overlay: 0 16px 48px color-mix(in oklch, var(--ds-bg) 35%, black);
 }

@@ -48,9 +48,9 @@ bun run check:phase-r-guards -- --strict
 
 | Tab | Route group | surfaces/ | features/ | 금지 |
 |-----|-------------|-----------|-----------|------|
-| **돈벌기 Earn** | `/home` · `/referral` · `/tier` · `/earn` · `/share` · `/onboarding` | `home` · `referral` · `tier` · `share` · `onboarding` | `earn` · `onboarding` | trade desk · sports slip · casino lobby · wallet rails |
+| **돈벌기 Earn** | `/home` · `/referral` · `/tier` · `/earn` · `/share` · `/onboarding` · `/staking` | `home` · `referral` · `tier` · `share` · `onboarding` · `staking` | `earn` · `onboarding` | trade desk · sports slip · casino lobby · wallet rails |
 | **지갑 Wallet** | `/wallet` · `/ledger` · `/rewards` | `wallet` · `rewards` | `wallet` | missions · order ticket · bet slip · game stage |
-| **거래 Trade** | `/trade` · `/staking` | `trade` · `staking` | `trading` · `trade` · `earn`(staking only) | sports · casino · earn missions |
+| **거래 Trade** | `/trade` | `trade` | `trading` · `trade` | sports · casino · earn missions · staking embed |
 | **스포츠 Sports** | `/sports` | `sports` | `sports` | trade chart · casino · earn hub |
 | **카지노 Casino** | `/casino` · `/games` · 12 game slugs | `casino` · `games` | `casino` | trade · sports · earn (navigate CTA만 Earn에서 허용) |
 

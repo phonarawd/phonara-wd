@@ -63,8 +63,17 @@ export const NEUTRAL_FEATURE_FOLDERS = ['auth', 'landing', 'pwa', 'responsible-g
 export const SURFACE_DOMAIN_SPECS: readonly SurfaceDomainSpec[] = [
   {
     id: 'earn',
-    routePrefixes: ['/home', '/referral', '/tier', '/earn', '/share/earnings', '/onboarding'],
-    surfaceFolders: ['home', 'referral', 'tier', 'share', 'onboarding'],
+    // `/staking` = Earn subnav chip (§12.19.4) — not Trade chapter (r0-staking-domain-sot-sync).
+    routePrefixes: [
+      '/home',
+      '/referral',
+      '/tier',
+      '/earn',
+      '/share/earnings',
+      '/onboarding',
+      '/staking',
+    ],
+    surfaceFolders: ['home', 'referral', 'tier', 'share', 'onboarding', 'staking'],
     featureFolders: ['earn', 'onboarding'],
     subnavStem: 'earn',
     descriptionKey: 'nav.earn',
@@ -79,9 +88,9 @@ export const SURFACE_DOMAIN_SPECS: readonly SurfaceDomainSpec[] = [
   },
   {
     id: 'trade',
-    routePrefixes: ['/trade', '/staking'],
-    surfaceFolders: ['trade', 'staking'],
-    featureFolders: ['trading', 'trade', 'earn'],
+    routePrefixes: ['/trade'],
+    surfaceFolders: ['trade'],
+    featureFolders: ['trading', 'trade'],
     subnavStem: 'trade',
     descriptionKey: 'nav.trade',
   },
@@ -205,6 +214,10 @@ export function isAllowedCrossSurfaceImport(fromFolder: string, importedFolder: 
 
 export function isAllowedFeatureImport(surfaceFolder: string, featureFolder: string): boolean {
   if ((NEUTRAL_FEATURE_FOLDERS as readonly string[]).includes(featureFolder)) {
+    return true;
+  }
+  // §13.1.3 beginner-help wrappers live under features/trading; Earn `/staking` may reuse them.
+  if (surfaceFolder === 'staking' && featureFolder === 'trading') {
     return true;
   }
   const domain = resolveDomainForSurfaceFolder(surfaceFolder);

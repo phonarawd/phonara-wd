@@ -6,6 +6,15 @@ import { I18nProvider } from '@/product/i18n';
 
 import { AdminWithdrawalsPage } from '@/product/surfaces/admin-withdrawals-page';
 
+vi.mock('@/hooks/admin/useAdminOperatorRbac', () => ({
+  useAdminOperatorRbac: () => ({
+    role: 'owner',
+    can: () => true,
+    setPreviewRole: vi.fn(),
+    roleLabelKey: 'admin.access.role.owner.label',
+  }),
+}));
+
 vi.mock('@/hooks/admin/useAdminWalletDesk', () => ({
   useAdminWalletDesk: () => ({
     withdrawals: [

@@ -484,7 +484,8 @@ function validateDryRun(
   if (beforeTodos.length !== EXPECTED.beforeIds)
     errors.push(`before=${beforeTodos.length} expected ${EXPECTED.beforeIds}`);
   if (removed !== EXPECTED.removed) errors.push(`removed=${removed} expected ${EXPECTED.removed}`);
-  if (summary.ids !== EXPECTED.afterIds) errors.push(`ids=${summary.ids} expected ${EXPECTED.afterIds}`);
+  if (summary.ids !== EXPECTED.afterIds)
+    errors.push(`ids=${summary.ids} expected ${EXPECTED.afterIds}`);
   if (summary.pending !== EXPECTED.pending)
     errors.push(`pending=${summary.pending} expected ${EXPECTED.pending}`);
   if (summary.completed !== EXPECTED.completed)
