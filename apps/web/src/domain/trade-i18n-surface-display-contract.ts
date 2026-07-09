@@ -45,6 +45,7 @@ export type TradeI18nDeferRule = {
 
 /** Relative to `apps/web/src` — static scan roots for vitest audit (surfaces + features + shell glue). */
 export const TRADE_I18N_SURFACE_SCAN_ROOTS = [
+  'product/primitives',
   'product/surfaces/trade',
   'product/surfaces/staking',
   'features/trading',
