@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { DA_W4_REDUCED_MOTION_MEDIA_QUERY } from '@/domain/da-w4-gate-motion-display-contract';
+import { DA_W4_REDUCED_MOTION_MEDIA_QUERY } from '../../../domain/da-w4-gate-motion-display-contract';
 
 function readPrefersReducedMotion(): boolean {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {

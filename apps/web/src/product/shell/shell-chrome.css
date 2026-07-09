@@ -235,10 +235,10 @@
 }
 
 .ds-shell-main-with-bottomnav {
-  /* Floating nav clearance: height + float margin + safe-area */
+  /* Floating nav clearance: height + float margin + safe-area + tap buffer */
   padding-bottom: calc(
     var(--ds-shell-bottomnav-height) + var(--ds-space-2) + env(safe-area-inset-bottom, 0px) +
-      var(--ds-space-2)
+      var(--ds-space-6)
   );
 }
 

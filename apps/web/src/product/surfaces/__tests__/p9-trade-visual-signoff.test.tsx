@@ -688,7 +688,7 @@ describe('p9-trade visual sign-off · §20.12 · §22.2.2 G1–G7', () => {
         expect(screen.getByTestId('spot-order-ticket')).toBeInTheDocument();
       } else {
         expect(screen.getByTestId('spot-desk-mobile-tabs')).toBeInTheDocument();
-        expect(screen.getByTestId('spot-order-ticket')).toBeInTheDocument();
+        expect(screen.getByTestId('trade-mobile-ticket-fold')).toBeInTheDocument();
       }
     },
   );
@@ -706,7 +706,11 @@ describe('p9-trade visual sign-off · §20.12 · §22.2.2 G1–G7', () => {
         </I18nProvider>,
       );
       expect(screen.getByTestId('futures-desk-page')).toBeInTheDocument();
-      expect(screen.getByTestId('futures-order-ticket')).toBeInTheDocument();
+      if (viewport.isMobile) {
+        expect(screen.getByTestId('trade-mobile-ticket-fold')).toBeInTheDocument();
+      } else {
+        expect(screen.getByTestId('futures-order-ticket')).toBeInTheDocument();
+      }
     },
   );
 
@@ -1076,7 +1080,11 @@ describe('Phase 4 Launch RC · S4 · 375/390/768/1024 layout signoff', () => {
         </I18nProvider>,
       );
       expect(screen.getByTestId('spot-desk-page')).toBeInTheDocument();
-      expect(screen.getByTestId('spot-order-ticket')).toBeInTheDocument();
+      if (width < 768) {
+        expect(screen.getByTestId('trade-mobile-ticket-fold')).toBeInTheDocument();
+      } else {
+        expect(screen.getByTestId('spot-order-ticket')).toBeInTheDocument();
+      }
       if (width === 768) {
         expect(screen.getByTestId('trade-desk-tablet-main-grid')).toBeInTheDocument();
       }
@@ -1096,7 +1104,11 @@ describe('Phase 4 Launch RC · S4 · 375/390/768/1024 layout signoff', () => {
         </I18nProvider>,
       );
       expect(screen.getByTestId('futures-desk-page')).toBeInTheDocument();
-      expect(screen.getByTestId('futures-order-ticket')).toBeInTheDocument();
+      if (width < 768) {
+        expect(screen.getByTestId('trade-mobile-ticket-fold')).toBeInTheDocument();
+      } else {
+        expect(screen.getByTestId('futures-order-ticket')).toBeInTheDocument();
+      }
     },
   );
 
