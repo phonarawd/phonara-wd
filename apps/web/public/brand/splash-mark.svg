@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PHONARA">
+  <g transform="translate(256 256)">
+    <g transform="rotate(-135)"><path fill="#2EC4A0" d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+    <g transform="rotate(-45)"><path fill="#4B8FE8" d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+    <g transform="rotate(135)"><path fill="#E07A52" d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+    <g transform="rotate(45)"><path fill="#D456A0" d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+    <circle r="54" fill="#7B6FE8"/>
+    <circle cx="-12" cy="-14" r="14" fill="#ffffff" fill-opacity="0.55"/>
+  </g>
+</svg>

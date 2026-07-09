@@ -1,0 +1,32 @@
+/**
+ * Phase R design tokens — CSS motion SOT (§25.3 L-A micro).
+ * Semantic role names are authoritative; fast/base/slow are deprecated aliases (P13 purge).
+ */
+
+:root {
+  /* SOT — semantic role */
+  --ds-motion-press: 120ms;
+  --ds-motion-field: 150ms;
+  --ds-motion-toggle: 150ms;
+  --ds-motion-surface: 200ms;
+  --ds-motion-overlay: 320ms;
+  --ds-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Deprecated alias — P13 removal · do not reference in new code */
+  --ds-motion-fast: var(--ds-motion-press);
+  --ds-motion-base: var(--ds-motion-surface);
+  --ds-motion-slow: var(--ds-motion-overlay);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ds-motion-press: 0ms;
+    --ds-motion-field: 0ms;
+    --ds-motion-toggle: 0ms;
+    --ds-motion-surface: 0ms;
+    --ds-motion-overlay: 0ms;
+    --ds-motion-fast: 0ms;
+    --ds-motion-base: 0ms;
+    --ds-motion-slow: 0ms;
+  }
+}

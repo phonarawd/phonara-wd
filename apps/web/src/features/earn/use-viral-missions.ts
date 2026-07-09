@@ -39,7 +39,12 @@ export function useViralMissionStatus() {
   const { session } = useAuth();
   const userId = session?.user.id ?? null;
 
-  const { data = null, isLoading: loading, error: rawError, refetch } = useQuery({
+  const {
+    data = null,
+    isLoading: loading,
+    error: rawError,
+    refetch,
+  } = useQuery({
     queryKey: viralMissionKeys.status(userId),
     queryFn: async () => {
       const { data: rpcData, error } = await supabase.rpc('rpc_get_viral_mission_status');

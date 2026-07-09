@@ -15,7 +15,10 @@ export async function setRgLimit(
   return data as { pending?: boolean; current_limit?: string };
 }
 
-export async function setSelfExclusion(untilIso: string, reason: string): Promise<{ exclusion_id?: string }> {
+export async function setSelfExclusion(
+  untilIso: string,
+  reason: string,
+): Promise<{ exclusion_id?: string }> {
   const data = await callRpc('rpc_set_self_exclusion', {
     p_excluded_until: untilIso,
     p_reason: reason,

@@ -29,12 +29,15 @@ BEGIN
     WHERE key IN ('system_halt', 'system_readonly', 'consent_gate_enabled');
   UPDATE app_config SET value = 'true' WHERE key = 'feature_withdrawal_enabled';
   PERFORM rpc_run_reconciliation();
+  UPDATE app_config SET value = '0' WHERE key IN (
+    'aml_min_account_age_hours', 'aml_rapid_credit_hours', 'aml_kyc_approval_cooldown_hours'
+  );
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
 
   BEGIN
     PERFORM rpc_request_withdrawal(
-      'PHON', '10.000000', '{}'::JSONB, 'wd-test-kyc-block-001', NULL
+      'PHON', '10.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'wd-test-kyc-block-001', NULL
     );
   EXCEPTION WHEN OTHERS THEN
     GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
@@ -80,9 +83,12 @@ BEGIN
   UPDATE app_config SET value = 'true' WHERE key = 'feature_withdrawal_enabled';
   UPDATE treasury_reserves SET real_balance = '99999999.000000' WHERE currency = 'PHON';
   PERFORM rpc_run_reconciliation();
+  UPDATE app_config SET value = '0' WHERE key IN (
+    'aml_min_account_age_hours', 'aml_rapid_credit_hours', 'aml_kyc_approval_cooldown_hours'
+  );
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin_user::TEXT, 'aal', 'aal2')::TEXT, true);
-  v_res := rpc_request_withdrawal('PHON', '10.000000', '{}'::JSONB, 'wd-self-approve-001', NULL);
+  v_res := rpc_request_withdrawal('PHON', '10.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'wd-self-approve-001', NULL);
   v_wr_id := (v_res->>'withdrawal_id')::UUID;
 
   BEGIN
@@ -138,11 +144,14 @@ BEGIN
   UPDATE app_config SET value = 'true' WHERE key = 'feature_withdrawal_enabled';
   UPDATE treasury_reserves SET real_balance = '99999999.000000' WHERE currency = 'PHON';
   PERFORM rpc_run_reconciliation();
+  UPDATE app_config SET value = '0' WHERE key IN (
+    'aml_min_account_age_hours', 'aml_rapid_credit_hours', 'aml_kyc_approval_cooldown_hours'
+  );
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
-  v_res := rpc_request_withdrawal('PHON', '10.000000', '{}'::JSONB, 'wd-feature-approve-001', NULL);
+  v_res := rpc_request_withdrawal('PHON', '10.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'wd-feature-approve-001', NULL);
   v_wr_approve := (v_res->>'withdrawal_id')::UUID;
-  v_res := rpc_request_withdrawal('PHON', '10.000000', '{}'::JSONB, 'wd-feature-sent-001', NULL);
+  v_res := rpc_request_withdrawal('PHON', '10.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'wd-feature-sent-001', NULL);
   v_wr_sent := (v_res->>'withdrawal_id')::UUID;
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
@@ -211,9 +220,12 @@ BEGIN
   UPDATE app_config SET value = 'true' WHERE key = 'feature_withdrawal_enabled';
   UPDATE treasury_reserves SET real_balance = '99999999.000000' WHERE currency = 'PHON';
   PERFORM rpc_run_reconciliation();
+  UPDATE app_config SET value = '0' WHERE key IN (
+    'aml_min_account_age_hours', 'aml_rapid_credit_hours', 'aml_kyc_approval_cooldown_hours'
+  );
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
-  v_res := rpc_request_withdrawal('PHON', '10.000000', '{}'::JSONB, 'wd-idem-approve-001', NULL);
+  v_res := rpc_request_withdrawal('PHON', '10.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'wd-idem-approve-001', NULL);
   v_wr_id := (v_res->>'withdrawal_id')::UUID;
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
@@ -281,6 +293,9 @@ BEGIN
   UPDATE app_config SET value = 'true' WHERE key = 'feature_withdrawal_enabled';
   UPDATE treasury_reserves SET real_balance = '99999999.000000' WHERE currency = 'PHON';
   PERFORM rpc_run_reconciliation();
+  UPDATE app_config SET value = '0' WHERE key IN (
+    'aml_min_account_age_hours', 'aml_rapid_credit_hours', 'aml_kyc_approval_cooldown_hours'
+  );
 
   SELECT phon_available::NUMERIC, phon_locked::NUMERIC
     INTO v_available_before, v_locked_before
@@ -292,7 +307,7 @@ BEGIN
   INTO v_total_before;
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
-  v_res := rpc_request_withdrawal('PHON', '10.000000', '{}'::JSONB, 'wd-lock-reject-001', NULL);
+  v_res := rpc_request_withdrawal('PHON', '10.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'wd-lock-reject-001', NULL);
   v_wr_id := (v_res->>'withdrawal_id')::UUID;
 
   SELECT phon_available, phon_locked INTO v_available, v_locked
@@ -380,6 +395,9 @@ BEGIN
   UPDATE app_config SET value = 'true' WHERE key = 'feature_withdrawal_enabled';
   UPDATE treasury_reserves SET real_balance = '99999999.000000' WHERE currency = 'PHON';
   PERFORM rpc_run_reconciliation();
+  UPDATE app_config SET value = '0' WHERE key IN (
+    'aml_min_account_age_hours', 'aml_rapid_credit_hours', 'aml_kyc_approval_cooldown_hours'
+  );
 
   SELECT phon_available::NUMERIC, phon_locked::NUMERIC
     INTO v_available_before, v_locked_before
@@ -393,7 +411,7 @@ BEGIN
   INTO v_total_before;
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
-  v_res := rpc_request_withdrawal('PHON', '10.000000', '{}'::JSONB, 'wd-lock-approve-001', NULL);
+  v_res := rpc_request_withdrawal('PHON', '10.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'wd-lock-approve-001', NULL);
   v_wr_id := (v_res->>'withdrawal_id')::UUID;
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_admin::TEXT, 'aal', 'aal2')::TEXT, true);
@@ -481,12 +499,15 @@ BEGIN
 
   UPDATE treasury_reserves SET real_balance = '99999999.000000' WHERE currency = 'PHON';
   PERFORM rpc_run_reconciliation();
+  UPDATE app_config SET value = '0' WHERE key IN (
+    'aml_min_account_age_hours', 'aml_rapid_credit_hours', 'aml_kyc_approval_cooldown_hours'
+  );
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
 
   BEGIN
     PERFORM rpc_request_withdrawal(
-      'PHON', '1.000000', '{}'::JSONB, 'wd-kill-switch-test-01', NULL
+      'PHON', '1.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'wd-kill-switch-test-01', NULL
     );
   EXCEPTION WHEN OTHERS THEN
     GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
@@ -538,15 +559,18 @@ BEGIN
   VALUES ('withdrawal_daily_cap_per_user', '100.000000', 'Per-user daily withdrawal cap (PHON).', FALSE)
   ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW();
   PERFORM rpc_run_reconciliation();
+  UPDATE app_config SET value = '0' WHERE key IN (
+    'aml_min_account_age_hours', 'aml_rapid_credit_hours', 'aml_kyc_approval_cooldown_hours'
+  );
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
 
-  v_res := rpc_request_withdrawal('PHON', '60.000000', '{}'::JSONB, 'wd-cap-first-001', NULL);
+  v_res := rpc_request_withdrawal('PHON', '60.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'wd-cap-first-001', NULL);
   ASSERT COALESCE((v_res->>'ok')::BOOLEAN, FALSE),
     format('first in-cap withdrawal must succeed, got %s', v_res);
 
   BEGIN
-    PERFORM rpc_request_withdrawal('PHON', '50.000000', '{}'::JSONB, 'wd-cap-over-001', NULL);
+    PERFORM rpc_request_withdrawal('PHON', '50.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'wd-cap-over-001', NULL);
   EXCEPTION WHEN OTHERS THEN
     GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
     IF v_msg LIKE 'ERR_WITHDRAWAL_DAILY_CAP%' THEN v_blocked := TRUE; END IF;
@@ -603,11 +627,14 @@ BEGIN
   VALUES ('withdrawal_daily_cap_per_user', '100.000000', 'Per-user daily withdrawal cap (PHON).', FALSE)
   ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW();
   PERFORM rpc_run_reconciliation();
+  UPDATE app_config SET value = '0' WHERE key IN (
+    'aml_min_account_age_hours', 'aml_rapid_credit_hours', 'aml_kyc_approval_cooldown_hours'
+  );
 
   SELECT phon_available::NUMERIC INTO v_avail_before FROM wallets WHERE user_id = v_uid;
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
-  v_res := rpc_request_withdrawal('PHON', '40.000000', '{}'::JSONB, 'wd-cap-in-001', NULL);
+  v_res := rpc_request_withdrawal('PHON', '40.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'wd-cap-in-001', NULL);
   ASSERT COALESCE((v_res->>'ok')::BOOLEAN, FALSE),
     format('in-cap withdrawal must succeed, got %s', v_res);
 

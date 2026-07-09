@@ -40,16 +40,12 @@ export function teamsMatchForSettle(
 
   const direct =
     normHomeA === normHomeB &&
-    (normAwayA === normAwayB ||
-      normAwayA.includes(normAwayB) ||
-      normAwayB.includes(normAwayA));
+    (normAwayA === normAwayB || normAwayA.includes(normAwayB) || normAwayB.includes(normAwayA));
   if (direct) return true;
 
   const swapped =
     normHomeA === normAwayB &&
-    (normAwayA === normHomeB ||
-      normAwayA.includes(normHomeB) ||
-      normHomeB.includes(normAwayA));
+    (normAwayA === normHomeB || normAwayA.includes(normHomeB) || normHomeB.includes(normAwayA));
   return swapped;
 }
 
@@ -64,7 +60,14 @@ export function findSecondaryFinishedMatch(
   for (const candidate of secondaryScores) {
     if (candidate.leagueCode !== primary.leagueCode) continue;
     if (!sameUtcDate(primary.kickoffAt, candidate.utcDate)) continue;
-    if (teamsMatchForSettle(primary.homeTeam, primary.awayTeam, candidate.homeTeam, candidate.awayTeam)) {
+    if (
+      teamsMatchForSettle(
+        primary.homeTeam,
+        primary.awayTeam,
+        candidate.homeTeam,
+        candidate.awayTeam,
+      )
+    ) {
       return candidate;
     }
   }
@@ -89,10 +92,7 @@ export function decideDualFeedSettle(
     };
   }
 
-  if (
-    primary.homeGoals !== secondary.homeGoals ||
-    primary.awayGoals !== secondary.awayGoals
-  ) {
+  if (primary.homeGoals !== secondary.homeGoals || primary.awayGoals !== secondary.awayGoals) {
     return {
       action: 'skip',
       reason: 'score_mismatch',

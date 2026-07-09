@@ -11,15 +11,15 @@
 
 ## 7섹션 목차
 
-| § | 제목 | 본문 |
-|---|------|------|
-| §1 | Kill switches | [§1 Kill switches](#1-kill-switches) |
-| §2 | Incidents | [§2 Incidents](#2-incidents) — Scenario 1~8 |
-| §3 | Backup / recovery | [§3 Backup / recovery](#3-backup--recovery) |
-| §4 | 출금 활성화 | [§4 출금 활성화 체크리스트](#4-출금-활성화-체크리스트-wave-12--사람만-수행) |
-| §5 | AML / 제재 | [§5 AML/제재 매치 대응](#5-aml제재-매치-대응-절차) |
-| §6 | 책임도박 (RG) | [§6 책임도박(RG)](#6-책임도박rg-사용자-문의-대응) |
-| §7 | Escalation | [§7 Escalation](#7-escalation) |
+| §   | 제목              | 본문                                                                        |
+| --- | ----------------- | --------------------------------------------------------------------------- |
+| §1  | Kill switches     | [§1 Kill switches](#1-kill-switches)                                        |
+| §2  | Incidents         | [§2 Incidents](#2-incidents) — Scenario 1~8                                 |
+| §3  | Backup / recovery | [§3 Backup / recovery](#3-backup--recovery)                                 |
+| §4  | 출금 활성화       | [§4 출금 활성화 체크리스트](#4-출금-활성화-체크리스트-wave-12--사람만-수행) |
+| §5  | AML / 제재        | [§5 AML/제재 매치 대응](#5-aml제재-매치-대응-절차)                          |
+| §6  | 책임도박 (RG)     | [§6 책임도박(RG)](#6-책임도박rg-사용자-문의-대응)                           |
+| §7  | Escalation        | [§7 Escalation](#7-escalation)                                              |
 
 ---
 
@@ -28,14 +28,14 @@ Admin Overview는 `rpc_get_ops_health()`와 `rpc_get_ops_alerts()`가 저장한 
 확인한다. 이 화면은 즉석 재조정이나 hash-chain 검사를 실행하지 않으며, 최신 로그와
 알림 inbox를 보고 새벽 대응 순서를 정하는 용도다.
 
-| Admin 카드 | 빨간 항목 / runbookKey | 확인할 시나리오 |
-|------------|------------------------|-----------------|
-| 시스템 모드 | `system_mode_active` | Scenario 1, Scenario 2, Scenario 5 |
-| 재조정 | `reconciliation_mismatch` | Scenario 1 |
-| 크론/청산 | `cron_liquidation_stale`, `liquidation_recent_error` | Scenario 4 |
-| 리저브 최신성 | `treasury_stale` | Scenario 3 |
-| 리스크 신호 | `hash_chain_broken`, `pending_exceptions`, `treasury_solvency_risk` | Scenario 1, Scenario 2, Scenario 3, Scenario 8 |
-| 최근 운영자 조치 | `operator_actions_review` | 감사 로그에서 변경 사유와 대상 확인 |
+| Admin 카드       | 빨간 항목 / runbookKey                                              | 확인할 시나리오                                |
+| ---------------- | ------------------------------------------------------------------- | ---------------------------------------------- |
+| 시스템 모드      | `system_mode_active`                                                | Scenario 1, Scenario 2, Scenario 5             |
+| 재조정           | `reconciliation_mismatch`                                           | Scenario 1                                     |
+| 크론/청산        | `cron_liquidation_stale`, `liquidation_recent_error`                | Scenario 4                                     |
+| 리저브 최신성    | `treasury_stale`                                                    | Scenario 3                                     |
+| 리스크 신호      | `hash_chain_broken`, `pending_exceptions`, `treasury_solvency_risk` | Scenario 1, Scenario 2, Scenario 3, Scenario 8 |
+| 최근 운영자 조치 | `operator_actions_review`                                           | 감사 로그에서 변경 사유와 대상 확인            |
 
 운영자는 다음 순서로 처리한다.
 
@@ -53,6 +53,7 @@ Admin Overview는 `rpc_get_ops_health()`와 `rpc_get_ops_alerts()`가 저장한 
 `acknowledged`인 항목은 Overview 알림 배너와 Alerts 화면에 나타난다.
 
 **확인 쿼리**:
+
 ```sql
 SELECT id, source_check_id, severity, status, summary, runbook_key,
        occurrence_count, last_seen_at
@@ -62,6 +63,7 @@ SELECT id, source_check_id, severity, status, summary, runbook_key,
 ```
 
 **수동 처리 원칙**:
+
 - 알림 acknowledge/resolve, exception queue resolve, withdrawal reject/approve,
   STR status update, risk flag clear는 모두 Admin 화면의 reason dialog 또는
   대응 `rpc_*`를 통해 처리한다.
@@ -69,6 +71,7 @@ SELECT id, source_check_id, severity, status, summary, runbook_key,
 - 모든 수동 조치 후 `audit_logs`에서 action, entity, payload.reason을 확인한다.
 
 **예외 큐 확인 쿼리**:
+
 ```sql
 SELECT queue_type, entity_type, entity_id, user_id, reason, status, sla_due_at
   FROM admin_review_queue
@@ -85,6 +88,7 @@ SELECT queue_type, entity_type, entity_id, user_id, reason, status, sla_due_at
 근거 기록만 담당한다.
 
 **확인 쿼리**:
+
 ```sql
 SELECT flag_type, status, user_id, created_at, details
   FROM risk_flags
@@ -98,6 +102,7 @@ SELECT case_type, status, user_id, trigger_ref, created_at
 ```
 
 **해제 원칙**:
+
 - `sanctions_hit`, `account_activity_frozen`, `rg_self_exclusion`은 원인 증거가
   해소된 뒤에만 Admin queue/RPC 경로로 해제한다.
 - 해제 전후에 사용자 wallet/system Σ가 바뀌지 않아야 한다. 잔액 변경이 필요하면
@@ -107,12 +112,12 @@ SELECT case_type, status, user_id, trigger_ref, created_at
 
 ## §1 Kill switches
 
-| 스위치 | 키 / RPC | 효과 |
-|--------|----------|------|
-| 전역 halt | `app_config.system_halt=true` | 모든 위험 RPC 차단 |
-| 읽기 전용 | `app_config.system_readonly=true` | 지갑 변경 RPC 차단 (Scenario 1 자동 설정) |
-| 기능별 | `feature_*_enabled=false` | 해당 surface만 차단 (Scenario 4d) |
-| Admin 수동 | `rpc_set_feature_enabled`, `rpc_set_system_mode` | reason + audit 필수, AAL2 Admin MFA |
+| 스위치     | 키 / RPC                                         | 효과                                      |
+| ---------- | ------------------------------------------------ | ----------------------------------------- |
+| 전역 halt  | `app_config.system_halt=true`                    | 모든 위험 RPC 차단                        |
+| 읽기 전용  | `app_config.system_readonly=true`                | 지갑 변경 RPC 차단 (Scenario 1 자동 설정) |
+| 기능별     | `feature_*_enabled=false`                        | 해당 surface만 차단 (Scenario 4d)         |
+| Admin 수동 | `rpc_set_feature_enabled`, `rpc_set_system_mode` | reason + audit 필수, AAL2 Admin MFA       |
 
 **원칙**: kill switch는 자동(재조정/서킷브레이커) 또는 Admin RPC로만 변경. SQL 직접 UPDATE는 Wave 12 긴급 복구 외 금지.
 
@@ -127,18 +132,19 @@ SELECT case_type, status, user_id, trigger_ref, created_at
 **발동 조건**: `rpc_run_reconciliation()` (매일 02:00 UTC, pg_cron)이 아래 **5종 검사** 중
 하나라도 실패 → `app_config.system_readonly = true` 자동 설정.
 
-| check_type | 무엇을 검사하는가 |
-|------------|-------------------|
-| `wallet` | 통화별 Σ(user wallet balances) == wallet_ledger net |
-| `system` | 통화별 Σ(system_accounts.balance) == system_account_ledger net |
-| `global_zero` | 통화별 Σ(wallets + system) == 0 |
-| `hash_chain_wallet` | `verify_ledger_hash_chain()` broken count == 0 |
-| `hash_chain_system` | `verify_system_account_hash_chain()` broken count == 0 |
+| check_type          | 무엇을 검사하는가                                              |
+| ------------------- | -------------------------------------------------------------- |
+| `wallet`            | 통화별 Σ(user wallet balances) == wallet_ledger net            |
+| `system`            | 통화별 Σ(system_accounts.balance) == system_account_ledger net |
+| `global_zero`       | 통화별 Σ(wallets + system) == 0                                |
+| `hash_chain_wallet` | `verify_ledger_hash_chain()` broken count == 0                 |
+| `hash_chain_system` | `verify_system_account_hash_chain()` broken count == 0         |
 
 **증상**: 유저가 "잠시 서비스 점검 중" 오류를 봄. 지갑 잔액 변경 RPC 전체 차단.
 (청산 RPC는 `system_readonly`와 무관하게 계속 동작.)
 
 **확인 쿼리**:
+
 ```sql
 -- 1. 최신 reconciliation 결과 (5 check types)
 SELECT run_at, check_type, currency, wallet_sum, ledger_net, delta,
@@ -167,17 +173,20 @@ SELECT check_type, broken_count, triggered_halt
 ```
 
 **원인 가능성**:
+
 - 직접 DB 조작(침해 또는 DB 버그) → `delta` 양수면 wallet이 더 많음(=돈 추가됨)
 - Decimal 계산 누적 오차(극히 드뭄) → `delta`가 0.000001 미만
 - 마이그레이션 중 atomic 실패
 
 **대응 절차**:
+
 1. 심각도 판단: `delta > 1.0` → 즉시 `system_halt` 고려. `delta < 0.000001` → 부동소수 오차, 즉시 해제 가능.
 2. 침해 의심 시: `system_halt = true` 설정 후 포렌식.
 3. 오차 범위 내 확인 시: 수동 원인 확인 후 `system_readonly = false` 해제.
 4. 해시체인 검증: `SELECT * FROM verify_ledger_hash_chain();` → 0건이어야 정상.
 
 **복구**:
+
 ```sql
 -- readonly 해제 (원인 확인 후에만)
 SELECT rpc_set_system_mode(false, false, '재조정 완료 확인 후 서비스 재개');
@@ -193,6 +202,7 @@ SELECT rpc_set_system_mode(false, false, '재조정 완료 확인 후 서비스 
 **증상**: 지갑 원장 tamper 가능성. 직접 발동되진 않지만 정기 모니터링에서 감지.
 
 **확인 쿼리**:
+
 ```sql
 SELECT broken_user_id, entry_id, entry_seq, expected, actual
   FROM verify_ledger_hash_chain()
@@ -200,6 +210,7 @@ SELECT broken_user_id, entry_id, entry_seq, expected, actual
 ```
 
 **대응 절차**:
+
 1. 즉시 `system_halt = true` 설정.
 2. 손상된 `entry_id`와 `broken_user_id` 기록.
 3. `wallet_ledger` 해당 행의 `idempotency_key`, `reason_code`, `created_at` 확인.
@@ -207,6 +218,7 @@ SELECT broken_user_id, entry_id, entry_seq, expected, actual
 5. 포렌식 완료 전까지 서비스 중단 유지.
 
 **halt 설정**:
+
 ```sql
 SELECT rpc_set_system_mode(true, false, '해시체인 손상 감지 - 포렌식 진행 중');
 ```
@@ -219,6 +231,7 @@ SELECT rpc_set_system_mode(true, false, '해시체인 손상 감지 - 포렌식 
 `treasury_reserves.real_balance < Σ(user wallets) × (1 + buffer_pct/100)`
 
 **확인 쿼리**:
+
 ```sql
 -- 리저브 현황
 SELECT r.currency,
@@ -233,9 +246,11 @@ SELECT r.currency,
 ```
 
 **대응 절차**:
+
 1. 출금 요청 검토 → 큰 이상 없으면 리저브 업데이트(온체인 자산 이동 후).
 2. 대규모 이상 출금 패턴 → AML 검토.
 3. 리저브 업데이트(admin RPC):
+
 ```sql
 SELECT rpc_update_treasury_reserve('USDT', '50000.000000', 10, 5, '자산 재확인 후 업데이트');
 ```
@@ -245,6 +260,7 @@ SELECT rpc_update_treasury_reserve('USDT', '50000.000000', 10, 5, '자산 재확
 ## 🟡 Scenario 4: 자동청산 실패 / pg_cron 미실행
 
 **확인 쿼리**:
+
 ```sql
 -- pg_cron 마지막 실행 시각
 SELECT jobname, schedule, active FROM cron.job WHERE jobname = 'phonara_auto_liquidations';
@@ -260,6 +276,7 @@ SELECT id, user_id, market, side, liquidation_price FROM futures_positions
 ```
 
 **수동 청산 실행** (긴급 시):
+
 ```sql
 PERFORM set_config('request.jwt.claims', '{}', true);
 SELECT rpc_run_liquidations();
@@ -279,6 +296,7 @@ SELECT rpc_run_liquidations();
 - [ ] 이번 인시던트 원인·대응 내용을 `docs/PHONARA_V2_MASTER_PLAN.md` Build Log에 기록
 
 **서비스 재개**:
+
 ```sql
 SELECT rpc_set_system_mode(false, false, '인시던트 해소 확인 - 서비스 정상화');
 ```
@@ -312,11 +330,13 @@ SELECT u.id, u.email
 프로덕션 Admin 콘솔은 앱 레벨에서 AAL2(MFA 완료 세션)를 요구한다. Supabase Dashboard 설정이 꺼져 있거나 관리자 계정에 factor가 없으면 운영자가 콘솔에 접근할 수 없다.
 
 **Dashboard 확인 경로**:
+
 1. Supabase Dashboard → Authentication → MFA → TOTP 활성화.
 2. 관리자 계정에 MFA factor 등록.
 3. Supabase Dashboard → Authentication → Password Policies → "Check for compromised passwords (HIBP)" 활성화.
 
 **장애 대응**:
+
 - Admin 로그인 후 `admin-mfa-required` 화면이 보이면 MFA challenge가 완료되지 않은 세션이다. 로그아웃 후 MFA 등록/인증을 완료한다.
 - HIBP 설정 후 약한/유출 비밀번호로 가입 또는 비밀번호 변경이 거부되는지 Dashboard Auth logs에서 확인한다.
 - MFA factor 분실 시 Supabase Dashboard에서 해당 admin 계정 factor를 재등록하고, 조치 이유를 Build Log에 남긴다.
@@ -331,26 +351,34 @@ SELECT u.id, u.email
 limit or `insurance_fund_phon` becomes materially negative.
 
 **Auto-response**:
+
 - Game settlement RPCs continue to conserve Σ=0.
 - Admin must pause the affected game family with the existing feature flag or
   system mode RPC if exposure cannot be explained.
 
 **Recovery checklist**:
+
 - [ ] Check system accounts:
+
 ```sql
 SELECT code, currency, balance FROM system_accounts ORDER BY currency, code;
 ```
+
 - [ ] Check recent casino settlement legs and largest payouts:
+
 ```sql
 SELECT user_id, game, stake, payout, settled_at
   FROM game_bets
  ORDER BY settled_at DESC
  LIMIT 50;
 ```
+
 - [ ] Verify ledger conservation:
+
 ```sql
 SELECT * FROM verify_ledger_hash_chain();
 ```
+
 - [ ] If exposure is from fair wins, top up/rebalance reserves and record the
       operator decision in the Build Log.
 - [ ] If exposure is unexplained, set `system_halt = true` and start forensic
@@ -375,12 +403,15 @@ work rather than open-ended visual polishing:
 after enough settled bets to be statistically meaningful.
 
 **Auto-response**:
+
 - Settlement remains atomic; no retroactive user balance mutation is allowed.
 - Affected game should be disabled if drift suggests implementation or seed
   verification risk.
 
 **Recovery checklist**:
+
 - [ ] Inspect rolling RTP:
+
 ```sql
 SELECT game,
        COUNT(*) AS bets,
@@ -394,6 +425,7 @@ SELECT game,
  WHERE settled_at > NOW() - INTERVAL '24 hours'
  GROUP BY game;
 ```
+
 - [ ] Recompute a sample of settled results from revealed server seeds.
 - [ ] Compare implementation against ADR-001 settle parity requirements.
 - [ ] If parity mismatch is confirmed, keep the game disabled and use Scenario 4.
@@ -425,21 +457,26 @@ incident requires many open positions/requests to be cancelled without breaking
 ledger conservation.
 
 **Auto-response**:
+
 - Use only idempotent RPCs or reviewed admin queue actions.
 - Never update wallets directly.
 
 **Recovery checklist**:
+
 - [ ] Freeze new affected actions through feature flags or `system_readonly`.
 - [ ] Export the target rows and reason before mutation:
+
 ```sql
 SELECT id, user_id, status, created_at
   FROM withdrawal_requests
  WHERE status = 'pending'
  ORDER BY created_at;
 ```
+
 - [ ] Process cancellations through the admin queue/RPC path with a consistent
       reason string.
 - [ ] Verify every rejected withdrawal unlocked funds:
+
 ```sql
 SELECT id, user_id, amount, status, ledger_unlock_id
   FROM withdrawal_requests
@@ -447,6 +484,7 @@ SELECT id, user_id, amount, status, ledger_unlock_id
  ORDER BY reviewed_at DESC
  LIMIT 50;
 ```
+
 - [ ] Run conservation and hash-chain checks before resuming traffic.
 
 ### 4. Settle-parity mismatch (ADR-001)
@@ -455,10 +493,12 @@ SELECT id, user_id, amount, status, ledger_unlock_id
 outcome does not match the revealed seed/nonce/game algorithm.
 
 **Auto-response**:
+
 - Disable the affected game immediately.
 - Preserve all rows; do not patch historical outcomes in place.
 
 **Recovery checklist**:
+
 - [ ] Capture the bet id, game, server seed hash, revealed seed, client seed,
       nonce, stored outcome, and recomputed outcome.
 - [ ] Confirm whether the mismatch is display-only or settlement-affecting.
@@ -473,12 +513,15 @@ outcome does not match the revealed seed/nonce/game algorithm.
 reconciliation cannot match incoming funds to expected references.
 
 **Auto-response**:
+
 - Deposit reconciliation mismatch must enter `system_readonly` rather than
   silently crediting user balances.
 - Withdrawals stay disabled until reserves and ledger sums are reconciled.
 
 **Recovery checklist**:
+
 - [ ] Confirm global conservation:
+
 ```sql
 SELECT
   'PHON' AS ccy,
@@ -490,10 +533,13 @@ SELECT
   (SELECT COALESCE(SUM(usdt_available::NUMERIC + usdt_locked::NUMERIC), 0) FROM wallets)
   + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'USDT');
 ```
+
 - [ ] Confirm reserve coverage:
+
 ```sql
 SELECT currency, real_balance, buffer_pct, updated_at FROM treasury_reserves;
 ```
+
 - [ ] Inspect unmatched deposits and reference codes.
 - [ ] Keep `system_readonly = true` until the unmatched deposit is resolved or
       explicitly rejected through an audited admin action.
@@ -508,6 +554,7 @@ intentionally sets the same key to `false` until the withdrawal lock lifecycle
 and operator launch decision are complete.
 
 **Auto-response**:
+
 - Do not assume migrations fixed the flag because the file exists locally.
 - If withdrawal RPCs exist remotely while `feature_withdrawal_enabled=true`,
   treat it as §STOP until the operator confirms withdrawal launch intent.
@@ -515,13 +562,17 @@ and operator launch decision are complete.
   an ad hoc remote change during prep.
 
 **Detection checklist**:
+
 - [ ] Confirm remote migration state:
+
 ```sql
 SELECT version, name
   FROM supabase_migrations.schema_migrations
  ORDER BY version;
 ```
+
 - [ ] Confirm critical remote config values:
+
 ```sql
 SELECT key, value
   FROM app_config
@@ -537,7 +588,9 @@ SELECT key, value
  )
  ORDER BY key;
 ```
+
 - [ ] Confirm whether withdrawal RPCs exist:
+
 ```sql
 SELECT p.proname
   FROM pg_proc p
@@ -551,11 +604,13 @@ SELECT p.proname
    )
  ORDER BY p.proname;
 ```
+
 - [ ] After Wave 12 push only: directly query remote
       `feature_withdrawal_enabled` and require `false`. If it is not `false`,
       stop before user traffic.
 
 **Recovery checklist**:
+
 - [ ] Classify the drift: expected pending migration diff, stale config value, or
       unexplained remote DDL/data drift.
 - [ ] If unexplained, stop and compare `supabase db diff --linked` output before
@@ -577,6 +632,7 @@ conservative launch defaults (`PHONUSDT-PERP=10`, `BTCUSDT-SIM=20`,
 item below is green.
 
 **Current limits and caps**:
+
 ```sql
 SELECT symbol, is_active, max_leverage, max_user_positions, max_open_interest
   FROM futures_markets
@@ -584,8 +640,10 @@ SELECT symbol, is_active, max_leverage, max_user_positions, max_open_interest
 ```
 
 **Checklist before any leverage increase**:
+
 - [ ] External feed is stable for the target market. Confirm the concrete
       oracle config values that govern this market:
+
 ```sql
 SELECT key, value
   FROM app_config
@@ -596,6 +654,7 @@ SELECT symbol, staleness_seconds, max_tick_pct, is_halted
   FROM market_circuit_breakers
  WHERE symbol = '<market>';
 ```
+
 - [ ] For leverage above launch defaults, the market must run with at least two
       non-stale sources (`oracle_min_sources >= 2` or documented equivalent for
       the market), 0 unresolved staleness incidents, outlier rejection tested,
@@ -609,6 +668,7 @@ SELECT symbol, staleness_seconds, max_tick_pct, is_halted
       Do not assume the insurance fund is complete until its own build and tests
       are recorded in the Build Log.
 - [ ] Apply the change through the audited RPC:
+
 ```sql
 SELECT rpc_set_market_limits(
   '<market>',
@@ -618,6 +678,7 @@ SELECT rpc_set_market_limits(
   '<operator reason>'
 );
 ```
+
 - [ ] After the change, run SQL trading tests, focused trading E2E, and record
       the before/after values plus the reason in the Build Log.
 
@@ -627,6 +688,7 @@ SELECT rpc_set_market_limits(
 remote project (`yocjhjsdwoijfdrehzoq`) as part of Wave 12 batch push.
 
 **Critical distinction**:
+
 - Pre-push `bun run check:advisors` with `SUPABASE_ACCESS_TOKEN` queries the
   **current remote** schema (historically through `000024`). A **0 ERROR** result
   there does **not** validate new local-only security code such as
@@ -636,13 +698,16 @@ remote project (`yocjhjsdwoijfdrehzoq`) as part of Wave 12 batch push.
   Wave 12 push when remote DDL matches local head (`000044`).
 
 **Mandatory checklist (Wave 12 push completion gate)**:
+
 - [ ] Confirm remote migration head includes `000044`:
+
 ```sql
 SELECT version, name
   FROM supabase_migrations.schema_migrations
  ORDER BY version DESC
  LIMIT 5;
 ```
+
 - [ ] Run `bun run check:advisors` (or CI `advisors` job) against the linked
       project with `SUPABASE_ACCESS_TOKEN` set. **Require 0 ERROR** on security
       advisor. Record WARN/INFO breakdown in the Build Log.
@@ -654,6 +719,7 @@ SELECT version, name
       resuming user traffic.
 
 **WARN interpretation (baseline at remote `000024`, pre-push)**:
+
 - `authenticated_security_definer_function_executable` (lint 0029): expected
   for guarded `rpc_*` definer wrappers; internal auth checks are the control.
 - Performance WARNs (`auth_rls_initplan`, `multiple_permissive_policies`) are
@@ -664,26 +730,26 @@ SELECT version, name
 
 ## §3 Backup / recovery
 
-| 항목 | 조치 |
-|------|------|
-| PITR / 백업 | Supabase Dashboard → Database → Backups (인간 결정 #3 — Wave 12 전 활성화 확인) |
-| 마이그레이션 복구 | 로컬 `supabase db reset` → `test:sql` 41/41 PASS 확인 후 remote push |
+| 항목                 | 조치                                                                                                                                                     |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PITR / 백업          | Supabase Dashboard → Database → Backups (인간 결정 #3 — Wave 12 전 활성화 확인)                                                                          |
+| 마이그레이션 복구    | 로컬 `supabase db reset` → `test:sql` 41/41 PASS 확인 후 remote push                                                                                     |
 | **로컬 백업 리허설** | `bun run rehearsal:backup` — `pg_dump` → **덤프 파일 `psql` 복원** → 복원 DB에서 `verify_ledger_hash_chain()` / `verify_system_account_hash_chain()` 0건 |
-| Auth rate limits | Dashboard → Auth → Rate limits (인간 결정 #3) |
-| 데이터 손실 의심 | 즉시 `system_halt=true` → Scenario 1·2 확인 → §7 Escalation |
+| Auth rate limits     | Dashboard → Auth → Rate limits (인간 결정 #3)                                                                                                            |
+| 데이터 손실 의심     | 즉시 `system_halt=true` → Scenario 1·2 확인 → §7 Escalation                                                                                              |
 
 Point-in-time recovery는 **사람만** 트리거. 자동화/에이전트가 remote 백업 복원을 실행하지 않는다.
 
 ### 로컬 백업 리허설 기록
 
-| Field | Value |
-|---|---|
-| Script | `bun run rehearsal:backup` (`scripts/backup-rehearsal.ts`) |
-| Recovery path | Docker `pg_dump` → stop realtime → drop replication slots → `DROP DATABASE postgres` → `CREATE` → **`psql` stdin restore** (`supabase_admin`; not `supabase db reset`) |
-| Post-restore verify | `verify_ledger_hash_chain()` = 0 broken; `verify_system_account_hash_chain()` = 0 broken (on **restored** DB) |
-| Post-rehearsal dev heal | Script ends with `supabase db reset` to re-apply migrations/grants — **not** counted as recovery |
-| Last run | `2026-06-12T23:57:59.822Z` — wallet 0 / system 0 broken; dump ~1.39 MB (see `backups/last-rehearsal.json`) |
-| Artifact | `backups/last-rehearsal.json` (dump files gitignored) |
+| Field                   | Value                                                                                                                                                                  |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Script                  | `bun run rehearsal:backup` (`scripts/backup-rehearsal.ts`)                                                                                                             |
+| Recovery path           | Docker `pg_dump` → stop realtime → drop replication slots → `DROP DATABASE postgres` → `CREATE` → **`psql` stdin restore** (`supabase_admin`; not `supabase db reset`) |
+| Post-restore verify     | `verify_ledger_hash_chain()` = 0 broken; `verify_system_account_hash_chain()` = 0 broken (on **restored** DB)                                                          |
+| Post-rehearsal dev heal | Script ends with `supabase db reset` to re-apply migrations/grants — **not** counted as recovery                                                                       |
+| Last run                | `2026-06-12T23:57:59.822Z` — wallet 0 / system 0 broken; dump ~1.39 MB (see `backups/last-rehearsal.json`)                                                             |
+| Artifact                | `backups/last-rehearsal.json` (dump files gitignored)                                                                                                                  |
 
 > **주의**: `supabase db reset`은 마이그레이션 재적용이지 덤프 복원이 아니다. 리허설의 목적은 **백업 파일 존재**가 아니라 **복원 가능성** 검증이다.
 
@@ -699,14 +765,18 @@ Point-in-time recovery는 **사람만** 트리거. 자동화/에이전트가 rem
 - [ ] **Admin MFA (AAL2)**: 모든 운영자 계정이 TOTP 등록 완료; Admin 로그인 후 JWT `aal=aal2` 확인.
 - [ ] **3시점 제재 스크리닝**: KYC 제출, 입금 매칭, 출금 요청 경로에 `_assert_sanctions_screening` / `_ensure_kyc_sanctions_screening_pending` 존재 확인(마이그레이션 적용됨).
 - [ ] **대기 중 제재 심사 0건**:
+
 ```sql
 SELECT COUNT(*) AS pending_screenings
   FROM sanctions_screenings
  WHERE status = 'pending';
 ```
-  잔여 건은 `rpc_resolve_sanctions_screening`으로 clear/hit 처리 후 재확인.
+
+잔여 건은 `rpc_resolve_sanctions_screening`으로 clear/hit 처리 후 재확인.
+
 - [ ] **외부 제재 리스트**: 데이터 소스·적재 주기 결정 완료(인간 결정 #7). 미결정 시 STOP.
 - [ ] **일일 출금 한도**:
+
 ```sql
 SELECT key, value FROM app_config WHERE key = 'withdrawal_daily_cap_per_user';
 ```
@@ -747,11 +817,11 @@ SELECT
 
 ### 3시점 스크리닝 (코드 경로)
 
-| 시점 | 진입 RPC | 내부 헬퍼 |
-|------|----------|-----------|
-| KYC/온보딩 | `rpc_submit_kyc` | `_ensure_kyc_sanctions_screening_pending` → `sanctions_screenings` + `admin_review_queue` |
-| 입금 | `rpc_create_krw_deposit_request` / `_try_match_krw_deposit` | `_assert_sanctions_screening` |
-| 출금 | `rpc_request_withdrawal` | `_assert_kyc_withdrawal_gate` + `_assert_sanctions_screening` |
+| 시점       | 진입 RPC                                                    | 내부 헬퍼                                                                                 |
+| ---------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| KYC/온보딩 | `rpc_submit_kyc`                                            | `_ensure_kyc_sanctions_screening_pending` → `sanctions_screenings` + `admin_review_queue` |
+| 입금       | `rpc_create_krw_deposit_request` / `_try_match_krw_deposit` | `_assert_sanctions_screening`                                                             |
+| 출금       | `rpc_request_withdrawal`                                    | `_assert_kyc_withdrawal_gate` + `_assert_sanctions_screening`                             |
 
 ### 매치(hit) 시 자동 동작 (사실)
 
@@ -779,17 +849,18 @@ SELECT
 
 ### 사용자가 설정하는 항목 (웹 `/responsible-gaming`)
 
-| 기능 | RPC | 비고 |
-|------|-----|------|
+| 기능               | RPC                                             | 비고                                          |
+| ------------------ | ----------------------------------------------- | --------------------------------------------- |
 | 월 입금 한도 (KRW) | `rpc_set_rg_limit('deposit', …, 'KRW', amount)` | `_assert_rg_deposit_allowed`가 초과 입금 차단 |
-| 월 게임 손실 한도 | `rpc_set_rg_limit('loss', 'game', …)` | 월간 순손실 누적 시 신규 베팅 차단 |
-| 자기제한 | `rpc_set_self_exclusion(until, reason)` | 입금·베팅·트레이딩 **신규 진입** 차단 |
+| 월 게임 손실 한도  | `rpc_set_rg_limit('loss', 'game', …)`           | 월간 순손실 누적 시 신규 베팅 차단            |
+| 자기제한           | `rpc_set_self_exclusion(until, reason)`         | 입금·베팅·트레이딩 **신규 진입** 차단         |
 
 ### 자기제한 중 사용자 문의 시 (운영자 응답 원칙)
 
 1. **만료 전 조기 해제 불가**: 운영자는 `rg_self_exclusions`를 직접 UPDATE하거나 임의 RPC로 만료를 당기지 **않는다**. 24시간 cooling-off 이후에만 시스템이 허용하는 해제 경로가 있다(마이그레이션 `00073` — 사용자 요청 + 대기).
 2. **잔액·원장 변경 없음**: 자기제한은 진입 가드만 적용한다. 기존 포지션 청산·잔액 조회는 가능; Σ=0 불변.
 3. **확인 쿼리**:
+
 ```sql
 SELECT user_id, excluded_until, reason, created_at
   FROM rg_self_exclusions
@@ -798,6 +869,7 @@ SELECT user_id, excluded_until, reason, created_at
  ORDER BY created_at DESC
  LIMIT 1;
 ```
+
 4. **오탐/버그 의심**: `audit_logs`와 해당 시점 `wallet_ledger` delta만 확인. 잔액 직접 수정 금지 — Scenario 1 참조.
 
 ### 입금 한도 초과 문의
@@ -809,12 +881,12 @@ SELECT user_id, excluded_until, reason, created_at
 
 ## §7 Escalation
 
-| 단계 | 조건 | 조치 |
-|------|------|------|
-| L1 | 단일 open alert, Σ=0 유지 | Admin Alerts acknowledge → Scenario 해당 절차 |
-| L2 | `reconciliation_mismatch` 또는 hash-chain broken | `system_readonly` 유지, Scenario 1·2, 24h 내 root-cause Build Log |
-| L3 | 출금/제재/RG와 법무·AML 교차 | STOP — `feature_withdrawal_enabled` 변경 금지, 인간 결정 #1·#5·#7 |
-| L4 | 데이터 무결성·보안 침해 의심 | `system_halt=true`, Supabase support + 인간 결정, remote 스키마 변경 중단 |
+| 단계 | 조건                                             | 조치                                                                      |
+| ---- | ------------------------------------------------ | ------------------------------------------------------------------------- |
+| L1   | 단일 open alert, Σ=0 유지                        | Admin Alerts acknowledge → Scenario 해당 절차                             |
+| L2   | `reconciliation_mismatch` 또는 hash-chain broken | `system_readonly` 유지, Scenario 1·2, 24h 내 root-cause Build Log         |
+| L3   | 출금/제재/RG와 법무·AML 교차                     | STOP — `feature_withdrawal_enabled` 변경 금지, 인간 결정 #1·#5·#7         |
+| L4   | 데이터 무결성·보안 침해 의심                     | `system_halt=true`, Supabase support + 인간 결정, remote 스키마 변경 중단 |
 
 **연락 전 준비**: 최신 `reconciliation_log`, `ops_alerts`, `audit_logs` 20건, 영향 통화별 Σ 스냅샷(빠른 참조 SQL).
 

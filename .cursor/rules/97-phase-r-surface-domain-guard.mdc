@@ -1,0 +1,95 @@
+---
+description: Phase R duplicate-work STOP + surface domain isolation guard (Plan phase_r_super-app_8bdf2c10)
+alwaysApply: true
+---
+
+# Phase R Surface Domain Guard (non-waivable)
+
+> **Plan SOT:** `phase_r_super-app_8bdf2c10` · **Boundary SOT:** `apps/web/src/product/shell/surface-domain-boundary.ts`  
+> **Gate:** `bun run check:phase-r-guards -- --strict` · **Queue:** `docs/SSOT/ACTIVE_WORK_SSOT.md`
+
+## AI STOP — duplicate work suspected
+
+**즉시 구현 중단**하고 operator에게 한국어로 보고한다. 추측으로 진행 **금지**.
+
+| 신호 | 행동 |
+|------|------|
+| ACTIVE_WORK_SSOT / REBUILD_PLAN에 todo가 `[x] DONE` · **재착수 금지** | STOP — 확장·잔여만 허용 |
+| 동일 route·surface·controller·test가 이미 존재 | STOP — **개선/확장**만, parallel 파일 **금지** |
+| `git status` / Grep에 같은 목적의 untracked surface·route | STOP — 중복 생성 전 operator 확인 |
+| `check:phase-r-guards` red | STOP — 위반 목록 전부 보고 후 수정 방향 제안 |
+| Plan YAML todo id가 completed | STOP — 다음 pending todo만 착수 |
+
+**보고 형식 (필수):**
+
+```text
+⛔ Phase R guard STOP
+- 의심 유형: [duplicate todo | cross-domain | parallel surface | layout debt]
+- 근거: 파일:라인 또는 gate id
+- 이미 존재하는 정본: <path>
+- 제안: [확장만 / 다른 todo / operator 승인 필요]
+```
+
+착수 전 **항상** 실행:
+
+```bash
+git status
+rg "<surface|route|controller name>" apps/web/src
+bun run check:phase-r-guards -- --strict
+```
+
+`PHONARA_IMPL_TODO=<id>` 환경변수 설정 시 gate가 completed todo면 **자동 FAIL**.
+
+---
+
+## 도메인 격리 — 페이지별 허용 범위 (§12.19)
+
+각 BottomNav chapter는 **해당 도메인 기능만** 노출한다. 다른 chapter UI embed · subnav · desk widget **절대 금지**.
+
+| Tab | Route group | surfaces/ | features/ | 금지 |
+|-----|-------------|-----------|-----------|------|
+| **돈벌기 Earn** | `/home` · `/referral` · `/tier` · `/earn` · `/share` · `/onboarding` | `home` · `referral` · `tier` · `share` · `onboarding` | `earn` · `onboarding` | trade desk · sports slip · casino lobby · wallet rails |
+| **지갑 Wallet** | `/wallet` · `/ledger` · `/rewards` | `wallet` · `rewards` | `wallet` | missions · order ticket · bet slip · game stage |
+| **거래 Trade** | `/trade` · `/staking` | `trade` · `staking` | `trading` · `trade` · `earn`(staking only) | sports · casino · earn missions |
+| **스포츠 Sports** | `/sports` | `sports` | `sports` | trade chart · casino · earn hub |
+| **카지노 Casino** | `/casino` · `/games` · 12 game slugs | `casino` · `games` | `casino` | trade · sports · earn (navigate CTA만 Earn에서 허용) |
+
+**12종 카지노만:** crash · limbo · dice · mines · hilo · plinko · mint-reels · gold-rush · roulette · blackjack · deepshaft · momentum — [`CASINO_UX_CANON.md`](../../docs/SSOT/CASINO_UX_CANON.md)
+
+**Cross-domain CTA (Earn/Home):** `/trade` · `/sports` · `/casino`로 **navigate only** — embed **금지**.
+
+**Subnav owner:** `AppShell` only — surface page 내부 `HorizontalSubnav` · `*-subnav` import **금지**.
+
+---
+
+## Mobile / layout 금지 (유저불만 0 · §32.7)
+
+| 금지 | 이유 |
+|------|------|
+| 페이지 root `max-w-[390px]` · `w-[390px]` | shell column 우회 → 좌우 스크롤 |
+| 페이지 root `min-w-[500px+]` | 모바일 가로 스크롤 |
+| surface에서 subnav + 긴 vertical stack 중복 | 한 화면에 chrome 이중 · 스크롤 혼란 |
+| Trade layout에 sports/casino embed | pre-demolition Bet hub — **역사·금지** |
+| `?section=sports\|casino` on `/trade` | canonical route 분리 위반 |
+
+표·order book 등 **의도된** `overflow-x-auto`는 **Card/table wrapper** 안에서만 — page root **금지**.
+
+---
+
+## Preflight checklist (매 surface todo)
+
+1. ACTIVE_WORK_SSOT NEXT todo 1개 확인 — completed todo 재착수 **금지**
+2. `surface-domain-boundary.ts`에 route·folder 등록 여부
+3. blueprint [`SURFACE_BLUEPRINTS.md`](../../docs/SSOT/SURFACE_BLUEPRINTS.md) Required modules만 — 임의 모듈 **금지**
+4. `bun run check:phase-r-guards -- --strict` · `check:ui-architecture -- --strict`
+5. `gate:ai-impl -- --test <surface path>`
+
+## FAIL
+
+- completed Plan todo 재구현
+- Earn page에 casino game · sports bet UI
+- Trade page에 mission hub · casino lobby
+- parallel `-page.tsx` / duplicate route file
+- guard red인데 operator 보고 없이 Implement 계속
+
+교차 참조: `70-autonomy-and-delivery` §0 · `89-beginner-autopilot` · `91-uiux-worldclass-methodology` · `DESIGN_PRINCIPLES.md` §1

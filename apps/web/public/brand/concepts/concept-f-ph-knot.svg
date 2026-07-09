@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" role="img" aria-label="PHONARA concept ph knot">
+  <path fill-rule="evenodd" d="M152 128h56v256h-56a16 16 0 0 1-16-16V144a16 16 0 0 1 16-16zm56 0h76c62.4 0 113 50.6 113 113s-50.6 113-113 113h-76V128zm76 48v130h40c35.3 0 64-28.7 64-64s-28.7-64-64-64h-40z"/>
+  <rect x="328" y="128" width="56" height="256" rx="16"/>
+  <rect x="208" y="232" width="176" height="48" rx="12"/>
+</svg>

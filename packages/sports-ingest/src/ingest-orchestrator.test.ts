@@ -20,13 +20,23 @@ describe('shouldRunScheduledTick', () => {
 describe('evaluateIngestHealthStatus', () => {
   it('marks stale when lag exceeds threshold', () => {
     expect(
-      evaluateIngestHealthStatus({ lagMs: 200_000, staleMs: 180_000, errored: false, disabled: false }),
+      evaluateIngestHealthStatus({
+        lagMs: 200_000,
+        staleMs: 180_000,
+        errored: false,
+        disabled: false,
+      }),
     ).toBe('stale');
   });
 
   it('marks error over stale', () => {
     expect(
-      evaluateIngestHealthStatus({ lagMs: 200_000, staleMs: 180_000, errored: true, disabled: false }),
+      evaluateIngestHealthStatus({
+        lagMs: 200_000,
+        staleMs: 180_000,
+        errored: true,
+        disabled: false,
+      }),
     ).toBe('error');
   });
 });

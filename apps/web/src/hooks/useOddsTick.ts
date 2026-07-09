@@ -1,12 +1,12 @@
 // S1/F26 — live odds tick · string-only math · mock SOT
 // no Number() · no parseFloat · no float arithmetic.
 // hard guard: live === false → tick 0.
-import { useEffect, useRef, useState } from "react";
-import { addDecimalStrings } from "@/components/sports/display-odds-multiply";
+import { useEffect, useRef, useState } from 'react';
+import { addDecimalStrings } from '@/lib/display-odds-multiply';
 
 export interface OddsTick {
   odds: string;
-  dir: "up" | "down" | null;
+  dir: 'up' | 'down' | null;
 }
 
 function hashSeed(id: string): number {
@@ -19,17 +19,13 @@ function hashSeed(id: string): number {
 }
 
 function prefersReducedMotion(): boolean {
-  if (typeof window === "undefined" || !window.matchMedia) return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (typeof window === 'undefined' || !window.matchMedia) return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-export function useOddsTick(
-  outcomeId: string,
-  baseOdds: string,
-  live: boolean,
-): OddsTick {
+export function useOddsTick(outcomeId: string, baseOdds: string, live: boolean): OddsTick {
   const [odds, setOdds] = useState<string>(baseOdds);
-  const [dir, setDir] = useState<"up" | "down" | null>(null);
+  const [dir, setDir] = useState<'up' | 'down' | null>(null);
   const seedRef = useRef<number>(hashSeed(outcomeId));
   const clearRef = useRef<(() => void) | null>(null);
 
@@ -54,7 +50,7 @@ export function useOddsTick(
       const wait = 8000 + (seed % span);
       timer = window.setTimeout(() => {
         if (cancelled) return;
-        if (document.visibilityState === "hidden") {
+        if (document.visibilityState === 'hidden') {
           schedule();
           return;
         }
@@ -62,15 +58,13 @@ export function useOddsTick(
         const s = seedRef.current;
         const upBit = (s & 1) === 1;
         const bigStep = (s & 2) === 2;
-        const step = bigStep ? "0.05" : "0.01";
-        const nextDir: "up" | "down" = upBit ? "up" : "down";
+        const step = bigStep ? '0.05' : '0.01';
+        const nextDir: 'up' | 'down' = upBit ? 'up' : 'down';
         setOdds((prev) => {
           const next =
-            nextDir === "up"
-              ? addDecimalStrings(prev, step)
-              : addDecimalStrings(prev, `-${step}`);
+            nextDir === 'up' ? addDecimalStrings(prev, step) : addDecimalStrings(prev, `-${step}`);
           // floor guard at 1.01 — display only
-          if (next.startsWith("-") || next === "0.00" || next === "1.00") {
+          if (next.startsWith('-') || next === '0.00' || next === '1.00') {
             return addDecimalStrings(prev, step);
           }
           return next;

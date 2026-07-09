@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
-import { spawnSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
+import { runDbScript } from '../../scripts/lib/db-connect.ts';
 import {
   diceMultiplier,
   getGame,
@@ -73,9 +73,7 @@ function buildCases(): SqlCase[] {
   let index = 0;
   for (const def of CASE_DEFS) {
     for (let i = 0; i < CASES_PER_GAME; i += 1) {
-      const serverSeed = createHash('sha256')
-        .update(`part-c:${def.game}:${i}`)
-        .digest('hex');
+      const serverSeed = createHash('sha256').update(`part-c:${def.game}:${i}`).digest('hex');
       cases.push({
         ...def,
         index,
@@ -117,22 +115,14 @@ ORDER BY idx;
 }
 
 function runSql(sql: string): string {
-  const result = spawnSync(
-    'docker',
-    [
-      'exec',
-      '-i',
-      'supabase_db_yocjhjsdwoijfdrehzoq',
-      'psql',
-      '-U',
-      'postgres',
-      '-d',
-      'postgres',
-      '-At',
-    ],
-    { input: sql, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 },
-  );
-  if (result.status !== 0) {
+  const result = runDbScript(sql, { psqlArgs: ['-At'] });
+  if (result.mode === 'unavailable') {
+    throw new Error(
+      `Supabase DB not reachable (${result.detail}). ` +
+        'Install postgresql-client and set SUPABASE_DB_URL, or run `supabase start`.',
+    );
+  }
+  if (!result.ok) {
     throw new Error(result.stderr || result.stdout || 'SQL parity query failed');
   }
   return result.stdout;

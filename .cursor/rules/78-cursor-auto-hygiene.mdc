@@ -12,14 +12,16 @@ alwaysApply: true
 
 | 트리거 | 동작 | 스크립트 |
 |--------|------|----------|
-| **Cursor 채팅 세션 시작** | 고아 vitest/playwright 종료 → E2E 포트 sweep → `clean:artifacts` → (로그 80MB+) Cursor 로그만 자동 정리 → watcher exclude 동기화 | `.cursor/hooks.json` → `sessionStart` |
+| **Cursor 채팅 세션 시작** | 고아 vitest/playwright 종료 → E2E 포트 sweep → `clean:artifacts` → (로그 50MB+) Cursor 로그만 자동 정리 → watcher exclude 동기화 | `.cursor/hooks.json` → `sessionStart` |
+| **에이전트 턴 종료 (`stop`)** | E2E 포트 sweep만 · artifact residue 있을 때만 clean · **CIM orphan 스캔 생략** (~1s) | `stop` hook → `agent-stop` |
 | **에이전트 작업 종료 (`stop`)** | 고아 프로세스 종료 → E2E 포트 sweep → `clean:artifacts` | `stop` hook |
 | **무거운 shell 직전** | 고아/포트 선제 정리 (dist 유지) | `beforeShellExecution` matcher: `test\|build\|check\|test:e2e\|check:full` |
 | **무거운 shell 직후** | 고아 종료 → 포트 sweep → `clean:artifacts` | `afterShellExecution` (동일 matcher + `e2e:kill`) |
 | **`bun run test` 직전** | 고아 vitest/playwright 종료 | `pretest` → `cursor:kill-orphans` |
 | **`bun run test:e2e*` 직전** | 고아 종료 + `e2e:kill` | `pretest:e2e*` |
 | **`bun run test*` / E2E 직후** | `clean:artifacts` | 기존 `posttest` / `posttest:e2e*` |
-| **렉·hang 스파이크** | `cursor:status` → `cursor:emergency-reset` | operator·agent 수동 1회 |
+| **렉·hang 스파이크** | `cursor:status` → **`cursor:purge`** (전체) 또는 `cursor:emergency-reset` (repo-only) | operator·agent 수동 1회 |
+| **raw Playwright / dev:web shell** | hook deny (`e2e-raw-deny.ts`) | `beforeShellExecution` · G5 |
 
 정본 설정: `.cursor/hooks.json` · 구현: `scripts/cursor-session-hygiene.ts` ·
 고아 탐지: `scripts/lib/cursor-dev-processes.ts` · **저사양 baseline:** `79-low-spec-pc.mdc`
@@ -55,13 +57,13 @@ Hook이 실패해도 에이전트는 아래를 **직접** 지킨다:
 4. **진단 shell 금지** — `Get-Process` / 전체 repo 파일 카운트 등을
    끝없이 돌려두지 않음
 5. **Docker** — 로컬 Supabase 미사용 시 Docker Desktop 종료 권고 (operator)
-6. **저사양 PC** — `79-low-spec-pc.mdc` 전 항목 준수 · 렉 시 `bun run cursor:emergency-reset`
+6. **저사양 PC** — `79-low-spec-pc.mdc` 전 항목 준수 · 렉 시 **`bun run cursor:purge`**
 
 ## operator 수동 (자동화 밖 · 필요 시만)
 
 - `.cursorignore` / `.vscode/settings.json` 변경 후 → Cursor **완전 재시작**
 - 월 1회: `bun run cursor:clean-metadata` (dry-run) → 필요 시 `--apply`
-- 렉 지속: `bun run cursor:preflight` (수동 full 진단 + dry-run metadata)
+- 렉 지속: `bun run cursor:purge` 또는 `bun run cursor:preflight`
 
 ## FAIL = 렉 방지 규칙 위반
 
@@ -75,11 +77,11 @@ Hook이 실패해도 에이전트는 아래를 **직접** 지킨다:
 ## self-check (변경 후)
 
 ```bash
-rg "sessionStart|cursor:hook|cursor:kill-orphans|cursor:emergency-reset|pretest" .cursor/hooks.json package.json
+rg "sessionStart|cursor:hook|cursor:purge|e2e-raw-deny|pretest" .cursor/hooks.json package.json
 bun run cursor:status
-bun run cursor:kill-orphans
+bun run cursor:purge
 bun run cursor:session-end
 bun run check:hygiene
 ```
 
-See also: `75-workspace-hygiene.mdc` · `76-cursor-performance.mdc` · `77-e2e-lifecycle.mdc` · **`79-low-spec-pc.mdc`**
+See also: `75-workspace-hygiene.mdc` · `76-cursor-performance.mdc` · `77-e2e-lifecycle.mdc` · **`79-low-spec-pc.mdc`** · **`83-session-purge-contract.mdc`**

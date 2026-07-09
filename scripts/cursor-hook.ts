@@ -1,17 +1,14 @@
-import { spawnSync } from 'node:child_process';
+import { spawnSyncSafe } from './lib/spawn-safe';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { countActiveHeavyRepoShells } from './lib/cursor-dev-processes';
 
-const REPO_ROOT = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  '..',
-);
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 type HookKind = 'session-start' | 'session-stop' | 'after-shell' | 'before-shell';
 
 function runHygiene(script: string): void {
-  spawnSync('bun', ['run', script], {
+  spawnSyncSafe('bun', ['run', script], {
     cwd: REPO_ROOT,
     stdio: 'inherit',
   });
@@ -26,7 +23,10 @@ switch (kind) {
     break;
 
   case 'session-stop':
-    runHygiene('cursor:session-end');
+    spawnSyncSafe('tsx', ['scripts/cursor-session-hygiene.ts', 'agent-stop'], {
+      cwd: REPO_ROOT,
+      stdio: 'inherit',
+    });
     process.stdout.write('{}\n');
     break;
 

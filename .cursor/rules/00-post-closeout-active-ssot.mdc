@@ -1,0 +1,37 @@
+---
+description: Post Demolition + Engine Apex closed — active SSOT only (Phase R)
+alwaysApply: true
+---
+
+# Active work SSOT (2026-07-03)
+
+> **Demolition DONE** · **Engine Apex FULLY CLOSED** · **구현 큐 = Phase R only**
+
+## Read first (implementation)
+
+1. [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../docs/SSOT/ACTIVE_WORK_SSOT.md) — **유일한 실행 큐 정본**
+2. [`docs/PRODUCT/REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) — Phase R 실행 정본 (2026-07-04 승인)
+3. [`docs/ENGINE_APEX_CLOSEOUT.md`](../../docs/ENGINE_APEX_CLOSEOUT.md) — **상태·게이트 수치만** (재착수 금지)
+
+## Do not read as work queue
+
+- `docs/ENGINE_PHASE*EVIDENCE*` · `ENGINE_POST_APEX*` · `ENGINE_FORENSIC*` · `ENGINE_STATE_AUDIT*`
+- Batch 11 deleted v2 docs · `DEMOLITION_PLAN` batch rows (Demolition **DONE** — 삭제 확장 금지)
+- `docs/CURRENT_STATUS.md` §AI Todo Sync (Phase R 전 유예)
+- `UI_REBUILD_WAVE` · `MASTER_TODO` · `UIUX_FULL_REBUILD_EXECUTION` (git rm)
+
+정본 차단: [`docs/SSOT/DEPRECATED_DOC_DENYLIST.md`](../../docs/SSOT/DEPRECATED_DOC_DENYLIST.md) · `bun run check:ai-reference`
+
+## Engine freeze (non-waivable)
+
+- **금지:** 신규 `supabase/migrations` · `packages/*-engine` 기능 · RPC/RLS 확장 (엔진 구현 큐 0)
+- **허용:** Phase R presentation 와이어 · 버그 fix · Demolition 삭제로 깨진 glue 복구
+- **Money:** UI는 RPC 표시만 · `@phonara/money` · Σ=0 · `stack:push-remote`
+
+## Phase R
+
+- Surface **1개** · canonical route **1개** · [`REBUILD_PLAN_v1`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) 정본
+- `check:ui-architecture` · `gate:ai-impl` — P6 gate todo에서 재정의
+- Track A 순서: **P1 Foundation → P2 Admin** → P3 Auth → … (Admin-first · §12.20)
+
+`00-phase-d-demolition.mdc` Demolition batch 지시는 **역사** — Demolition DONE 이후 본 규칙 우선.

@@ -23,8 +23,15 @@ function fmt6(v: Decimal | number | string): string {
 }
 
 /** Token bucket rate limit check — mirrors _enforce_rate_limit in SQL */
-interface Bucket { tokens: number; lastRefill: number }
-interface RlConfig { capacity: number; refillRate: number; cost: number }
+interface Bucket {
+  tokens: number;
+  lastRefill: number;
+}
+interface RlConfig {
+  capacity: number;
+  refillRate: number;
+  cost: number;
+}
 
 function checkRateLimit(
   bucket: Bucket,
@@ -141,8 +148,8 @@ describe('A4: Hash-chain ledger — payload construction', () => {
   });
 
   it('tampered direction produces different payload (detectable)', () => {
-    const honest  = buildHashPayload('abc', 'id-1', 'credit', 'PHON', '100.000000', TS);
-    const tampered = buildHashPayload('abc', 'id-1', 'debit',  'PHON', '100.000000', TS);
+    const honest = buildHashPayload('abc', 'id-1', 'credit', 'PHON', '100.000000', TS);
+    const tampered = buildHashPayload('abc', 'id-1', 'debit', 'PHON', '100.000000', TS);
     expect(honest).not.toBe(tampered);
   });
 
@@ -150,15 +157,22 @@ describe('A4: Hash-chain ledger — payload construction', () => {
     // Simulate 3-row chain
     const entries = [
       { id: 'e1', direction: 'credit', currency: 'PHON', amount: '5000.000000', createdAt: TS },
-      { id: 'e2', direction: 'debit',  currency: 'PHON', amount: '100.000000',  createdAt: TS },
-      { id: 'e3', direction: 'credit', currency: 'PHON', amount: '50.000000',   createdAt: TS },
+      { id: 'e2', direction: 'debit', currency: 'PHON', amount: '100.000000', createdAt: TS },
+      { id: 'e3', direction: 'credit', currency: 'PHON', amount: '50.000000', createdAt: TS },
     ];
 
     // Build hashes
     let prevHash: string | null = null;
     const hashes: string[] = [];
     for (const e of entries) {
-      const payload = buildHashPayload(prevHash, e.id, e.direction, e.currency, e.amount, e.createdAt);
+      const payload = buildHashPayload(
+        prevHash,
+        e.id,
+        e.direction,
+        e.currency,
+        e.amount,
+        e.createdAt,
+      );
       // Simulate SHA-256 with a deterministic surrogate (btoa for offline test)
       const hash = btoa(payload);
       hashes.push(hash);
@@ -170,9 +184,19 @@ describe('A4: Hash-chain ledger — payload construction', () => {
     let broken = false;
     for (let i = 0; i < entries.length; i++) {
       const e = entries[i]!;
-      const payload = buildHashPayload(prevHash, e.id, e.direction, e.currency, e.amount, e.createdAt);
+      const payload = buildHashPayload(
+        prevHash,
+        e.id,
+        e.direction,
+        e.currency,
+        e.amount,
+        e.createdAt,
+      );
       const expected = btoa(payload);
-      if (expected !== hashes[i]) { broken = true; break; }
+      if (expected !== hashes[i]) {
+        broken = true;
+        break;
+      }
       prevHash = hashes[i] ?? null;
     }
     expect(broken).toBe(false);
@@ -184,9 +208,19 @@ describe('A4: Hash-chain ledger — payload construction', () => {
     broken = false;
     for (let i = 0; i < entries.length; i++) {
       const e = entries[i]!;
-      const payload = buildHashPayload(prevHash, e.id, e.direction, e.currency, e.amount, e.createdAt);
+      const payload = buildHashPayload(
+        prevHash,
+        e.id,
+        e.direction,
+        e.currency,
+        e.amount,
+        e.createdAt,
+      );
       const expected = btoa(payload);
-      if (expected !== hashes[i]) { broken = true; break; }
+      if (expected !== hashes[i]) {
+        broken = true;
+        break;
+      }
       prevHash = hashes[i] ?? null;
     }
     expect(broken).toBe(true); // tampering detected

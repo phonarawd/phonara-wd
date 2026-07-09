@@ -207,6 +207,11 @@ describe('computeCloseSettlement', () => {
     expect(s.equityReturned).toBe('49.430000');
     expect(s.isWipeout).toBe(false);
   });
+
+  it('returns exitPrice at 6dp (SQL _fmt6 parity)', () => {
+    const s = computeCloseSettlement({ position: longPos, exitPrice: '0.012900' });
+    expect(s.exitPrice).toBe('0.012900');
+  });
 });
 
 describe('isLiquidatable', () => {

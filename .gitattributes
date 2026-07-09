@@ -1,2 +1,3 @@
 # Migration append-only lock hashes SHA-256 raw file bytes — force LF on all platforms.
 supabase/migrations/*.sql text eol=lf
+packages/shared-types/src/database.types.ts text eol=lf

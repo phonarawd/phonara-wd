@@ -124,7 +124,11 @@ function trace097Overwrites(): Array<{
     if (!row) continue;
 
     const hadAdminIn084Scope = chunk.includes('IF NOT _is_admin()');
-    if (rpc === 'rpc_check_casino_rtp_drift' && hadAdminIn084Scope && !chunk.includes('_assert_admin_aal2')) {
+    if (
+      rpc === 'rpc_check_casino_rtp_drift' &&
+      hadAdminIn084Scope &&
+      !chunk.includes('_assert_admin_aal2')
+    ) {
       out.push({
         rpc,
         guard: 'aal2',
@@ -147,7 +151,10 @@ function probeAal1(
   return { ok: r.ok, error: err.slice(0, 500), blocked };
 }
 
-function probeHaltUser(userId: string, rpcCall: string): { ok: boolean; error: string; leaked: boolean } {
+function probeHaltUser(
+  userId: string,
+  rpcCall: string,
+): { ok: boolean; error: string; leaked: boolean } {
   sqlExec(`UPDATE app_config SET value = 'true' WHERE key = 'system_halt';`);
   const r = sqlAsUser<unknown>(userId, rpcCall);
   sqlExec(`UPDATE app_config SET value = 'false' WHERE key = 'system_halt';`);
@@ -161,9 +168,7 @@ function ensureHaltOff(): void {
 }
 
 function filterActionableAal2Gaps(rows: RpcRow[]): RpcRow[] {
-  return rows.filter(
-    (r) => r.is_admin && !r.aal2 && !isAllowlisted(r.name, r.args, 'aal2-exempt'),
-  );
+  return rows.filter((r) => r.is_admin && !r.aal2 && !isAllowlisted(r.name, r.args, 'aal2-exempt'));
 }
 
 function filterActionableSystemLiveGaps(rows: RpcRow[]): RpcRow[] {
@@ -191,7 +196,8 @@ async function main(): Promise<void> {
     );
   `);
 
-  const aal1Probes: Record<string, { ok: boolean; error: string; blocked: boolean; call: string }> = {};
+  const aal1Probes: Record<string, { ok: boolean; error: string; blocked: boolean; call: string }> =
+    {};
 
   aal1Probes.rpc_check_casino_rtp_drift = {
     ...probeAal1(adminId, 'rpc_check_casino_rtp_drift()'),
@@ -231,7 +237,8 @@ async function main(): Promise<void> {
 
   ensureHaltOff();
 
-  const haltProbes: Record<string, { ok: boolean; error: string; leaked: boolean; call: string }> = {};
+  const haltProbes: Record<string, { ok: boolean; error: string; leaked: boolean; call: string }> =
+    {};
 
   const stakeRes = sqlAsUser<{ position_id?: string }>(
     fixture.userA.id,
@@ -317,7 +324,9 @@ async function main(): Promise<void> {
 
   const rtp = aal1Probes.rpc_check_casino_rtp_drift;
   if (rtp?.ok) {
-    launchBlockers.push('[A] rpc_check_casino_rtp_drift: AAL1 admin 통과 — MFA 없이 RTP drift/게임 kill switch');
+    launchBlockers.push(
+      '[A] rpc_check_casino_rtp_drift: AAL1 admin 통과 — MFA 없이 RTP drift/게임 kill switch',
+    );
   }
 
   for (const [name, p] of Object.entries(aal1Probes)) {

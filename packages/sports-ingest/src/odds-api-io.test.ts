@@ -48,8 +48,6 @@ describe('mapOddsApiIoEventOddsToMessages', () => {
 
   it('returns empty when no bookmakers', () => {
     const empty: OddsApiIoEventOdds = { ...sampleOdds, bookmakers: {} };
-    expect(mapOddsApiIoEventOddsToMessages(empty, 'epl', '2026-06-16T12:00:00.000Z')).toEqual(
-      [],
-    );
+    expect(mapOddsApiIoEventOddsToMessages(empty, 'epl', '2026-06-16T12:00:00.000Z')).toEqual([]);
   });
 });

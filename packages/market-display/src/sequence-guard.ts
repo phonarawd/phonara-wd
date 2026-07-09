@@ -1,4 +1,4 @@
-import type { BookDelta, BookSnapshot } from "./order-book-types";
+import type { BookDelta, BookSnapshot } from './order-book-types';
 
 export type SequenceGuardState = {
   lastUpdateId: number;
@@ -14,10 +14,7 @@ export function createSequenceGuard(snapshot: BookSnapshot): SequenceGuardState 
  * Binance depth stream: apply delta only when U <= lastUpdateId+1 <= u.
  * Gap → needsReseed (REST depth snapshot required).
  */
-export function applyBookDelta(
-  state: SequenceGuardState,
-  delta: BookDelta,
-): SequenceGuardState {
+export function applyBookDelta(state: SequenceGuardState, delta: BookDelta): SequenceGuardState {
   const expected = state.lastUpdateId + 1;
   if (delta.u < expected) {
     return state;

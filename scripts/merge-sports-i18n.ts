@@ -36,9 +36,12 @@ function formatEntry([k, v]: [string, string]): string {
 }
 
 if (newKo.length > 0) {
-  const insertKo = '\n  // ── Sportsbook (Lovable Wave-1 paste) ─────────────────────────────────────\n' +
-    newKo.map(formatEntry).join('\n') + '\n';
-  const anchor = "  'sports.disclaimer.quota': '월 요청 한도 내에서 ingest 주기를 유지합니다. 설정은',";
+  const insertKo =
+    '\n  // ── Sportsbook (Presentation Wave-1 paste) ─────────────────────────────────────\n' +
+    newKo.map(formatEntry).join('\n') +
+    '\n';
+  const anchor =
+    "  'sports.disclaimer.quota': '월 요청 한도 내에서 ingest 주기를 유지합니다. 설정은',";
   if (src.includes(anchor)) {
     src = src.replace(anchor, anchor + insertKo);
   } else {
@@ -47,9 +50,12 @@ if (newKo.length > 0) {
 }
 
 if (newEn.length > 0) {
-  const insertEn = '\n  // ── Sportsbook (Lovable Wave-1 paste) ─────────────────────────────────────\n' +
-    newEn.map(formatEntry).join('\n') + '\n';
-  const anchor = "  'sports.disclaimer.quota': 'Ingest interval stays within the monthly request quota. Settings in',";
+  const insertEn =
+    '\n  // ── Sportsbook (Presentation Wave-1 paste) ─────────────────────────────────────\n' +
+    newEn.map(formatEntry).join('\n') +
+    '\n';
+  const anchor =
+    "  'sports.disclaimer.quota': 'Ingest interval stays within the monthly request quota. Settings in',";
   if (src.includes(anchor)) {
     src = src.replace(anchor, anchor + insertEn);
   } else {

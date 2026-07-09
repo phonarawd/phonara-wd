@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="OG card simulation  PHONARA">
+  <defs>
+    <linearGradient id="og-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07110d"/>
+      <stop offset="0.56" stop-color="#0d0f14"/>
+      <stop offset="1" stop-color="#071912"/>
+    </linearGradient>
+    <radialGradient id="og-halo" cx="26%" cy="48%" r="42%">
+      <stop offset="0" stop-color="#92ffd8" stop-opacity="0.34"/>
+      <stop offset="0.42" stop-color="#92ffd8" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#92ffd8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="og-wm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0fff9"/>
+      <stop offset="0.28" stop-color="#bfffe9"/>
+      <stop offset="0.62" stop-color="#92ffd8"/>
+      <stop offset="1" stop-color="#4bce9b"/>
+    </linearGradient>
+    <linearGradient id="og-body" x1="112" y1="200" x2="340" y2="430" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#eafff6"/>
+      <stop offset="0.5" stop-color="#7dffc8"/>
+      <stop offset="1" stop-color="#1a8a5c"/>
+    </linearGradient>
+    <radialGradient id="og-core" cx="38%" cy="34%" r="68%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#2cb87f"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" rx="36" fill="url(#og-bg)"/>
+  <circle cx="286" cy="316" r="236" fill="url(#og-halo)"/>
+  <g transform="translate(112,201) scale(0.445)">
+    <g fill="url(#og-body)">
+      <path d="M256 72c18 0 32 14 32 32 0 52-14 96-32 128-18-32-32-76-32-128 0-18 14-32 32-32z"/>
+      <path d="M256 440c-18 0-32-14-32-32 0-52 14-96 32-128 18 32 32 76 32 128 0 18-14 32-32 32z"/>
+      <path d="M72 256c0-18 14-32 32-32 52 0 96 14 128 32-32 18-76 32-128 32-18 0-32-14-32-32z"/>
+      <path d="M440 256c0 18-14 32-32 32-52 0-96-14-128-32 32-18 76-32 128-32 18 0 32 14 32 32z"/>
+    </g>
+    <circle cx="256" cy="256" r="52" fill="url(#og-core)"/>
+  </g>
+  <text x="360" y="290" font-family="Pretendard,system-ui,sans-serif" font-size="70" font-weight="600" letter-spacing="9.1" fill="url(#og-wm)">PHONARA</text>
+  <text x="362" y="340" font-family="Pretendard,system-ui,sans-serif" font-size="18" font-weight="500" letter-spacing="5.2" fill="#d8fff2" fill-opacity="0.72">EARN � TRADE � SPORTS � CASINO</text>
+</svg>

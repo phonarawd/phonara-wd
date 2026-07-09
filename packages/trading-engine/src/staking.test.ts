@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  estimateStakingReward,
-  computeAccruedReward,
-  canUnstake,
-  TradingError,
-} from './index';
+import { estimateStakingReward, computeAccruedReward, canUnstake, TradingError } from './index';
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -22,12 +17,12 @@ describe('estimateStakingReward', () => {
   });
 
   it('rejects negative apr and non-positive principal', () => {
-    expect(() =>
-      estimateStakingReward({ principal: '100', apr: '-0.1', days: '30' }),
-    ).toThrow(TradingError);
-    expect(() =>
-      estimateStakingReward({ principal: '0', apr: '0.1', days: '30' }),
-    ).toThrow(TradingError);
+    expect(() => estimateStakingReward({ principal: '100', apr: '-0.1', days: '30' })).toThrow(
+      TradingError,
+    );
+    expect(() => estimateStakingReward({ principal: '0', apr: '0.1', days: '30' })).toThrow(
+      TradingError,
+    );
   });
 });
 

@@ -1,4 +1,14 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2';
+import {
+  createEdgeContext,
+  mapSupabaseError,
+  recordEdgeOpsEvent,
+  recordProviderHealth,
+  assessCircuitBreaker,
+  recordCircuitBreakerOutcome,
+  toStableErrorCode,
+  type CircuitBreakerGate,
+} from '../_shared/edge-observability.ts';
 
 type Provider = 'binance' | 'bybit' | 'okx';
 
@@ -27,7 +37,6 @@ const REQUEST_TIMEOUT_MS = 4_000;
 const MAX_CONCURRENCY = 4;
 const MAX_RETRIES = 2; // total attempts per fetch = 1 + MAX_RETRIES
 const RETRY_BASE_MS = 200;
-const CIRCUIT_THRESHOLD = 3; // consecutive provider failures (this invocation) before tripping
 
 const jsonHeaders = { 'content-type': 'application/json' };
 
@@ -110,7 +119,11 @@ function sleep(ms: number): Promise<void> {
 
 // Bounded retry with exponential backoff. Caps total upstream work per source so a
 // flapping provider cannot stretch a single invocation past the cron interval.
-async function withRetry<T>(fn: () => Promise<T>, retries: number, baseDelayMs: number): Promise<T> {
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  retries: number,
+  baseDelayMs: number,
+): Promise<T> {
   let lastError: unknown;
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
@@ -128,7 +141,11 @@ async function withRetry<T>(fn: () => Promise<T>, retries: number, baseDelayMs: 
 // Fixed-size worker pool: at most `limit` upstream fetches are in flight at once,
 // regardless of how many market sources are enabled. The worker resolves with a
 // FeedResult for every item (never rejects), so the pool always settles cleanly.
-async function runPool<T, R>(items: readonly T[], limit: number, worker: (item: T) => Promise<R>): Promise<R[]> {
+async function runPool<T, R>(
+  items: readonly T[],
+  limit: number,
+  worker: (item: T) => Promise<R>,
+): Promise<R[]> {
   const results = new Array<R>(items.length);
   let cursor = 0;
 
@@ -242,11 +259,12 @@ function isProvider(value: string): value is Provider {
 }
 
 interface BreakerState {
-  failures: number;
-  open: boolean;
+  gate: CircuitBreakerGate;
 }
 
 Deno.serve(async (request) => {
+  const ctx = createEdgeContext('price-feed', request);
+
   try {
     const serviceBearer = await authorize(request);
     if (typeof serviceBearer !== 'string') {
@@ -263,19 +281,23 @@ Deno.serve(async (request) => {
       .eq('enabled', true);
 
     if (sourceError) {
-      return jsonResponse({ ok: false, error: 'source_query_failed', detail: sourceError.message }, 500);
+      ctx.logError('ops.price_feed.source_query_failed', mapSupabaseError(sourceError));
+      await recordEdgeOpsEvent(supabase, ctx, {
+        eventKey: 'ops.price_feed.failed',
+        status: 'error',
+        errorCode: mapSupabaseError(sourceError),
+      });
+      return ctx.jsonErr('source_query_failed', 500, { internal: sourceError });
     }
 
-    // Per-invocation, per-provider circuit breaker. Once a provider trips, the
-    // remaining sources for that provider short-circuit instead of each retrying
-    // a known-bad upstream.
+    // Per-provider DB circuit breaker gate (memoized per invocation).
     const breakers = new Map<Provider, BreakerState>();
-    const breakerFor = (provider: Provider): BreakerState => {
+    const breakerFor = async (provider: Provider): Promise<CircuitBreakerGate> => {
       const existing = breakers.get(provider);
-      if (existing) return existing;
-      const created: BreakerState = { failures: 0, open: false };
-      breakers.set(provider, created);
-      return created;
+      if (existing) return existing.gate;
+      const gate = await assessCircuitBreaker(supabase, provider, 'price_feed', '');
+      breakers.set(provider, { gate });
+      return gate;
     };
 
     const processSource = async (source: MarketSource): Promise<FeedResult> => {
@@ -291,8 +313,8 @@ Deno.serve(async (request) => {
         };
       }
 
-      const breaker = breakerFor(provider);
-      if (breaker.open) {
+      const gate = await breakerFor(provider);
+      if (!gate.allowed) {
         return {
           internalSymbol: source.internal_symbol,
           provider,
@@ -304,19 +326,35 @@ Deno.serve(async (request) => {
 
       let price: string;
       try {
-        price = await withRetry(() => fetchers[provider](source.provider_symbol), MAX_RETRIES, RETRY_BASE_MS);
-        breaker.failures = 0;
+        price = await withRetry(
+          () => fetchers[provider](source.provider_symbol),
+          MAX_RETRIES,
+          RETRY_BASE_MS,
+        );
+        await recordCircuitBreakerOutcome(supabase, ctx, {
+          provider,
+          domain: 'price_feed',
+          success: true,
+        });
+        const cached = breakers.get(provider);
+        if (cached) cached.gate = { allowed: true, state: 'closed' };
       } catch (error) {
-        breaker.failures += 1;
-        if (breaker.failures >= CIRCUIT_THRESHOLD) {
-          breaker.open = true;
-        }
+        const reason = toStableErrorCode(error, 'unknown_error');
+        await recordCircuitBreakerOutcome(supabase, ctx, {
+          provider,
+          domain: 'price_feed',
+          success: false,
+          errorCode: reason,
+        });
+        const refreshed = await assessCircuitBreaker(supabase, provider, 'price_feed', '');
+        const cached = breakers.get(provider);
+        if (cached) cached.gate = refreshed;
         return {
           internalSymbol: source.internal_symbol,
           provider,
           providerSymbol: source.provider_symbol,
           ok: false,
-          reason: error instanceof Error ? error.message : 'unknown_error',
+          reason,
         };
       }
 
@@ -335,7 +373,7 @@ Deno.serve(async (request) => {
             provider,
             providerSymbol: source.provider_symbol,
             ok: false,
-            reason: error.message,
+            reason: mapSupabaseError(error),
           };
         }
 
@@ -352,7 +390,7 @@ Deno.serve(async (request) => {
           provider,
           providerSymbol: source.provider_symbol,
           ok: false,
-          reason: error instanceof Error ? error.message : 'unknown_error',
+          reason: toStableErrorCode(error, 'unknown_error'),
         };
       }
     };
@@ -370,19 +408,63 @@ Deno.serve(async (request) => {
       return rpcResult['reason'] === 'insufficient_sources';
     }).length;
 
-    return jsonResponse({
+    const providerStats = new Map<string, { ok: number; fail: number; circuit: boolean }>();
+    for (const result of results) {
+      if (!isProvider(result.provider)) continue;
+      const stats = providerStats.get(result.provider) ?? { ok: 0, fail: 0, circuit: false };
+      if (result.ok) stats.ok += 1;
+      else stats.fail += 1;
+      if (result.reason === 'circuit_open') stats.circuit = true;
+      providerStats.set(result.provider, stats);
+    }
+
+    for (const [provider, stats] of providerStats) {
+      const breaker = breakers.get(provider as Provider);
+      let status: 'healthy' | 'degraded' | 'unavailable' = 'healthy';
+      if (breaker?.gate.state === 'open' || (stats.fail > 0 && stats.ok === 0))
+        status = 'unavailable';
+      else if (stats.fail > 0) status = 'degraded';
+
+      await recordProviderHealth(supabase, ctx, {
+        provider,
+        domain: 'price_feed',
+        status,
+        errorCode: status === 'healthy' ? null : stats.circuit ? 'circuit_open' : 'fetch_failures',
+        metadata: {
+          ok: stats.ok,
+          fail: stats.fail,
+          circuitOpen: stats.circuit,
+          breakerState: breaker?.gate.state ?? 'closed',
+        },
+      });
+    }
+
+    ctx.log('ops.price_feed.completed', {
+      batch_count: results.length,
+      skipped_count: circuitSkipped,
+    });
+
+    await recordEdgeOpsEvent(supabase, ctx, {
+      eventKey: 'ops.price_feed.completed',
+      status: submitted > 0 ? 'ok' : 'error',
+      batchCount: results.length,
+      skippedCount: circuitSkipped,
+      errorCode: submitted > 0 ? null : 'all_sources_failed',
+      metadata: { submitted, failed: results.length - submitted, insufficientSources },
+    });
+
+    return ctx.jsonOk({
       ok: true,
       attempted: results.length,
       submitted,
       failed: results.length - submitted,
       circuitSkipped,
       insufficientSources,
-      results,
     });
   } catch (error) {
-    return jsonResponse(
-      { ok: false, error: error instanceof Error ? error.message : 'unknown_error' },
-      500,
-    );
+    ctx.logError('ops.price_feed.failed', toStableErrorCode(error, 'internal_error'), {
+      internal: error,
+    });
+    return ctx.jsonErr(toStableErrorCode(error, 'internal_error'), 500, { internal: error });
   }
 });

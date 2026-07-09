@@ -21,7 +21,12 @@ describe('blackjack RED', () => {
     const floats = await floatStream(SERVER, CLIENT, 2, 51);
     expect(() =>
       playBlackjack(
-        { actions: [{ seat: 0, move: 'hit' }, { seat: 0, move: 'double' }] },
+        {
+          actions: [
+            { seat: 0, move: 'hit' },
+            { seat: 0, move: 'double' },
+          ],
+        },
         floats,
       ),
     ).toThrow('invalid_action');

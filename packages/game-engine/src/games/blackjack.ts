@@ -73,7 +73,11 @@ function buildHand(cards: number[]): BlackjackHand {
   };
 }
 
-function dealerPlay(deck: number[], idx: number, dealerCards: number[]): { hand: BlackjackHand; idx: number } {
+function dealerPlay(
+  deck: number[],
+  idx: number,
+  dealerCards: number[],
+): { hand: BlackjackHand; idx: number } {
   const cards = [...dealerCards];
   let i = idx;
   while (true) {

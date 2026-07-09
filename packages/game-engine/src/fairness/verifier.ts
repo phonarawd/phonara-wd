@@ -53,11 +53,7 @@ function stableStringify(value: unknown): string {
   return JSON.stringify(value);
 }
 
-export function recomputeResult(
-  game: GameCode,
-  floats: number[],
-  selection: unknown,
-): unknown {
+export function recomputeResult(game: GameCode, floats: number[], selection: unknown): unknown {
   return getGame(game).resultFromFloats(floats, selection);
 }
 

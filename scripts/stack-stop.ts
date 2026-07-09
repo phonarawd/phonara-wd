@@ -2,17 +2,27 @@
 /**
  * Release local Supabase containers after E2E/SQL sessions.
  *
- * Keeps Docker Desktop running (operator choice) but stops ~15 Supabase
- * containers that saturate RAM/CPU on low-spec PCs when left idle.
- *
- * Skip: PHONARA_KEEP_STACK=1 (e.g. back-to-back SQL after E2E).
+ * On-demand OFF (default): stops Supabase containers + quits Docker Desktop (WSL RAM).
+ * Skip stack: PHONARA_KEEP_STACK=1 · skip Desktop quit: PHONARA_DOCKER_AUTO_QUIT=0
  */
-import { spawnSync } from 'node:child_process';
 import { runDockerClean } from './lib/docker-clean';
+import {
+  dockerAutoQuitEnabled,
+  quitDockerDesktopAndReleaseWsl,
+} from './lib/docker-desktop-lifecycle';
 import { isLocalSupabaseRunning } from './lib/supabase-local';
+import { spawnSyncSafe } from './lib/spawn-safe';
 
 const args = new Set(process.argv.slice(2));
 const quiet = args.has('--quiet') || process.env['PHONARA_STACK_QUIET'] === '1';
+
+function maybeQuitDockerDesktop(): void {
+  if (dockerAutoQuitEnabled()) {
+    quitDockerDesktopAndReleaseWsl({ quiet });
+  } else if (!quiet) {
+    process.stdout.write('[stack:stop] PHONARA_DOCKER_AUTO_QUIT=0 — Docker Desktop left running\n');
+  }
+}
 
 function main(): void {
   if (process.env['PHONARA_KEEP_STACK'] === '1') {
@@ -27,6 +37,7 @@ function main(): void {
     if (process.env['PHONARA_SKIP_DOCKER_CLEAN'] !== '1') {
       runDockerClean({ level: 'safe', quiet });
     }
+    maybeQuitDockerDesktop();
     return;
   }
 
@@ -34,10 +45,9 @@ function main(): void {
     process.stdout.write('[stack:stop] stopping local Supabase (`supabase stop`)…\n');
   }
 
-  const stop = spawnSync('bunx', ['supabase', 'stop'], {
+  const stop = spawnSyncSafe('bunx', ['supabase', 'stop'], {
     stdio: quiet ? 'pipe' : 'inherit',
     encoding: 'utf8',
-    shell: process.platform === 'win32',
   });
 
   if (stop.status !== 0) {
@@ -55,6 +65,8 @@ function main(): void {
   if (process.env['PHONARA_SKIP_DOCKER_CLEAN'] !== '1') {
     runDockerClean({ level: 'safe', quiet });
   }
+
+  maybeQuitDockerDesktop();
 }
 
 main();

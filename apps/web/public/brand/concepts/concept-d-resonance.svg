@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" role="img" aria-label="PHONARA concept resonance ring">
+  <path fill-rule="evenodd" d="M256 72c101.6 0 184 82.4 184 184s-82.4 184-184 184S72 357.6 72 256 154.4 72 256 72zm0 32c-83.9 0-152 68.1-152 152s68.1 152 152 152 152-68.1 152-152S339.9 104 256 104z"/>
+  <rect x="196" y="196" width="36" height="120" rx="10"/>
+  <rect x="238" y="156" width="36" height="200" rx="10"/>
+  <rect x="280" y="196" width="36" height="120" rx="10"/>
+</svg>

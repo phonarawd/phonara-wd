@@ -1,9 +1,16 @@
 import { supabase } from './supabase';
 import type { Database } from '@phonara/shared-types';
+import type { MessageKey } from '@phonara/i18n';
+
+import { translateError } from './translate-error';
 
 export type RpcName = keyof Database['public']['Functions'];
 export type RpcArgs<N extends RpcName> = Database['public']['Functions'][N]['Args'];
 export type RpcReturns<N extends RpcName> = Database['public']['Functions'][N]['Returns'];
+
+/** PostgREST payload for call sites — zero-arg RPCs accept omitted args or `{}`. */
+export type RpcCallPayload<N extends RpcName> =
+  RpcArgs<N> extends never ? Record<string, never> | undefined : RpcArgs<N>;
 
 /**
  * Stable error codes our SECURITY DEFINER RPCs RAISE. The DB never returns a
@@ -47,8 +54,8 @@ export class RpcError extends Error {
     this.raw = raw;
   }
   /** i18n key for user-facing copy. */
-  get i18nKey(): `error.${RpcErrorCode}` {
-    return `error.${this.code}`;
+  get i18nKey(): MessageKey {
+    return translateError(this) as MessageKey;
   }
 }
 
@@ -57,8 +64,14 @@ export class RpcError extends Error {
  * message to a stable {@link RpcErrorCode} so the UI can translate it without
  * leaking raw SQL strings to the user.
  */
-export async function callRpc<N extends RpcName>(fn: N, args: RpcArgs<N>): Promise<RpcReturns<N>> {
-  const { data, error } = await supabase.rpc(fn, args as never);
+type RpcCallArgs<N extends RpcName> =
+  RpcArgs<N> extends never ? [args?: Record<string, never>] : [args: RpcArgs<N>];
+
+export async function callRpc<N extends RpcName>(
+  fn: N,
+  ...args: RpcCallArgs<N>
+): Promise<RpcReturns<N>> {
+  const { data, error } = await supabase.rpc(fn, (args[0] ?? {}) as never);
   if (error) {
     throw new RpcError(parseErrorCode(error.message), error.message, error);
   }

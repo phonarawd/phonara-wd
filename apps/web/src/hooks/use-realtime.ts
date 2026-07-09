@@ -4,7 +4,13 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
 type PostgresEvent = 'INSERT' | 'UPDATE' | 'DELETE' | '*';
-export type RealtimeConnectionStatus = 'disabled' | 'connecting' | 'subscribed' | 'closed' | 'channel_error' | 'timed_out';
+export type RealtimeConnectionStatus =
+  | 'disabled'
+  | 'connecting'
+  | 'subscribed'
+  | 'closed'
+  | 'channel_error'
+  | 'timed_out';
 
 export interface UseRealtimeResult {
   status: RealtimeConnectionStatus;
@@ -123,7 +129,9 @@ export function useRealtime({
   const qc = useQueryClient();
   const onChangeRef = useRef(onChange);
   const invalidateRef = useRef(invalidate);
-  const [status, setStatus] = useState<RealtimeConnectionStatus>(enabled ? 'connecting' : 'disabled');
+  const [status, setStatus] = useState<RealtimeConnectionStatus>(
+    enabled ? 'connecting' : 'disabled',
+  );
 
   useEffect(() => {
     onChangeRef.current = onChange;

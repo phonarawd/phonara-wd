@@ -8,6 +8,10 @@ import { minesDefinition } from './games/mines';
 import { plinkoDefinition } from './games/plinko';
 import { deepshaftDefinition } from './games/deepshaft';
 import { momentumDefinition } from './games/momentum';
+import { mintReelsDefinition } from './games/mint-reels';
+import { goldRushDefinition } from './games/gold-rush';
+import { rouletteDefinition } from './games/roulette';
+import { blackjackDefinition } from './games/blackjack';
 import type { GameDefinition } from './registry';
 
 const SERVER_SEED = 'deadbeef00112233445566778899aabbccddeeff00112233445566778899aabb';
@@ -24,11 +28,15 @@ async function resultFor<Selection, Result>(
 
 describe('casino TS parity vectors', () => {
   it('locks Dice over/under constants', async () => {
-    await expect(resultFor(diceDefinition, { target: '50.00', direction: 'over' })).resolves.toEqual({
+    await expect(
+      resultFor(diceDefinition, { target: '50.00', direction: 'over' }),
+    ).resolves.toEqual({
       roll: 18.37,
       won: false,
     });
-    await expect(resultFor(diceDefinition, { target: '25.00', direction: 'under' })).resolves.toEqual({
+    await expect(
+      resultFor(diceDefinition, { target: '25.00', direction: 'under' }),
+    ).resolves.toEqual({
       roll: 18.37,
       won: true,
     });
@@ -65,18 +73,24 @@ describe('casino TS parity vectors', () => {
       minePositions: [6, 0, 4],
       hitMine: true,
     });
-    await expect(resultFor(minesDefinition, { mineCount: 24, revealedCells: [0] })).resolves.toEqual({
-      minePositions: [6, 0, 4, 5, 13, 19, 11, 8, 20, 14, 16, 21, 24, 1, 3, 10, 17, 9, 12, 18, 2, 7, 23, 15],
+    await expect(
+      resultFor(minesDefinition, { mineCount: 24, revealedCells: [0] }),
+    ).resolves.toEqual({
+      minePositions: [
+        6, 0, 4, 5, 13, 19, 11, 8, 20, 14, 16, 21, 24, 1, 3, 10, 17, 9, 12, 18, 2, 7, 23, 15,
+      ],
       hitMine: true,
     });
   });
 
   it('locks HiLo card path constants', async () => {
-    await expect(resultFor(hiloDefinition, { startCard: 7, guesses: ['higher'] })).resolves.toEqual({
-      cards: [7, 3],
-      rounds: [{ card: 7, guess: 'higher', correct: false, multiplier: 0 }],
-      won: false,
-    });
+    await expect(resultFor(hiloDefinition, { startCard: 7, guesses: ['higher'] })).resolves.toEqual(
+      {
+        cards: [7, 3],
+        rounds: [{ card: 7, guess: 'higher', correct: false, multiplier: 0 }],
+        won: false,
+      },
+    );
     await expect(
       resultFor(hiloDefinition, { startCard: null, guesses: ['skip', 'higher', 'lower'] }),
     ).resolves.toEqual({
@@ -121,8 +135,61 @@ describe('casino TS parity vectors', () => {
     });
   });
 
+  it('locks Mint Reels line constants', async () => {
+    await expect(resultFor(mintReelsDefinition, { lines: 20 })).resolves.toEqual({
+      totalMultiplier: 0,
+    });
+    await expect(resultFor(mintReelsDefinition, { lines: 1 })).resolves.toEqual({
+      totalMultiplier: 0,
+    });
+  });
+
+  it('locks Gold Rush line constants', async () => {
+    await expect(resultFor(goldRushDefinition, { lines: 20 })).resolves.toEqual({
+      totalMultiplier: 0,
+    });
+    await expect(resultFor(goldRushDefinition, { lines: 1 })).resolves.toEqual({
+      totalMultiplier: 0,
+    });
+  });
+
+  it('locks Roulette bet constants', async () => {
+    await expect(
+      resultFor(rouletteDefinition, { bets: [{ type: 'red', value: null, stakeWeight: 1 }] }),
+    ).resolves.toEqual({
+      winningNumber: 6,
+      totalMultiplier: 0,
+    });
+    await expect(
+      resultFor(rouletteDefinition, { bets: [{ type: 'straight', value: 7, stakeWeight: 1 }] }),
+    ).resolves.toEqual({
+      winningNumber: 6,
+      totalMultiplier: 0,
+    });
+  });
+
+  it('locks Blackjack action constants', async () => {
+    await expect(
+      resultFor(blackjackDefinition, { actions: [{ seat: 0, move: 'stand' }] }),
+    ).resolves.toEqual({
+      totalMultiplier: 2,
+    });
+    await expect(
+      resultFor(blackjackDefinition, {
+        actions: [
+          { seat: 0, move: 'hit' },
+          { seat: 0, move: 'stand' },
+        ],
+      }),
+    ).resolves.toEqual({
+      totalMultiplier: 2,
+    });
+  });
+
   it('locks Momentum play and cash-out constants', async () => {
-    await expect(resultFor(momentumDefinition, { comboBefore: 0, cashOut: false })).resolves.toEqual({
+    await expect(
+      resultFor(momentumDefinition, { comboBefore: 0, cashOut: false }),
+    ).resolves.toEqual({
       won: false,
       roll: 18.37,
       comboBefore: 0,
@@ -131,14 +198,16 @@ describe('casino TS parity vectors', () => {
       cashedOut: false,
       totalMultiplier: 0,
     });
-    await expect(resultFor(momentumDefinition, { comboBefore: 3, cashOut: true })).resolves.toEqual({
-      won: true,
-      roll: 0,
-      comboBefore: 3,
-      comboAfter: 0,
-      comboMultiplier: 16.46,
-      cashedOut: true,
-      totalMultiplier: 16.29,
-    });
+    await expect(resultFor(momentumDefinition, { comboBefore: 3, cashOut: true })).resolves.toEqual(
+      {
+        won: true,
+        roll: 0,
+        comboBefore: 3,
+        comboAfter: 0,
+        comboMultiplier: 16.46,
+        cashedOut: true,
+        totalMultiplier: 16.29,
+      },
+    );
   });
 });

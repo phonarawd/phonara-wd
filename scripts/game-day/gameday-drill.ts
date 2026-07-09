@@ -3,7 +3,7 @@
  * PHONARA Game Day Drill — operational reliability (local Supabase only).
  * Drills 0–6: kill switches, partial gates, permissions, backup restore, Σ=0.
  */
-import { spawnSync } from 'node:child_process';
+import { spawnSyncSafe } from '../lib/spawn-safe';
 import { adminClient, loadPentestConfig } from '../pentest/lib/config.ts';
 import { createPentestFixture } from '../pentest/lib/fixture.ts';
 import {
@@ -71,7 +71,7 @@ function recoveryProbesPass(probes: ProbeResult[]): boolean {
 
 function resetLocalDbAfterFailedRestore(): void {
   console.warn('[gameday] drill 5 restore failed — supabase db reset for drill 6 baseline');
-  spawnSync('supabase', ['db', 'reset', '--yes'], { encoding: 'utf8', shell: true });
+  spawnSyncSafe('supabase', ['db', 'reset', '--yes'], { encoding: 'utf8', stdio: 'inherit' });
   waitForDbReady(180);
 }
 
@@ -104,12 +104,7 @@ async function runDrill1Halt(
     };
   }
 
-  const blockProbes = await runMoneyProbeMatrix(
-    config,
-    fixture,
-    'reject',
-    wdBaseline.withdrawalId,
-  );
+  const blockProbes = await runMoneyProbeMatrix(config, fixture, 'reject', wdBaseline.withdrawalId);
   const haltLeaksList = haltLeaks(blockProbes);
 
   const haltOff = setSystemMode(fixture.adminId, false, false, 'gameday drill 1 recovery');
@@ -474,10 +469,7 @@ function runDrill4Permissions(fixture: PentestFixture): {
 
   return {
     verdict: failures.length === 0 ? 'pass' : 'fail',
-    summary:
-      failures.length === 0
-        ? '비상 레버: user/AAL1 거부, AAL2 허용'
-        : failures.join('; '),
+    summary: failures.length === 0 ? '비상 레버: user/AAL1 거부, AAL2 허용' : failures.join('; '),
     measurements: {
       user_halt_blocked: probes[0]?.passed ?? false,
       user_feature_blocked: probes[1]?.passed ?? false,
@@ -560,9 +552,7 @@ async function runDrill5Restore(
   };
 }
 
-function runDrill6Integrity(
-  sigmaBefore: { PHON: string; USDT: string; KRW: string } | null,
-): {
+function runDrill6Integrity(sigmaBefore: { PHON: string; USDT: string; KRW: string } | null): {
   verdict: 'pass' | 'fail';
   summary: string;
   measurements: Record<string, string | number | boolean>;
@@ -575,11 +565,9 @@ function runDrill6Integrity(
   const neg = hasNegativeBalances();
 
   const invHealthy =
-    inv?.['healthy'] === true ||
-    (inv?.['ok'] === true && inv?.['mismatch'] === false);
+    inv?.['healthy'] === true || (inv?.['ok'] === true && inv?.['mismatch'] === false);
   const reconMatch =
-    recon?.['is_match'] === true ||
-    (recon?.['ok'] === true && recon?.['mismatch'] === false);
+    recon?.['is_match'] === true || (recon?.['ok'] === true && recon?.['mismatch'] === false);
   const sigmaOk = sigmaBefore
     ? sigma?.PHON === sigmaBefore.PHON &&
       sigma?.USDT === sigmaBefore.USDT &&

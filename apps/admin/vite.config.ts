@@ -1,33 +1,73 @@
 import { fileURLToPath, URL } from 'node:url';
+import tailwindcss from '@tailwindcss/vite';
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
 
+const adminSrc = fileURLToPath(new URL('./src', import.meta.url));
+const webProduct = fileURLToPath(new URL('../web/src/product', import.meta.url));
+const i18nReactSrc = fileURLToPath(new URL('../../packages/i18n/src/react.tsx', import.meta.url));
+const i18nSrc = fileURLToPath(new URL('../../packages/i18n/src/index.ts', import.meta.url));
+
+/** Phase R admin entry — TanStack Router + shared web design tokens/primitives. */
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    TanStackRouterVite({
+      routesDirectory: './src/routes',
+      generatedRouteTree: './src/routeTree.gen.ts',
+      autoCodeSplitting: true,
+    }),
+    tailwindcss(),
+    react(),
+  ],
   envDir: '../..',
-  // Share web public assets (fonts, favicon) — no duplicate binaries in apps/admin.
-  publicDir: fileURLToPath(new URL('../web/public', import.meta.url)),
+  publicDir: './public',
   resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
+    dedupe: ['react', 'react-dom'],
+    alias: [
+      { find: '@/product/primitives', replacement: `${webProduct}/primitives` },
+      { find: '@/product/tokens', replacement: `${webProduct}/tokens` },
+      {
+        find: '@/product/layout/content-shell',
+        replacement: `${webProduct}/layout/content-shell.tsx`,
+      },
+      { find: '@/product/i18n', replacement: `${adminSrc}/product/i18n` },
+      { find: '@/lib/i18n', replacement: `${adminSrc}/lib/i18n.tsx` },
+      { find: '@', replacement: adminSrc },
+      { find: '@phonara/i18n/react', replacement: i18nReactSrc },
+      { find: '@phonara/i18n', replacement: i18nSrc },
+    ],
   },
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react/jsx-dev-runtime',
+      'react/jsx-runtime',
+      '@tanstack/react-router',
+      '@tanstack/react-query',
+      '@supabase/supabase-js',
+      'zod',
+      'lucide-react',
+    ],
+    holdUntilCrawlEnd: false,
+  },
+  esbuild: { target: 'esnext' },
   server: {
     port: 3001,
     strictPort: true,
     host: '127.0.0.1',
+    warmup: {
+      clientFiles: [
+        `${adminSrc.replace(/\\/g, '/')}/main.tsx`,
+        `${adminSrc.replace(/\\/g, '/')}/router.ts`,
+        `${adminSrc.replace(/\\/g, '/')}/routes/__root.tsx`,
+        `${adminSrc.replace(/\\/g, '/')}/routes/index.tsx`,
+        `${adminSrc.replace(/\\/g, '/')}/routes/login.tsx`,
+      ],
+    },
   },
   build: {
-    rolldownOptions: {
-      output: {
-        minify: {
-          compress: {
-            dropConsole: true,
-            dropDebugger: true,
-          },
-        },
-      },
-    },
+    sourcemap: false,
   },
 });

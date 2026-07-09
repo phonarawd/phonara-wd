@@ -1,8 +1,9 @@
-import { spawnSync } from 'node:child_process';
-import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { spawnSyncSafe } from './spawn-safe';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { LOCKED_SUPABASE_PROJECT_REF } from './locked-supabase-project';
-import { loadRepoEnvFiles } from './load-repo-env';
+import { loadRepoEnvFiles, stripUtf8Bom } from './load-repo-env';
+import { isLocalSupabaseRunning } from './supabase-local';
 
 const TOKEN_PATTERN = /^sbp_[A-Za-z0-9]+$/;
 
@@ -11,11 +12,15 @@ export function repoRoot(): string {
 }
 
 export function ensureEnvFileFromExample(): void {
+  // CI injects stack credentials via GITHUB_ENV — avoid copying .env.example (Bun auto-loads .env).
+  if (process.env.GITHUB_ACTIONS === 'true') return;
+
   const root = repoRoot();
   const envPath = join(root, '.env');
   const examplePath = join(root, '.env.example');
   if (existsSync(envPath) || !existsSync(examplePath)) return;
-  copyFileSync(examplePath, envPath);
+  const exampleBody = stripUtf8Bom(readFileSync(examplePath, 'utf8'));
+  writeFileSync(envPath, exampleBody.endsWith('\n') ? exampleBody : `${exampleBody}\n`, 'utf8');
   process.stdout.write('[stack:env] created .env from .env.example\n');
 }
 
@@ -27,7 +32,7 @@ export function readAccessTokenFromEnvFiles(): string | null {
   for (const filename of ['.env', '.env.local', 'setup/.env.secrets']) {
     const path = join(repoRoot(), filename);
     if (!existsSync(path)) continue;
-    for (const rawLine of readFileSync(path, 'utf8').split(/\r?\n/)) {
+    for (const rawLine of stripUtf8Bom(readFileSync(path, 'utf8')).split(/\r?\n/)) {
       const line = rawLine.trim();
       if (!line || line.startsWith('#')) continue;
       const m = line.match(/^SUPABASE_ACCESS_TOKEN=(.+)$/);
@@ -42,7 +47,9 @@ export function readAccessTokenFromEnvFiles(): string | null {
 function upsertEnvToken(token: string): void {
   const envPath = join(repoRoot(), '.env');
   ensureEnvFileFromExample();
-  const lines = existsSync(envPath) ? readFileSync(envPath, 'utf8').split(/\r?\n/) : [];
+  const lines = existsSync(envPath)
+    ? stripUtf8Bom(readFileSync(envPath, 'utf8')).split(/\r?\n/)
+    : [];
   let found = false;
   const out = lines.map((line) => {
     if (/^\s*SUPABASE_ACCESS_TOKEN=/.test(line)) {
@@ -60,8 +67,8 @@ function syncFromWindowsCredentialManager(): boolean {
   if (process.platform !== 'win32') return false;
   const script = join(repoRoot(), 'scripts', 'sync-supabase-pat.ps1');
   if (!existsSync(script)) return false;
-  const result = spawnSync(
-    'powershell',
+  const result = spawnSyncSafe(
+    'powershell.exe',
     ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', script],
     { stdio: 'pipe', encoding: 'utf8' },
   );
@@ -71,11 +78,15 @@ function syncFromWindowsCredentialManager(): boolean {
 }
 
 function cliLoginWithToken(token: string): boolean {
-  const result = spawnSync('bunx', ['supabase', 'login', '--token', token, '--name', 'phonara-gb'], {
-    cwd: repoRoot(),
-    stdio: 'pipe',
-    encoding: 'utf8',
-  });
+  const result = spawnSyncSafe(
+    'bunx',
+    ['supabase', 'login', '--token', token, '--name', 'phonara-gb'],
+    {
+      cwd: repoRoot(),
+      stdio: 'pipe',
+      encoding: 'utf8',
+    },
+  );
   return result.status === 0;
 }
 
@@ -99,13 +110,23 @@ export type EnsureSupabaseAuthOptions = {
 /** Idempotent: .env → CLI login → Windows cred sync → verify Management API. */
 export async function ensureSupabaseAuth(options: EnsureSupabaseAuthOptions = {}): Promise<void> {
   const { quiet = false } = options;
+
+  // GitHub Actions E2E job starts the local stack before Playwright — no PAT on the runner.
+  if (process.env.GITHUB_ACTIONS === 'true' && isLocalSupabaseRunning()) {
+    if (!quiet) {
+      process.stdout.write('[stack:supabase] CI: local stack up — skipping Management API auth\n');
+    }
+    return;
+  }
+
   ensureEnvFileFromExample();
   loadRepoEnvFiles();
 
   let token = readAccessTokenFromEnvFiles();
 
   if (!token && process.platform === 'win32') {
-    if (!quiet) process.stdout.write('[stack:supabase] syncing PAT from Windows credential store…\n');
+    if (!quiet)
+      process.stdout.write('[stack:supabase] syncing PAT from Windows credential store…\n');
     if (syncFromWindowsCredentialManager()) {
       token = readAccessTokenFromEnvFiles();
     }
@@ -134,9 +155,7 @@ export async function ensureSupabaseAuth(options: EnsureSupabaseAuthOptions = {}
   }
 
   if (!quiet) {
-    process.stdout.write(
-      `[stack:supabase] auth OK · project=${LOCKED_SUPABASE_PROJECT_REF}\n`,
-    );
+    process.stdout.write(`[stack:supabase] auth OK · project=${LOCKED_SUPABASE_PROJECT_REF}\n`);
   }
 }
 

@@ -1,54 +1,21 @@
-import { createRoute, useNavigate } from '@tanstack/react-router';
-import { useEffect } from 'react';
-import { Route as rootRoute } from './__root';
-import { useAuth } from '../contexts/auth-context';
-import { Card } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { PresentationRoot } from '../presentation-import/presentation-root';
-import { ImportedLandingPage } from '../presentation-import/pages/landing-page';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/',
-  component: IndexPage,
-});
+import { hasAccountMarker } from '@/lib/auth-account-marker';
+import { getSessionWithTimeout } from '@/lib/auth';
+import { resolveLandingRouteRedirect } from '@/lib/landing-route-guard';
+import { LandingPage } from '@/product/surfaces/landing/landing-page';
 
-function IndexPage() {
-  const { session, loading } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (loading) return;
-    if (session) {
-      void navigate({ to: '/home' });
+export const Route = createFileRoute('/')({
+  beforeLoad: async ({ location }) => {
+    const session = await getSessionWithTimeout();
+    const target = resolveLandingRouteRedirect({
+      search: location.searchStr,
+      hasSession: Boolean(session),
+      hasAccount: hasAccountMarker(),
+    });
+    if (target) {
+      throw redirect({ href: target, replace: true });
     }
-  }, [session, loading, navigate]);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center p-4">
-        <Card className="grid w-full max-w-sm gap-4 p-5" aria-busy="true">
-          <Skeleton className="h-5 w-28" />
-          <Skeleton className="h-20" />
-        </Card>
-      </div>
-    );
-  }
-
-  if (session) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center p-4">
-        <Card className="grid w-full max-w-sm gap-4 p-5" aria-busy="true">
-          <Skeleton className="h-5 w-28" />
-          <Skeleton className="h-20" />
-        </Card>
-      </div>
-    );
-  }
-
-  return (
-    <PresentationRoot>
-      <ImportedLandingPage />
-    </PresentationRoot>
-  );
-}
+  },
+  component: LandingPage,
+});

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" role="img" aria-label="PrimeForge concept C growth">
+  <path fill-rule="evenodd" d="M152 128h72v256h-72a20 20 0 0 1-20-20V148a20 20 0 0 1 20-20zm72 0h88c70.7 0 128 57.3 128 128s-57.3 128-128 128h-88V128zm72 56v144h16c48.6 0 88-39.4 88-88s-39.4-88-88-88h-16z"/>
+  <path d="M296 352V224h40v88c44 0 80-36 80-80V192h40v40c0 66-54 120-120 120h-40z"/>
+  <circle cx="416" cy="192" r="20"/>
+</svg>

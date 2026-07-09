@@ -1,0 +1,75 @@
+---
+description: Docker Desktop on-demand — E2E/SQL 때만 ON · 종료 후 WSL RAM 해제 (저사양 Windows)
+alwaysApply: true
+---
+
+# Docker On-Demand Contract (WSL VM · 저사양 Windows)
+
+> **목적:** Docker Desktop(WSL2 VM) RAM을 **E2E/SQL gate 때만** 켜고, 끝나면 **자동 OFF**.
+> Cursor sessionStart·일반 UI 작업 중에는 Docker **0**.
+
+## 정본 흐름
+
+```text
+일상 (typecheck · lint · UI)     → Docker OFF · RAM 절약
+bun run test:e2e* / test:sql     → pretest: stack:ensure --full → Docker ON-demand start
+posttest:e2e / posttest:sql      → stack:stop → supabase stop → Docker Desktop quit
+```
+
+| 단계 | 스크립트 | Docker |
+|------|----------|--------|
+| **ON** | `pretest:e2e*` · `pretest:sql` → `ensure-dev-stack --full` | `PHONARA_DOCKER_AUTO_START=1`(기본) 시 Desktop 자동 기동 |
+| **OFF** | `posttest:e2e*` · `posttest:sql` → `stack:stop` | `PHONARA_DOCKER_AUTO_QUIT=1`(기본) 시 Desktop `-Quit` |
+| **금지** | `sessionStart` hook | Docker/Supabase **절대 깨우지 않음** (G11) |
+
+## operator 1회 셋업
+
+```powershell
+bun run stack:docker:setup
+bun run stack:docker:setup -- --apply-wslconfig --apply-env
+wsl --shutdown   # WSL RAM cap 적용 (1회)
+```
+
+**Docker Desktop UI (수동 1회):**
+
+- General → **「로그인 시 Docker Desktop 시작」 체크 해제**
+- Resources → WSL integration **ON**
+
+**`.wslconfig`** (`%USERPROFILE%\.wslconfig`) — RAM 상한 4GB 권장 (템플릿: `scripts/templates/wslconfig.phonara.txt`).
+
+## 환경 변수 (`.env`)
+
+| 변수 | 기본 | 의미 |
+|------|------|------|
+| `PHONARA_DOCKER_AUTO_START` | `1` | `--full` pretest 시 Desktop 자동 기동 |
+| `PHONARA_DOCKER_AUTO_QUIT` | `1` | `stack:stop` 후 Desktop 종료 (WSL VM RAM 해제) |
+| `PHONARA_KEEP_STACK` | — | `1` = 연속 E2E+SQL — stop/quit **스킵** |
+| `PHONARA_SKIP_DOCKER_CLEAN` | — | `1` = prune 스킵 |
+
+다른 Docker 프로젝트 병행 시: `PHONARA_DOCKER_AUTO_QUIT=0` (Desktop 유지).
+
+## 에이전트 규칙 (non-waivable)
+
+1. **sessionStart / cursor:preflight / cursor:purge** — Docker **기동 금지** (orphan·artifact만).
+2. **E2E/SQL** — `pretest:*`가 stack을 올림. operator 수동 Desktop ON **불필요**(기본 on-demand).
+3. **E2E/SQL 종료** — `posttest:*` → `stack:stop`이 Desktop quit(기본). **수동 tray 종료 불필요**.
+4. **연속 gate** (E2E 직후 SQL) — `PHONARA_KEEP_STACK=1` 한 세션만.
+5. **첫 on-demand start** — Desktop cold boot **1~3분** 가능. hang 아님 — foreground 대기.
+
+## FAIL
+
+- sessionStart에 `stack:ensure --full` 복원 (G11)
+- E2E/SQL 없이 Docker Desktop 상시 ON 방치 (operator)
+- `stack:stop` 우회하고 Desktop RAM 방치한 채 완료 보고
+
+## self-check
+
+```bash
+bun run stack:docker:setup
+bun run cursor:status   # docker daemon: OFF when idle
+rg "PHONARA_DOCKER_AUTO" .env.example scripts/lib/docker-desktop-lifecycle.ts
+```
+
+구현: `scripts/lib/docker-desktop-lifecycle.ts` · `scripts/lib/docker-ready.ts` · `scripts/stack-stop.ts` · `scripts/ensure-dev-stack.ts`
+
+교차 참조: `79-low-spec-pc.mdc` · `80-absolute-gate-prohibitions.mdc` (G10·G11) · `83-session-purge-contract.mdc`

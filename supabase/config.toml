@@ -1,26 +1,28 @@
 project_id = "yocjhjsdwoijfdrehzoq"
 
+# Windows Hyper-V may reserve 54255–54354 (blocks default 54321–54324 on operator PC).
 [api]
 enabled = true
-port = 54444
+port = 54521
 schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
 [db]
-port = 54442
-shadow_port = 54443
+port = 54400
+shadow_port = 54401
 # Matches the linked production project (yocjhjsdwoijfdrehzoq runs PostgreSQL 17),
 # so local `db reset` and SQL tests run on the same engine as prod.
 major_version = 17
 
 [studio]
 enabled = true
-port = 54445
+port = 54523
 
 [inbucket]
-# Catch signup/reset/magic-link emails locally (http://127.0.0.1:54424).
+# Catch signup/reset/magic-link emails locally in Mailpit (http://127.0.0.1:54524).
 enabled = true
+port = 54524
 
 [auth]
 enabled = true
@@ -28,11 +30,22 @@ enabled = true
 site_url = "http://localhost:3000"
 additional_redirect_urls = [
   "http://localhost:3000",
+  "http://localhost:3000/auth/callback",
   "http://localhost:3001",
+  "http://localhost:3001/auth/callback",
   "http://localhost:3002",
+  "http://localhost:3002/auth/callback",
   "http://127.0.0.1:3000",
+  "http://127.0.0.1:3000/auth/callback",
   "http://127.0.0.1:3001",
+  "http://127.0.0.1:3001/auth/callback",
   "http://127.0.0.1:3002",
+  "http://127.0.0.1:3002/auth/callback",
+  "https://phonara.net",
+  "https://phonara.net/auth/callback",
+  "https://www.phonara.net",
+  "https://phonara-web.pages.dev",
+  "https://phonara-web.pages.dev/auth/callback",
 ]
 jwt_expiry = 3600
 enable_signup = true
@@ -45,8 +58,8 @@ minimum_password_length = 8
 
 [auth.email]
 enable_signup = true
-# Local stack only — signup/login without Studio confirm. Remote prod uses enable_confirmations=true (Dashboard / one-off push).
-enable_confirmations = false
+# Signup sends a confirmation email; login blocked until the link is opened.
+enable_confirmations = true
 double_confirm_changes = true
 secure_password_change = true
 max_frequency = "1s"
@@ -79,9 +92,24 @@ max_frequency = "10s"
 enabled = true
 
 [auth.webauthn]
-rp_display_name = "phonara-gb"
+rp_display_name = "PHONARA"
+# Local dev: rp_id must match the browser host (localhost). Production Dashboard/CLI: set rp_id to phonara.net.
 rp_id = "localhost"
-rp_origins = ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"]
+rp_origins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3002",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:3001",
+  "http://127.0.0.1:3002",
+  "https://phonara.net",
+  "https://www.phonara.net",
+  "https://phonara-web.pages.dev",
+]
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
 
 # Analytics (logflare) is disabled for local dev. On Windows it requires the
 # Docker daemon to be exposed on tcp://localhost:2375, which we don't enable.
@@ -90,4 +118,28 @@ rp_origins = ["http://localhost:3000", "http://localhost:3001", "http://localhos
 enabled = false
 
 [functions.price-feed]
+verify_jwt = true
+
+[functions.crypto-chain-watcher]
+verify_jwt = true
+
+[functions.derive-crypto-address]
+verify_jwt = true
+
+[functions.crypto-withdraw-broadcast]
+verify_jwt = true
+
+[functions.crypto-sign]
+verify_jwt = true
+
+[functions.usdt-krw-feed]
+verify_jwt = true
+
+[functions.notification-dispatch]
+verify_jwt = true
+
+[functions.pg-bank-webhook]
+verify_jwt = false
+
+[functions.ops-notify]
 verify_jwt = true

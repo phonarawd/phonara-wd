@@ -23,7 +23,12 @@ function sqlLiteral(value: string): string {
 
 export type ProbeExpect = 'reject' | 'allow';
 
-const HALT_BLOCK_PATTERNS = ['system_halted', 'system_readonly', 'feature_disabled', 'withdrawal_solvency_hold'];
+const HALT_BLOCK_PATTERNS = [
+  'system_halted',
+  'system_readonly',
+  'feature_disabled',
+  'withdrawal_solvency_hold',
+];
 
 export function evaluateProbe(expected: ProbeExpect, ok: boolean, error: string): boolean {
   if (expected === 'allow') return ok;
@@ -86,7 +91,9 @@ export async function placeDiceBet(
   tag: string,
 ): Promise<{ ok: boolean; betId?: string; error: string }> {
   seedOracleAndMarkets();
-  sqlExec(`UPDATE app_config SET value = 'true' WHERE key IN ('feature_game_enabled', 'feature_game_dice_enabled');`);
+  sqlExec(
+    `UPDATE app_config SET value = 'true' WHERE key IN ('feature_game_enabled', 'feature_game_dice_enabled');`,
+  );
   const opened = await openRound(config, fixture.userA.accessToken, 'dice');
   if (!opened.ok || !opened.data) {
     return { ok: false, error: opened.error || 'open round failed' };
@@ -123,10 +130,7 @@ export async function requestSmallWithdrawal(
   return { ok: true, withdrawalId: wdId ? String(wdId) : undefined, error: '' };
 }
 
-export async function rejectPendingWithdrawals(
-  adminId: string,
-  userId: string,
-): Promise<void> {
+export async function rejectPendingWithdrawals(adminId: string, userId: string): Promise<void> {
   const rows = sqlExec(`
     SELECT id::text FROM withdrawal_requests
     WHERE user_id = ${sqlLiteral(userId)}::uuid AND status = 'pending';

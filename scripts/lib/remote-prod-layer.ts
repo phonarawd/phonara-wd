@@ -1,4 +1,4 @@
-import { spawnSync } from 'node:child_process';
+import { spawnSyncSafe } from './spawn-safe';
 
 const LOCKED_REF = 'yocjhjsdwoijfdrehzoq';
 
@@ -27,7 +27,10 @@ export interface RemoteProdLayer {
   projectHealth?: unknown;
 }
 
-async function managementQuery(token: string, sql: string): Promise<{ ok: boolean; data: unknown; error: string }> {
+async function managementQuery(
+  token: string,
+  sql: string,
+): Promise<{ ok: boolean; data: unknown; error: string }> {
   try {
     const res = await fetch(`https://api.supabase.com/v1/projects/${LOCKED_REF}/database/query`, {
       method: 'POST',
@@ -62,11 +65,12 @@ async function fetchAdvisor(token: string, type: 'security' | 'performance'): Pr
   return lints.filter((l) => l.level === 'ERROR').length;
 }
 
-async function fetchRemoteMigrations(token: string): Promise<{ ok: boolean; tail: string[]; parity: boolean; error: string }> {
-  const migCli = spawnSync('supabase', ['migration', 'list', '--linked'], {
+async function fetchRemoteMigrations(
+  token: string,
+): Promise<{ ok: boolean; tail: string[]; parity: boolean; error: string }> {
+  const migCli = spawnSyncSafe('supabase', ['migration', 'list', '--linked'], {
     encoding: 'utf8',
     cwd: process.cwd(),
-    shell: process.platform === 'win32',
     env: { ...process.env, SUPABASE_ACCESS_TOKEN: token },
   });
   if (migCli.status === 0) {
@@ -80,9 +84,12 @@ async function fetchRemoteMigrations(token: string): Promise<{ ok: boolean; tail
   }
 
   try {
-    const res = await fetch(`https://api.supabase.com/v1/projects/${LOCKED_REF}/database/migrations`, {
-      headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
-    });
+    const res = await fetch(
+      `https://api.supabase.com/v1/projects/${LOCKED_REF}/database/migrations`,
+      {
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+      },
+    );
     if (!res.ok) {
       return { ok: false, tail: [], parity: false, error: `${res.status} ${await res.text()}` };
     }
@@ -121,7 +128,8 @@ export async function collectRemoteProdLayer(token: string | undefined): Promise
     out.securityAdvisorErrors = await fetchAdvisor(token, 'security');
     out.performanceAdvisorErrors = await fetchAdvisor(token, 'performance');
   } catch (error) {
-    out.migrationListError = `${out.migrationListError ?? ''} advisor: ${error instanceof Error ? error.message : String(error)}`.trim();
+    out.migrationListError =
+      `${out.migrationListError ?? ''} advisor: ${error instanceof Error ? error.message : String(error)}`.trim();
   }
 
   try {
@@ -133,7 +141,10 @@ export async function collectRemoteProdLayer(token: string | undefined): Promise
     /* optional */
   }
 
-  const authUsers = await managementQuery(token, 'SELECT count(*)::int AS auth_users FROM auth.users');
+  const authUsers = await managementQuery(
+    token,
+    'SELECT count(*)::int AS auth_users FROM auth.users',
+  );
   if (authUsers.ok && Array.isArray(authUsers.data) && authUsers.data[0]) {
     out.authUsers = Number((authUsers.data[0] as { auth_users?: number }).auth_users ?? NaN);
   }
@@ -142,7 +153,8 @@ export async function collectRemoteProdLayer(token: string | undefined): Promise
   if (recon.ok) {
     out.reconciliationRaw = recon.data;
     const row = Array.isArray(recon.data) ? recon.data[0] : recon.data;
-    const payload = row && typeof row === 'object' && 'result' in row ? (row as { result: unknown }).result : row;
+    const payload =
+      row && typeof row === 'object' && 'result' in row ? (row as { result: unknown }).result : row;
     const parsed =
       typeof payload === 'string'
         ? (JSON.parse(payload) as { ok?: boolean; mismatch?: boolean })

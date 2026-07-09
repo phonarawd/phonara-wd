@@ -78,7 +78,10 @@ export function levelGrowthMult(riskTier: DeepshaftRiskTier, depth: number): num
 }
 
 /** Paying mult at committed depth — floor(raw × 99) / 100 (platform convention). */
-export function deepshaftPayoutMultiplier(riskTier: DeepshaftRiskTier, targetDepth: number): number {
+export function deepshaftPayoutMultiplier(
+  riskTier: DeepshaftRiskTier,
+  targetDepth: number,
+): number {
   const raw = deepshaftRawMultiplier(riskTier, targetDepth);
   if (raw <= 0) return 0;
   return Math.floor(raw * 99) / 100;

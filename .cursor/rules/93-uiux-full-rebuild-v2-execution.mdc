@@ -1,0 +1,18 @@
+---
+description: DEPRECATED — v2 UI rebuild execution lock (Batch 11 deleted SSOT; superseded by 00-phase-d-demolition.mdc)
+alwaysApply: false
+---
+
+# UI/UX Full Rebuild v2 — Execution Lock (DEPRECATED)
+
+> **Superseded:** Phase D — [`docs/PRODUCT/DEMOLITION_PLAN.md`](../../docs/PRODUCT/DEMOLITION_PLAN.md) + `00-phase-d-demolition.mdc`  
+> **Batch 11 deleted:** `UIUX_FULL_REBUILD_EXECUTION` · `MASTER_TODO` · `UI_REBUILD_WAVE` · `NEXT_STEP` · Living 4종  
+> **Do not follow** this rule for execution — history only.
+
+## FAIL (if cited as active queue)
+
+- Treating v2 plan / U-wave / NEXT_STEP as primary implementation queue during Phase D
+- Recreating deleted SSOT files from git history
+- `check:ui-architecture` · `gate:ai-impl` as Demolition merge criteria
+
+교차 참조: `00-phase-d-demolition.mdc` · `DEPRECATED_DOC_DENYLIST.md`

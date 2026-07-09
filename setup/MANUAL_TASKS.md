@@ -14,10 +14,10 @@
 cp .env.example .env.local
 ```
 
-| 변수 | 설명 | 어디서 얻나 |
-|------|------|------------|
-| `VITE_SUPABASE_ANON_KEY` | 클라이언트용 공개 키 | Supabase Dashboard → Project Settings → API → `anon public` |
-| `VITE_SUPABASE_URL` | 이미 `.env.example`에 있음 (`https://yocjhjsdwoijfdrehzoq.supabase.co`) | 그대로 사용 |
+| 변수                     | 설명                                                                    | 어디서 얻나                                                 |
+| ------------------------ | ----------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `VITE_SUPABASE_ANON_KEY` | 클라이언트용 공개 키                                                    | Supabase Dashboard → Project Settings → API → `anon public` |
+| `VITE_SUPABASE_URL`      | 이미 `.env.example`에 있음 (`https://yocjhjsdwoijfdrehzoq.supabase.co`) | 그대로 사용                                                 |
 
 - [ ] `.env.local` 파일 생성 + `VITE_SUPABASE_ANON_KEY` 입력
 
@@ -31,6 +31,7 @@ cp .env.example .env.local
 > 더 이상 수동 작업이 필요 없습니다.
 
 확인 방법(원할 때):
+
 ```sql
 -- Supabase Dashboard → SQL Editor에서 실행
 SELECT jobname, schedule, active FROM cron.job WHERE jobname = 'phonara_auto_liquidations';
@@ -47,6 +48,7 @@ pg_cron이 유일한 청산 실행 경로입니다. 이중 경로로 인한 동�
 없애기 위해 edge function 코드를 제거했습니다.
 
 청산이 동작하는지 확인하려면:
+
 ```sql
 SELECT jobname, schedule, active FROM cron.job WHERE jobname = 'phonara_auto_liquidations';
 SELECT * FROM liquidation_run_log ORDER BY ran_at DESC LIMIT 20;
@@ -110,10 +112,10 @@ Supabase Dashboard → Authentication → **URL Configuration**:
 
 Supabase Dashboard → Database → **Extensions**:
 
-| Extension | 용도 | 우선순위 |
-|-----------|------|---------|
-| `pg_cron` | SQL 레벨 주기적 실행 (청산/오라클 러너) | ✅ 완료 |
-| `pg_net` | SQL에서 HTTP 요청 (오라클 Edge Function 호출) | ✅ 완료 |
+| Extension | 용도                                          | 우선순위 |
+| --------- | --------------------------------------------- | -------- |
+| `pg_cron` | SQL 레벨 주기적 실행 (청산/오라클 러너)       | ✅ 완료  |
+| `pg_net`  | SQL에서 HTTP 요청 (오라클 Edge Function 호출) | ✅ 완료  |
 
 - [x] `pg_cron` 활성화
 - [x] `pg_net` 활성화
@@ -124,13 +126,13 @@ Supabase Dashboard → Database → **Extensions**:
 
 Vercel / Netlify / 기타 배포 플랫폼에서 환경 변수 등록:
 
-| 변수 | 값 |
-|------|----|
-| `VITE_SUPABASE_URL` | `https://yocjhjsdwoijfdrehzoq.supabase.co` |
+| 변수                     | 값                                         |
+| ------------------------ | ------------------------------------------ |
+| `VITE_SUPABASE_URL`      | `https://yocjhjsdwoijfdrehzoq.supabase.co` |
 | `VITE_SUPABASE_ANON_KEY` | Supabase Dashboard → API → anon public key |
-| `VITE_APP_ENV` | `production` |
-| `VITE_APP_URL` | `https://실제도메인.com` |
-| `VITE_DEFAULT_LOCALE` | `ko` |
+| `VITE_APP_ENV`           | `production`                               |
+| `VITE_APP_URL`           | `https://실제도메인.com`                   |
+| `VITE_DEFAULT_LOCALE`    | `ko`                                       |
 
 - [ ] 배포 플랫폼에 모든 환경 변수 등록
 
@@ -140,13 +142,13 @@ Vercel / Netlify / 기타 배포 플랫폼에서 환경 변수 등록:
 
 `ci-pipeline` 작업이 시작될 때 GitHub Repo → Settings → **Secrets and variables → Actions**에 등록:
 
-| 시크릿 이름 | 값 | 어디서 얻나 |
-|------------|-----|------------|
-| `SUPABASE_PROJECT_ID` | `yocjhjsdwoijfdrehzoq` | 고정값 |
-| `SUPABASE_SERVICE_ROLE_KEY` | service_role 키 | Supabase Dashboard → Project Settings → API |
-| `SUPABASE_ACCESS_TOKEN` | Personal Access Token | supabase.com → Account → Access Tokens |
-| `SUPABASE_DB_PASSWORD` | DB 비밀번호 | Supabase Dashboard → Project Settings → Database |
-| `VITE_SUPABASE_ANON_KEY` | anon 키 | Supabase Dashboard → API |
+| 시크릿 이름                 | 값                     | 어디서 얻나                                      |
+| --------------------------- | ---------------------- | ------------------------------------------------ |
+| `SUPABASE_PROJECT_ID`       | `yocjhjsdwoijfdrehzoq` | 고정값                                           |
+| `SUPABASE_SERVICE_ROLE_KEY` | service_role 키        | Supabase Dashboard → Project Settings → API      |
+| `SUPABASE_ACCESS_TOKEN`     | Personal Access Token  | supabase.com → Account → Access Tokens           |
+| `SUPABASE_DB_PASSWORD`      | DB 비밀번호            | Supabase Dashboard → Project Settings → Database |
+| `VITE_SUPABASE_ANON_KEY`    | anon 키                | Supabase Dashboard → API                         |
 
 > **CI `advisors` 잡 필수**: `.github/workflows/ci.yml`의 `advisors` 잡은
 > `SUPABASE_ACCESS_TOKEN` + `SUPABASE_PROJECT_ID` 시크릿으로 보안 advisor 0 ERROR를
@@ -167,15 +169,16 @@ npx web-push generate-vapid-keys
 ```
 
 출력 예시:
+
 ```
 Public Key:  BIu...
 Private Key: WlJ...
 ```
 
-| 환경 변수 | 위치 |
-|----------|------|
-| `VITE_VAPID_PUBLIC_KEY` | `.env.local` + 배포 플랫폼 |
-| `VAPID_PRIVATE_KEY` | Supabase Edge Function Secret (서버 전용, 클라 번들 금지!) |
+| 환경 변수               | 위치                                                       |
+| ----------------------- | ---------------------------------------------------------- |
+| `VITE_VAPID_PUBLIC_KEY` | `.env.local` + 배포 플랫폼                                 |
+| `VAPID_PRIVATE_KEY`     | Supabase Edge Function Secret (서버 전용, 클라 번들 금지!) |
 
 - [ ] (PWA 작업 전) VAPID 키 생성
 - [ ] `VITE_VAPID_PUBLIC_KEY` → `.env.local` 등록
@@ -210,9 +213,9 @@ bun run test:sql
 > AI가 Launch RC 중 원격 적용을 완료했습니다.
 > 수동 확인용 레퍼런스.
 
-| 마이그레이션 | 내용 | 원격 적용 |
-|------------|------|---------|
-| `20260609000001` ~ `20260611000079` | Phase1~Launch RC schema/RLS/RPC/ops/affiliate/closeout 전체 | ✅ 완료 |
+| 마이그레이션                        | 내용                                                        | 원격 적용 |
+| ----------------------------------- | ----------------------------------------------------------- | --------- |
+| `20260609000001` ~ `20260611000079` | Phase1~Launch RC schema/RLS/RPC/ops/affiliate/closeout 전체 | ✅ 완료   |
 
 ---
 
@@ -270,6 +273,82 @@ SELECT count(*) AS open_ops_alerts
 
 ---
 
+## 10-B. Ops pager (Launch E3 · `ops-notify`)
+
+**정본:** ntfy 무료 푸시 1순위 · Telegram/HMAC webhook 선택 · critical `ops_alerts` → cron 1분 → Edge → ntfy
+
+### A. ntfy (권장 · chat id 불필요)
+
+1. one-shot (토픽 생성 · Edge sync · 테스트):
+
+```powershell
+bun run stack:setup-ops-ntfy
+```
+
+2. PC/폰 구독 — `.env` `OPS_NTFY_TOPIC` URL:
+
+```text
+https://ntfy.sh/<OPS_NTFY_TOPIC>
+```
+
+3. 재동기화 · 테스트:
+
+```powershell
+bun run stack:sync-ops-pager-secrets
+bun run stack:test-ops-pager
+bun run stack:test-ops-pager -- --ntfy-direct
+```
+
+| Secret            | 필수                   | 설명                   |
+| ----------------- | ---------------------- | ---------------------- |
+| `OPS_NTFY_TOPIC`  | ✅                     | 토픽 이름 (= 비밀번호) |
+| `OPS_NTFY_SERVER` | 기본 `https://ntfy.sh` | 자체 호스트 시만 변경  |
+| `OPS_NTFY_TOKEN`  | ❌                     | 공용 ntfy.sh 불필요    |
+
+### B. Telegram (선택 fallback)
+
+`.env` 또는 Dashboard → Edge `ops-notify` Secrets:
+
+```env
+OPS_TELEGRAM_BOT_TOKEN=...
+OPS_TELEGRAM_CHAT_ID=...
+```
+
+```powershell
+bun run stack:sync-ops-pager-secrets -- --check
+bun run stack:sync-ops-pager-secrets
+```
+
+| Secret                              | 설명                                                       |
+| ----------------------------------- | ---------------------------------------------------------- |
+| `OPS_TELEGRAM_BOT_TOKEN`            | BotFather API Token                                        |
+| `OPS_TELEGRAM_CHAT_ID`              | @userinfobot 본인 Id · `@phonara_ops_alert_bot` Start 필수 |
+| `OPS_TELEGRAM_WEBHOOK_*`            | (선택) HMAC webhook                                        |
+| `OPS_TELEGRAM_WEBHOOK_HMAC_SECRET`  | primary HMAC                                               |
+| `OPS_TELEGRAM_FALLBACK_URL`         | (선택) fallback webhook                                    |
+| `OPS_TELEGRAM_FALLBACK_HMAC_SECRET` | fallback HMAC                                              |
+
+Vault cron secret 동기화:
+
+```powershell
+bun run stack:verify-worldno1-edge
+```
+
+스케줄 (UTC · KST ≈ +9):
+
+- `phonara_ops_notify` — `* * * * *` (outbox 즉시 dispatch)
+- `phonara_ops_notify_digest` — `0 3,13 * * *` (critical pager digest ≈ 12:00/22:00 KST)
+
+확인:
+
+- [x] `OPS_NTFY_TOPIC` + Edge secrets (`stack:sync-ops-pager-secrets`)
+- [x] `stack:verify-worldno1-edge` exit 0 · `ops-notify` HTTP 200
+- [x] `stack:test-ops-pager` E2E `sent:1`
+- [ ] ntfy 토픽 URL 북마크 · 폰/PC 구독 유지
+- [ ] critical `ops_alerts` 발생 시 ntfy `[PHONARA ALERT] CRITICAL` 수신
+
+---
+
 ## 11. Launch-Ops 당일 운영 루프
 
 AI가 read-only로 확인한 최신 원격 상태:
@@ -281,6 +360,8 @@ AI가 read-only로 확인한 최신 원격 상태:
 - open/ack ops alerts 0, pending review queue 0, pending withdrawals 0, active risk flags 0, open STR cases 0
 - pg_cron jobs active:
   - `phonara_auto_liquidations` → `* * * * *`
+  - `phonara_ops_notify` → `* * * * *`
+  - `phonara_ops_notify_digest` → `0 3,13 * * *`
   - `phonara_casino_stale_pending_sweep` → `*/5 * * * *`
   - `phonara_daily_reconciliation` → `0 2 * * *`
 - `reconciliation_log`는 아직 비어 있습니다. 첫 launch-ops 전에 수동 실행 또는 첫 scheduled run 후 green 확인이 필요합니다.
@@ -321,6 +402,8 @@ SELECT jobname, schedule, active
   FROM cron.job
  WHERE jobname IN (
    'phonara_auto_liquidations',
+   'phonara_ops_notify',
+   'phonara_ops_notify_digest',
    'phonara_daily_reconciliation',
    'phonara_casino_stale_pending_sweep'
  )

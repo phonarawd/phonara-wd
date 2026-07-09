@@ -10,13 +10,18 @@
 
 import { ensureDockerReady } from './lib/docker-ready';
 import { ensureSupabaseAuth } from './lib/supabase-auth';
-import { ensureLocalSupabaseStarted } from './lib/supabase-local';
+import {
+  ensureLocalSupabaseReadyForE2e,
+  ensureLocalSupabaseReadyForSql,
+} from './lib/supabase-local';
 
 const args = new Set(process.argv.slice(2));
 const quiet = args.has('--quiet');
 const full = args.has('--full');
 const authOnly = args.has('--auth-only');
 const dockerOnly = args.has('--docker-only');
+/** SQL gate: Docker + supabase start + dirty-baseline/migration reset (no PostgREST RPC probe). */
+const sqlGate = args.has('--sql-gate');
 
 async function main(): Promise<void> {
   if (!quiet) {
@@ -33,10 +38,13 @@ async function main(): Promise<void> {
   if (authOnly) return;
 
   if (full || args.has('--supabase-start')) {
-    // Never auto-launch Docker Desktop from hooks/pretest — spikes CPU/RAM on
-    // low-spec Windows and freezes Cursor. Operator starts Docker once before E2E.
-    ensureDockerReady({ quiet, startDesktop: false });
-    ensureLocalSupabaseStarted({ quiet });
+    // On-demand: pretest:e2e / pretest:sql only (never sessionStart). See 84-docker-on-demand.mdc.
+    ensureDockerReady({ quiet });
+    if (sqlGate) {
+      ensureLocalSupabaseReadyForSql({ quiet });
+      return;
+    }
+    await ensureLocalSupabaseReadyForE2e({ quiet });
     return;
   }
 

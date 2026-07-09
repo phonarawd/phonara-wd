@@ -1,15 +1,6 @@
 import { spawnSync } from 'node:child_process';
-import {
-  createHash,
-} from 'node:crypto';
-import {
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 // Generates a READ-ONLY mirror of every public SQL function's current definition
@@ -24,13 +15,13 @@ import { join } from 'node:path';
 //   --check       regenerate in-memory and fail if it differs from the committed
 //                 mirror (used by CI after `supabase db reset`)
 //
-// DB connection mirrors scripts/run-sql-tests.ts: prefer `psql` on PATH, else a
-// running `supabase_db_*` Docker container. When neither is available the script
+// DB connection: prefer local `supabase_db_*` docker exec, else host `psql`
+// (see scripts/lib/db-connect.ts). When neither is available the script skips
 // skips (exit 0) unless --check is combined with PHONARA_FUNCTIONS_MIRROR_STRICT=1.
 
 const MIRROR_DIR = join(process.cwd(), 'supabase', 'functions-sql', 'current');
 const dbUrl =
-  process.env.SUPABASE_DB_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54442/postgres';
+  process.env.SUPABASE_DB_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/postgres';
 
 const checkMode = process.argv.includes('--check');
 const strict = process.env.PHONARA_FUNCTIONS_MIRROR_STRICT === '1';
@@ -161,7 +152,9 @@ function main(): void {
   try {
     raw = runQuery();
   } catch (error) {
-    console.error(`functions-mirror: query failed: ${error instanceof Error ? error.message : error}`);
+    console.error(
+      `functions-mirror: query failed: ${error instanceof Error ? error.message : error}`,
+    );
     process.exit(1);
   }
 
@@ -192,7 +185,9 @@ function main(): void {
   }
 
   writeMirror(expected);
-  console.log(`functions-mirror: wrote ${expected.size} function definitions to supabase/functions-sql/current/.`);
+  console.log(
+    `functions-mirror: wrote ${expected.size} function definitions to supabase/functions-sql/current/.`,
+  );
 }
 
 main();

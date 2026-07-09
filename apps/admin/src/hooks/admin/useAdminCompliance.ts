@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Tables } from '@phonara/shared-types';
-import type { AdminAuditEvent } from '@/components/admin/primitives';
+import {
+  ADMIN_REVIEW_QUEUE_ROW,
+  KYC_SUBMISSIONS_ROW,
+  RISK_FLAGS_ROW,
+  STR_CASES_ROW,
+} from '@phonara/shared-types';
+import type { AdminAuditEvent } from '@/shared-types';
 import { supabase } from '../../lib/supabase';
 import { runQueueAction } from '../../domain/queues';
 import type {
@@ -62,10 +68,7 @@ function summarizePayload(payload: unknown): string {
   return text.length > 48 ? `${text.slice(0, 45)}…` : text;
 }
 
-function mapKycRow(
-  review: ReviewQueueRow,
-  submission: KycSubmissionRow | undefined,
-): AdminKycRow {
+function mapKycRow(review: ReviewQueueRow, submission: KycSubmissionRow | undefined): AdminKycRow {
   return {
     id: review.entity_id,
     userId: `${(submission?.user_id ?? review.entity_id).slice(0, 8)}…`,
@@ -76,13 +79,16 @@ function mapKycRow(
     documentSummary: submission
       ? `${submission.document_type} ${submission.country} · ${submission.document_last4}`
       : summarizePayload(review.payload),
+    documentFrontPath: submission?.document_front_path ?? null,
+    documentBackPath: submission?.document_back_path ?? null,
+    selfiePath: submission?.selfie_path ?? null,
   };
 }
 
 function mapStrRow(row: StrCaseRow): AdminStrRow {
-  const caseType = (['structuring', 'rapid_movement', 'high_risk_geo', 'chip_dumping'] as const).includes(
-    row.case_type as StrCaseType,
-  )
+  const caseType = (
+    ['structuring', 'rapid_movement', 'high_risk_geo', 'chip_dumping'] as const
+  ).includes(row.case_type as StrCaseType)
     ? (row.case_type as StrCaseType)
     : 'structuring';
   const status = (['open', 'reviewing', 'filed', 'dismissed'] as const).includes(
@@ -164,21 +170,25 @@ async function fetchComplianceData() {
   const [reviewQueue, submissions, strCases, riskFlags] = await Promise.all([
     supabase
       .from('admin_review_queue')
-      .select('*')
+      .select(ADMIN_REVIEW_QUEUE_ROW)
       .eq('entity_type', 'kyc_submission')
       .in('status', ['pending', 'in_review'])
       .order('sla_due_at', { ascending: true })
       .limit(100),
-    supabase.from('kyc_submissions').select('*').order('created_at', { ascending: false }).limit(200),
+    supabase
+      .from('kyc_submissions')
+      .select(KYC_SUBMISSIONS_ROW)
+      .order('created_at', { ascending: false })
+      .limit(200),
     supabase
       .from('str_cases')
-      .select('*')
+      .select(STR_CASES_ROW)
       .in('status', ['open', 'reviewing'])
       .order('created_at', { ascending: true })
       .limit(100),
     supabase
       .from('risk_flags')
-      .select('*')
+      .select(RISK_FLAGS_ROW)
       .eq('status', 'active')
       .order('created_at', { ascending: true })
       .limit(100),

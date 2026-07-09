@@ -58,7 +58,7 @@ BEGIN
     + (SELECT COALESCE(SUM(balance::NUMERIC),0) FROM system_accounts WHERE currency='PHON')
   INTO v_grand_after;
 
-  -- The claims must have actually awarded PHON (welcome 5000 + daily 50 + spin >=10).
+  -- The claims must have actually awarded PHON (welcome 10000 + daily 1000 + spin prize).
   ASSERT (v_welcome->>'already_claimed')::BOOLEAN = FALSE, 'welcome bonus did not award';
   ASSERT v_wallet_after > v_wallet_before, 'user PHON wallet did not increase';
 
@@ -78,7 +78,7 @@ BEGIN
 END;
 $$;
 
--- ── Test 2: referral reward credits the REFERRER, not the caller ─────────────
+-- ── Test 2: qualified referral pays referrer on referred first daily claim ───
 DO $$
 DECLARE
   v_referrer UUID := gen_random_uuid();
@@ -90,21 +90,31 @@ BEGIN
     (v_referrer, 'authenticated', 'authenticated', 'ref_a_' || v_referrer::TEXT || '@test.local', NOW(), NOW()),
     (v_referred, 'authenticated', 'authenticated', 'ref_b_' || v_referred::TEXT || '@test.local', NOW(), NOW());
 
-  -- referred was invited by referrer (rewarded_at NULL -> eligible).
-  INSERT INTO referrals (referrer_id, referred_id) VALUES (v_referrer, v_referred);
+  INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
+  SELECT v_referred, doc_type::consent_doc_type, 'v1', TRUE
+  FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']) AS doc_type
+  ON CONFLICT DO NOTHING;
 
-  -- The REFERRED user claims their welcome bonus.
+  INSERT INTO referrals (referrer_id, referred_id, state) VALUES (v_referrer, v_referred, 'pending');
+
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_referred::TEXT)::TEXT, true);
   PERFORM rpc_claim_welcome_bonus();
 
   SELECT phon_available::NUMERIC INTO v_referrer_phon FROM wallets WHERE user_id = v_referrer;
   SELECT phon_available::NUMERIC INTO v_referred_phon FROM wallets WHERE user_id = v_referred;
 
-  -- Referrer must receive exactly 2,000 PHON; referred receives 5,000 + 1,000 = 6,000.
-  ASSERT v_referrer_phon = 2000, format('referrer should get 2000 PHON, got %s', v_referrer_phon);
-  ASSERT v_referred_phon = 6000, format('referred should get 6000 PHON, got %s', v_referred_phon);
+  ASSERT v_referrer_phon = 0, format('referrer should get 0 PHON on welcome-only, got %s', v_referrer_phon);
+  ASSERT v_referred_phon = 11000, format('referred should get 11000 PHON welcome (base+ref bonus), got %s', v_referred_phon);
 
-  RAISE NOTICE 'REFERRAL REWARD OK — referrer=+% referred=+% (credited to correct wallets)',
+  PERFORM rpc_claim_daily_reward();
+
+  SELECT phon_available::NUMERIC INTO v_referrer_phon FROM wallets WHERE user_id = v_referrer;
+  SELECT phon_available::NUMERIC INTO v_referred_phon FROM wallets WHERE user_id = v_referred;
+
+  ASSERT v_referrer_phon = 10000, format('referrer should get 10000 PHON after qualified daily, got %s', v_referrer_phon);
+  ASSERT v_referred_phon = 12000, format('referred should get 12000 PHON after daily, got %s', v_referred_phon);
+
+  RAISE NOTICE 'REFERRAL QUALIFIED REWARD OK — referrer=+% referred=+%',
     v_referrer_phon, v_referred_phon;
 END;
 $$;
@@ -204,6 +214,46 @@ BEGIN
   ASSERT v_grand_after = v_grand_before, 'PHON grand total must be conserved after viral claim';
 
   RAISE NOTICE 'VIRAL MISSION CONSERVATION OK — Σ=0, idempotency, quota enforced';
+END;
+$$;
+
+-- ── Test 5: welcome bonus — 10,000 base, no duplicate payout ─────────────────
+DO $$
+DECLARE
+  v_uid             UUID := gen_random_uuid();
+  v_first           JSONB;
+  v_second          JSONB;
+  v_wallet_first    NUMERIC;
+  v_wallet_second   NUMERIC;
+  v_welcome_rows    INT;
+BEGIN
+  INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
+  VALUES (v_uid, 'authenticated', 'authenticated',
+          'welcome_idem_' || v_uid::TEXT || '@test.local', NOW(), NOW());
+
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
+
+  v_first := rpc_claim_welcome_bonus();
+  ASSERT (v_first->>'already_claimed')::BOOLEAN = FALSE, 'first welcome claim must award';
+  ASSERT v_first->>'phon_awarded' = '10000.000000',
+    format('welcome base must be 10000 PHON, got %s', v_first->>'phon_awarded');
+
+  SELECT phon_available::NUMERIC INTO v_wallet_first FROM wallets WHERE user_id = v_uid;
+  ASSERT v_wallet_first = 10000, format('wallet after first claim must be 10000, got %s', v_wallet_first);
+
+  v_second := rpc_claim_welcome_bonus();
+  ASSERT (v_second->>'already_claimed')::BOOLEAN = TRUE, 'second welcome claim must be idempotent';
+  ASSERT v_second->>'phon_awarded' = '10000.000000',
+    format('idempotent response must echo stored award, got %s', v_second->>'phon_awarded');
+
+  SELECT phon_available::NUMERIC INTO v_wallet_second FROM wallets WHERE user_id = v_uid;
+  ASSERT v_wallet_second = v_wallet_first,
+    format('duplicate claim must not credit again: before=%s after=%s', v_wallet_first, v_wallet_second);
+
+  SELECT COUNT(*) INTO v_welcome_rows FROM welcome_bonuses WHERE user_id = v_uid;
+  ASSERT v_welcome_rows = 1, format('welcome_bonuses must have exactly one row, got %s', v_welcome_rows);
+
+  RAISE NOTICE 'WELCOME BONUS IDEMPOTENCY OK — 10000 PHON once, duplicate claim no-op';
 END;
 $$;
 

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Concept A on dark background  contrast check">
+  <rect width="512" height="512" fill="#0d0f14"/>
+  <use href="concept-a-resonance-chamber.svg#root" transform="translate(0,0)"/>
+  <g transform="translate(56,56) scale(0.78)">
+    <use href="../concept-a-resonance-chamber.svg"/>
+  </g>
+  <!-- inline duplicate for standalone preview -->
+  <g transform="translate(56,56) scale(0.78)">
+    <defs>
+      <linearGradient id="pa-body" x1="96" y1="72" x2="416" y2="440" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#eafff6"/>
+        <stop offset="0.34" stop-color="#9dffd9"/>
+        <stop offset="0.68" stop-color="#4fd9a8"/>
+        <stop offset="1" stop-color="#128a5c"/>
+      </linearGradient>
+      <linearGradient id="pa-hi" x1="108" y1="88" x2="300" y2="300" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#ffffff" stop-opacity="0.9"/>
+        <stop offset="0.45" stop-color="#ffffff" stop-opacity="0.22"/>
+        <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="pa-sh" x1="280" y1="220" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#063d2a" stop-opacity="0"/>
+        <stop offset="0.55" stop-color="#063d2a" stop-opacity="0.28"/>
+        <stop offset="1" stop-color="#021810" stop-opacity="0.72"/>
+      </linearGradient>
+      <radialGradient id="pa-core" cx="38%" cy="34%" r="68%">
+        <stop offset="0" stop-color="#ffffff"/>
+        <stop offset="0.38" stop-color="#c8ffea"/>
+        <stop offset="1" stop-color="#2cb87f"/>
+      </radialGradient>
+      <filter id="pa-shadow" x="-18%" y="-18%" width="148%" height="148%">
+        <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#021810" flood-opacity="0.34"/>
+      </filter>
+      <clipPath id="pa-clip"><circle cx="256" cy="256" r="196"/></clipPath>
+    </defs>
+    <g filter="url(#pa-shadow)">
+      <g fill="url(#pa-body)">
+        <path d="M256 72c18 0 32 14 32 32 0 52-14 96-32 128-18-32-32-76-32-128 0-18 14-32 32-32z"/>
+        <path d="M256 440c-18 0-32-14-32-32 0-52 14-96 32-128 18 32 32 76 32 128 0 18-14 32-32 32z"/>
+        <path d="M72 256c0-18 14-32 32-32 52 0 96 14 128 32-32 18-76 32-128 32-18 0-32-14-32-32z"/>
+        <path d="M440 256c0 18-14 32-32 32-52 0-96-14-128-32 32-18 76-32 128-32 18 0 32 14 32 32z"/>
+      </g>
+      <g clip-path="url(#pa-clip)">
+        <path fill="url(#pa-hi)" d="M88 72h300L180 420H88z"/>
+        <path fill="url(#pa-sh)" d="M260 180h220L520 500H220z"/>
+      </g>
+      <circle cx="256" cy="256" r="52" fill="url(#pa-core)"/>
+      <circle cx="244" cy="244" r="16" fill="#ffffff" fill-opacity="0.78"/>
+    </g>
+  </g>
+  <text x="256" y="468" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" fill="#92ffd8" fill-opacity="0.72">#0d0f14 bg � symbol min #4fd9a8 � contrast 9.8:1</text>
+</svg>

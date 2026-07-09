@@ -1,0 +1,7 @@
+# PHONARA admin app — separate Cloudflare Pages project (optional)
+# Suggested hostname: admin.phonara.net + Cloudflare Access
+name = "phonara-admin"
+compatibility_date = "2024-12-01"
+pages_build_output_dir = "apps/admin/dist"
+
+# Build command: bun install && bun run build:packages && bun --filter @phonara/admin build

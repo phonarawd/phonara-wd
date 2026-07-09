@@ -1,18 +1,17 @@
-import { createRoute } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
-import { Route as rootRoute } from './__root';
+import { getSession } from '@/lib/auth';
 
-import { TradeLovableSurface } from '../presentation-import/trading/trade-lovable-surface';
+function TradeRouteLayout() {
+  return <Outlet />;
+}
 
-
-
-export const Route = createRoute({
-
-  getParentRoute: () => rootRoute,
-
-  path: '/trade',
-
-  component: TradeLovableSurface,
-
+export const Route = createFileRoute('/trade')({
+  beforeLoad: async () => {
+    const session = await getSession();
+    if (!session) {
+      throw redirect({ to: '/login', replace: true });
+    }
+  },
+  component: TradeRouteLayout,
 });
-

@@ -27,6 +27,25 @@ alwaysApply: true
 | **G10** | `pretest:e2e` / `stack:ensure --full` 없이 E2E 시작 (Docker/로컬 stack 미확인) | service key·Auth·RPC flake |
 | **G11** | E2E/SQL/`check:full` **아닐 때** Docker Desktop 상시 ON 권장 무시 (operator) · sessionStart에 `stack:ensure` 복원 | RAM·디스크 상시 포화 |
 | **G12** | `test-results/` · E2E auth token · 3000–3002 listener 잔존 채로 **완료 보고** | `check:hygiene` FAIL · 다음 E2E 충돌 |
+| **G13** | Agent **자율** heavy gate — `test:e2e*` · full visual diff · `test:sql` · `check:full` · Playwright · Docker stack 기동 · heavy **retry** | 저사양 lag · flake false-red · RAM 포화 |
+
+## G13 — 저사양 heavy gate (agent 자율 금지 · CI authoritative)
+
+> **Authoritative = GitHub Actions CI** (`.github/workflows/ci.yml`). 로컬 heavy red/green으로 DONE 판정 **금지**.  
+> **8GB operator 일상:** L5~L8 **로컬 실행 안 함** — push/PR → CI green 확인.  
+> **문서 정본:** [`docs/SSOT/CI_GATE_AUTHORITY.md`](../../docs/SSOT/CI_GATE_AUTHORITY.md)
+
+| 주체 | 허용 | 금지 |
+|------|------|------|
+| **Agent (자율)** | L0–L4 lightweight: `gate:ai-impl -- --test <path>` (todo Implemented 정본) · `cursor:status` · `check:hygiene` · `check:ui-architecture` · `typecheck` · `lint` · `check:i18n` · `check:release` · 단일 파일 vitest | **자율** L5–L8 heavy (표 G13) |
+| **Operator PC (8GB 일상)** | `gate:ai-impl` → **git push** → GitHub Actions green 확인 | 로컬 `test:e2e*` · `test:sql` · `check:full` **일상 실행** |
+| **Operator 「gate 실행」** | 채팅 **명시** 시 **단일** spec/SQL **1회** advisory · CI와 불일치 시 **CI 우선** | retry · full suite · 로컬 red/green = authoritative |
+| **GitHub Actions CI** | **quality** · **sql** · **e2e** · **advisors** jobs (push/PR) | — |
+
+**Heavy:** Playwright E2E(+chromium) · full visual diff · `check:full` · `test:sql` integration suite · Docker+Supabase stack for gates  
+**Lightweight (항상 로컬 OK):** `typecheck` · `check:i18n` · `check:hygiene` · dev 육안 · 단일 SQL **조회**(integration suite 아님)
+
+Operator 체크리스트: [`docs/SSOT/OPERATOR_GATES.md`](docs/SSOT/OPERATOR_GATES.md) · [`docs/SSOT/CI_GATE_AUTHORITY.md`](docs/SSOT/CI_GATE_AUTHORITY.md)
 
 ## 필수 (금지의 반대 — 반드시 지킬 것)
 
@@ -43,19 +62,24 @@ alwaysApply: true
 
 ## 에이전트·operator 공통 치트시트
 
+### 8GB operator (일상 — CI 위임)
+
 ```powershell
 Set-Location c:\Users\PC\Desktop\phonara-gb
 bun run cursor:status
+bun run gate:ai-impl -- --test <owner-vitest-path>
+git push origin <branch>
+# GitHub Actions → CI → quality · sql · e2e · advisors green 확인
+gh run list --workflow=ci.yml --limit 3
+```
+
+### 로컬 「gate 실행」(선택 · 1회 advisory · CI 우선)
+
+```powershell
 # orphan·포트·residue 있으면 (G4 방지):
 bun run cursor:emergency-reset
-
-# 좁게 → 넓게 (G1·G6 방지 — 한 줄씩 · exit code 확인 후 다음)
-bun run typecheck
+# 한 줄씩 · foreground only (G1):
 bun run test:e2e:casino -- tests/e2e/<target>.spec.ts
-bun run test:e2e
-bun run check:full
-
-# E2E 후 필수 (G12)
 bun run e2e:kill
 bun run check:hygiene
 ```
@@ -69,7 +93,8 @@ bun run cursor:status
 
 ## 교차 참조
 
-- `79-low-spec-pc.mdc` — 저사양 baseline · 실행 순서
+- `79-low-spec-pc.mdc` — 저사양 baseline · CI 위임
+- `docs/SSOT/CI_GATE_AUTHORITY.md` — GitHub CI job 매트릭스
 - `77-e2e-lifecycle.mdc` — teardown · 포트 3000–3002
 - `78-cursor-auto-hygiene.mdc` — hooks · sessionStart/stop
 - `40-testing.mdc` — E2E 설계·보존 검증

@@ -30,10 +30,7 @@ export function momentumWinProbability(threshold: number = MOMENTUM_WIN_THRESHOL
 }
 
 /** E[total stakes] from combo 0 until cash-out at targetCombo (play + cash-out bets, with resets). */
-export function expectedStakesToCashOut(
-  winProb: number,
-  targetCombo: number,
-): number {
+export function expectedStakesToCashOut(winProb: number, targetCombo: number): number {
   const p = winProb;
   let a = 1;
   let b = 0;
@@ -54,8 +51,9 @@ export function comboRawMultiplier(comboIndex: number): number {
 }
 
 /** Precomputed combo table — mirrors SQL `_momentum_combo_mult`. */
-export const COMBO_MULT: readonly number[] = Array.from({ length: MOMENTUM_MAX_COMBO + 1 }, (_, i) =>
-  comboRawMultiplier(i),
+export const COMBO_MULT: readonly number[] = Array.from(
+  { length: MOMENTUM_MAX_COMBO + 1 },
+  (_, i) => comboRawMultiplier(i),
 );
 
 export function comboPayoutMultiplier(comboIndex: number): number {
@@ -63,10 +61,7 @@ export function comboPayoutMultiplier(comboIndex: number): number {
   return Math.floor(raw * 99) / 100;
 }
 
-export function evaluateMomentum(
-  floats: number[],
-  selection: MomentumSelection,
-): MomentumResult {
+export function evaluateMomentum(floats: number[], selection: MomentumSelection): MomentumResult {
   const { comboBefore, cashOut } = selection;
   if (comboBefore < 0 || comboBefore > MOMENTUM_MAX_COMBO) {
     throw new Error('invalid_momentum_combo');

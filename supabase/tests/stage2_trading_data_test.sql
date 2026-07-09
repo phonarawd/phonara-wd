@@ -22,6 +22,13 @@ DECLARE
   v_source JSONB;
   v_disabled JSONB;
   v_audit_count INT;
+  v_boundary_user UUID := gen_random_uuid();
+  v_boundary_candles JSONB;
+  v_boundary_buy JSONB;
+  v_boundary_stale BOOLEAN := FALSE;
+  v_boundary_oracle NUMERIC;
+  v_boundary_fill NUMERIC;
+  v_boundary_close NUMERIC;
 BEGIN
   INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
   VALUES
@@ -125,6 +132,12 @@ BEGIN
     'synthetic book must straddle mid';
   ASSERT v_ledger_before = v_ledger_after, 'synthetic book wrote ledger rows';
 
+  SET ROLE anon;
+  v_book := rpc_get_synthetic_book('TEST_USDT', NULL);
+  RESET ROLE;
+  ASSERT jsonb_array_length(v_book->'asks') = 3,
+    'anon synthetic book call must succeed (definer + _fmt6)';
+
   -- Source registry admin RPCs.
   v_source := rpc_set_market_source('BTCUSDT-SIM', 'Binance', 'BTCUSDT', '1', TRUE, 'stage2 source setup');
   ASSERT (v_source->>'provider') = 'binance', 'market source provider should be normalized';
@@ -136,7 +149,98 @@ BEGIN
        AND entity_type = 'market_sources'
   ), 'market source audit rows missing';
 
-  RAISE NOTICE 'STAGE2 TRADING DATA OK — metadata, risk, candles, book, sources';
+  -- T0-d settlement boundary: display candles must not drive settlement price.
+  INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
+  VALUES (
+    v_boundary_user,
+    'authenticated',
+    'authenticated',
+    'stage2_boundary_' || v_boundary_user::TEXT || '@t.local',
+    NOW(),
+    NOW()
+  );
+  UPDATE wallets
+     SET usdt_available = '1000000.000000', phon_available = '1000000.000000'
+   WHERE user_id = v_boundary_user;
+
+  INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
+  SELECT v_boundary_user, doc_type::consent_doc_type, '1.0', TRUE
+  FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']) AS doc_type
+  ON CONFLICT DO NOTHING;
+
+  INSERT INTO spot_markets (symbol, fee_rate, display_name, sort_order, price_precision, tick_size, min_notional)
+  VALUES ('T0D_BOUND_USDT', '0.001', 'T0D/BOUND', 998, 2, '0.01', '1.000000');
+
+  INSERT INTO market_circuit_breakers (symbol, is_halted, max_tick_pct, staleness_seconds)
+  VALUES ('T0D_BOUND_USDT', FALSE, 10.0, 60)
+  ON CONFLICT (symbol) DO UPDATE SET
+    is_halted = FALSE,
+    staleness_seconds = 60,
+    updated_at = NOW();
+
+  INSERT INTO oracle_prices (symbol, price, updated_at)
+  VALUES ('T0D_BOUND_USDT', '100.000000', NOW())
+  ON CONFLICT (symbol) DO UPDATE SET
+    price = '100.000000',
+    updated_at = NOW();
+
+  -- Zero ticks: oracle forward-fill must emit min display bars (display-only).
+  v_boundary_candles := rpc_get_candles('T0D_BOUND_USDT', '1m', 60);
+  ASSERT jsonb_array_length(v_boundary_candles) = 60,
+    'T0-d zero-tick oracle forward-fill must return min 60 bars';
+  ASSERT v_boundary_candles->59->>'close' = '100.00',
+    'T0-d forward-fill close must mirror oracle mark';
+
+  -- One stale tick diverging from oracle: candle close != settlement fill.
+  INSERT INTO price_ticks (symbol, price, created_at)
+  VALUES ('T0D_BOUND_USDT', '50.000000', NOW() - INTERVAL '2 minutes');
+
+  v_boundary_candles := rpc_get_candles('T0D_BOUND_USDT', '1m', 5);
+  v_boundary_close := (v_boundary_candles->(jsonb_array_length(v_boundary_candles) - 1)->>'close')::NUMERIC;
+  ASSERT v_boundary_close = 50.00,
+    format('T0-d candle close must follow tick not oracle, got %s', v_boundary_close);
+
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_boundary_user::TEXT)::TEXT, true);
+  PERFORM set_config('phonara.ledger_write', 'allowed', true);
+
+  v_boundary_buy := rpc_spot_market_buy(
+    'T0D_BOUND_USDT',
+    'USDT',
+    '10.000000',
+    'stage2-t0d-boundary-' || v_boundary_user::TEXT
+  );
+  v_boundary_fill := (v_boundary_buy->>'price')::NUMERIC;
+  SELECT price::NUMERIC INTO v_boundary_oracle FROM oracle_prices WHERE symbol = 'T0D_BOUND_USDT';
+
+  ASSERT v_boundary_fill = v_boundary_oracle,
+    format('settlement fill must use oracle mark (%s), not candle close (%s)', v_boundary_oracle, v_boundary_close);
+  ASSERT v_boundary_fill <> v_boundary_close,
+    'T0-d boundary requires synthetic candle close to differ from settlement fill';
+
+  -- Zero ticks + stale oracle: forward-fill still renders, market buy must reject.
+  DELETE FROM price_ticks WHERE symbol = 'T0D_BOUND_USDT';
+  UPDATE oracle_prices
+     SET price = '100.000000', updated_at = NOW() - INTERVAL '10 minutes'
+   WHERE symbol = 'T0D_BOUND_USDT';
+
+  v_boundary_candles := rpc_get_candles('T0D_BOUND_USDT', '1m', 10);
+  ASSERT jsonb_array_length(v_boundary_candles) = 10,
+    'stale oracle must still forward-fill display candles';
+
+  BEGIN
+    PERFORM rpc_spot_market_buy(
+      'T0D_BOUND_USDT',
+      'USDT',
+      '10.000000',
+      'stage2-t0d-stale-' || v_boundary_user::TEXT
+    );
+  EXCEPTION WHEN OTHERS THEN
+    IF SQLERRM LIKE '%stale_price%' THEN v_boundary_stale := TRUE; END IF;
+  END;
+  ASSERT v_boundary_stale,
+    'stale oracle must reject market buy even when display forward-fill exists';
+
+  RAISE NOTICE 'STAGE2 TRADING DATA OK — metadata, risk, candles, book, sources, T0-d boundary';
 END;
 $$;
 

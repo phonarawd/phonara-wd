@@ -14,7 +14,6 @@ const packageAliases = {
   '@phonara/sports-ingest': path.resolve(root, 'packages/sports-ingest/src'),
   '@phonara/i18n': path.resolve(root, 'packages/i18n/src'),
   '@phonara/i18n/react': path.resolve(root, 'packages/i18n/src/react'),
-  '@phonara/ui': path.resolve(root, 'packages/ui/src'),
   '@phonara/market-display': path.resolve(root, 'packages/market-display/src'),
 };
 
@@ -51,14 +50,15 @@ export default defineConfig({
         extends: true,
         resolve: {
           alias: {
-            '@/games': path.resolve(webSrc, 'components/games'),
             '@': webSrc,
-            'react-router-dom': path.resolve(webSrc, 'shims/react-router-dom.tsx'),
+            'virtual:pwa-register': path.resolve(webSrc, 'lib/pwa-register-dev-stub.ts'),
             ...packageAliases,
           },
         },
         test: {
           name: 'web',
+          /** Windows low-spec: forks hangs during full web collection — threads + maxWorkers 1. */
+          pool: 'threads',
           globals: false,
           environment: 'jsdom',
           include: ['apps/web/src/**/*.test.{ts,tsx}'],
@@ -68,10 +68,37 @@ export default defineConfig({
       {
         extends: true,
         resolve: {
-          alias: {
-            '@': path.resolve(root, 'apps/admin/src'),
-            ...packageAliases,
-          },
+          alias: [
+            {
+              find: '@/product/primitives',
+              replacement: path.resolve(root, 'apps/web/src/product/primitives'),
+            },
+            {
+              find: '@/product/tokens',
+              replacement: path.resolve(root, 'apps/web/src/product/tokens'),
+            },
+            {
+              find: '@/product/layout/content-shell',
+              replacement: path.resolve(root, 'apps/web/src/product/layout/content-shell.tsx'),
+            },
+            {
+              find: '@/hooks/use-prefers-reduced-motion',
+              replacement: path.resolve(root, 'apps/web/src/hooks/use-prefers-reduced-motion.ts'),
+            },
+            {
+              find: '@/product/i18n',
+              replacement: path.resolve(root, 'apps/admin/src/product/i18n'),
+            },
+            {
+              find: '@/lib/i18n',
+              replacement: path.resolve(root, 'apps/admin/src/lib/i18n.tsx'),
+            },
+            { find: '@', replacement: path.resolve(root, 'apps/admin/src') },
+            ...Object.entries(packageAliases).map(([find, replacement]) => ({
+              find,
+              replacement,
+            })),
+          ],
         },
         test: {
           name: 'admin',

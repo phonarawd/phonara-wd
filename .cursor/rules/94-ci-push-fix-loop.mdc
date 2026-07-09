@@ -1,0 +1,84 @@
+---
+description: Push → CI watch → AI fix → re-push until required jobs green (8GB · G13)
+alwaysApply: true
+---
+
+# CI Push-Fix Loop (perfect push)
+
+> **정본:** [`docs/SSOT/CI_GATE_AUTHORITY.md`](../../docs/SSOT/CI_GATE_AUTHORITY.md) · skill `.cursor/skills/ci-push-fix-loop`  
+> **Heavy gate:** agent 로컬 `test:e2e` / `test:sql` **금지** (G13) — CI가 authoritative
+
+## Operator 트리거 (standing grant)
+
+| 입력 | Agent 행동 |
+|------|------------|
+| 「깃허브 푸쉬 전에 완벽하게…」 / 「푸시해서 CI green까지」 / 「push-fix loop」 | 본 규칙 **전체 루프** 자율 실행 |
+| 「CI 확인해줘」 | push **후** `ci:watch` 또는 `ci:status`만 |
+| 「구현해줘」 (Plan 승인 없음) | **Implement 금지** — `89` |
+
+Operator가 push·commit을 **명시**했을 때만 commit/push. 루프 중 재푸시는 동일 세션 standing grant.
+
+## 루프 (non-waivable)
+
+```text
+preflight → L0~L4 local green → commit → push → ci:watch
+  → required green? → DONE / Verified 보고
+  → red? → triage (gh logs · artifacts) → fix (L0~L4 only) → commit → push → ci:watch (반복)
+```
+
+**Required CI jobs:** `quality` · `sql` · `e2e` · `advisors` (`scripts/ci-watch.ts`)
+
+**Advisory (merge 차단 아님):** `e2e-browser-matrix` · `format` advisory — red여도 required 4개 green이면 Verified OK (operator에 advisory만 보고)
+
+## Pre-push (로컬 · Docker OFF)
+
+순서 고정 · **한 무거운 gate 1개** (G1):
+
+1. `bun run cursor:status` — orphan/residue 0
+2. `bun run typecheck` → `lint` → `format:check`
+3. `check:i18n` · `check:release` · `check:hygiene` · `check:ai-reference`
+4. 변경 surface: `gate:ai-impl -- --test <path>`
+5. `.tmp/` · `.cursor/.phonara-render-fix-at` · secrets **커밋 제외**
+
+**red면 push 금지** — batch-fix 후 같은 계층 1회 재실행 (`81`).
+
+## Push 후 CI 감시
+
+```powershell
+git push origin <branch>
+bun run ci:watch
+# 타임아웃/백그라운드: gh run view <id> · gh run view <id> --log-failed
+```
+
+`ci:watch` exit 1 = required job red — **실패가 아니라 다음 fix 입력**.
+
+## Red triage (job별)
+
+| Job | 로그 | 흔한 fix (로컬) |
+|-----|------|-----------------|
+| **quality** | `gh run view <id> --log-failed` | Prettier `format` · vitest · lint · typecheck |
+| **sql** | failed step + `database-types-ci-expected` artifact | allowlist SQL test · `gen:types` drift → CI artifact sync |
+| **e2e** | Playwright report artifact | UI/RPC wire · **로컬 full E2E 금지** — 타겟 vitest + CI 재확인 |
+| **advisors** | advisor ERROR | migration/RPC — operator RED STOP if new migration |
+
+Artifact: `gh run download <id> -n database-types-ci-expected -D .tmp-ci-types`
+
+## Re-push 규칙
+
+- fix마다 **의미 있는 conventional commit** 1개
+- **force push 금지** · hook 우회 금지 · `.env` 커밋 금지
+- migration touch 시: push와 별도 `stack:push-remote` (`96`)
+- **최대 5 fix-push 사이클** — 초과 시 operator 보고 (flake · env · scope creep)
+
+## DONE (Verified)
+
+- [ ] Required 4 jobs **success** (`ci:watch` green 또는 `gh run view` 확인)
+- [ ] 로컬 L0~L4 green
+- [ ] `git status` clean (의도 untracked만)
+- [ ] §AI Todo / Plan `[x]` — **CI green 후에만** (`82`)
+
+**FAIL =** required red인데 Verified/DONE 주장 · 로컬 heavy gate로 green 주장 · advisory red를 merge blocker로 과장
+
+## 교차 참조
+
+- `70-autonomy-and-delivery` §5 perfect-green · `80` G13 · `89` §9 · `gate-runner` · `CI_GATE_AUTHORITY.md`

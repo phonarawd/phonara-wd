@@ -14,8 +14,7 @@ import {
 } from './guard-coverage-detect.ts';
 import { isAllowlisted } from './guard-coverage-allowlist.ts';
 
-const LEGACY_BALANCE_RE =
-  /_credit_wallet|_debit_wallet|_lock_wallet|_unlock_wallet|_debit_locked/i;
+const LEGACY_BALANCE_RE = /_credit_wallet|_debit_wallet|_lock_wallet|_unlock_wallet|_debit_locked/i;
 
 interface RpcRow extends RpcDefRow {
   authenticated: boolean;

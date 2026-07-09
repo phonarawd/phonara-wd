@@ -1,0 +1,69 @@
+# Session Purge Contract (저사양 · E2E 잔재 · 터미널 충돌)
+
+> **목적:** Cursor 렉·E2E hang·포트 3000–3002 충돌·`test-results/` 잔재를 **한 번에** 제거하는 정본.
+> **non-waivable** — 에이전트·operator 동일.
+
+## 정본 명령 (우선순위)
+
+| 상황 | 명령 | 비용 |
+|------|------|------|
+| **전체 purge (권장)** | `bun run cursor:purge` | 즉시~수초 |
+| 렉·hang 긴급 | `bun run cursor:emergency-reset` | 즉시 |
+| 읽기 전용 진단 | `bun run cursor:status` | ~2–3s (no full User walk) |
+| E2E/SQL 착수 전 | `bun run cursor:preflight` | ~10s |
+| 세션 종료 | `bun run cursor:session-end` | 즉시 |
+
+`cursor:purge` = orphan kill + E2E 포트 sweep + repo artifact + 프로젝트 metadata(transcripts/terminals) + `check:hygiene`.
+
+## 에이전트 의무 (착수 전 · E2E 후 · 완료 보고 전)
+
+1. **착수:** `bun run cursor:status` — orphan·포트·residue 확인. 이상 있으면 **`cursor:purge` 1회** 후 gate.
+2. **E2E 종료(성공/실패 무관):** foreground exit 확인 → `bun run e2e:kill` → `bun run check:hygiene`.
+3. **완료 보고:** residue 0 · 포트 free · background heavy gate 없음. 아니면 **`cursor:purge`** 후 재확인.
+4. **Cursor UI 렉 지속:** purge 후 **Cursor 완전 종료(트레이 포함)** → 재시작.
+
+## Hook 강제 (G5 보완)
+
+`.cursor/hooks/e2e-raw-deny.ts` — agent shell에서 차단:
+
+- raw `playwright test` / `bunx playwright` / `npx playwright`
+- `bun run dev:web` · `dev:admin` (E2E webServer와 포트 충돌)
+- `Tee-Object` · repo-root `check-full-log.txt` / `e2e-log.txt` 리다이렉트
+
+정본 E2E: `bun run test:e2e` · `test:e2e:casino` · `test:e2e:casino-smoke` · `e2e:kill` · `setup:playwright`.
+
+레거시 우회(수동만): `PHONARA_ALLOW_RAW_E2E=1` — **에이전트 기본 사용 금지**.
+
+## 절대 남기지 말 것 (check:hygiene FAIL)
+
+- `test-results/` · `playwright-report/` · `blob-report/` · `coverage/`
+- `tests/e2e/.auth.json` · `.admin-auth.json`
+- repo-root `check-full-log.txt` · `e2e-log.txt` · `check-gate-log.txt`
+- 포트 **3000 / 3001 / 3002** LISTENING orphan
+
+`dist/` · `packages/*/dist/`는 mid-session 유효 — purge/emergency-reset이 **삭제하지 않음**.
+
+## Docker / RAM (저사양)
+
+- **RAM 위기 (free < 1GB):** Track A — 앱 종료 우선; compact는 RAM 무관 → [`docs/SSOT/OPERATOR_GATES.md`](../../docs/SSOT/OPERATOR_GATES.md)
+- **페이지파일:** Windows 시스템 관리 크기 확인 (P1)
+- E2E/SQL **아닐 때** Docker OFF — on-demand가 **자동** 관리 (`84-docker-on-demand.mdc`)
+- E2E/SQL **종료 후** `posttest:*` → Desktop auto-quit (기본)
+- 디스크 부족: `bun run stack:docker-clean --cache`
+
+## FAIL = purge 미실행
+
+- orphan·BUSY port·residue 있는데 gate/E2E/완료 보고 진행
+- E2E background shell + 다음 gate 병렬 (G1·G2)
+- hung E2E 후 `e2e:kill` 없이 새 터미널에서 재시작 (G4)
+
+## self-check
+
+```bash
+bun run cursor:status
+bun run cursor:purge
+bun run check:hygiene
+rg "cursor:purge|e2e-raw-deny" package.json .cursor/hooks.json .cursor/rules/
+```
+
+교차 참조: `78-cursor-auto-hygiene.mdc` · `79-low-spec-pc.mdc` · `80-absolute-gate-prohibitions.mdc` (G4·G5·G12) · `77-e2e-lifecycle.mdc`

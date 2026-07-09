@@ -16,7 +16,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@phonara/money": "workspace:*"
+    "@phonara/money": "workspace:*",
+    "@phonara/shared-types": "workspace:*"
   },
   "devDependencies": {
     "typescript": "latest",

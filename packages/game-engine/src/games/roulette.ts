@@ -43,9 +43,7 @@ export interface RouletteResult {
   totalMultiplier: number;
 }
 
-const RED_NUMBERS = new Set([
-  1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36,
-]);
+const RED_NUMBERS = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
 
 const DOZEN1 = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
 const DOZEN2 = new Set([13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]);

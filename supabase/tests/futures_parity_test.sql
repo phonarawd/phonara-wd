@@ -496,3 +496,52 @@ END;
 $$;
 
 ROLLBACK;
+
+BEGIN;
+
+DO $$
+DECLARE
+  v_uid    UUID := gen_random_uuid();
+  v_open   JSONB;
+  v_update JSONB;
+  v_pos_id UUID;
+BEGIN
+  INSERT INTO auth.users (id, aud, role, email, created_at, updated_at)
+  VALUES (v_uid, 'authenticated', 'authenticated',
+          'parity_sltp_' || v_uid::TEXT || '@test.local', NOW(), NOW());
+  PERFORM set_config('phonara.ledger_write', 'allowed', true);
+  UPDATE wallets SET usdt_available = '1000.000000' WHERE user_id = v_uid;
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
+
+  UPDATE app_config SET value = 'false' WHERE key IN ('system_halt', 'system_readonly');
+  UPDATE app_config SET value = 'true' WHERE key IN ('feature_futures_enabled', 'consent_gate_enabled');
+  INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
+  SELECT v_uid, doc_type::consent_doc_type, 'test', TRUE
+  FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']) AS doc_type
+  ON CONFLICT DO NOTHING;
+
+  UPDATE futures_markets
+     SET is_active = TRUE, max_leverage = 100, max_user_positions = 100, max_open_interest = '1000000.000000'
+   WHERE symbol = 'PHONUSDT-PERP';
+  UPDATE market_circuit_breakers SET is_halted = FALSE WHERE symbol = 'PHONUSDT-PERP';
+  INSERT INTO oracle_prices (symbol, price, updated_at)
+  VALUES ('PHONUSDT-PERP', '0.012345', NOW())
+  ON CONFLICT (symbol) DO UPDATE SET price = '0.012345', updated_at = NOW();
+
+  v_open := rpc_open_futures_position(
+    'PHONUSDT-PERP', 'long', 'USDT', '123.456789', '7', NULL, NULL,
+    'parity-sltp-' || v_uid::TEXT
+  );
+  v_pos_id := (v_open->>'position_id')::UUID;
+
+  v_update := rpc_update_futures_position_sltp(
+    v_pos_id, '0.011000', '0.013000'
+  );
+  ASSERT v_update->>'stop_loss' = '0.011000', 'sltp parity stop_loss failed';
+  ASSERT v_update->>'take_profit' = '0.013000', 'sltp parity take_profit failed';
+
+  RAISE NOTICE 'FUTURES SLTP UPDATE PARITY OK — post-open edit RPC stores TP/SL';
+END;
+$$;
+
+ROLLBACK;

@@ -1,12 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Json } from '@phonara/shared-types';
-import type { AdminAuditEvent } from '@/components/admin/primitives';
-import {
-  ackOpsAlert,
-  getOpsAlertsRaw,
-  resolveOpsAlert,
-} from '../../domain/ops';
+import type { AdminAuditEvent } from '@/shared-types';
+import { ackOpsAlert, getOpsAlertsRaw, resolveOpsAlert } from '../../domain/ops';
 import { useAuditLogs } from '../use-audit-logs';
 import { useAdminMfaReady } from '../use-admin-mfa-ready';
 import type {
@@ -47,8 +43,7 @@ function parseAlertRow(value: Json): AdminAlertRow | null {
   if (status !== 'open' && status !== 'acknowledged' && status !== 'resolved') return null;
   return {
     id,
-    dedupeKey:
-      typeof value['dedupe_key'] === 'string' ? value['dedupe_key'] : sourceCheckId,
+    dedupeKey: typeof value['dedupe_key'] === 'string' ? value['dedupe_key'] : sourceCheckId,
     sourceCheckId,
     severity,
     status,
@@ -56,8 +51,7 @@ function parseAlertRow(value: Json): AdminAlertRow | null {
     runbookKey: typeof value['runbook_key'] === 'string' ? value['runbook_key'] : '',
     firstSeenAt: typeof value['first_seen_at'] === 'string' ? value['first_seen_at'] : '',
     lastSeenAt: typeof value['last_seen_at'] === 'string' ? value['last_seen_at'] : '',
-    occurrenceCount:
-      typeof value['occurrence_count'] === 'number' ? value['occurrence_count'] : 1,
+    occurrenceCount: typeof value['occurrence_count'] === 'number' ? value['occurrence_count'] : 1,
   };
 }
 
@@ -170,10 +164,7 @@ export function useAdminAuditAlerts(): UseAdminAuditAlerts {
     [auditFeed, auditFilters],
   );
 
-  const filteredAlerts = useMemo(
-    () => filterAlerts(alerts, alertFilters),
-    [alerts, alertFilters],
-  );
+  const filteredAlerts = useMemo(() => filterAlerts(alerts, alertFilters), [alerts, alertFilters]);
 
   const refreshAuditFeed = useCallback(() => {
     void refetchAuditLogs();

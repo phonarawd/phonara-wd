@@ -11,7 +11,5 @@
     "tsBuildInfoFile": "../../node_modules/.cache/tsbuild/money.tsbuildinfo"
   },
   "include": ["src"],
-  "references": [
-    { "path": "../shared-types" }
-  ]
+  "references": [{ "path": "../shared-types" }]
 }

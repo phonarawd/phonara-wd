@@ -1,5 +1,9 @@
-import { spawn } from 'node:child_process';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { requirePackagesDistOrExit } from './lib/ensure-packages-built';
+import { spawnSafe, resolveBunExe } from './lib/spawn-safe';
+
+const repoRoot = join(fileURLToPath(new URL('.', import.meta.url)), '..');
 
 const app = process.argv[2];
 const port = process.argv[3];
@@ -12,38 +16,35 @@ if ((app !== 'web' && app !== 'admin') || !port) {
 // pretest:e2e builds once; web+admin servers must not each run tsc --force in parallel.
 requirePackagesDistOrExit();
 
-function toCommand(parts: string[]): string {
-  return parts
-    .map((part) => (part.includes(' ') || part.includes('*') ? `"${part.replaceAll('"', '\\"')}"` : part))
-    .join(' ');
-}
+const serverEnv: NodeJS.ProcessEnv = { ...process.env };
 
-const server = spawn(
-  toCommand([
-    'bun',
-    'run',
-    `dev:${app}`,
-    '--',
-    '--host',
-    '127.0.0.1',
-    '--port',
-    port,
-    '--strictPort',
-  ]),
+const appDir = app === 'web' ? join(repoRoot, 'apps/web') : join(repoRoot, 'apps/admin');
+
+const server = spawnSafe(
+  resolveBunExe(),
+  ['run', 'dev', '--', '--host', '127.0.0.1', '--port', port, '--strictPort'],
   {
+    cwd: appDir,
     stdio: 'inherit',
-    shell: true,
+    env: serverEnv,
   },
 );
 
+let intentionalStop = false;
+
 const stop = (): void => {
+  intentionalStop = true;
   if (!server.killed) server.kill('SIGTERM');
 };
 
 process.once('SIGINT', stop);
 process.once('SIGTERM', stop);
 
-server.once('exit', (code) => {
+server.once('exit', (code, signal) => {
+  if (intentionalStop || signal === 'SIGTERM' || signal === 'SIGINT') {
+    process.exit(0);
+    return;
+  }
   process.exit(code ?? 0);
 });
 server.once('error', (error) => {

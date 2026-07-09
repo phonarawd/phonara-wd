@@ -57,8 +57,7 @@ export function readWsIngestEnv(): WsIngestWorkerConfig {
     .filter(Boolean);
 
   const statusRaw = process.env['SPORTS_WS_STATUS']?.trim().toLowerCase();
-  const wsStatus =
-    statusRaw === 'live' || statusRaw === 'prematch' ? statusRaw : undefined;
+  const wsStatus = statusRaw === 'live' || statusRaw === 'prematch' ? statusRaw : undefined;
 
   return {
     apiKey,
@@ -98,10 +97,7 @@ export class OddsApiIoWsIngestWorker {
 
   async start(): Promise<void> {
     await this.bootstrapRest();
-    const cursor = await loadIngestCursor(
-      ODDS_API_IO_WS_CURSOR.vendor,
-      WS_CURSOR_LEAGUE_CODE,
-    );
+    const cursor = await loadIngestCursor(ODDS_API_IO_WS_CURSOR.vendor, WS_CURSOR_LEAGUE_CODE);
     if (cursor?.last_seq) {
       const parsed = Number(cursor.last_seq);
       if (Number.isFinite(parsed) && parsed > 0) {
@@ -130,13 +126,16 @@ export class OddsApiIoWsIngestWorker {
   }
 
   private startStallWatch(): void {
-    this.stallTimer = setInterval(() => {
-      if (this.stopped || !this.stallDetector.isStalled()) return;
-      console.warn(
-        `[sports-ingest-ws] stall detected (${this.stallDetector.elapsedMs()}ms) — reconnecting`,
-      );
-      this.forceReconnect();
-    }, Math.min(this.config.stallMs / 2, 30_000));
+    this.stallTimer = setInterval(
+      () => {
+        if (this.stopped || !this.stallDetector.isStalled()) return;
+        console.warn(
+          `[sports-ingest-ws] stall detected (${this.stallDetector.elapsedMs()}ms) — reconnecting`,
+        );
+        this.forceReconnect();
+      },
+      Math.min(this.config.stallMs / 2, 30_000),
+    );
   }
 
   private async bootstrapRest(): Promise<void> {
@@ -145,14 +144,10 @@ export class OddsApiIoWsIngestWorker {
       const envKey = `SPORTS_ODDS_IO_LEAGUE_${league.toUpperCase().replace(/-/g, '_')}`;
       const leagueSlugOverride = process.env[envKey];
 
-      const { messages, eventCount } = await fetchOddsApiIoSportOdds(
-        this.config.apiKey,
-        league,
-        {
-          bookmakers: this.config.bookmakers,
-          leagueSlugOverride,
-        },
-      );
+      const { messages, eventCount } = await fetchOddsApiIoSportOdds(this.config.apiKey, league, {
+        bookmakers: this.config.bookmakers,
+        leagueSlugOverride,
+      });
 
       for (const msg of messages) {
         if (msg.type === 'event_upsert') {
@@ -284,11 +279,7 @@ export class OddsApiIoWsIngestWorker {
     if (seq !== undefined && seq > this.lastSeq) {
       this.lastSeq = seq;
       if (this.lastSeq % 50 === 0) {
-        await saveIngestCursor(
-          ODDS_API_IO_WS_CURSOR.vendor,
-          WS_CURSOR_LEAGUE_CODE,
-          this.lastSeq,
-        );
+        await saveIngestCursor(ODDS_API_IO_WS_CURSOR.vendor, WS_CURSOR_LEAGUE_CODE, this.lastSeq);
       }
     }
 
@@ -369,11 +360,7 @@ export class OddsApiIoWsIngestWorker {
     try {
       const count = await persistIngestMessages(batch);
       console.info(`[sports-ingest-ws] persisted ${count} messages (lastSeq=${this.lastSeq})`);
-      await saveIngestCursor(
-        ODDS_API_IO_WS_CURSOR.vendor,
-        WS_CURSOR_LEAGUE_CODE,
-        this.lastSeq,
-      );
+      await saveIngestCursor(ODDS_API_IO_WS_CURSOR.vendor, WS_CURSOR_LEAGUE_CODE, this.lastSeq);
     } catch (error) {
       console.error(
         `[sports-ingest-ws] persist failed: ${error instanceof Error ? error.message : String(error)}`,

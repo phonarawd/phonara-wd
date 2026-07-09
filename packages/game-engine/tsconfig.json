@@ -11,7 +11,5 @@
     "tsBuildInfoFile": "../../node_modules/.cache/tsbuild/game-engine.tsbuildinfo"
   },
   "include": ["src"],
-  "references": [
-    { "path": "../money" }
-  ]
+  "references": [{ "path": "../money" }]
 }

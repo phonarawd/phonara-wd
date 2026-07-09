@@ -445,6 +445,14 @@ BEGIN
   ON CONFLICT DO NOTHING;
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
+  v_res := rpc_get_crypto_deposit_address('USDT', 'TRC20');
+  ASSERT (v_res->>'ok')::BOOLEAN, format('crypto address slot failed: %s', v_res);
+  v_addr := 'T' || upper(substr(replace(v_uid::TEXT, '-', ''), 1, 33));
+  PERFORM set_config('request.jwt.claims', '{}', true);
+  PERFORM rpc_service_set_crypto_address(
+    v_uid, 'TRC20', v_addr, (v_res->>'derivation_index')::INT
+  );
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
   v_res := rpc_create_crypto_deposit_request('50.000000', 'USDT', 'TRC20', 'crypto-req-' || v_uid::TEXT);
   ASSERT (v_res->>'ok')::BOOLEAN, format('crypto deposit request must succeed, got %s', v_res);
   v_addr := v_res->>'address';

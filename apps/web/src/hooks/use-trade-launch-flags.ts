@@ -1,10 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../lib/supabase';
 
-const TRADE_LAUNCH_FLAG_KEYS = [
-  'feature_cross_margin_enabled',
-  'feature_funding_enabled',
-] as const;
+import { supabase } from '@/lib/supabase';
+
+const TRADE_LAUNCH_FLAG_KEYS = ['feature_cross_margin_enabled', 'feature_funding_enabled'] as const;
 
 type TradeLaunchFlagKey = (typeof TRADE_LAUNCH_FLAG_KEYS)[number];
 
@@ -14,9 +12,10 @@ async function fetchTradeLaunchFlags(): Promise<Record<TradeLaunchFlagKey, strin
     .select('key, value')
     .in('key', [...TRADE_LAUNCH_FLAG_KEYS]);
   if (error) throw error;
-  const map = Object.fromEntries(
-    TRADE_LAUNCH_FLAG_KEYS.map((key) => [key, null]),
-  ) as Record<TradeLaunchFlagKey, string | null>;
+  const map = Object.fromEntries(TRADE_LAUNCH_FLAG_KEYS.map((key) => [key, null])) as Record<
+    TradeLaunchFlagKey,
+    string | null
+  >;
   for (const row of data ?? []) {
     if (row.key in map) {
       map[row.key as TradeLaunchFlagKey] = row.value;

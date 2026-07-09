@@ -1,6 +1,11 @@
 import { create } from 'zustand';
-import { toast } from 'sonner';
 import type { MessageKey } from '@phonara/i18n';
+import {
+  readNotificationLocalPref,
+  NOTIFICATION_LOCAL_PREF_DEFAULTS,
+  type NotificationLocalPrefKey,
+} from '@/domain/notifications-pwa-display-contract';
+import { productToast } from '@/product/primitives/toast-zone';
 
 export type NotificationTone = 'success' | 'danger' | 'warning' | 'info';
 export type PriceAlertDirection = 'above' | 'below';
@@ -27,6 +32,10 @@ export interface EmitNotificationInput {
   tone: NotificationTone;
   title: string;
   body: string;
+  /** When set, in-app toast/browser notify respect `/settings/notifications` local pref. */
+  prefKey?: NotificationLocalPrefKey;
+  /** Growth alerts use warm toast grammar (§3.2). */
+  toastZone?: 'warm' | 'strict';
 }
 
 const NOTIFICATIONS_STORAGE_KEY = 'phonara.trade.notifications.v1';
@@ -40,7 +49,9 @@ export const priceRef = { current: new Map<string, string>() };
 function readStoredNotifications(): TradeNotification[] {
   if (typeof window === 'undefined') return [];
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(NOTIFICATIONS_STORAGE_KEY) ?? '[]') as unknown;
+    const parsed = JSON.parse(
+      window.localStorage.getItem(NOTIFICATIONS_STORAGE_KEY) ?? '[]',
+    ) as unknown;
     if (!Array.isArray(parsed)) return [];
     return parsed.filter(isTradeNotification).slice(0, MAX_NOTIFICATIONS);
   } catch {
@@ -51,7 +62,9 @@ function readStoredNotifications(): TradeNotification[] {
 function readStoredPriceAlert(): PriceAlertConfig | null {
   if (typeof window === 'undefined') return null;
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(PRICE_ALERT_STORAGE_KEY) ?? 'null') as unknown;
+    const parsed = JSON.parse(
+      window.localStorage.getItem(PRICE_ALERT_STORAGE_KEY) ?? 'null',
+    ) as unknown;
     if (!parsed || typeof parsed !== 'object') return null;
     const alert = parsed as Partial<PriceAlertConfig>;
     if (
@@ -81,13 +94,19 @@ function isTradeNotification(value: unknown): value is TradeNotification {
     typeof item.title === 'string' &&
     typeof item.body === 'string' &&
     typeof item.createdAt === 'string' &&
-    (item.tone === 'success' || item.tone === 'danger' || item.tone === 'warning' || item.tone === 'info')
+    (item.tone === 'success' ||
+      item.tone === 'danger' ||
+      item.tone === 'warning' ||
+      item.tone === 'info')
   );
 }
 
 function persistNotifications(items: TradeNotification[]): void {
   if (typeof window === 'undefined') return;
-  window.localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(items.slice(0, MAX_NOTIFICATIONS)));
+  window.localStorage.setItem(
+    NOTIFICATIONS_STORAGE_KEY,
+    JSON.stringify(items.slice(0, MAX_NOTIFICATIONS)),
+  );
 }
 
 function persistPriceAlert(alert: PriceAlertConfig | null): void {
@@ -119,9 +138,10 @@ interface NotificationStore {
 export const useNotificationStore = create<NotificationStore>((set, get) => ({
   notifications: readStoredNotifications(),
   priceAlert: readStoredPriceAlert(),
-  permission: typeof window !== 'undefined' && 'Notification' in window
-    ? window.Notification.permission
-    : 'unsupported',
+  permission:
+    typeof window !== 'undefined' && 'Notification' in window
+      ? window.Notification.permission
+      : 'unsupported',
   permissionBusy: false,
   permissionError: null,
 
@@ -141,14 +161,38 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
       return { notifications: next };
     });
 
-    const options = input.body ? { description: input.body, id: input.id } : { id: input.id };
-    if (input.tone === 'danger') toast.error(input.title, options);
-    else if (input.tone === 'success') toast.success(input.title, options);
-    else if (input.tone === 'warning') toast.warning(input.title, options);
-    else toast(input.title, options);
+    const prefAllowsToast =
+      !input.prefKey ||
+      readNotificationLocalPref(input.prefKey, NOTIFICATION_LOCAL_PREF_DEFAULTS[input.prefKey]);
+
+    if (prefAllowsToast) {
+      const toastOptions = input.body
+        ? { description: input.body, id: input.id }
+        : { id: input.id };
+      const tone =
+        input.tone === 'danger'
+          ? 'error'
+          : input.tone === 'success'
+            ? 'success'
+            : input.tone === 'warning'
+              ? 'warning'
+              : 'default';
+      productToast.showText({
+        zone: input.toastZone ?? 'strict',
+        title: input.title,
+        description: toastOptions.description,
+        id: toastOptions.id,
+        tone,
+      });
+    }
 
     const { permission } = get();
-    if (permission === 'granted' && typeof window !== 'undefined' && 'Notification' in window) {
+    if (
+      prefAllowsToast &&
+      permission === 'granted' &&
+      typeof window !== 'undefined' &&
+      'Notification' in window
+    ) {
       try {
         new window.Notification(input.title, {
           body: input.body,

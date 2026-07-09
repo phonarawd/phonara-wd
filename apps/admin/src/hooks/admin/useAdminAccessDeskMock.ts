@@ -1,6 +1,6 @@
-import { useCallback } from "react";
-import { createAdminMockHook } from "@/hooks/admin/createAdminMockHook";
-import type { AdminAuditEvent } from "@/components/admin/primitives";
+import { useCallback } from 'react';
+import { createAdminMockHook } from '@/hooks/admin/createAdminMockHook';
+import type { AdminAuditEvent } from '@/shared-types';
 
 // L1-15-J · Admin Access desk mock SOT.
 // Three domains: RBAC roles · Saved filters · MFA policy.
@@ -10,31 +10,25 @@ import type { AdminAuditEvent } from "@/components/admin/primitives";
 
 const MIN_REASON = 4;
 
-export type RbacRoleKey =
-  | "owner"
-  | "finance"
-  | "risk"
-  | "support"
-  | "operator"
-  | "viewer";
+export type RbacRoleKey = 'owner' | 'finance' | 'risk' | 'support' | 'operator' | 'viewer';
 
 export type AccessDeskKey =
-  | "operations"
-  | "casino"
-  | "earn"
-  | "cms"
-  | "users"
-  | "sports"
-  | "audit"
-  | "alerts";
+  | 'operations'
+  | 'casino'
+  | 'earn'
+  | 'cms'
+  | 'users'
+  | 'sports'
+  | 'audit'
+  | 'alerts';
 
 export type MfaTierKey =
-  | "tier.bronze"
-  | "tier.silver"
-  | "tier.gold"
-  | "tier.platinum"
-  | "tier.staff"
-  | "tier.admin";
+  | 'tier.bronze'
+  | 'tier.silver'
+  | 'tier.gold'
+  | 'tier.platinum'
+  | 'tier.staff'
+  | 'tier.admin';
 
 export interface AdminRbacRoleRow {
   id: string;
@@ -69,239 +63,224 @@ export interface AdminMfaPolicyRow {
 
 export interface RbacFilters {
   search: string;
-  enabled: "all" | "on" | "off";
+  enabled: 'all' | 'on' | 'off';
 }
 
 export interface FilterFilters {
   search: string;
-  deskKey: AccessDeskKey | "all";
+  deskKey: AccessDeskKey | 'all';
 }
 
 export interface MfaFilters {
   search: string;
-  tierKey: MfaTierKey | "all";
-  required: "all" | "on" | "off";
+  tierKey: MfaTierKey | 'all';
+  required: 'all' | 'on' | 'off';
 }
 
 // --- SEED -------------------------------------------------------------------
 
 const SEED_ROLES: AdminRbacRoleRow[] = [
   {
-    id: "r_owner",
-    roleKey: "owner",
-    labelKey: "admin.access.role.owner.label",
-    memberCount: "2",
-    routesSummary: "*",
+    id: 'r_owner',
+    roleKey: 'owner',
+    labelKey: 'admin.access.role.owner.label',
+    memberCount: '2',
+    routesSummary: '*',
     enabled: true,
-    updatedAt: "2026-06-01T08:00:00.000Z",
+    updatedAt: '2026-06-01T08:00:00.000Z',
   },
   {
-    id: "r_finance",
-    roleKey: "finance",
-    labelKey: "admin.access.role.finance.label",
-    memberCount: "4",
-    routesSummary: "operations · earn · audit",
+    id: 'r_finance',
+    roleKey: 'finance',
+    labelKey: 'admin.access.role.finance.label',
+    memberCount: '4',
+    routesSummary: 'operations · earn · audit',
     enabled: true,
-    updatedAt: "2026-06-02T09:30:00.000Z",
+    updatedAt: '2026-06-02T09:30:00.000Z',
   },
   {
-    id: "r_risk",
-    roleKey: "risk",
-    labelKey: "admin.access.role.risk.label",
-    memberCount: "3",
-    routesSummary: "alerts · audit · users",
+    id: 'r_risk',
+    roleKey: 'risk',
+    labelKey: 'admin.access.role.risk.label',
+    memberCount: '3',
+    routesSummary: 'alerts · audit · users',
     enabled: true,
-    updatedAt: "2026-06-03T10:00:00.000Z",
+    updatedAt: '2026-06-03T10:00:00.000Z',
   },
   {
-    id: "r_support",
-    roleKey: "support",
-    labelKey: "admin.access.role.support.label",
-    memberCount: "9",
-    routesSummary: "queues · users · cms",
+    id: 'r_support',
+    roleKey: 'support',
+    labelKey: 'admin.access.role.support.label',
+    memberCount: '9',
+    routesSummary: 'queues · users · cms',
     enabled: true,
-    updatedAt: "2026-06-04T11:00:00.000Z",
+    updatedAt: '2026-06-04T11:00:00.000Z',
   },
   {
-    id: "r_operator",
-    roleKey: "operator",
-    labelKey: "admin.access.role.operator.label",
-    memberCount: "6",
-    routesSummary: "casino · sports · cms",
+    id: 'r_operator',
+    roleKey: 'operator',
+    labelKey: 'admin.access.role.operator.label',
+    memberCount: '6',
+    routesSummary: 'casino · sports · cms',
     enabled: true,
-    updatedAt: "2026-06-05T12:00:00.000Z",
+    updatedAt: '2026-06-05T12:00:00.000Z',
   },
   {
-    id: "r_viewer",
-    roleKey: "viewer",
-    labelKey: "admin.access.role.viewer.label",
-    memberCount: "12",
-    routesSummary: "overview · audit (read)",
+    id: 'r_viewer',
+    roleKey: 'viewer',
+    labelKey: 'admin.access.role.viewer.label',
+    memberCount: '12',
+    routesSummary: 'overview · audit (read)',
     enabled: true,
-    updatedAt: "2026-06-06T13:00:00.000Z",
+    updatedAt: '2026-06-06T13:00:00.000Z',
   },
 ];
 
 const SEED_FILTERS: AdminSavedFilterRow[] = [
   {
-    id: "f_ops_withdraw",
-    deskKey: "operations",
-    presetName: "Withdraw · queued · 24h",
-    filterBlob: "kind=withdraw · status=queued · window=24h",
+    id: 'f_ops_withdraw',
+    deskKey: 'operations',
+    presetName: 'Withdraw · queued · 24h',
+    filterBlob: 'kind=withdraw · status=queued · window=24h',
     isDefault: true,
-    updatedAt: "2026-06-10T09:00:00.000Z",
+    updatedAt: '2026-06-10T09:00:00.000Z',
   },
   {
-    id: "f_casino_rtp",
-    deskKey: "casino",
-    presetName: "RTP drift > 1%",
-    filterBlob: "drift>=0.01 · published=true",
+    id: 'f_casino_rtp',
+    deskKey: 'casino',
+    presetName: 'RTP drift > 1%',
+    filterBlob: 'drift>=0.01 · published=true',
     isDefault: false,
-    updatedAt: "2026-06-11T09:00:00.000Z",
+    updatedAt: '2026-06-11T09:00:00.000Z',
   },
   {
-    id: "f_earn_pending",
-    deskKey: "earn",
-    presetName: "Settlements · pending",
-    filterBlob: "state=pending",
+    id: 'f_earn_pending',
+    deskKey: 'earn',
+    presetName: 'Settlements · pending',
+    filterBlob: 'state=pending',
     isDefault: true,
-    updatedAt: "2026-06-12T09:00:00.000Z",
+    updatedAt: '2026-06-12T09:00:00.000Z',
   },
   {
-    id: "f_cms_drafts",
-    deskKey: "cms",
-    presetName: "Pages · drafts only",
-    filterBlob: "status=draft",
+    id: 'f_cms_drafts',
+    deskKey: 'cms',
+    presetName: 'Pages · drafts only',
+    filterBlob: 'status=draft',
     isDefault: false,
-    updatedAt: "2026-06-13T09:00:00.000Z",
+    updatedAt: '2026-06-13T09:00:00.000Z',
   },
   {
-    id: "f_users_flagged",
-    deskKey: "users",
-    presetName: "Users · risk flagged",
-    filterBlob: "riskFlag=true",
+    id: 'f_users_flagged',
+    deskKey: 'users',
+    presetName: 'Users · risk flagged',
+    filterBlob: 'riskFlag=true',
     isDefault: false,
-    updatedAt: "2026-06-14T09:00:00.000Z",
+    updatedAt: '2026-06-14T09:00:00.000Z',
   },
   {
-    id: "f_sports_settling",
-    deskKey: "sports",
-    presetName: "Fixtures · settling",
-    filterBlob: "state=settling",
+    id: 'f_sports_settling',
+    deskKey: 'sports',
+    presetName: 'Fixtures · settling',
+    filterBlob: 'state=settling',
     isDefault: false,
-    updatedAt: "2026-06-14T12:00:00.000Z",
+    updatedAt: '2026-06-14T12:00:00.000Z',
   },
   {
-    id: "f_audit_admin",
-    deskKey: "audit",
-    presetName: "Audit · admin actor only",
-    filterBlob: "actor=admin · range=7d",
+    id: 'f_audit_admin',
+    deskKey: 'audit',
+    presetName: 'Audit · admin actor only',
+    filterBlob: 'actor=admin · range=7d',
     isDefault: false,
-    updatedAt: "2026-06-15T08:00:00.000Z",
+    updatedAt: '2026-06-15T08:00:00.000Z',
   },
   {
-    id: "f_alerts_p1",
-    deskKey: "alerts",
-    presetName: "Alerts · P1 unresolved",
-    filterBlob: "severity=P1 · state=open",
+    id: 'f_alerts_p1',
+    deskKey: 'alerts',
+    presetName: 'Alerts · P1 unresolved',
+    filterBlob: 'severity=P1 · state=open',
     isDefault: true,
-    updatedAt: "2026-06-15T16:00:00.000Z",
+    updatedAt: '2026-06-15T16:00:00.000Z',
   },
 ];
 
 const SEED_MFA: AdminMfaPolicyRow[] = [
   {
-    id: "m_admin",
-    tierKey: "tier.admin",
+    id: 'm_admin',
+    tierKey: 'tier.admin',
     mfaRequired: true,
-    graceDays: "0",
-    enrollRate: "100",
-    updatedAt: "2026-06-01T00:00:00.000Z",
+    graceDays: '0',
+    enrollRate: '100',
+    updatedAt: '2026-06-01T00:00:00.000Z',
   },
   {
-    id: "m_staff",
-    tierKey: "tier.staff",
+    id: 'm_staff',
+    tierKey: 'tier.staff',
     mfaRequired: true,
-    graceDays: "3",
-    enrollRate: "98",
-    updatedAt: "2026-06-02T00:00:00.000Z",
+    graceDays: '3',
+    enrollRate: '98',
+    updatedAt: '2026-06-02T00:00:00.000Z',
   },
   {
-    id: "m_platinum",
-    tierKey: "tier.platinum",
+    id: 'm_platinum',
+    tierKey: 'tier.platinum',
     mfaRequired: true,
-    graceDays: "7",
-    enrollRate: "84",
-    updatedAt: "2026-06-03T00:00:00.000Z",
+    graceDays: '7',
+    enrollRate: '84',
+    updatedAt: '2026-06-03T00:00:00.000Z',
   },
   {
-    id: "m_gold",
-    tierKey: "tier.gold",
+    id: 'm_gold',
+    tierKey: 'tier.gold',
     mfaRequired: true,
-    graceDays: "14",
-    enrollRate: "61",
-    updatedAt: "2026-06-04T00:00:00.000Z",
+    graceDays: '14',
+    enrollRate: '61',
+    updatedAt: '2026-06-04T00:00:00.000Z',
   },
   {
-    id: "m_silver",
-    tierKey: "tier.silver",
+    id: 'm_silver',
+    tierKey: 'tier.silver',
     mfaRequired: false,
-    graceDays: "30",
-    enrollRate: "32",
-    updatedAt: "2026-06-05T00:00:00.000Z",
+    graceDays: '30',
+    enrollRate: '32',
+    updatedAt: '2026-06-05T00:00:00.000Z',
   },
   {
-    id: "m_bronze",
-    tierKey: "tier.bronze",
+    id: 'm_bronze',
+    tierKey: 'tier.bronze',
     mfaRequired: false,
-    graceDays: "60",
-    enrollRate: "14",
-    updatedAt: "2026-06-06T00:00:00.000Z",
+    graceDays: '60',
+    enrollRate: '14',
+    updatedAt: '2026-06-06T00:00:00.000Z',
   },
 ];
 
 // --- filters ---------------------------------------------------------------
 
-function filterRoles(
-  rows: AdminRbacRoleRow[],
-  f: RbacFilters,
-): AdminRbacRoleRow[] {
+function filterRoles(rows: AdminRbacRoleRow[], f: RbacFilters): AdminRbacRoleRow[] {
   const q = f.search.trim().toLowerCase();
   return rows.filter((r) => {
-    if (f.enabled === "on" && !r.enabled) return false;
-    if (f.enabled === "off" && r.enabled) return false;
+    if (f.enabled === 'on' && !r.enabled) return false;
+    if (f.enabled === 'off' && r.enabled) return false;
     if (!q) return true;
-    return (
-      r.roleKey.toLowerCase().includes(q) ||
-      r.routesSummary.toLowerCase().includes(q)
-    );
+    return r.roleKey.toLowerCase().includes(q) || r.routesSummary.toLowerCase().includes(q);
   });
 }
 
-function filterPresets(
-  rows: AdminSavedFilterRow[],
-  f: FilterFilters,
-): AdminSavedFilterRow[] {
+function filterPresets(rows: AdminSavedFilterRow[], f: FilterFilters): AdminSavedFilterRow[] {
   const q = f.search.trim().toLowerCase();
   return rows.filter((r) => {
-    if (f.deskKey !== "all" && r.deskKey !== f.deskKey) return false;
+    if (f.deskKey !== 'all' && r.deskKey !== f.deskKey) return false;
     if (!q) return true;
-    return (
-      r.presetName.toLowerCase().includes(q) ||
-      r.filterBlob.toLowerCase().includes(q)
-    );
+    return r.presetName.toLowerCase().includes(q) || r.filterBlob.toLowerCase().includes(q);
   });
 }
 
-function filterMfa(
-  rows: AdminMfaPolicyRow[],
-  f: MfaFilters,
-): AdminMfaPolicyRow[] {
+function filterMfa(rows: AdminMfaPolicyRow[], f: MfaFilters): AdminMfaPolicyRow[] {
   const q = f.search.trim().toLowerCase();
   return rows.filter((r) => {
-    if (f.tierKey !== "all" && r.tierKey !== f.tierKey) return false;
-    if (f.required === "on" && !r.mfaRequired) return false;
-    if (f.required === "off" && r.mfaRequired) return false;
+    if (f.tierKey !== 'all' && r.tierKey !== f.tierKey) return false;
+    if (f.required === 'on' && !r.mfaRequired) return false;
+    if (f.required === 'off' && r.mfaRequired) return false;
     if (!q) return true;
     return r.tierKey.toLowerCase().includes(q);
   });
@@ -310,54 +289,47 @@ function filterMfa(
 // --- hook factories --------------------------------------------------------
 
 const useRolesMock = createAdminMockHook<AdminRbacRoleRow, RbacFilters>({
-  storageKey: "phonara-admin-rbac-v1",
+  storageKey: 'phonara-admin-rbac-v1',
   seedRows: SEED_ROLES,
-  seedFilters: { search: "", enabled: "all" },
+  seedFilters: { search: '', enabled: 'all' },
   filterFn: filterRoles,
   auditCap: 100,
 });
 
 const usePresetsMock = createAdminMockHook<AdminSavedFilterRow, FilterFilters>({
-  storageKey: "phonara-admin-filters-v1",
+  storageKey: 'phonara-admin-filters-v1',
   seedRows: SEED_FILTERS,
-  seedFilters: { search: "", deskKey: "all" },
+  seedFilters: { search: '', deskKey: 'all' },
   filterFn: filterPresets,
   auditCap: 100,
 });
 
 const useMfaMock = createAdminMockHook<AdminMfaPolicyRow, MfaFilters>({
-  storageKey: "phonara-admin-mfa-policy-v1",
+  storageKey: 'phonara-admin-mfa-policy-v1',
   seedRows: SEED_MFA,
-  seedFilters: { search: "", tierKey: "all", required: "all" },
+  seedFilters: { search: '', tierKey: 'all', required: 'all' },
   filterFn: filterMfa,
   auditCap: 100,
 });
 
-const ROLE_KEYS: RbacRoleKey[] = [
-  "owner",
-  "finance",
-  "risk",
-  "support",
-  "operator",
-  "viewer",
-];
+const ROLE_KEYS: RbacRoleKey[] = ['owner', 'finance', 'risk', 'support', 'operator', 'viewer'];
 const DESK_KEYS: AccessDeskKey[] = [
-  "operations",
-  "casino",
-  "earn",
-  "cms",
-  "users",
-  "sports",
-  "audit",
-  "alerts",
+  'operations',
+  'casino',
+  'earn',
+  'cms',
+  'users',
+  'sports',
+  'audit',
+  'alerts',
 ];
 const TIER_KEYS: MfaTierKey[] = [
-  "tier.admin",
-  "tier.staff",
-  "tier.platinum",
-  "tier.gold",
-  "tier.silver",
-  "tier.bronze",
+  'tier.admin',
+  'tier.staff',
+  'tier.platinum',
+  'tier.gold',
+  'tier.silver',
+  'tier.bronze',
 ];
 
 export interface UseAdminAccessDesk {
@@ -375,9 +347,7 @@ export interface UseAdminAccessDesk {
   presets: AdminSavedFilterRow[];
   filteredPresets: AdminSavedFilterRow[];
   presetFilters: FilterFilters;
-  setPresetFilters: (
-    f: FilterFilters | ((p: FilterFilters) => FilterFilters),
-  ) => void;
+  setPresetFilters: (f: FilterFilters | ((p: FilterFilters) => FilterFilters)) => void;
   deletePreset: (id: string, reason: string) => boolean;
   setDefaultPreset: (id: string) => boolean;
   bulkDeletePresets: (ids: string[], reason: string) => boolean;
@@ -400,7 +370,7 @@ export interface UseAdminAccessDesk {
 
 const nowIso = () => new Date().toISOString();
 const validReason = (r: string | undefined) =>
-  typeof r === "string" && r.trim().length >= MIN_REASON;
+  typeof r === 'string' && r.trim().length >= MIN_REASON;
 
 export function useAdminAccessDeskMock(): UseAdminAccessDesk {
   const ro = useRolesMock();
@@ -422,8 +392,8 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
       ro.appendAudit({
         id: `${row.roleKey}-enable-${at}`,
         at,
-        actorKey: "admin.primitive.audit.actor.system",
-        actionKey: "admin.access.roles.audit.enable",
+        actorKey: 'admin.primitive.audit.actor.system',
+        actionKey: 'admin.access.roles.audit.enable',
         subject: row.roleKey,
       });
       return true;
@@ -433,10 +403,10 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
 
   const disableRole = useCallback(
     (id: string, reason: string): boolean => {
-      if (!validReason(reason)) throw new Error("reason<4");
+      if (!validReason(reason)) throw new Error('reason<4');
       const row = ro.allRows.find((r) => r.id === id);
       if (!row || !row.enabled) return false;
-      if (row.roleKey === "owner") return false; // owner is non-disablable
+      if (row.roleKey === 'owner') return false; // owner is non-disablable
       const at = nowIso();
       ro.patchRow(
         id,
@@ -446,8 +416,8 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
       ro.appendAudit({
         id: `${row.roleKey}-disable-${at}`,
         at,
-        actorKey: "admin.primitive.audit.actor.system",
-        actionKey: "admin.access.roles.audit.disable",
+        actorKey: 'admin.primitive.audit.actor.system',
+        actionKey: 'admin.access.roles.audit.disable',
         subject: row.roleKey,
         reason: reason.trim(),
       });
@@ -458,7 +428,7 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
 
   const bulkDisableRoles = useCallback(
     (ids: string[], reason: string): boolean => {
-      if (!validReason(reason)) throw new Error("reason<4");
+      if (!validReason(reason)) throw new Error('reason<4');
       let any = false;
       for (const id of ids) if (disableRole(id, reason)) any = true;
       return any;
@@ -470,7 +440,7 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
 
   const deletePreset = useCallback(
     (id: string, reason: string): boolean => {
-      if (!validReason(reason)) throw new Error("reason<4");
+      if (!validReason(reason)) throw new Error('reason<4');
       const row = fp.allRows.find((r) => r.id === id);
       if (!row) return false;
       const at = nowIso();
@@ -483,7 +453,7 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
         (r) => ({
           ...r,
           presetName: r.presetName,
-          filterBlob: "[deleted]",
+          filterBlob: '[deleted]',
           isDefault: false,
           updatedAt: at,
           lastChangedAt: at,
@@ -492,8 +462,8 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
       fp.appendAudit({
         id: `${row.presetName}-delete-${at}`,
         at,
-        actorKey: "admin.primitive.audit.actor.system",
-        actionKey: "admin.access.filters.audit.delete",
+        actorKey: 'admin.primitive.audit.actor.system',
+        actionKey: 'admin.access.filters.audit.delete',
         subject: row.presetName,
         reason: reason.trim(),
       });
@@ -525,8 +495,8 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
       fp.appendAudit({
         id: `${row.presetName}-default-${at}`,
         at,
-        actorKey: "admin.primitive.audit.actor.system",
-        actionKey: "admin.access.filters.audit.default",
+        actorKey: 'admin.primitive.audit.actor.system',
+        actionKey: 'admin.access.filters.audit.default',
         subject: row.presetName,
       });
       return true;
@@ -536,7 +506,7 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
 
   const bulkDeletePresets = useCallback(
     (ids: string[], reason: string): boolean => {
-      if (!validReason(reason)) throw new Error("reason<4");
+      if (!validReason(reason)) throw new Error('reason<4');
       let any = false;
       for (const id of ids) if (deletePreset(id, reason)) any = true;
       return any;
@@ -559,8 +529,8 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
       mf.appendAudit({
         id: `${row.tierKey}-require-${at}`,
         at,
-        actorKey: "admin.primitive.audit.actor.system",
-        actionKey: "admin.access.mfa.audit.require",
+        actorKey: 'admin.primitive.audit.actor.system',
+        actionKey: 'admin.access.mfa.audit.require',
         subject: row.tierKey,
       });
       return true;
@@ -570,10 +540,10 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
 
   const relaxMfa = useCallback(
     (id: string, reason: string): boolean => {
-      if (!validReason(reason)) throw new Error("reason<4");
+      if (!validReason(reason)) throw new Error('reason<4');
       const row = mf.allRows.find((r) => r.id === id);
       if (!row || !row.mfaRequired) return false;
-      if (row.tierKey === "tier.admin") return false; // admin can't be relaxed
+      if (row.tierKey === 'tier.admin') return false; // admin can't be relaxed
       const at = nowIso();
       mf.patchRow(
         id,
@@ -583,8 +553,8 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
       mf.appendAudit({
         id: `${row.tierKey}-relax-${at}`,
         at,
-        actorKey: "admin.primitive.audit.actor.system",
-        actionKey: "admin.access.mfa.audit.relax",
+        actorKey: 'admin.primitive.audit.actor.system',
+        actionKey: 'admin.access.mfa.audit.relax',
         subject: row.tierKey,
         reason: reason.trim(),
       });
@@ -604,7 +574,7 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
 
   const bulkRelaxMfa = useCallback(
     (ids: string[], reason: string): boolean => {
-      if (!validReason(reason)) throw new Error("reason<4");
+      if (!validReason(reason)) throw new Error('reason<4');
       let any = false;
       for (const id of ids) if (relaxMfa(id, reason)) any = true;
       return any;
@@ -612,8 +582,8 @@ export function useAdminAccessDeskMock(): UseAdminAccessDesk {
     [relaxMfa],
   );
 
-  const audit: AdminAuditEvent[] = [...ro.audit, ...fp.audit, ...mf.audit].sort(
-    (a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0),
+  const audit: AdminAuditEvent[] = [...ro.audit, ...fp.audit, ...mf.audit].sort((a, b) =>
+    a.at < b.at ? 1 : a.at > b.at ? -1 : 0,
   );
 
   const resetForTest = useCallback(() => {

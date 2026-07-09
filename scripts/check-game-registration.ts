@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 /**
  * Validates that every GameCode is registered across engine, SQL, app config, and UI adapters.
- * See docs/ADD_GAME_RUNBOOK.md for the full 12-step checklist.
+ * See docs/rebuild/MASTER_EXECUTION_PROMPT.md §3 and docs/RUNBOOK.md for game registration checklist.
  */
 
 await import('../packages/game-engine/src/index.ts');
@@ -42,15 +42,11 @@ for (const code of GAME_CODES) {
 }
 
 const gameConfig = read('apps/web/src/features/casino/game-config.ts');
-const registry = read('apps/web/src/components/games/registry.ts');
 const i18n = read('packages/i18n/src/index.ts');
 
 for (const code of GAME_CODES) {
   if (!gameConfig.includes(`code: '${code}'`)) {
     failures.push(`game-config.ts missing: ${code}`);
-  }
-  if (!registry.includes(`${code}:`)) {
-    failures.push(`IMPORTED_GAME_LOADERS missing: ${code}`);
   }
   if (!i18n.includes(`casino.game.${code}`)) {
     failures.push(`i18n missing: casino.game.${code}`);
@@ -69,9 +65,7 @@ for (const file of migrationFiles) {
     content.includes('CREATE OR REPLACE FUNCTION _game_result') &&
     !enumOnlyPattern.test(file)
   ) {
-    failures.push(
-      `enum-add mixed with implementation in same migration (split required): ${file}`,
-    );
+    failures.push(`enum-add mixed with implementation in same migration (split required): ${file}`);
   }
 }
 

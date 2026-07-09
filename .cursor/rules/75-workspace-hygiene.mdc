@@ -45,7 +45,7 @@ sizes outside repo; `--apply` to delete).
 - E2E auth tokens: `tests/e2e/.auth.json`, `.admin-auth.json`
 - Playwright screenshots/traces under `test-results/`
 - Build outputs: `apps/*/dist/`, `packages/*/dist/` (rebuilt by `build:packages`)
-- Duplicate presentation layers — single source: `presentation-import/` + Lovable paste zones
+- Duplicate presentation layers — v5 Demolition deleted pre-demolition paste zones; do not recreate them before Phase R defines a new presentation structure
 - Dev-only UI (`DemoBadge`, demo labels) in production paths
 
 ## Index exclusions (`.cursorignore` — do not remove)
@@ -70,8 +70,8 @@ Cursor** so watchers rebuild without excluded paths.
 
 ## Duplicate prevention (presentation)
 
-- Do not recreate `apps/web/src/presentation/` — removed; use `presentation-import/`.
-- One shell: Lovable `components/shell/*`, not parallel `presentation/shell`.
+- Deleted presentation and paste zones stay absent before Phase R defines a new structure.
+- One future shell owner must be defined by Phase R plan/ADR; do not restore pre-demolition shell folders.
 
 ## Session end checklist (agents)
 

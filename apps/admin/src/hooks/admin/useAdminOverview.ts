@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Json } from '@phonara/shared-types';
-import { getOpsAlertsRaw, getOpsHealthRaw } from '../../domain/ops';
+import { getOpsAlertsRaw, getOpsDashboardRaw, getOpsHealthRaw } from '../../domain/ops';
+import { parseOpsDashboard, type OpsDashboard } from '@/product/bridge/parse-ops-dashboard';
 import { useAppConfig } from '../use-app-config';
 import { useAdminMfaReady } from '../use-admin-mfa-ready';
 
@@ -65,7 +66,7 @@ function parseOptionalTimestamp(value: unknown): string | null {
   return value;
 }
 
-function parseCheck(value: Json): OpsHealthCheck | null {
+export function parseCheck(value: Json): OpsHealthCheck | null {
   if (!isRecord(value)) return null;
   const id = parseCheckId(value['id']);
   if (!id) return null;
@@ -110,15 +111,23 @@ async function fetchOpsAlertsSummary(): Promise<{ unresolved: number }> {
   return { unresolved };
 }
 
-export function findHealthCheck(
-  checks: OpsHealthCheck[],
-  id: CheckId,
-): OpsHealthCheck | undefined {
+export function findHealthCheck(checks: OpsHealthCheck[], id: CheckId): OpsHealthCheck | undefined {
   return checks.find((check) => check.id === id);
 }
 
+export type UseAdminOverview = {
+  health: OpsHealthResponse | undefined;
+  dashboard: OpsDashboard | undefined;
+  isLoading: boolean;
+  isFetching: boolean;
+  error: Error | null;
+  unresolvedAlerts: number;
+  fallbackConfig: ReturnType<typeof useAppConfig>['data'];
+  refreshAll: () => Promise<void>;
+};
+
 /** Engine-backed overview health + alert summary (Tier A). */
-export function useAdminOverview() {
+export function useAdminOverview(): UseAdminOverview {
   const qc = useQueryClient();
   const { data: fallbackConfig } = useAppConfig();
   const mfaReady = useAdminMfaReady();
@@ -139,19 +148,29 @@ export function useAdminOverview() {
     refetchInterval: mfaReady ? 60_000 : false,
   });
 
+  const dashboardQuery = useQuery({
+    queryKey: ['ops-dashboard', 'overview'],
+    queryFn: async () => parseOpsDashboard(await getOpsDashboardRaw()),
+    enabled: mfaReady,
+    staleTime: 60_000,
+    refetchInterval: mfaReady ? 60_000 : false,
+  });
+
   const refreshAll = useCallback(async () => {
     await Promise.all([
       healthQuery.refetch(),
       alertsQuery.refetch(),
+      dashboardQuery.refetch(),
       qc.invalidateQueries({ queryKey: ['app-config'] }),
     ]);
-  }, [alertsQuery, healthQuery, qc]);
+  }, [alertsQuery, dashboardQuery, healthQuery, qc]);
 
   return {
     health: healthQuery.data,
-    isLoading: healthQuery.isLoading,
-    isFetching: healthQuery.isFetching,
-    error: healthQuery.error,
+    dashboard: dashboardQuery.data,
+    isLoading: healthQuery.isLoading || alertsQuery.isLoading || dashboardQuery.isLoading,
+    isFetching: healthQuery.isFetching || alertsQuery.isFetching || dashboardQuery.isFetching,
+    error: healthQuery.error ?? dashboardQuery.error,
     unresolvedAlerts: alertsQuery.data?.unresolved ?? 0,
     fallbackConfig,
     refreshAll,

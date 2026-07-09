@@ -6,11 +6,11 @@
 
 ## Opinion metadata
 
-| Field | Value |
-|-------|-------|
-| Law firm / attorney | [사용자 기입] |
-| Opinion date | [사용자 기입] |
-| Status | Written legal opinion finalized (per operator record) |
+| Field               | Value                                                 |
+| ------------------- | ----------------------------------------------------- |
+| Law firm / attorney | [사용자 기입]                                         |
+| Opinion date        | [사용자 기입]                                         |
+| Status              | Written legal opinion finalized (per operator record) |
 
 ---
 

@@ -90,10 +90,7 @@ export function normalizeVendorEventUpsert(
     const marketKey = market.key ?? `market_${index}`;
     const marketId = canonicalMarketId(fixtureId, marketKey);
     const outcomes: OutcomePayload[] = (market.outcomes ?? []).map((outcome, oIndex) => ({
-      outcomeId: canonicalOutcomeId(
-        marketId,
-        outcome.id ?? outcome.name ?? `outcome_${oIndex}`,
-      ),
+      outcomeId: canonicalOutcomeId(marketId, outcome.id ?? outcome.name ?? `outcome_${oIndex}`),
       selection: mapSelection(outcome.name),
       line: outcome.point !== undefined ? String(outcome.point) : undefined,
     }));

@@ -1,0 +1,209 @@
+:root {
+  --ds-shell-topbar-height: 56px;
+  --ds-shell-bottomnav-height: 56px;
+  --ds-shell-earn-chip-height: 48px;
+  --ds-shell-sidenav-expanded: 240px;
+  --ds-shell-sidenav-collapsed: 64px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  z-index: 100;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.skip-link:focus {
+  left: max(var(--ds-shell-gutter), env(safe-area-inset-left, 0px));
+  top: max(var(--ds-space-2), env(safe-area-inset-top, 0px));
+  width: auto;
+  height: auto;
+  overflow: visible;
+  padding: var(--ds-space-2) var(--ds-space-3);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-accent);
+  color: var(--ds-accent-foreground);
+  font-size: var(--ds-text-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ds-shell-topbar {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  height: var(--ds-shell-topbar-height);
+  min-height: var(--ds-shell-topbar-height);
+  border-bottom: 1px solid var(--ds-line);
+  background: var(--ds-surface);
+}
+
+.ds-shell-bottomnav {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  height: calc(var(--ds-shell-bottomnav-height) + env(safe-area-inset-bottom, 0px));
+  min-height: var(--ds-shell-bottomnav-height);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  border-top: 1px solid var(--ds-line);
+  background: var(--ds-surface);
+}
+
+.ds-shell-bottomnav-tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: var(--ds-shell-bottomnav-height);
+  padding-inline: var(--ds-space-1);
+  color: var(--ds-foreground-muted);
+  text-decoration: none;
+  font-size: var(--ds-text-xs);
+  font-weight: 500;
+  transition: color 150ms ease;
+}
+
+.ds-shell-bottomnav-tab[data-active='true'] {
+  color: var(--ds-accent);
+}
+
+.ds-shell-bottomnav-tab[data-active='true']::after {
+  content: '';
+  position: absolute;
+  bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-accent);
+  transform: translateX(-50%);
+}
+
+.ds-shell-bottomnav-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.ds-shell-bottomnav-badge {
+  position: absolute;
+  top: 8px;
+  right: calc(50% - 18px);
+  width: 6px;
+  height: 6px;
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-accent);
+}
+
+.ds-shell-subnav-scroller {
+  display: flex;
+  gap: var(--ds-space-2);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.ds-shell-subnav-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.ds-shell-subnav-chip {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  height: var(--ds-shell-earn-chip-height);
+  min-height: var(--ds-shell-earn-chip-height);
+  padding-inline: var(--ds-space-4);
+  scroll-snap-align: start;
+  border-radius: var(--ds-radius-full);
+  border: 1px solid var(--ds-line);
+  background: var(--ds-surface);
+  color: var(--ds-foreground-muted);
+  font-size: var(--ds-text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.ds-shell-subnav-chip[data-active='true'] {
+  border-color: transparent;
+  background: var(--ds-accent);
+  color: var(--ds-accent-foreground);
+}
+
+.ds-shell-subnav-chip--help {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  height: auto;
+  min-height: var(--ds-shell-earn-chip-height);
+  padding-block: var(--ds-space-2);
+  white-space: normal;
+}
+
+.ds-shell-subnav-chip-label {
+  font-size: var(--ds-text-sm);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.ds-shell-subnav-chip-help {
+  font-size: 0.625rem;
+  font-weight: 400;
+  line-height: 1.2;
+  opacity: 0.85;
+}
+
+.ds-shell-subnav-chip[data-active='true'] .ds-shell-subnav-chip-help {
+  opacity: 0.92;
+}
+
+.ds-shell-earn-sidenav {
+  box-sizing: border-box;
+  width: var(--ds-shell-sidenav-expanded);
+  flex-shrink: 0;
+  border-right: 1px solid var(--ds-line);
+  background: var(--ds-surface);
+}
+
+.ds-shell-earn-sidenav[data-collapsed='true'] {
+  width: var(--ds-shell-sidenav-collapsed);
+}
+
+.ds-shell-earn-sidenav-link {
+  display: flex;
+  align-items: center;
+  min-height: var(--ds-shell-earn-chip-height);
+  padding-inline: var(--ds-space-4);
+  border-radius: var(--ds-radius-md);
+  color: var(--ds-foreground-muted);
+  font-size: var(--ds-text-sm);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.ds-shell-earn-sidenav-link[data-active='true'] {
+  background: color-mix(in oklab, var(--ds-accent) 12%, transparent);
+  color: var(--ds-accent);
+}
+
+.ds-shell-main-with-bottomnav {
+  padding-bottom: calc(var(--ds-shell-bottomnav-height) + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 1024px) {
+  .ds-shell-main-with-bottomnav {
+    padding-bottom: 0;
+  }
+}

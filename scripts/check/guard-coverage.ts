@@ -72,7 +72,9 @@ function loadFromMirror(): RpcRow[] | null {
   if (!existsSync(MIRROR_DIR)) return null;
 
   const rows: RpcRow[] = [];
-  for (const file of readdirSync(MIRROR_DIR).filter((f) => f.startsWith('rpc_') && f.endsWith('.sql'))) {
+  for (const file of readdirSync(MIRROR_DIR).filter(
+    (f) => f.startsWith('rpc_') && f.endsWith('.sql'),
+  )) {
     const def = readFileSync(join(MIRROR_DIR, file), 'utf8');
     const header = def.match(/^CREATE OR REPLACE FUNCTION (rpc_\w+)\(([^)]*)\)/i);
     if (!header) continue;

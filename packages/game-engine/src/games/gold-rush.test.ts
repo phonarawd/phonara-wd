@@ -32,14 +32,22 @@ describe('gold_rush RED', () => {
       const goldSpin = spinSlot(GOLD_RUSH_CONFIG, floats, 20);
       const mintSpin = spinSlot(MINT_REELS_CONFIG, floats, 20);
       goldTotal += goldRushDefinition
-        .settle(stake, { lines: 20 }, {
-          totalMultiplier: slotPayoutMultiplier(goldSpin.totalMultiplier, 20),
-        })
+        .settle(
+          stake,
+          { lines: 20 },
+          {
+            totalMultiplier: slotPayoutMultiplier(goldSpin.totalMultiplier, 20),
+          },
+        )
         .payout.toNumber();
       mintTotal += mintReelsDefinition
-        .settle(stake, { lines: 20 }, {
-          totalMultiplier: slotPayoutMultiplier(mintSpin.totalMultiplier, 20),
-        })
+        .settle(
+          stake,
+          { lines: 20 },
+          {
+            totalMultiplier: slotPayoutMultiplier(mintSpin.totalMultiplier, 20),
+          },
+        )
         .payout.toNumber();
     }
     expect(goldTotal / 10_000).toBeLessThan(1);

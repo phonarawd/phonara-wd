@@ -22,6 +22,6 @@ export type TradeTapeEntry = {
   symbol: string;
   price: string;
   qty: string;
-  side: "buy" | "sell";
+  side: 'buy' | 'sell';
   timeMs: number;
 };

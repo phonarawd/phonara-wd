@@ -1,0 +1,16 @@
+{
+  "network": {
+    "allow": [
+      "*.supabase.co",
+      "api.supabase.com",
+      "registry.npmjs.org",
+      "registry.yarnpkg.com",
+      "github.com",
+      "codeload.github.com",
+      "*.githubusercontent.com",
+      "playwright.azureedge.net",
+      "dl.google.com",
+      "storage.googleapis.com"
+    ]
+  }
+}

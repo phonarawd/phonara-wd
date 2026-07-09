@@ -46,8 +46,7 @@ const hiloDefinition: GameDefinition<HiLoSelection, HiLoResult> = {
 
   resultFromFloats(floats, selection): HiLoResult {
     let floatIdx = 0;
-    const startCard =
-      selection.startCard ?? cardFromFloat(requireFloat(floats, floatIdx++));
+    const startCard = selection.startCard ?? cardFromFloat(requireFloat(floats, floatIdx++));
     const cards: number[] = [startCard];
     const rounds: HiLoRound[] = [];
     let cumMult = 1;
@@ -63,8 +62,7 @@ const hiloDefinition: GameDefinition<HiLoSelection, HiLoResult> = {
         continue;
       }
 
-      const correct =
-        guess === 'higher' ? nextCard > currentCard : nextCard < currentCard;
+      const correct = guess === 'higher' ? nextCard > currentCard : nextCard < currentCard;
       const stepMult = hiloMultiplier(currentCard, guess);
       cumMult = correct ? Math.floor(cumMult * stepMult * 100) / 100 : 0;
 

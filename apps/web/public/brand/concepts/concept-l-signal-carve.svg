@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PHONARA concept signal carve">
+  <defs>
+    <linearGradient id="body" x1="144" y1="112" x2="404" y2="404" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#dffff4"/>
+      <stop offset="0.5" stop-color="#88ffd0"/>
+      <stop offset="1" stop-color="#1a9769"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#body)" d="M148 116h68v280h-68a20 20 0 0 1-20-20V136a20 20 0 0 1 20-20zm68 0h108c86 0 156 70 156 156s-70 156-156 156H216V116zm92 54v204h42c50.8 0 92-42 92-102s-41.2-102-92-102h-42z"/>
+  <path fill="#ffffff" fill-opacity=".22" d="M160 130h160c68 0 120 52 120 120v10H160z"/>
+  <path fill="#76ffcb" d="M340 176a124 124 0 0 1 124 124h-26a98 98 0 0 0-98-98v-26z"/>
+  <path fill="#76ffcb" fill-opacity=".58" d="M354 154a148 148 0 0 1 148 148h-26a122 122 0 0 0-122-122v-26z"/>
+  <circle cx="446" cy="300" r="22" fill="#76ffcb"/>
+  <circle cx="446" cy="300" r="10" fill="#ffffff" fill-opacity=".62"/>
+</svg>

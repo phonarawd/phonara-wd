@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" role="img" aria-label="PHONARA flat silhouette">
+  <g transform="translate(256 256)">
+    <g transform="rotate(-135)"><path d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+    <g transform="rotate(-45)"><path d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+    <g transform="rotate(135)"><path d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+    <g transform="rotate(45)"><path d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+    <circle r="54"/>
+  </g>
+</svg>

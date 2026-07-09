@@ -1,11 +1,11 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { sleepMs, spawnSyncSafe } from './spawn-safe';
 
 const CACHE_DIR = join(process.cwd(), 'node_modules', '.cache', 'phonara-e2e');
 const LOCK_FILE = join(CACHE_DIR, 'build-packages.lock');
 const DIST_MARKERS = [
-  join(process.cwd(), 'packages/ui/dist/index.js'),
+  join(process.cwd(), 'packages/money/dist/index.js'),
   join(process.cwd(), 'packages/i18n/dist/index.js'),
 ] as const;
 
@@ -14,15 +14,12 @@ function distReady(): boolean {
 }
 
 function sleepSync(ms: number): void {
-  spawnSync('powershell', ['-NoProfile', '-Command', `Start-Sleep -Milliseconds ${ms}`], {
-    stdio: 'ignore',
-  });
+  sleepMs(ms);
 }
 
 function runBuildPackages(): void {
-  const result = spawnSync('bun', ['run', 'build:packages'], {
+  const result = spawnSyncSafe('bun', ['run', 'build:packages'], {
     stdio: 'inherit',
-    shell: process.platform === 'win32',
   });
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
@@ -59,7 +56,9 @@ export function ensurePackagesBuiltForE2e(options: { quiet?: boolean } = {}): vo
   try {
     if (!distReady()) {
       if (!options.quiet) {
-        process.stdout.write('[e2e] building packages once (low-spec: no parallel webServer builds)\n');
+        process.stdout.write(
+          '[e2e] building packages once (low-spec: no parallel webServer builds)\n',
+        );
       }
       runBuildPackages();
     }

@@ -27,11 +27,18 @@ interface Rule {
 }
 
 const RULES: Rule[] = [
-  { name: 'console statement', re: /console\.(log|debug|info|warn|error)\s*\(/, devGuardable: true },
+  {
+    name: 'console statement',
+    re: /console\.(log|debug|info|warn|error)\s*\(/,
+    devGuardable: true,
+  },
   { name: 'debugger statement', re: /(^|[^.\w])debugger\b/ },
   { name: 'TODO/FIXME marker', re: /\b(TODO|FIXME|HACK|XXX)\b/ },
   { name: 'focused test', re: /\b(describe|it|test)\.only\s*\(/ },
-  { name: 'placeholder copy', re: /추후 구현|미구현|샘플 데이터|테스트 모드|test mode|dummy data|lorem ipsum/i },
+  {
+    name: 'placeholder copy',
+    re: /추후 구현|미구현|샘플 데이터|테스트 모드|test mode|dummy data|lorem ipsum/i,
+  },
 ];
 
 function collectTs(dir: string): string[] {

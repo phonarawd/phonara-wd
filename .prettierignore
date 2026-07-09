@@ -19,3 +19,4 @@ bun.lock
 supabase/.temp
 supabase/.branches
 supabase/functions-sql
+packages/shared-types/src/database.types.ts

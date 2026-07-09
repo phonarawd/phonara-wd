@@ -25,7 +25,11 @@ if (round.ok && round.data?.round_id) {
     sqlExec(`UPDATE app_config SET value='true' WHERE key='system_halt'`);
     const cancel = sqlAsUser(uid, `rpc_cancel_game_bet('${bet.data.bet_id}'::uuid)`);
     sqlExec(`UPDATE app_config SET value='false' WHERE key='system_halt'`);
-    console.log('cancel_halt', { ok: cancel.ok, err: cancel.error?.slice(0, 200), LEAKED: cancel.ok });
+    console.log('cancel_halt', {
+      ok: cancel.ok,
+      err: cancel.error?.slice(0, 200),
+      LEAKED: cancel.ok,
+    });
   } else {
     console.log('bet_not_pending', bet.data);
   }

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" role="img" aria-label="PrimeForge concept A orbit">
+  <path fill-rule="evenodd" d="M152 128h72v256h-72a20 20 0 0 1-20-20V148a20 20 0 0 1 20-20zm72 0h88c70.7 0 128 57.3 128 128s-57.3 128-128 128h-88V128zm72 56v144h16c48.6 0 88-39.4 88-88s-39.4-88-88-88h-16z"/>
+  <path d="M288 104a168 168 0 0 1 168 168l-36 0a132 132 0 0 0-132-132l0-36z"/>
+  <circle cx="448" cy="272" r="24"/>
+</svg>

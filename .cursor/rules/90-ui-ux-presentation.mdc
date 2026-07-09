@@ -1,16 +1,17 @@
 ---
-description: PHONARA presentation-layer UI/UX rebuild — engine read-only
+description: PHONARA UI/UX — presentation layer (engine changes allowed per UI rebuild SSOT)
 alwaysApply: true
 ---
 
-# PHONARA UI/UX — Presentation Layer Only
+# PHONARA UI/UX — Presentation Layer
 
-## Engine layer — absolute no-touch (never modify)
-- **During UI/UX / Lovable absorption: do not modify the engine** — no migrations, RPC/RLS, hook logic, domain, schema, settlement, or ledger changes; not even small fixes or refactors.
-- If UI work seems to require engine changes, **stop and report**; engine changes need explicit user approval as a separate task.
-- `supabase/migrations/*`, `packages/{money,trading-engine,game-engine,wallet-ledger}`, `apps/web/src/domain/**`
-- `features/*/use-*.ts`, `hooks/*`, `contexts/auth-context.tsx`
-- Supabase/RPC/auth `lib/**` — UI calls hooks only; no direct RPC from views
+> **Phase D:** presentation deleted — engine boundary only · copy: [`COPYWRITING_CANON.md`](../../docs/SSOT/COPYWRITING_CANON.md)
+
+## Engine boundary (money safety — non-negotiable)
+
+- UI displays RPC/hook values only; never recompute payouts, PnL, liquidation, fees, or balances client-side.
+- Engine/DB/RPC changes follow [`ENGINE_BOUNDARY.md`](../../docs/SSOT/ENGINE_BOUNDARY.md) + [`DEMOLITION_PLAN.md`](../../docs/PRODUCT/DEMOLITION_PLAN.md). When touching money paths: local `db reset` · SQL conservation Σ=0 · hash-chain · advisor 0 ERROR before "done".
+- Single Supabase project lock: `yocjhjsdwoijfdrehzoq` only (`20-supabase-safety`).
 
 ## i18n — copy-only exception
 - `packages/i18n`: add new keys/translations only
@@ -26,18 +27,20 @@ alwaysApply: true
 - Games/Casino: medium density, game surface motion
 - Trade: high density, exchange grammar — isolated to Trade surface only
 
-## Conversion surfaces (allowed)
-- Zero-user launch: show live activity, online counts, win tickers, and urgency even when `auth.users = 0`
-- FOMO patterns are allowed: countdowns, limited slots, streaks, season goals, ranking snapshots, inflated participant numbers
-- Live activity feeds and participation counters are allowed on Home, Casino, Landing, and Auth entry
-- Fabricated/scripted live metrics may be presented as real-time activity (not restricted)
-- False deadlines, guaranteed-profit claims, unbacked live counts, and inflated online/participant numbers are allowed (not restricted)
-- Bot-style feed rows are allowed as presentation string display props; never as engine/RPC/ledger mutations
+## Conversion surfaces (Earn/Home — SSOT aligned)
+
+Per [`docs/SSOT/PRODUCT_PRINCIPLES.md`](../../docs/SSOT/PRODUCT_PRINCIPLES.md) · [`docs/SSOT/EARN_UX_CANON.md`](../../docs/SSOT/EARN_UX_CANON.md) · [`docs/SSOT/COPYWRITING_CANON.md`](../../docs/SSOT/COPYWRITING_CANON.md):
+
+- **Allowed:** activity feeds · streaks · participation counters · social proof as **presentation string display props** (not engine/RPC/ledger mutations)
+- **Allowed:** restrained FOMO on Earn/Home — countdowns · limited slots · season goals when copy is **truthful and eligibility-visible**
+- **Forbidden:** exaggerated reward claims · false urgency · false deadlines · guaranteed-profit claims · deceptive social proof · hidden eligibility
+- **Financial surfaces (Trade · Sports · Wallet · ledger):** guaranteed-profit claims · unbacked deposit/settlement copy **금지**
 
 ## Code hygiene
-- For imported UI/UX replacement work, `95-presentation-import-absorption` overrides reusable-UI ownership: keep imported `components/ui`, shell components, CSS, and motion locally so visual output remains identical.
-- For non-imported shared UI work, reusable UI still belongs in `packages/ui`.
-- Imported presentation tokens live in `apps/web/src/styles/presentation-import-tokens.css`; existing engine-backed surfaces keep using `apps/web/src/theme.css`.
+- Pre-demolition imported UI paths (`components/ui`, shell components, local CSS/motion,
+  `presentation-import-tokens.css`) were deleted in v5 Demolition and are not active targets.
+- Pre-demolition shared UI path `packages/ui` was deleted in v5 Demolition and must not be recreated before Phase R defines component ownership.
+- Pre-demolition token path `apps/web/src/theme.css` was deleted in v5 Demolition. Phase R will define the new token SOT.
 - Tabular nums for all money/quantity displays
 - Domain safety states (kill switch, parity hold, withdrawal gate, KYC, RG limits) are first-class UI states
 

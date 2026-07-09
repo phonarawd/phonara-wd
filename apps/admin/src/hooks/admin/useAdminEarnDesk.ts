@@ -1,8 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Tables } from '@phonara/shared-types';
-import type { AdminAuditEvent } from '@/components/admin/primitives';
+import type { AdminAuditEvent } from '@/shared-types';
 import { callRpc } from '../../lib/rpc';
+import { AFFILIATE_SETTLEMENTS_ROW } from '@phonara/shared-types';
 import { supabase } from '../../lib/supabase';
 import type {
   AdminEarnSettlementRow,
@@ -85,12 +86,12 @@ export function useAdminEarnDesk(): UseAdminEarnDesk {
   });
   const [audit, setAudit] = useState<AdminAuditEvent[]>([]);
 
-  const { data: settlements = [], refetch } = useQuery({
+  const settlementsQuery = useQuery({
     queryKey: ['admin-earn-settlements'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('affiliate_settlements')
-        .select('*')
+        .select(AFFILIATE_SETTLEMENTS_ROW)
         .order('created_at', { ascending: false })
         .limit(200);
       if (error) throw error;
@@ -100,6 +101,8 @@ export function useAdminEarnDesk(): UseAdminEarnDesk {
     refetchInterval: 30_000,
   });
 
+  const settlements = settlementsQuery.data ?? [];
+
   const filteredSettlements = useMemo(
     () => filterSettlements(settlements, settlementFilters),
     [settlements, settlementFilters],
@@ -107,8 +110,12 @@ export function useAdminEarnDesk(): UseAdminEarnDesk {
 
   const invalidate = useCallback(async () => {
     await qc.invalidateQueries({ queryKey: ['admin-earn-settlements'] });
-    await refetch();
-  }, [qc, refetch]);
+    await settlementsQuery.refetch();
+  }, [qc, settlementsQuery]);
+
+  const refresh = useCallback(async () => {
+    await settlementsQuery.refetch();
+  }, [settlementsQuery]);
 
   const approveSettlement = useCallback(
     (id: string): boolean => {
@@ -120,16 +127,18 @@ export function useAdminEarnDesk(): UseAdminEarnDesk {
             p_approval_id: id,
             p_reason: 'admin settlement approve',
           });
-          setAudit((prev) => [
-            {
-              id: `${id}-approve-${Date.now()}`,
-              at: new Date().toISOString(),
-              actorKey: 'admin.primitive.audit.actor.system',
-              actionKey: 'admin.earn.settlements.audit.approve',
-              subject: id,
-            },
-            ...prev,
-          ].slice(0, 50));
+          setAudit((prev) =>
+            [
+              {
+                id: `${id}-approve-${Date.now()}`,
+                at: new Date().toISOString(),
+                actorKey: 'admin.primitive.audit.actor.system',
+                actionKey: 'admin.earn.settlements.audit.approve',
+                subject: id,
+              },
+              ...prev,
+            ].slice(0, 50),
+          );
           await invalidate();
         } catch {
           // display-only failure
@@ -176,6 +185,9 @@ export function useAdminEarnDesk(): UseAdminEarnDesk {
     bulkMarkSettlementsPaid: tierCFalse,
     settlementStates: SETTLEMENT_STATES,
     audit,
+    loading: settlementsQuery.isLoading,
+    isError: settlementsQuery.isError,
+    refresh,
     resetForTest: () => {
       setAgentFilters({ search: '', tier: 'all', status: 'all' });
       setSettlementFilters({ search: '', state: 'all' });

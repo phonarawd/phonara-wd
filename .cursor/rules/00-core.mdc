@@ -1,45 +1,27 @@
 ---
-description: PHONARA core engineering rules
+description: PHONARA core engineering rules (Phase D — Demolition override via 00-phase-d-demolition.mdc)
 alwaysApply: true
 ---
 
 # Core Rules
 
-- Treat `docs/PHONARA_V2_MASTER_PLAN.md` as the source of truth.
-- Before ANY work, run the duplicate-prevention preflight in
-  `70-autonomy-and-delivery`: confirm the task/RPC/component/migration/test/plan
-  is not already implemented, not already tracked, and not duplicated elsewhere.
-  Duplicate work and duplicate generated artifacts are forbidden.
+- **Active implementation SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../docs/SSOT/ACTIVE_WORK_SSOT.md) — Demolition DONE · Engine Apex CLOSED · Phase R only.
+- **Deleted v2 execution docs (Batch 11):** `UI_REBUILD_WAVE` · `NEXT_STEP` · `AI_REFERENCE_PRIORITY` · `UIUX_FULL_REBUILD_EXECUTION` · `MASTER_TODO` — **never** restore ([`DEPRECATED_DOC_DENYLIST.md`](../../docs/SSOT/DEPRECATED_DOC_DENYLIST.md)).
+- **Frozen engine evidence:** `ENGINE_PHASE*EVIDENCE*` — 감사 이력만 · 구현 큐 **아님** · status = `ENGINE_APEX_CLOSEOUT.md`.
+- **Phase R:** UX intent = `docs/SSOT/*_UX_CANON.md` · execution = [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) (2026-07-04 승인).
+- Before ANY work, run duplicate-prevention preflight in `70-autonomy-and-delivery`: grep/git status · no parallel migrations/components/plans.
 - Prefer small, tested, auditable changes.
-- Preserve completed engine/domain behavior; current product work prioritizes UI/UX presentation.
-- Preserve a clear boundary between `apps/web`, `apps/admin`, and `packages/*`.
-- Do not add compatibility shims for unshipped work on this branch; keep the branch clean and direct.
+- Preserve completed engine/domain behavior (`packages/*-engine`, `supabase/`, contracts, domain).
+- Preserve boundary: `apps/web`, `apps/admin`, `packages/*`.
+- No compatibility shims for unshipped work on this branch.
 
 ## Standing autonomy (operator-granted)
 
-The operator has granted the agent full standing authority to lead and finish the
-platform end-to-end WITHOUT per-step approval — including running local/Docker
-tests, applying remote Supabase migrations, deploying edge functions, and fixing
-risky/buggy areas on its own judgment. Do not pause to ask for permission. The
-only hard constraint that survives this grant is the single-project lock in
-`20-supabase-safety` (project `yocjhjsdwoijfdrehzoq` only). See
-`70-autonomy-and-delivery` for the full operating contract.
+Full authority within **Phase R plan scope** after operator approval — engine/migration changes require explicit operator RED STOP. Hard stop: Supabase project `yocjhjsdwoijfdrehzoq` only (`20-supabase-safety`).
 
 ## Protected Work (extra rigor if touched)
 
-The current focus is UI/UX. If a change still touches protected domain or
-database behavior, use extra rigor: draft first, validate locally, test the
-changed branch, run the advisor, THEN apply autonomously when relevant:
+Money, ledger, Supabase migrations, RLS/RPC, admin permissions, auth/session:
 
-- Completed money, ledger, conservation, trading, liquidation, and casino settlement behavior.
-- Supabase schema/RLS/RPC migrations.
-- anon/public/role privilege changes (GRANT/REVOKE).
-- Admin permission, withdrawal, or kill-switch logic.
-- Security-sensitive auth/session changes.
-- Anything that can affect balances, settlement, or withdrawals.
-
-For these, the mandatory gates still apply and are non-negotiable: local
-`supabase db reset` must pass, money/settlement/liquidation/circuit-breaker RPCs
-must be exercised by a `supabase/tests/*.sql` integration test that asserts
-conservation (Σ=0) and hash-chain integrity and `ROLLBACK`s, and the Supabase
-security advisor must be clean (0 ERROR) before the change is considered done.
+- Local `supabase db reset` → `test:sql` Σ=0 · hash-chain → **`bun run stack:push-remote`** → advisor 0 ERROR.
+- Closeout during Phase D: update `DEMOLITION_PLAN` batch status only — §AI Todo Sync **deferred** until Phase R.

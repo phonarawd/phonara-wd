@@ -37,7 +37,7 @@ describe('TS ↔ SQL futures parity (mirrors supabase/tests/futures_parity_test.
 
   it('close: exit/realizedPnl/closeFee/equityReturned match the SQL RPC', () => {
     const close = computeCloseSettlement({ position: open, exitPrice: '0.012900' });
-    expect(close.exitPrice).toBe('0.0129');
+    expect(close.exitPrice).toBe('0.012900');
     expect(close.realizedPnl).toBe('38.852136');
     expect(close.closeFee).toBe('0.541829');
     expect(close.equityReturned).toBe('161.767095');
@@ -48,7 +48,11 @@ describe('TS ↔ SQL futures boundary parity (mirrors SQL boundary formulas)', (
   const tick = new Decimal('0.000001');
   const maintenanceMarginRate = new Decimal('0.005');
 
-  function expectedLiquidationPrice(side: 'long' | 'short', entry: string, leverage: string): string {
+  function expectedLiquidationPrice(
+    side: 'long' | 'short',
+    entry: string,
+    leverage: string,
+  ): string {
     const entryPrice = new Decimal(entry);
     const lev = new Decimal(leverage);
     const invLev = new Decimal(1).div(lev);

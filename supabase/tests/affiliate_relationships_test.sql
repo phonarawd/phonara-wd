@@ -96,8 +96,23 @@ BEGIN
     SELECT 1 FROM referrals
      WHERE referrer_id = v_parent
        AND referred_id = v_child
+       AND state = 'pending'
+       AND rewarded_at IS NULL
+  ), 'welcome claim must mark referral pending until qualified daily claim';
+
+  INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
+  SELECT v_child, doc_type::consent_doc_type, 'v1', TRUE
+  FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']) AS doc_type
+  ON CONFLICT DO NOTHING;
+
+  PERFORM rpc_claim_daily_reward();
+  ASSERT EXISTS (
+    SELECT 1 FROM referrals
+     WHERE referrer_id = v_parent
+       AND referred_id = v_child
+       AND state = 'paid'
        AND rewarded_at IS NOT NULL
-  ), 'welcome claim must still reward through referrals table';
+  ), 'first daily claim must qualify referral payout';
 
   RAISE NOTICE 'AFFILIATE RPC COEXISTENCE OK — referrals and affiliate_relationships coexist';
 END;
@@ -125,17 +140,17 @@ BEGIN
   INSERT INTO referrals (referrer_id, referred_id)
   VALUES (v_referrer, v_ref1), (v_referrer, v_ref2), (v_referrer, v_ref3);
 
-  UPDATE referrals SET referrer_phon = '2000.000000', referred_phon = '1000.000000', rewarded_at = NOW()
+  UPDATE referrals SET state = 'paid', referrer_phon = '2000.000000', referred_phon = '1000.000000', rewarded_at = NOW()
    WHERE referrer_id = v_referrer AND referred_id IN (v_ref1, v_ref2);
   SELECT COUNT(*) INTO v_found
     FROM missions WHERE user_id = v_referrer AND mission = 'invite_3_friends' AND completed_at IS NOT NULL;
   ASSERT v_found = 0, 'invite_3_friends must not fire before 3 rewarded referrals';
 
-  UPDATE referrals SET referrer_phon = '2000.000000', referred_phon = '1000.000000', rewarded_at = NOW()
+  UPDATE referrals SET state = 'paid', referrer_phon = '2000.000000', referred_phon = '1000.000000', rewarded_at = NOW()
    WHERE referrer_id = v_referrer AND referred_id = v_ref3;
   SELECT COUNT(*) INTO v_found
     FROM missions WHERE user_id = v_referrer AND mission = 'invite_3_friends' AND completed_at IS NOT NULL;
-  ASSERT v_found = 1, 'invite_3_friends must still fire from referrals.rewarded_at';
+  ASSERT v_found = 1, 'invite_3_friends must still fire from referrals.state=paid';
 
   RAISE NOTICE 'AFFILIATE REFERRALS REGRESSION OK — mission remains referrals-based';
 END;

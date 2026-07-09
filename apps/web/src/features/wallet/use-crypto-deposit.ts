@@ -11,16 +11,20 @@ export interface CryptoDepositAddress {
   asset: string;
   chain: string;
   address_id: string;
+  needs_derivation?: boolean;
+  derivation_index?: number;
 }
 
 export interface CryptoDepositRequestResult {
   ok: boolean;
-  request_id: string;
+  deposit_id: string;
   address: string;
   asset: string;
   chain: string;
   amount: string;
-  status: string;
+  status?: string;
+  confirmations_required?: number;
+  sla_hours?: number;
 }
 
 export const cryptoDepositKeys = {
@@ -28,21 +32,44 @@ export const cryptoDepositKeys = {
     ['crypto-deposit-address', userId, asset, chain] as const,
 };
 
-export function useCryptoDepositAddress(asset = 'USDT', chain = 'TRC20') {
+async function ensureCryptoAddressDerived(
+  asset: string,
+  chain: string,
+): Promise<CryptoDepositAddress> {
+  const { data: rpcData, error } = await supabase.rpc('rpc_get_crypto_deposit_address', {
+    p_asset: asset,
+    p_chain: chain,
+  });
+  if (error) throw error;
+  let result = rpcData as unknown as CryptoDepositAddress;
+  if (result.needs_derivation) {
+    const { data: derived, error: fnError } = await supabase.functions.invoke(
+      'derive-crypto-address',
+      {
+        body: { chain },
+      },
+    );
+    if (fnError) throw fnError;
+    if (derived?.address) {
+      result = { ...result, address: derived.address, needs_derivation: false };
+    }
+  }
+  return result;
+}
+
+export function useCryptoDepositAddress(asset = 'USDT', chain = 'TRC20', enabled = true) {
   const { session } = useAuth();
   const userId = session?.user.id ?? null;
 
-  const { data = null, isLoading: loading, error: rawError, refetch } = useQuery({
+  const {
+    data = null,
+    isLoading: loading,
+    error: rawError,
+    refetch,
+  } = useQuery({
     queryKey: cryptoDepositKeys.address(userId, asset, chain),
-    queryFn: async () => {
-      const { data: rpcData, error } = await supabase.rpc('rpc_get_crypto_deposit_address', {
-        p_asset: asset,
-        p_chain: chain,
-      });
-      if (error) throw error;
-      return rpcData as unknown as CryptoDepositAddress;
-    },
-    enabled: !!userId,
+    queryFn: () => ensureCryptoAddressDerived(asset, chain),
+    enabled: enabled && !!userId,
     staleTime: 60_000,
   });
 
@@ -69,6 +96,7 @@ export function useCryptoDepositRequest() {
       setLoading(true);
       setError(null);
       try {
+        await ensureCryptoAddressDerived(params.asset ?? 'USDT', params.chain ?? 'TRC20');
         const { data, error: rpcError } = await supabase.rpc('rpc_create_crypto_deposit_request', {
           p_amount: params.amount,
           p_asset: params.asset ?? 'USDT',
@@ -79,12 +107,17 @@ export function useCryptoDepositRequest() {
         const created = data as unknown as CryptoDepositRequestResult;
         setResult(created);
         void qc.invalidateQueries({
-          queryKey: cryptoDepositKeys.address(userId, params.asset ?? 'USDT', params.chain ?? 'TRC20'),
+          queryKey: cryptoDepositKeys.address(
+            userId,
+            params.asset ?? 'USDT',
+            params.chain ?? 'TRC20',
+          ),
         });
         return created;
       } catch (err) {
-        setError(translateError(err, 'error.UNKNOWN'));
-        return null;
+        const key = translateError(err, 'error.UNKNOWN');
+        setError(key);
+        throw err;
       } finally {
         setLoading(false);
       }

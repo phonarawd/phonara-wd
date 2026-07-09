@@ -2,16 +2,16 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const root = join(import.meta.dir, '..');
-const desktop = 'C:/Users/PC/Desktop/PHONARA-lovable-master-prompt.md';
-const masterOut = join(root, 'docs/PHONARA_LOVABLE_GAMES_POLISH_MASTER.md');
-const crashLockOut = join(root, 'docs/PHONARA_LOVABLE_GAMES_POLISH_G1_CRASH_LOCK.md');
+const desktop = 'C:/Users/PC/Desktop/PHONARA-presentation-master-prompt.md';
+const masterOut = join(root, 'docs/PHONARA_PRESENTATION_GAMES_POLISH_MASTER.md');
+const crashLockOut = join(root, 'docs/PHONARA_PRESENTATION_GAMES_POLISH_G1_CRASH_LOCK.md');
 
-const header = `# PHONARA · Lovable Games Polish Master (12 originals · Stake 압살 · 렉 0)
+const header = `# PHONARA · Presentation Games Polish Master (12 originals · Stake 압살 · 렉 0)
 
-> **목적:** Lovable canvas에서 casino **12 originals** UI/UX를 엔진 오차 0 · 렉 0 · Stake 압살 수준으로 올리는 **standing 정본**.  
-> **갱신:** 2026-06-17 · operator desktop \`PHONARA-lovable-master-prompt.md\` 흡수 + Deepshaft/Momentum 확장  
-> **담당:** Lovable AI · Cursor (§GREEN 검증) · operator (APPROVE/EXECUTE GO)  
-> **연결:** \`PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md\` §3.1.5 · \`LOVABLE_OPERATOR_PROMPT_DISPATCH.md\`
+> **목적:** External canvas에서 casino **12 originals** UI/UX를 엔진 오차 0 · 렉 0 · Stake 압살 수준으로 올리는 **standing 정본**.  
+> **갱신:** 2026-06-17 · operator desktop \`PHONARA-presentation-master-prompt.md\` 흡수 + Deepshaft/Momentum 확장  
+> **담당:** Presentation AI · Cursor (§GREEN 검증) · operator (APPROVE/EXECUTE GO)  
+> **연결:** \`PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md\` §3.1.5 · \`PRESENTATION_OPERATOR_PROMPT_DISPATCH.md\`
 
 ---
 
@@ -34,7 +34,7 @@ const header = `# PHONARA · Lovable Games Polish Master (12 originals · Stake 
 | # | GameCode | 상태 |
 |---|----------|------|
 | — | plinko · mines · shell | ✅ signed-off |
-| **G#1** | crash | ⏳ EXECUTE — \`PHONARA_LOVABLE_GAMES_POLISH_G1_CRASH_LOCK.md\` |
+| **G#1** | crash | ⏳ EXECUTE — \`PHONARA_PRESENTATION_GAMES_POLISH_G1_CRASH_LOCK.md\` |
 | G#2 | dice | PLAN |
 | G#3 | limbo | PLAN |
 | G#4 | hilo | PLAN |
@@ -49,7 +49,7 @@ const header = `# PHONARA · Lovable Games Polish Master (12 originals · Stake 
 
 ---
 
-## 2. Lovable standing instruction (PART 1–5)
+## 2. Presentation standing instruction (PART 1–5)
 
 `;
 
@@ -80,19 +80,20 @@ const extension = `
 `;
 
 const body = readFileSync(desktop, 'utf8');
-const part3End = body.indexOf('═══════════════════════════════════════════════════════════════════════\n## PART 4');
-const beforePart4 =
-  part3End > 0 ? body.slice(0, part3End) : body;
+const part3End = body.indexOf(
+  '═══════════════════════════════════════════════════════════════════════\n## PART 4',
+);
+const beforePart4 = part3End > 0 ? body.slice(0, part3End) : body;
 const fromPart4 = part3End > 0 ? body.slice(part3End) : '';
 
 writeFileSync(masterOut, header + beforePart4 + extension + fromPart4, 'utf8');
 
 writeFileSync(
   crashLockOut,
-  `# LOVABLE Games Polish · G#1 Crash — LOCK v0.1 + World Crush Moment Bar (FINAL)
+  `# PRESENTATION Games Polish · G#1 Crash — LOCK v0.1 + World Crush Moment Bar (FINAL)
 
 > **상태:** APPROVE · EXECUTE GO · REVISE #9 반영  
-> **큐:** L1-GP Game #1 · PHONARA_LOVABLE_GAMES_POLISH_MASTER.md  
+> **큐:** L1-GP Game #1 · PHONARA_PRESENTATION_GAMES_POLISH_MASTER.md  
 > **갱신:** 2026-06-17
 
 ## Scope

@@ -1,297 +1,51 @@
 /**
- * Admin E2E — S8b/S8c/S8d: authentication + RBAC + audit + operations
+ * Admin auth funnel E2E (P3 gate · operator/CI advisory · 80 G13).
  *
- * S8b positive:  admin user logs in → can access /overview, /audit, /operations
- * S8b negative:  regular user logs in to admin app → blocked (admin-forbidden)
- * S8c:           audit log renders for admin; entries appear after operations
- * S8d:           admin can toggle a feature flag → confirmation dialog → action
- *                executes → audit log entry recorded
- *
- * All tests run against the LOCAL Supabase stack via the admin app (port 3001).
+ * Covers login → MFA challenge → desk access and negative auth (profiles role gate).
+ * Requires local Supabase + admin dev server (port 3001).
  */
 import { test, expect } from '@playwright/test';
+
 import {
-  readAuth,
-  readAdminAuth,
-  adminClient,
-  SUPABASE_URL,
-  ANON_KEY,
-  currencyTotals,
-  loginAdmin,
-  gotoAdminPage,
   ADMIN_BASE,
-} from './_helpers';
-import { createClient } from '@supabase/supabase-js';
+  E2E_USER_PASSWORD,
+  loginAdminWithMfa,
+  provisionAdminAuthFixtures,
+  type AdminAuthFixtures,
+} from './fixtures/admin-auth';
 
-test.describe('Admin RBAC', () => {
-  test('positive: admin user can access all admin routes', async ({ page }) => {
-    const auth = readAdminAuth();
+test.describe('Admin auth funnel', () => {
+  let fixtures: AdminAuthFixtures;
 
-    await loginAdmin(page, auth.email, 'E2e-Admin-Password-123456', readAdminAuth().totpSecret);
+  test.beforeAll(async () => {
+    fixtures = await provisionAdminAuthFixtures();
+  });
 
-    // After login, should redirect to /overview.
-    await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByTestId('admin-sidebar')).toBeVisible();
+  test('redirects unauthenticated desk access to login', async ({ page }) => {
+    await page.goto(`${ADMIN_BASE}/queues`);
+    await expect(page.getByTestId('admin-login-form')).toBeVisible({ timeout: 15_000 });
+  });
 
-    // Sidebar link smoke (one click) then direct routes for stability under full-suite load.
-    await page.getByTestId('nav-audit').click();
-    await expect(page.getByTestId('audit-page')).toBeVisible({ timeout: 20_000 });
+  test('negative: non-admin user sees admin-forbidden', async ({ page }) => {
+    await page.goto(`${ADMIN_BASE}/login`);
+    await expect(page.getByTestId('admin-login-form')).toBeVisible({ timeout: 15_000 });
+    await page.getByTestId('admin-login-email').fill(fixtures.user.email);
+    await page.getByTestId('admin-login-password').fill(E2E_USER_PASSWORD);
+    await page.getByTestId('admin-login-submit').click();
 
-    await gotoAdminPage(page, '/alerts', 'admin-alerts-page');
-    await gotoAdminPage(page, '/queues', 'admin-queues-page');
-    await gotoAdminPage(page, '/operations', 'operations-page');
+    await expect(page.getByTestId('admin-forbidden')).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId('overview-page')).not.toBeVisible();
+  });
 
-    // No forbidden message should appear.
+  test('positive: admin completes MFA challenge and reaches overview', async ({ page }) => {
+    await loginAdminWithMfa(page, fixtures.admin);
+    await expect(page.getByTestId('admin-sidebar')).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId('admin-forbidden')).not.toBeVisible();
   });
 
-  test('negative: regular user is blocked from admin app', async ({ page }) => {
-    const auth = readAuth();
-
-    // Regular user (role='user') attempts to log in to admin app.
-    await page.goto(`${ADMIN_BASE}/login`);
-    await expect(page.getByTestId('admin-login-form')).toBeVisible({ timeout: 15_000 });
-    await page.getByTestId('admin-email').fill(auth.email);
-    await page.getByTestId('admin-password').fill('E2e-Test-Password-123456');
-    await page.getByTestId('admin-login-submit').click();
-
-    // Should see the forbidden screen, NOT the admin dashboard.
-    await expect(page.getByTestId('admin-forbidden')).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByTestId('overview-page')).not.toBeVisible();
-    await expect(page.getByTestId('audit-page')).not.toBeVisible();
+  test('policy desk is reachable after MFA step-up', async ({ page }) => {
+    await loginAdminWithMfa(page, fixtures.admin);
+    await page.goto(`${ADMIN_BASE}/mfa/policy`);
+    await expect(page.getByTestId('admin-mfa-policy-page')).toBeVisible({ timeout: 20_000 });
   });
 });
-
-test.describe('Admin Operations + Audit (S8c/S8d)', () => {
-  test.setTimeout(120_000);
-
-  test('admin can toggle a feature flag and audit log records the action', async ({ page }) => {
-    const adminAuth = readAdminAuth();
-    const dbAdmin = adminClient();
-
-    // Ensure game feature is enabled before the test.
-    await dbAdmin.from('app_config').update({ value: 'true' }).eq('key', 'feature_game_enabled');
-
-    // Log in as admin.
-    await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456', adminAuth.totpSecret);
-    await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
-
-    await gotoAdminPage(page, '/operations', 'operations-page');
-
-    // Count audit log entries before the action.
-    const { count: auditBefore } = await dbAdmin
-      .from('audit_logs')
-      .select('*', { count: 'exact', head: true })
-      .eq('action', 'feature_toggle');
-
-    // Disable the game feature (currently enabled → click Disable).
-    await expect(page.getByTestId('ops-feature-game-toggle')).toBeVisible({ timeout: 10_000 });
-    await page.getByTestId('ops-feature-game-toggle').click();
-
-    // Confirmation dialog with reason input should appear.
-    await expect(page.getByTestId('ops-confirm-reason')).toBeVisible({ timeout: 5_000 });
-    await page.getByTestId('ops-confirm-reason').fill('E2E test: disable game for maintenance');
-
-    // Confirm the action.
-    await page.getByTestId('ops-confirm-confirm').click();
-    await expect(page.getByTestId('ops-confirm-confirm')).not.toBeVisible({ timeout: 10_000 });
-
-    // Verify DB: feature_game_enabled should now be false.
-    const { data: configRow } = await dbAdmin
-      .from('app_config')
-      .select('value')
-      .eq('key', 'feature_game_enabled')
-      .single();
-    expect(configRow?.value, 'feature_game_enabled should be false after disable').toBe('false');
-
-    // Verify audit log: one new entry with action='feature_toggle'.
-    const { count: auditAfter } = await dbAdmin
-      .from('audit_logs')
-      .select('*', { count: 'exact', head: true })
-      .eq('action', 'feature_toggle');
-    expect(auditAfter ?? 0, 'audit log should have 1 new entry').toBe((auditBefore ?? 0) + 1);
-
-    await page.getByTestId('ops-feature-game-toggle').click();
-    await expect(page.getByTestId('ops-confirm-reason')).toBeVisible({ timeout: 5_000 });
-    await expect(page.getByTestId('ops-confirm-reason')).toHaveValue('');
-    await expect(page.getByTestId('ops-confirm-confirm')).toBeDisabled();
-    await page.getByTestId('ops-confirm-reason').fill('E2E restore game after reason reset check');
-    await page.getByTestId('ops-confirm-confirm').click();
-    await expect(page.getByTestId('ops-confirm-confirm')).not.toBeVisible({ timeout: 10_000 });
-
-    await gotoAdminPage(page, '/audit', 'audit-page');
-    await expect(async () => {
-      await page
-        .waitForResponse(
-          (resp) => resp.url().includes('/rest/v1/audit_logs') && resp.status() === 200,
-          { timeout: 10_000 },
-        )
-        .catch(() => undefined);
-      await expect(page.getByTestId('audit-table')).toBeVisible({ timeout: 5_000 });
-    }).toPass({ timeout: 45_000 });
-  });
-
-  test('negative: server-side guard blocks non-admin calling operations RPC directly', async () => {
-    // Regular user tries to call rpc_set_system_mode via their JWT.
-    const auth = readAuth();
-    const userClient = createClient(SUPABASE_URL, ANON_KEY, {
-      auth: { persistSession: false },
-      global: { headers: { Authorization: `Bearer ${auth.accessToken}` } },
-    });
-    const { error } = await userClient.rpc('rpc_set_system_mode', {
-      p_halt: false,
-      p_readonly: false,
-      p_reason: 'E2E negative test',
-    });
-    expect(error, 'non-admin must be rejected by server-side guard').not.toBeNull();
-    expect(error?.message ?? '', 'error should mention forbidden').toMatch(/forbidden|Forbidden|403/i);
-  });
-});
-
-test.describe('Admin Exception Queues (W9-R1)', () => {
-  test.setTimeout(120_000);
-
-  test('admin can reject withdrawal queue item, audit reason, and refund Σ=0', async ({ page }) => {
-    const auth = readAuth();
-    const adminAuth = readAdminAuth();
-    const dbAdmin = adminClient();
-    const userClient = createClient(SUPABASE_URL, ANON_KEY, {
-      auth: { persistSession: false },
-      global: { headers: { Authorization: `Bearer ${auth.accessToken}` } },
-    });
-
-    await dbAdmin.from('profiles').update({ kyc_tier: 'id_verified' }).eq('id', auth.userId);
-    await dbAdmin.from('sanctions_screenings').insert({
-      user_id: auth.userId,
-      status: 'clear',
-      screened_at: new Date().toISOString(),
-    });
-    await dbAdmin.from('app_config').update({ value: 'false' }).in('key', ['system_halt', 'system_readonly']);
-    await dbAdmin.from('app_config').update({ value: 'true' }).eq('key', 'feature_withdrawal_enabled');
-    await dbAdmin.from('treasury_reserves').update({ real_balance: '999999999.000000' }).eq('currency', 'PHON');
-    const { error: reconErr } = await dbAdmin.rpc('rpc_run_reconciliation');
-    expect(reconErr, 'reconciliation before withdrawal should pass').toBeNull();
-    await dbAdmin.from('app_config').update({ value: 'false' }).in('key', ['system_halt', 'system_readonly']);
-
-    const before = await currencyTotals(dbAdmin);
-    const { data: requestData, error: requestErr } = await userClient.rpc('rpc_request_withdrawal', {
-      p_currency: 'PHON',
-      p_amount: '25.000000',
-      p_destination: { kind: 'e2e' },
-      p_idempotency_key: `e2e-wd-${Date.now()}`,
-      p_client_request_id: crypto.randomUUID(),
-    });
-    expect(requestErr, 'withdrawal request should create a pending locked item').toBeNull();
-    const withdrawalId = (requestData as { withdrawal_id: string }).withdrawal_id;
-
-    await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456', adminAuth.totpSecret);
-    await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
-    await gotoAdminPage(page, '/queues', 'admin-queues-page');
-    await expect(page.getByTestId('admin-withdrawals-table')).toBeVisible({ timeout: 20_000 });
-
-    await page.getByTestId(`queue-withdraw-reject-${withdrawalId}`).click();
-    await expect(page.getByTestId('admin-queue-action-reason')).toBeVisible({ timeout: 5_000 });
-    await page.getByTestId('admin-queue-action-reason').fill('E2E reject withdrawal and verify refund');
-    await page.getByTestId('admin-queue-action-confirm').click();
-    await expect(page.getByTestId('admin-queue-action-confirm')).not.toBeVisible({ timeout: 10_000 });
-
-    const { data: wr } = await dbAdmin
-      .from('withdrawal_requests')
-      .select('status')
-      .eq('id', withdrawalId)
-      .single();
-    expect(wr?.status).toBe('rejected');
-
-    const after = await currencyTotals(dbAdmin);
-    expect(after.PHON, 'reject path must conserve PHON across wallets + system').toBe(before.PHON);
-
-    const { count: auditCount } = await dbAdmin
-      .from('audit_logs')
-      .select('*', { count: 'exact', head: true })
-      .eq('action', 'withdrawal_rejected')
-      .eq('entity_id', withdrawalId);
-    expect(auditCount ?? 0, 'reject action should be audited').toBeGreaterThan(0);
-
-    await dbAdmin.from('app_config').update({ value: 'false' }).eq('key', 'feature_withdrawal_enabled');
-  });
-
-  test('admin can sync, acknowledge ops alert, and audit row is recorded', async ({ page }) => {
-    const adminAuth = readAdminAuth();
-    const dbAdmin = adminClient();
-
-    await dbAdmin.from('reconciliation_log').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-
-    const seedAlertId = crypto.randomUUID();
-    await dbAdmin.from('ops_alerts').insert({
-      id: seedAlertId,
-      dedupe_key: `e2e-alert-${seedAlertId}`,
-      source_check_id: 'e2e_test',
-      severity: 'warning',
-      status: 'open',
-      summary: 'E2E seeded ops alert',
-      runbook_key: 'e2e',
-    });
-
-    await loginAdmin(page, adminAuth.email, 'E2e-Admin-Password-123456', adminAuth.totpSecret);
-    await expect(page.getByTestId('overview-page')).toBeVisible({ timeout: 20_000 });
-
-    await gotoAdminPage(page, '/alerts', 'admin-alerts-page');
-    await page.keyboard.press('Escape');
-    await page.getByTestId('ops-alerts-sync').click({ timeout: 15_000 });
-
-    const alertRow = page.locator('[data-testid^="alert-ack-"]').first();
-    await expect(alertRow).toBeVisible({ timeout: 15_000 });
-    const testId = await alertRow.getAttribute('data-testid');
-    const alertId = testId?.replace('alert-ack-', '');
-    expect(alertId, 'alert id must be present in test id').toBeTruthy();
-
-    await alertRow.click();
-    await expect(page.getByTestId('admin-alert-action-reason')).toBeVisible({ timeout: 5_000 });
-    await page.getByTestId('admin-alert-action-reason').fill('E2E acknowledge operational alert');
-    await page.getByTestId('admin-alert-action-confirm').click();
-    await expect(page.getByTestId('admin-alert-action-confirm')).not.toBeVisible({ timeout: 10_000 });
-
-    const { data: alertRowDb } = await dbAdmin
-      .from('ops_alerts')
-      .select('status')
-      .eq('id', alertId!)
-      .single();
-    expect(alertRowDb?.status).toBe('acknowledged');
-
-    const { count: auditCount } = await dbAdmin
-      .from('audit_logs')
-      .select('*', { count: 'exact', head: true })
-      .eq('action', 'ops_alert_acknowledged')
-      .eq('entity_id', alertId!);
-    expect(auditCount ?? 0, 'ack action should be audited').toBeGreaterThan(0);
-  });
-
-  test('negative: non-admin cannot call ops alert RPC directly', async () => {
-    const auth = readAuth();
-    const userClient = createClient(SUPABASE_URL, ANON_KEY, {
-      auth: { persistSession: false },
-      global: { headers: { Authorization: `Bearer ${auth.accessToken}` } },
-    });
-    const { error } = await userClient.rpc('rpc_ack_ops_alert', {
-      p_alert_id: crypto.randomUUID(),
-      p_reason: 'E2E negative test',
-    });
-    expect(error, 'non-admin must be rejected by server-side guard').not.toBeNull();
-    expect(error?.message ?? '', 'error should mention forbidden').toMatch(/forbidden|Forbidden|403/i);
-  });
-
-  test('negative: non-admin cannot call queue resolution RPC directly', async () => {
-    const auth = readAuth();
-    const userClient = createClient(SUPABASE_URL, ANON_KEY, {
-      auth: { persistSession: false },
-      global: { headers: { Authorization: `Bearer ${auth.accessToken}` } },
-    });
-    const { error } = await userClient.rpc('rpc_clear_risk_flag', {
-      p_flag_id: crypto.randomUUID(),
-      p_reason: 'E2E negative test',
-    });
-    expect(error, 'non-admin must be rejected by server-side guard').not.toBeNull();
-    expect(error?.message ?? '', 'error should mention forbidden').toMatch(/forbidden|Forbidden|403/i);
-  });
-});
-

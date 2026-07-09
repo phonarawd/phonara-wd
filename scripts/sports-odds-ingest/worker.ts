@@ -108,7 +108,9 @@ async function runTheOddsApiIngest(
     lastQuota = { remaining: requestsRemaining, used: requestsUsed };
 
     if (isVendorQuotaExhausted(THE_ODDS_API_VENDOR, requestsRemaining)) {
-      throw new Error(`[the-odds-api] monthly quota exhausted (remaining=${requestsRemaining ?? '0'})`);
+      throw new Error(
+        `[the-odds-api] monthly quota exhausted (remaining=${requestsRemaining ?? '0'})`,
+      );
     }
 
     for (const event of events) {
@@ -182,11 +184,10 @@ async function runSportsGameOddsIngest(
     const envKey = `SPORTS_SGO_LEAGUE_${league.toUpperCase().replace(/-/g, '_')}`;
     const leagueIdOverride = process.env[envKey];
 
-    const { messages, eventCount } = await fetchSportsGameOddsSportOdds(
-      credential.apiKey,
-      league,
-      { bookmakerIds: bookmakers, leagueIdOverride },
-    );
+    const { messages, eventCount } = await fetchSportsGameOddsSportOdds(credential.apiKey, league, {
+      bookmakerIds: bookmakers,
+      leagueIdOverride,
+    });
 
     allMessages.push(...messages);
     console.info(

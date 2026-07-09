@@ -4,7 +4,10 @@ import { sqlAsAdminAal1, sqlAsUser, sqlExec } from '../pentest/lib/sql-rpc.ts';
 const adminId = sqlExec(`SELECT id::text FROM profiles WHERE role='admin' LIMIT 1`).stdout.trim();
 sqlExec(`UPDATE app_config SET value='false' WHERE key IN ('system_halt','system_readonly')`);
 
-const crypto2 = sqlAsAdminAal1(adminId, `rpc_admin_match_crypto_deposit('0xaudit4', 'ERC20', '0xaddr', '1.000000', 12)`);
+const crypto2 = sqlAsAdminAal1(
+  adminId,
+  `rpc_admin_match_crypto_deposit('0xaudit4', 'ERC20', '0xaddr', '1.000000', 12)`,
+);
 console.log('crypto_aal1_payload', JSON.stringify(crypto2.data));
 
 const uid = sqlExec(
@@ -15,7 +18,11 @@ if (uid) {
   sqlExec(`UPDATE app_config SET value='true' WHERE key='system_halt'`);
   const spot = sqlAsUser(uid, `rpc_spot_market_buy('100.000000', 'guard-audit-legacy-spot')`);
   sqlExec(`UPDATE app_config SET value='false' WHERE key='system_halt'`);
-  console.log('legacy_spot_halt', { ok: spot.ok, err: (spot.error || '').slice(0, 250), leaked: spot.ok });
+  console.log('legacy_spot_halt', {
+    ok: spot.ok,
+    err: (spot.error || '').slice(0, 250),
+    leaked: spot.ok,
+  });
 }
 
 // pending mines bet cancel during halt
@@ -31,7 +38,11 @@ if (round.ok && round.data && typeof round.data === 'object' && 'round_id' in ro
     sqlExec(`UPDATE app_config SET value='true' WHERE key='system_halt'`);
     const cancel = sqlAsUser(uid, `rpc_cancel_game_bet('${bid}'::uuid)`);
     sqlExec(`UPDATE app_config SET value='false' WHERE key='system_halt'`);
-    console.log('cancel_game_halt', { ok: cancel.ok, err: (cancel.error || '').slice(0, 250), leaked: cancel.ok });
+    console.log('cancel_game_halt', {
+      ok: cancel.ok,
+      err: (cancel.error || '').slice(0, 250),
+      leaked: cancel.ok,
+    });
   } else {
     console.log('mines_bet_setup', { ok: bet.ok, err: (bet.error || '').slice(0, 200) });
   }

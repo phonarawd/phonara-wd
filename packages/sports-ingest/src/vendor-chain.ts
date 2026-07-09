@@ -2,10 +2,7 @@ export const THE_ODDS_API_VENDOR = 'the-odds-api';
 export const ODDS_API_IO_VENDOR = 'odds-api-io';
 export const SPORTSGAMEODDS_VENDOR = 'sportsgameodds';
 
-export const DEFAULT_VENDOR_PRIORITY: readonly string[] = [
-  THE_ODDS_API_VENDOR,
-  ODDS_API_IO_VENDOR,
-];
+export const DEFAULT_VENDOR_PRIORITY: readonly string[] = [THE_ODDS_API_VENDOR, ODDS_API_IO_VENDOR];
 
 export interface VendorCredential {
   readonly vendor: string;

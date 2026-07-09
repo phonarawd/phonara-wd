@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import type { Tables } from '@phonara/shared-types';
+import { WALLET_LEDGER_ROW, WALLETS_ROW } from '@phonara/shared-types';
 import type { MessageKey } from '@phonara/i18n';
 import { useAuth } from '../contexts/auth-context';
 import { useRealtime } from './use-realtime';
@@ -23,12 +24,17 @@ export function useWallet() {
   const { session } = useAuth();
   const userId = session?.user.id ?? null;
 
-  const { data: wallet = null, isLoading: loading, error: rawError } = useQuery({
+  const {
+    data: wallet = null,
+    isLoading: loading,
+    error: rawError,
+    refetch,
+  } = useQuery({
     queryKey: walletKeys.all(userId),
     queryFn: async () => {
       const { data, error } = await supabase
         .from('wallets')
-        .select('*')
+        .select(WALLETS_ROW)
         .eq('user_id', userId!)
         .single();
       if (error) throw error;
@@ -45,7 +51,7 @@ export function useWallet() {
   });
 
   const error: MessageKey | null = rawError ? translateError(rawError) : null;
-  return { wallet, loading, error };
+  return { wallet, loading, error, refetch };
 }
 
 // ─── Ledger ────────────────────────────────────────────────────
@@ -55,12 +61,17 @@ export function useLedger(limit = 30) {
   const userId = session?.user.id ?? null;
   const qc = useQueryClient();
 
-  const { data: entries = [], isLoading: loading, error: rawError, refetch } = useQuery({
+  const {
+    data: entries = [],
+    isLoading: loading,
+    error: rawError,
+    refetch,
+  } = useQuery({
     queryKey: walletKeys.ledger(userId, limit),
     queryFn: async () => {
       const { data, error } = await supabase
         .from('wallet_ledger')
-        .select('*')
+        .select(WALLET_LEDGER_ROW)
         .eq('user_id', userId!)
         .order('created_at', { ascending: false })
         .limit(limit);

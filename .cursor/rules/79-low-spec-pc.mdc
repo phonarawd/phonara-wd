@@ -5,11 +5,17 @@ alwaysApply: true
 
 # Low-Spec PC Execution Contract (operator baseline)
 
-PHONARA operator PC는 **저사양**이다. 모든 에이전트·hook·테스트 실행은 이 PC에서
-Cursor가 멈추지 않으면서 **게이트를 완주**할 수 있어야 한다. CI 병렬도와 다른
-로컬 규칙을 적용한다.
+PHONARA operator PC는 **저사양(8GB)** 이다. 무거운 게이트(SQL · E2E · check:full)는 **GitHub Actions CI가 authoritative** — 로컬에서 일상 실행 **금지**.
 
-> **절대 금지 정본:** [`80-absolute-gate-prohibitions.mdc`](80-absolute-gate-prohibitions.mdc) (G1–G12 · 위반 = FAIL)
+> **CI 위임 정본:** [`docs/SSOT/CI_GATE_AUTHORITY.md`](docs/SSOT/CI_GATE_AUTHORITY.md)  
+> **절대 금지 정본:** [`80-absolute-gate-prohibitions.mdc`](80-absolute-gate-prohibitions.mdc) (G1–G13 · 위반 = FAIL)
+
+## Agent 기본 (G13 · 저사양 · CI 위임)
+
+- **일상 로컬:** L0–L4 lightweight만 (`typecheck` · `lint` · `check:i18n` · `check:hygiene` · `gate:ai-impl` · 단일 vitest).
+- **Heavy (L5–L8):** agent **자율 금지** — **GitHub CI authoritative.** Operator 「gate 실행」= advisory **단일** 1회만 (선택).
+- **마감 보고:** push/PR 후 CI job green 확인 전 **Verified/DONE 주장 금지.**
+- Operator 체크시트: [`docs/SSOT/OPERATOR_GATES.md`](docs/SSOT/OPERATOR_GATES.md) · [`docs/rebuild/LOWSPEC_RULES.md`](docs/rebuild/LOWSPEC_RULES.md)
 
 ## 절대 금지 (요약 — 상세·FAIL 조건은 80 정본)
 
@@ -31,9 +37,9 @@ Cursor가 멈추지 않으면서 **게이트를 완주**할 수 있어야 한다
 2. orphan/residue 있으면 `bun run cursor:emergency-reset` (또는 `cursor:kill-orphans` + `e2e:kill` + `clean`)
 3. `bun run typecheck` → `bun run lint` (변경 범위에 맞게)
 4. 단위: `bun run test` (vitest **maxWorkers: 1** 고정)
-5. E2E: **`test:e2e:casino` 타겟 spec 먼저** → 전체 `bun run test:e2e` (playwright **workers: 1**)
-6. `bun run build` (세션 종료 직전 1회면 충분한 경우 많음)
-7. `bun run check:full` — **E2E 55+/58 안정 후**, foreground 1회만
+5. E2E/SQL: **GitHub CI 위임** — agent 자율 L5–L8 **금지** · operator 「gate 실행」= 선택 1회 advisory (`80` G13 · [`CI_GATE_AUTHORITY.md`](../../docs/SSOT/CI_GATE_AUTHORITY.md))
+6. `bun run build` (세션 종료 직전 1회면 충분한 경우 많음 — CI **quality** job이 authoritative)
+7. `bun run check:full` — **CI 또는 operator 「gate 실행」 1회** — agent 자율 **금지**
 
 `bun run check` 전체 체인은 로컬에서 **최종 RC 직전**에만. 일상 작업은 위 단계별 gate.
 
@@ -57,16 +63,16 @@ bun run cursor:emergency-reset
 - UI still lag → Cursor **완전 종료** (트레이 포함) 후 재시작
 - Docker Desktop: SQL/E2E **아닐 때** 종료 권장
 
-## Docker / Supabase
+## Docker / Supabase (on-demand — `84-docker-on-demand.mdc`)
 
-- `pretest:e2e` · `pretest:sql` · `check:full` SQL 단계에서만 stack 필요
-- E2E/SQL 없는 UI-only 작업: Docker **끄기** — RAM 확보
-- **`stack:ensure --full`은 Docker Desktop 자동 기동 금지** — operator가 수동 ON 후 E2E/SQL (Cursor freeze 방지)
-- **E2E/SQL 종료 후 `posttest:*` → `stack:stop`** — Supabase ~15 컨테이너 해제 + **safe docker prune** (stopped containers · dangling images · unused networks)
-- stack 유지: `PHONARA_KEEP_STACK=1` · docker prune skip: `PHONARA_SKIP_DOCKER_CLEAN=1`
-- 디스크 부족: `bun run stack:docker-clean --cache` (build cache) · `--images` (unused images, next start re-pull)
-- **DB 볼륨 삭제 금지 (자동):** `docker volume prune`는 `--volumes` + `PHONARA_DOCKER_PURGE_VOLUMES=1` 수동만 — 로컬 DB 소실
-- **RAM 렉 1순위:** E2E/SQL 끝나면 **Docker Desktop 종료** (WSL VM RAM 해제) — `stack:stop`만으로는 Desktop RAM은 남음
+- **일상 UI/typecheck:** Docker **OFF** — WSL VM RAM 0
+- **ON:** `pretest:e2e*` · `pretest:sql` → `stack:ensure --full` → Desktop **자동 기동**(기본)
+- **OFF:** `posttest:*` → `stack:stop` → Supabase stop + Desktop **자동 quit**(기본)
+- **sessionStart / cursor:purge:** Docker **절대 기동 금지** (G11)
+- **1회 셋업:** `bun run stack:docker:setup -- --apply-wslconfig --apply-env` + Docker「로그인 시 시작」해제
+- **연속 gate:** `PHONARA_KEEP_STACK=1` · 다른 Docker workload: `PHONARA_DOCKER_AUTO_QUIT=0`
+- 디스크 부족: `bun run stack:docker-clean --cache` · `--images`
+- **DB 볼륨 삭제 금지 (자동):** `docker volume prune --volumes` + `PHONARA_DOCKER_PURGE_VOLUMES=1` 수동만
 - Plinko E2E: Pixi WebGL ticker는 `VITE_PHONARA_E2E_ENGINE=1`에서 **0** — casino.spec RPC 구간 중 CPU 포화 방지
 
 ## 에이전트 완료 보고 전 (저사양 checklist)

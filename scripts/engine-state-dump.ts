@@ -1,16 +1,14 @@
 import { createHash } from 'node:crypto';
-import { spawnSync } from 'node:child_process';
-import {
-  cpSync,
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  readdirSync,
-  writeFileSync,
-} from 'node:fs';
+import { spawnSyncSafe } from './lib/spawn-safe';
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadRepoEnvFiles } from './lib/load-repo-env';
-import { findSupabaseDbContainer, readLocalSupabaseEnv, runDbJsonQuery, runDbQuery } from './lib/db-connect';
+import {
+  findSupabaseDbContainer,
+  readLocalSupabaseEnv,
+  runDbJsonQuery,
+  runDbQuery,
+} from './lib/db-connect';
 import { collectRemoteProdLayer, type RemoteProdLayer } from './lib/remote-prod-layer';
 
 loadRepoEnvFiles();
@@ -23,7 +21,10 @@ const LOCK_PATH = join(ROOT, 'supabase', 'migrations.lock.json');
 const args = new Set(process.argv.slice(2));
 const runFullGate = args.has('--full') || args.has('--ultimate');
 const skipGates = args.has('--skip-gates');
-const tryRemote = args.has('--remote') || args.has('--ultimate') || Boolean(process.env.SUPABASE_ACCESS_TOKEN?.trim());
+const tryRemote =
+  args.has('--remote') ||
+  args.has('--ultimate') ||
+  Boolean(process.env.SUPABASE_ACCESS_TOKEN?.trim());
 
 interface GateResult {
   readonly command: string;
@@ -58,11 +59,15 @@ function readText(path: string): string {
   return readFileSync(path, 'utf8');
 }
 
-function runCommand(label: string, command: string, cmdArgs: string[], logPath: string): GateResult {
-  const result = spawnSync(command, cmdArgs, {
+function runCommand(
+  label: string,
+  command: string,
+  cmdArgs: string[],
+  logPath: string,
+): GateResult {
+  const result = spawnSyncSafe(command, cmdArgs, {
     cwd: ROOT,
     encoding: 'utf8',
-    shell: process.platform === 'win32',
     maxBuffer: 64 * 1024 * 1024,
     env: process.env,
   });
@@ -88,21 +93,20 @@ function skippedGate(label: string, reason: string): GateResult {
 }
 
 function gitHead(): string {
-  const r = spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8', cwd: ROOT, shell: process.platform === 'win32' });
+  const r = spawnSyncSafe('git', ['rev-parse', 'HEAD'], { encoding: 'utf8', cwd: ROOT });
   return r.status === 0 ? (r.stdout ?? '').trim() : 'unknown';
 }
 
 function gitBranch(): string {
-  const r = spawnSync('git', ['branch', '--show-current'], {
+  const r = spawnSyncSafe('git', ['branch', '--show-current'], {
     encoding: 'utf8',
     cwd: ROOT,
-    shell: process.platform === 'win32',
   });
   return r.status === 0 ? (r.stdout ?? '').trim() : 'unknown';
 }
 
 function gitStatusShort(): string {
-  const r = spawnSync('git', ['status', '--short'], { encoding: 'utf8', cwd: ROOT, shell: process.platform === 'win32' });
+  const r = spawnSyncSafe('git', ['status', '--short'], { encoding: 'utf8', cwd: ROOT });
   return r.status === 0 ? (r.stdout ?? '') : '';
 }
 
@@ -118,13 +122,17 @@ function migrationInventory(): {
         .filter((f) => f.endsWith('.sql'))
         .sort()
     : [];
-  const lock = existsSync(LOCK_PATH) ? (JSON.parse(readText(LOCK_PATH)) as { migrations?: Record<string, string> }) : { migrations: {} };
+  const lock = existsSync(LOCK_PATH)
+    ? (JSON.parse(readText(LOCK_PATH)) as { migrations?: Record<string, string> })
+    : { migrations: {} };
   const rpcNames = new Set<string>();
   const tableCreates: Array<{ file: string; count: number }> = [];
 
   for (const file of files) {
     const content = readText(join(MIGRATIONS_DIR, file));
-    for (const m of content.matchAll(/CREATE OR REPLACE FUNCTION\s+(rpc_[a-z0-9_]+|_[a-z0-9_]+)/gi)) {
+    for (const m of content.matchAll(
+      /CREATE OR REPLACE FUNCTION\s+(rpc_[a-z0-9_]+|_[a-z0-9_]+)/gi,
+    )) {
       rpcNames.add(m[1]!);
     }
     const tableCount = (content.match(/CREATE TABLE/gi) ?? []).length;
@@ -152,7 +160,9 @@ function hookRpcMap(): Array<{ hook: string; rpcCalls: string[] }> {
       else if (entry.name.startsWith('use-') && entry.name.endsWith('.ts')) {
         const rel = full.replace(`${ROOT}\\`, '').replace(`${ROOT}/`, '');
         const text = readText(full);
-        const rpcCalls = [...new Set([...text.matchAll(/rpc_[a-z0-9_]+/gi)].map((m) => m[0]!))].sort();
+        const rpcCalls = [
+          ...new Set([...text.matchAll(/rpc_[a-z0-9_]+/gi)].map((m) => m[0]!)),
+        ].sort();
         out.push({ hook: rel, rpcCalls });
       }
     }
@@ -182,7 +192,9 @@ function rpcCallSites(): Record<string, string[]> {
     }
   };
   for (const dir of scanDirs) walk(dir);
-  return Object.fromEntries([...map.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => [k, [...v].sort()]));
+  return Object.fromEntries(
+    [...map.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => [k, [...v].sort()]),
+  );
 }
 
 function sqlTestInventory(): string[] {
@@ -225,12 +237,19 @@ function buildScorecard(ctx: {
           ? String(ctx.remote?.reason ?? 'SUPABASE_ACCESS_TOKEN absent')
           : ctx.remote?.migrationParity === true
             ? 'remote migration list through 098'
-            : String(ctx.remote?.migrationListError ?? ctx.remote?.migrationListTail ?? 'migration list not run'),
+            : String(
+                ctx.remote?.migrationListError ??
+                  ctx.remote?.migrationListTail ??
+                  'migration list not run',
+              ),
     },
     {
       id: 'G2',
       label: 'database.types.ts game_code + crypto/viral types',
-      status: types.includes('game_code') && types.includes('crypto_') && types.includes('viral_') ? 'PASS' : 'FAIL',
+      status:
+        types.includes('game_code') && types.includes('crypto_') && types.includes('viral_')
+          ? 'PASS'
+          : 'FAIL',
       evidence: 'packages/shared-types/src/database.types.ts scan',
     },
     {
@@ -249,7 +268,11 @@ function buildScorecard(ctx: {
       id: 'G5',
       label: 'Prod rpc_run_reconciliation green',
       status:
-        ctx.remote?.reconciliationOk === true ? 'PASS' : ctx.remote?.reconciliationOk === false ? 'FAIL' : 'UNVERIFIED',
+        ctx.remote?.reconciliationOk === true
+          ? 'PASS'
+          : ctx.remote?.reconciliationOk === false
+            ? 'FAIL'
+            : 'UNVERIFIED',
       evidence: String(ctx.remote?.reconciliationDetail ?? 'service_role remote query not run'),
     },
     {
@@ -275,7 +298,10 @@ function buildScorecard(ctx: {
             ? 'PASS'
             : 'FAIL'
           : 'UNVERIFIED',
-      evidence: typeof ctx.remote?.authUsers === 'number' ? `auth.users=${ctx.remote.authUsers}` : 'remote count not run',
+      evidence:
+        typeof ctx.remote?.authUsers === 'number'
+          ? `auth.users=${ctx.remote.authUsers}`
+          : 'remote count not run',
     },
     {
       id: 'G9',
@@ -304,9 +330,14 @@ function buildScorecard(ctx: {
     {
       id: 'G11',
       label: 'Hook wrappers for viral/crypto RPC',
-      status:
-        ctx.hooks.some((h) => h.rpcCalls.some((r) => r.includes('viral') || r.includes('crypto'))) ? 'PASS' : 'FAIL',
-      evidence: ctx.hooks.map((h) => `${h.hook}: ${h.rpcCalls.join(', ') || '(none)'}`).join(' | ') || 'no hooks',
+      status: ctx.hooks.some((h) =>
+        h.rpcCalls.some((r) => r.includes('viral') || r.includes('crypto')),
+      )
+        ? 'PASS'
+        : 'FAIL',
+      evidence:
+        ctx.hooks.map((h) => `${h.hook}: ${h.rpcCalls.join(', ') || '(none)'}`).join(' | ') ||
+        'no hooks',
     },
     {
       id: 'G12',
@@ -359,7 +390,8 @@ function checkFullSummary(gates: Record<string, GateResult>): string[] {
     }
   }
   if (/check:full OK/.test(log)) lines.push('- **전체:** check:full OK');
-  else if (gates.checkFull.ok === false) lines.push('- **전체:** check:full **RED** — `gates/check-full.log`');
+  else if (gates.checkFull.ok === false)
+    lines.push('- **전체:** check:full **RED** — `gates/check-full.log`');
   return lines;
 }
 
@@ -383,7 +415,9 @@ function writeEngineStateMd(
     '',
     '| ID | 상태 | 항목 | 근거 |',
     '|---|---|---|---|',
-    ...scorecard.map((s) => `| ${s.id} | ${s.status} | ${s.label} | ${s.evidence.replace(/\|/g, '\\|')} |`),
+    ...scorecard.map(
+      (s) => `| ${s.id} | ${s.status} | ${s.label} | ${s.evidence.replace(/\|/g, '\\|')} |`,
+    ),
     '',
     '## 레이어',
     '',
@@ -402,7 +436,9 @@ function writeEngineStateMd(
     '',
     '## 다음 액션',
     '',
-    fail > 0 ? '- FAIL 항목부터 `scorecard.json` evidence 확인' : '- FAIL 없음 — UNVERIFIED remote/p95만 보완',
+    fail > 0
+      ? '- FAIL 항목부터 `scorecard.json` evidence 확인'
+      : '- FAIL 없음 — UNVERIFIED remote/p95만 보완',
     unverified > 0 ? '- UNVERIFIED: remote token · prod operator account · p95 probe 확인' : '',
     runFullGate ? '' : '- launch-readiness 전체: `bun run dump:engine -- --ultimate`',
     '',
@@ -411,7 +447,8 @@ function writeEngineStateMd(
 }
 
 function captureL3Security(l3: Record<string, unknown>, mirrorCopied: boolean): void {
-  const dbAvailable = findSupabaseDbContainer() !== null || runDbQuery('SELECT 1').mode !== 'unavailable';
+  const dbAvailable =
+    findSupabaseDbContainer() !== null || runDbQuery('SELECT 1').mode !== 'unavailable';
   l3.dbAvailable = dbAvailable;
   l3.mirrorCopied = mirrorCopied;
 
@@ -493,14 +530,17 @@ function copyMirrorToL2(layersDir: string): boolean {
 
 function runP95Probe(logPath: string): { ok: boolean; data: Record<string, unknown> | null } {
   const localEnv = readLocalSupabaseEnv();
-  const result = spawnSync('bun', ['run', 'scripts/measure-spot-rpc-p95.ts', '--samples=30'], {
+  const result = spawnSyncSafe('bun', ['run', 'scripts/measure-spot-rpc-p95.ts', '--samples=30'], {
     cwd: ROOT,
     encoding: 'utf8',
-    shell: process.platform === 'win32',
     maxBuffer: 16 * 1024 * 1024,
     env: { ...process.env, ...localEnv },
   });
-  writeFileSync(logPath, [result.stdout ?? '', result.stderr ?? ''].filter(Boolean).join('\n'), 'utf8');
+  writeFileSync(
+    logPath,
+    [result.stdout ?? '', result.stderr ?? ''].filter(Boolean).join('\n'),
+    'utf8',
+  );
   if (result.status !== 0) return { ok: false, data: null };
   try {
     const jsonStart = (result.stdout ?? '').indexOf('{');
@@ -543,7 +583,9 @@ async function main(): Promise<void> {
     rpcNamesFromMigrations: migrations.rpcNames,
     rpcCount: migrations.rpcNames.length,
     tableCreatesByMigration: migrations.tableCreates,
-    databaseTypesSha256: existsSync(join(ROOT, 'packages', 'shared-types', 'src', 'database.types.ts'))
+    databaseTypesSha256: existsSync(
+      join(ROOT, 'packages', 'shared-types', 'src', 'database.types.ts'),
+    )
       ? sha256(readText(join(ROOT, 'packages', 'shared-types', 'src', 'database.types.ts')))
       : null,
   });
@@ -553,7 +595,12 @@ async function main(): Promise<void> {
   if (!runFullGate) {
     if (dbContainer && !args.has('--no-reset')) {
       console.log('[dump:engine] supabase db reset (clean slate for SQL + mirror)...');
-      gates.dbReset = runCommand('supabase db reset', 'supabase', ['db', 'reset'], join(gatesDir, 'db-reset.log'));
+      gates.dbReset = runCommand(
+        'supabase db reset',
+        'supabase',
+        ['db', 'reset'],
+        join(gatesDir, 'db-reset.log'),
+      );
       if (!gates.dbReset.ok) {
         console.error('[dump:engine] db reset failed — SQL/mirror layers may be invalid.');
       }
@@ -564,7 +611,12 @@ async function main(): Promise<void> {
     }
 
     if (dbContainer) {
-      gates.mirrorFunctions = runCommand('mirror:functions', 'bun', ['run', 'mirror:functions'], join(gatesDir, 'mirror-functions.log'));
+      gates.mirrorFunctions = runCommand(
+        'mirror:functions',
+        'bun',
+        ['run', 'mirror:functions'],
+        join(gatesDir, 'mirror-functions.log'),
+      );
     }
   } else {
     gates.dbReset = skippedGate('supabase db reset', 'deferred to check:full');
@@ -582,9 +634,24 @@ async function main(): Promise<void> {
 
   // L4 gates
   if (!runFullGate) {
-    gates.buildPackages = runCommand('build:packages', 'bun', ['run', 'build:packages'], join(gatesDir, 'build-packages.log'));
-    gates.checkGames = runCommand('check:games', 'bun', ['run', 'check:games'], join(gatesDir, 'check-games.log'));
-    gates.checkMigrations = runCommand('check:migrations', 'bun', ['run', 'check:migrations'], join(gatesDir, 'check-migrations.log'));
+    gates.buildPackages = runCommand(
+      'build:packages',
+      'bun',
+      ['run', 'build:packages'],
+      join(gatesDir, 'build-packages.log'),
+    );
+    gates.checkGames = runCommand(
+      'check:games',
+      'bun',
+      ['run', 'check:games'],
+      join(gatesDir, 'check-games.log'),
+    );
+    gates.checkMigrations = runCommand(
+      'check:migrations',
+      'bun',
+      ['run', 'check:migrations'],
+      join(gatesDir, 'check-migrations.log'),
+    );
   }
   writeJson(join(layersDir, 'L4-packages.json'), {
     gates: {
@@ -598,7 +665,12 @@ async function main(): Promise<void> {
   if (runFullGate) {
     gates.testSql = skippedGate('test:sql', 'included in check:full');
   } else if (!skipGates) {
-    gates.testSql = runCommand('test:sql', 'bun', ['run', 'test:sql'], join(gatesDir, 'test-sql.log'));
+    gates.testSql = runCommand(
+      'test:sql',
+      'bun',
+      ['run', 'test:sql'],
+      join(gatesDir, 'test-sql.log'),
+    );
   } else {
     gates.testSql = skippedGate('test:sql', '--skip-gates');
   }
@@ -615,13 +687,19 @@ async function main(): Promise<void> {
   });
 
   // L8 remote prod (early — while check:full runs we already have token work done)
-  let remote: RemoteProdLayer | Record<string, unknown> = { skipped: true, reason: 'not requested' };
+  let remote: RemoteProdLayer | Record<string, unknown> = {
+    skipped: true,
+    reason: 'not requested',
+  };
   if (tryRemote) {
     console.log('[dump:engine] collecting remote prod layer (read-only)...');
     remote = await collectRemoteProdLayer(process.env.SUPABASE_ACCESS_TOKEN);
     writeJson(join(layersDir, 'L8-remote.json'), remote);
   } else {
-    writeJson(join(layersDir, 'L8-remote.json'), { skipped: true, reason: 'pass --remote or --ultimate' });
+    writeJson(join(layersDir, 'L8-remote.json'), {
+      skipped: true,
+      reason: 'pass --remote or --ultimate',
+    });
   }
 
   let p95: Record<string, unknown> | null = null;
@@ -630,16 +708,50 @@ async function main(): Promise<void> {
   // L7 ultimate gate
   if (runFullGate) {
     console.log('[dump:engine] build:packages (required before check:games in check:full)...');
-    gates.buildPackages = runCommand('build:packages', 'bun', ['run', 'build:packages'], join(gatesDir, 'build-packages.log'));
-    gates.checkGames = runCommand('check:games', 'bun', ['run', 'check:games'], join(gatesDir, 'check-games.log'));
-    gates.checkMigrations = runCommand('check:migrations', 'bun', ['run', 'check:migrations'], join(gatesDir, 'check-migrations.log'));
+    gates.buildPackages = runCommand(
+      'build:packages',
+      'bun',
+      ['run', 'build:packages'],
+      join(gatesDir, 'build-packages.log'),
+    );
+    gates.checkGames = runCommand(
+      'check:games',
+      'bun',
+      ['run', 'check:games'],
+      join(gatesDir, 'check-games.log'),
+    );
+    gates.checkMigrations = runCommand(
+      'check:migrations',
+      'bun',
+      ['run', 'check:migrations'],
+      join(gatesDir, 'check-migrations.log'),
+    );
 
-    console.log('[dump:engine] pre-sync functions mirror (db reset + mirror for check:full strict gate)...');
-    gates.preMirrorReset = runCommand('supabase db reset (pre-check:full)', 'supabase', ['db', 'reset'], join(gatesDir, 'pre-mirror-reset.log'));
-    gates.preMirrorSync = runCommand('mirror:functions (pre-check:full)', 'bun', ['run', 'mirror:functions'], join(gatesDir, 'pre-mirror-sync.log'));
+    console.log(
+      '[dump:engine] pre-sync functions mirror (db reset + mirror for check:full strict gate)...',
+    );
+    gates.preMirrorReset = runCommand(
+      'supabase db reset (pre-check:full)',
+      'supabase',
+      ['db', 'reset'],
+      join(gatesDir, 'pre-mirror-reset.log'),
+    );
+    gates.preMirrorSync = runCommand(
+      'mirror:functions (pre-check:full)',
+      'bun',
+      ['run', 'mirror:functions'],
+      join(gatesDir, 'pre-mirror-sync.log'),
+    );
 
-    console.log('[dump:engine] running check:full (check + PWA + reset + mirror + SQL + casino parity + E2E)...');
-    gates.checkFull = runCommand('check:full', 'bun', ['run', 'check:full'], join(gatesDir, 'check-full.log'));
+    console.log(
+      '[dump:engine] running check:full (check + PWA + reset + mirror + SQL + casino parity + E2E)...',
+    );
+    gates.checkFull = runCommand(
+      'check:full',
+      'bun',
+      ['run', 'check:full'],
+      join(gatesDir, 'check-full.log'),
+    );
     gates.testSql = {
       ...gates.checkFull,
       command: 'test:sql (via check:full)',
@@ -647,7 +759,12 @@ async function main(): Promise<void> {
     };
 
     console.log('[dump:engine] post-check:full mirror + security + p95...');
-    gates.mirrorFunctions = runCommand('mirror:functions', 'bun', ['run', 'mirror:functions'], join(gatesDir, 'mirror-functions.log'));
+    gates.mirrorFunctions = runCommand(
+      'mirror:functions',
+      'bun',
+      ['run', 'mirror:functions'],
+      join(gatesDir, 'mirror-functions.log'),
+    );
     const mirrorAfterFull = copyMirrorToL2(layersDir);
     captureL3Security(l3, mirrorAfterFull);
     writeJson(join(layersDir, 'L3-security.json'), l3);
@@ -658,10 +775,15 @@ async function main(): Promise<void> {
       exitCode: p95Result.ok ? 0 : 1,
       ok: p95Result.ok,
       skipped: false,
-      logFile: join(gatesDir, 'measure-spot-rpc-p95.log').replace(`${ROOT}\\`, '').replace(`${ROOT}/`, ''),
+      logFile: join(gatesDir, 'measure-spot-rpc-p95.log')
+        .replace(`${ROOT}\\`, '')
+        .replace(`${ROOT}/`, ''),
     };
     p95 = p95Result.data;
-    writeJson(join(layersDir, 'L9-p95.json'), p95 ?? { error: 'p95 probe failed', log: gates.p95.logFile });
+    writeJson(
+      join(layersDir, 'L9-p95.json'),
+      p95 ?? { error: 'p95 probe failed', log: gates.p95.logFile },
+    );
 
     l10.casinoSqlParity = { includedIn: 'check:full', ok: gates.checkFull.ok };
     l10.checkAdvisorsStrict = runCommand(
@@ -721,7 +843,7 @@ async function main(): Promise<void> {
 
   const gateFailed =
     manifest.scorecardSummary.fail > 0 ||
-    gates.checkFull?.skipped === false && gates.checkFull?.ok === false ||
+    (gates.checkFull?.skipped === false && gates.checkFull?.ok === false) ||
     (gates.testSql?.skipped !== true && gates.testSql?.ok === false) ||
     (gates.dbReset?.skipped !== true && gates.dbReset?.ok === false && !runFullGate);
 

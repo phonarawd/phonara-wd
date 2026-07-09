@@ -1,11 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Tables } from '@phonara/shared-types';
+import {
+  CRYPTO_DEPOSIT_REQUESTS_ROW,
+  GIFTCARD_DEPOSIT_REQUESTS_ROW,
+  KRW_DEPOSIT_REQUESTS_ROW,
+  KYC_SUBMISSIONS_ROW,
+  WITHDRAWAL_REQUESTS_ROW,
+} from '@phonara/shared-types';
+import { isPhonKrwRateStale, isPhonKrwRateUnavailable } from '../../lib/phon-krw-rate-stale';
+import {
+  fetchFiatReferenceRateQueryData,
+  fiatReferenceRateQueryKey,
+  type ExchangeRateSnapshot,
+} from '../money/use-fiat-reference-rates';
 import { supabase } from '../../lib/supabase';
 
 export type DepositRequest = Tables<'krw_deposit_requests'>;
+export type CryptoDepositRequest = Tables<'crypto_deposit_requests'>;
+export type GiftcardDepositRequest = Tables<'giftcard_deposit_requests'>;
 export type WithdrawalRequest = Tables<'withdrawal_requests'>;
 export type KycSubmission = Tables<'kyc_submissions'>;
-export type ExchangeRateSnapshot = Tables<'exchange_rate_snapshots'>;
+export type { ExchangeRateSnapshot };
 
 export function useWalletData(userId: string | null) {
   const { data: deposits = [] } = useQuery({
@@ -13,7 +28,7 @@ export function useWalletData(userId: string | null) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('krw_deposit_requests')
-        .select('*')
+        .select(KRW_DEPOSIT_REQUESTS_ROW)
         .eq('user_id', userId!)
         .order('created_at', { ascending: false })
         .limit(5);
@@ -23,12 +38,42 @@ export function useWalletData(userId: string | null) {
     enabled: !!userId,
   });
 
+  const { data: cryptoDeposits = [] } = useQuery({
+    queryKey: ['crypto-deposits', userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('crypto_deposit_requests')
+        .select(CRYPTO_DEPOSIT_REQUESTS_ROW)
+        .eq('user_id', userId!)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      return (data ?? []) as CryptoDepositRequest[];
+    },
+    enabled: !!userId,
+  });
+
+  const { data: giftcardDeposits = [] } = useQuery({
+    queryKey: ['giftcard-deposits', userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('giftcard_deposit_requests')
+        .select(GIFTCARD_DEPOSIT_REQUESTS_ROW)
+        .eq('user_id', userId!)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      return (data ?? []) as GiftcardDepositRequest[];
+    },
+    enabled: !!userId,
+  });
+
   const { data: withdrawals = [] } = useQuery({
     queryKey: ['withdrawals', userId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('withdrawal_requests')
-        .select('*')
+        .select(WITHDRAWAL_REQUESTS_ROW)
         .eq('user_id', userId!)
         .order('created_at', { ascending: false })
         .limit(5);
@@ -43,7 +88,7 @@ export function useWalletData(userId: string | null) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('kyc_submissions')
-        .select('*')
+        .select(KYC_SUBMISSIONS_ROW)
         .eq('user_id', userId!)
         .order('created_at', { ascending: false })
         .limit(3);
@@ -53,43 +98,36 @@ export function useWalletData(userId: string | null) {
     enabled: !!userId,
   });
 
-  const { data: withdrawalEnabled } = useQuery({
-    queryKey: ['app-config', 'feature_withdrawal_enabled'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('app_config')
-        .select('value')
-        .eq('key', 'feature_withdrawal_enabled')
-        .maybeSingle();
-      if (error) throw error;
-      return data?.value !== 'false';
-    },
+  const {
+    data: activePhonKrwRate = null,
+    isError: depositRateError,
+    refetch: refetchPhonKrwRate,
+  } = useQuery({
+    queryKey: fiatReferenceRateQueryKey('PHON', 'KRW'),
+    queryFn: () => fetchFiatReferenceRateQueryData({ base: 'PHON', quote: 'KRW' }),
+    select: (data) => data.snapshot,
+    staleTime: 30_000,
+    refetchInterval: 60_000,
   });
 
-  const { data: activePhonKrwRate = null, isError: depositRateError } = useQuery({
-    queryKey: ['exchange-rate', 'PHON', 'KRW', 'active'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('exchange_rate_snapshots')
-        .select('id,base_currency,quote_currency,rate,captured_at,source,is_active,created_by')
-        .eq('base_currency', 'PHON')
-        .eq('quote_currency', 'KRW')
-        .eq('is_active', true)
-        .order('captured_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (error) throw error;
-      return data as ExchangeRateSnapshot | null;
-    },
-    staleTime: 30_000,
-  });
+  const phonKrwRateStale = isPhonKrwRateStale(activePhonKrwRate?.captured_at);
+  const phonKrwRateUnavailable = isPhonKrwRateUnavailable(
+    activePhonKrwRate?.rate,
+    depositRateError,
+  );
+  const phonKrwRateBlocked = phonKrwRateStale || phonKrwRateUnavailable;
 
   return {
     deposits,
+    cryptoDeposits,
+    giftcardDeposits,
     withdrawals,
     kycSubmissions,
-    withdrawalEnabled,
     activePhonKrwRate,
     depositRateError,
+    phonKrwRateStale,
+    phonKrwRateUnavailable,
+    phonKrwRateBlocked,
+    refetchPhonKrwRate,
   };
 }

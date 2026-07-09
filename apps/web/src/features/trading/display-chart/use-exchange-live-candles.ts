@@ -1,22 +1,13 @@
 import { useMemo } from 'react';
-import type { TradingChartCandle } from '@phonara/ui';
+import {
+  DISPLAY_ONLY_FEED,
+  isOracleDisplayInterval,
+  toTradingChartCandles,
+} from './display-feed-contract';
 import { useCandles } from '@/hooks/use-trading';
 import { useDisplayKline, type DisplayKlineInterval } from './use-display-kline';
 
 const MIN_LIVE = 2;
-
-function toChartCandles(
-  rows: { time: number; open: number | string; high: number | string; low: number | string; close: number | string; volume?: number | string | null }[],
-): TradingChartCandle[] {
-  return rows.map((c) => ({
-    time: c.time,
-    open: String(c.open),
-    high: String(c.high),
-    low: String(c.low),
-    close: String(c.close),
-    volume: c.volume != null ? String(c.volume) : null,
-  }));
-}
 
 /**
  * Exchange display candles (Binance/Bybit) + oracle RPC fallback for PHON / feed outage.
@@ -27,29 +18,22 @@ export function useExchangeLiveCandles(
   interval: DisplayKlineInterval = '1m',
 ) {
   const live = useDisplayKline(marketSymbol, interval, Boolean(marketSymbol));
-  const needOracle = Boolean(marketSymbol) && live.candles.length < MIN_LIVE;
-  const { candles: oracleRows, loading: oracleLoading, refetch } = useCandles(
-    needOracle ? marketSymbol : null,
-    interval,
-  );
+  const needOracle =
+    Boolean(marketSymbol) && live.candles.length < MIN_LIVE && isOracleDisplayInterval(interval);
+  const {
+    candles: oracleRows,
+    loading: oracleLoading,
+    refetch,
+  } = useCandles(needOracle ? marketSymbol : null, interval);
 
   const candles = useMemo(() => {
     if (live.candles.length >= MIN_LIVE) {
-      return toChartCandles(live.candles);
+      return toTradingChartCandles(live.candles);
     }
     if (oracleRows.length > 0) {
-      return toChartCandles(
-        oracleRows.map((c) => ({
-          time: c.time,
-          open: c.open,
-          high: c.high,
-          low: c.low,
-          close: c.close,
-          volume: c.volume,
-        })),
-      );
+      return toTradingChartCandles(oracleRows);
     }
-    return toChartCandles(live.candles);
+    return toTradingChartCandles(live.candles);
   }, [live.candles, oracleRows]);
 
   const loading =
@@ -63,6 +47,6 @@ export function useExchangeLiveCandles(
     error: live.error && candles.length < 2 && live.historyReady && !oracleLoading,
     lastPrice: live.lastPrice,
     refetch,
-    displayOnly: true as const,
+    displayOnly: DISPLAY_ONLY_FEED,
   };
 }

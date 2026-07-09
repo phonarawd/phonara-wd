@@ -69,8 +69,7 @@ describe('A1: futures settlement conservation (10k random cases)', () => {
           // ── Raw values (full precision), exactly as the SQL computes them ──
           const qty = new Decimal(pos.quantity);
           const marginR = new Decimal(pos.marginAmount);
-          const pnlRaw =
-            side === 'long' ? qty.mul(exit.minus(entry)) : qty.mul(entry.minus(exit));
+          const pnlRaw = side === 'long' ? qty.mul(exit.minus(entry)) : qty.mul(entry.minus(exit));
           const closeFeeRaw = qty.mul(exit).mul('0.0006'); // DEFAULT close fee rate
           const grossEquity = marginR.plus(pnlRaw).minus(closeFeeRaw);
           const equity = grossEquity.lessThan(0) ? new Decimal(0) : grossEquity;

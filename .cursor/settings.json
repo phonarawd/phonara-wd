@@ -1,10 +1,10 @@
-﻿{
-    "plugins":  {
-                    "linear":  {
-                                   "enabled":  true
-                               },
-                    "supabase":  {
-                                     "enabled":  false
-                                 }
-                }
+{
+  "plugins": {
+    "linear": {
+      "enabled": true
+    },
+    "supabase": {
+      "enabled": false
+    }
+  }
 }

@@ -1,5 +1,13 @@
 import type { Currency, LedgerDirection } from '@phonara/shared-types';
-import { add, subtract, isGreaterThanOrEqual, money, zero, isPositive } from '@phonara/money';
+import {
+  add,
+  subtract,
+  isGreaterThanOrEqual,
+  money,
+  zero,
+  isPositive,
+  toDecimal,
+} from '@phonara/money';
 import type { MoneyAmount } from '@phonara/money';
 
 // ─── Core Types ──────────────────────────────────────────────────────────────
@@ -7,7 +15,7 @@ import type { MoneyAmount } from '@phonara/money';
 export interface WalletBalance {
   readonly currency: Currency;
   readonly available: string; // decimal string
-  readonly locked: string;    // decimal string
+  readonly locked: string; // decimal string
 }
 
 export interface WalletSnapshot {
@@ -25,13 +33,13 @@ export interface LedgerEntry {
   readonly idempotencyKey: string;
   readonly direction: LedgerDirection;
   readonly currency: Currency;
-  readonly amount: string;        // always positive decimal string
+  readonly amount: string; // always positive decimal string
   readonly balanceBefore: WalletBalance;
   readonly balanceAfter: WalletBalance;
   readonly reasonCode: string;
   readonly relatedEntityId?: string;
   readonly rateSnapshotId?: string;
-  readonly createdAt: string;     // ISO 8601
+  readonly createdAt: string; // ISO 8601
 }
 
 /**
@@ -65,8 +73,30 @@ export type LedgerErrorCode =
   | 'INSUFFICIENT_AVAILABLE'
   | 'INSUFFICIENT_LOCKED'
   | 'INVALID_AMOUNT'
+  | 'INVALID_BALANCE'
   | 'CURRENCY_MISMATCH'
   | 'INVALID_DIRECTION';
+
+function normalizeWalletBalance(balance: WalletBalance): WalletBalance {
+  let available: string;
+  let locked: string;
+
+  try {
+    available = money(balance.available, balance.currency).amount;
+    locked = money(balance.locked, balance.currency).amount;
+  } catch {
+    throw new LedgerError(`invalid balance string for ${balance.currency}`, 'INVALID_BALANCE');
+  }
+
+  if (toDecimal(available).isNegative()) {
+    throw new LedgerError('available must not be negative', 'INVALID_BALANCE');
+  }
+  if (toDecimal(locked).isNegative()) {
+    throw new LedgerError('locked must not be negative', 'INVALID_BALANCE');
+  }
+
+  return { ...balance, available, locked };
+}
 
 // ─── Pure Balance Mutation (no I/O) ──────────────────────────────────────────
 
@@ -88,6 +118,8 @@ export function applyLedgerEntry(
   direction: LedgerDirection,
   amount: MoneyAmount,
 ): WalletBalance {
+  balance = normalizeWalletBalance(balance);
+
   if (amount.currency !== balance.currency) {
     throw new LedgerError(
       `currency mismatch: balance is ${balance.currency}, entry is ${amount.currency}`,
@@ -161,10 +193,7 @@ export function applyLedgerEntry(
 // ─── Balance Helpers ─────────────────────────────────────────────────────────
 
 export function totalBalance(balance: WalletBalance): MoneyAmount {
-  return add(
-    money(balance.available, balance.currency),
-    money(balance.locked, balance.currency),
-  );
+  return add(money(balance.available, balance.currency), money(balance.locked, balance.currency));
 }
 
 export function emptyBalance(currency: Currency): WalletBalance {
@@ -176,7 +205,5 @@ export function emptyBalance(currency: Currency): WalletBalance {
 }
 
 export function getBalance(snapshot: WalletSnapshot, currency: Currency): WalletBalance {
-  return (
-    snapshot.balances.find((b) => b.currency === currency) ?? emptyBalance(currency)
-  );
+  return snapshot.balances.find((b) => b.currency === currency) ?? emptyBalance(currency);
 }

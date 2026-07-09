@@ -1,0 +1,84 @@
+/**
+ * Phase R design tokens — OKLCH color SOT (§25.8).
+ * light-dark() dual theme · hex/hsl 신규 정의 금지.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* Neutral ladder — blue-tint dark (거래소급 심도) */
+  --ds-bg: light-dark(oklch(0.98 0.008 260), oklch(0.145 0.012 260));
+  --ds-surface: light-dark(oklch(0.96 0.008 260), oklch(0.185 0.012 260));
+  --ds-surface-raised: light-dark(oklch(0.94 0.01 260), oklch(0.225 0.012 260));
+  --ds-surface-hover: light-dark(
+    color-mix(in oklch, var(--ds-surface-raised) 92%, black),
+    color-mix(in oklch, var(--ds-surface-raised) 92%, white)
+  );
+  --ds-surface-overlay: light-dark(oklch(0.99 0.008 260), oklch(0.27 0.014 260));
+  --ds-line: light-dark(oklch(0.88 0.012 260), oklch(0.32 0.012 260));
+
+  --ds-foreground: light-dark(oklch(0.18 0.02 260), oklch(0.92 0.01 260));
+  --ds-foreground-muted: light-dark(oklch(0.48 0.02 260), oklch(0.65 0.02 260));
+
+  /* Brand accent — mint (Earn 성장 정체성) */
+  --ds-accent: light-dark(oklch(0.52 0.17 165), oklch(0.78 0.17 165));
+  --ds-accent-foreground: light-dark(oklch(0.98 0.01 165), oklch(0.14 0.02 165));
+  --ds-accent-hover: light-dark(
+    oklch(0.46 0.17 165),
+    color-mix(in oklch, oklch(0.78 0.17 165) 88%, white)
+  );
+
+  /* Semantic status — market 색과 분리 */
+  --ds-success: light-dark(oklch(0.48 0.17 155), oklch(0.72 0.17 155));
+  --ds-success-foreground: light-dark(oklch(0.98 0.01 155), oklch(0.14 0.02 155));
+  --ds-warning: light-dark(oklch(0.55 0.16 85), oklch(0.8 0.16 85));
+  --ds-warning-foreground: light-dark(oklch(0.16 0.02 85), oklch(0.16 0.02 85));
+  --ds-danger: light-dark(oklch(0.5 0.21 25), oklch(0.65 0.21 25));
+  --ds-danger-foreground: light-dark(oklch(0.98 0.01 25), oklch(0.98 0.01 25));
+  --ds-danger-hover: light-dark(
+    oklch(0.44 0.21 25),
+    color-mix(in oklch, oklch(0.65 0.21 25) 88%, white)
+  );
+  --ds-info: light-dark(oklch(0.48 0.14 240), oklch(0.7 0.14 240));
+  --ds-info-foreground: light-dark(oklch(0.98 0.01 240), oklch(0.14 0.02 240));
+
+  /* Market — PnL·호가 (semantic success/danger와 독립) */
+  --ds-market-up: light-dark(oklch(0.48 0.17 155), oklch(0.72 0.17 155));
+  --ds-market-down: light-dark(oklch(0.5 0.21 25), oklch(0.62 0.21 25));
+
+  /* Bet CTA — Casino/Sports primary action */
+  --ds-bet: var(--ds-accent);
+  --ds-bet-foreground: var(--ds-accent-foreground);
+  --ds-bet-hover: var(--ds-accent-hover);
+
+  --ds-focus: light-dark(
+    color-mix(in oklch, oklch(0.52 0.17 165) 55%, transparent),
+    color-mix(in oklch, oklch(0.78 0.17 165) 55%, transparent)
+  );
+
+  /* Tier ramp — /tier/me ring·badge 공용 (hue 고정 · lightness 단계) */
+  --ds-tier-bronze: light-dark(oklch(0.58 0.12 55), oklch(0.62 0.12 55));
+  --ds-tier-silver: light-dark(oklch(0.68 0.02 258), oklch(0.72 0.02 258));
+  --ds-tier-gold: light-dark(oklch(0.72 0.12 85), oklch(0.78 0.14 85));
+  --ds-tier-platinum: light-dark(oklch(0.72 0.08 210), oklch(0.78 0.08 210));
+  --ds-tier-diamond: light-dark(oklch(0.66 0.14 280), oklch(0.72 0.14 280));
+  --ds-tier-prime: light-dark(oklch(0.55 0.17 165), oklch(0.78 0.17 165));
+}
+
+/* §25.8.2 — theme toggle surface transition (P8 preferences SOT) */
+[data-theme] {
+  transition:
+    background-color var(--ds-motion-surface) var(--ds-ease-standard),
+    color var(--ds-motion-surface) var(--ds-ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme] {
+    transition: none;
+  }
+}
+
+body {
+  background-color: var(--ds-bg);
+  color: var(--ds-foreground);
+}

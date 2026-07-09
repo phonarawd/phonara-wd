@@ -1,0 +1,52 @@
+---
+description: Phase D — Engine-only Demolition override (Batch 1–11½)
+alwaysApply: true
+---
+
+# Phase D — Demolition-only override (non-waivable until Demolition DONE)
+
+> **Implementation SSOT:** [`docs/PRODUCT/DEMOLITION_PLAN.md`](../../docs/PRODUCT/DEMOLITION_PLAN.md) + [`docs/PRODUCT/ADR/000-v5-demolition-first.md`](../../docs/PRODUCT/ADR/000-v5-demolition-first.md) **only**.
+
+## Scope
+
+- **Work allowed:** `DEMOLITION_PLAN` Batch 0–11½ only — `git rm` / deletes per KEEP·DELETE inventory. No UI fixes. No Rebuild. No `product/`.
+- **Standing autonomy (`70`):** within Demolition Batch scope only — no parallel surfaces, routes, or presentation layers.
+- **`89-beginner-autopilot`:** “구현해줘” after D0 GO = execute **approved** `DEMOLITION_PLAN` Batches only.
+
+## `00-core.mdc` v2 execution queue — suspended for Phase D
+
+Do **not** treat as implementation SSOT during Phase D:
+
+- `docs/SSOT/AI_REFERENCE_PRIORITY.md` as UI rebuild intent / execution source
+- `docs/SSOT/NEXT_STEP.md` · `docs/SSOT/UI_REBUILD_WAVE.md` as work queue
+- `docs/CURRENT_STATUS.md` **§AI Todo Sync** as queue or `[x]` DONE restart authority
+- `docs/SSOT/UIUX_FULL_REBUILD_EXECUTION.md` · `MASTER_TODO` · `LEGACY_SURFACE_MAP` and other Batch 11 DELETE targets
+
+If any rule (including `00-core`, `89`, `91`, `93`, `82`) conflicts with Phase D scope, **this file wins** until Demolition DONE.
+
+## Closeout (`82-work-doc-closeout-sync`)
+
+- §AI Todo Sync · `UI_REBUILD_WAVE` · `NEXT_STEP` doc sync — **deferred** until Demolition DONE (Phase R).
+- Do not claim UI surface / wave DONE during Phase D.
+
+## Gates — not applicable during Demolition Batches
+
+Do **not** run or require as merge criteria during Phase D Batch work:
+
+- `check:ui-architecture` · Consolidation C0–C5 (`88-ui-consolidation-wave`)
+- `gate:ai-impl` for UI surfaces
+- `91-uiux-worldclass-methodology` preflight reads of v2 execution docs
+
+**Optional mid-batch (Batch 1–10):** `bun run check:engine-demolition:packages` only.  
+**Do not** expect `check:engine-demolition:light` / `:full` green until **Batch 11½** complete.
+
+## Engine non-negotiables (unchanged)
+
+- Money: `@phonara/money` · ledger append-only · no client-side payout recompute
+- Supabase project `yocjhjsdwoijfdrehzoq` only
+- No `supabase/migrations` or `packages/*-engine` logic changes during Demolition unless fixing accidental breakage from deletes
+- i18n: no key delete/rename in `packages/i18n`
+
+## Demolition DONE
+
+Only after `check:engine-demolition:full` green — then STOP. Rebuild uses a **new** plan (`REBUILD_PLAN_v1`), not v2 SSOT on disk.

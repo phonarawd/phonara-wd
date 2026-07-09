@@ -24,6 +24,12 @@ BEGIN
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
 
+  INSERT INTO storage.objects (bucket_id, name, owner, metadata)
+  VALUES
+    ('kyc-documents', v_uid::TEXT || '/id-front.jpg', v_uid, '{}'::jsonb),
+    ('kyc-documents', v_uid::TEXT || '/id-back.jpg', v_uid, '{}'::jsonb),
+    ('kyc-documents', v_uid::TEXT || '/selfie.jpg', v_uid, '{}'::jsonb);
+
   BEGIN
     PERFORM _assert_kyc_withdrawal_gate(v_uid);
   EXCEPTION WHEN OTHERS THEN
@@ -37,7 +43,10 @@ BEGIN
       'legal_name', 'Kim Minsoo',
       'document_type', 'id_card',
       'document_last4', 'A123',
-      'country', 'KR'
+      'country', 'KR',
+      'document_front_path', v_uid::TEXT || '/id-front.jpg',
+      'document_back_path', v_uid::TEXT || '/id-back.jpg',
+      'selfie_path', v_uid::TEXT || '/selfie.jpg'
     ),
     'kyc-test-idem-' || v_uid::TEXT
   );
@@ -74,7 +83,10 @@ BEGIN
       'legal_name', 'Kim Minsoo',
       'document_type', 'id_card',
       'document_last4', 'A123',
-      'country', 'KR'
+      'country', 'KR',
+      'document_front_path', v_uid::TEXT || '/id-front.jpg',
+      'document_back_path', v_uid::TEXT || '/id-back.jpg',
+      'selfie_path', v_uid::TEXT || '/selfie.jpg'
     ),
     'kyc-test-idem-' || v_uid::TEXT
   );

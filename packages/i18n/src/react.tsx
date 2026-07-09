@@ -55,7 +55,10 @@ export function createI18n({ storageKey, detectNavigatorLanguage = false }: Crea
 
     const t = useCallback<TranslateFn>((key, vars) => translate(locale, key, vars), [locale]);
 
-    const value = useMemo<I18nContextValue>(() => ({ locale, setLocale, t }), [locale, setLocale, t]);
+    const value = useMemo<I18nContextValue>(
+      () => ({ locale, setLocale, t }),
+      [locale, setLocale, t],
+    );
 
     return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
   }

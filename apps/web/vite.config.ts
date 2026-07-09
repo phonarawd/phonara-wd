@@ -1,157 +1,145 @@
 import { fileURLToPath, URL } from 'node:url';
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
+import { defineConfig, type PluginOption } from 'vite';
+import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import {
+  PHONARA_VITE_ESBUILD,
+  PHONARA_VITE_OPTIMIZE_DEPS,
+  phonaraViteDevWarmup,
+} from './vite-dev-performance';
+import { pwaManifestCopy } from './pwa-manifest';
 
 const webSrc = fileURLToPath(new URL('./src', import.meta.url));
+const pwaRegisterDevStub = fileURLToPath(
+  new URL('./src/lib/pwa-register-dev-stub.ts', import.meta.url),
+);
+const i18nReactSrc = fileURLToPath(new URL('../../packages/i18n/src/react.tsx', import.meta.url));
+const i18nSrc = fileURLToPath(new URL('../../packages/i18n/src/index.ts', import.meta.url));
 
-export default defineConfig({
-  plugins: [
-    react({
-      babel: {
-        plugins: [['babel-plugin-react-compiler', { target: '19' }]],
-      },
-    }),
-    tailwindcss(),
-    VitePWA({
-      strategies: 'injectManifest',
-      srcDir: 'src',
-      filename: 'sw.ts',
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'phonara-icon.svg', 'apple-touch-icon-180x180.png'],
-      manifest: {
-        name: 'PHONARA',
-        short_name: 'PHONARA',
-        description: 'PHON-powered crypto trading & rewards platform',
-        theme_color: '#0b0b0f',
-        background_color: '#0b0b0f',
-        display: 'standalone',
-        orientation: 'portrait',
-        start_url: '/',
-        scope: '/',
-        lang: 'ko',
-        icons: [
-          { src: 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
-          { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
-          {
-            src: 'maskable-icon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable',
-          },
-        ],
-        shortcuts: [
-          {
-            name: 'Trade',
-            short_name: 'Trade',
-            description: 'Spot and futures trading',
-            url: '/trade',
-            icons: [{ src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
-          },
-          {
-            name: 'Wallet',
-            short_name: 'Wallet',
-            description: 'Wallet and deposits',
-            url: '/wallet',
-            icons: [{ src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
-          },
-          {
-            name: 'Casino',
-            short_name: 'Casino',
-            description: 'Casino games',
-            url: '/casino',
-            icons: [{ src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
-          },
-        ],
-      },
-      injectManifest: {
-        // App shell assets: cache-first, long TTL. The custom service worker
-        // keeps the /offline.html navigateFallback and Supabase API denylist.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-      },
-      devOptions: {
-        enabled: false,
-      },
-    }),
-  ],
-  // Env files live at the monorepo root (.env.local etc.), not in apps/web.
-  // `envDir` is resolved relative to the project root (this directory), so '../..'
-  // points at the repo root. Without this, vite loads no env and the app boots
-  // with an undefined Supabase config. Kept as a relative string (no node: imports)
-  // so the web typecheck project doesn't need @types/node.
-  envDir: '../..',
-  resolve: {
-    alias: {
-      '@/games': `${webSrc}/components/games`,
-      '@': webSrc,
-      'react-router-dom': `${webSrc}/shims/react-router-dom.tsx`,
-    },
-  },
-  optimizeDeps: {
-    include: [
-      'framer-motion',
-      'lucide-react',
-      'vaul',
-      'cmdk',
-      'embla-carousel-react',
-      'react-hook-form',
-      '@hookform/resolvers/zod',
-      'input-otp',
-      'react-day-picker',
-      'canvas-confetti',
-      'pixi.js',
-      'pixi-filters',
-      'matter-js',
-      'comlink',
-      'lightweight-charts',
-      '@tanstack/react-virtual',
-      '@tanstack/react-table',
-      'html-to-image',
-      'qrcode.react',
-      'react-helmet-async',
-      '@use-gesture/react',
+/** Phase R web entry — TanStack Router file routes + PWA injectManifest shell. */
+export default defineConfig(({ command }) => {
+  const pwaPlugin: PluginOption = VitePWA({
+    strategies: 'injectManifest',
+    srcDir: 'src',
+    filename: 'sw.ts',
+    registerType: 'prompt',
+    includeAssets: [
+      'offline.html',
+      'favicon.ico',
+      'favicon.svg',
+      'brand/logo.svg',
+      'apple-touch-icon-180x180.png',
+      'og-card.png',
+      'monochrome-512.png',
+      'screenshots/home-narrow.png',
+      'screenshots/wallet-narrow.png',
+      'screenshots/trade-wide.png',
     ],
-  },
-  server: {
-    port: 3000,
-  },
-  build: {
-    rolldownOptions: {
-      output: {
-        minify: {
-          compress: {
-            dropConsole: true,
-            dropDebugger: true,
-          },
-        },
+    manifest: {
+      id: '/',
+      name: 'PHONARA',
+      short_name: 'PHONARA',
+      description: pwaManifestCopy.description,
+      lang: 'ko',
+      dir: 'ltr',
+      start_url: '/home?source=pwa',
+      scope: '/',
+      display: 'standalone',
+      display_override: ['standalone', 'minimal-ui'],
+      orientation: 'portrait',
+      theme_color: '#0d0f14',
+      background_color: '#0d0f14',
+      categories: ['finance', 'entertainment'],
+      prefer_related_applications: false,
+      launch_handler: {
+        client_mode: 'navigate-existing',
       },
-    },
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules/pixi.js')) return 'pixi-vendor';
-          if (id.includes('node_modules/pixi-filters')) return 'pixi-filters-vendor';
-          if (id.includes('node_modules/matter-js')) return 'matter-vendor';
-          if (id.includes('node_modules/lightweight-charts')) return 'charts-vendor';
-          if (id.includes('node_modules/@supabase')) return 'supabase-vendor';
-          if (id.includes('node_modules/@tanstack')) return 'tanstack-vendor';
-          if (id.includes('node_modules')) return 'vendor';
-          if (id.includes('/components/games/crash/')) return 'game-crash';
-          if (id.includes('/components/games/plinko/')) return 'game-plinko';
-          if (id.includes('/components/games/mines/')) return 'game-mines';
-          if (id.includes('/components/games/dice/')) return 'game-dice';
-          if (id.includes('/components/games/limbo/')) return 'game-limbo';
-          if (id.includes('/components/games/hilo/')) return 'game-hilo';
-          if (id.includes('/components/games/shared/')) return 'game-shared';
-          if (id.includes('/packages/game-engine/') || id.includes('/features/casino/'))
-            return 'casino-domain';
-          if (id.includes('/packages/trading-engine/') || id.includes('/features/trading/'))
-            return 'trading-domain';
-          return undefined;
+      icons: [
+        { src: 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
+        { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+        { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+        {
+          src: 'maskable-icon-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'maskable',
         },
-      },
+        {
+          src: 'monochrome-512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'monochrome',
+        },
+      ],
+      shortcuts: [...pwaManifestCopy.shortcuts],
+      screenshots: [
+        {
+          src: 'screenshots/home-narrow.png',
+          sizes: '1170x2532',
+          type: 'image/png',
+          form_factor: 'narrow',
+          label: 'Earn · Home',
+        },
+        {
+          src: 'screenshots/wallet-narrow.png',
+          sizes: '1170x2532',
+          type: 'image/png',
+          form_factor: 'narrow',
+          label: 'Wallet',
+        },
+        {
+          src: 'screenshots/trade-wide.png',
+          sizes: '1920x1080',
+          type: 'image/png',
+          form_factor: 'wide',
+          label: 'Trade · Desktop',
+        },
+      ],
     },
-  },
+    injectManifest: {
+      maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+      globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json}'],
+    },
+    devOptions: {
+      enabled: false,
+    },
+  });
+
+  return {
+    plugins: [
+      TanStackRouterVite({
+        routesDirectory: './src/routes',
+        generatedRouteTree: './src/routeTree.gen.ts',
+        autoCodeSplitting: true,
+      }),
+      tailwindcss(),
+      react(),
+      // PWA manifest/service-worker graph is build-only — skipping it saves dev cold start.
+      ...(command === 'build' ? [pwaPlugin] : []),
+    ],
+    envDir: '../..',
+    resolve: {
+      alias: {
+        '@': webSrc,
+        '@phonara/i18n/react': i18nReactSrc,
+        '@phonara/i18n': i18nSrc,
+        // PWA plugin is build-only; dev resolves the same import to a no-op stub.
+        ...(command === 'build' ? {} : { 'virtual:pwa-register': pwaRegisterDevStub }),
+      },
+      dedupe: ['react', 'react-dom'],
+    },
+    optimizeDeps: PHONARA_VITE_OPTIMIZE_DEPS,
+    esbuild: PHONARA_VITE_ESBUILD,
+    server: {
+      host: '127.0.0.1',
+      port: 3000,
+      strictPort: true,
+      warmup: phonaraViteDevWarmup(webSrc),
+    },
+    build: {
+      sourcemap: false,
+    },
+  };
 });

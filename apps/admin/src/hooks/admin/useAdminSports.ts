@@ -14,7 +14,8 @@ import type {
   RiskSeverity,
   RiskTier,
   SportsFixtureRow,
-} from '../useAdminSportsMock';
+  SportsUserRiskTier,
+} from './admin-sports-types';
 
 export type {
   AdminSportsActions,
@@ -26,11 +27,25 @@ export type {
   RiskTier,
   SportsFixtureRow,
   SportsFixtureStatus,
-} from '../useAdminSportsMock';
+  SportsUserRiskTier,
+} from './admin-sports-types';
 
 export { formatKrwGrouped } from '../../lib/admin-time';
 
 const MIN_REASON = 4;
+
+async function firstMarketIdForFixture(fixtureId: string): Promise<string | null> {
+  const { data: rawPayload, error } = await supabase.rpc(
+    'rpc_get_fixture_markets' as never,
+    { p_fixture_id: fixtureId } as never,
+  );
+  const payload = rawPayload as Json | null;
+  if (error || !isRecord(payload)) return null;
+  const marketsRaw = payload['markets'];
+  if (!Array.isArray(marketsRaw) || marketsRaw.length === 0) return null;
+  const first = marketsRaw[0];
+  return isRecord(first) && typeof first['market_id'] === 'string' ? first['market_id'] : null;
+}
 
 function isRecord(value: Json | unknown): value is Record<string, Json | undefined> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -42,6 +57,13 @@ function mapFixture(row: Json): SportsFixtureRow | null {
   if (!id) return null;
   const pending = row['pending_bets'];
   const pendingNum = typeof pending === 'number' ? pending : Number(pending ?? 0);
+  const liabilityRaw = row['pending_liability'];
+  const liability =
+    typeof liabilityRaw === 'number'
+      ? String(liabilityRaw)
+      : typeof liabilityRaw === 'string'
+        ? liabilityRaw
+        : '0';
   const statusRaw = typeof row['status'] === 'string' ? row['status'] : 'scheduled';
   const status =
     statusRaw === 'live' || statusRaw === 'ft' || statusRaw === 'scheduled'
@@ -54,7 +76,7 @@ function mapFixture(row: Json): SportsFixtureRow | null {
     away: typeof row['away_name'] === 'string' ? row['away_name'] : '—',
     kickoff: typeof row['kickoff_at'] === 'string' ? row['kickoff_at'] : new Date().toISOString(),
     unsettledMarkets: Number.isFinite(pendingNum) ? pendingNum : 0,
-    exposure: '0',
+    exposure: liability.split('.')[0] ?? liability,
     status,
   };
 }
@@ -64,7 +86,11 @@ function mapRiskEvent(row: Json, index: number): RiskEvent | null {
   const id = typeof row['id'] === 'string' ? row['id'] : `re-${index}`;
   const eventType = typeof row['event_type'] === 'string' ? row['event_type'] : 'info';
   const severity: RiskSeverity =
-    eventType.includes('crit') || eventType.includes('ban') ? 'crit' : eventType.includes('warn') ? 'warn' : 'info';
+    eventType.includes('crit') || eventType.includes('ban')
+      ? 'crit'
+      : eventType.includes('warn')
+        ? 'warn'
+        : 'info';
   return {
     id,
     severity,
@@ -73,27 +99,30 @@ function mapRiskEvent(row: Json, index: number): RiskEvent | null {
   };
 }
 
-function aggregateExposure(rows: Json[]): ExposureAggregate {
+function aggregateExposure(rows: Json[], capPhon: string): ExposureAggregate {
   let total = 0n;
   let openBets = 0;
   for (const row of rows) {
     if (!isRecord(row)) continue;
-    const stake = typeof row['pending_stake'] === 'string' ? row['pending_stake'] : String(row['pending_stake'] ?? '0');
+    const currency = typeof row['currency'] === 'string' ? row['currency'] : 'PHON';
     const liability =
       typeof row['pending_liability'] === 'string'
         ? row['pending_liability']
         : String(row['pending_liability'] ?? '0');
-    try {
-      total += BigInt(stake.split('.')[0] ?? '0') + BigInt(liability.split('.')[0] ?? '0');
-    } catch {
-      // skip malformed
+    if (currency === 'PHON') {
+      try {
+        total += BigInt(liability.split('.')[0] ?? '0');
+      } catch {
+        // skip malformed
+      }
     }
     const bets = row['pending_bets'];
     openBets += typeof bets === 'number' ? bets : Number(bets ?? 0);
   }
+  const capWhole = capPhon.split('.')[0] ?? capPhon;
   return {
     total: total.toString(),
-    max: total.toString(),
+    max: capWhole,
     openBets,
   };
 }
@@ -104,8 +133,13 @@ export function useAdminSports(): AdminSportsState & AdminSportsActions {
   const { data: config } = useAppConfig();
   const [suspended, setSuspended] = useState<MarketSuspension[]>([]);
 
+  const capPhon =
+    typeof config?.['sports_house_exposure_cap_phon'] === 'string'
+      ? config['sports_house_exposure_cap_phon']
+      : '5000000';
+
   const { data, refetch } = useQuery({
-    queryKey: ['admin-sports-desk'],
+    queryKey: ['admin-sports-desk', capPhon],
     queryFn: async () => {
       const [fixturesRaw, exposureRaw, riskRaw] = await Promise.all([
         callRpc('rpc_admin_list_unsettled_sports_fixtures', { p_limit: 100 }),
@@ -115,7 +149,7 @@ export function useAdminSports(): AdminSportsState & AdminSportsActions {
       const fixtures = (fixturesRaw ?? [])
         .map(mapFixture)
         .filter((row): row is SportsFixtureRow => row !== null);
-      const exposure = aggregateExposure(exposureRaw ?? []);
+      const exposure = aggregateExposure(exposureRaw ?? [], capPhon);
       const risk = (riskRaw ?? [])
         .map(mapRiskEvent)
         .filter((row): row is RiskEvent => row !== null);
@@ -127,7 +161,11 @@ export function useAdminSports(): AdminSportsState & AdminSportsActions {
 
   const featureEnabled = config?.['feature_sports_enabled'] === 'true';
   const fixtures = data?.fixtures ?? [];
-  const exposure = data?.exposure ?? { total: '0', max: '0', openBets: 0 };
+  const exposure = data?.exposure ?? {
+    total: '0',
+    max: capPhon.split('.')[0] ?? capPhon,
+    openBets: 0,
+  };
   const risk = data?.risk ?? [];
   const tier: RiskTier = useMemo(() => {
     if (risk.some((e) => e.severity === 'crit')) return 'C';
@@ -141,8 +179,10 @@ export function useAdminSports(): AdminSportsState & AdminSportsActions {
   }, [qc, refetch]);
 
   const setFeatureEnabledAction = useCallback(
-    async (enabled: boolean) => {
-      await setFeatureEnabled({ feature: 'sports', enabled, reason: 'admin sports desk toggle' });
+    async (enabled: boolean, reason: string) => {
+      const trimmed = reason.trim();
+      if (trimmed.length < MIN_REASON) return;
+      await setFeatureEnabled({ feature: 'sports', enabled, reason: trimmed });
       await invalidate();
     },
     [invalidate],
@@ -151,24 +191,10 @@ export function useAdminSports(): AdminSportsState & AdminSportsActions {
   const suspendMarket = useCallback(
     async (fixtureId: string, reason: string) => {
       if (reason.trim().length < MIN_REASON) return;
-      const { data: markets, error } = await (
-        supabase as unknown as {
-          from: (table: string) => {
-            select: (cols: string) => {
-              eq: (col: string, val: string) => {
-                limit: (n: number) => Promise<{ data: { id: string }[] | null; error: Error | null }>;
-              };
-            };
-          };
-        }
-      )
-        .from('sports_markets')
-        .select('id')
-        .eq('fixture_id', fixtureId)
-        .limit(1);
-      if (error || !markets?.[0]?.id) return;
+      const marketId = await firstMarketIdForFixture(fixtureId);
+      if (!marketId) return;
       await callRpc('rpc_admin_suspend_sports_market', {
-        p_market_id: markets[0].id,
+        p_market_id: marketId,
         p_duration_ms: 86_400_000,
         p_reason: reason.trim(),
       });
@@ -181,9 +207,96 @@ export function useAdminSports(): AdminSportsState & AdminSportsActions {
     [invalidate],
   );
 
-  const unsuspendMarket = useCallback((fixtureId: string) => {
-    setSuspended((prev) => prev.filter((s) => s.fixtureId !== fixtureId));
-  }, []);
+  const unsuspendMarket = useCallback(
+    async (fixtureId: string, reason: string): Promise<boolean> => {
+      if (reason.trim().length < MIN_REASON) return false;
+      const marketId = await firstMarketIdForFixture(fixtureId);
+      if (!marketId) return false;
+      try {
+        await callRpc('rpc_admin_resume_sports_market', {
+          p_market_id: marketId,
+          p_reason: reason.trim(),
+        });
+        setSuspended((prev) => prev.filter((s) => s.fixtureId !== fixtureId));
+        await invalidate();
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [invalidate],
+  );
+
+  const settleFixtureQuorum = useCallback(
+    async (
+      fixtureId: string,
+      homeGoals: number,
+      awayGoals: number,
+      reason: string,
+      forceQuorum: boolean,
+    ): Promise<boolean> => {
+      if (reason.trim().length < MIN_REASON) return false;
+      try {
+        await callRpc('rpc_admin_settle_sports_fixture_quorum', {
+          p_fixture_id: fixtureId,
+          p_home_goals: homeGoals,
+          p_away_goals: awayGoals,
+          p_reason: reason.trim(),
+          p_force_quorum: forceQuorum,
+        });
+        await invalidate();
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [invalidate],
+  );
+
+  const voidFixtureMarket = useCallback(
+    async (fixtureId: string, reason: string): Promise<boolean> => {
+      if (reason.trim().length < MIN_REASON) return false;
+      const marketId = await firstMarketIdForFixture(fixtureId);
+      if (!marketId) return false;
+      try {
+        await supabase.rpc(
+          'rpc_void_sports_market' as never,
+          {
+            p_market_id: marketId,
+            p_reason: reason.trim(),
+          } as never,
+        );
+        await invalidate();
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [invalidate],
+  );
+
+  const setSportsRiskTier = useCallback(
+    async (userId: string, tier: SportsUserRiskTier, reason: string): Promise<boolean> => {
+      if (reason.trim().length < MIN_REASON) return false;
+      try {
+        await supabase.rpc(
+          'rpc_admin_set_sports_risk_tier' as never,
+          {
+            p_user_id: userId,
+            p_tier: tier,
+            p_reason: reason.trim(),
+            p_stake_multiplier: null,
+            p_live_delay_ms: null,
+          } as never,
+        );
+        await invalidate();
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [invalidate],
+  );
 
   const resetForTest = useCallback(() => {
     setSuspended([]);
@@ -196,13 +309,16 @@ export function useAdminSports(): AdminSportsState & AdminSportsActions {
     risk,
     exposure,
     tier,
-    setFeatureEnabled: (enabled: boolean) => {
-      void setFeatureEnabledAction(enabled);
+    setFeatureEnabled: (enabled: boolean, reason: string) => {
+      void setFeatureEnabledAction(enabled, reason);
     },
     suspendMarket: (fixtureId: string, reason: string) => {
       void suspendMarket(fixtureId, reason);
     },
     unsuspendMarket,
+    settleFixtureQuorum,
+    voidFixtureMarket,
+    setSportsRiskTier,
     resetForTest,
   };
 }

@@ -1,53 +1,53 @@
-import { spawn } from 'node:child_process';
-import { spawnSync } from 'node:child_process';
+import { spawnSafe } from './lib/spawn-safe';
+import { readLocalSupabaseEnv } from './lib/db-connect';
+import {
+  DEFAULT_MANIFEST_PATH,
+  GateManifestCollector,
+  printManifestSummary,
+  type ManifestGateName,
+} from './lib/gate-manifest';
 
 interface GateStep {
   readonly name: string;
   readonly command: string;
   readonly args: readonly string[];
   readonly env?: NodeJS.ProcessEnv | (() => NodeJS.ProcessEnv);
+  readonly manifestGate?: ManifestGateName;
+}
+
+export interface RunFullGateOptions {
+  /** When set, gate durations are recorded into the manifest. */
+  readonly manifest?: GateManifestCollector;
+  /** Phase R already ran sql + e2e — skip duplicate heavy steps. */
+  readonly skipSqlE2e?: boolean;
+  /** Phase R already ran check:pwa — skip duplicate pwa step. */
+  readonly skipPwa?: boolean;
+  readonly manifestPath?: string;
 }
 
 function localSupabaseEnv(): NodeJS.ProcessEnv {
-  const result = spawnSync('supabase', ['status', '-o', 'env'], {
-    cwd: process.cwd(),
-    encoding: 'utf8',
-    shell: process.platform === 'win32',
-  });
-
-  if (result.status !== 0) {
+  const env = readLocalSupabaseEnv();
+  if (!env) {
     throw new Error('[check:full] unable to read local Supabase env for E2E');
   }
 
-  const values = new Map<string, string>();
-  for (const line of result.stdout.split(/\r?\n/)) {
-    const match = line.match(/^([A-Z0-9_]+)=['"]?(.+?)['"]?$/);
-    if (match) values.set(match[1]!, match[2]!);
-  }
-
-  const serviceRoleKey =
-    values.get('SECRET_KEY') ?? values.get('SUPABASE_SERVICE_ROLE_KEY') ?? values.get('SERVICE_ROLE_KEY');
-  const anonKey = values.get('ANON_KEY');
-
-  if (!serviceRoleKey || !anonKey) {
-    throw new Error('[check:full] local Supabase env is missing E2E credentials');
-  }
-
   return {
-    SUPABASE_SERVICE_ROLE_KEY: serviceRoleKey,
-    SUPABASE_SECRET_KEY: serviceRoleKey,
-    VITE_SUPABASE_URL: 'http://127.0.0.1:54444',
-    VITE_SUPABASE_ANON_KEY: anonKey,
+    SUPABASE_SERVICE_ROLE_KEY: env.SUPABASE_SERVICE_ROLE_KEY,
+    SUPABASE_SECRET_KEY: env.SUPABASE_SERVICE_ROLE_KEY,
+    VITE_SUPABASE_URL: env.VITE_SUPABASE_URL,
+    VITE_SUPABASE_ANON_KEY: env.VITE_SUPABASE_ANON_KEY,
   };
 }
 
 async function waitForLocalAuth(): Promise<void> {
+  const env = readLocalSupabaseEnv();
+  const baseUrl = env?.VITE_SUPABASE_URL ?? 'http://127.0.0.1:54321';
   const deadline = Date.now() + 90_000;
   let lastError = 'not attempted';
 
   while (Date.now() < deadline) {
     try {
-      const response = await fetch('http://127.0.0.1:54444/auth/v1/health');
+      const response = await fetch(`${baseUrl}/auth/v1/health`);
       if (response.ok) return;
       lastError = `status ${response.status}`;
     } catch (error) {
@@ -60,52 +60,136 @@ async function waitForLocalAuth(): Promise<void> {
   throw new Error(`[check:full] local Auth did not become ready before E2E: ${lastError}`);
 }
 
-const steps: GateStep[] = [
-  // Strict advisor mode: a skipped Supabase advisor run is NOT a pass for the
-  // full launch-readiness gate. check:advisors (inside `bun run check`) fails
-  // when SUPABASE_ACCESS_TOKEN is absent instead of silently exiting 0.
-  { name: 'standard check', command: 'bun', args: ['run', 'check'], env: { PHONARA_ADVISORS_STRICT: '1' } },
-  { name: 'pwa', command: 'bun', args: ['run', 'check:pwa'] },
-  { name: 'supabase reset', command: 'supabase', args: ['db', 'reset'] },
-  // posttest/clean:artifacts from standard check wipes supabase/functions-sql/;
-  // regenerate from the freshly-reset DB before the strict drift check.
-  { name: 'functions mirror regenerate', command: 'bun', args: ['run', 'mirror:functions'] },
-  // After a clean apply of all append-only migrations, the committed function
-  // mirror must match the database exactly (strict: a missing DB is a failure here).
-  {
-    name: 'functions mirror',
-    command: 'bun',
-    args: ['run', 'check:functions-mirror'],
-    env: { PHONARA_FUNCTIONS_MIRROR_STRICT: '1' },
-  },
-  {
-    name: 'guard coverage',
-    command: 'bun',
-    args: ['run', 'check:guard-coverage'],
-    env: { PHONARA_GUARD_COVERAGE_STRICT: '1' },
-  },
-  { name: 'sql', command: 'bun', args: ['run', 'test:sql'] },
-  {
-    name: 'casino sql parity',
-    command: 'bunx',
-    args: ['vitest', 'run', 'tests/integration/casino-sql-parity.test.ts'],
-    env: { PHONARA_SQL_PARITY: '1' },
-  },
-  { name: 'e2e', command: 'bun', args: ['run', 'test:e2e'], env: localSupabaseEnv },
-];
+function buildSteps(options: RunFullGateOptions): GateStep[] {
+  const steps: GateStep[] = [
+    {
+      name: 'standard check',
+      command: 'bun',
+      args: ['run', 'check'],
+      env: { PHONARA_ADVISORS_STRICT: '1' },
+      manifestGate: 'advisor',
+    },
+  ];
 
-async function runStep(step: GateStep): Promise<void> {
+  if (!options.skipPwa) {
+    steps.push({
+      name: 'pwa',
+      command: 'bun',
+      args: ['run', 'check:pwa'],
+      manifestGate: 'pwa',
+    });
+  }
+
+  if (!options.skipSqlE2e) {
+    steps.push(
+      { name: 'supabase reset', command: 'supabase', args: ['db', 'reset'], manifestGate: 'sql' },
+      {
+        name: 'functions mirror regenerate',
+        command: 'bun',
+        args: ['run', 'mirror:functions'],
+      },
+      {
+        name: 'functions mirror',
+        command: 'bun',
+        args: ['run', 'check:functions-mirror'],
+        env: { PHONARA_FUNCTIONS_MIRROR_STRICT: '1' },
+      },
+      {
+        name: 'database types drift',
+        command: 'bun',
+        args: ['run', 'check:types'],
+        env: { PHONARA_DATABASE_TYPES_STRICT: '1' },
+      },
+      {
+        name: 'guard coverage',
+        command: 'bun',
+        args: ['run', 'check:guard-coverage'],
+        env: { PHONARA_GUARD_COVERAGE_STRICT: '1' },
+      },
+      {
+        name: 'sql',
+        command: 'bun',
+        args: ['run', 'test:sql'],
+        env: { PHONARA_KEEP_STACK: '1' },
+        manifestGate: 'sql',
+      },
+      {
+        name: 'reconciliation launch gate',
+        command: 'bun',
+        args: ['run', 'check:reconciliation-launch'],
+        env: { PHONARA_KEEP_STACK: '1' },
+      },
+      {
+        name: 'casino sql parity',
+        command: 'bunx',
+        args: ['vitest', 'run', 'tests/integration/casino-sql-parity.test.ts'],
+        env: { PHONARA_SQL_PARITY: '1' },
+      },
+      {
+        name: 'e2e',
+        command: 'bun',
+        args: ['run', 'test:e2e'],
+        env: localSupabaseEnv,
+        manifestGate: 'e2e',
+      },
+    );
+  } else {
+    steps.push(
+      {
+        name: 'functions mirror regenerate',
+        command: 'bun',
+        args: ['run', 'mirror:functions'],
+      },
+      {
+        name: 'functions mirror',
+        command: 'bun',
+        args: ['run', 'check:functions-mirror'],
+        env: { PHONARA_FUNCTIONS_MIRROR_STRICT: '1' },
+      },
+      {
+        name: 'database types drift',
+        command: 'bun',
+        args: ['run', 'check:types'],
+        env: { PHONARA_DATABASE_TYPES_STRICT: '1' },
+      },
+      {
+        name: 'guard coverage',
+        command: 'bun',
+        args: ['run', 'check:guard-coverage'],
+        env: { PHONARA_GUARD_COVERAGE_STRICT: '1' },
+      },
+      {
+        name: 'reconciliation launch gate',
+        command: 'bun',
+        args: ['run', 'check:reconciliation-launch'],
+        env: { PHONARA_KEEP_STACK: '1' },
+      },
+      {
+        name: 'casino sql parity',
+        command: 'bunx',
+        args: ['vitest', 'run', 'tests/integration/casino-sql-parity.test.ts'],
+        env: { PHONARA_SQL_PARITY: '1' },
+      },
+    );
+  }
+
+  return steps;
+}
+
+async function runStep(step: GateStep, manifest?: GateManifestCollector): Promise<void> {
   process.stdout.write(`\n[check:full] ${step.name}\n`);
 
   if (step.name === 'e2e') {
     await waitForLocalAuth();
   }
 
-  return new Promise((resolve, reject) => {
-    const child = spawn(step.command, step.args, {
+  const gateName = step.manifestGate;
+  const gateStarted = gateName ? Date.now() : 0;
+
+  await new Promise<void>((resolve, reject) => {
+    const child = spawnSafe(step.command, [...step.args], {
       cwd: process.cwd(),
       env: { ...process.env, ...(typeof step.env === 'function' ? step.env() : step.env) },
-      shell: process.platform === 'win32',
       stdio: 'inherit',
     });
 
@@ -125,10 +209,58 @@ async function runStep(step: GateStep): Promise<void> {
       );
     });
   });
+
+  if (gateName && manifest && !manifest.hasRecorded(gateName)) {
+    manifest.record(gateName, 'pass', Date.now() - gateStarted);
+  }
 }
 
-for (const step of steps) {
-  await runStep(step);
+export async function runFullGate(options: RunFullGateOptions = {}): Promise<void> {
+  const manifest = options.manifest ?? new GateManifestCollector();
+  const ownManifest = !options.manifest;
+
+  for (const step of buildSteps(options)) {
+    const gateName = step.manifestGate;
+    const gateStarted = gateName ? Date.now() : 0;
+    try {
+      await runStep(step, manifest);
+    } catch (error) {
+      if (gateName && !manifest.hasRecorded(gateName)) {
+        const message = error instanceof Error ? error.message : String(error);
+        manifest.record(gateName, 'fail', Date.now() - gateStarted, message);
+      }
+      if (ownManifest) {
+        const path = manifest.writeFinal({
+          allowSkip: true,
+          outputPath: options.manifestPath ?? DEFAULT_MANIFEST_PATH,
+        });
+        printManifestSummary(manifest.finalize({ allowSkip: true }));
+        process.stderr.write(`[check:full] manifest written (failed run) → ${path}\n`);
+      }
+      throw error;
+    }
+  }
+
+  if (ownManifest) {
+    const path = manifest.writeFinal({
+      allowSkip: true,
+      outputPath: options.manifestPath ?? DEFAULT_MANIFEST_PATH,
+    });
+    const finalManifest = manifest.finalize({ allowSkip: true });
+    printManifestSummary(finalManifest);
+    process.stdout.write(`\n[check:full] manifest → ${path}\n`);
+    process.stdout.write(
+      `\ncheck:full OK - local check, PWA, SQL, casino parity, and E2E passed · releaseReady=${finalManifest.releaseReady}\n`,
+    );
+  } else {
+    process.stdout.write('\n[check:full] L8 lite steps OK (Phase R embedded)\n');
+  }
 }
 
-process.stdout.write('\ncheck:full OK - local check, PWA, SQL, casino parity, and E2E passed\n');
+const entryScript = process.argv[1]?.replace(/\\/g, '/');
+if (entryScript?.endsWith('run-full-gate.ts')) {
+  runFullGate().catch((error) => {
+    process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
+    process.exit(1);
+  });
+}

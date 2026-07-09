@@ -1,13 +1,18 @@
-import { createRoute } from '@tanstack/react-router';
-import { Route as rootRoute } from './__root';
-import { HomeLovableSurface } from '../presentation-import/home/home-lovable-surface';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/home',
-  component: ImportedHomeRoute,
+import { getSession } from '@/lib/auth';
+import { EarnHomePage } from '@/product/surfaces/home/earn-home-page';
+
+export const Route = createFileRoute('/home')({
+  beforeLoad: async () => {
+    const session = await getSession();
+    if (!session) {
+      throw redirect({ to: '/login', replace: true });
+    }
+  },
+  component: HomeRoutePage,
 });
 
-function ImportedHomeRoute() {
-  return <HomeLovableSurface />;
+function HomeRoutePage() {
+  return <EarnHomePage />;
 }

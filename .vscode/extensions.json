@@ -1,6 +1,4 @@
 {
   "recommendations": [],
-  "unwantedRecommendations": [
-    "supabase.vscode-supabase-extension"
-  ]
+  "unwantedRecommendations": ["supabase.vscode-supabase-extension"]
 }

@@ -1,10 +1,5 @@
 import { toFixed } from '@phonara/money';
-import {
-  Decimal,
-  dec,
-  assertPositive,
-  TradingError,
-} from './shared';
+import { Decimal, dec, assertPositive, TradingError } from './shared';
 
 // ─── PHON Staking ────────────────────────────────────────────────────────────
 // Pool-based variable rewards. APR is an ESTIMATE, never guaranteed.

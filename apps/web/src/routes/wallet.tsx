@@ -1,17 +1,17 @@
-import { createRoute } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
-import { Route as rootRoute } from './__root';
+import { getSession } from '@/lib/auth';
 
-import { WalletLovableSurface } from '../presentation-import/wallet/wallet-lovable-surface';
-
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/wallet',
-  component: WalletRoute,
-});
-
-function WalletRoute() {
-  return <WalletLovableSurface />;
+function WalletRouteLayout() {
+  return <Outlet />;
 }
 
-
+export const Route = createFileRoute('/wallet')({
+  beforeLoad: async () => {
+    const session = await getSession();
+    if (!session) {
+      throw redirect({ to: '/login', replace: true });
+    }
+  },
+  component: WalletRouteLayout,
+});

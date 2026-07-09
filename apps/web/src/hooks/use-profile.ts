@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import type { Tables } from '@phonara/shared-types';
+import { PROFILES_ROW } from '@phonara/shared-types';
 import { useAuth } from '../contexts/auth-context';
 
 type Profile = Tables<'profiles'>;
@@ -14,7 +15,7 @@ export function useProfile() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select(PROFILES_ROW)
         .eq('id', userId!)
         .single();
       if (error) throw error;

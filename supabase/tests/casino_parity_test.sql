@@ -2,7 +2,7 @@
 -- Casino parity — TS engine constants vs SQL _game_result
 -- ============================================================
 -- Constants are generated from packages/game-engine/src/casino-parity.test.ts.
--- Each game has two deterministic paths using the same seed triple.
+-- Each of 12 games has two deterministic paths using the same seed triple.
 -- ============================================================
 
 BEGIN;
@@ -139,6 +139,40 @@ BEGIN
   ASSERT (v_result->'result'->>'cashedOut')::BOOLEAN = TRUE, 'momentum cashout parity failed';
   ASSERT (v_result->'result'->>'totalMultiplier')::NUMERIC = 16.29, 'momentum cashout mult parity failed';
 
+  v_result := _game_result('mint_reels', v_seed, v_client, v_nonce, '{"lines":20}'::JSONB);
+  ASSERT (v_result->'result'->>'totalMultiplier')::NUMERIC = 0, 'mint_reels 20 lines multiplier parity failed';
+  ASSERT v_result->>'payout_multiplier' = '0.000000', 'mint_reels 20 lines payout parity failed';
+
+  v_result := _game_result('mint_reels', v_seed, v_client, v_nonce, '{"lines":1}'::JSONB);
+  ASSERT (v_result->'result'->>'totalMultiplier')::NUMERIC = 0, 'mint_reels 1 line multiplier parity failed';
+  ASSERT v_result->>'payout_multiplier' = '0.000000', 'mint_reels 1 line payout parity failed';
+
+  v_result := _game_result('gold_rush', v_seed, v_client, v_nonce, '{"lines":20}'::JSONB);
+  ASSERT (v_result->'result'->>'totalMultiplier')::NUMERIC = 0, 'gold_rush 20 lines multiplier parity failed';
+  ASSERT v_result->>'payout_multiplier' = '0.000000', 'gold_rush 20 lines payout parity failed';
+
+  v_result := _game_result('gold_rush', v_seed, v_client, v_nonce, '{"lines":1}'::JSONB);
+  ASSERT (v_result->'result'->>'totalMultiplier')::NUMERIC = 0, 'gold_rush 1 line multiplier parity failed';
+  ASSERT v_result->>'payout_multiplier' = '0.000000', 'gold_rush 1 line payout parity failed';
+
+  v_result := _game_result('roulette', v_seed, v_client, v_nonce, '{"bets":[{"type":"red","value":null,"stakeWeight":1}]}'::JSONB);
+  ASSERT (v_result->'result'->>'winningNumber')::INT = 6, 'roulette red winning number parity failed';
+  ASSERT (v_result->'result'->>'totalMultiplier')::NUMERIC = 0, 'roulette red multiplier parity failed';
+  ASSERT v_result->>'payout_multiplier' = '0.000000', 'roulette red payout parity failed';
+
+  v_result := _game_result('roulette', v_seed, v_client, v_nonce, '{"bets":[{"type":"straight","value":7,"stakeWeight":1}]}'::JSONB);
+  ASSERT (v_result->'result'->>'winningNumber')::INT = 6, 'roulette straight winning number parity failed';
+  ASSERT (v_result->'result'->>'totalMultiplier')::NUMERIC = 0, 'roulette straight multiplier parity failed';
+  ASSERT v_result->>'payout_multiplier' = '0.000000', 'roulette straight payout parity failed';
+
+  v_result := _game_result('blackjack', v_seed, v_client, v_nonce, '{"actions":[{"seat":0,"move":"stand"}]}'::JSONB);
+  ASSERT (v_result->'result'->>'totalMultiplier')::NUMERIC = 2, 'blackjack stand multiplier parity failed';
+  ASSERT v_result->>'payout_multiplier' = '2.000000', 'blackjack stand payout parity failed';
+
+  v_result := _game_result('blackjack', v_seed, v_client, v_nonce, '{"actions":[{"seat":0,"move":"hit"},{"seat":0,"move":"stand"}]}'::JSONB);
+  ASSERT (v_result->'result'->>'totalMultiplier')::NUMERIC = 2, 'blackjack hit-stand multiplier parity failed';
+  ASSERT v_result->>'payout_multiplier' = '2.000000', 'blackjack hit-stand payout parity failed';
+
   FOR v_case IN 1..2000 LOOP
     v_seed := encode(extensions.digest('part-c-existing-result:' || v_case::TEXT, 'sha256'), 'hex');
     v_client := 'part_c_client_' || (v_case % 97)::TEXT;
@@ -166,7 +200,7 @@ BEGIN
     END LOOP;
   END LOOP;
 
-  RAISE NOTICE 'CASINO PARITY OK — 6 games × 2 deterministic paths match TS constants';
+  RAISE NOTICE 'CASINO PARITY OK — 12 games × 2 deterministic paths match TS constants';
   RAISE NOTICE 'CASINO DOUBLE DOMAIN OK — legacy NUMERIC and new double keep 6-game result boundaries unchanged across 2000 seeds';
 END;
 $$;

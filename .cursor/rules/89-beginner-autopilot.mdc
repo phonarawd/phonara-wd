@@ -1,0 +1,84 @@
+---
+description: 8GB operator autopilot — Plan→승인→Implement, 자연어 명령, RAM/VPN/Composer 가드. Apply on every session.
+alwaysApply: true
+---
+
+# Beginner Autopilot (8GB · operator)
+
+**NON-NEGOTIABLE:** Plan → operator 승인 → Implement — 절대 생략 금지.  
+"구현해줘"는 **승인된 Plan**이 있을 때만. surface **1개** · canonical route **1개**.  
+승인 없이 Implement·신규 surface·heavy gate = **FAIL**.
+
+Operator 치트시트: [`docs/rebuild/LOWSPEC_RULES.md`](../../docs/rebuild/LOWSPEC_RULES.md)  
+자동화 기대: 처음 ~70% · 숙련 후 75~82% (8GB 상한)
+
+## §9 자연어 명령표
+
+| operator 입력 | agent 행동 |
+|---------------|------------|
+| "오늘 작업 시작해줘" | preflight → env-doctor → DEMOLITION_PLAN → Plan + 모델 1문장 추천 |
+| "구현해줘" | 승인된 Plan 있을 때만 Implement + gate:ai-impl |
+| "[surface] 만들어줘" | 해당 surface Plan 제안 후 승인 대기 |
+| "렉 걸린 것 같아" | 렉 1·2차 멘트 → env-doctor → triage |
+| "인터넷이 느린 것 같아" | 인터넷 1·2차 멘트 → env-doctor → Chat/Cmd+K 추천 |
+| "세션 끝내고 정리해줘" | cursor:session-end → check:hygiene |
+| "Composer 써줘" | 인터넷 좋을 때 + 4파일+ surface일 때만 |
+| "상태만 알려줘" | cursor:status 또는 env-doctor |
+| "CI 확인해줘" / "깃허브 테스트" | `bun run ci:status` · push/PR 후 GitHub Actions CI green 확인 · agent 로컬 test:e2e/check:full **금지** · [`CI_GATE_AUTHORITY.md`](../../docs/SSOT/CI_GATE_AUTHORITY.md) |
+| "푸시 전 완벽하게" / "CI green까지" / "push-fix loop" | rule `94-ci-push-fix-loop` · skill `ci-push-fix-loop` — L0~L4 → commit/push → `ci:watch` → red fix → re-push (최대 5회) · required: quality·sql·e2e·advisors |
+
+## Day 0 (operator · 1회)
+
+1. Settings: Background Agents **Off** · Max Context **6k** · Inline Chat **On**
+2. `bun run cursor:render-fix` → Cursor **완전 종료**(트레이) → 재시작
+3. `docs/rebuild/LOWSPEC_RULES.md` 북마크 · §9 표 숙지
+
+## "오늘 작업 시작해줘" 흐름
+
+1. `bun run cursor:preflight` (foreground · 1개씩)
+2. `bun run cursor:env-doctor` — RAM **<1024MB** → 코드 작업 **중단** · 정리 안내
+3. RAM OK → [`docs/PRODUCT/DEMOLITION_PLAN.md`](../../docs/PRODUCT/DEMOLITION_PLAN.md) 읽기 → **Plan만** 제시
+4. 모델 **1문장** 추천 → operator 승인 대기 (**Implement 금지**)
+
+## 인터넷 / VPN
+
+- VPN ON 또는 불안정 → **Composer 제안 금지**
+- 1차 멘트: `인터넷 상태부터 확인할게요. RAM도 env-doctor로 같이 볼게요.`
+- RAM OK 2차: `Chat이나 Cmd+K로 작업하는 걸 추천드릴게요`
+- Max Context **6k** 기본 (Settings → Agents)
+
+## RAM 부족
+
+- 1차 멘트: `렉부터 확인할게요. RAM·Docker 상태를 env-doctor로 먼저 볼게요.`
+- **critical <1024MB:** 코드 작업 **즉시 중단** — Chrome/Docker · `bun run stack:stop`
+- **warn <1228MB:** Composer·heavy gate 금지 · 앱 정리 후 env-doctor 재실행
+
+## Composer 제한
+
+- VPN/불안정/RAM warn 이하 → **거의 금지** (Chat/Cmd+K 우선)
+- 허용: 인터넷 안정 + RAM ≥1228MB + 4파일+ surface + operator `"Composer 써줘"`
+
+## 모델 선택
+
+- **1문장** 추천만 — operator **1클릭** (UI 자동 전환 주장 금지)
+- 예: `다음은 UI-only surface라 Chat 기본 모델로 Plan부터 추천드립니다.`
+
+## Implement 마감 (승인 후)
+
+- 착수 전: `bun run check:ui-architecture` · 중복 surface/route 금지
+- surface 1개 · `gate:ai-impl -- --test <path>` (L0~L4) — **로컬 Implemented 정본**
+- **heavy gate (E2E/SQL/check:full):** operator PC **일상 실행 안 함** — **GitHub CI authoritative** ([`CI_GATE_AUTHORITY.md`](../../docs/SSOT/CI_GATE_AUTHORITY.md))
+- push/PR → CI job green 확인 후 Verified/DONE
+- operator 「gate 실행」= 선택 1회 advisory (CI와 불일치 시 CI 우선)
+- 세션 종료: `cursor:session-end` · `check:hygiene`
+
+## 기대치 (8GB)
+
+- 처음 2~3일 자동화 체감 **~70%** — 정상
+- 숙련 후 상한 **75~82%** · RAM 16GB는 P0 업그레이드
+
+## See also
+
+- [`76-cursor-performance.mdc`](76-cursor-performance.mdc) · [`78-cursor-auto-hygiene.mdc`](78-cursor-auto-hygiene.mdc)
+- [`79-low-spec-pc.mdc`](79-low-spec-pc.mdc) · [`80-absolute-gate-prohibitions.mdc`](80-absolute-gate-prohibitions.mdc)
+- Skills: `.cursor/skills/gate-ladder` · `.cursor/skills/session-hygiene`

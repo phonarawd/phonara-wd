@@ -24,6 +24,11 @@ function sha256(text: string): string {
   return createHash('sha256').update(text).digest('hex');
 }
 
+/** Match .gitattributes `eol=lf` — hash git-normalized content on all platforms. */
+function normalizeMigrationText(text: string): string {
+  return text.replace(/\r\n/g, '\n');
+}
+
 function readMigrations(): Map<string, string> {
   const map = new Map<string, string>();
   if (!existsSync(MIGRATIONS_DIR)) return map;
@@ -31,7 +36,8 @@ function readMigrations(): Map<string, string> {
     .filter((f) => f.endsWith('.sql'))
     .sort();
   for (const name of files) {
-    map.set(name, sha256(readFileSync(join(MIGRATIONS_DIR, name), 'utf8')));
+    const raw = readFileSync(join(MIGRATIONS_DIR, name), 'utf8');
+    map.set(name, sha256(normalizeMigrationText(raw)));
   }
   return map;
 }

@@ -1,0 +1,48 @@
+---
+description: Prod apply — raw paths deny · stack:push-remote 정본
+alwaysApply: true
+---
+
+# Prod apply — raw deny · `stack:push-remote` 정본
+
+원격 migration apply는 **에이전트 자동** — operator 수동 `supabase link` / `db push` **불필요**.
+
+## 정본 (non-waivable)
+
+돈/RPC/migration 변경 후 원격 동기화:
+
+```text
+supabase db reset → bun run test:sql → bun run stack:push-remote → advisor 0 ERROR
+```
+
+| 항목 | 값 |
+|------|-----|
+| **명령** | `bun run stack:push-remote` |
+| **구현** | `scripts/push-pending-remote-migrations.ts` |
+| **인증** | `.env` `SUPABASE_ACCESS_TOKEN` (`stack:supabase:login` / Windows cred sync) |
+| **link** | **불필요** (Management API) |
+| **parity** | migration **name** (server version timestamp ≠ local prefix OK) |
+
+## 기술 강제 (repo)
+
+| 계층 | 허용 | 차단 |
+|------|------|------|
+| Shell | `bun run stack:push-remote` | `supabase db push` · `migration up` · `db remote` |
+| MCP | `list_migrations` · `get_advisors` · read `execute_sql` | `apply_migration` · `deploy_edge_function` (에이전트는 스크립트 정본 사용) |
+| Hook | `prod-apply-deny.ts` — raw prod apply 패턴만 deny | `stack:push-remote`는 matcher 밖 → **항상 허용** |
+
+`PHONARA_ALLOW_PROD_DB_PUSH=1` — raw `supabase db push` / MCP write 우회용(legacy). **신규 작업은 `stack:push-remote`만.**
+
+## 에이전트 금지
+
+- `supabase db push` / `supabase link` + push (operator 수동 경로)
+- MCP `apply_migration` 직접 호출 (스크립트와 중복·timestamp drift)
+- prod DDL/DML `execute_sql` (ROLLBACK 없는)
+
+## FAIL
+
+- migration SQL 변경 후 **`stack:push-remote` 없이** 완료 보고
+- operator에게 `supabase link` / `db push` 수동 지시
+- raw prod apply hook 우회 성공 주장
+
+정본: `scripts/push-pending-remote-migrations.ts` · `scripts/lib/prod-apply-guard.ts` · `20-supabase-safety`

@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Json } from '@phonara/shared-types';
-import type { AdminAuditEvent } from '@/components/admin/primitives';
+import type { AdminAuditEvent } from '@/shared-types';
 import { useAppConfig } from '../use-app-config';
 import { useAuditLogs } from '../use-audit-logs';
 import { useAdminMfaReady } from '../use-admin-mfa-ready';
 import {
   getOpsHealthRaw,
+  haltTradeMarket,
+  listTradeMarketBreakersRaw,
+  resumeTradeMarket,
   setFeatureEnabled,
   setSystemMode,
 } from '../../domain/ops';
@@ -33,6 +36,8 @@ export type {
   OpsKillTone,
   UseAdminOperations,
 } from './useAdminOperationsMock';
+
+export type { AdminTradeMarketBreakerRow } from '../../domain/ops';
 
 const MIN_REASON = 4;
 
@@ -116,6 +121,15 @@ const KILL_DEFS: Array<{
     feature: 'game',
   },
   {
+    id: 'ks_feature_sports',
+    switchKey: 'feature_sports',
+    category: 'sports',
+    labelKey: 'admin.operations.kill.label.feature_sports',
+    tone: 'primary',
+    configKey: 'feature_sports_enabled',
+    feature: 'sports',
+  },
+  {
     id: 'ks_feature_referral',
     switchKey: 'feature_referral',
     category: 'earn',
@@ -175,9 +189,7 @@ function filterHealth(rows: AdminOpsHealthRow[], f: OpsHealthFilters): AdminOpsH
     if (f.status !== 'all' && r.status !== f.status) return false;
     if (f.category !== 'all' && r.category !== f.category) return false;
     if (!q) return true;
-    return (
-      r.checkKey.toLowerCase().includes(q) || r.summary.toLowerCase().includes(q)
-    );
+    return r.checkKey.toLowerCase().includes(q) || r.summary.toLowerCase().includes(q);
   });
 }
 
@@ -186,22 +198,14 @@ function filterKill(rows: AdminKillSwitchRow[], f: OpsKillFilters): AdminKillSwi
   return rows.filter((r) => {
     if (f.category !== 'all' && r.category !== f.category) return false;
     if (!q) return true;
-    return (
-      r.switchKey.toLowerCase().includes(q) || r.labelKey.toLowerCase().includes(q)
-    );
+    return r.switchKey.toLowerCase().includes(q) || r.labelKey.toLowerCase().includes(q);
   });
 }
 
 const validReason = (r: string) => r.trim().length >= MIN_REASON;
 
 const HEALTH_CATEGORIES: OpsHealthCategory[] = ['cron', 'queue', 'budget', 'infra'];
-const KILL_CATEGORIES: OpsKillCategory[] = [
-  'system',
-  'wallet',
-  'trading',
-  'sports',
-  'earn',
-];
+const KILL_CATEGORIES: OpsKillCategory[] = ['system', 'wallet', 'trading', 'sports', 'earn'];
 
 /** Engine-backed operations desk — replaces mock in production hubs. */
 export function useAdminOperations(): UseAdminOperations {
@@ -218,6 +222,14 @@ export function useAdminOperations(): UseAdminOperations {
   const { data: healthRows = [], refetch: refetchHealth } = useQuery({
     queryKey: ['ops-health', 'desk'],
     queryFn: async () => mapHealthRows(await getOpsHealthRaw()),
+    enabled: mfaReady,
+    staleTime: 60_000,
+    refetchInterval: mfaReady ? 60_000 : false,
+  });
+
+  const { data: tradeMarkets = [], refetch: refetchTradeMarkets } = useQuery({
+    queryKey: ['ops-trade-markets', 'desk'],
+    queryFn: listTradeMarketBreakersRaw,
     enabled: mfaReady,
     staleTime: 60_000,
     refetchInterval: mfaReady ? 60_000 : false,
@@ -273,8 +285,9 @@ export function useAdminOperations(): UseAdminOperations {
 
   const refreshHealth = useCallback(() => {
     void refetchHealth();
+    void refetchTradeMarkets();
     void qc.invalidateQueries({ queryKey: ['app-config'] });
-  }, [qc, refetchHealth]);
+  }, [qc, refetchHealth, refetchTradeMarkets]);
 
   const applyKillMutation = useCallback(
     async (row: AdminKillSwitchRow, enabled: boolean, reason: string): Promise<boolean> => {
@@ -283,13 +296,9 @@ export function useAdminOperations(): UseAdminOperations {
       try {
         if (def.switchKey === 'system_halt' || def.switchKey === 'system_readonly') {
           const halt =
-            def.switchKey === 'system_halt'
-              ? enabled
-              : config?.['system_halt'] === 'true';
+            def.switchKey === 'system_halt' ? enabled : config?.['system_halt'] === 'true';
           const readonly =
-            def.switchKey === 'system_readonly'
-              ? enabled
-              : config?.['system_readonly'] === 'true';
+            def.switchKey === 'system_readonly' ? enabled : config?.['system_readonly'] === 'true';
           await setSystemMode({ halt, readonly, reason });
         } else if (def.feature) {
           await setFeatureEnabled({ feature: def.feature, enabled, reason });
@@ -360,6 +369,36 @@ export function useAdminOperations(): UseAdminOperations {
     [applyKillMutation, killSwitches],
   );
 
+  const confirmHaltTradeMarket = useCallback(
+    async (symbol: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
+      try {
+        await haltTradeMarket({ symbol, reason: reason.trim() });
+        await refetchTradeMarkets();
+        await qc.invalidateQueries({ queryKey: ['audit-logs'] });
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [qc, refetchTradeMarkets],
+  );
+
+  const confirmResumeTradeMarket = useCallback(
+    async (symbol: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
+      try {
+        await resumeTradeMarket({ symbol, reason: reason.trim() });
+        await refetchTradeMarkets();
+        await qc.invalidateQueries({ queryKey: ['audit-logs'] });
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [qc, refetchTradeMarkets],
+  );
+
   const resetForTest = useCallback(() => {
     setHealthFilters({ search: '', status: 'all', category: 'all' });
     setKillFilters({ search: '', category: 'all' });
@@ -383,6 +422,9 @@ export function useAdminOperations(): UseAdminOperations {
     resetForTest,
     confirmKillSwitch,
     confirmBulkKillSwitch,
+    tradeMarkets,
+    confirmHaltTradeMarket,
+    confirmResumeTradeMarket,
     configReady,
   };
 }

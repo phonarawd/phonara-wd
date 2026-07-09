@@ -3,16 +3,23 @@ import type { Currency } from '@phonara/shared-types';
 import { productComboOddsFromLegs } from './combo-odds';
 import type { BetLegInput } from './types';
 
-/** Display-only payout preview — server settlement is authoritative (S4). */
-export function previewComboPayout(
-  stake: MoneyAmount,
-  legs: readonly BetLegInput[],
-): MoneyAmount {
+export const PREVIEW_ONLY =
+  'Preview-only — authoritative payout/settlement remains SQL/RPC (_finalize_sports_bet).';
+
+/**
+ * Display-only combo payout preview for slip UI.
+ * {@link PREVIEW_ONLY}
+ */
+export function previewComboPayout(stake: MoneyAmount, legs: readonly BetLegInput[]): MoneyAmount {
   const comboOdds = productComboOddsFromLegs(legs);
   toDecimal(comboOdds, 'combo odds');
   return multiply(stake, comboOdds);
 }
 
+/**
+ * Display-only single-leg payout preview for slip UI.
+ * {@link PREVIEW_ONLY}
+ */
 export function previewSinglePayout(
   stakeAmount: string,
   currency: Currency,

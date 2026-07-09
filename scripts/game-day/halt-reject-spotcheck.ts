@@ -23,7 +23,12 @@ const reqReject = sqlAsUser<{ withdrawal_id?: string }>(
   userId,
   "rpc_request_withdrawal('PHON', '11.000000', '{}'::jsonb, 'spotcheck-wd-reject', NULL)",
 );
-if (!reqApprove.ok || !reqApprove.data?.withdrawal_id || !reqReject.ok || !reqReject.data?.withdrawal_id) {
+if (
+  !reqApprove.ok ||
+  !reqApprove.data?.withdrawal_id ||
+  !reqReject.ok ||
+  !reqReject.data?.withdrawal_id
+) {
   console.error('FAIL setup:', reqApprove.error, reqReject.error);
   process.exit(1);
 }
@@ -33,7 +38,10 @@ const wdReject = reqReject.data.withdrawal_id;
 
 sqlExec(`UPDATE app_config SET value = 'true' WHERE key = 'system_halt';`);
 
-const approve = sqlAsAdmin(adminId, `rpc_approve_withdrawal('${wdApprove}'::uuid, 'halt spot-check approve')`);
+const approve = sqlAsAdmin(
+  adminId,
+  `rpc_approve_withdrawal('${wdApprove}'::uuid, 'halt spot-check approve')`,
+);
 const reject = sqlAsAdmin<{ ok?: boolean; status?: string }>(
   adminId,
   `rpc_reject_withdrawal('${wdReject}'::uuid, 'halt spot-check reject')`,
@@ -47,7 +55,11 @@ console.log(
   approve.error.slice(0, 200),
 );
 console.log('reject wd:', wdReject);
-console.log('reject ok:', reject.ok, reject.ok ? JSON.stringify(reject.data) : reject.error.slice(0, 200));
+console.log(
+  'reject ok:',
+  reject.ok,
+  reject.ok ? JSON.stringify(reject.data) : reject.error.slice(0, 200),
+);
 
 sqlExec(`UPDATE app_config SET value = 'false' WHERE key = 'system_halt';`);
 

@@ -1,18 +1,5 @@
-import { createRoute } from '@tanstack/react-router';
-import { adminDeskRoute } from './admin-desk';
-import { AdminLovableSurface } from '../presentation-import/admin/admin-lovable-surface';
-import { ImportedAdminEarnPage } from '../presentation-import/admin/pages/ImportedAdminEarnPage';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
 
-export const Route = createRoute({
-  getParentRoute: () => adminDeskRoute,
-  path: '/earn',
-  component: EarnRoute,
+export const Route = createFileRoute('/earn')({
+  component: () => <Outlet />,
 });
-
-function EarnRoute() {
-  return (
-    <AdminLovableSurface>
-      <ImportedAdminEarnPage />
-    </AdminLovableSurface>
-  );
-}

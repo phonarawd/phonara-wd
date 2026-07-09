@@ -1,6 +1,6 @@
 import type { GameCode } from '@phonara/game-engine';
 
-/** Mirrors Lovable `useMockPipeline.resetAccumulatedSelection` (§1-H). */
+/** Mirrors External `useMockPipeline.resetAccumulatedSelection` (§1-H). */
 export function resetAccumulatedSelection(
   gameCode: GameCode,
   prev: Record<string, unknown>,
@@ -14,5 +14,5 @@ export function resetAccumulatedSelection(
   return prev;
 }
 
-/** Delay after settle before clearing mines/hilo accumulated selection (Lovable parity). */
+/** Delay after settle before clearing mines/hilo accumulated selection (Presentation parity). */
 export const ACCUMULATED_SELECTION_RESET_MS = 400;

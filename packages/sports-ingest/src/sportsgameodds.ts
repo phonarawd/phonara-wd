@@ -44,7 +44,11 @@ interface SgoTeamSide {
 interface SgoEvent {
   readonly eventID?: string;
   readonly leagueID?: string;
-  readonly status?: { readonly started?: boolean; readonly completed?: boolean; readonly cancelled?: boolean };
+  readonly status?: {
+    readonly started?: boolean;
+    readonly completed?: boolean;
+    readonly cancelled?: boolean;
+  };
   readonly teams?: {
     readonly home?: SgoTeamSide;
     readonly away?: SgoTeamSide;
@@ -94,7 +98,10 @@ function pickBookmaker(
 ): { bookmaker: string; line: NonNullable<SgoOddEntry['byBookmaker']>[string] } | undefined {
   if (!byBookmaker) return undefined;
   if (preferred) {
-    for (const name of preferred.split(',').map((s) => s.trim()).filter(Boolean)) {
+    for (const name of preferred
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)) {
       const exact = byBookmaker[name];
       if (exact) return { bookmaker: name, line: exact };
       const ci = Object.entries(byBookmaker).find(([k]) => k.toLowerCase() === name.toLowerCase());
@@ -214,9 +221,7 @@ export async function fetchSportsGameOddsSportOdds(
     apiKey,
   );
 
-  const events = Array.isArray(payload)
-    ? payload
-    : (payload.data ?? payload.events ?? []);
+  const events = Array.isArray(payload) ? payload : (payload.data ?? payload.events ?? []);
 
   const allMessages: IngestMessage[] = [];
   for (const event of events) {

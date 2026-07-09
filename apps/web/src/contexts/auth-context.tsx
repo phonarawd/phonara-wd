@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import type { Session } from '@supabase/supabase-js';
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import { markHasAccount } from '../lib/auth-account-marker';
 import { supabase } from '../lib/supabase';
 
 interface AuthContextValue {
@@ -8,6 +9,9 @@ interface AuthContextValue {
   refreshSession: () => Promise<Session | null>;
   setAuthSession: (session: Session | null) => void;
 }
+
+/** Fail-open when session probe hangs (headless CI / slow local stack). */
+const AUTH_BOOTSTRAP_TIMEOUT_MS = 10_000;
 
 const AuthContext = createContext<AuthContextValue>({
   session: null,
@@ -45,12 +49,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const bootstrapTimeout = window.setTimeout(() => {
+      setLoading((prev) => (prev ? false : prev));
+    }, AUTH_BOOTSTRAP_TIMEOUT_MS);
+
     void refreshSession();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => {
-      setSession(s);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, nextSession) => {
+      if (event === 'SIGNED_IN' && nextSession) {
+        markHasAccount();
+      }
+      setSession(nextSession);
       setLoading(false);
     });
-    return () => subscription.unsubscribe();
+    return () => {
+      window.clearTimeout(bootstrapTimeout);
+      subscription.unsubscribe();
+    };
   }, [refreshSession]);
 
   return (

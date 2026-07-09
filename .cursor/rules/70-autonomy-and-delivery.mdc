@@ -18,9 +18,7 @@ end-to-end. This file is the operating contract for that grant.
   across plans/files.
 - Minimum preflight sources:
   - `.cursor/rules/*` for non-negotiable operating rules.
-  - `docs/PHONARA_V2_MASTER_PLAN.md` when it is readable and relevant.
- - `docs/CURRENT_STATUS.md` for the lightweight current-state summary.
- - For UI/UX work, `docs/PHONARA_UI_UX_MASTER.md` and the active Cursor UI plan.
+  - **`docs/PRODUCT/DEMOLITION_PLAN.md`** during Phase D (Batch 11 deleted v2 SSOT).
   - `git status`, recent commits, and relevant file/RPC/component searches.
 - If a task is already complete, do NOT redo it. If a file/RPC/component/test is
   already present, improve or extend the existing artifact instead of generating
@@ -29,22 +27,29 @@ end-to-end. This file is the operating contract for that grant.
 - Duplicate creation is forbidden: no duplicate migrations, plans, components,
   hooks, stores, RPC wrappers, SQL tests, Playwright specs, fixtures, mock/seed
   data, CI workflows, docs, or generated assets for the same purpose.
-- If two plans describe the same work, consolidate them: keep
- `docs/PHONARA_V2_MASTER_PLAN.md` as the product/source-of-truth document and
- only one active tactical plan for the current UI/UX slice. Do not create a
- third competing plan unless the older plan is explicitly superseded in writing.
+- If two plans describe the same work, consolidate into
+  `docs/PRODUCT/DEMOLITION_PLAN.md` (Phase D) or future `REBUILD_PLAN_v1` (Phase R). Do not create competing plan docs.
 - If current code and a plan disagree, inspect the code/tests/remote state, then
   follow verified current state before implementing. Never blindly implement
   from an old plan.
+
+### 0.1 UI architecture duplication preflight (Phase R TBD)
+
+v5 Demolition에서 presentation routes/components/shell 경로가 삭제되었다. 아래
+pre-demolition UI architecture preflight는 현재 active command가 아니다.
+
+- `check:ui-architecture`와 삭제된 `apps/web/src/components/**` grep은 Phase R 새 UI 구조가 정의된 뒤 재작성한다.
+- `HomeShellFrame`, `LiveActivityFeed`, BottomNav/TopBar 등 pre-demolition 이름을 복구하지 않는다.
+- Phase R plan/ADR 없이 신규 surface/route/chrome layer를 만들지 않는다.
 
 ## 1. Standing autonomy (no per-step approval)
 
 - Do NOT ask the operator for permission to proceed, test, or apply changes.
   Decide and act as a world-class lead engineer would.
 - Pre-authorized without asking: running local & Docker tests, `supabase db
-  reset`, applying remote migrations, deploying edge functions, installing
-  extensions, GRANT/REVOKE, refactors, dependency changes, and fixing risky or
-  buggy code discovered along the way.
+  reset`, **`bun run stack:push-remote`** (원격 migration apply 정본), deploying
+  edge functions, installing extensions, GRANT/REVOKE, refactors, dependency
+  changes, and fixing risky or buggy code discovered along the way.
 - The ONLY non-waivable constraints are:
   1. The single-project Supabase lock (`yocjhjsdwoijfdrehzoq`) in `20-supabase-safety`. If any instruction implies a different project/ref/URL, stop and ask in writing.
   2. **Lovable ZIP publish gate** in `92-lovable-lock-execute.mdc` §ZIP 게이트: **no** `dist-phonara-package.zip` / admin ZIP / zip dry+real / CHANGELOG ZIP KB until the operator explicitly says **「ZIP 발행」** (or equivalent). Standing autonomy does **not** authorize ZIP. §GREEN without ZIP is complete.
@@ -55,8 +60,9 @@ end-to-end. This file is the operating contract for that grant.
 
 - Whenever a change needs validation, run the checks yourself without asking:
   `bun run typecheck`, `bun run test`, `bun run build`, `bun run check:i18n`,
-  `supabase db reset`, `bun run test:sql`, and the relevant Playwright E2E
-  suite (`bun run test:e2e` or a narrower `playwright test ...` target).
+  `supabase db reset`, `bun run test:sql`, and when SQL/migrations changed:
+  **`bun run stack:push-remote`**, plus the relevant Playwright E2E suite
+  (`bun run test:e2e` or a narrower target).
 - Docker is expected to be available. SQL integration tests run against the local
   Supabase container; if `psql` is absent, `scripts/run-sql-tests.ts` falls back
   to `docker exec`. Start/use Docker and the local stack as needed, automatically.
@@ -72,25 +78,37 @@ end-to-end. This file is the operating contract for that grant.
 
 ## 3. Documentation updates
 
-- Do not treat `docs/PHONARA_V2_MASTER_PLAN.md` Build Log updates as mandatory
-  task-closeout work. Update docs only when the user asks or when the task
-  explicitly changes durable product plans, runbooks, or operator-facing docs.
+- Do not treat roadmap doc updates as mandatory task-closeout work. Update
+  `docs/PRODUCT/DEMOLITION_PLAN.md` only when the user asks or
+  when the task explicitly changes durable product plans, runbooks, or operator docs.
 
 ## 4. Production cleanliness (launch-ready)
 
 - The shipped product must show NO test/dev/debug/"test mode" UI. Gate any dev-
   only tooling behind `import.meta.env.DEV` so production builds exclude it.
-- No mock/seed/demo data in engine, RPC, or ledger paths. Zero-user launch may still use presentation-layer FOMO/live-feed/social-proof string display props presented as real-time activity.
-  banners in production paths. Remove scaffolding and residue as you go.
+- No mock/seed/demo data in engine, RPC, or ledger paths. Earn/Home may use
+  presentation-layer social proof as string display props — **truthful copy only**
+  (no exaggerated rewards · false urgency · false deadlines) per `docs/SSOT/COPYWRITING_CANON.md`.
+  Remove scaffolding and residue as you go.
 - All user-facing copy is i18n-keyed (Korean lives only in the i18n catalog).
   English mode must never show Korean. `bun run check:i18n` must pass before a
   frontend area is considered done.
 
-## 5. Commits (local only, at milestones)
+## 5. Commits & Push (operator 승인 2026-07-04 · perfect-green 자동화)
 
-- Commit locally ONLY at meaningful milestones (a coherent feature/fix that is
-  green), never trivially. Do not push to any remote unless explicitly asked.
-- Use clear conventional messages; never commit secrets (`.env`, keys).
+- **Operator standing grant:** 중요 작업 마감(todo 완료 · Part gate green · 검증된
+  문서/정리 세션) 시 에이전트가 **직접 commit + GitHub push까지** 수행한다 —
+  매번 묻지 않음. 정본 조건: Phase R 플랜 **§20.8** (perfect-green 체크리스트).
+- **Perfect-green 조건 (전부 충족 시에만):** 세션 범위 lightweight gate 전부
+  green (`typecheck` · 구현 시 `gate:ai-impl` · 해당 시 `check:i18n/release/
+  ai-reference/hygiene`) · `82` doc sync 완료 · `git status`에 의도된 변경만
+  (G12 잔여물 0) · secrets diff 0. **red 상태 커밋/푸시 = FAIL.**
+- Push: 현재 추적 브랜치 직push만 · **force push 금지** · `git config` 변경 금지 ·
+  hook 우회 금지. push가 CI(heavy authoritative)를 트리거 — CI red면 **`94-ci-push-fix-loop`**
+  (로그 triage → L0~L4 fix → re-push · 최대 5회) 또는 다음 세션 최우선 수정.
+- Commit at meaningful milestones, never trivially. Use clear conventional
+  messages; never commit secrets (`.env`, keys).
+- Supabase 원격 migration은 git push와 별개 — `stack:push-remote` 정본 유지 (`96`).
 
 ## 6. Session continuity & performance hygiene
 
@@ -104,14 +122,21 @@ end-to-end. This file is the operating contract for that grant.
 - Run `bun run clean` after every E2E run and before task closeout when build or
   E2E executed in that session (hook `stop`/`afterShellExecution`이 선행).
 
+## 6b. Work doc closeout sync (non-waivable)
+
+Step/Phase/하위 항목을 마감했다고 보고하기 **전에** `82-work-doc-closeout-sync` 실행:
+
+- `docs/PRODUCT/DEMOLITION_PLAN.md` batch status + evidence (Phase D)
+- **미동기화 = FAIL** (코드만 green이어도 "완료" 아님)
+
 ## 7. Naming & structure (world-class defaults)
 
 - TypeScript: `camelCase` vars/functions, `PascalCase` types/components,
   `SCREAMING_SNAKE_CASE` consts; files `kebab-case.ts(x)`; hooks `use-*`.
 - SQL: client RPCs `rpc_*`, internal helpers `_*` (revoked from anon/PUBLIC),
   stable UPPER_SNAKE error codes translated client-side.
-- Keep the `apps/web` / `apps/admin` / `packages/*` boundary clean; shared UI in
-  `@phonara/ui`, shared money in `@phonara/money`, copy in `@phonara/i18n`.
+- Keep the `apps/web` / `apps/admin` / `packages/*` boundary clean. Shared money stays in
+  `@phonara/money`, copy stays in `@phonara/i18n`; shared UI ownership is Phase R TBD.
 
 ## 8. Admin design principles
 

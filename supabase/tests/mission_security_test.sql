@@ -190,7 +190,7 @@ BEGIN
     'invite_3_friends not granted after 3rd referral rewarded';
 
   SELECT phon_available::NUMERIC INTO v_phon_after FROM wallets WHERE user_id = v_referrer;
-  ASSERT v_phon_after = v_phon_before + 1500,
+  ASSERT v_phon_after = v_phon_before + 30000,
     format('invite_3_friends reward mismatch: before=%s after=%s', v_phon_before, v_phon_after);
 
   SELECT
@@ -201,7 +201,7 @@ BEGIN
     format('PHON not conserved after invite_3_friends: before=%s after=%s',
            v_grand_before, v_grand_after);
 
-  RAISE NOTICE 'INVITE_3_FRIENDS TRIGGER OK — fired at 3rd referral, 1500 PHON, conservation intact';
+  RAISE NOTICE 'INVITE_3_FRIENDS TRIGGER OK — fired at 3rd referral, 30000 PHON, conservation intact';
 END;
 $$;
 ROLLBACK;
@@ -236,7 +236,7 @@ BEGIN
     'complete_profile mission not granted after username set';
 
   SELECT phon_available::NUMERIC INTO v_phon_after FROM wallets WHERE user_id = v_uid;
-  ASSERT v_phon_after = v_phon_before + 200,
+  ASSERT v_phon_after = v_phon_before + 500,
     format('complete_profile reward mismatch: before=%s after=%s', v_phon_before, v_phon_after);
 
   SELECT
@@ -288,7 +288,7 @@ BEGIN
   ASSERT v_count = 1, 'first_deposit mission not granted after credited deposit';
 
   SELECT phon_available::NUMERIC INTO v_after FROM wallets WHERE user_id = v_uid;
-  ASSERT v_after = v_before + 500,
+  ASSERT v_after = v_before + 3000,
     format('first_deposit reward mismatch: before=%s after=%s', v_before, v_after);
 
   UPDATE krw_deposit_requests
@@ -328,7 +328,7 @@ BEGIN
   ASSERT v_count = 1, 'kyc_verified mission not granted at id_verified tier';
 
   SELECT phon_available::NUMERIC INTO v_after FROM wallets WHERE user_id = v_uid;
-  ASSERT v_after = v_before + 3000,
+  ASSERT v_after = v_before + 2000,
     format('kyc_verified reward mismatch: before=%s after=%s', v_before, v_after);
 
   UPDATE profiles SET display_name = 'idempotency proof' WHERE id = v_uid;

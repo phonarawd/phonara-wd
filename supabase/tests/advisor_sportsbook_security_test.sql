@@ -24,6 +24,7 @@ BEGIN
         'rpc_admin_list_sports_exposure',
         'rpc_admin_list_sports_risk_events',
         'rpc_admin_list_unsettled_sports_fixtures',
+        'rpc_admin_resume_sports_market',
         'rpc_admin_suspend_sports_market',
         'rpc_get_sports_bet',
         'rpc_list_my_sports_bets',

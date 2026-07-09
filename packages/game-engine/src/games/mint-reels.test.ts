@@ -32,7 +32,11 @@ describe('mint_reels RED', () => {
       const floats = await floatStream(`${SERVER}:${i}`, CLIENT, (i % 251) + 1, 5);
       const spin = spinSlot(MINT_REELS_CONFIG, floats, 20);
       const mult = slotPayoutMultiplier(spin.totalMultiplier, 20);
-      const { payout } = mintReelsDefinition.settle(stake, { lines: 20 }, { totalMultiplier: mult });
+      const { payout } = mintReelsDefinition.settle(
+        stake,
+        { lines: 20 },
+        { totalMultiplier: mult },
+      );
       total += payout.toNumber();
     }
     expect(total / 10_000).toBeLessThan(1);

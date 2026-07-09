@@ -1,13 +1,18 @@
-import { createRoute } from '@tanstack/react-router';
-import { Route as rootRoute } from './__root';
-import { StakingLovableSurface } from '../presentation-import/wallet/staking-lovable-surface';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/staking',
-  component: StakingRoute,
+import { getSession } from '@/lib/auth';
+import { StakingHubPage } from '@/product/surfaces/staking/staking-hub-page';
+
+export const Route = createFileRoute('/staking')({
+  beforeLoad: async () => {
+    const session = await getSession();
+    if (!session) {
+      throw redirect({ to: '/login', replace: true });
+    }
+  },
+  component: StakingRoutePage,
 });
 
-function StakingRoute() {
-  return <StakingLovableSurface />;
+function StakingRoutePage() {
+  return <StakingHubPage />;
 }

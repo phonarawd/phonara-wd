@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-label="Header simulation  light and dark">
+  <text x="400" y="24" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" fill="#666">Header lockup simulation</text>
+  <!-- Light header -->
+  <rect x="24" y="44" width="360" height="64" rx="12" fill="#ffffff" stroke="#e8ecf0"/>
+  <g transform="translate(40,52) scale(0.09375)">
+    <path fill="#0a2e20" d="M256 72c18 0 32 14 32 32 0 52-14 96-32 128-18-32-32-76-32-128 0-18 14-32 32-32z"/>
+    <path fill="#0a2e20" d="M256 440c-18 0-32-14-32-32 0-52 14-96 32-128 18 32 32 76 32 128 0 18-14 32-32 32z"/>
+    <path fill="#0a2e20" d="M72 256c0-18 14-32 32-32 52 0 96 14 128 32-32 18-76 32-128 32-18 0-32-14-32-32z"/>
+    <path fill="#0a2e20" d="M440 256c0 18-14 32-32 32-52 0-96-14-128-32 32-18 76-32 128-32 18 0 32 14 32 32z"/>
+    <circle fill="#0a2e20" cx="256" cy="256" r="52"/>
+  </g>
+  <text x="108" y="88" font-family="Pretendard,system-ui,sans-serif" font-size="22" font-weight="600" letter-spacing="2.8" fill="#0a2e20">PHONARA</text>
+  <text x="204" y="118" text-anchor="middle" font-size="10" fill="#888">light � 12.1:1</text>
+  <!-- Dark header -->
+  <rect x="416" y="44" width="360" height="64" rx="12" fill="#0d0f14" stroke="#243042"/>
+  <g transform="translate(432,52) scale(0.09375)">
+    <path fill="#92ffd8" d="M256 72c18 0 32 14 32 32 0 52-14 96-32 128-18-32-32-76-32-128 0-18 14-32 32-32z"/>
+    <path fill="#92ffd8" d="M256 440c-18 0-32-14-32-32 0-52 14-96 32-128 18 32 32 76 32 128 0 18-14 32-32 32z"/>
+    <path fill="#92ffd8" d="M72 256c0-18 14-32 32-32 52 0 96 14 128 32-32 18-76 32-128 32-18 0-32-14-32-32z"/>
+    <path fill="#92ffd8" d="M440 256c0 18-14 32-32 32-52 0-96-14-128-32 32-18 76-32 128-32 18 0 32 14 32 32z"/>
+    <circle fill="#92ffd8" cx="256" cy="256" r="52"/>
+  </g>
+  <text x="500" y="88" font-family="Pretendard,system-ui,sans-serif" font-size="22" font-weight="600" letter-spacing="2.8" fill="#f0fff9">PHONARA</text>
+  <text x="596" y="118" text-anchor="middle" font-size="10" fill="#92ffd8" fill-opacity="0.6">dark � 14.8:1</text>
+  <!-- App icon -->
+  <rect x="80" y="136" width="96" height="96" rx="22" fill="#0d0f14" stroke="#243042"/>
+  <g transform="translate(88,144) scale(0.15625)">
+    <path fill="#92ffd8" d="M256 72c18 0 32 14 32 32 0 52-14 96-32 128-18-32-32-76-32-128 0-18 14-32 32-32z"/>
+    <path fill="#92ffd8" d="M256 440c-18 0-32-14-32-32 0-52 14-96 32-128 18 32 32 76 32 128 0 18-14 32-32 32z"/>
+    <path fill="#92ffd8" d="M72 256c0-18 14-32 32-32 52 0 96 14 128 32-32 18-76 32-128 32-18 0-32-14-32-32z"/>
+    <path fill="#92ffd8" d="M440 256c0 18-14 32-32 32-52 0-96-14-128-32 32-18 76-32 128-32 18 0 32 14 32 32z"/>
+    <circle fill="#92ffd8" cx="256" cy="256" r="52"/>
+  </g>
+  <text x="128" y="252" text-anchor="middle" font-size="10" fill="#888">maskable 96</text>
+  <rect x="220" y="136" width="96" height="96" rx="22" fill="#0d0f14" stroke="#243042"/>
+  <g transform="translate(236,152) scale(0.125)">
+    <path fill="#92ffd8" d="M256 72c18 0 32 14 32 32 0 52-14 96-32 128-18-32-32-76-32-128 0-18 14-32 32-32z"/>
+    <path fill="#92ffd8" d="M256 440c-18 0-32-14-32-32 0-52 14-96 32-128 18 32 32 76 32 128 0 18-14 32-32 32z"/>
+    <path fill="#92ffd8" d="M72 256c0-18 14-32 32-32 52 0 96 14 128 32-32 18-76 32-128 32-18 0-32-14-32-32z"/>
+    <path fill="#92ffd8" d="M440 256c0 18-14 32-32 32-52 0-96-14-128-32 32-18 76-32 128-32 18 0 32 14 32 32z"/>
+    <circle fill="#92ffd8" cx="256" cy="256" r="52"/>
+  </g>
+  <text x="268" y="252" text-anchor="middle" font-size="10" fill="#888">iOS 180</text>
+</svg>

@@ -9,7 +9,7 @@ export class SportsbookComboError extends Error {
   }
 }
 
-/** Multiply decimal odds strings for a combo (display/preview only until S3 RPC). */
+/** Multiply decimal odds strings for a combo (display/preview only — SQL place/settle is authoritative). */
 export function productComboOdds(legOdds: readonly string[]): string {
   if (legOdds.length === 0) {
     throw new SportsbookComboError('[sportsbook] combo requires at least one leg');

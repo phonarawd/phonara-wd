@@ -32,16 +32,27 @@ function assertOk(label: string, result: ReturnType<typeof run>): void {
   throw new Error(`${label} failed:\n${result.stderr || result.stdout}`);
 }
 
-function dockerExec(args: string[], options: { input?: string; maxBuffer?: number } = {}): ReturnType<typeof run> {
-  return run(
-    'docker',
-    ['exec', '-e', `PGPASSWORD=${DB_PASSWORD}`, CONTAINER, ...args],
-    options,
-  );
+function dockerExec(
+  args: string[],
+  options: { input?: string; maxBuffer?: number } = {},
+): ReturnType<typeof run> {
+  return run('docker', ['exec', '-e', `PGPASSWORD=${DB_PASSWORD}`, CONTAINER, ...args], options);
 }
 
 function psql(sql: string, database = 'postgres', user = DB_SUPERUSER): ReturnType<typeof run> {
-  return dockerExec(['psql', '-U', user, '-d', database, '-v', 'ON_ERROR_STOP=1', '-t', '-A', '-c', sql]);
+  return dockerExec([
+    'psql',
+    '-U',
+    user,
+    '-d',
+    database,
+    '-v',
+    'ON_ERROR_STOP=1',
+    '-t',
+    '-A',
+    '-c',
+    sql,
+  ]);
 }
 
 function psqlScalar(sql: string, database = 'postgres', user = DB_SUPERUSER): number {
@@ -67,8 +78,14 @@ function dropReplicationSlots(): void {
     "SELECT slot_name FROM pg_replication_slots WHERE database = 'postgres';",
   ]);
   assertOk('list replication slots', slots);
-  for (const slot of slots.stdout.split('\n').map((s) => s.trim()).filter(Boolean)) {
-    assertOk(`drop replication slot ${slot}`, psql(`SELECT pg_drop_replication_slot('${slot}');`, 'template1'));
+  for (const slot of slots.stdout
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean)) {
+    assertOk(
+      `drop replication slot ${slot}`,
+      psql(`SELECT pg_drop_replication_slot('${slot}');`, 'template1'),
+    );
   }
 }
 
@@ -89,7 +106,9 @@ function main(): void {
 
   const inspect = run('docker', ['inspect', '-f', '{{.State.Running}}', CONTAINER]);
   if (inspect.stdout.trim() !== 'true') {
-    throw new Error(`Local Supabase DB container ${CONTAINER} is not running. Start with: supabase start`);
+    throw new Error(
+      `Local Supabase DB container ${CONTAINER} is not running. Start with: supabase start`,
+    );
   }
 
   console.log(`[1/5] pg_dump → ${dumpPath}`);
@@ -105,7 +124,9 @@ function main(): void {
   assertOk('pg_dump', dump);
   writeFileSync(dumpPath, dump.stdout, 'utf8');
 
-  console.log('[2/5] Recovery rehearsal: stop realtime → drop slots → DROP DATABASE → psql restore');
+  console.log(
+    '[2/5] Recovery rehearsal: stop realtime → drop slots → DROP DATABASE → psql restore',
+  );
   ensureRealtimeStopped();
   dropReplicationSlots();
   assertOk('drop database', psql('DROP DATABASE IF EXISTS postgres WITH (FORCE);', 'template1'));
@@ -113,7 +134,20 @@ function main(): void {
 
   const restore = run(
     'docker',
-    ['exec', '-e', `PGPASSWORD=${DB_PASSWORD}`, '-i', CONTAINER, 'psql', '-U', DB_SUPERUSER, '-d', 'postgres', '-v', 'ON_ERROR_STOP=1'],
+    [
+      'exec',
+      '-e',
+      `PGPASSWORD=${DB_PASSWORD}`,
+      '-i',
+      CONTAINER,
+      'psql',
+      '-U',
+      DB_SUPERUSER,
+      '-d',
+      'postgres',
+      '-v',
+      'ON_ERROR_STOP=1',
+    ],
     {
       input: readFileSync(dumpPath, 'utf8'),
       maxBuffer: 128 * 1024 * 1024,
@@ -122,8 +156,16 @@ function main(): void {
   assertOk('psql restore', restore);
 
   console.log('[3/5] Post-restore hash-chain verify (restored database)');
-  const walletBroken = psqlScalar('SELECT count(*)::int FROM verify_ledger_hash_chain();', 'postgres', 'postgres');
-  const systemBroken = psqlScalar('SELECT count(*)::int FROM verify_system_account_hash_chain();', 'postgres', 'postgres');
+  const walletBroken = psqlScalar(
+    'SELECT count(*)::int FROM verify_ledger_hash_chain();',
+    'postgres',
+    'postgres',
+  );
+  const systemBroken = psqlScalar(
+    'SELECT count(*)::int FROM verify_system_account_hash_chain();',
+    'postgres',
+    'postgres',
+  );
   if (walletBroken !== 0 || systemBroken !== 0) {
     throw new Error(
       `Hash-chain verify failed after restore: verify_ledger_hash_chain=${walletBroken}, verify_system_account_hash_chain=${systemBroken}`,
@@ -133,7 +175,9 @@ function main(): void {
   console.log('[4/5] Restart Supabase stack after restore');
   assertOk('supabase start', run('supabase', ['start']));
 
-  console.log('[5/5] Restore local dev grants/schema via supabase db reset (not part of recovery verify)');
+  console.log(
+    '[5/5] Restore local dev grants/schema via supabase db reset (not part of recovery verify)',
+  );
   assertOk('supabase db reset', run('supabase', ['db', 'reset', '--yes']));
 
   const summary = {
@@ -147,7 +191,11 @@ function main(): void {
     hash_chain_system_broken: systemBroken,
     hash_chain_verify: 'PASS',
   };
-  writeFileSync(join(BACKUP_DIR, 'last-rehearsal.json'), `${JSON.stringify(summary, null, 2)}\n`, 'utf8');
+  writeFileSync(
+    join(BACKUP_DIR, 'last-rehearsal.json'),
+    `${JSON.stringify(summary, null, 2)}\n`,
+    'utf8',
+  );
   console.log('backup-rehearsal OK');
 }
 

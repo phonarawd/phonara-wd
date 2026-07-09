@@ -116,6 +116,7 @@ export const EMERGENCY_LEVER_INVENTORY: readonly LeverInventoryEntry[] = [
     blocks: 'Only feature_withdrawal guard; NO _assert_system_live',
     toggle: 'Verify in drill 1',
     auth: 'Admin AAL2',
-    citation: 'supabase/migrations/20260611000063_withdrawal_admin_guard_and_deposit_lock.sql:24-31',
+    citation:
+      'supabase/migrations/20260611000063_withdrawal_admin_guard_and_deposit_lock.sql:24-31',
   },
 ] as const;

@@ -2,9 +2,20 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../contexts/auth-context';
 import { supabase } from '../../lib/supabase';
 
+function isVisualFixtureMode(): boolean {
+  return false;
+}
+
+const VISUAL_FIXTURE = {
+  oddsHome: '1.68',
+  oddsDraw: '3.80',
+  oddsAway: '4.75',
+} as const;
+
 export interface SportsFixtureSummary {
   readonly fixture_id: string;
   readonly league_code: string;
+  readonly sport_code?: string;
   readonly home_name: string;
   readonly away_name: string;
   readonly kickoff_at: string;
@@ -40,26 +51,88 @@ async function sportsRpc<T>(fn: string, args: Record<string, unknown>): Promise<
   return data as T;
 }
 
+const VISUAL_FIXTURE_FIXTURES: SportsFixtureSummary[] = [
+  {
+    fixture_id: 'visual-fixture-1',
+    league_code: 'epl',
+    home_name: 'Team A',
+    away_name: 'Team B',
+    kickoff_at: '2026-06-26T15:00:00.000Z',
+    status: 'scheduled',
+    match_1x2: {
+      home: {
+        outcome_id: 'visual-home',
+        odds: VISUAL_FIXTURE.oddsHome,
+        captured_at: '2026-06-26T12:00:00.000Z',
+      },
+      draw: {
+        outcome_id: 'visual-draw',
+        odds: '3.40',
+        captured_at: '2026-06-26T12:00:00.000Z',
+      },
+      away: {
+        outcome_id: 'visual-away',
+        odds: VISUAL_FIXTURE.oddsAway,
+        captured_at: '2026-06-26T12:00:00.000Z',
+      },
+    },
+  },
+];
+
 export function useListSportsFixtures(league?: string, status?: string) {
+  const fixture = isVisualFixtureMode();
   return useQuery({
     queryKey: ['sports', 'fixtures', league ?? 'all', status ?? 'all'],
     queryFn: async (): Promise<SportsFixtureSummary[]> => {
+      if (fixture) return VISUAL_FIXTURE_FIXTURES;
       return sportsRpc<SportsFixtureSummary[]>('rpc_list_sports_fixtures', {
         p_date: null,
         p_league: league ?? null,
         p_status: status ?? null,
       });
     },
-    staleTime: 5_000,
-    refetchInterval: 15_000,
+    staleTime: fixture ? Infinity : 5_000,
+    refetchInterval: fixture ? false : 60_000,
   });
 }
 
+const VISUAL_FIXTURE_MARKETS: SportsMarketSummary[] = [
+  {
+    market_id: 'visual-market-1x2',
+    market_type: 'match_1x2',
+    status: 'open',
+    outcomes: [
+      {
+        outcome_id: 'visual-home',
+        selection: 'home',
+        odds: VISUAL_FIXTURE.oddsHome,
+        captured_at: '2026-06-26T12:00:00.000Z',
+      },
+      {
+        outcome_id: 'visual-draw',
+        selection: 'draw',
+        odds: VISUAL_FIXTURE.oddsDraw,
+        captured_at: '2026-06-26T12:00:00.000Z',
+      },
+      {
+        outcome_id: 'visual-away',
+        selection: 'away',
+        odds: VISUAL_FIXTURE.oddsAway,
+        captured_at: '2026-06-26T12:00:00.000Z',
+      },
+    ],
+  },
+];
+
 export function useGetFixtureMarkets(fixtureId: string | undefined) {
+  const fixture = isVisualFixtureMode();
   return useQuery({
     queryKey: ['sports', 'fixture-markets', fixtureId],
     enabled: Boolean(fixtureId),
     queryFn: async (): Promise<SportsMarketSummary[]> => {
+      if (fixture && fixtureId === 'visual-fixture-1') {
+        return VISUAL_FIXTURE_MARKETS;
+      }
       const payload = await sportsRpc<{
         markets?: SportsMarketSummary[];
       }>('rpc_get_fixture_markets', {
@@ -67,10 +140,12 @@ export function useGetFixtureMarkets(fixtureId: string | undefined) {
       });
       return payload?.markets ?? [];
     },
-    staleTime: 5_000,
-    refetchInterval: 15_000,
+    staleTime: fixture ? Infinity : 5_000,
+    refetchInterval: fixture ? false : 60_000,
   });
 }
+
+export type SportsBetKind = 'single' | 'combo' | 'sgp';
 
 export function usePlaceSportsBet() {
   const { session } = useAuth();
@@ -82,10 +157,13 @@ export function usePlaceSportsBet() {
       stake: string;
       currency: 'PHON' | 'USDT';
       idempotencyKey: string;
+      betKind?: SportsBetKind;
       deviceHash?: string;
       ipHash?: string;
     }) => {
       if (!session?.user) throw new Error('UNAUTHENTICATED');
+      const betKind =
+        input.betKind ?? (input.legs.length > 1 ? ('combo' as const) : ('single' as const));
       return sportsRpc<{
         bet_id: string;
         status: string;
@@ -97,6 +175,7 @@ export function usePlaceSportsBet() {
         p_stake: input.stake,
         p_currency: input.currency,
         p_idempotency_key: input.idempotencyKey,
+        p_bet_kind: betKind,
         p_device_hash: input.deviceHash ?? null,
         p_ip_hash: input.ipHash ?? null,
       });
@@ -141,6 +220,85 @@ export function useLiveFixtureState(fixtureId: string | undefined) {
         p_fixture_id: fixtureId,
       });
     },
+    staleTime: 5_000,
     refetchInterval: 15_000,
+  });
+}
+
+export function usePreviewSportsCashout(
+  betId: string | undefined,
+  options?: { liveRefresh?: boolean },
+) {
+  const { session } = useAuth();
+  const liveRefresh = options?.liveRefresh ?? false;
+
+  return useQuery({
+    queryKey: ['sports', 'cashout-preview', betId],
+    enabled: Boolean(session?.user && betId),
+    queryFn: async () => {
+      return sportsRpc<{
+        bet_id: string;
+        cashout_amount: string;
+        currency: string;
+        potential_payout: string;
+      }>('rpc_preview_sports_cashout', { p_bet_id: betId });
+    },
+    staleTime: 5_000,
+    refetchInterval: liveRefresh ? 15_000 : false,
+  });
+}
+
+export function usePlaceSportsSystemBet() {
+  const { session } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: {
+      legs: readonly SportsBetLegInput[];
+      systemSizes: readonly number[];
+      stakePerLine: string;
+      currency: 'PHON' | 'USDT';
+      idempotencyKey: string;
+      deviceHash?: string;
+      ipHash?: string;
+    }) => {
+      if (!session?.user) throw new Error('UNAUTHENTICATED');
+      return sportsRpc<{ lines: unknown[] }>('rpc_place_sports_system_bet', {
+        p_legs: input.legs,
+        p_system_sizes: input.systemSizes,
+        p_stake_per_line: input.stakePerLine,
+        p_currency: input.currency,
+        p_idempotency_key: input.idempotencyKey,
+        p_device_hash: input.deviceHash ?? null,
+        p_ip_hash: input.ipHash ?? null,
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['sports'] });
+      await queryClient.invalidateQueries({ queryKey: ['wallet'] });
+    },
+  });
+}
+
+export function useCashoutSportsBet() {
+  const { session } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { betId: string; cashoutAmount: string; idempotencyKey: string }) => {
+      if (!session?.user) throw new Error('UNAUTHENTICATED');
+      return sportsRpc<{ bet_id: string; status: string; cashout_amount: string }>(
+        'rpc_cashout_sports_bet',
+        {
+          p_bet_id: input.betId,
+          p_cashout_amount: input.cashoutAmount,
+          p_idempotency_key: input.idempotencyKey,
+        },
+      );
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['sports'] });
+      await queryClient.invalidateQueries({ queryKey: ['wallet'] });
+    },
   });
 }

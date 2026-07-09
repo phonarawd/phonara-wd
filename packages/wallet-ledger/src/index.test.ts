@@ -1,11 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  applyLedgerEntry,
-  totalBalance,
-  emptyBalance,
-  getBalance,
-  LedgerError,
-} from './index';
+import { applyLedgerEntry, totalBalance, emptyBalance, getBalance, LedgerError } from './index';
 import type { WalletBalance, WalletSnapshot } from './index';
 import { money } from '@phonara/money';
 
@@ -17,6 +11,11 @@ function bal(available: string, locked: string): WalletBalance {
 
 const phon = (a: string) => money(a, 'PHON');
 const usdt = (a: string) => money(a, 'USDT');
+const krw = (a: string) => money(a, 'KRW');
+
+function krwBal(available: string, locked: string): WalletBalance {
+  return { currency: 'KRW', available, locked };
+}
 
 // ─── credit ──────────────────────────────────────────────────────────────────
 
@@ -42,9 +41,9 @@ describe('debit', () => {
   });
 
   it('throws INSUFFICIENT_AVAILABLE when balance is too low', () => {
-    expect(() =>
-      applyLedgerEntry(bal('10.000000', '0.000000'), 'debit', phon('20')),
-    ).toThrow(LedgerError);
+    expect(() => applyLedgerEntry(bal('10.000000', '0.000000'), 'debit', phon('20'))).toThrow(
+      LedgerError,
+    );
 
     try {
       applyLedgerEntry(bal('10.000000', '0.000000'), 'debit', phon('20'));
@@ -69,9 +68,9 @@ describe('lock', () => {
   });
 
   it('throws when locking more than available', () => {
-    expect(() =>
-      applyLedgerEntry(bal('10.000000', '0.000000'), 'lock', phon('20')),
-    ).toThrow(LedgerError);
+    expect(() => applyLedgerEntry(bal('10.000000', '0.000000'), 'lock', phon('20'))).toThrow(
+      LedgerError,
+    );
   });
 });
 
@@ -85,9 +84,9 @@ describe('unlock', () => {
   });
 
   it('throws INSUFFICIENT_LOCKED', () => {
-    expect(() =>
-      applyLedgerEntry(bal('60.000000', '10.000000'), 'unlock', phon('40')),
-    ).toThrow(LedgerError);
+    expect(() => applyLedgerEntry(bal('60.000000', '10.000000'), 'unlock', phon('40'))).toThrow(
+      LedgerError,
+    );
 
     try {
       applyLedgerEntry(bal('60.000000', '10.000000'), 'unlock', phon('40'));
@@ -126,6 +125,34 @@ describe('errors', () => {
       applyLedgerEntry(bal('100.000000', '0.000000'), 'credit', phon('0'));
     } catch (e) {
       expect((e as LedgerError).code).toBe('INVALID_AMOUNT');
+    }
+  });
+
+  it('throws INVALID_BALANCE on invalid available string', () => {
+    try {
+      applyLedgerEntry(
+        { currency: 'PHON', available: 'not-a-number', locked: '0.000000' },
+        'credit',
+        phon('1'),
+      );
+    } catch (e) {
+      expect((e as LedgerError).code).toBe('INVALID_BALANCE');
+    }
+  });
+
+  it('throws INVALID_BALANCE on negative available', () => {
+    try {
+      applyLedgerEntry(bal('-1.000000', '0.000000'), 'credit', phon('1'));
+    } catch (e) {
+      expect((e as LedgerError).code).toBe('INVALID_BALANCE');
+    }
+  });
+
+  it('throws INVALID_BALANCE on negative locked', () => {
+    try {
+      applyLedgerEntry(bal('10.000000', '-1.000000'), 'unlock', phon('1'));
+    } catch (e) {
+      expect((e as LedgerError).code).toBe('INVALID_BALANCE');
     }
   });
 });
@@ -185,5 +212,26 @@ describe('getBalance', () => {
     };
     const b = getBalance(snapshot, 'PHON');
     expect(b.available).toBe('500.000000');
+  });
+});
+
+describe('KRW 0-decimal ledger', () => {
+  it('lock/unlock preserves KRW integer precision', () => {
+    const initial = krwBal('5000', '0');
+    const afterLock = applyLedgerEntry(initial, 'lock', krw('1300'));
+    expect(afterLock.available).toBe('3700');
+    expect(afterLock.locked).toBe('1300');
+
+    const afterUnlock = applyLedgerEntry(afterLock, 'unlock', krw('1300'));
+    expect(afterUnlock.available).toBe('5000');
+    expect(afterUnlock.locked).toBe('0');
+  });
+
+  it('credit/debit use KRW 0-decimal canonical strings', () => {
+    const afterCredit = applyLedgerEntry(krwBal('0', '0'), 'credit', krw('1300.9'));
+    expect(afterCredit.available).toBe('1300');
+
+    const afterDebit = applyLedgerEntry(afterCredit, 'debit', krw('300'));
+    expect(afterDebit.available).toBe('1000');
   });
 });

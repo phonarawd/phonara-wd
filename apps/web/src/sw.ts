@@ -2,6 +2,10 @@
 
 export {};
 
+function dedupePrecacheUrls(urls: string[]): string[] {
+  return [...new Set(urls)];
+}
+
 type PrecacheEntry = { url: string; revision: string | null };
 type PushPayload = {
   title?: string;
@@ -20,7 +24,7 @@ const sw = globalThis as unknown as ServiceWorkerGlobalScope & {
   __WB_MANIFEST: PrecacheEntry[];
 };
 
-const PRECACHE = 'phonara-precache-v1';
+const PRECACHE = 'phonara-precache-v2';
 const RUNTIME_PAGES = 'phonara-pages-v1';
 const OFFLINE_URL = '/offline.html';
 const API_PATHS = ['/rest/v1', '/auth/v1', '/realtime/v1', '/storage/v1'];
@@ -30,27 +34,30 @@ function isSupabaseApi(url: URL): boolean {
 }
 
 function precacheUrls(): string[] {
-  const urls = new Set(self.__WB_MANIFEST.map((entry) => entry.url));
-  urls.add(OFFLINE_URL);
-  return [...urls];
+  return dedupePrecacheUrls([...self.__WB_MANIFEST.map((entry) => entry.url), OFFLINE_URL]);
 }
 
 sw.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(PRECACHE)
-      .then((cache) => cache.addAll(precacheUrls()))
-      .then(() => sw.skipWaiting()),
-  );
+  event.waitUntil(caches.open(PRECACHE).then((cache) => cache.addAll(precacheUrls())));
+});
+
+sw.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    event.waitUntil(sw.skipWaiting());
+  }
 });
 
 sw.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(
-        keys
-          .filter((key) => key !== PRECACHE && key !== RUNTIME_PAGES)
-          .map((key) => caches.delete(key)),
-      ))
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => key !== PRECACHE && key !== RUNTIME_PAGES)
+            .map((key) => caches.delete(key)),
+        ),
+      )
       .then(() => sw.clients.claim()),
   );
 });
@@ -72,7 +79,7 @@ sw.addEventListener('fetch', (event) => {
       })
       .catch(async () => {
         const cached = await caches.match(event.request);
-        return cached ?? await caches.match(OFFLINE_URL) ?? Response.error();
+        return cached ?? (await caches.match(OFFLINE_URL)) ?? Response.error();
       }),
   );
 });
@@ -80,7 +87,7 @@ sw.addEventListener('fetch', (event) => {
 sw.addEventListener('push', (event) => {
   let payload: PushPayload;
   try {
-    payload = event.data?.json() as PushPayload ?? {};
+    payload = (event.data?.json() as PushPayload) ?? {};
   } catch {
     payload = { body: event.data?.text() };
   }
@@ -100,7 +107,10 @@ sw.addEventListener('push', (event) => {
 
 sw.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const targetUrl = new URL(String((event.notification.data as { url?: string } | undefined)?.url ?? '/'), sw.location.origin);
+  const targetUrl = new URL(
+    String((event.notification.data as { url?: string } | undefined)?.url ?? '/'),
+    sw.location.origin,
+  );
 
   event.waitUntil(
     sw.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(async (clients) => {

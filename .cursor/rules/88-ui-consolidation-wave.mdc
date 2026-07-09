@@ -1,0 +1,28 @@
+---
+description: UI/UX Consolidation Wave — 레이어 중복 수렴 · canonical IA · shell owner 단일화 (additive paste 이후 필수)
+alwaysApply: true
+---
+
+# UI/UX Consolidation Wave (pre-demolition history · inactive)
+
+> **상태:** v5 Demolition 이후 비활성. Paste/NOVA presentation 레이어와
+> `components/ui`, `@phonara/ui`, `HomeShellFrame`, `LiveActivityFeed`,
+> `PresentationRoot` 계열은 삭제되었거나 active target이 아니다.
+
+## 현재 규칙
+
+- 이 파일은 Phase R 착수 전 실행 큐가 아니다.
+- 삭제된 consolidation queue(C0-C5)를 따라 UI 경로를 복구하지 않는다.
+- canonical IA, mobile chrome owner, shell owner, semantic component naming은 Phase R plan/ADR에서 새로 정의한다.
+- `check:ui-architecture` strict, visual smoke, E2E closeout은 Phase R 새 UI 구조가 생긴 뒤 재정의한다.
+
+## 허용되는 언급
+
+- pre-demolition 부채와 왜 demolition이 필요했는지 설명하는 역사 기록.
+- Phase R에서 새 convergence gate를 설계할 때 참고하는 문맥.
+
+## 금지
+
+- 삭제된 paste/NOVA 경로를 현재 작업 큐로 실행.
+- 삭제된 shell/component 이름을 새 파일로 복구.
+- Phase R plan 없이 consolidation gate를 되살려 완료 기준으로 사용.

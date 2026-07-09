@@ -104,6 +104,11 @@ export const GUARD_COVERAGE_ALLOWLIST: readonly GuardCoverageAllowlistEntry[] = 
     reason: 'service_role deposit rail — feature guard only, not system halt',
   },
   {
+    name: 'rpc_process_bank_transfer_batch',
+    rule: 'system-live-exempt',
+    reason: 'E1b PG webhook/batch ingest — delegates to rpc_process_bank_transfer',
+  },
+  {
     name: 'rpc_admin_void_game_bet',
     rule: 'system-live-exempt',
     reason: 'admin incident void/refund during halt — same class as reject_withdrawal',
@@ -128,6 +133,17 @@ export const GUARD_COVERAGE_ALLOWLIST: readonly GuardCoverageAllowlistEntry[] = 
     name: 'rpc_admin_match_crypto_deposit',
     rule: 'system-live-exempt',
     reason: 'admin/service crypto deposit match — feature guard only, not user halt surface',
+  },
+  {
+    name: 'rpc_admin_match_krw_deposit',
+    rule: 'system-live-exempt',
+    reason: 'admin/service KRW deposit match — feature guard only, not user halt surface',
+  },
+  {
+    name: 'rpc_admin_manual_wallet_adjust',
+    rule: 'system-live-exempt',
+    reason:
+      'admin manual wallet adjust — incident/finance path during halt (same class as treasury reserve)',
   },
   {
     name: 'rpc_process_on_chain_transfer',
@@ -166,11 +182,7 @@ export {
   isThinWrapper,
 } from './guard-coverage-detect.ts';
 
-export function isAllowlisted(
-  name: string,
-  args: string,
-  rule: GuardCoverageRule,
-): boolean {
+export function isAllowlisted(name: string, args: string, rule: GuardCoverageRule): boolean {
   return GUARD_COVERAGE_ALLOWLIST.some(
     (entry) =>
       entry.name === name &&

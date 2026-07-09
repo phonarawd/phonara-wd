@@ -3,12 +3,14 @@
 param(
   [switch]$Apply,
   [switch]$IncludeCursorLogs,
+  [switch]$IncludeSnapshots,
   [switch]$SkipTranscripts
 )
 
 # bun/npm pass GNU-style flags; normalize for PowerShell switches.
 if (-not $Apply -and ($args -contains '--apply')) { $Apply = $true }
 if (-not $IncludeCursorLogs -and ($args -contains '--include-cursor-logs')) { $IncludeCursorLogs = $true }
+if (-not $IncludeSnapshots -and ($args -contains '--include-snapshots')) { $IncludeSnapshots = $true }
 if (-not $SkipTranscripts -and ($args -contains '--skip-transcripts')) { $SkipTranscripts = $true }
 
 $ErrorActionPreference = 'Stop'
@@ -62,6 +64,12 @@ if ($IncludeCursorLogs) {
   )
 }
 
+if ($IncludeSnapshots) {
+  $plan += @(
+    @{ Path = Join-Path $env:APPDATA 'Cursor\snapshots'; Label = 'Cursor editor snapshots cache' }
+  )
+}
+
 Write-Host 'Targets:'
 foreach ($item in $plan) {
   $stats = Get-DirStats $item.Path
@@ -77,7 +85,10 @@ if (Test-Path $repoSmoke) {
 Write-Host ''
 Write-Host 'NOT touched (keeps your settings, extensions, chat UI state):'
 Write-Host '  - %APPDATA%\Cursor\User (~2GB workspace state)'
-Write-Host '  - %APPDATA%\Cursor\Partitions, snapshots, Cache'
+Write-Host '  - %APPDATA%\Cursor\Partitions, Cache'
+if (-not $IncludeSnapshots) {
+  Write-Host '  - %APPDATA%\Cursor\snapshots (use --include-snapshots when >200MB)'
+}
 Write-Host '  - %USERPROFILE%\.cursor\extensions'
 Write-Host ''
 

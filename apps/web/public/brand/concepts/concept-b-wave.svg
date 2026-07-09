@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" role="img" aria-label="PrimeForge concept B wave">
+  <path fill-rule="evenodd" d="M152 128h72v256h-72a20 20 0 0 1-20-20V148a20 20 0 0 1 20-20zm72 0h88c70.7 0 128 57.3 128 128s-57.3 128-128 128h-88V128zm72 56v144h16c48.6 0 88-39.4 88-88s-39.4-88-88-88h-16z"/>
+  <path d="M312 168c48 0 88 24 112 64l-32 20c-16-28-44-44-80-44s-64 16-80 44l-32-20c24-40 64-64 112-64z"/>
+  <path d="M312 232c32 0 60 16 76 40l-32 20c-10-16-28-26-44-26s-34 10-44 26l-32-20c16-24 44-40 76-40z"/>
+</svg>

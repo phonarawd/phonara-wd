@@ -1,13 +1,9 @@
-import { spawn } from 'node:child_process';
-import {
-  finalizeE2eSession,
-  getBlockedE2ePorts,
-} from './lib/e2e-lifecycle';
+import { spawnSafe } from './lib/spawn-safe';
+import { finalizeE2eSession, getBlockedE2ePorts } from './lib/e2e-lifecycle';
 import { loadRepoEnvFiles } from './lib/load-repo-env';
 import { readLocalSupabaseEnv } from './lib/db-connect';
 
-// Playwright globalSetup imports tests/e2e/_helpers at load time — inject local
-// stack keys here so E2E never depends on remote .env SERVICE_ROLE against 127.0.0.1.
+// Playwright webServer boots Vite — inject local stack keys when available.
 loadRepoEnvFiles();
 const localSupabase = readLocalSupabaseEnv();
 if (localSupabase) {
@@ -20,11 +16,11 @@ const playwrightArgs = process.argv.slice(2);
 let exitCode = 1;
 let teardownDone = false;
 
-async function teardown(reason: string): Promise<void> {
+async function teardown(reason: string, options: { cleanArtifacts?: boolean } = {}): Promise<void> {
   if (teardownDone) return;
   teardownDone = true;
   process.stdout.write(`[e2e] finalizing session (${reason})…\n`);
-  await finalizeE2eSession();
+  await finalizeE2eSession({ cleanArtifacts: options.cleanArtifacts ?? true });
   const blocked = getBlockedE2ePorts();
   if (blocked.length > 0) {
     process.stderr.write(
@@ -45,11 +41,10 @@ function onSignal(signal: 'SIGINT' | 'SIGTERM'): void {
 process.once('SIGINT', () => onSignal('SIGINT'));
 process.once('SIGTERM', () => onSignal('SIGTERM'));
 
-const child = spawn('bunx', ['playwright', 'test', ...playwrightArgs], {
+const child = spawnSafe('bunx', ['playwright', 'test', ...playwrightArgs], {
   cwd: process.cwd(),
-  env: process.env,
+  env: { ...process.env, PHONARA_E2E_ACTIVE: '1' },
   stdio: 'inherit',
-  shell: process.platform === 'win32',
 });
 
 child.once('error', (error) => {
@@ -60,5 +55,6 @@ child.once('error', (error) => {
 child.once('exit', (code, signal) => {
   exitCode = code ?? (signal ? 1 : 0);
   const reason = signal ?? `exit ${code ?? 0}`;
-  teardown(reason).finally(() => process.exit(exitCode));
+  const preserveCiArtifacts = process.env.GITHUB_ACTIONS === 'true' && exitCode !== 0;
+  teardown(reason, { cleanArtifacts: !preserveCiArtifacts }).finally(() => process.exit(exitCode));
 });

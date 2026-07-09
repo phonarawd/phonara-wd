@@ -3,28 +3,69 @@
   "hooks": {
     "sessionStart": [
       {
-        "command": "bun run cursor:hook:session-start",
-        "timeout": 90
+        "command": "bun x tsx scripts/cursor-session-hygiene.ts start",
+        "timeout": 20
       }
     ],
     "stop": [
       {
-        "command": "bun run cursor:hook:session-stop",
-        "timeout": 90
+        "command": "bun x tsx scripts/cursor-session-hygiene.ts agent-stop",
+        "timeout": 15
       }
     ],
     "beforeShellExecution": [
       {
+        "command": "bun .cursor/hooks/agent-heavy-gate-deny.ts",
+        "matcher": "bun run (test:e2e|pretest:e2e|posttest:e2e|test:sql|pretest:sql|posttest:sql|check:full|gate:phase-r)|supabase db reset",
+        "failClosed": true,
+        "timeout": 10
+      },
+      {
         "command": "bun run cursor:hook:before-shell",
-        "matcher": "bun run (test|build|check|test:e2e|check:full|stack:ensure|supabase)",
+        "matcher": "bun run (test|build|check|test:e2e|e2e:|check:full|stack:ensure|supabase|dev|dev:web|dev:admin|gate:local-autopilot|gate:phase-r|gate:ai-impl)",
         "timeout": 30
+      },
+      {
+        "command": "bun .cursor/hooks/e2e-raw-deny.ts",
+        "matcher": "playwright test|bunx playwright|npx playwright|Tee-Object|check-full-log|e2e-log|dev:web|dev:admin|bun run dev\\b|bun --filter.*\\bdev\\b",
+        "failClosed": true,
+        "timeout": 10
+      },
+      {
+        "command": "bun .cursor/hooks/prod-apply-deny.ts",
+        "matcher": "supabase db push|supabase migration up|supabase db remote|apply_migration",
+        "failClosed": true,
+        "timeout": 10
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": "bun .cursor/hooks/prod-apply-deny.ts",
+        "matcher": "apply_migration|deploy_edge_function|restore_project|pause_project",
+        "failClosed": true,
+        "timeout": 10
       }
     ],
     "afterShellExecution": [
       {
         "command": "bun run cursor:hook:after-shell",
-        "matcher": "bun run (test|build|check|test:e2e|check:full|e2e:kill|stack:ensure|supabase)",
+        "matcher": "bun run (test|build|check|test:e2e|e2e:|check:full|e2e:kill|stack:ensure|supabase|dev|dev:web|dev:admin|gate:local-autopilot|gate:phase-r|gate:ai-impl|cursor:work-end|cursor:session-end)",
         "timeout": 120
+      }
+    ],
+    "beforeReadFile": [
+      {
+        "command": "bun .cursor/hooks/secrets-read-deny.ts",
+        "matcher": "\\.env|\\.pem|\\.key",
+        "failClosed": true,
+        "timeout": 5
+      }
+    ],
+    "subagentStart": [
+      {
+        "command": "bun .cursor/hooks/subagent-guard.ts",
+        "matcher": "shell|generalPurpose|gate-runner|test-autopilot",
+        "timeout": 10
       }
     ]
   }

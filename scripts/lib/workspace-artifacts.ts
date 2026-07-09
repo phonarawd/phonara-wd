@@ -6,11 +6,12 @@
 
 /** Dirs at repo root that must be cleaned and excluded from watchers/index. */
 export const ROOT_ARTIFACT_DIRS = [
-  '.lovable-intake/staging',
+  '.paste-intake/staging',
   '.turbo',
   '.vite',
   'blob-report',
   'coverage',
+  'gate-manifest',
   'playwright-report',
   'test-results',
   'supabase/.temp',
@@ -44,92 +45,28 @@ export const WORKSPACE_ARTIFACT_NAMES = [
 export const WORKSPACE_ROOTS = ['apps', 'packages'] as const;
 
 /** E2E ephemeral auth — never commit; cleaned on artifact sweep. */
-export const EPHEMERAL_AUTH_PATHS = [
-  'tests/e2e/.auth.json',
-  'tests/e2e/.admin-auth.json',
-] as const;
+export const EPHEMERAL_AUTH_PATHS = ['tests/e2e/.auth.json', 'tests/e2e/.admin-auth.json'] as const;
 
 /** Repo-local Cursor/MCP ephemeral files — never commit. */
 export const CURSOR_EPHEMERAL_PATHS = ['.cursor/mcp-smoke-stderr.txt'] as const;
 
 /**
- * Archival doc trees — exclude entire dirs from Cursor index + watchers.
- * `docs/archive/` holds restored Lovable reference copies (38+ files).
+ * Archival / legacy paths excluded from Cursor index (P8 — Final UI Reset).
+ * High-volume PNG mockups, deleted-doc staging, and superseded visual baselines.
  */
 export const CURSOR_ARCHIVAL_DIR_PATTERNS = [
-  'docs/archive/',
-  'docs/checkpoints/',
+  'docs_archive',
+  'archive',
+  'docs/archive',
+  'tests/visual/mockups',
+  'tests/visual/m0-baselines',
 ] as const;
 
-/** Bulk LOCK/EXECUTE docs — glob prefix in .cursorignore (tactical docs stay indexed). */
-export const CURSOR_ARCHIVAL_DOC_GLOB_PREFIXES = [
-  'docs/LOVABLE_ZENITH_PHASE12_',
-  'docs/PHONARA_CURSOR_PASTE_',
-  'docs/PHONARA_LOVABLE_',
-  'docs/PHONARA_ENGINE_WAVE_',
-  'docs/PHONARA_ENGINE_WORLD_',
-  'docs/LOVABLE_SPORTSBOOK_',
-  'docs/PHONARA_SPORTSBOOK_',
-  'docs/LOVABLE_WORLD_CRUSH_',
-  'docs/LOVABLE_ADMIN_',
-  'docs/LOVABLE_WALLET_',
-] as const;
+/** Bulk LOCK globs — cleared after Presentation/paste archive purge. */
+export const CURSOR_ARCHIVAL_DOC_GLOB_PREFIXES = [] as const;
 
-/**
- * Large archival docs — exclude from Cursor semantic index + file watchers.
- * Keep tactical handoff small: INDEX · CRUSH_HANDOFF · NEW_CHAT · CURRENT_STATUS · active LOCK/EXECUTE.
- */
-export const CURSOR_ARCHIVAL_DOC_PATHS = [
-  'docs/PHONARA_V2_MASTER_PLAN.md',
-  'docs/PHONARA_UI_UX_MASTER.md',
-  'docs/PHONARA_UI_UX_REBUILD_LOG.md',
-  'docs/AUDIT_REPORT_2026-06-11.md',
-  'docs/AUDIT_FINAL_REPORT.md',
-  'docs/ENGINE_100_HANDOFF.md',
-  'docs/WORK_LOG_2026-06-14.md',
-  'docs/RUNBOOK.md',
-  'docs/SCORECARD.md',
-  'docs/CHAT_HANDOFF_2026-06-14.md',
-  'docs/GAMES-INTEGRATION.md',
-  'docs/GAMES-INTEGRATION.delta.md',
-  'docs/LOVABLE_ZENITH_CHAT_HANDOFF.md',
-  'docs/LOVABLE_ZENITH_SESSION_HANDOFF.md',
-  'docs/LOVABLE_ZENITH_MASTER_PLAN.md',
-  'docs/LOVABLE_P1_FINAL_PHONARA.md',
-  'docs/LOVABLE_HANDOFF.md',
-  'docs/LOVABLE_PRODUCT_PLATFORM_MANIFEST.md',
-  'docs/LOVABLE_WORKSPACE_DUMP_REQUEST.md',
-  'docs/LOVABLE_CRASH_CHECKPOINT.md',
-  'docs/LOVABLE_ABSORPTION_PLAN_FINAL.md',
-  'docs/LOVABLE_ZENITH_ROADMAP.md',
-  'docs/LOVABLE_ZENITH_BOOTSTRAP_PASTE.md',
-  'docs/LOVABLE_ZENITH_NEW_CHAT_PASTE.md',
-  'docs/LOVABLE_ZENITH_PHASE12_PRODUCT_PLAN.md',
-  'docs/LOVABLE_ZENITH_PHASE12_GAP_AUDIT.md',
-  'docs/LOVABLE_ZENITH_PHASE12_FINAL_PARALLEL_LOCK.md',
-  'docs/LOVABLE_ZENITH_PHASE12_E_LOCK.md',
-  'docs/LOVABLE_ZENITH_PHASE12_B_LOCK.md',
-  'docs/LOVABLE_ZENITH_PHASE12_C_LOCK.md',
-  'docs/LOVABLE_ZENITH_PHASE12_D_LOCK.md',
-  'docs/PHONARA_NORTH_STAR_PLAN.md',
-  'docs/PHONARA_CURSOR_PASTE_CRUSH_LOCK.md',
-  'docs/PHONARA_CURSOR_PASTE_CRUSH_P1_1_LOCK.md',
-  'docs/PHONARA_CURSOR_PASTE_CRUSH_P1_3_LOCK.md',
-  'docs/PHONARA_CURSOR_PASTE_CRUSH_P1_4_LOCK.md',
-  'docs/PHONARA_CURSOR_PASTE_CRUSH_P1_5_LOCK.md',
-  'docs/PHONARA_CURSOR_PASTE_CRUSH_P2_LOCK.md',
-  'docs/PHONARA_CURSOR_PASTE_ROUTE_DEDUP_LOCK.md',
-  'docs/LOVABLE_ZENITH_CRUSH_HANDOFF.md',
-  'docs/LOVABLE_ZENITH_NEW_CHAT.md',
-  'docs/PHONARA_WORLD_CLASS_INTEGRATED_ROADMAP.md',
-  'docs/LOVABLE_SPORTSBOOK_UI_LOCK.md',
-  'docs/PHONARA_WORLD_CRUSH_PLATFORM_UI_PLAN.md',
-  'docs/PHONARA_DEEPSHAFT_MOMENTUM_ENGINE_DELIVERABLE.md',
-  'docs/PHONARA_NEW_CHAT_HANDOFF_2026-06-16.md',
-  'docs/PHONARA_NEW_CHAT_HANDOFF_2026-06-17.md',
-  'docs/PHONARA_NEW_CHAT_HANDOFF_GAMES_POLISH_2026-06-17.md',
-  'project_dump.md',
-] as const;
+/** Large docs excluded from Cursor index — RELEASE_ROADMAP.md deleted 2026-07-04 (git history). */
+export const CURSOR_ARCHIVAL_DOC_PATHS = ['docs/rebuild/LOWSPEC_RULES.md'] as const;
 
 /**
  * Patterns that MUST exist in `.cursorignore` (substring match).
@@ -138,9 +75,12 @@ export const CURSOR_ARCHIVAL_DOC_PATHS = [
 export const CURSORIGNORE_REQUIRED_PATTERNS = [
   'node_modules/',
   '**/node_modules/',
+  '.bun/',
+  '**/.bun/',
   '**/dist/',
   'test-results/',
   'playwright-report/',
+  'gate-manifest/',
   '.vite/',
   '**/.vite/',
   '*.tsbuildinfo',
@@ -149,17 +89,23 @@ export const CURSORIGNORE_REQUIRED_PATTERNS = [
   'packages/*/dist/',
   'supabase/functions-sql/',
   'engine-dump/',
-  '.lovable-intake/',
-  '.tmp-lovable-',
+  '.paste-intake/',
+  '.tmp/',
+  '.tmp-presentation-',
   '.tmp-zip-extract/',
   '.tmp-*/',
-  'docs/archive/',
-  'docs/checkpoints/',
   'bun.lock',
   'scripts/tmp-',
   'check-full-log.txt',
   'check-gate-log.txt',
   'e2e-log.txt',
+  '**/*.zip',
+  '_audit/',
+  'docs_archive/',
+  'archive/',
+  'docs/archive/',
+  'tests/visual/mockups/',
+  'tests/visual/m0-baselines/',
 ] as const;
 
 /**
@@ -167,18 +113,26 @@ export const CURSORIGNORE_REQUIRED_PATTERNS = [
  */
 export const VSCODE_WATCHER_EXCLUDE_REQUIRED = [
   '**/node_modules/**',
+  '**/.bun/**',
   '**/dist/**',
   '**/.vite/**',
   '**/test-results/**',
   '**/playwright-report/**',
+  '**/gate-manifest/**',
   '**/packages/*/dist/**',
   '**/apps/*/dist/**',
-  '**/.lovable-intake/**',
+  '**/.paste-intake/**',
+  '**/.tmp/**',
   '**/.tmp-zip-extract/**',
-  '**/.tmp-lovable-*/**',
-  '**/docs/archive/**',
-  '**/docs/checkpoints/**',
+  '**/.tmp-presentation-*/**',
   '**/engine-dump/**',
+  '**/_audit/**',
+  '**/*.zip',
+  '**/docs_archive/**',
+  '**/archive/**',
+  '**/docs/archive/**',
+  '**/tests/visual/mockups/**',
+  '**/tests/visual/m0-baselines/**',
 ] as const;
 
 /**

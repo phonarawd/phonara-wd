@@ -56,7 +56,9 @@ export function staleMsForChannel(
   return config.restStaleMs;
 }
 
-export function parseOrchestratorScheduleFromEnv(env: Record<string, string | undefined>): OrchestratorScheduleConfig {
+export function parseOrchestratorScheduleFromEnv(
+  env: Record<string, string | undefined>,
+): OrchestratorScheduleConfig {
   const wsKey = env['ODDS_API_IO_KEY']?.trim();
   return {
     restIntervalMs: Number(env['SPORTS_REST_INTERVAL_MS'] ?? '300000'),

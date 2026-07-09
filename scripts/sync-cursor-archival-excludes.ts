@@ -46,10 +46,15 @@ for (const key of VSCODE_WATCHER_EXCLUDE_REQUIRED) {
   settings.files.watcherExclude[key] = true;
 }
 
-writeFileSync(settingsPath, `${JSON.stringify(settings, null, 2)}\n`, 'utf8');
-console.log(
-  `synced ${CURSOR_ARCHIVAL_DOC_PATHS.length} archival doc + ${CURSOR_ARCHIVAL_DIR_PATTERNS.length} dir + ${CURSOR_ARCHIVAL_DOC_GLOB_PREFIXES.length} glob excludes → .vscode/settings.json`,
-);
+const nextSettings = `${JSON.stringify(settings, null, 2)}\n`;
+if (nextSettings === raw || nextSettings === `${raw.trimEnd()}\n`) {
+  console.log('sync: .vscode/settings.json already up to date');
+} else {
+  writeFileSync(settingsPath, nextSettings, 'utf8');
+  console.log(
+    `synced ${CURSOR_ARCHIVAL_DOC_PATHS.length} archival doc + ${CURSOR_ARCHIVAL_DIR_PATTERNS.length} dir + ${CURSOR_ARCHIVAL_DOC_GLOB_PREFIXES.length} glob excludes → .vscode/settings.json`,
+  );
+}
 
 function syncCursorignore(): number {
   const cursorignorePath = '.cursorignore';
@@ -66,29 +71,54 @@ function syncCursorignore(): number {
     'scripts/tmp-',
   ]);
 
+  const autoSyncMarker =
+    '# Auto-synced from scripts/lib/workspace-artifacts.ts (cursor:sync-excludes)';
   let text = readFileSync(cursorignorePath, 'utf8');
-  const missing: string[] = [];
+  const markerIndex = text.indexOf(autoSyncMarker);
+  if (markerIndex >= 0) {
+    text = text.slice(0, markerIndex).trimEnd();
+  }
 
+  const bodyLines = text
+    .split('\n')
+    .map((line) => line.trimEnd())
+    .filter((line) => line.length > 0 && !line.startsWith('# Auto-synced'));
+
+  const bodySet = new Set(bodyLines);
+  const dedupedBody = bodyLines.filter((line) => {
+    if (line.startsWith('#')) return true;
+    // Drop body lines fully covered by a required pattern already present elsewhere in body
+    for (const required of requiredLines) {
+      if (line === required && bodySet.has(required)) {
+        const firstIndex = bodyLines.indexOf(required);
+        return bodyLines.indexOf(line) === firstIndex;
+      }
+    }
+    return true;
+  });
+
+  const bodyText = dedupedBody.join('\n');
+  const missing: string[] = [];
   for (const line of requiredLines) {
-    if (!text.includes(line)) {
+    if (!bodyText.includes(line)) {
       missing.push(line);
     }
   }
 
   if (missing.length === 0) {
+    const normalized = `${bodyText}\n`;
+    if (normalized !== readFileSync(cursorignorePath, 'utf8')) {
+      writeFileSync(cursorignorePath, normalized, 'utf8');
+      console.log('sync: normalized .cursorignore (removed duplicate auto-sync blocks)');
+      return 1;
+    }
     console.log('sync: .cursorignore already contains all workspace-artifacts patterns');
     return 0;
   }
 
-  const block = [
-    '',
-    '# Auto-synced from scripts/lib/workspace-artifacts.ts (cursor:sync-excludes)',
-    ...missing.sort(),
-    '',
-  ].join('\n');
-
-  text = text.trimEnd() + block;
-  writeFileSync(cursorignorePath, text.endsWith('\n') ? text : `${text}\n`, 'utf8');
+  const block = ['', autoSyncMarker, ...missing.sort(), ''].join('\n');
+  const next = `${bodyText}${block}`;
+  writeFileSync(cursorignorePath, next.endsWith('\n') ? next : `${next}\n`, 'utf8');
   const added = missing.length;
   console.log(`sync: appended ${added} missing pattern(s) → .cursorignore`);
   return added;

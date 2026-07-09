@@ -1,0 +1,39 @@
+---
+description: Cursor Agents hub — AGENTS.md, subagents, skills, permissions. Apply when configuring or troubleshooting agent behavior.
+alwaysApply: false
+---
+
+# Cursor Agents (PHONARA)
+
+## Entry points
+
+| Asset | Path |
+|-------|------|
+| Agent index | `AGENTS.md` + nested `apps/*/AGENTS.md`, `supabase/AGENTS.md` |
+| Subagents | `.cursor/agents/verifier.md`, `security-auditor.md`, `gate-runner.md` |
+| Skills | `.cursor/skills/gate-ladder`, `supabase-apply`, `session-hygiene` |
+| Auto-review | `.cursor/permissions.json` |
+| Sandbox network | `.cursor/sandbox.json` |
+| Hooks | `.cursor/hooks.json` |
+
+## Operator setup (once)
+
+```powershell
+bun run cursor:autopilot-setup
+bun run cursor:autopilot-setup:apply-settings
+```
+
+Then UI (1회): Settings → Agents — Background Agents **Off** · Max Context **6k** · Inline Chat **On** · Approvals **Auto-review**. Quit Cursor fully (tray) and reopen.
+
+1. **Scripted:** hooks · permissions · MCP · argv · preflight — `cursor:autopilot-setup`
+2. **Docker on-demand:** `bun run stack:docker:setup`
+3. Restart Cursor after `.cursorignore` changes
+4. **Guide:** [`docs/SSOT/CURSOR_AUTOPILOT.md`](../../docs/SSOT/CURSOR_AUTOPILOT.md) · [`89-beginner-autopilot.mdc`](89-beginner-autopilot.mdc)
+
+## Invoke subagents
+
+- `@verifier` before Step/Phase done claims
+- `@security-auditor` after Supabase/money/admin auth changes
+- `@gate-runner` after implementation to run gate ladder
+
+Hooks are deterministic; rules/skills are guidance.

@@ -1,44 +1,72 @@
-import { useEffect, useMemo } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { formatMoney } from '@/hooks/use-money';
-import { useAuth } from '../../contexts/auth-context';
-import { useLedger } from '../../hooks/use-wallet';
-import { useT } from '../../lib/i18n';
-import { ledgerReasonLabelKey } from '../wallet/ledger-labels';
+import { useCallback, useMemo } from 'react';
+import type { MessageKey } from '@phonara/i18n';
 
-export type LedgerRowView = {
-  id: string;
-  dateDisplay: string;
-  typeDisplay: string;
-  amountDisplay: string;
-  statusDisplay: string;
+import { useAuth } from '@/contexts/auth-context';
+import { useLedger } from '@/hooks/use-wallet';
+
+import {
+  clampLedgerPage,
+  filterLedgerRows,
+  LEDGER_FETCH_LIMIT,
+  ledgerPageCount,
+  paginateLedgerRows,
+  type LedgerRowView,
+} from './ledger-entry-filters';
+import { ledgerPageFiltersFromSearch, type LedgerPageSearch } from './ledger-page-display';
+import { mapWalletLedgerRow } from './wallet-ledger-display';
+
+export type LedgerPageControllerView = {
+  loading: boolean;
+  errorKey: MessageKey | null;
+  rows: LedgerRowView[];
+  filteredCount: number;
+  page: number;
+  totalPages: number;
+  empty: boolean;
+  filterEmpty: boolean;
+  refresh: () => void;
 };
 
-export function useLedgerPageController() {
-  const t = useT();
-  const navigate = useNavigate();
-  const { session, loading: authLoading } = useAuth();
-  const { entries, loading } = useLedger();
+export function useLedgerPageController(search: LedgerPageSearch): LedgerPageControllerView {
+  const { loading: authLoading } = useAuth();
+  const { entries, loading: ledgerLoading, error, refresh } = useLedger(LEDGER_FETCH_LIMIT);
 
-  useEffect(() => {
-    if (!authLoading && !session) void navigate({ to: '/login' });
-  }, [session, authLoading, navigate]);
+  const filters = ledgerPageFiltersFromSearch(search);
 
-  const rows = useMemo((): LedgerRowView[] => {
-    return entries.map((row) => ({
-      id: row.id,
-      dateDisplay: new Date(row.created_at).toLocaleString(),
-      typeDisplay: t(ledgerReasonLabelKey(row.reason_code)),
-      amountDisplay: `${formatMoney(row.amount, row.currency)} ${row.currency}`,
-      statusDisplay: '—',
-    }));
-  }, [entries, t]);
+  const allRows = useMemo(() => entries.map(mapWalletLedgerRow), [entries]);
+
+  const filteredRows = useMemo(
+    () =>
+      filterLedgerRows(allRows, {
+        type: filters.type,
+        currency: filters.currency,
+        period: filters.period,
+      }),
+    [allRows, filters.type, filters.currency, filters.period],
+  );
+
+  const totalPages = ledgerPageCount(filteredRows.length);
+  const page = clampLedgerPage(filters.page, totalPages);
+
+  const rows = useMemo(() => paginateLedgerRows(filteredRows, page), [filteredRows, page]);
+
+  const loading = authLoading || ledgerLoading;
+  const empty = !loading && !error && allRows.length === 0;
+  const filterEmpty = !loading && !error && allRows.length > 0 && filteredRows.length === 0;
+
+  const onRefresh = useCallback(() => {
+    refresh();
+  }, [refresh]);
 
   return {
-    t,
-    authLoading,
     loading,
+    errorKey: error,
     rows,
-    empty: rows.length === 0,
+    filteredCount: filteredRows.length,
+    page,
+    totalPages,
+    empty,
+    filterEmpty,
+    refresh: onRefresh,
   };
 }

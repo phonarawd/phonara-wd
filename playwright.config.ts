@@ -1,22 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
+import { adminDevServer, E2E_LOW_SPEC_BASE, webDevServer } from './playwright.shared';
 
-// Local Supabase demo anon JWT (matches `supabase start` default stack).
-const LOCAL_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
+/** Phase R — smoke by default; full e2e when run via `bun run test:e2e` (PHONARA_E2E_ACTIVE=1). */
+const includeFullE2E = process.env.PHONARA_E2E_ACTIVE === '1';
 
 export default defineConfig({
+  ...E2E_LOW_SPEC_BASE,
   testDir: './tests',
-  testMatch: ['e2e/**/*.spec.ts', 'smoke/**/*.spec.ts'],
-  outputDir: 'test-results',
+  testMatch: includeFullE2E ? ['e2e/**/*.spec.ts', 'smoke/**/*.spec.ts'] : ['smoke/**/*.spec.ts'],
   timeout: 60_000,
-  /** Low-spec PC: one worker, serial specs — prevents port/CPU contention with Cursor. */
-  workers: 1,
-  fullyParallel: false,
-  reporter: 'list',
-  // Provisions a funded/consented test user against the local Supabase stack and
-  // writes tests/e2e/.auth.json for the core-flow spec to inject.
-  globalSetup: './tests/e2e/global-setup.ts',
-  globalTeardown: './tests/e2e/global-teardown.ts',
   use: {
     baseURL: 'http://127.0.0.1:3000',
     trace: 'on-first-retry',
@@ -27,30 +19,5 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  webServer: [
-    {
-      command: 'tsx scripts/e2e-dev-server.ts web 3000',
-      url: 'http://127.0.0.1:3000',
-      reuseExistingServer: false,
-      timeout: 120_000,
-      // Pin the dev server to the LOCAL Supabase stack so E2E never targets a
-      // remote project, regardless of ambient shell env or .env files.
-      env: {
-        VITE_SUPABASE_URL: 'http://127.0.0.1:54444',
-        VITE_SUPABASE_ANON_KEY: LOCAL_ANON_KEY,
-        VITE_PHONARA_E2E_ENGINE: '1',
-      },
-    },
-    {
-      command: 'tsx scripts/e2e-dev-server.ts admin 3001',
-      url: 'http://127.0.0.1:3001',
-      reuseExistingServer: false,
-      timeout: 120_000,
-      env: {
-        VITE_SUPABASE_URL: 'http://127.0.0.1:54444',
-        VITE_SUPABASE_ANON_KEY: LOCAL_ANON_KEY,
-        VITE_PHONARA_E2E_ENGINE: '1',
-      },
-    },
-  ],
+  webServer: includeFullE2E ? [webDevServer(), adminDevServer()] : webDevServer(),
 });

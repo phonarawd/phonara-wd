@@ -152,7 +152,9 @@ export function printGamedayReport(report: GamedayReport): void {
     if (drill.probes?.length) {
       const failed = drill.probes.filter((p) => !p.passed);
       for (const p of failed.slice(0, 5)) {
-        console.log(`   probe FAIL ${p.name}: expected=${p.expected} ok=${p.ok} err=${p.error.slice(0, 80)}`);
+        console.log(
+          `   probe FAIL ${p.name}: expected=${p.expected} ok=${p.ok} err=${p.error.slice(0, 80)}`,
+        );
       }
     }
   }

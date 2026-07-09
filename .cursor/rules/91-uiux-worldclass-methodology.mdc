@@ -1,0 +1,85 @@
+---
+description: UI rebuild methodology — reference as intent, token→component→page→responsive→verification (Final AI Reset)
+alwaysApply: true
+---
+
+# UI Rebuild Methodology (Final AI Reset)
+
+> **Phase D:** suspended — [`docs/PRODUCT/DEMOLITION_PLAN.md`](../../docs/PRODUCT/DEMOLITION_PLAN.md) only (`00-phase-d-demolition.mdc`)  
+> **Phase R intent (not execution queue):** [`UX_REFERENCE_CANON.md`](../../docs/SSOT/UX_REFERENCE_CANON.md) · `docs/SSOT/*_UX_CANON.md`  
+> **Deprecated for execution:** v2 wave docs (Batch 11 deleted) · mockup pixel queue · `docs/rebuild/*` UI plan — **참고·이력만**
+
+## Pipeline (Phase R intent · not current paths)
+
+```text
+UX reference (의도 참조 — clone 아님)
+  → Phase R token SOT 정의
+  → Phase R component ownership 정의
+  → 페이지 조립 + 3-breakpoint 반응형
+  → 검증 (multi-viewport · a11y · dead control 0 · money Σ=0 · gate:ai-impl)
+```
+
+**Do not** implement surfaces by pixel-matching external PNG at a single width. **Do not** treat external mockup `pixelmatch` diff% as surface DONE.
+
+## Reference role
+
+| Allowed | Forbidden |
+|---------|-----------|
+| Extract layout · hierarchy · density · trust cues from reference products ([`UX_REFERENCE_CANON.md`](../../docs/SSOT/UX_REFERENCE_CANON.md)) | Clone competitor copy · logo · asset · unique visual identity |
+| Surface-specific canon + [`SURFACE_BLUEPRINTS.md`](../../docs/SSOT/SURFACE_BLUEPRINTS.md) modules | Inline arbitrary hex without token (`rgb(31 224 138)` in JSX) |
+| Token-first responsive typography | Hardcoded px typography as the only responsive strategy |
+
+## Component ownership
+
+- Pre-demolition paths such as `@phonara/ui`, `apps/web/src/theme.css`,
+  `apps/web/src/ui/design/*`, and `apps/web/src/components/ui/*` were deleted in v5 Demolition.
+- They are not active implementation targets.
+- Phase R must define component ownership in a new plan/ADR before any UI code is created.
+
+## Responsive shell
+
+- **3 tiers:** mobile 390 · tablet 768 (`md:`) · desktop 1024 (`lg:`) — **not** single mockup width.
+- **Code SOT:** Phase R TBD. Pre-demolition shell names such as `AppShell`,
+  `.shell-content-column`, `design-system.css`, and `viewport-contract.ts` are intent/history only.
+- **Pages:** use `md:`/`lg:` + `--ds-*` tokens; no prod `max-w-[390px]` bypassing shell column
+
+## Gates
+
+**Primary (surface closeout):**
+
+- `gate:ai-impl -- --test <path>` · `typecheck` · `check:i18n` · `check:release`
+- Multi-viewport smoke · axe critical 0 · dead control 0
+- Relevant money E2E Σ=0 when surface touches money paths
+
+**Demoted (legacy — not primary for new surfaces):**
+
+- External PNG `pixelmatch` · mockup fixture-form harness · pixel baseline diff% as DONE gate
+
+Heavy visual/E2E: operator 「gate 실행」 or CI only (`80` G13). Entrypoint: [`docs/SSOT/OPERATOR_GATES.md`](../../docs/SSOT/OPERATOR_GATES.md).
+
+## Auth pilot checkpoint
+
+Before broad U-phase rollout: **`/login`** rebuilt with tokens + components · password/passkey/magic-link wired · mobile + desktop OK · **operator visual sign-off**.
+
+## Unchanged boundaries
+
+- Money: Decimal · append-only ledger · UI displays RPC only (`30-money-ledger`, `90-ui-ux-presentation`).
+- IA: five tabs · Consolidation C0~C5 · `check:ui-architecture` allowlist must not grow.
+- Engine: `features/*` controllers · `contracts/*` · `supabase/*` — visual-only tasks still respect [`ENGINE_BOUNDARY.md`](../../docs/SSOT/ENGINE_BOUNDARY.md).
+- Protected: Pixi/canvas games · single Supabase project lock.
+
+## Preflight (every UI task)
+
+```bash
+bun run check:ui-architecture
+# Phase R only: read surface *_UX_CANON.md before implementing (not during Demolition)
+```
+
+## FAIL
+
+- Following deprecated execution plans (`PHONARA_ACTIVE_ROADMAP`, `docs/rebuild/*` active queue) as current work queue
+- New mockup-PNG-background fixture to achieve 0% diff on a rebuild surface
+- Claiming U-phase surface DONE during Phase D (Demolition — no UI surfaces)
+- Adding parallel login/signup page implementations instead of extending canonical surface (`70` §0)
+
+교차 참조: `90-ui-ux-presentation` · `95-presentation-import-absorption` · `88-ui-consolidation-wave` · `82-work-doc-closeout-sync`

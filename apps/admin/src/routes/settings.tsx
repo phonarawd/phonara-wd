@@ -1,18 +1,7 @@
-import { createRoute } from '@tanstack/react-router';
-import { adminDeskRoute } from './admin-desk';
-import { AdminLovableSurface } from '../presentation-import/admin/admin-lovable-surface';
-import { ImportedAdminSettingsPage } from '../presentation-import/admin/pages/ImportedAdminSettingsPage';
+import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createRoute({
-  getParentRoute: () => adminDeskRoute,
-  path: '/settings',
-  component: SettingsRoute,
+import { AdminSettingsPage } from '@/product/surfaces/admin-settings-page';
+
+export const Route = createFileRoute('/settings')({
+  component: AdminSettingsPage,
 });
-
-function SettingsRoute() {
-  return (
-    <AdminLovableSurface>
-      <ImportedAdminSettingsPage />
-    </AdminLovableSurface>
-  );
-}

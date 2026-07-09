@@ -31,6 +31,7 @@ A task is not complete until relevant gates pass:
   claimed. E2E failure blocks completion even when unit, SQL, lint, typecheck,
   and build pass.
 - SQL migrations apply cleanly on a local Supabase (`supabase db reset`); apply-time errors are not caught by TS checks.
+- Remote migration sync: **`bun run stack:push-remote`** after `test:sql` green; remote security advisor 0 ERROR (`96-prod-apply-agent-deny`).
 - SQL integration tests pass for money/settlement/liquidation/circuit-breaker RPCs, exercising the changed branch and asserting conservation + hash-chain integrity.
 - Env and i18n coverage checks.
 - Workspace hygiene (`bun run check:hygiene`) — cursorignore, watcher excludes,
@@ -45,3 +46,4 @@ included — see `70-autonomy-and-delivery`). Additionally:
 
 - No dev/test/"test mode" UI may ship; dev-only tooling is gated behind
   `import.meta.env.DEV`. Production builds must be clean and launch-ready.
+- Step/Phase 마감 시 **`82-work-doc-closeout-sync`**: §AI Todo Sync · roadmap · Plan YAML `[x]`/`[ ]` — 미동기화 = FAIL.

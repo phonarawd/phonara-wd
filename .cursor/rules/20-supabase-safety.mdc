@@ -16,7 +16,7 @@ alwaysApply: true
   advisor-cleanup passes for the same issue. If a prior migration/test exists but
   is stale, update or supersede it explicitly; do not create a parallel version.
 - Before applying remote changes, compare local migration files, remote migration
-  history, current function/policy definitions, and the active tactical plan.
+  history, current function/policy definitions, and `docs/PRODUCT/DEMOLITION_PLAN.md`.
   If local and remote disagree, reconcile intentionally and report the decision
   in the task summary unless the user asks for a durable docs update.
 
@@ -40,11 +40,17 @@ alwaysApply: true
 - Generate SQL/RPC/RLS as drafts first.
 - Explain security and data impact in the build log when applying migrations.
 - Remote DB changes (migrations, GRANT/REVOKE, edge functions, extensions) are
-  pre-authorized under the operator's standing autonomy grant (see
-  `70-autonomy-and-delivery`). Apply them autonomously ONLY AFTER the mandatory
-  gates pass: local `supabase db reset` clean, SQL integration tests green
-  (conservation Σ=0 + hash-chain), and security advisor 0 ERROR. The
-  single-project lock above is never waived.
+  pre-authorized under standing autonomy (`70-autonomy-and-delivery`). Apply
+  autonomously ONLY AFTER local gates pass: `supabase db reset` clean, `bun run
+  test:sql` green (conservation Σ=0 + hash-chain), then **`bun run
+  stack:push-remote`** (Management API · `scripts/push-pending-remote-migrations.ts`
+  · `SUPABASE_ACCESS_TOKEN` in `.env` · **no `supabase link` required**), then
+  security advisor **0 ERROR** on remote. The single-project lock above is never
+  waived.
+- **원격 migration apply 정본 (non-waivable):** `bun run stack:push-remote` only.
+  Operator 수동 `supabase db push` / `supabase link` / MCP `apply_migration` 직접
+  호출 금지 — hook·`96-prod-apply-agent-deny`가 raw 경로 차단. Parity는 migration
+  **name** 기준(Management API server timestamp ≠ local file prefix 허용).
 - RLS policies require positive and negative tests.
 - User-visible database errors should return stable error codes and be translated in the client.
 - Service role keys are server-only and must never be used in Vite/browser code.

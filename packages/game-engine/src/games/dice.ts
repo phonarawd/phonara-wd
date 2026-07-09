@@ -61,8 +61,7 @@ const diceDefinition: GameDefinition<DiceSelection, DiceResult> = {
     const f = requireFloat(floats, 0);
     const roll = diceFromFloat(f);
     const target = parseFloat(selection.target);
-    const won =
-      selection.direction === 'over' ? roll > target : roll < target;
+    const won = selection.direction === 'over' ? roll > target : roll < target;
     return { roll, won };
   },
 

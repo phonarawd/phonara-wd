@@ -87,9 +87,10 @@ export function buildOddsApiIoWsUrl(options: OddsApiIoWsConnectOptions): string 
   return `${ODDS_API_IO_WS_HOST}?${params.toString()}`;
 }
 
-export function parseOddsApiIoWsScores(
-  scores: OddsApiIoWsScorePayload | undefined,
-): { homeGoals: number | null; awayGoals: number | null } {
+export function parseOddsApiIoWsScores(scores: OddsApiIoWsScorePayload | undefined): {
+  homeGoals: number | null;
+  awayGoals: number | null;
+} {
   if (!scores) return { homeGoals: null, awayGoals: null };
 
   const ft = scores.periods?.['ft'];

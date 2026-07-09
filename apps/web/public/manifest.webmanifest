@@ -1,46 +1,90 @@
 {
+  "id": "/",
   "name": "PHONARA",
   "short_name": "PHONARA",
-  "description": "PHON-powered crypto trading & rewards platform",
-  "theme_color": "#0b0b0f",
-  "background_color": "#0b0b0f",
-  "display": "standalone",
-  "orientation": "portrait",
-  "start_url": "/",
-  "scope": "/",
+  "description": "보상 획득, 거래, 스포츠·카지노를 한곳에서 — PHONARA super-app · Earn, trade, sports, and casino in one app",
   "lang": "ko",
+  "dir": "ltr",
+  "start_url": "/home?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "theme_color": "#0d0f14",
+  "background_color": "#0d0f14",
+  "categories": ["finance", "entertainment"],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "icons": [
     { "src": "pwa-64x64.png", "sizes": "64x64", "type": "image/png" },
-    { "src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "pwa-512x512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "pwa-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     {
       "src": "maskable-icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    },
+    {
+      "src": "monochrome-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "monochrome"
     }
   ],
   "shortcuts": [
     {
-      "name": "Trade",
-      "short_name": "Trade",
-      "description": "Spot and futures trading",
-      "url": "/trade",
+      "name": "돈벌기",
+      "short_name": "돈벌기",
+      "description": "Earn rewards and missions",
+      "url": "/home?source=shortcut",
       "icons": [{ "src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
-      "name": "Wallet",
-      "short_name": "Wallet",
+      "name": "지갑",
+      "short_name": "지갑",
       "description": "Wallet and deposits",
-      "url": "/wallet",
+      "url": "/wallet?source=shortcut",
       "icons": [{ "src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
-      "name": "Casino",
-      "short_name": "Casino",
-      "description": "Casino games",
-      "url": "/casino",
+      "name": "거래",
+      "short_name": "거래",
+      "description": "Spot and futures trading",
+      "url": "/trade?source=shortcut",
       "icons": [{ "src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "카지노",
+      "short_name": "카지노",
+      "description": "Casino games",
+      "url": "/casino?source=shortcut",
+      "icons": [{ "src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/home-narrow.png",
+      "sizes": "1170x2532",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Earn · Home"
+    },
+    {
+      "src": "screenshots/wallet-narrow.png",
+      "sizes": "1170x2532",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Wallet"
+    },
+    {
+      "src": "screenshots/trade-wide.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Trade · Desktop"
     }
   ]
 }

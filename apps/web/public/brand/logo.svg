@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PHONARA">
+  <defs>
+    <linearGradient id="earn" x1="80" y1="80" x2="280" y2="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6EEBC5"/>
+      <stop offset="0.45" stop-color="#2EC4A0"/>
+      <stop offset="1" stop-color="#1A7A62"/>
+    </linearGradient>
+    <linearGradient id="trade" x1="432" y1="80" x2="232" y2="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#85B8F5"/>
+      <stop offset="0.45" stop-color="#4B8FE8"/>
+      <stop offset="1" stop-color="#2A5A9E"/>
+    </linearGradient>
+    <linearGradient id="sports" x1="80" y1="432" x2="280" y2="232" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F0A882"/>
+      <stop offset="0.45" stop-color="#E07A52"/>
+      <stop offset="1" stop-color="#9E4E30"/>
+    </linearGradient>
+    <linearGradient id="casino" x1="432" y1="432" x2="232" y2="232" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E88EC4"/>
+      <stop offset="0.45" stop-color="#D456A0"/>
+      <stop offset="1" stop-color="#8E3468"/>
+    </linearGradient>
+    <radialGradient id="core" cx="36%" cy="32%" r="72%">
+      <stop offset="0" stop-color="#D4CCFF"/>
+      <stop offset="0.38" stop-color="#A99EF2"/>
+      <stop offset="1" stop-color="#4A3F9E"/>
+    </radialGradient>
+    <linearGradient id="core-hi" x1="220" y1="200" x2="300" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.88"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#12082A" flood-opacity="0.36"/>
+      <feDropShadow dx="5" dy="8" stdDeviation="6" flood-color="#2A1F5C" flood-opacity="0.2"/>
+    </filter>
+    <clipPath id="bounds">
+      <circle cx="256" cy="256" r="210"/>
+    </clipPath>
+  </defs>
+  <g filter="url(#shadow)" clip-path="url(#bounds)">
+    <g transform="translate(256 256)">
+      <g transform="rotate(-135)"><path fill="url(#earn)" d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+      <g transform="rotate(-45)"><path fill="url(#trade)" d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+      <g transform="rotate(135)"><path fill="url(#sports)" d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+      <g transform="rotate(45)"><path fill="url(#casino)" d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+      <circle r="54" fill="url(#core)"/>
+      <circle r="54" fill="url(#core-hi)"/>
+      <circle cx="-12" cy="-14" r="14" fill="#ffffff" fill-opacity="0.72"/>
+    </g>
+  </g>
+</svg>

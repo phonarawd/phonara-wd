@@ -1,0 +1,30 @@
+# PHONARA user app — Cloudflare Pages (Vite + React SPA)
+# Custom domain: phonara.net (attach after first deploy — see deploy:pages:web:domain)
+name = "phonara-web"
+compatibility_date = "2024-12-01"
+pages_build_output_dir = "apps/web/dist"
+
+# Cloudflare Pages (Git) — Dashboard → Settings → Builds:
+#   Framework preset: None
+#   Build command:    bun install && bun run build:packages && bun --filter @phonara/web build
+#   Build output:     apps/web/dist
+#   Root directory:   /
+#   Node/Bun:         Bun 1.x (Pages build image supports bun)
+#
+# Production environment variables (build-time — Vite bakes VITE_* into the bundle):
+#   VITE_SUPABASE_URL=https://yocjhjsdwoijfdrehzoq.supabase.co
+#   VITE_SUPABASE_ANON_KEY=<anon public key>
+#   VITE_APP_ENV=production
+#   VITE_APP_URL=https://phonara.net
+#   VITE_DEFAULT_LOCALE=ko
+#
+# SPA routing: apps/web/public/_redirects → /* /index.html 200
+# Security headers: apps/web/public/_headers (CSP, HSTS, frame deny)
+#
+# Cloudflare Dashboard (operator — zone phonara.net):
+#   SSL/TLS → Full (strict)
+#   Security → Settings → Security Level: medium (Rocket Loader / Email Obfuscation off)
+#   Security → Bots → Bot Fight Mode: ON — injects inline __CF$cv$params at ~body end;
+#     CSP hash in apps/web/public/_headers script-src (or turn Bot Fight Mode OFF)
+#   Security → WAF → managed rulesets ON
+#   Admin: Cloudflare Access on admin.phonara.net (separate Pages project)

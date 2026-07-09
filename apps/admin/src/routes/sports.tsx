@@ -1,18 +1,7 @@
-import { createRoute } from '@tanstack/react-router';
-import { adminDeskRoute } from './admin-desk';
-import { AdminLovableSurface } from '../presentation-import/admin/admin-lovable-surface';
-import { ImportedAdminSportsPage } from '../presentation-import/admin/pages/ImportedAdminSportsPage';
+import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createRoute({
-  getParentRoute: () => adminDeskRoute,
-  path: '/sports',
-  component: SportsRoute,
+import { AdminSportsPage } from '@/product/surfaces/admin-sports-page';
+
+export const Route = createFileRoute('/sports')({
+  component: AdminSportsPage,
 });
-
-function SportsRoute() {
-  return (
-    <AdminLovableSurface>
-      <ImportedAdminSportsPage />
-    </AdminLovableSurface>
-  );
-}

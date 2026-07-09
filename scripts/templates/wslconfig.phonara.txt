@@ -1,0 +1,8 @@
+# PHONARA — caps WSL2 VM RAM when Docker Desktop runs (low-spec Windows)
+# Apply: bun run stack:docker:setup -- --apply-wslconfig
+# Then: wsl --shutdown (or reboot) once
+[wsl2]
+memory=4GB
+processors=4
+swap=2GB
+localhostForwarding=true

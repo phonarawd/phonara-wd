@@ -1,0 +1,126 @@
+/**
+ * Tailwind v4 CSS-first bridge — --ds-* = 유일 SOT (§25.2).
+ */
+@import 'tailwindcss';
+
+@source '../../**/*.{ts,tsx}';
+
+/* §25.15 Skeleton shimmer — token duration · reduced-motion static */
+@keyframes skeleton-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--ds-surface-hover) 65%, transparent),
+    transparent
+  );
+  animation: skeleton-shimmer var(--ds-motion-surface) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+@theme inline {
+  --color-background: var(--ds-bg);
+  --color-foreground: var(--ds-foreground);
+  --color-foreground-muted: var(--ds-foreground-muted);
+
+  --color-surface: var(--ds-surface);
+  --color-surface-raised: var(--ds-surface-raised);
+  --color-surface-hover: var(--ds-surface-hover);
+  --color-surface-overlay: var(--ds-surface-overlay);
+
+  /* Legacy shadcn bridge — P3 existing JSX only · removed at P13 strict */
+  --color-primary: var(--ds-accent);
+  --color-muted-foreground: var(--ds-foreground-muted);
+  --color-line: var(--ds-line);
+
+  --color-accent: var(--ds-accent);
+  --color-accent-foreground: var(--ds-accent-foreground);
+  --color-accent-hover: var(--ds-accent-hover);
+
+  --color-success: var(--ds-success);
+  --color-success-foreground: var(--ds-success-foreground);
+  --color-warning: var(--ds-warning);
+  --color-warning-foreground: var(--ds-warning-foreground);
+  --color-danger: var(--ds-danger);
+  --color-danger-foreground: var(--ds-danger-foreground);
+  --color-danger-hover: var(--ds-danger-hover);
+  --color-info: var(--ds-info);
+  --color-info-foreground: var(--ds-info-foreground);
+
+  --color-market-up: var(--ds-market-up);
+  --color-market-down: var(--ds-market-down);
+
+  --color-bet: var(--ds-bet);
+  --color-bet-foreground: var(--ds-bet-foreground);
+  --color-bet-hover: var(--ds-bet-hover);
+
+  --color-focus: var(--ds-focus);
+
+  --font-sans: var(--ds-font-sans);
+  --font-display: var(--ds-font-display);
+  --font-mono: var(--ds-font-mono);
+
+  --text-xs: var(--ds-text-xs);
+  --text-sm: var(--ds-text-sm);
+  --text-base: var(--ds-text-base);
+  --text-lg: var(--ds-text-lg);
+  --text-xl: var(--ds-text-xl);
+  --text-2xl: var(--ds-text-2xl);
+  --text-3xl: var(--ds-text-3xl);
+  --text-hero: var(--ds-text-hero);
+
+  --radius-sm: var(--ds-radius-sm);
+  --radius-md: var(--ds-radius-md);
+  --radius-lg: var(--ds-radius-lg);
+  --radius-full: var(--ds-radius-full);
+
+  --spacing-ds-1: var(--ds-space-1);
+  --spacing-ds-2: var(--ds-space-2);
+  --spacing-ds-3: var(--ds-space-3);
+  --spacing-ds-4: var(--ds-space-4);
+  --spacing-ds-5: var(--ds-space-5);
+  --spacing-ds-6: var(--ds-space-6);
+  --spacing-ds-7: var(--ds-space-7);
+  --spacing-ds-8: var(--ds-space-8);
+  --spacing-ds-9: var(--ds-space-9);
+  --spacing-ds-10: var(--ds-space-10);
+  --spacing-ds-11: var(--ds-space-11);
+  --spacing-ds-12: var(--ds-space-12);
+
+  --shadow-overlay: var(--ds-shadow-overlay);
+
+  /*
+   * Breakpoints MUST be literal lengths — lightningcss minify rejects var() in @media.
+   * Keep in sync with layout.css --ds-bp-* and viewport-contract.ts VIEWPORT_BREAKPOINTS.
+   */
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1920px;
+  --breakpoint-2xl: 2560px;
+
+  --breakpoint-mobile-narrow: 320px;
+  --breakpoint-mobile: 390px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-wide: 1280px;
+  --breakpoint-ultra: 1920px;
+  --breakpoint-superwide: 2560px;
+}

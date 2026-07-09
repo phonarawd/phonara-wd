@@ -1,6 +1,6 @@
 /**
  * Stable Playwright anchors for casino money flows.
- * Keep on the route adapter layer after Lovable ZIP — game UI may omit these.
+ * Keep on the route adapter layer after External ZIP — game UI may omit these.
  */
 export const CASINO_E2E_TESTIDS = {
   fairnessVerifier: 'casino-fairness-verifier',

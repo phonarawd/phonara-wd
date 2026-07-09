@@ -183,8 +183,7 @@ export function computeCloseSettlement(params: ClosePositionParams): PositionSet
 
   const realizedPnlRaw = (() => {
     const entry = dec(position.entryPrice, 'entryPrice');
-    const priceDelta =
-      position.side === 'long' ? exitPrice.minus(entry) : entry.minus(exitPrice);
+    const priceDelta = position.side === 'long' ? exitPrice.minus(entry) : entry.minus(exitPrice);
     return qty.mul(priceDelta);
   })();
 
@@ -195,12 +194,11 @@ export function computeCloseSettlement(params: ClosePositionParams): PositionSet
   const isWipeout = equityRaw.lessThanOrEqualTo(0);
   const equity = isWipeout ? new Decimal(0) : equityRaw;
 
-  const roiRaw = margin.isZero()
-    ? new Decimal(0)
-    : equity.minus(margin).div(margin);
+  const roiRaw = margin.isZero() ? new Decimal(0) : equity.minus(margin).div(margin);
 
   return {
-    exitPrice: exitPrice.toFixed(),
+    // Stored as _fmt6 in SQL (rpc_close_futures_position exit_price).
+    exitPrice: fmt6(exitPrice),
     realizedPnl: toFixed(realizedPnlRaw, position.marginCurrency),
     closeFee: toFixed(closeFeeRaw, position.marginCurrency),
     equityReturned: toFixed(equity, position.marginCurrency),

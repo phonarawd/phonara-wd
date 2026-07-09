@@ -1,29 +1,20 @@
-import { execSync, spawnSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
+import {
+  dockerAutoStartEnabled,
+  getDockerDesktopState,
+  recoverDockerDesktopEngine,
+  startDockerDesktopWindows,
+} from './docker-desktop-lifecycle';
+import { isDockerDaemonReady } from './docker-daemon';
+import { isLocalSupabaseRunning } from './supabase-local';
 
-const DOCKER_DESKTOP_PATHS_WIN = [
-  `${process.env.ProgramFiles ?? 'C:\\Program Files'}\\Docker\\Docker\\Docker Desktop.exe`,
-  `${process.env['ProgramFiles(x86)'] ?? 'C:\\Program Files (x86)'}\\Docker\\Docker\\Docker Desktop.exe`,
-] as const;
+export { isDockerDaemonReady } from './docker-daemon';
 
-export function isDockerDaemonReady(): boolean {
-  const probe = spawnSync('docker', ['info'], { stdio: 'ignore' });
-  return probe.status === 0;
-}
-
-function startDockerDesktopWindows(): boolean {
-  for (const exe of DOCKER_DESKTOP_PATHS_WIN) {
-    try {
-      execSync(
-        `powershell -NoProfile -Command "Start-Process -FilePath '${exe.replace(/'/g, "''")}'"`,
-        { stdio: 'ignore' },
-      );
-      return true;
-    } catch {
-      // try next path
-    }
-  }
-  return false;
-}
+export type EnsureDockerOptions = {
+  startDesktop?: boolean;
+  timeoutMs?: number;
+  quiet?: boolean;
+};
 
 function sleep(ms: number): void {
   execSync(
@@ -34,30 +25,47 @@ function sleep(ms: number): void {
   );
 }
 
-export type EnsureDockerOptions = {
-  startDesktop?: boolean;
-  timeoutMs?: number;
-  quiet?: boolean;
-};
-
 /** Wait until `docker info` succeeds. On Windows, optionally launches Docker Desktop. */
 export function ensureDockerReady(options: EnsureDockerOptions = {}): void {
-  const { startDesktop = true, timeoutMs = 180_000, quiet = false } = options;
+  const startDesktop =
+    options.startDesktop ?? (process.platform === 'win32' && dockerAutoStartEnabled());
+  const { timeoutMs = 180_000, quiet = false } = options;
 
   if (isDockerDaemonReady()) {
     if (!quiet) process.stdout.write('[stack:docker] daemon ready\n');
     return;
   }
 
-  if (process.platform === 'win32' && startDesktop) {
-    if (!quiet) process.stdout.write('[stack:docker] starting Docker Desktop…\n');
-    if (!startDockerDesktopWindows()) {
+  // Local Supabase is up — stack bootstrap already succeeded (CI or prior start).
+  if (isLocalSupabaseRunning()) {
+    if (!quiet) {
+      process.stdout.write('[stack:docker] supabase stack running — skip daemon gate\n');
+    }
+    return;
+  }
+
+  const desktopState = getDockerDesktopState();
+  if (desktopState === 'zombie_ui') {
+    if (!quiet) {
+      process.stdout.write(
+        '[stack:docker] zombie UI detected (Docker open but engine N/A) — recovering…\n',
+      );
+    }
+    recoverDockerDesktopEngine({ quiet });
+  } else if (process.platform === 'win32' && startDesktop) {
+    if (!quiet)
+      process.stdout.write('[stack:docker] on-demand start — launching Docker Desktop…\n');
+    if (!startDockerDesktopWindows({ quiet })) {
       throw new Error(
         '[stack:docker] Docker Desktop not found. Install Docker Desktop for Windows.',
       );
     }
   } else if (!startDesktop) {
-    throw new Error('[stack:docker] daemon not running (startDesktop=false)');
+    const hint =
+      process.platform === 'win32'
+        ? 'start Docker Desktop manually, or set PHONARA_DOCKER_AUTO_START=1 (default) and re-run E2E/SQL.'
+        : 'start the Docker daemon or run `supabase start` before E2E/SQL.';
+    throw new Error(`[stack:docker] daemon not running — ${hint}`);
   }
 
   const deadline = Date.now() + timeoutMs;
@@ -71,7 +79,7 @@ export function ensureDockerReady(options: EnsureDockerOptions = {}): void {
 
   throw new Error(
     `[stack:docker] daemon not ready after ${Math.round(timeoutMs / 1000)}s — ` +
-      'start Docker Desktop manually, wait until it is idle, then re-run E2E/SQL. ' +
-      '(Auto-launch is disabled on low-spec PCs — see 79-low-spec-pc.mdc)',
+      'run: bun run stack:docker:recover · wait until Docker Desktop is idle, then re-run E2E/SQL. ' +
+      '(On-demand auto-start: PHONARA_DOCKER_AUTO_START=1 · see 84-docker-on-demand.mdc)',
   );
 }

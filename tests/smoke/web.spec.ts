@@ -1,9 +1,14 @@
 import { test, expect } from '@playwright/test';
 
-test('web app boots and renders the login page', async ({ page }) => {
-  // Assert the app mounted and the login form rendered (locale-independent selector).
-  await page.goto('/login');
-  await expect(page.locator('input#login-email')).toBeVisible({ timeout: 15_000 });
+import { seedWebE2EStorage } from '../e2e/fixtures/wallet-money';
+
+test.beforeEach(async ({ page }) => {
+  await seedWebE2EStorage(page);
+});
+
+test('web app boots and renders the stub shell', async ({ page }) => {
+  await page.goto('/?landing=1', { waitUntil: 'domcontentloaded' });
+  await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 15_000 });
 });
 
 test('PWA icon assets are reachable', async ({ page }) => {
@@ -31,4 +36,9 @@ test('offline fallback page is reachable', async ({ page }) => {
   expect(resp.status()).toBe(200);
   const body = await resp.text();
   expect(body).toContain('PHONARA');
+});
+
+test('guest readonly surfaces boot without auth', async ({ page }) => {
+  await page.goto('/?landing=1', { waitUntil: 'domcontentloaded' });
+  await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 15_000 });
 });

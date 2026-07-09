@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PHONARA concept C  Phon Convergence (4-channel P)">
+  <defs>
+    <linearGradient id="c-body" x1="120" y1="96" x2="420" y2="416" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ecfff7"/>
+      <stop offset="0.36" stop-color="#96ffd5"/>
+      <stop offset="0.7" stop-color="#48d49a"/>
+      <stop offset="1" stop-color="#157a52"/>
+    </linearGradient>
+    <linearGradient id="c-hi" x1="108" y1="100" x2="280" y2="320" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.92"/>
+      <stop offset="0.4" stop-color="#ffffff" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="c-sh" x1="240" y1="160" x2="460" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#063d2a" stop-opacity="0"/>
+      <stop offset="0.6" stop-color="#063d2a" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#021810" stop-opacity="0.75"/>
+    </linearGradient>
+    <linearGradient id="c-wave" x1="300" y1="140" x2="480" y2="340" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d4fff0"/>
+      <stop offset="0.5" stop-color="#86ffd0"/>
+      <stop offset="1" stop-color="#28a874"/>
+    </linearGradient>
+    <radialGradient id="c-node" cx="40%" cy="36%" r="70%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#b8ffe8"/>
+      <stop offset="1" stop-color="#1fa872"/>
+    </radialGradient>
+    <filter id="c-shadow" x="-14%" y="-14%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#021810" flood-opacity="0.3"/>
+      <feDropShadow dx="7" dy="9" stdDeviation="5" flood-color="#0a3d2c" flood-opacity="0.16"/>
+    </filter>
+    <clipPath id="c-clip">
+      <path d="M136 108h76v296h-76a20 20 0 0 1-20-20V128a20 20 0 0 1 20-20zm76 0h96c82.8 0 150 67.2 150 150s-67.2 150-150 150h-96V108zm84 52v196h28c48.6 0 88-39.4 88-88s-39.4-88-88-88h-28z"/>
+    </clipPath>
+  </defs>
+  <g filter="url(#c-shadow)">
+    <path fill="url(#c-body)" d="M136 108h76v296h-76a20 20 0 0 1-20-20V128a20 20 0 0 1 20-20zm76 0h96c82.8 0 150 67.2 150 150s-67.2 150-150 150h-96V108zm84 52v196h28c48.6 0 88-39.4 88-88s-39.4-88-88-88h-28z"/>
+    <g clip-path="url(#c-clip)">
+      <path fill="url(#c-hi)" d="M92 84h276L200 444H92z"/>
+      <path fill="url(#c-sh)" d="M228 112h236L520 468H206z"/>
+    </g>
+    <!-- 4 equal emission channels (N�E�S�W) converging at terminal node -->
+    <path fill="url(#c-wave)" d="M312 148a148 148 0 0 1 148 148h-28a120 120 0 0 0-120-120v-28z"/>
+    <path fill="url(#c-wave)" fill-opacity="0.82" d="M328 128a172 172 0 0 1 172 172h-28a144 144 0 0 0-144-144v-28z"/>
+    <path fill="url(#c-wave)" fill-opacity="0.64" d="M296 168a128 128 0 0 1 128 128h-24a104 104 0 0 0-104-104v-24z"/>
+    <path fill="url(#c-wave)" fill-opacity="0.48" d="M344 108a192 192 0 0 1 192 192h-28a164 164 0 0 0-164-164v-28z"/>
+    <circle cx="448" cy="276" r="26" fill="url(#c-node)"/>
+    <circle cx="441" cy="268" r="10" fill="#ffffff" fill-opacity="0.76"/>
+  </g>
+</svg>

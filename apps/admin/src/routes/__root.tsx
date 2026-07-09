@@ -1,152 +1,81 @@
-import { createRootRoute, Outlet, Navigate, useRouterState } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
-import { useAuth } from '../contexts/auth-context';
-import { useIsAdmin } from '../hooks/use-is-admin';
-import { useT } from '../lib/i18n';
-import { signOut } from '../lib/auth';
-import { loadAdminMfaGateState, type AdminMfaGateState } from '../domain/admin-auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createRootRoute, Outlet, useRouterState } from '@tanstack/react-router';
+import { useState } from 'react';
 
-export const Route = createRootRoute({
-  component: RootLayout,
-});
+import { AuthProvider } from '@/contexts/auth-context';
+import { isAdminAuthSurfacePath } from '@/domain/admin-post-auth';
+import { useAdminRouteGate } from '@/hooks/use-admin-route-gate';
+import { AdminShell } from '@/product/layout/admin-shell';
+import { AdminForbiddenShell } from '@/product/surfaces/admin-forbidden-shell';
+import { Skeleton } from '@/product/primitives/skeleton';
+import { ShellPage } from '@/product/layout/content-shell';
+
+function AdminDeskLoadingShell() {
+  return (
+    <ShellPage className="bg-background text-foreground min-h-dvh p-6">
+      <div
+        className="mx-auto flex w-full max-w-3xl flex-col gap-4"
+        data-testid="admin-desk-loading"
+      >
+        <Skeleton className="h-8 w-1/3" />
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-24 w-full" />
+      </div>
+    </ShellPage>
+  );
+}
+
+function AdminRouteGate({ children }: { children: React.ReactNode }) {
+  const gate = useAdminRouteGate();
+
+  if (gate.kind === 'forbidden') {
+    return <AdminForbiddenShell />;
+  }
+
+  if (gate.kind === 'loading' || gate.kind === 'unauthenticated') {
+    return <AdminDeskLoadingShell />;
+  }
+
+  return children;
+}
+
+function AdminChrome({ children }: { children: React.ReactNode }) {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  if (isAdminAuthSurfacePath(pathname)) {
+    return children;
+  }
+  return <AdminShell>{children}</AdminShell>;
+}
 
 function RootLayout() {
-  const { session, loading: authLoading } = useAuth();
-  const { isAdmin, loading: adminLoading } = useIsAdmin();
-  const [mfaState, setMfaState] = useState<AdminMfaGateState | null>(null);
-  const [mfaLoading, setMfaLoading] = useState(false);
-  const t = useT();
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
-
-  const isLogin = pathname === '/login';
-  const isMfaEnroll = pathname === '/mfa/enroll';
-  const isMfaChallenge = pathname === '/mfa/challenge';
-  const isMfaRoute = isMfaEnroll || isMfaChallenge;
-
-  useEffect(() => {
-    if (!session) {
-      setMfaState(null);
-      setMfaLoading(false);
-      return;
-    }
-    setMfaLoading(true);
-    void loadAdminMfaGateState()
-      .then((state) => {
-        setMfaState(state);
-        setMfaLoading(false);
-      })
-      .catch(() => {
-        setMfaState(null);
-        setMfaLoading(false);
-      });
-  }, [session]);
-
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-dvh text-muted text-sm">
-        {t('common.loading')}
-      </div>
-    );
-  }
-
-  if (!session) {
-    if (isLogin) return <Outlet />;
-    return <Navigate to="/login" />;
-  }
-
-  if (!isLogin && !isMfaRoute) {
-    if (adminLoading) {
-      return (
-        <div className="flex items-center justify-center min-h-dvh text-muted text-sm">
-          {t('admin.loading')}
-        </div>
-      );
-    }
-
-    if (!isAdmin) {
-      return (
-        <div
-          className="flex flex-col items-center justify-center min-h-dvh gap-4"
-          data-testid="admin-forbidden"
-        >
-          <p className="text-down font-semibold">{t('admin.forbidden')}</p>
-          <button
-            className="text-sm text-muted underline"
-            onClick={() => { void signOut(); }}
-          >
-            {t('nav.logout')}
-          </button>
-        </div>
-      );
-    }
-
-    if (mfaLoading || !mfaState) {
-      return (
-        <div className="flex items-center justify-center min-h-dvh text-muted text-sm">
-          {t('common.loading')}
-        </div>
-      );
-    }
-
-    if (!mfaState.hasVerifiedTotp) {
-      return <Navigate to="/mfa/enroll" />;
-    }
-
-    if (mfaState.currentLevel !== 'aal2') {
-      return <Navigate to="/mfa/challenge" />;
-    }
-  }
-
-  if (isMfaRoute) {
-    if (adminLoading) {
-      return (
-        <div className="flex items-center justify-center min-h-dvh text-muted text-sm">
-          {t('admin.loading')}
-        </div>
-      );
-    }
-
-    if (!isAdmin) {
-      return (
-        <div
-          className="flex flex-col items-center justify-center min-h-dvh gap-4"
-          data-testid="admin-forbidden"
-        >
-          <p className="text-down font-semibold">{t('admin.forbidden')}</p>
-          <button
-            className="text-sm text-muted underline"
-            onClick={() => { void signOut(); }}
-          >
-            {t('nav.logout')}
-          </button>
-        </div>
-      );
-    }
-
-    if (mfaLoading || !mfaState) {
-      return (
-        <div className="flex items-center justify-center min-h-dvh text-muted text-sm">
-          {t('common.loading')}
-        </div>
-      );
-    }
-
-    if (isMfaEnroll && mfaState.hasVerifiedTotp && mfaState.currentLevel === 'aal2') {
-      return <Navigate to="/overview" />;
-    }
-
-    if (isMfaEnroll && mfaState.hasVerifiedTotp && mfaState.currentLevel !== 'aal2') {
-      return <Navigate to="/mfa/challenge" />;
-    }
-
-    if (isMfaChallenge && !mfaState.hasVerifiedTotp) {
-      return <Navigate to="/mfa/enroll" />;
-    }
-
-    if (isMfaChallenge && mfaState.currentLevel === 'aal2') {
-      return <Navigate to="/overview" />;
-    }
-  }
-
-  return <Outlet />;
+  return (
+    <AuthProvider>
+      <AdminRouteGate>
+        <AdminChrome>
+          <Outlet />
+        </AdminChrome>
+      </AdminRouteGate>
+    </AuthProvider>
+  );
 }
+
+function AdminRootProviders({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: { staleTime: 30_000, retry: 1 },
+        },
+      }),
+  );
+
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+}
+
+export const Route = createRootRoute({
+  component: () => (
+    <AdminRootProviders>
+      <RootLayout />
+    </AdminRootProviders>
+  ),
+});

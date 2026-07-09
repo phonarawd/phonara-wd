@@ -66,10 +66,33 @@ BEGIN
   SELECT rpc_get_fixture_markets(v_fixture_id) INTO v_detail;
   ASSERT v_detail->>'home_name' = 'Arsenal', 'fixture detail mismatch';
 
-  ASSERT NOT has_table_privilege('anon', 'public.sports_fixtures', 'SELECT'),
-    'anon must NOT SELECT sports_fixtures directly';
-  ASSERT NOT has_table_privilege('authenticated', 'public.sports_fixtures', 'SELECT'),
-    'authenticated must NOT SELECT sports_fixtures directly';
+  ASSERT has_table_privilege('anon', 'public.sports_fixtures', 'SELECT'),
+    'anon may SELECT sports_fixtures for realtime display';
+  ASSERT has_table_privilege('authenticated', 'public.sports_fixtures', 'SELECT'),
+    'authenticated may SELECT sports_fixtures for realtime display';
+  ASSERT NOT has_table_privilege('anon', 'public.sports_fixtures', 'INSERT'),
+    'anon must NOT INSERT sports_fixtures directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.sports_fixtures', 'INSERT'),
+    'authenticated must NOT INSERT sports_fixtures directly';
+
+  ASSERT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime'
+      AND schemaname = 'public'
+      AND tablename = 'sports_fixtures'
+  ), 'sports_fixtures must be in supabase_realtime publication';
+  ASSERT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime'
+      AND schemaname = 'public'
+      AND tablename = 'sports_markets'
+  ), 'sports_markets must be in supabase_realtime publication';
+  ASSERT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime'
+      AND schemaname = 'public'
+      AND tablename = 'sports_odds_snapshots'
+  ), 'sports_odds_snapshots must be in supabase_realtime publication';
 END;
 $$;
 

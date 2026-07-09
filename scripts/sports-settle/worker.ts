@@ -14,7 +14,11 @@ import {
   type TheOddsApiScoreEvent,
 } from '@phonara/sports-ingest';
 import { persistIngestMessages } from '../lib/sports-ingest-persist';
-import { ingestFixtureStatus, resolveServiceClient } from '../lib/sports-engine-client';
+import {
+  ingestFixtureStatus,
+  recordScoreQuorumMismatch,
+  resolveServiceClient,
+} from '../lib/sports-engine-client';
 import { recordIngestHealth } from '../lib/sports-ingest-health';
 
 export interface SettleWorkerConfig {
@@ -160,18 +164,22 @@ export async function runSettleWorker(config: SettleWorkerConfig): Promise<Settl
       for (const league of config.leagues) {
         const { events, requestsRemaining } = await fetchSportScores(credential.apiKey, league, 3);
         if (isVendorQuotaExhausted(THE_ODDS_API_VENDOR, requestsRemaining)) {
-          throw new Error(`[the-odds-api] scores quota exhausted (remaining=${requestsRemaining ?? '0'})`);
+          throw new Error(
+            `[the-odds-api] scores quota exhausted (remaining=${requestsRemaining ?? '0'})`,
+          );
         }
 
         const secondaryScores = secondaryByLeague[league] ?? [];
         const dualFeedActive =
-          config.dualFeed &&
-          config.footballDataApiKey &&
-          secondaryScores.length > 0;
+          config.dualFeed && config.footballDataApiKey && secondaryScores.length > 0;
 
         for (const event of events) {
           const mapped = mapScoreEventToStatusPayload(event, league);
-          if (mapped.status !== 'finished' || mapped.homeGoals === null || mapped.awayGoals === null) {
+          if (
+            mapped.status !== 'finished' ||
+            mapped.homeGoals === null ||
+            mapped.awayGoals === null
+          ) {
             continue;
           }
 
@@ -198,6 +206,26 @@ export async function runSettleWorker(config: SettleWorkerConfig): Promise<Settl
                 console.warn(
                   `[sports-settle] score_mismatch ${primary.canonicalFixtureId} primary=${primary.homeGoals}-${primary.awayGoals} secondary=${secondaryMatch?.homeGoals ?? '?'}-${secondaryMatch?.awayGoals ?? '?'}`,
                 );
+                if (!config.dryRun && secondaryMatch) {
+                  try {
+                    await recordScoreQuorumMismatch(client, {
+                      canonicalFixtureId: primary.canonicalFixtureId,
+                      leagueCode: league,
+                      primaryHome: primary.homeGoals,
+                      primaryAway: primary.awayGoals,
+                      secondaryHome: secondaryMatch.homeGoals,
+                      secondaryAway: secondaryMatch.awayGoals,
+                      primarySource: THE_ODDS_API_VENDOR,
+                      secondarySource: 'football-data',
+                    });
+                  } catch (persistError) {
+                    const message =
+                      persistError instanceof Error ? persistError.message : String(persistError);
+                    console.warn(
+                      `[sports-settle] quorum_persist_failed ${primary.canonicalFixtureId}: ${message}`,
+                    );
+                  }
+                }
               }
               continue;
             }
@@ -209,13 +237,7 @@ export async function runSettleWorker(config: SettleWorkerConfig): Promise<Settl
             continue;
           }
 
-          const settled = await ingestFinishedScore(
-            client,
-            event,
-            league,
-            mapped,
-            settleReason,
-          );
+          const settled = await ingestFinishedScore(client, event, league, mapped, settleReason);
           if (settled) processed += 1;
         }
       }

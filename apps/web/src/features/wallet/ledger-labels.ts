@@ -24,5 +24,7 @@ const LEDGER_REASON_KEYS: Record<string, MessageKey> = {
 };
 
 export function ledgerReasonLabelKey(reasonCode: string | null | undefined): MessageKey {
-  return reasonCode ? LEDGER_REASON_KEYS[reasonCode] ?? 'ledger.reason.system' : 'ledger.reason.system';
+  return reasonCode
+    ? (LEDGER_REASON_KEYS[reasonCode] ?? 'ledger.reason.system')
+    : 'ledger.reason.system';
 }

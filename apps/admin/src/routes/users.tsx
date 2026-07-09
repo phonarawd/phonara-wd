@@ -1,18 +1,7 @@
-import { createRoute } from '@tanstack/react-router';
-import { adminDeskRoute } from './admin-desk';
-import { AdminLovableSurface } from '../presentation-import/admin/admin-lovable-surface';
-import { ImportedAdminUsersPage } from '../presentation-import/admin/pages/ImportedAdminUsersPage';
+import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createRoute({
-  getParentRoute: () => adminDeskRoute,
-  path: '/users',
-  component: UsersRoute,
+import { AdminUsersPage } from '@/product/surfaces/admin-users-page';
+
+export const Route = createFileRoute('/users')({
+  component: AdminUsersPage,
 });
-
-function UsersRoute() {
-  return (
-    <AdminLovableSurface>
-      <ImportedAdminUsersPage />
-    </AdminLovableSurface>
-  );
-}

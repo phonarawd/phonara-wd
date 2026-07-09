@@ -9,18 +9,21 @@ $globalMcpPath = Join-Path $env:USERPROFILE '.cursor\mcp.json'
 $cursorSettingsPath = Join-Path $repoRoot '.cursor\settings.json'
 $vscodeSupabaseExt = Join-Path $env:USERPROFILE '.vscode\extensions\supabase.vscode-supabase-extension-0.0.13'
 
+function Write-JsonNoBom {
+  param([string]$Path, [object]$Object, [int]$Depth = 2)
+  $json = $Object | ConvertTo-Json -Depth $Depth
+  [System.IO.File]::WriteAllText($Path, $json, [System.Text.UTF8Encoding]::new($false))
+}
+
 Write-Host '=== PHONARA Cursor MCP fix ==='
 
-# 1) argv.json — aggressive GPU off breaks Electron MessagePort / McpProcess IPC on Windows.
-$argv = @{
-  'enable-low-end-device-mode' = $true
-  'max-memory'                 = 4096
-}
-$argv | ConvertTo-Json | Set-Content -Path $argvPath -Encoding UTF8
-Write-Host "[ok] argv.json updated (removed disable-gpu*) -> $argvPath"
+# 1) argv.json — merge PHONARA contract (max-memory + disable-hardware-acceleration); preserve other keys.
+. (Join-Path $PSScriptRoot 'lib\Invoke-PhonaraBun.ps1')
+Invoke-PhonaraBun run cursor:render-fix
+Write-Host "[ok] argv.json merged (render contract) -> $argvPath"
 
 # 2) Global MCP — empty (HTTP OAuth hits MessagePort races on Windows; no duplicate server).
-@{ mcpServers = @{} } | ConvertTo-Json | Set-Content -Path $globalMcpPath -Encoding UTF8
+Write-JsonNoBom -Path $globalMcpPath -Object @{ mcpServers = @{} }
 Write-Host "[ok] global mcp.json cleared -> $globalMcpPath"
 
 # 3) Project MCP — stdio launcher reads PAT from repo .env (no secrets in JSON).
@@ -32,7 +35,7 @@ $projectMcp = @{
     }
   }
 }
-$projectMcp | ConvertTo-Json -Depth 5 | Set-Content -Path $mcpPath -Encoding UTF8
+Write-JsonNoBom -Path $mcpPath -Object $projectMcp -Depth 5
 Write-Host "[ok] project stdio MCP -> $mcpPath"
 
 # 4) Disable Cursor Supabase plugin (HTTP OAuth duplicate; separate from VS Code extension).
@@ -47,7 +50,7 @@ if (Test-Path $cursorSettingsPath) {
     Write-Host '[warn] could not parse existing .cursor/settings.json — writing defaults'
   }
 }
-$cursorSettings | ConvertTo-Json -Depth 5 | Set-Content -Path $cursorSettingsPath -Encoding UTF8
+Write-JsonNoBom -Path $cursorSettingsPath -Object $cursorSettings -Depth 5
 Write-Host "[ok] Cursor Supabase plugin disabled -> $cursorSettingsPath"
 
 # 5) Remove VS Code Supabase extension (Cursor uses project stdio MCP only).

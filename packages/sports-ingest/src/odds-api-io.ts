@@ -1,8 +1,5 @@
 import type { IngestMessage } from '@phonara/sportsbook-engine';
-import {
-  expandEventWithOdds,
-  normalizeVendorEventUpsert,
-} from './normalizer';
+import { expandEventWithOdds, normalizeVendorEventUpsert } from './normalizer';
 import { ODDS_API_IO_VENDOR } from './vendor-chain';
 import { buildMarketsFromIo } from './odds-api-io-shared';
 
@@ -104,7 +101,10 @@ function pickBookmaker(
   preferred?: string,
 ): [string, readonly OddsApiIoMarket[]] | undefined {
   if (preferred) {
-    const names = preferred.split(',').map((s) => s.trim()).filter(Boolean);
+    const names = preferred
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
     for (const name of names) {
       const markets = bookmakers[name];
       if (markets && markets.length > 0) return [name, markets];

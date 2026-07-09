@@ -38,12 +38,13 @@ Removes `dist/`, `test-results/`, `.vite/` caches, Playwright artifacts. See
 
 에이전트/Cursor가 Supabase·Docker를 **자동**으로 준비합니다.
 
-| 명령 | 동작 |
-|------|------|
-| `bun run stack:ensure` | `.env` 생성 · PAT → `supabase login --token` · Management API 검증 |
-| `bun run stack:ensure:full` | 위 + **Docker Desktop 기동** + **`supabase start`** |
-| `bun run stack:supabase:login` | Supabase CLI 로그인만 |
-| `bun run stack:docker` | Docker daemon만 |
+| 명령                           | 동작                                                               |
+| ------------------------------ | ------------------------------------------------------------------ |
+| `bun run stack:push-remote`    | **원격 migration apply 정본** · `test:sql` green 후 · link 불필요  |
+| `bun run stack:ensure`         | `.env` 생성 · PAT → `supabase login --token` · Management API 검증 |
+| `bun run stack:ensure:full`    | 위 + **Docker Desktop 기동** + **`supabase start`**                |
+| `bun run stack:supabase:login` | Supabase CLI 로그인만                                              |
+| `bun run stack:docker`         | Docker daemon만                                                    |
 
 **자동 트리거**
 

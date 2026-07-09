@@ -14,7 +14,11 @@ import {
   type OrchestratorScheduleConfig,
 } from '@phonara/sports-ingest';
 import { loadIngestCursor, ODDS_API_IO_WS_CURSOR } from '../lib/sports-ingest-cursor';
-import { loadIngestHealthLag, recordIngestHealth, syncSportsIngestOpsAlerts } from '../lib/sports-ingest-health';
+import {
+  loadIngestHealthLag,
+  recordIngestHealth,
+  syncSportsIngestOpsAlerts,
+} from '../lib/sports-ingest-health';
 import { readSportsFeatureEnabled } from '../lib/sports-feature-gate';
 import { readIngestEnv, runIngestWorker } from '../sports-odds-ingest/worker';
 import { readSettleEnv, runSettleWorker } from '../sports-settle/worker';
@@ -25,7 +29,9 @@ export interface OrchestratorConfig extends OrchestratorScheduleConfig {
 }
 
 export function readOrchestratorEnv(): OrchestratorConfig {
-  const schedule = parseOrchestratorScheduleFromEnv(process.env as Record<string, string | undefined>);
+  const schedule = parseOrchestratorScheduleFromEnv(
+    process.env as Record<string, string | undefined>,
+  );
   return {
     ...schedule,
     dryRun: process.env['SPORTS_INGEST_DRY_RUN'] !== 'false',
@@ -60,7 +66,9 @@ export class SportsIngestOrchestrator {
     if (this.config.wsEnabled) {
       this.spawnWsChild();
     } else {
-      console.info('[sports-orchestrator] WS disabled (no ODDS_API_IO_KEY or SPORTS_ORCHESTRATOR_WS=false)');
+      console.info(
+        '[sports-orchestrator] WS disabled (no ODDS_API_IO_KEY or SPORTS_ORCHESTRATOR_WS=false)',
+      );
     }
 
     while (!this.stopped) {
@@ -90,7 +98,9 @@ export class SportsIngestOrchestrator {
     if (shouldRunScheduledTick(this.ticks.rest.lastRunAtMs, this.config.restIntervalMs, nowMs)) {
       await this.runRestTick(nowMs);
     }
-    if (shouldRunScheduledTick(this.ticks.settle.lastRunAtMs, this.config.settleIntervalMs, nowMs)) {
+    if (
+      shouldRunScheduledTick(this.ticks.settle.lastRunAtMs, this.config.settleIntervalMs, nowMs)
+    ) {
       await this.runSettleTick(nowMs);
     }
   }
@@ -199,7 +209,9 @@ export class SportsIngestOrchestrator {
     });
 
     this.wsChild.on('exit', (code, signal) => {
-      console.warn(`[sports-orchestrator] WS child exited code=${code ?? 'null'} signal=${signal ?? 'null'}`);
+      console.warn(
+        `[sports-orchestrator] WS child exited code=${code ?? 'null'} signal=${signal ?? 'null'}`,
+      );
       this.wsChild = null;
       if (!this.stopped) {
         this.wsRestartAttempts += 1;
@@ -244,7 +256,9 @@ export class SportsIngestOrchestrator {
     });
 
     if (status === 'stale' || status === 'error') {
-      console.warn(`[sports-orchestrator] WS ${status} lag=${lagMs ?? 'unknown'}ms — restarting child`);
+      console.warn(
+        `[sports-orchestrator] WS ${status} lag=${lagMs ?? 'unknown'}ms — restarting child`,
+      );
       if (this.wsChild && !this.wsChild.killed) {
         this.wsChild.kill('SIGTERM');
       }
@@ -269,7 +283,9 @@ export class SportsIngestOrchestrator {
         settleStaleMs: this.config.settleStaleMs,
       });
       if (result.opened > 0 || result.resolved > 0) {
-        console.info(`[sports-orchestrator] ops alerts opened=${result.opened} resolved=${result.resolved}`);
+        console.info(
+          `[sports-orchestrator] ops alerts opened=${result.opened} resolved=${result.resolved}`,
+        );
       }
     } catch (error) {
       console.error(
@@ -278,7 +294,9 @@ export class SportsIngestOrchestrator {
     }
   }
 
-  private async recordOrchestratorHeartbeat(status: 'healthy' | 'degraded' | 'error'): Promise<void> {
+  private async recordOrchestratorHeartbeat(
+    status: 'healthy' | 'degraded' | 'error',
+  ): Promise<void> {
     await recordIngestHealth({
       channel: 'orchestrator',
       leagueCode: '_all',

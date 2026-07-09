@@ -1,0 +1,46 @@
+/**
+ * §12.19.5 marketing zone — standalone outside AppShell chrome.
+ * No TopBar/BottomNav geometry; safe-area + content column only.
+ */
+
+.ds-marketing-shell {
+  --ds-marketing-shell-max: 64rem;
+}
+
+.ds-marketing-shell-content {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--ds-marketing-shell-max);
+  margin-inline: auto;
+  min-width: 0;
+  animation: marketing-shell-enter var(--ds-motion-surface) ease-out both;
+}
+
+.ds-marketing-shell--landing .ds-marketing-shell-content {
+  max-width: min(var(--ds-marketing-shell-max), var(--ds-content-max));
+}
+
+@keyframes marketing-shell-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-marketing-shell-content {
+    animation: none;
+  }
+}
+
+/* E2E — skip enter fade so Playwright sees login/landing immediately (§28.5). */
+html[data-e2e-engine='1'] .ds-marketing-shell-content {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}

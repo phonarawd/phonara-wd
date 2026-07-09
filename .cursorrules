@@ -1,24 +1,28 @@
 ﻿# PHONARA Cursor Rules
 
-Always read `docs/PHONARA_V2_MASTER_PLAN.md`, `docs/QUALITY_GATES.md`, and for UI work `docs/PHONARA_UI_UX_MASTER.md` before making implementation changes.
+> **Active SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](docs/SSOT/ACTIVE_WORK_SSOT.md)  
+> **Engine:** `[x] FULLY CLOSED` · **Demolition:** `[x] DONE` · **Next:** Phase R (`REBUILD_PLAN_v1` · P1 Foundation)  
+> **Agents:** `AGENTS.md` · `.cursor/rules/00-post-closeout-active-ssot.mdc`
 
-## Non-negotiables
+Before implementation, read **ACTIVE_WORK_SSOT + REBUILD_PLAN_v1** only — not engine evidence reports or v2 SSOT on disk.
 
-- Do not apply Supabase schema/RLS/RPC changes without explicit user approval.
+## Non-negotiables (engine — unchanged)
+
+- Supabase schema/RLS/RPC: local `db reset` → `test:sql` Σ=0 · hash-chain → **`bun run stack:push-remote`** → advisor 0 ERROR (`20-supabase-safety`). Operator 수동 `supabase link`/`db push` 금지.
 - Do not use JavaScript `number` or floating point arithmetic for money, balances, odds, PnL, fees, or exchange rates.
-- Use Decimal-based money utilities from `@phonara/money` once engine implementation begins.
+- Use Decimal-based money utilities from `@phonara/money`.
 - Ledger changes must be append-only, atomic, auditable, and idempotent.
 - User-facing copy must use i18n keys. Korean text belongs in locale files, not JSX.
-- **Operator/work docs** (`docs/**`, handoff, rules): **Korean** so the operator can verify; English for code/RPC/key tokens only — no Chinese/Japanese in work docs (see `61-script-locale-hygiene.mdc`). Product i18n may add `zh`/`ja` locales later in catalog files only.
-- Keep user app and admin app separated: `apps/web` and `apps/admin`.
+- **Operator/work docs** (`docs/**`, handoff, rules): **Korean** — no Chinese/Japanese (`61-script-locale-hygiene.mdc`).
 - Never expose `SUPABASE_SERVICE_ROLE_KEY` to browser code or `VITE_` env vars.
-- **Lovable ZIP 발행 금지 (operator 명시 전):** `dist-phonara-package.zip` · admin ZIP · CHANGELOG ZIP KB · zip dry/real 스크립트 실행 — operator가 **「ZIP 발행」** 등으로 **명시할 때까지** Cursor·Lovable AI·에이전트 모두 **0**. §GREEN은 ZIP 없이 완료 가능. (`92-lovable-lock-execute.mdc` §ZIP 게이트)
-- **게이트·터미널 절대 금지 (non-waivable):** 무거운 gate 병렬/background · hang 후 reset 없이 재시작 · E2E 미안정 시 `check:full` — 정본 `.cursor/rules/80-absolute-gate-prohibitions.mdc` (G1–G12)
-- Normal operations should be automated; humans handle exceptions through Admin.
+- **게이트·터미널 절대 금지 (non-waivable):** 무거운 gate 병렬/background · hang 후 reset 없이 재시작 · E2E 미안정 시 `check:full` — `80-absolute-gate-prohibitions.mdc` (G1–G12)
+- **저사양 heavy gate:** SQL · E2E · check:full = **GitHub CI authoritative** — **에이전트 로컬 실행 금지** (hook `agent-heavy-gate-deny`) · [`docs/SSOT/CI_GATE_AUTHORITY.md`](docs/SSOT/CI_GATE_AUTHORITY.md) · push 후 `bun run ci:status`
+- **중복 생성 금지:** 착수 전 Grep/Glob/git status — Phase D는 **삭제만** · 신규 UI/route/surface 금지.
 
-## Current Focus
+## Current Focus (Phase R prep)
 
-1. Preserve completed engine, ledger, Supabase, and domain behavior.
-2. Build UI/UX through shared `@phonara/ui` components, app shells, and route presentation.
-3. Keep copy i18n-keyed and validate release cleanliness.
-4. Run relevant UI, type, i18n, release, and E2E gates before calling work complete.
+1. **엔진·Demolition 재착수 금지** — evidence `.md` · batch 표는 이력만.
+2. Phase R: [`REBUILD_PLAN_v1.md`](docs/PRODUCT/REBUILD_PLAN_v1.md) — P1 Foundation → P2 Admin-first Track A.
+3. Preflight: `git status` · `check:ai-reference` · 중복 surface/route 금지.
+4. Engine regression only: `bun run test:engine` · DB touch 시 **CI sql job** green + `stack:push-remote` (에이전트 로컬 `test:sql` 금지).
+5. Closeout: `82-work-doc-closeout-sync` — Phase R plan 승인 후.

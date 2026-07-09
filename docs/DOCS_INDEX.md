@@ -1,71 +1,98 @@
-# PHONARA · 문서 인덱스 (paste / engine)
+# PHONARA Docs Index (v5.4 · Post Engine Apex)
 
-> **갱신:** 2026-06-18 · `docs/` 루트 **슬림화** — 완료 LOCK·구 handoff는 [`archive/`](archive/MANIFEST.json)  
-> **Lovable 상세 인덱스:** [`LOVABLE_ZENITH_INDEX.md`](LOVABLE_ZENITH_INDEX.md)
+> **Active execution:** [`SSOT/ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md) only  
+> **Frozen / denylist:** [`SSOT/DEPRECATED_DOC_DENYLIST.md`](SSOT/DEPRECATED_DOC_DENYLIST.md)
 
----
+## Active (AI implementation read)
 
-## 1. 지금 (paste 직전)
+| Doc                                                        | Role                                     |
+| ---------------------------------------------------------- | ---------------------------------------- |
+| [`SSOT/ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)     | **유일한 실행 큐 정본**                  |
+| [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) | Phase R 실행 정본                        |
+| [`ENGINE_APEX_CLOSEOUT.md`](ENGINE_APEX_CLOSEOUT.md)       | Engine status · gates only (재착수 금지) |
+| [`CURRENT_STATUS.md`](CURRENT_STATUS.md)                   | 한 페이지 상태 stub                      |
 
-| 문서 | 용도 |
-|------|------|
-| [`PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md`](PHONARA_SEQUENTIAL_EXECUTION_CONTRACT.md) | 큐 head · L1→L2→L3 |
-| [`PHONARA_LOVABLE_ZIP_INTAKE_READY.md`](PHONARA_LOVABLE_ZIP_INTAKE_READY.md) | Lovable ZIP → intake → paste GO |
-| [`../apps/web/PRESENTATION_IMPORT.md`](../apps/web/PRESENTATION_IMPORT.md) | paste map · adapter |
-| [`PHONARA_CURSOR_PASTE_CRUSH_LOCK.md`](PHONARA_CURSOR_PASTE_CRUSH_LOCK.md) | Crush P0–P7 |
-| [`PHONARA_CURSOR_PASTE_CRUSH_P2_0_PASTE_MAP.md`](PHONARA_CURSOR_PASTE_CRUSH_P2_0_PASTE_MAP.md) | 게임 allowlist |
-| [`PHONARA_CURSOR_PASTE_CRUSH_P2_LOCK.md`](PHONARA_CURSOR_PASTE_CRUSH_P2_LOCK.md) | Trade paste |
-| [`PHONARA_LOVABLE_P2_GAMES_HANDOFF.md`](PHONARA_LOVABLE_P2_GAMES_HANDOFF.md) | canvas vitest/i18n 스냅샷 |
-| [`PHONARA_NEW_CHAT_HANDOFF_GAMES_POLISH_2026-06-18.md`](PHONARA_NEW_CHAT_HANDOFF_GAMES_POLISH_2026-06-18.md) | 최신 handoff |
+## Phase D · Demolition (DONE — history)
 
----
+| Doc                                                                                | Role                                    |
+| ---------------------------------------------------------------------------------- | --------------------------------------- |
+| [`PRODUCT/DEMOLITION_PLAN.md`](PRODUCT/DEMOLITION_PLAN.md)                         | 완료 이력 · batch 증거 (재실행 큐 아님) |
+| [`PRODUCT/ADR/000-v5-demolition-first.md`](PRODUCT/ADR/000-v5-demolition-first.md) | Demolition ADR                          |
 
-## 2. Lovable dispatch
+> `PRE_DEMOLITION_INVENTORY.md` · `DEMOLITION_CLOSEOUT_PLAN.md`는 2026-07-04 삭제 — git history (tag `ui-v3-final-backup`)
 
-| 문서 | 용도 |
-|------|------|
-| [`LOVABLE_AI_MASTER_PROMPT.md`](LOVABLE_AI_MASTER_PROMPT.md) | Lovable mandate |
-| [`LOVABLE_OPERATOR_PROMPT_DISPATCH.md`](LOVABLE_OPERATOR_PROMPT_DISPATCH.md) | 프롬프트 조립 규칙 |
-| [`LOVABLE_VISUAL_REFERENCE_LINKS.md`](LOVABLE_VISUAL_REFERENCE_LINKS.md) | Tier A 참고 링크 |
-| [`LOVABLE_ABSORPTION_PLAN_FINAL.md`](LOVABLE_ABSORPTION_PLAN_FINAL.md) | 흡수 계약 |
-| [`LOVABLE_ZENITH_PHASE12_E_LOCK.md`](LOVABLE_ZENITH_PHASE12_E_LOCK.md) | 12-E Partner 정본 |
+## Engine · Gates · Ops (boundary / operator)
 
----
+| Doc                                                                                          | Role                     |
+| -------------------------------------------------------------------------------------------- | ------------------------ |
+| [`QUALITY_GATES.md`](QUALITY_GATES.md)                                                       | Quality gate ladder      |
+| [`SSOT/OPERATOR_GATES.md`](SSOT/OPERATOR_GATES.md)                                           | Operator gate entrypoint |
+| [`SSOT/ENGINE_BOUNDARY.md`](SSOT/ENGINE_BOUNDARY.md)                                         | Engine vs presentation   |
+| [`SSOT/PAYMENT_ARCHITECTURE_CANON.md`](SSOT/PAYMENT_ARCHITECTURE_CANON.md)                   | Payment rails canon      |
+| [`SSOT/CURSOR_AUTOPILOT.md`](SSOT/CURSOR_AUTOPILOT.md)                                       | Cursor setup             |
+| [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md)                                               | Dev environment          |
+| [`RUNBOOK.md`](RUNBOOK.md)                                                                   | Operations               |
+| [`OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md) | Pre-launch (operator)    |
 
-## 3. 엔진 (NO-TOUCH 경계)
+## Audit reports (PQA §33 · read-only)
 
-| 문서 | 용도 |
-|------|------|
-| [`PHONARA_V2_MASTER_PLAN.md`](PHONARA_V2_MASTER_PLAN.md) | 제품 정본 |
-| [`ENGINE_100_HANDOFF.md`](ENGINE_100_HANDOFF.md) | 엔진 handoff |
-| [`GAMES-INTEGRATION.md`](GAMES-INTEGRATION.md) | 카지노 게임 wire |
-| [`PHONARA_DEEPSHAFT_MOMENTUM_ENGINE_DELIVERABLE.md`](PHONARA_DEEPSHAFT_MOMENTUM_ENGINE_DELIVERABLE.md) | 신규 게임 엔진 |
-| [`PHONARA_SPORTSBOOK_MASTER_PLAN.md`](PHONARA_SPORTSBOOK_MASTER_PLAN.md) | 스포츠북 마스터 |
-| [`PHONARA_SPORTSBOOK_ENGINE_STANDARD.md`](PHONARA_SPORTSBOOK_ENGINE_STANDARD.md) | 엔진 표준 |
-| [`PHONARA_SPORTSBOOK_ENGINE_TIER_STRATEGY.md`](PHONARA_SPORTSBOOK_ENGINE_TIER_STRATEGY.md) | tier 전략 |
-| [`PHONARA_ENGINE_WAVE_S_SPORTSBOOK_PLAN.md`](PHONARA_ENGINE_WAVE_S_SPORTSBOOK_PLAN.md) | Wave S 개요 |
-| [`PHONARA_ENGINE_WAVE_S1_SPORTSBOOK_LOCK.md`](PHONARA_ENGINE_WAVE_S1_SPORTSBOOK_LOCK.md) … S5 | Wave S LOCK |
-| [`PHONARA_ENGINE_WORLD_CRUSH_GAP_ROADMAP.md`](PHONARA_ENGINE_WORLD_CRUSH_GAP_ROADMAP.md) | UI vs 엔진 갭 |
-| [`CURSOR_ENGINE_MASTER_PROMPT.md`](CURSOR_ENGINE_MASTER_PROMPT.md) | L3 Engine mandate |
+| Doc                                                                                                              | Role                             |
+| ---------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| [`audit/PLATFORM_AUDIT_A_DB_GUARDS_2026-07-08.md`](audit/PLATFORM_AUDIT_A_DB_GUARDS_2026-07-08.md)               | Section A — guard/GRANT          |
+| [`audit/PLATFORM_AUDIT_B_RPC_CONTRACT_2026-07-08.md`](audit/PLATFORM_AUDIT_B_RPC_CONTRACT_2026-07-08.md)         | Section B — RPC/error/realtime   |
+| [`audit/PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md`](audit/PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md) | Section C — surface/dead control |
+| [`audit/PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md`](audit/PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md)         | Section D — app_config/ops       |
+| [`audit/PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md`](audit/PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md)   | **Section E — P0–P3 결함 대장**  |
 
----
+재현: `bun run audit:pqa-c` · `bun run audit:pqa-d` · `bun run check:engine-foundation-parity`
 
-## 4. 운영 · 게이트
+## Product OS (Landing CVR pass · Phase 0 동결)
 
-| 문서 | 용도 |
-|------|------|
-| [`QUALITY_GATES.md`](QUALITY_GATES.md) | check 체인 |
-| [`CURRENT_STATUS.md`](CURRENT_STATUS.md) | 스냅샷 |
-| [`RUNBOOK.md`](RUNBOOK.md) | 운영 |
-| [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md) | 로컬 셋업 · **stack:ensure** |
-| [`SUPABASE_ACCESS_MATRIX.md`](SUPABASE_ACCESS_MATRIX.md) | RLS/RPC |
-| [`THREAT_MODEL.md`](THREAT_MODEL.md) | 보안 |
+| Doc                                                                                                | Role                                             |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [`PRODUCT/PRODUCT_OPERATING_SYSTEM.md`](PRODUCT/PRODUCT_OPERATING_SYSTEM.md)                       | Product OS 루트 · doc freeze · 구현 우선순위     |
+| [`PRODUCT/LANDING_PRODUCT_SPEC.md`](PRODUCT/LANDING_PRODUCT_SPEC.md)                               | CVR-first fold IA · 컴포넌트 매핑                |
+| [`PRODUCT/DESIGN_CHARTER.md`](PRODUCT/DESIGN_CHARTER.md)                                           | Voice · Motion · timeless tokens                 |
+| [`PRODUCT/SUCCESS_METRICS.md`](PRODUCT/SUCCESS_METRICS.md)                                         | North Star · landing funnel events               |
+| [`PRODUCT/SCOPE_TRACK3_DECISION.md`](PRODUCT/SCOPE_TRACK3_DECISION.md)                             | Track 3 스코프 (3a/3c 활성) · operator 서명 대기 |
+| [`PRODUCT/ADR/003-landing-timeless-conversion.md`](PRODUCT/ADR/003-landing-timeless-conversion.md) | CVR pass 구현 ADR                                |
 
----
+## ADR
 
-## 5. archive
+| Doc                                                                                                                   |
+| --------------------------------------------------------------------------------------------------------------------- |
+| [`ADR/0002-engine-freeze.md`](ADR/0002-engine-freeze.md) — **Accepted** (Engine Apex closed)                          |
+| [`PRODUCT/ADR/001-pg-less-funding-rails.md`](PRODUCT/ADR/001-pg-less-funding-rails.md)                                |
+| [`PRODUCT/ADR/002-crypto-custody-signing.md`](PRODUCT/ADR/002-crypto-custody-signing.md)                              |
+| [`PRODUCT/ADR/003-landing-timeless-conversion.md`](PRODUCT/ADR/003-landing-timeless-conversion.md) — Landing CVR pass |
+| [`PRODUCT/ADR/ENGINE_GAP_ADR.md`](PRODUCT/ADR/ENGINE_GAP_ADR.md) — Track B E0–E10 gap index (draft · E0 승인 대기)    |
+| [`ADR/0001-quality-gates.md`](ADR/0001-quality-gates.md) … [`0006`](ADR/0006-wallet-sigma-rule.md)                    |
 
-완료 §GREEN LOCK · 구 handoff · audit · superseded plan → **`docs/archive/`**  
-이동 목록: [`archive/MANIFEST.json`](archive/MANIFEST.json)
+## Rebuild runbooks (gates · low-spec)
 
-**규칙:** EXECUTE는 **docs/ 루트 정본만** — archive LOCK으로 GO **금지** (이미 §GREEN된 audit용).
+| Doc                                                                  |
+| -------------------------------------------------------------------- |
+| [`rebuild/LOWSPEC_RULES.md`](rebuild/LOWSPEC_RULES.md)               |
+| [`rebuild/E2E-LOWSPEC-RUNBOOK.md`](rebuild/E2E-LOWSPEC-RUNBOOK.md)   |
+| [`rebuild/PHASE-D-GATE-RUNBOOK.md`](rebuild/PHASE-D-GATE-RUNBOOK.md) |
+| [`rebuild/PHASE-R-GATE-RUNBOOK.md`](rebuild/PHASE-R-GATE-RUNBOOK.md) |
+
+> `rebuild/NEXT_STEP.md` · `RELEASE_ROADMAP.md` — 2026-07-04 삭제된 문서 (deleted · git history) · 실행 큐 = [`SSOT/ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
+
+## UX canon (Phase R intent — Plan 승인 전 구현 큐 아님)
+
+`SSOT/*_UX_CANON.md` · `UX_REFERENCE_CANON.md` · `SURFACE_BLUEPRINTS.md` · `PRODUCT_PRINCIPLES.md` · `COPYWRITING_CANON.md` · `DESIGN_PRINCIPLES.md` · `I18N_FIRST.md`
+
+## Platform canon (§32 · Track A narrative · engine 0)
+
+| Doc                                                                    | Role                                    |
+| ---------------------------------------------------------------------- | --------------------------------------- |
+| [`SSOT/GLOBAL_EXPANSION.md`](SSOT/GLOBAL_EXPANSION.md)                 | Locale · currency · region slots        |
+| [`SSOT/ONBOARDING_JOURNEY_CANON.md`](SSOT/ONBOARDING_JOURNEY_CANON.md) | First 7-day journey §13.11              |
+| [`SSOT/PLATFORM_NARRATIVE_CANON.md`](SSOT/PLATFORM_NARRATIVE_CANON.md) | Positioning · pillars · trust narrative |
+
+**코드 계약:** `apps/web/src/domain/platform-narrative-display-contract.ts` · `onboarding-journey-display-contract.ts` · `operator-trust-pages-display-contract.ts`
+
+## Frozen evidence (2026-07-04 워킹트리 삭제 — git history only)
+
+`ENGINE_PHASE*_EVIDENCE_REPORT.md` · `ENGINE_POST_APEX_*` · `ENGINE_FORENSIC_*` · `ENGINE_STATE_AUDIT_*` · `ENGINE_FINAL_FUNDING_PLAN_CLOSEOUT.md` — **워킹트리에서 삭제됨** · 원문 = git history · 수치 정본 = [`ENGINE_APEX_CLOSEOUT.md`](ENGINE_APEX_CLOSEOUT.md) (denylist 유지)

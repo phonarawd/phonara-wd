@@ -1,11 +1,12 @@
 import { supabase } from './supabase';
+import { authCallbackRedirect } from './auth-redirect';
 import type { Session } from '@supabase/supabase-js';
 
 export async function sendMagicLink(email: string): Promise<{ error: string | null }> {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${window.location.origin}/home`,
+      emailRedirectTo: authCallbackRedirect('/home'),
     },
   });
   return { error: error?.message ?? null };
@@ -20,23 +21,31 @@ export async function getSession() {
   return data.session;
 }
 
+/** Fail-open session probe for route guards — mirrors AuthProvider bootstrap timeout. */
+export async function getSessionWithTimeout(timeoutMs = 10_000): Promise<Session | null> {
+  return Promise.race([
+    getSession(),
+    new Promise<null>((resolve) => {
+      window.setTimeout(() => resolve(null), timeoutMs);
+    }),
+  ]);
+}
+
 // ─── Email + password auth ──────────────────────────────────────────────────
 // Password auth is the primary path (familiar for all users); Magic Link above
 // stays as the secondary passwordless option. All helpers below return a typed
 // AuthResult so routes never render raw provider error strings — they map a
 // stable `code` to an i18n message instead.
 
-export type AuthStatus =
-  | 'verify_email'
-  | 'magic_link_sent'
-  | 'reset_sent'
-  | 'password_updated';
+export type AuthStatus = 'verify_email' | 'magic_link_sent' | 'reset_sent' | 'password_updated';
 
 export type AuthErrorCode =
   | 'invalidCredentials'
   | 'emailInvalid'
+  | 'emailAlreadyRegistered'
   | 'emailNotConfirmed'
   | 'passwordTooShort'
+  | 'passwordWeak'
   | 'rateLimited'
   | 'network'
   | 'generic';
@@ -82,8 +91,35 @@ function mapSupabaseError(error: unknown): AuthErrorCode {
   if (lower.includes('email') && (lower.includes('invalid') || lower.includes('valid'))) {
     return 'emailInvalid';
   }
+  if (
+    code === 'user_already_exists' ||
+    code === 'email_exists' ||
+    lower.includes('already registered') ||
+    lower.includes('user already registered')
+  ) {
+    return 'emailAlreadyRegistered';
+  }
+  if (
+    code === 'weak_password' ||
+    lower.includes('weak_password') ||
+    (lower.includes('password') &&
+      lower.includes('character of each') &&
+      lower.includes('abcdefghijklmnopqrstuvwxyz'))
+  ) {
+    return 'passwordWeak';
+  }
   if (lower.includes('password') && (lower.includes('short') || lower.includes('6 characters'))) {
     return 'passwordTooShort';
+  }
+  if (
+    code === 'anonymous_provider_disabled' ||
+    code === 'signup_disabled' ||
+    lower.includes('signup is disabled')
+  ) {
+    return 'generic';
+  }
+  if (code === 'validation_failed' || lower.includes('unable to validate email')) {
+    return 'emailInvalid';
   }
   if (lower.includes('network') || lower.includes('fetch') || lower.includes('failed to fetch')) {
     return 'network';
@@ -91,12 +127,22 @@ function mapSupabaseError(error: unknown): AuthErrorCode {
   return 'generic';
 }
 
-function dashboardRedirect(): string | undefined {
-  return typeof window !== 'undefined' ? `${window.location.origin}/home` : undefined;
+function resetRedirect(): string | undefined {
+  return authCallbackRedirect('/reset-password');
 }
 
-function resetRedirect(): string | undefined {
-  return typeof window !== 'undefined' ? `${window.location.origin}/reset-password` : undefined;
+export async function resendSignupVerification(email: string): Promise<AuthResult> {
+  try {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email.trim(),
+      options: { emailRedirectTo: authCallbackRedirect('/home') },
+    });
+    if (error) return { ok: false, code: mapSupabaseError(error) };
+    return { ok: true, status: 'verify_email' };
+  } catch (error) {
+    return { ok: false, code: mapSupabaseError(error) };
+  }
 }
 
 export async function signInWithPassword(email: string, password: string): Promise<AuthResult> {
@@ -114,7 +160,7 @@ export async function signUpWithPassword(email: string, password: string): Promi
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: dashboardRedirect() },
+      options: { emailRedirectTo: authCallbackRedirect('/home') },
     });
     if (error) return { ok: false, code: mapSupabaseError(error) };
     // When email confirmation is required Supabase returns no session — show the
@@ -134,6 +180,16 @@ export async function sendPasswordReset(email: string): Promise<AuthResult> {
     });
     if (error) return { ok: false, code: mapSupabaseError(error) };
     return { ok: true, status: 'reset_sent' };
+  } catch (error) {
+    return { ok: false, code: mapSupabaseError(error) };
+  }
+}
+
+export async function signInWithPasskey(): Promise<AuthResult> {
+  try {
+    const { data, error } = await supabase.auth.signInWithPasskey();
+    if (error) return { ok: false, code: mapSupabaseError(error) };
+    return data.session ? { ok: true, session: data.session } : { ok: false, code: 'generic' };
   } catch (error) {
     return { ok: false, code: mapSupabaseError(error) };
   }

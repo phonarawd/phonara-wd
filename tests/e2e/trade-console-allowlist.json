@@ -1,0 +1,7 @@
+{
+  "_governance": {
+    "maxEntries": 5,
+    "p4Review": "P4 closeout: delete expired or unused warn entries — unbounded growth forbidden"
+  },
+  "warn": []
+}

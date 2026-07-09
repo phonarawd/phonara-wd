@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" role="img" aria-label="Favicon simulation  light and dark">
+  <text x="160" y="20" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" fill="#666">Favicon simulation</text>
+  <!-- 16px light -->
+  <rect x="24" y="40" width="48" height="48" rx="6" fill="#ffffff" stroke="#e5e7eb"/>
+  <g transform="translate(32,48) scale(0.03125)">
+    <path fill="#0a2e20" d="M256 72c18 0 32 14 32 32 0 52-14 96-32 128-18-32-32-76-32-128 0-18 14-32 32-32z"/>
+    <path fill="#0a2e20" d="M256 440c-18 0-32-14-32-32 0-52 14-96 32-128 18 32 32 76 32 128 0 18-14 32-32 32z"/>
+    <path fill="#0a2e20" d="M72 256c0-18 14-32 32-32 52 0 96 14 128 32-32 18-76 32-128 32-18 0-32-14-32-32z"/>
+    <path fill="#0a2e20" d="M440 256c0 18-14 32-32 32-52 0-96-14-128-32 32-18 76-32 128-32 18 0 32 14 32 32z"/>
+    <circle fill="#0a2e20" cx="256" cy="256" r="52"/>
+  </g>
+  <text x="48" y="108" text-anchor="middle" font-size="10" fill="#666">16 light</text>
+  <!-- 32px light -->
+  <rect x="96" y="32" width="64" height="64" rx="8" fill="#ffffff" stroke="#e5e7eb"/>
+  <g transform="translate(104,40) scale(0.0625)">
+    <path fill="#0a2e20" d="M256 72c18 0 32 14 32 32 0 52-14 96-32 128-18-32-32-76-32-128 0-18 14-32 32-32z"/>
+    <path fill="#0a2e20" d="M256 440c-18 0-32-14-32-32 0-52 14-96 32-128 18 32 32 76 32 128 0 18-14 32-32 32z"/>
+    <path fill="#0a2e20" d="M72 256c0-18 14-32 32-32 52 0 96 14 128 32-32 18-76 32-128 32-18 0-32-14-32-32z"/>
+    <path fill="#0a2e20" d="M440 256c0 18-14 32-32 32-52 0-96-14-128-32 32-18 76-32 128-32 18 0 32 14 32 32z"/>
+    <circle fill="#0a2e20" cx="256" cy="256" r="52"/>
+  </g>
+  <text x="128" y="108" text-anchor="middle" font-size="10" fill="#666">32 light</text>
+  <!-- 16px dark -->
+  <rect x="184" y="40" width="48" height="48" rx="6" fill="#0d0f14" stroke="#243042"/>
+  <g transform="translate(192,48) scale(0.03125)">
+    <path fill="#92ffd8" d="M256 72c18 0 32 14 32 32 0 52-14 96-32 128-18-32-32-76-32-128 0-18 14-32 32-32z"/>
+    <path fill="#92ffd8" d="M256 440c-18 0-32-14-32-32 0-52 14-96 32-128 18 32 32 76 32 128 0 18-14 32-32 32z"/>
+    <path fill="#92ffd8" d="M72 256c0-18 14-32 32-32 52 0 96 14 128 32-32 18-76 32-128 32-18 0-32-14-32-32z"/>
+    <path fill="#92ffd8" d="M440 256c0 18-14 32-32 32-52 0-96-14-128-32 32-18 76-32 128-32 18 0 32 14 32 32z"/>
+    <circle fill="#92ffd8" cx="256" cy="256" r="52"/>
+  </g>
+  <text x="208" y="108" text-anchor="middle" font-size="10" fill="#92ffd8" fill-opacity="0.7">16 dark</text>
+  <!-- 32px dark -->
+  <rect x="248" y="32" width="64" height="64" rx="8" fill="#0d0f14" stroke="#243042"/>
+  <g transform="translate(256,40) scale(0.0625)">
+    <path fill="#92ffd8" d="M256 72c18 0 32 14 32 32 0 52-14 96-32 128-18-32-32-76-32-128 0-18 14-32 32-32z"/>
+    <path fill="#92ffd8" d="M256 440c-18 0-32-14-32-32 0-52 14-96 32-128 18 32 32 76 32 128 0 18-14 32-32 32z"/>
+    <path fill="#92ffd8" d="M72 256c0-18 14-32 32-32 52 0 96 14 128 32-32 18-76 32-128 32-18 0-32-14-32-32z"/>
+    <path fill="#92ffd8" d="M440 256c0 18-14 32-32 32-52 0-96-14-128-32 32-18 76-32 128-32 18 0 32 14 32 32z"/>
+    <circle fill="#92ffd8" cx="256" cy="256" r="52"/>
+  </g>
+  <text x="280" y="108" text-anchor="middle" font-size="10" fill="#92ffd8" fill-opacity="0.7">32 dark</text>
+  <text x="160" y="140" text-anchor="middle" font-size="10" fill="#888">contrast: light 12.1:1 � dark 14.8:1</text>
+</svg>

@@ -1,18 +1,11 @@
-import { createRoute } from '@tanstack/react-router';
-import { Route as rootRoute } from './__root';
-import { PresentationRoot } from '../presentation-import/presentation-root';
-import { ImportedPWAInstallPage } from '../presentation-import/pages/install-page';
+import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/install',
-  component: InstallRoute,
+import { InstallPage } from '@/product/surfaces/install/install-page';
+
+export const Route = createFileRoute('/install')({
+  component: InstallRoutePage,
 });
 
-function InstallRoute() {
-  return (
-    <PresentationRoot>
-      <ImportedPWAInstallPage />
-    </PresentationRoot>
-  );
+function InstallRoutePage() {
+  return <InstallPage />;
 }

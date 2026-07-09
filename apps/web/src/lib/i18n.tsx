@@ -1,8 +1,3 @@
-import { createI18n, type I18nContextValue, type TranslateFn } from '@phonara/i18n/react';
-
-const i18n = createI18n({ storageKey: 'phonara.locale' });
-
-export const I18nProvider = i18n.I18nProvider;
-export const useI18n = i18n.useI18n;
-export const useT = i18n.useT;
-export type { I18nContextValue, TranslateFn };
+/** @deprecated Import from `@/product/i18n` — kept for engine glue hooks during Phase R. */
+export { I18nProvider, useI18n, useT } from '@/product/i18n';
+export type { I18nContextValue, TranslateFn } from '@/product/i18n';

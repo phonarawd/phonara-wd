@@ -43,7 +43,11 @@ export interface FetchFootballDataFinishedResult {
   readonly scores: readonly FootballDataFinishedScore[];
 }
 
-function parseFinishedScore(match: FootballDataMatch, leagueCode: string, competitionCode: string): FootballDataFinishedScore | null {
+function parseFinishedScore(
+  match: FootballDataMatch,
+  leagueCode: string,
+  competitionCode: string,
+): FootballDataFinishedScore | null {
   if (match.status !== 'FINISHED') return null;
   const homeGoals = match.score?.fullTime?.home;
   const awayGoals = match.score?.fullTime?.away;

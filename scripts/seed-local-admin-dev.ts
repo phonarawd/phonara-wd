@@ -26,14 +26,19 @@ export interface LocalAdminCredentials {
   createdAt: string;
 }
 
-async function waitForProfileAndWallet(
-  admin: SupabaseClient,
-  userId: string,
-): Promise<void> {
+async function waitForProfileAndWallet(admin: SupabaseClient, userId: string): Promise<void> {
   const deadline = Date.now() + 15_000;
   while (Date.now() < deadline) {
-    const { data: profile } = await admin.from('profiles').select('id').eq('id', userId).maybeSingle();
-    const { data: wallet } = await admin.from('wallets').select('user_id').eq('user_id', userId).maybeSingle();
+    const { data: profile } = await admin
+      .from('profiles')
+      .select('id')
+      .eq('id', userId)
+      .maybeSingle();
+    const { data: wallet } = await admin
+      .from('wallets')
+      .select('user_id')
+      .eq('user_id', userId)
+      .maybeSingle();
     if (profile && wallet) return;
     await new Promise((r) => setTimeout(r, 200));
   }
@@ -86,7 +91,10 @@ async function provisionAdmin(
 
   await waitForProfileAndWallet(admin, userId);
 
-  const { error: roleErr } = await admin.from('profiles').update({ role: 'admin' }).eq('id', userId);
+  const { error: roleErr } = await admin
+    .from('profiles')
+    .update({ role: 'admin' })
+    .eq('id', userId);
   if (roleErr) throw new Error(`promote admin failed: ${roleErr.message}`);
 
   const { data: signIn, error: sErr } = await pub.auth.signInWithPassword({
@@ -160,7 +168,11 @@ async function main(): Promise<void> {
   ensureLocalSupabaseStarted({ quiet: false });
 
   const localEnv = readLocalSupabaseEnv();
-  if (!localEnv?.VITE_SUPABASE_URL || !localEnv.VITE_SUPABASE_ANON_KEY || !localEnv.SUPABASE_SERVICE_ROLE_KEY) {
+  if (
+    !localEnv?.VITE_SUPABASE_URL ||
+    !localEnv.VITE_SUPABASE_ANON_KEY ||
+    !localEnv.SUPABASE_SERVICE_ROLE_KEY
+  ) {
     throw new Error('Local Supabase env unavailable — run `bun run stack:ensure -- --full`');
   }
 
@@ -181,13 +193,21 @@ async function main(): Promise<void> {
   if (existingId && existsSync(CREDENTIALS_FILE)) {
     creds = JSON.parse(readFileSync(CREDENTIALS_FILE, 'utf8')) as LocalAdminCredentials;
     if (creds.userId !== existingId || creds.email !== DEV_ADMIN_EMAIL) {
-      creds = await provisionAdmin(url, localEnv.VITE_SUPABASE_ANON_KEY, localEnv.SUPABASE_SERVICE_ROLE_KEY);
+      creds = await provisionAdmin(
+        url,
+        localEnv.VITE_SUPABASE_ANON_KEY,
+        localEnv.SUPABASE_SERVICE_ROLE_KEY,
+      );
     } else {
       process.stdout.write('[seed:local-admin] existing dev admin — credentials reused\n');
     }
   } else {
     process.stdout.write('[seed:local-admin] provisioning dev admin…\n');
-    creds = await provisionAdmin(url, localEnv.VITE_SUPABASE_ANON_KEY, localEnv.SUPABASE_SERVICE_ROLE_KEY);
+    creds = await provisionAdmin(
+      url,
+      localEnv.VITE_SUPABASE_ANON_KEY,
+      localEnv.SUPABASE_SERVICE_ROLE_KEY,
+    );
   }
 
   writeFileSync(CREDENTIALS_FILE, JSON.stringify(creds, null, 2));

@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process';
+import { spawnSafe } from './lib/spawn-safe';
 
 const app = process.argv[2];
 const port = process.argv[3];
@@ -8,18 +8,9 @@ if (app !== 'web' || !port) {
   process.exit(1);
 }
 
-function toCommand(parts: string[]): string {
-  return parts
-    .map((part) => (part.includes(' ') || part.includes('*') ? `"${part.replaceAll('"', '\\"')}"` : part))
-    .join(' ');
-}
-
 function runBun(args: string[]): Promise<void> {
   return new Promise((resolve, reject) => {
-    const child = spawn(toCommand(['bun', ...args]), {
-      stdio: 'inherit',
-      shell: true,
-    });
+    const child = spawnSafe('bun', args, { stdio: 'inherit' });
 
     child.once('exit', (code) => {
       if (code === 0) resolve();
@@ -32,9 +23,9 @@ function runBun(args: string[]): Promise<void> {
 await runBun(['run', 'build:packages']);
 await runBun(['--filter', '@phonara/web', 'build']);
 
-const server = spawn(
-  toCommand([
-    'bun',
+const server = spawnSafe(
+  'bun',
+  [
     '--filter',
     '@phonara/web',
     'preview',
@@ -44,11 +35,8 @@ const server = spawn(
     '--port',
     port,
     '--strictPort',
-  ]),
-  {
-    stdio: 'inherit',
-    shell: true,
-  },
+  ],
+  { stdio: 'inherit' },
 );
 
 const stop = (): void => {

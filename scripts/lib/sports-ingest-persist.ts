@@ -4,7 +4,7 @@ import { readLocalSupabaseEnv } from './db-connect';
 
 function resolveServiceClient(): SupabaseClient {
   const local = readLocalSupabaseEnv();
-  const url = process.env['SUPABASE_URL'] ?? local?.VITE_SUPABASE_URL ?? 'http://127.0.0.1:54444';
+  const url = process.env['SUPABASE_URL'] ?? local?.VITE_SUPABASE_URL ?? 'http://127.0.0.1:54321';
   const key =
     process.env['SUPABASE_SERVICE_ROLE_KEY'] ??
     local?.SUPABASE_SERVICE_ROLE_KEY ??

@@ -179,8 +179,7 @@ export function isGuardedByCalleeOrSelf(
       const helperDef = resolveCalleeDef(helper, ctx);
       if (!helperDef) return false;
       return (
-        hasSystemLiveGuard(helperDef) ||
-        isGuardedByCalleeOrSelf(helperDef, helper, ctx, depth + 1)
+        hasSystemLiveGuard(helperDef) || isGuardedByCalleeOrSelf(helperDef, helper, ctx, depth + 1)
       );
     });
   }
@@ -191,8 +190,7 @@ export function isGuardedByCalleeOrSelf(
       const defs = ctx.rpcByName.get(callee) ?? [];
       if (!defs.length) return false;
       return defs.some(
-        (cdef) =>
-          hasSystemLiveGuard(cdef) || isGuardedByCalleeOrSelf(cdef, callee, ctx, depth + 1),
+        (cdef) => hasSystemLiveGuard(cdef) || isGuardedByCalleeOrSelf(cdef, callee, ctx, depth + 1),
       );
     });
   }

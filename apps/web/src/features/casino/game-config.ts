@@ -14,7 +14,14 @@ export const GAME_CONFIGS: GameConfig[] = [
     descriptionKey: 'casino.game.crash.desc',
     defaultStake: '10',
     defaultSelection: { autoCashout: '2.00' },
-    fields: [{ kind: 'text', key: 'autoCashout', labelKey: 'casino.field.autoCashout', inputMode: 'decimal' }],
+    fields: [
+      {
+        kind: 'text',
+        key: 'autoCashout',
+        labelKey: 'casino.field.autoCashout',
+        inputMode: 'decimal',
+      },
+    ],
   },
   {
     code: 'limbo',
@@ -22,7 +29,14 @@ export const GAME_CONFIGS: GameConfig[] = [
     descriptionKey: 'casino.game.limbo.desc',
     defaultStake: '10',
     defaultSelection: { target: '2.00' },
-    fields: [{ kind: 'text', key: 'target', labelKey: 'casino.field.targetMultiplier', inputMode: 'decimal' }],
+    fields: [
+      {
+        kind: 'text',
+        key: 'target',
+        labelKey: 'casino.field.targetMultiplier',
+        inputMode: 'decimal',
+      },
+    ],
   },
   {
     code: 'dice',

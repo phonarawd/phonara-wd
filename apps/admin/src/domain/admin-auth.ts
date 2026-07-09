@@ -88,16 +88,15 @@ export async function waitForAdminAal2(maxAttempts = 12, delayMs = 100): Promise
   throw new Error('ERR_MFA_AAL2_TIMEOUT');
 }
 
-export function getVerifiedTotpFactor(factors: MfaFactors | null): MfaFactors['totp'][number] | null {
+export function getVerifiedTotpFactor(
+  factors: MfaFactors | null,
+): MfaFactors['totp'][number] | null {
   if (!factors) return null;
   return factors.totp.find((factor) => factor.status === 'verified') ?? null;
 }
 
 export async function loadAdminMfaGateState(): Promise<AdminMfaGateState> {
-  const [aal, factors] = await Promise.all([
-    getAuthenticatorAssuranceLevel(),
-    listMfaFactors(),
-  ]);
+  const [aal, factors] = await Promise.all([getAuthenticatorAssuranceLevel(), listMfaFactors()]);
   const verifiedTotp = getVerifiedTotpFactor(factors);
   return {
     currentLevel: aal?.currentLevel ?? null,

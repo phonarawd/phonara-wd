@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Tables } from '@phonara/shared-types';
-import type { AdminAuditEvent } from '@/components/admin/primitives';
+import {
+  CRYPTO_DEPOSIT_ADMIN_ROW,
+  KRW_DEPOSIT_REQUESTS_ROW,
+  WITHDRAWAL_REQUESTS_ROW,
+} from '@phonara/shared-types';
+import type { AdminAuditEvent } from '@/shared-types';
 import { supabase } from '../../lib/supabase';
 import { runQueueAction } from '../../domain/queues';
 import type {
@@ -34,6 +39,27 @@ type WithdrawalRow = Tables<'withdrawal_requests'>;
 type CryptoDepositRow = Tables<'crypto_deposit_requests'> & {
   crypto_deposit_addresses: Pick<Tables<'crypto_deposit_addresses'>, 'address'> | null;
 };
+type KrwDepositRow = Tables<'krw_deposit_requests'>;
+type GiftcardDepositRow = {
+  id: string;
+  user_id: string;
+  face_value_krw: string;
+  status: string;
+  created_at: string;
+  kind: string;
+};
+
+function mapGiftcardDepositRow(row: GiftcardDepositRow): AdminDepositReconRow {
+  return {
+    id: row.id,
+    userId: `${row.user_id.slice(0, 8)}…`,
+    amount: row.face_value_krw,
+    method: 'giftcard' as DepositMethod,
+    status: row.status === 'pending' ? 'pending_review' : mapDepositStatus(row.status),
+    createdAt: row.created_at,
+    reference: row.kind,
+  };
+}
 
 function mapDepositStatus(status: string): DepositStatus {
   if (status === 'unmatched' || status === 'disputed') return 'pending_review';
@@ -52,6 +78,18 @@ function mapDepositRow(row: CryptoDepositRow): AdminDepositReconRow {
     status: mapDepositStatus(row.status),
     createdAt: row.created_at,
     reference: row.tx_hash ?? row.crypto_deposit_addresses?.address ?? '—',
+  };
+}
+
+function mapKrwDepositRow(row: KrwDepositRow): AdminDepositReconRow {
+  return {
+    id: row.id,
+    userId: `${row.user_id.slice(0, 8)}…`,
+    amount: row.amount_krw,
+    method: 'krw' as DepositMethod,
+    status: mapDepositStatus(row.status),
+    createdAt: row.created_at,
+    reference: row.reference_code,
   };
 }
 
@@ -74,6 +112,18 @@ function mapStatus(status: string): WithdrawStatus {
   return 'pending';
 }
 
+function inferWithdrawMethod(row: WithdrawalRow): 'crypto' | 'krw' {
+  if (row.currency === 'KRW') return 'krw';
+  const dest =
+    typeof row.destination === 'object' && row.destination !== null
+      ? (row.destination as Record<string, unknown>)
+      : null;
+  if (dest?.['rail'] === 'krw' || dest?.['method'] === 'krw' || dest?.['bank_account']) {
+    return 'krw';
+  }
+  return 'crypto';
+}
+
 function mapWithdrawRow(row: WithdrawalRow): AdminWithdrawRow {
   const destination =
     typeof row.destination === 'object' && row.destination !== null
@@ -84,7 +134,7 @@ function mapWithdrawRow(row: WithdrawalRow): AdminWithdrawRow {
     userId: row.user_id.slice(0, 8) + '…',
     amount: row.amount,
     currency: row.currency,
-    method: 'crypto',
+    method: inferWithdrawMethod(row),
     status: mapStatus(row.status),
     createdAt: row.created_at,
     slaDueAt: row.created_at,
@@ -126,7 +176,7 @@ export function useAdminWalletDesk() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('withdrawal_requests')
-        .select('*')
+        .select(WITHDRAWAL_REQUESTS_ROW)
         .order('created_at', { ascending: false })
         .limit(200);
       if (error) throw error;
@@ -145,14 +195,35 @@ export function useAdminWalletDesk() {
   const { data: deposits = [], refetch: refetchDeposits } = useQuery({
     queryKey: ['admin-deposits'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('crypto_deposit_requests')
-        .select('*, crypto_deposit_addresses(address)')
-        .order('created_at', { ascending: false })
-        .limit(200);
-      if (error) throw error;
-      return (data ?? []).map((row) =>
+      const [cryptoRes, krwRes, giftRes] = await Promise.all([
+        supabase
+          .from('crypto_deposit_requests')
+          .select(CRYPTO_DEPOSIT_ADMIN_ROW)
+          .order('created_at', { ascending: false })
+          .limit(200),
+        supabase
+          .from('krw_deposit_requests')
+          .select(KRW_DEPOSIT_REQUESTS_ROW)
+          .order('created_at', { ascending: false })
+          .limit(200),
+        (supabase as { from: (rel: string) => ReturnType<typeof supabase.from> })
+          .from('giftcard_deposit_requests')
+          .select('id, user_id, face_value_krw, status, created_at, kind')
+          .order('created_at', { ascending: false })
+          .limit(200),
+      ]);
+      if (cryptoRes.error) throw cryptoRes.error;
+      if (krwRes.error) throw krwRes.error;
+      if (giftRes.error) throw giftRes.error;
+      const cryptoRows = (cryptoRes.data ?? []).map((row) =>
         mapDepositRow(row as CryptoDepositRow),
+      );
+      const krwRows = (krwRes.data ?? []).map((row) => mapKrwDepositRow(row as KrwDepositRow));
+      const giftRows = (giftRes.data ?? []).map((row) =>
+        mapGiftcardDepositRow(row as unknown as GiftcardDepositRow),
+      );
+      return [...cryptoRows, ...krwRows, ...giftRows].sort(
+        (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt),
       );
     },
     staleTime: 15_000,
@@ -236,23 +307,45 @@ export function useAdminWalletDesk() {
   );
 
   const matchDeposit = useCallback(
-    (id: string, reason: string): void => {
-      if (reason.trim().length < MIN_REASON) return;
-      void (async () => {
-        const full = await supabase
-          .from('crypto_deposit_requests')
-          .select('*, crypto_deposit_addresses(address, chain)')
-          .eq('id', id)
-          .single();
-        if (full.error || !full.data) return;
-        const req = full.data as CryptoDepositRow & {
-          crypto_deposit_addresses: { address: string; chain: string } | null;
-        };
-        const tx = req.tx_hash;
-        const chain = req.chain;
-        const address = req.crypto_deposit_addresses?.address;
-        if (!tx || !chain || !address) return;
-        try {
+    async (id: string, reason: string): Promise<boolean> => {
+      if (reason.trim().length < MIN_REASON) return false;
+      const row = deposits.find((d) => d.id === id);
+      if (!row) return false;
+      try {
+        if (row.method === 'giftcard') {
+          await (
+            supabase as {
+              rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
+            }
+          ).rpc('rpc_admin_approve_giftcard_deposit', {
+            p_deposit_id: id,
+            p_reason: reason.trim(),
+          });
+        } else if (row.method === 'krw') {
+          const transferId = `admin-${id.slice(0, 8)}-${Date.now()}`;
+          await (
+            supabase as {
+              rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
+            }
+          ).rpc('rpc_admin_match_krw_deposit', {
+            p_deposit_id: id,
+            p_transfer_id: transferId,
+            p_reason: reason.trim(),
+          });
+        } else {
+          const full = await supabase
+            .from('crypto_deposit_requests')
+            .select('*, crypto_deposit_addresses(address, chain)')
+            .eq('id', id)
+            .single();
+          if (full.error || !full.data) return false;
+          const req = full.data as CryptoDepositRow & {
+            crypto_deposit_addresses: { address: string; chain: string } | null;
+          };
+          const tx = req.tx_hash ?? `admin-match-${transferSuffix()}`;
+          const chain = req.chain;
+          const address = req.crypto_deposit_addresses?.address;
+          if (!chain || !address) return false;
           await callRpc('rpc_admin_match_crypto_deposit', {
             p_tx_hash: tx,
             p_chain: chain,
@@ -260,14 +353,19 @@ export function useAdminWalletDesk() {
             p_amount: req.amount,
             p_confirmations_seen: req.confirmations_seen ?? 1,
           });
-          await invalidate();
-        } catch {
-          // no fake success
         }
-      })();
+        await invalidate();
+        return true;
+      } catch {
+        return false;
+      }
     },
-    [invalidate],
+    [deposits, invalidate],
   );
+
+  function transferSuffix(): string {
+    return `${Date.now().toString(36)}`;
+  }
 
   return {
     withdrawals,
@@ -283,10 +381,30 @@ export function useAdminWalletDesk() {
     rejectWithdraw,
     markSent,
     matchDeposit,
-    flagDeposit: (id: string, reason: string) => {
-      void id;
-      void reason;
-      return undefined;
+    flagDeposit: async (id: string, reason: string): Promise<boolean> => {
+      if (reason.trim().length < MIN_REASON) return false;
+      try {
+        await (
+          supabase as {
+            rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
+          }
+        ).rpc('rpc_admin_flag_deposit', {
+          p_deposit_id: id,
+          p_reason: reason.trim(),
+        });
+        appendAudit({
+          id: `dep-flag-${id}-${Date.now()}`,
+          at: new Date().toISOString(),
+          actorKey: 'admin.primitive.audit.actor.system',
+          actionKey: 'admin.wallet.depositRecon.audit.flag',
+          subject: id,
+          reason: reason.trim(),
+        });
+        await invalidate();
+        return true;
+      } catch {
+        return false;
+      }
     },
     resetForTest: () => {
       setWithdrawFilters({ search: '', status: [], method: [] });

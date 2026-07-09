@@ -26,11 +26,12 @@ export interface ConvertResult {
 
 // ─── Decimal Places Per Currency ─────────────────────────────────────────────
 
-const DECIMALS: Record<Currency, number> = {
+/** Frozen currency decimal-place map — runtime mutation is forbidden. */
+const DECIMALS = Object.freeze({
   PHON: 6,
   USDT: 6,
   KRW: 0,
-};
+} satisfies Record<Currency, number>);
 
 function currencyDecimals(currency: Currency): number {
   const places = DECIMALS[currency];
@@ -67,7 +68,9 @@ export function toDecimal(amount: string, label = 'amount'): Decimal {
  */
 export function toFixed(amount: Decimal | string, currency: Currency): string {
   const d = typeof amount === 'string' ? toDecimal(amount) : amount;
-  return d.toDecimalPlaces(currencyDecimals(currency), Decimal.ROUND_DOWN).toFixed(currencyDecimals(currency));
+  return d
+    .toDecimalPlaces(currencyDecimals(currency), Decimal.ROUND_DOWN)
+    .toFixed(currencyDecimals(currency));
 }
 
 export function money(amount: Decimal | string, currency: Currency): MoneyAmount {
@@ -150,6 +153,9 @@ export function applyFeeRate(
 /**
  * Converts amount from one currency to another using a RateSnapshot.
  * rate = quoteCurrency per 1 baseCurrency  (e.g., PHON→USDT: "0.01")
+ *
+ * Fee policy: always returns `fee = zero(quoteCurrency)`. FX spread or conversion
+ * fees belong in `convertWithFee()` — never silently deducted here.
  */
 export function convert(amount: MoneyAmount, snapshot: RateSnapshot): ConvertResult {
   if (amount.currency !== snapshot.baseCurrency) {

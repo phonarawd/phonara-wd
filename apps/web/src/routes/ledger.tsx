@@ -1,13 +1,16 @@
-import { createRoute } from '@tanstack/react-router';
-import { Route as rootRoute } from './__root';
-import { LedgerLovableSurface } from '../presentation-import/wallet/ledger-lovable-surface';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/ledger',
-  component: LedgerRoute,
+import { parseLedgerPageSearch } from '@/features/wallet/ledger-page-display';
+import { getSession } from '@/lib/auth';
+import { LedgerPage } from '@/product/surfaces/wallet/ledger-page';
+
+export const Route = createFileRoute('/ledger')({
+  validateSearch: (search: Record<string, unknown>) => parseLedgerPageSearch(search),
+  beforeLoad: async () => {
+    const session = await getSession();
+    if (!session) {
+      throw redirect({ to: '/login', replace: true });
+    }
+  },
+  component: LedgerPage,
 });
-
-function LedgerRoute() {
-  return <LedgerLovableSurface />;
-}

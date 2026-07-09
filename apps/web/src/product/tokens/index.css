@@ -1,0 +1,10 @@
+/**
+ * Phase R design system entry — import order is contractual.
+ */
+@import './fonts.css';
+@import './colors.css';
+@import './spacing.css';
+@import './layout.css';
+@import './motion.css';
+@import './theme.css';
+@import '../shell/shell.css';

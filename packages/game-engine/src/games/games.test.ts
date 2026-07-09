@@ -24,9 +24,7 @@ const CLIENT_SEED = 'test_client';
 const NONCE = 7;
 
 /** Legacy 12-low table — ~104% RTP (+EV); regression anchor. */
-const LEGACY_12_LOW = [
-  8.1, 4.0, 3.0, 1.4, 1.1, 1.0, 0.5, 1.0, 1.1, 1.4, 3.0, 4.0, 8.1,
-];
+const LEGACY_12_LOW = [8.1, 4.0, 3.0, 1.4, 1.1, 1.0, 0.5, 1.0, 1.1, 1.4, 3.0, 4.0, 8.1];
 
 function legacy12LowRtp(): number {
   let ev = 0;
@@ -80,9 +78,9 @@ describe('Plinko cursor boundary (row 16 uses float index 15)', () => {
   });
 
   it('throws when row count exceeds float stream (no silent ?? 0)', () => {
-    expect(() =>
-      plinkoDefinition.resultFromFloats([0.5], { rows: 16, risk: 'low' }),
-    ).toThrow(/exhausted at index/);
+    expect(() => plinkoDefinition.resultFromFloats([0.5], { rows: 16, risk: 'low' })).toThrow(
+      /exhausted at index/,
+    );
   });
 });
 
@@ -151,9 +149,7 @@ describe('HiLo exploit regression', () => {
 
   it('allows exactly 10 guesses in schema', () => {
     const guesses = Array.from({ length: HILO_MAX_GUESSES }, () => 'skip' as const);
-    expect(hiloDefinition.betSchema.safeParse({ startCard: null, guesses }).success).toBe(
-      true,
-    );
+    expect(hiloDefinition.betSchema.safeParse({ startCard: null, guesses }).success).toBe(true);
   });
 });
 

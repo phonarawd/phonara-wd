@@ -181,11 +181,29 @@ export function restoreFromDump(dumpPath: string): RestoreResult {
   const restoreInput = `${LEDGER_WRITE_SESSION}\n${readFileSync(dumpPath, 'utf8')}`;
   const restore = run(
     'docker',
-    ['exec', '-e', `PGPASSWORD=${DB_PASSWORD}`, '-i', DB_CONTAINER, 'psql', '-U', DB_SUPERUSER, '-d', 'postgres', '-v', 'ON_ERROR_STOP=1'],
+    [
+      'exec',
+      '-e',
+      `PGPASSWORD=${DB_PASSWORD}`,
+      '-i',
+      DB_CONTAINER,
+      'psql',
+      '-U',
+      DB_SUPERUSER,
+      '-d',
+      'postgres',
+      '-v',
+      'ON_ERROR_STOP=1',
+    ],
     { input: restoreInput, maxBuffer: 128 * 1024 * 1024 },
   );
   if (restore.status !== 0) {
-    return { hashChainWalletBroken: -1, hashChainSystemBroken: -1, commands, error: restore.stderr || restore.stdout };
+    return {
+      hashChainWalletBroken: -1,
+      hashChainSystemBroken: -1,
+      commands,
+      error: restore.stderr || restore.stdout,
+    };
   }
 
   commands.push(`docker start ${REALTIME_CONTAINER}`);
@@ -194,7 +212,9 @@ export function restoreFromDump(dumpPath: string): RestoreResult {
 
   try {
     const walletBroken = psqlScalar('SELECT count(*)::int FROM verify_ledger_hash_chain();');
-    const systemBroken = psqlScalar('SELECT count(*)::int FROM verify_system_account_hash_chain();');
+    const systemBroken = psqlScalar(
+      'SELECT count(*)::int FROM verify_system_account_hash_chain();',
+    );
     return { hashChainWalletBroken: walletBroken, hashChainSystemBroken: systemBroken, commands };
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
@@ -222,8 +242,7 @@ export function evaluateRestoreDrill(
   dumpCommands: string[],
 ): RestoreDrillOutcome {
   const { match, diffs } = snapshotsMatch(snapshotBefore, snapshotAfter);
-  const hashOk =
-    restore.hashChainWalletBroken === 0 && restore.hashChainSystemBroken === 0;
+  const hashOk = restore.hashChainWalletBroken === 0 && restore.hashChainSystemBroken === 0;
   const pass = match && hashOk && !restore.error;
 
   writeFileSync(
@@ -255,7 +274,7 @@ export function evaluateRestoreDrill(
     commands: [...dumpCommands, ...restore.commands],
     error: pass
       ? undefined
-      : restore.error ?? `snapshot_match=${match} diffs=${diffs.join('; ')}`,
+      : (restore.error ?? `snapshot_match=${match} diffs=${diffs.join('; ')}`),
   };
 }
 

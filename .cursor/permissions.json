@@ -1,0 +1,65 @@
+{
+  "approvalMode": "unrestricted",
+  "mcpAllowlist": ["supabase:*"],
+  "terminalAllowlist": [
+    "bun run",
+    "bun x",
+    "bunx",
+    "tsx ",
+    "git status",
+    "git diff",
+    "git log",
+    "git show",
+    "git branch",
+    "git push",
+    "gh ",
+    "supabase status",
+    "supabase migration list",
+    "supabase functions",
+    "rg ",
+    "Get-ChildItem",
+    "Get-Content",
+    "Set-Location"
+  ],
+  "autoRun": {
+    "allow_instructions": [
+      "Run lightweight PHONARA gates (typecheck, lint, gate:ai-impl, targeted vitest, check:i18n, check:release, check:hygiene) without asking.",
+      "Run bun run ci:status and bun run ci:watch after git push to poll GitHub Actions without asking.",
+      "When operator requests push-fix loop (perfect push / CI green): commit, push, ci:watch, triage gh logs/artifacts, fix with L0-L4 only, re-push up to 5 cycles — see rule 94-ci-push-fix-loop.",
+      "Run bun run gate:local-autopilot for full local test ladder (sequential · low-spec) without asking.",
+      "Run bun run gate:local-autopilot -- --from=<step> to resume after AI fixes a failure.",
+      "Invoke @test-autopilot subagent for local test + auto-fix loop without asking.",
+      "Run bun run stack:push-remote for remote migration sync without asking (after local code change — SQL verification is CI authoritative).",
+      "Run session hygiene (cursor:purge, cursor:work-end, cursor:session-end, e2e:kill, clean) without asking.",
+      "Run bun run cursor:work-end after any test session, gate:local-autopilot, or implementation closeout without asking.",
+      "Use Supabase MCP readonly tools on project yocjhjsdwoijfdrehzoq without asking.",
+      "Follow operator-approved DEMOLITION_PLAN or Phase R plan without asking for each file touch in scope.",
+      "Invoke @gate-runner, @verifier, @security-auditor, or @test-autopilot subagents without asking."
+    ],
+    "block_instructions": [
+      "Block agent-autonomous heavy gates: bun run test:e2e*, bun run test:sql, supabase db reset, bun run check:full, bun run gate:phase-r — use push then GitHub CI (G13). Operator 1회 only: PHONARA_ALLOW_LOCAL_HEAVY_GATE=1.",
+      "Block raw supabase db push — use bun run stack:push-remote instead.",
+      "Block raw playwright test / bunx playwright — use bun run test:e2e only when operator explicitly runs gate with PHONARA_ALLOW_LOCAL_HEAVY_GATE=1.",
+      "Block parallel heavy gates (two of test:e2e, check:full, build, test:sql at the same time).",
+      "Block reading or writing .env (not .env.example).",
+      "Block git push --force to main or master without explicit operator approval.",
+      "Block docker volume prune with PHONARA_DOCKER_PURGE_VOLUMES without approval.",
+      "Block Supabase MCP on any project other than yocjhjsdwoijfdrehzoq."
+    ]
+  },
+  "autoReview": {
+    "allow_instructions": [
+      "Approve lightweight bun run PHONARA gates (typecheck, lint, gate:ai-impl, ci:status, ci:watch, stack:push-remote).",
+      "Approve git commit and push when operator explicitly requested push-fix loop or perfect push in the same session.",
+      "Approve readonly git and diagnostics.",
+      "Approve Supabase MCP on project yocjhjsdwoijfdrehzoq."
+    ],
+    "block_instructions": [
+      "Block agent-autonomous test:e2e, test:sql, check:full, gate:phase-r, supabase db reset — CI authoritative (G13).",
+      "Block raw supabase db push and raw playwright.",
+      "Block parallel heavy gates on 8GB machine.",
+      "Block .env read/write.",
+      "Block git commit/push unless operator explicitly asked."
+    ]
+  }
+}

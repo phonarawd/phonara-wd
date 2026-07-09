@@ -36,7 +36,11 @@ fallback.
   full-repo file counts). They compete with TypeScript/ESLint and freeze the UI.
 - **Low-spec operator PC:** see **`79-low-spec-pc.mdc`** — vitest/playwright single-worker,
   one terminal / one heavy gate, no background shells, `check:full` only after E2E stable.
-- **Lag spike:** `bun run cursor:status` then `bun run cursor:emergency-reset` before any new gate.
+- **Lag spike (pick track — see [`docs/SSOT/OPERATOR_GATES.md`](../../docs/SSOT/OPERATOR_GATES.md)):**
+  - **RAM free low** — close Claude Desktop / browser / extra Electron (compact does NOT free RAM)
+  - **Repo residue** — `bun run cursor:emergency-reset` or `cursor:purge`
+  - **vscdb bloat** — `cursor:compact-global-state` **after quitting Cursor**, not during swap crisis
+  - Do not run `cursor:status` repeatedly — once per session is enough
 
 ## MCP and Cursor runtime
 

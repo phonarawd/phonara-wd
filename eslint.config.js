@@ -16,7 +16,7 @@ export default tseslint.config(
       'scripts/tmp-*.ts',
       '**/.tmp-*/**',
       '**/.tmp-*',
-      '**/.lovable-intake/**',
+      '**/.paste-intake/**',
     ],
   },
   js.configs.recommended,
@@ -57,10 +57,7 @@ export default tseslint.config(
     // domain layer (apps/*/src/domain/**) or hooks, never call PostgREST RPC
     // directly. Keeps RPC names, payload shapes, and error translation in one
     // place so the UI stays declarative and decoupled from the DB contract.
-    files: [
-      'apps/*/src/routes/**/*.{ts,tsx}',
-      'apps/*/src/components/**/*.{ts,tsx}',
-    ],
+    files: ['apps/*/src/routes/**/*.{ts,tsx}', 'apps/*/src/components/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-syntax': [
         'error',
@@ -80,6 +77,15 @@ export default tseslint.config(
             'Do not call the PostgREST /rest/v1/rpc/ endpoint directly from routes/components. Use the domain layer (callRpc) instead.',
         },
       ],
+    },
+  },
+  {
+    files: ['apps/web/public/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: {
+        ...globals.browser,
+      },
     },
   },
 );

@@ -25,7 +25,8 @@ function level(): 'safe' | 'cache' | 'images' {
 
 function main(): void {
   if (process.env['PHONARA_SKIP_DOCKER_CLEAN'] === '1') {
-    if (!quiet) process.stdout.write('[stack:docker-clean] PHONARA_SKIP_DOCKER_CLEAN=1 — skipped\n');
+    if (!quiet)
+      process.stdout.write('[stack:docker-clean] PHONARA_SKIP_DOCKER_CLEAN=1 — skipped\n');
     return;
   }
 

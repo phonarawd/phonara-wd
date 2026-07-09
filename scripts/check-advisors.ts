@@ -48,12 +48,18 @@ interface Lint {
   remediation?: string;
 }
 
-async function fetchAdvisor(ref: string, token: string, type: 'security' | 'performance'): Promise<Lint[]> {
+async function fetchAdvisor(
+  ref: string,
+  token: string,
+  type: 'security' | 'performance',
+): Promise<Lint[]> {
   const res = await fetch(`https://api.supabase.com/v1/projects/${ref}/advisors/${type}`, {
     headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
   });
   if (!res.ok) {
-    throw new Error(`${type} advisor request failed: ${res.status} ${res.statusText} — ${await res.text()}`);
+    throw new Error(
+      `${type} advisor request failed: ${res.status} ${res.statusText} — ${await res.text()}`,
+    );
   }
   const data = (await res.json()) as { lints?: Lint[]; result?: { lints?: Lint[] } };
   return data.lints ?? data.result?.lints ?? [];
@@ -140,6 +146,8 @@ async function main(): Promise<void> {
 }
 
 main().catch((err: unknown) => {
-  process.stderr.write(`check:advisors errored: ${err instanceof Error ? err.message : String(err)}\n`);
+  process.stderr.write(
+    `check:advisors errored: ${err instanceof Error ? err.message : String(err)}\n`,
+  );
   process.exit(1);
 });

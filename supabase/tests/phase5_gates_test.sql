@@ -179,7 +179,7 @@ BEGIN
   END;
 
   BEGIN
-    PERFORM rpc_request_withdrawal('PHON', '1.000000', '{}'::JSONB, 'sanc-hit-wd-' || v_uid::TEXT, NULL);
+    PERFORM rpc_request_withdrawal('PHON', '1.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'sanc-hit-wd-' || v_uid::TEXT, NULL);
   EXCEPTION WHEN OTHERS THEN
     GET STACKED DIAGNOSTICS v_withdraw_err = MESSAGE_TEXT;
     IF v_withdraw_err = 'account_activity_frozen' THEN v_withdraw_blocked := TRUE; END IF;
@@ -257,7 +257,7 @@ BEGIN
   VALUES (v_uid, 'sanctions_pending', 'active', '{"source":"test"}'::JSONB);
 
   BEGIN
-    PERFORM rpc_request_withdrawal('PHON', '1.000000', '{}'::JSONB, 'sanc-pending-wd-' || v_uid::TEXT, NULL);
+    PERFORM rpc_request_withdrawal('PHON', '1.000000', jsonb_build_object('type', 'bank', 'chain', 'BANK', 'account', '110123456789', 'address', '110123456789'), 'sanc-pending-wd-' || v_uid::TEXT, NULL);
   EXCEPTION WHEN OTHERS THEN
     GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT;
     IF v_msg = 'sanctions_pending' THEN v_withdraw_blocked := TRUE; END IF;

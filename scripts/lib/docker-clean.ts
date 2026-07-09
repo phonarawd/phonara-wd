@@ -1,4 +1,4 @@
-import { spawnSync } from 'node:child_process';
+import { spawnSyncSafe } from './spawn-safe';
 import { isDockerDaemonReady } from './docker-ready';
 
 export type DockerCleanLevel = 'safe' | 'cache' | 'images';
@@ -14,9 +14,8 @@ type PruneStep = {
 };
 
 function runDocker(args: string[], quiet: boolean): { ok: boolean; output: string } {
-  const result = spawnSync('docker', args, {
+  const result = spawnSyncSafe('docker', args, {
     encoding: 'utf8',
-    shell: process.platform === 'win32',
     stdio: quiet ? ['ignore', 'pipe', 'pipe'] : 'inherit',
   });
   const output = [result.stdout, result.stderr].filter(Boolean).join('\n').trim();
@@ -87,9 +86,8 @@ export function runDockerClean(options: DockerCleanOptions = {}): {
 export function readDockerDiskSnapshot(): string | null {
   if (!isDockerDaemonReady()) return null;
 
-  const df = spawnSync('docker', ['system', 'df'], {
+  const df = spawnSyncSafe('docker', ['system', 'df'], {
     encoding: 'utf8',
-    shell: process.platform === 'win32',
     stdio: ['ignore', 'pipe', 'ignore'],
   });
   if (df.status !== 0 || !df.stdout?.trim()) return null;

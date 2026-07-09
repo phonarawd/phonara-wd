@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 96" role="img" aria-label="phonara lockup">
+  <g transform="translate(0 8) scale(0.15625)">
+    <g transform="translate(256 256)">
+      <g transform="rotate(-135)"><path fill="#2EC4A0" d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+      <g transform="rotate(-45)"><path fill="#4B8FE8" d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+      <g transform="rotate(135)"><path fill="#E07A52" d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+      <g transform="rotate(45)"><path fill="#D456A0" d="M0-136c30 32 38 84 22 124-8 20-16 30-22 36-6-6-14-16-22-36-16-40-8-92 22-124z"/></g>
+      <circle r="54" fill="#7B6FE8"/>
+    </g>
+  </g>
+  <text x="96" y="68" font-family="Pretendard, system-ui, -apple-system, Segoe UI, sans-serif"
+    font-size="48" font-weight="500" letter-spacing="1.9" fill="currentColor">phonara</text>
+</svg>

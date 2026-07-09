@@ -1,9 +1,18 @@
 name: CI
 
+run-name: >-
+  ${{ github.event_name == 'pull_request'
+      && format('PR #{0} · {1}', github.event.pull_request.number, github.head_ref || github.ref_name)
+      || format('push · {0}', github.ref_name) }}
+
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 # Cancel superseded runs on the same ref.
 concurrency:
@@ -15,8 +24,9 @@ jobs:
   quality:
     name: typecheck / lint / test / build
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -25,9 +35,16 @@ jobs:
       - run: bun run check:hygiene
       - run: bun run check:i18n
       - run: bun run check:release
+      - run: bun run check:money-formula-citations
       - run: bun run check:migrations
       - run: bun run typecheck
       - run: bun run lint
+      - run: bun run format:check
+      - name: Set Supabase env for unit tests
+        run: |
+          # Non-sensitive dummy values used only for unit tests and client build in CI.
+          echo "VITE_SUPABASE_URL=http://127.0.0.1:54321" >> $GITHUB_ENV
+          echo "VITE_SUPABASE_ANON_KEY=test-anon-key" >> $GITHUB_ENV
       - run: bun run test
       - run: bun run build
       - run: bun run check:pwa
@@ -39,7 +56,7 @@ jobs:
     name: supabase security advisors (0 ERROR)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -50,21 +67,6 @@ jobs:
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: bun run check:advisors
 
-  # Advisory until repo-wide Prettier churn is intentionally normalized.
-  # i18n is now required in the `quality` job.
-  advisory:
-    name: format (advisory)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      - run: bun install --frozen-lockfile
-      - name: prettier format check
-        continue-on-error: true
-        run: bun run format:check
-
   # C1 — SQL apply-gate: applies every migration on a fresh local Supabase
   # (db reset) and runs the SQL integration tests (conservation + hardening).
   # TS checks never catch apply-time SQL errors; this is the mandatory gate
@@ -72,36 +74,48 @@ jobs:
   sql:
     name: supabase db reset + SQL tests
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - uses: supabase/setup-cli@v1
-        with:
-          version: latest
       - name: Install psql client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
       - run: bun install --frozen-lockfile
       - name: Start local Supabase stack
-        run: supabase start
+        run: bun run supabase start
       - name: Apply all migrations on a fresh database
-        run: supabase db reset
+        run: bun run supabase db reset
+      - name: Database types drift gate
+        env:
+          PHONARA_DATABASE_TYPES_STRICT: '1'
+          SUPABASE_DB_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+        run: bun run check:types
+      - name: Upload CI-expected database types on drift
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-types-ci-expected
+          path: database.types.ci-expected.ts
+          retention-days: 7
+          if-no-files-found: ignore
       - name: Guard coverage gate (AAL2 + system_live)
         env:
-          PHONARA_GUARD_COVERAGE_STRICT: "1"
+          PHONARA_GUARD_COVERAGE_STRICT: '1'
         run: bun run check:guard-coverage
       - name: Run SQL integration tests (conservation + hardening)
         env:
-          SUPABASE_DB_URL: postgresql://postgres:postgres@127.0.0.1:54442/postgres
-        run: bun run test:sql
-      - name: Run casino TS to SQL parity (6 games x 1000 seeds)
-        env:
-          PHONARA_SQL_PARITY: "1"
-        run: bunx vitest run tests/integration/casino-sql-parity.test.ts
+          SUPABASE_DB_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+          PHONARA_KEEP_STACK: '1'
+        run: |
+          bun run test:sql
+          PHONARA_SQL_PARITY=1 bunx vitest run tests/integration/casino-sql-parity.test.ts
+          bun run posttest:sql
       - name: Stop local Supabase stack
         if: always()
-        run: supabase stop --no-backup
+        continue-on-error: true
+        run: bun run supabase stop --no-backup
 
   # C2 — E2E gate (rules 10/40/70): runs the Playwright money/auth flows against
   # a fresh local Supabase stack in a real browser, asserting DB-level
@@ -109,38 +123,84 @@ jobs:
   e2e:
     name: playwright e2e (local stack + DB conservation)
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - uses: supabase/setup-cli@v1
-        with:
-          version: latest
       - run: bun install --frozen-lockfile
+      - name: Build packages before starting local stack
+        run: bun run build:packages
       - name: Start local Supabase stack
-        run: supabase start
+        run: bun run supabase start
       - name: Apply all migrations on a fresh database
-        run: supabase db reset
+        run: bun run supabase db reset
       - name: Export local Supabase E2E credentials
         run: |
-          eval "$(supabase status -o env)"
-          # Supabase CLI exports SERVICE_ROLE_KEY on older releases and
-          # SECRET_KEY / SUPABASE_SERVICE_ROLE_KEY on newer ones — accept all.
+          set -euo pipefail
+          # Parse `supabase status -o env` without eval (avoids shell metachar / quoting issues).
+          mapfile -t _sb_env < <(bun run supabase status -o env)
+          ANON_KEY=""
+          SERVICE_ROLE_KEY=""
+          SUPABASE_SERVICE_ROLE_KEY=""
+          SECRET_KEY=""
+          for line in "${_sb_env[@]}"; do
+            case "$line" in
+              ANON_KEY=*)
+                ANON_KEY="${line#ANON_KEY=}"
+                ANON_KEY="${ANON_KEY%\"}"
+                ANON_KEY="${ANON_KEY#\"}"
+                ANON_KEY="${ANON_KEY%\'}"
+                ANON_KEY="${ANON_KEY#\'}"
+                ;;
+              SERVICE_ROLE_KEY=*)
+                SERVICE_ROLE_KEY="${line#SERVICE_ROLE_KEY=}"
+                SERVICE_ROLE_KEY="${SERVICE_ROLE_KEY%\"}"
+                SERVICE_ROLE_KEY="${SERVICE_ROLE_KEY#\"}"
+                SERVICE_ROLE_KEY="${SERVICE_ROLE_KEY%\'}"
+                SERVICE_ROLE_KEY="${SERVICE_ROLE_KEY#\'}"
+                ;;
+              SUPABASE_SERVICE_ROLE_KEY=*)
+                SUPABASE_SERVICE_ROLE_KEY="${line#SUPABASE_SERVICE_ROLE_KEY=}"
+                SUPABASE_SERVICE_ROLE_KEY="${SUPABASE_SERVICE_ROLE_KEY%\"}"
+                SUPABASE_SERVICE_ROLE_KEY="${SUPABASE_SERVICE_ROLE_KEY#\"}"
+                SUPABASE_SERVICE_ROLE_KEY="${SUPABASE_SERVICE_ROLE_KEY%\'}"
+                SUPABASE_SERVICE_ROLE_KEY="${SUPABASE_SERVICE_ROLE_KEY#\'}"
+                ;;
+              SECRET_KEY=*)
+                SECRET_KEY="${line#SECRET_KEY=}"
+                SECRET_KEY="${SECRET_KEY%\"}"
+                SECRET_KEY="${SECRET_KEY#\"}"
+                SECRET_KEY="${SECRET_KEY%\'}"
+                SECRET_KEY="${SECRET_KEY#\'}"
+                ;;
+            esac
+          done
           SRK="${SERVICE_ROLE_KEY:-${SUPABASE_SERVICE_ROLE_KEY:-$SECRET_KEY}}"
           if [ -z "$SRK" ]; then
             echo "No local service role key from supabase status -o env" >&2
             exit 1
           fi
+          if [ -z "$ANON_KEY" ]; then
+            echo "No ANON_KEY from supabase status -o env" >&2
+            exit 1
+          fi
           {
-            echo "SUPABASE_SERVICE_ROLE_KEY=$SRK"
-            echo "VITE_SUPABASE_URL=http://127.0.0.1:54444"
-            echo "VITE_SUPABASE_ANON_KEY=$ANON_KEY"
+            echo "SUPABASE_SERVICE_ROLE_KEY<<EOF"
+            echo "$SRK"
+            echo "EOF"
+            echo "VITE_SUPABASE_URL=http://127.0.0.1:54321"
+            echo "VITE_SUPABASE_ANON_KEY<<EOF"
+            echo "$ANON_KEY"
+            echo "EOF"
           } >> "$GITHUB_ENV"
       - name: Install Playwright browser (chromium)
         run: bunx playwright install --with-deps chromium
       - name: Run Playwright E2E (Playwright boots the web dev server)
-        run: bun run test:e2e
+        # Keep `test:e2e` wrapper (pretest package build + run-e2e teardown); explicit
+        # --workers=1 avoids OOM SIGKILL (137) on GHA with Supabase + dual Vite + Chromium.
+        run: bun run test:e2e -- --workers=1
       - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -152,4 +212,100 @@ jobs:
           retention-days: 7
       - name: Stop local Supabase stack
         if: always()
-        run: supabase stop --no-backup
+        continue-on-error: true
+        run: bun run supabase stop --no-backup
+
+  # C2b — P3-D browser matrix (advisory): trade-desk-smoke E1/E8/E9 on firefox + webkit.
+  # Chromium authoritative gate remains job `e2e` above. Failure does not block merge.
+  e2e-browser-matrix:
+    name: playwright trade-desk browser matrix (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Build packages before starting local stack
+        run: bun run build:packages
+      - name: Start local Supabase stack
+        run: bun run supabase start
+      - name: Apply all migrations on a fresh database
+        run: bun run supabase db reset
+      - name: Export local Supabase E2E credentials
+        run: |
+          set -euo pipefail
+          mapfile -t _sb_env < <(bun run supabase status -o env)
+          ANON_KEY=""
+          SERVICE_ROLE_KEY=""
+          SUPABASE_SERVICE_ROLE_KEY=""
+          SECRET_KEY=""
+          for line in "${_sb_env[@]}"; do
+            case "$line" in
+              ANON_KEY=*)
+                ANON_KEY="${line#ANON_KEY=}"
+                ANON_KEY="${ANON_KEY%\"}"
+                ANON_KEY="${ANON_KEY#\"}"
+                ANON_KEY="${ANON_KEY%\'}"
+                ANON_KEY="${ANON_KEY#\'}"
+                ;;
+              SERVICE_ROLE_KEY=*)
+                SERVICE_ROLE_KEY="${line#SERVICE_ROLE_KEY=}"
+                SERVICE_ROLE_KEY="${SERVICE_ROLE_KEY%\"}"
+                SERVICE_ROLE_KEY="${SERVICE_ROLE_KEY#\"}"
+                SERVICE_ROLE_KEY="${SERVICE_ROLE_KEY%\'}"
+                SERVICE_ROLE_KEY="${SERVICE_ROLE_KEY#\'}"
+                ;;
+              SUPABASE_SERVICE_ROLE_KEY=*)
+                SUPABASE_SERVICE_ROLE_KEY="${line#SUPABASE_SERVICE_ROLE_KEY=}"
+                SUPABASE_SERVICE_ROLE_KEY="${SUPABASE_SERVICE_ROLE_KEY%\"}"
+                SUPABASE_SERVICE_ROLE_KEY="${SUPABASE_SERVICE_ROLE_KEY#\"}"
+                SUPABASE_SERVICE_ROLE_KEY="${SUPABASE_SERVICE_ROLE_KEY%\'}"
+                SUPABASE_SERVICE_ROLE_KEY="${SUPABASE_SERVICE_ROLE_KEY#\'}"
+                ;;
+              SECRET_KEY=*)
+                SECRET_KEY="${line#SECRET_KEY=}"
+                SECRET_KEY="${SECRET_KEY%\"}"
+                SECRET_KEY="${SECRET_KEY#\"}"
+                SECRET_KEY="${SECRET_KEY%\'}"
+                SECRET_KEY="${SECRET_KEY#\'}"
+                ;;
+            esac
+          done
+          SRK="${SERVICE_ROLE_KEY:-${SUPABASE_SERVICE_ROLE_KEY:-$SECRET_KEY}}"
+          if [ -z "$SRK" ]; then
+            echo "No local service role key from supabase status -o env" >&2
+            exit 1
+          fi
+          if [ -z "$ANON_KEY" ]; then
+            echo "No ANON_KEY from supabase status -o env" >&2
+            exit 1
+          fi
+          {
+            echo "SUPABASE_SERVICE_ROLE_KEY<<EOF"
+            echo "$SRK"
+            echo "EOF"
+            echo "VITE_SUPABASE_URL=http://127.0.0.1:54321"
+            echo "VITE_SUPABASE_ANON_KEY<<EOF"
+            echo "$ANON_KEY"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
+      - name: Install Playwright browsers (firefox · webkit)
+        run: bunx playwright install --with-deps firefox webkit
+      - name: Run trade-desk browser matrix smoke
+        run: bun run test:e2e:browser-matrix -- --workers=1
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-browser-matrix-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+      - name: Stop local Supabase stack
+        if: always()
+        continue-on-error: true
+        run: bun run supabase stop --no-backup

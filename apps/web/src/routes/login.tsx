@@ -1,13 +1,7 @@
-import { createRoute } from '@tanstack/react-router';
-import { Route as rootRoute } from './__root';
-import { LoginLovableSurface } from '../presentation-import/auth/login-lovable-surface';
+import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/login',
-  component: LoginRoute,
+import { LoginPage } from '@/product/surfaces/login/login-page';
+
+export const Route = createFileRoute('/login')({
+  component: LoginPage,
 });
-
-function LoginRoute() {
-  return <LoginLovableSurface />;
-}

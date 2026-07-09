@@ -3,19 +3,21 @@
  * One-shot dev environment bootstrap for PHONARA (Windows/macOS/Linux).
  * Installs JS deps, Playwright browsers, and verifies core toolchain.
  */
-import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { spawnSyncSafe } from './lib/spawn-safe';
+import { syncJetBrainsMonoFont } from './sync-jetbrains-mono-font';
+import { syncPretendardFont } from './sync-pretendard-font';
+import { syncSpaceGroteskFont } from './sync-space-grotesk-font';
 
 const root = resolve(import.meta.dirname, '..');
 
 function run(command: string, args: string[], cwd = root): boolean {
   const label = [command, ...args].join(' ');
   console.log(`\n▶ ${label}`);
-  const result = spawnSync(command, args, {
+  const result = spawnSyncSafe(command, args, {
     cwd,
     stdio: 'inherit',
-    shell: process.platform === 'win32',
   });
   if (result.status !== 0) {
     console.error(`✗ failed: ${label}`);
@@ -25,9 +27,8 @@ function run(command: string, args: string[], cwd = root): boolean {
 }
 
 function probe(command: string, args: string[]): string | null {
-  const result = spawnSync(command, args, {
+  const result = spawnSyncSafe(command, args, {
     encoding: 'utf8',
-    shell: process.platform === 'win32',
   });
   if (result.status !== 0) return null;
   return (result.stdout ?? result.stderr ?? '').trim().split('\n')[0] ?? null;
@@ -44,7 +45,9 @@ console.log('Toolchain:');
 console.log(`  bun:      ${bun ?? 'MISSING — install https://bun.sh'}`);
 console.log(`  node:     ${node ?? 'optional (bun bundles runtime)'}`);
 console.log(`  docker:   ${docker ?? 'MISSING — required for local Supabase/E2E'}`);
-console.log(`  supabase: ${supabase ?? 'MISSING — run `bun install` (CLI pinned in devDependencies)'}`);
+console.log(
+  `  supabase: ${supabase ?? 'MISSING — run `bun install` (CLI pinned in devDependencies)'}`,
+);
 
 if (!bun) {
   process.exit(1);
@@ -55,16 +58,26 @@ ok = run('bun', ['install']) && ok;
 ok = run('bun', ['run', 'build:packages']) && ok;
 ok = run('bunx', ['playwright', 'install', 'chromium']) && ok;
 
+console.log('\n▶ sync self-hosted fonts (Pretendard · JetBrains Mono · Space Grotesk)');
+ok = syncPretendardFont({ quiet: false }) && ok;
+ok = syncJetBrainsMonoFont({ quiet: false }) && ok;
+ok = syncSpaceGroteskFont({ quiet: false }) && ok;
+
+console.log('\n▶ domain stack audit');
+ok = run('bun', ['run', 'check:domain-stack']) && ok;
+
 if (docker && supabase) {
   const config = resolve(root, 'supabase', 'config.toml');
   if (existsSync(config)) {
     console.log('\nℹ Local Supabase: run `supabase start` when you need DB/E2E (Docker).');
   }
 } else {
-  console.log('\n⚠ Skipping Supabase start hint — install Docker + Supabase CLI for money/E2E gates.');
+  console.log(
+    '\n⚠ Skipping Supabase start hint — install Docker + Supabase CLI for money/E2E gates.',
+  );
 }
 
-console.log('\nPresentation stack (apps/web) — Lovable replacement mode:');
+console.log('\nPresentation stack (apps/web) — Presentation import mode:');
 console.log('  Core: React 19 + React Compiler, Vite 8, Tailwind v4, TS 6 strict');
 console.log('  Data: TanStack Router/Query/Table/Virtual');
 console.log('  UI: framer-motion, Radix (full shadcn set), vaul, cmdk, sonner, @use-gesture/react');

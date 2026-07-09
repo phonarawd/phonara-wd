@@ -2,20 +2,19 @@
 /**
  * One command: Docker Supabase + local admin seed + Admin Vite (3001 strict).
  */
-import { spawn } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { generateSync } from 'otplib';
 import { ensureDockerReady } from './lib/docker-ready';
 import { ensureLocalSupabaseStarted } from './lib/supabase-local';
+import { spawnSafe } from './lib/spawn-safe';
 
 const CREDENTIALS_FILE = join(process.cwd(), '.local-admin-dev.credentials.json');
 
 function run(command: string, args: string[]): Promise<number> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, {
+    const child = spawnSafe(command, args, {
       stdio: 'inherit',
-      shell: true,
       cwd: process.cwd(),
     });
     child.on('error', reject);
@@ -54,7 +53,9 @@ async function main(): Promise<void> {
   printQuickRef();
 
   process.stdout.write('[dev:admin:local] starting Admin on http://127.0.0.1:3001 …\n');
-  process.stdout.write('[dev:admin:local] stop with Ctrl+C · stack stays up (bun run stack:stop)\n\n');
+  process.stdout.write(
+    '[dev:admin:local] stop with Ctrl+C · stack stays up (bun run stack:stop)\n\n',
+  );
 
   const devCode = await run('bun', [
     '--filter',

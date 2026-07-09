@@ -1,0 +1,118 @@
+/**
+ * Phase R design tokens — viewport breakpoints + shell geometry (§3.0).
+ * TS mirror: `viewport-contract.ts` · smoke widths 390 / 768 / 1024 / 2560.
+ */
+
+:root {
+  --ds-bp-mobile-narrow: 320px;
+  --ds-bp-mobile: 390px;
+  --ds-bp-mobile-plus: 480px;
+  --ds-bp-tablet: 768px;
+  --ds-bp-desktop: 1024px;
+  --ds-bp-wide: 1280px;
+  --ds-bp-ultra: 1920px;
+  --ds-bp-superwide: 2560px;
+
+  --ds-content-max: 1680px;
+  --ds-panel-min: 280px;
+
+  /* Fluid gutters — scale between mobile thumb-safe and desktop exchange density */
+  --ds-shell-gutter: clamp(1rem, 2.5vw, 1.5rem);
+  --ds-shell-gutter-wide: clamp(1.25rem, 3vw, 2rem);
+  --ds-shell-gutter-ultra: clamp(1.5rem, 4vw, 3rem);
+}
+
+/* Full-viewport page shell — safe-area + min dynamic viewport height */
+.ds-shell-page {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100dvh;
+  min-height: 100vh;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Centered max-width content column — ultra-wide letterboxing (§3.0) */
+.ds-shell-content-column,
+.shell-content-column {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--ds-content-max);
+  margin-inline: auto;
+  padding-inline: max(var(--ds-shell-gutter), env(safe-area-inset-left, 0px))
+    max(var(--ds-shell-gutter), env(safe-area-inset-right, 0px));
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .ds-shell-content-column,
+  .shell-content-column {
+    padding-inline: max(var(--ds-shell-gutter-wide), env(safe-area-inset-left, 0px))
+      max(var(--ds-shell-gutter-wide), env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (min-width: 1920px) {
+  .ds-shell-content-column,
+  .shell-content-column {
+    padding-inline: max(var(--ds-shell-gutter-ultra), env(safe-area-inset-left, 0px))
+      max(var(--ds-shell-gutter-ultra), env(safe-area-inset-right, 0px));
+  }
+}
+
+/* Edge-to-edge band inside a capped route (chart stage, casino canvas) */
+.ds-shell-bleed {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin-inline: calc(-1 * max(var(--ds-shell-gutter), env(safe-area-inset-left, 0px)));
+  padding-inline: max(var(--ds-shell-gutter), env(safe-area-inset-left, 0px))
+    max(var(--ds-shell-gutter), env(safe-area-inset-right, 0px));
+}
+
+@media (min-width: 768px) {
+  .ds-shell-bleed {
+    margin-inline: calc(-1 * max(var(--ds-shell-gutter-wide), env(safe-area-inset-left, 0px)));
+    padding-inline: max(var(--ds-shell-gutter-wide), env(safe-area-inset-left, 0px))
+      max(var(--ds-shell-gutter-wide), env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (min-width: 1920px) {
+  .ds-shell-bleed {
+    margin-inline: calc(-1 * max(var(--ds-shell-gutter-ultra), env(safe-area-inset-left, 0px)));
+    padding-inline: max(var(--ds-shell-gutter-ultra), env(safe-area-inset-left, 0px))
+      max(var(--ds-shell-gutter-ultra), env(safe-area-inset-right, 0px));
+  }
+}
+
+/* Exchange-grade multi-panel grid — panel min-width preserved at ultra (2560+) */
+.ds-shell-panel-grid {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  gap: var(--ds-space-4);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 768px) {
+  .ds-shell-panel-grid[data-cols='2'],
+  .ds-shell-panel-grid[data-cols='3'] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .ds-shell-panel-grid[data-cols='3'] {
+    grid-template-columns: minmax(var(--ds-panel-min), 1fr) minmax(0, 2fr) minmax(
+        var(--ds-panel-min),
+        1fr
+      );
+  }
+}
+
+@media (min-width: 1280px) {
+  .ds-shell-panel-grid[data-cols='2'] {
+    grid-template-columns: minmax(var(--ds-panel-min), 1fr) minmax(0, 2fr);
+  }
+}

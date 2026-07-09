@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PHONARA concept phon wave sculpted">
+  <defs>
+    <linearGradient id="p-body" x1="132" y1="108" x2="404" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e8fff7"/>
+      <stop offset="0.38" stop-color="#98ffd7"/>
+      <stop offset="0.72" stop-color="#58e5ae"/>
+      <stop offset="1" stop-color="#169364"/>
+    </linearGradient>
+    <linearGradient id="p-shadow" x1="252" y1="160" x2="448" y2="408" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0e5e41" stop-opacity="0"/>
+      <stop offset="0.55" stop-color="#0d5239" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#072c1e" stop-opacity="0.78"/>
+    </linearGradient>
+    <linearGradient id="p-highlight" x1="112" y1="104" x2="296" y2="324" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.92"/>
+      <stop offset="0.35" stop-color="#ffffff" stop-opacity="0.34"/>
+      <stop offset="0.78" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="wave-band" x1="336" y1="148" x2="500" y2="324" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d8fff2"/>
+      <stop offset="0.45" stop-color="#8effd2"/>
+      <stop offset="1" stop-color="#2ba979"/>
+    </linearGradient>
+    <radialGradient id="node-core" cx="40%" cy="36%" r="72%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.42" stop-color="#bfffe9"/>
+      <stop offset="1" stop-color="#1ca271"/>
+    </radialGradient>
+    <filter id="mark-shadow" x="-14%" y="-14%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#031610" flood-opacity="0.28"/>
+      <feDropShadow dx="8" dy="10" stdDeviation="6" flood-color="#0a3324" flood-opacity="0.16"/>
+    </filter>
+    <clipPath id="p-clip">
+      <path d="M144 112h72v288h-72a20 20 0 0 1-20-20V132a20 20 0 0 1 20-20zm72 0h108c88.4 0 160 71.6 160 160S412.4 432 324 432H216V112zm96 56v208h36c52 0 96-44 96-104s-44-104-96-104h-36z"/>
+    </clipPath>
+  </defs>
+  <g filter="url(#mark-shadow)">
+    <path fill="url(#p-body)" d="M144 112h72v288h-72a20 20 0 0 1-20-20V132a20 20 0 0 1 20-20zm72 0h108c88.4 0 160 71.6 160 160S412.4 432 324 432H216V112zm96 56v208h36c52 0 96-44 96-104s-44-104-96-104h-36z"/>
+    <g clip-path="url(#p-clip)">
+      <path fill="url(#p-highlight)" d="M100 88h284L210 436H100z"/>
+      <path fill="url(#p-shadow)" d="M236 116h228L522 468H214z"/>
+      <path fill="#ffffff" fill-opacity=".18" d="M160 126h162c66 0 120 54 120 120v10H160z"/>
+    </g>
+    <path fill="url(#wave-band)" d="M336 164a136 136 0 0 1 136 136h-32a104 104 0 0 0-104-104v-32z"/>
+    <path fill="url(#wave-band)" fill-opacity=".78" d="M352 144a160 160 0 0 1 160 160h-32a128 128 0 0 0-128-128v-32z"/>
+    <path fill="#ffffff" fill-opacity=".18" d="M338 172a128 128 0 0 1 128 128h-16A112 112 0 0 0 338 188v-16z"/>
+    <circle cx="456" cy="300" r="24" fill="url(#node-core)"/>
+    <circle cx="450" cy="292" r="9" fill="#ffffff" fill-opacity=".72"/>
+  </g>
+</svg>

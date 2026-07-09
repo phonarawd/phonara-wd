@@ -6,18 +6,17 @@
  *   bun run scripts/measure-spot-rpc-p95.ts --samples=40
  */
 import { createClient } from '@supabase/supabase-js';
-import { spawnSync } from 'node:child_process';
+import { spawnSyncSafe } from './lib/spawn-safe';
 
-const SUPABASE_URL = process.env['VITE_SUPABASE_URL'] ?? 'http://127.0.0.1:54444';
+const SUPABASE_URL = process.env['VITE_SUPABASE_URL'] ?? 'http://127.0.0.1:54321';
 const ANON_KEY =
   process.env['VITE_SUPABASE_ANON_KEY'] ??
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
 
 function readLocalServiceKey(): string {
-  const result = spawnSync('supabase', ['status', '-o', 'env'], {
+  const result = spawnSyncSafe('supabase', ['status', '-o', 'env'], {
     cwd: process.cwd(),
     encoding: 'utf8',
-    shell: process.platform === 'win32',
   });
   if (result.status !== 0) {
     throw new Error('Local Supabase not running. Start with `supabase start`.');
@@ -28,13 +27,15 @@ function readLocalServiceKey(): string {
     if (match) values.set(match[1]!, match[2]!);
   }
   const key =
-    values.get('SECRET_KEY') ?? values.get('SUPABASE_SERVICE_ROLE_KEY') ?? values.get('SERVICE_ROLE_KEY');
+    values.get('SECRET_KEY') ??
+    values.get('SUPABASE_SERVICE_ROLE_KEY') ??
+    values.get('SERVICE_ROLE_KEY');
   if (!key) throw new Error('Could not read local service role key from `supabase status`.');
   return key.replace(/^['"]|['"]$/g, '');
 }
 
 function findSupabaseDbContainer(): string {
-  const probe = spawnSync('docker', ['ps', '--format', '{{.Names}}'], { encoding: 'utf8' });
+  const probe = spawnSyncSafe('docker', ['ps', '--format', '{{.Names}}'], { encoding: 'utf8' });
   const name = probe.stdout
     ?.split(/\r?\n/)
     .map((s) => s.trim())
@@ -45,9 +46,21 @@ function findSupabaseDbContainer(): string {
 
 function runDockerPsql(sql: string): void {
   const container = findSupabaseDbContainer();
-  const exec = spawnSync(
+  const exec = spawnSyncSafe(
     'docker',
-    ['exec', '-i', container, 'psql', '-U', 'postgres', '-d', 'postgres', '-At', '-v', 'ON_ERROR_STOP=1'],
+    [
+      'exec',
+      '-i',
+      container,
+      'psql',
+      '-U',
+      'postgres',
+      '-d',
+      'postgres',
+      '-At',
+      '-v',
+      'ON_ERROR_STOP=1',
+    ],
     { input: sql, encoding: 'utf8' },
   );
   if (exec.status !== 0) throw new Error(`psql failed: ${exec.stderr ?? exec.stdout}`);
@@ -79,7 +92,10 @@ function percentile(sorted: number[], p: number): number {
   return sorted[Math.max(0, Math.min(sorted.length - 1, idx))]!;
 }
 
-async function waitForProfileAndWallet(admin: ReturnType<typeof createClient>, userId: string): Promise<void> {
+async function waitForProfileAndWallet(
+  admin: ReturnType<typeof createClient>,
+  userId: string,
+): Promise<void> {
   for (let attempt = 0; attempt < 75; attempt += 1) {
     const [{ data: profile }, { data: wallet }] = await Promise.all([
       admin.from('profiles').select('id').eq('id', userId).maybeSingle(),
@@ -122,14 +138,17 @@ async function main(): Promise<void> {
     await admin.from('app_config').update({ value: 'false' }).eq('key', 'system_halt');
     await admin.from('app_config').update({ value: 'true' }).eq('key', 'feature_spot_enabled');
     await admin.from('spot_markets').update({ is_active: true }).eq('symbol', 'PHON_USDT');
-    await admin.from('oracle_prices').upsert(
-      { symbol: 'PHON_USDT', price: '0.010000', updated_at: new Date().toISOString() },
-      { onConflict: 'symbol' },
-    );
+    await admin
+      .from('oracle_prices')
+      .upsert(
+        { symbol: 'PHON_USDT', price: '0.010000', updated_at: new Date().toISOString() },
+        { onConflict: 'symbol' },
+      );
 
     const pub = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
     const { data: signIn, error: sErr } = await pub.auth.signInWithPassword({ email, password });
-    if (sErr || !signIn.session) throw new Error(`sign-in failed: ${sErr?.message ?? 'no session'}`);
+    if (sErr || !signIn.session)
+      throw new Error(`sign-in failed: ${sErr?.message ?? 'no session'}`);
 
     const client = createClient(SUPABASE_URL, ANON_KEY, {
       auth: { persistSession: false },

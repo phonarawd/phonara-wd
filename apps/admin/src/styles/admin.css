@@ -1,0 +1,4 @@
+@import '../../../web/src/product/tokens/index.css';
+
+@source '../**/*.{ts,tsx}';
+@source '../../../web/src/product/**/*.{ts,tsx}';

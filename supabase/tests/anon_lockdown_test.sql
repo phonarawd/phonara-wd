@@ -98,7 +98,7 @@ BEGIN
         '_wl_compute_hash','verify_ledger_hash_chain','rpc_run_liquidations',
         'rpc_update_oracle_price','rpc_get_candles',
         '_lock_wallet_internal','_unlock_wallet_internal','_debit_wallet_internal',
-        '_assert_position_limits','_is_admin'
+        '_assert_position_limits','_is_admin','rpc_complete_mission'
       )
   LOOP
     IF r.proconfig IS NULL
@@ -109,6 +109,47 @@ BEGIN
   ASSERT v_bad = '',
     format('functions missing function-level search_path:%s', v_bad);
   RAISE NOTICE 'ADVISOR SEARCH_PATH OK — flagged functions now pin search_path via proconfig';
+END;
+$$;
+
+-- ── Test 1d: earn-hub + golden earth RPCs — anon EXECUTE revoked ───────────────
+DO $$
+DECLARE
+  r RECORD;
+  v_sig TEXT;
+BEGIN
+  FOR r IN
+    SELECT p.oid::regprocedure AS sig
+    FROM pg_proc p
+    JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public'
+      AND p.proname IN (
+        'rpc_claim_repeatable_mission',
+        'rpc_get_repeatable_mission_status',
+        'rpc_get_earn_hub_status',
+        'rpc_get_earn_activity_feed',
+        'rpc_golden_earth_tap'
+      )
+  LOOP
+    v_sig := r.sig::TEXT;
+    ASSERT NOT has_function_privilege('anon', v_sig, 'EXECUTE'),
+      format('anon must NOT execute %s after earn-hub lockdown', v_sig);
+    ASSERT has_function_privilege('authenticated', v_sig, 'EXECUTE'),
+      format('authenticated must still execute %s', v_sig);
+  END LOOP;
+
+  RAISE NOTICE 'EARN-HUB ANON LOCKDOWN OK — earn-hub + golden_earth_tap revoked from anon';
+END;
+$$;
+
+-- ── Test 1e: internal formatting helpers — anon EXECUTE revoked (FQ3) ───────
+DO $$
+BEGIN
+  ASSERT NOT has_function_privilege('anon', 'public._fmt6(numeric)', 'EXECUTE'),
+    'anon must NOT execute _fmt6';
+  ASSERT NOT has_function_privilege('anon', 'public._sports_odds_exact_match(text,text)', 'EXECUTE'),
+    'anon must NOT execute _sports_odds_exact_match';
+  RAISE NOTICE 'INTERNAL HELPER ANON LOCKDOWN OK — _fmt6 and _sports_odds_exact_match revoked from anon';
 END;
 $$;
 

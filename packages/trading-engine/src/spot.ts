@@ -1,10 +1,5 @@
 import { toFixed } from '@phonara/money';
-import {
-  type Decimal,
-  dec,
-  assertPositive,
-  TradingError,
-} from './shared';
+import { type Decimal, dec, fmt6, assertPositive, TradingError } from './shared';
 
 // ─── Spot market: PHON/USDT ──────────────────────────────────────────────────
 // Convention: price = USDT per 1 PHON.
@@ -102,7 +97,11 @@ export function computeSpotSell(params: SpotSellParams): SpotSellResult {
   };
 }
 
-/** Market buy major: spend stake currency, receive base asset qty (fee on base). */
+/**
+ * Tier-1 major spot buy preview: spend stake currency, receive base asset qty.
+ * Fee is deducted from the base asset received (same convention as computeSpotBuy).
+ * Preview-only — authoritative settlement remains SQL/RPC.
+ */
 export interface MajorSpotBuyParams extends SpotQuoteParams {
   readonly stakeCurrency: 'USDT' | 'PHON';
   readonly stakeAmount: string;
@@ -126,9 +125,10 @@ export function computeMajorSpotBuy(params: MajorSpotBuyParams): MajorSpotBuyRes
   assertPositive(stake, 'stakeAmount', 'INVALID_AMOUNT');
   validate(price, feeRate);
 
-  const usdtSpent = params.stakeCurrency === 'USDT'
-    ? stake
-    : stake.mul(dec(params.phonUsdtPrice ?? '0', 'phonUsdtPrice'));
+  const usdtSpent =
+    params.stakeCurrency === 'USDT'
+      ? stake
+      : stake.mul(dec(params.phonUsdtPrice ?? '0', 'phonUsdtPrice'));
 
   const grossBase = usdtSpent.div(price);
   const feeBase = grossBase.mul(feeRate);
@@ -137,11 +137,47 @@ export function computeMajorSpotBuy(params: MajorSpotBuyParams): MajorSpotBuyRes
   return {
     stakeCurrency: params.stakeCurrency,
     stakeSpent: toFixed(stake, params.stakeCurrency),
-    price: price.toFixed(),
-    grossBase: grossBase.toFixed(6),
-    feeBase: toFixed(feeBase, 'USDT'),
-    netBase: netBase.toFixed(6),
+    price: fmt6(price),
+    grossBase: fmt6(grossBase),
+    feeBase: fmt6(feeBase),
+    netBase: fmt6(netBase),
   };
 }
 
 export { DEFAULT_SPOT_FEE };
+
+export type SpotOrderSide = 'buy' | 'sell';
+
+/** Limit buy preview at a fixed limit price (stake USDT → base received). */
+export function computeSpotLimitBuyPreview(params: SpotBuyParams): SpotBuyResult {
+  return computeSpotBuy(params);
+}
+
+/** Limit sell preview at a fixed limit price (base sold → USDT received). */
+export function computeSpotLimitSellPreview(params: SpotSellParams): SpotSellResult {
+  return computeSpotSell(params);
+}
+
+/** Mirrors `_spot_order_limit_crossed` in SQL (buy ≤ limit · sell ≥ limit). */
+export function isSpotLimitCrossed(
+  side: SpotOrderSide,
+  markPrice: string,
+  limitPrice: string,
+): boolean {
+  const mark = dec(markPrice, 'markPrice');
+  const limit = dec(limitPrice, 'limitPrice');
+  if (side === 'buy') return mark.lessThanOrEqualTo(limit);
+  return mark.greaterThanOrEqualTo(limit);
+}
+
+/** Mirrors `_spot_order_stop_entry_triggered` in SQL (buy ≥ stop · sell ≤ stop). */
+export function isSpotStopEntryTriggered(
+  side: SpotOrderSide,
+  markPrice: string,
+  stopPrice: string,
+): boolean {
+  const mark = dec(markPrice, 'markPrice');
+  const stop = dec(stopPrice, 'stopPrice');
+  if (side === 'buy') return mark.greaterThanOrEqualTo(stop);
+  return mark.lessThanOrEqualTo(stop);
+}

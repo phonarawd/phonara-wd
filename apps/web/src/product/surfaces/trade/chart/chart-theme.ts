@@ -1,0 +1,117 @@
+export type ChartTheme = {
+  textMuted: string;
+  line: string;
+  marketUp: string;
+  marketDown: string;
+  accent: string;
+  background: string;
+};
+
+/** Dark-theme rgb fallbacks — LWC cannot parse oklch/light-dark (§25.4). */
+const CHART_RGB_FALLBACKS = {
+  textMuted: 'rgb(163, 163, 175)',
+  line: 'rgb(67, 67, 76)',
+  marketUp: 'rgb(77, 195, 135)',
+  marketDown: 'rgb(230, 82, 82)',
+  accent: 'rgb(31, 224, 138)',
+} as const;
+
+/** Canvas normalizes oklch/light-dark to rgb — same trick browsers use internally. */
+function toChartRgb(color: string): string {
+  if (/^rgba?\(/i.test(color) || /^#[0-9a-f]{3,8}$/i.test(color)) return color;
+  if (!/oklch|light-dark|color-mix|lab\(|lch\(/i.test(color)) return color;
+  if (typeof document === 'undefined') return color;
+
+  try {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return color;
+
+    ctx.fillStyle = '#000000';
+    ctx.fillStyle = color;
+    const normalized = ctx.fillStyle;
+    if (normalized && /^rgba?\(/i.test(normalized)) return normalized;
+  } catch {
+    /* jsdom / unsupported color syntax */
+  }
+
+  return color;
+}
+
+/** Resolve `--ds-*` tokens to rgb/rgba for Lightweight Charts. */
+function readToken(name: string, fallback: string): string {
+  if (typeof document === 'undefined') return fallback;
+
+  const probe = document.createElement('span');
+  probe.style.setProperty('color', `var(${name})`);
+  probe.style.setProperty('position', 'absolute');
+  probe.style.setProperty('visibility', 'hidden');
+  probe.style.setProperty('pointer-events', 'none');
+  document.documentElement.appendChild(probe);
+  const resolved = getComputedStyle(probe).color.trim();
+  probe.remove();
+
+  const raw = resolved || fallback;
+  if (/^rgba?\(/i.test(raw) || /^#[0-9a-f]{3,8}$/i.test(raw)) return raw;
+
+  const rgb = toChartRgb(raw);
+  return /^rgba?\(/i.test(rgb) || /^#[0-9a-f]{3,8}$/i.test(rgb) ? rgb : fallback;
+}
+
+/** Map `--ds-*` tokens to Lightweight Charts options (§25.4). */
+export function readChartTheme(): ChartTheme {
+  return {
+    textMuted: readToken('--ds-foreground-muted', CHART_RGB_FALLBACKS.textMuted),
+    line: readToken('--ds-line', CHART_RGB_FALLBACKS.line),
+    marketUp: readToken('--ds-market-up', CHART_RGB_FALLBACKS.marketUp),
+    marketDown: readToken('--ds-market-down', CHART_RGB_FALLBACKS.marketDown),
+    accent: readToken('--ds-accent', CHART_RGB_FALLBACKS.accent),
+    background: 'transparent',
+  };
+}
+
+export function chartLayoutOptions(theme: ChartTheme) {
+  return {
+    background: { color: theme.background },
+    textColor: theme.textMuted,
+    fontFamily: 'var(--ds-font-sans)',
+    attributionLogo: true as const,
+  };
+}
+
+export function chartGridOptions(theme: ChartTheme) {
+  return {
+    vertLines: { color: theme.line },
+    horzLines: { color: theme.line },
+  };
+}
+
+export function candleSeriesOptions(theme: ChartTheme) {
+  return {
+    upColor: theme.marketUp,
+    downColor: theme.marketDown,
+    wickUpColor: theme.marketUp,
+    wickDownColor: theme.marketDown,
+    borderVisible: false as const,
+  };
+}
+
+export function lineSeriesOptions(color: string) {
+  return {
+    color,
+    lineWidth: 2 as const,
+    crosshairMarkerVisible: true,
+    priceLineVisible: false,
+    lastValueVisible: false,
+  };
+}
+
+export function indicatorSeriesOptions(color: string) {
+  return {
+    color,
+    lineWidth: 1 as const,
+    crosshairMarkerVisible: false,
+    priceLineVisible: false,
+    lastValueVisible: false,
+  };
+}

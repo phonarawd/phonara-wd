@@ -34,10 +34,12 @@ function playwrightArtifactDirs() {
     .map((entry) => join(base, entry.name));
 }
 
+const authTargets = process.env['PHONARA_E2E_ACTIVE'] === '1' ? [] : [...EPHEMERAL_AUTH_PATHS];
+
 const targets = [
   ...ROOT_ARTIFACT_DIRS,
   ...workspaceTargets(),
-  ...EPHEMERAL_AUTH_PATHS,
+  ...authTargets,
   ...CURSOR_EPHEMERAL_PATHS,
   ...playwrightArtifactDirs(),
   ...ROOT_ARTIFACT_FILES,

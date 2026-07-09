@@ -3,7 +3,7 @@ import { hmacSha256 } from './hmac';
 /**
  * floatStream — generate N uniform floats in [0, 1) from a provably-fair seed triple.
  *
- * Algorithm (stake.com standard):
+ * Algorithm (industry-standard provably-fair):
  *   - For each HMAC call: serverSeed is the key, message = `${clientSeed}:${nonce}:${cursor}`.
  *   - Each HMAC output = 32 bytes = up to 8 floats (4 bytes each, base-256 accumulation).
  *   - When more than 8 floats are needed (e.g. Mines, Plinko), cursor is incremented

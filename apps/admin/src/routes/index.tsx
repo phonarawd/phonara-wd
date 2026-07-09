@@ -1,13 +1,7 @@
-import { createRoute, Navigate } from '@tanstack/react-router';
-import { Route as rootRoute } from './__root';
+import { createFileRoute } from '@tanstack/react-router';
 
-/** Admin SPA entry — `/` has no desk; send operators to login. */
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/',
-  component: AdminIndexRedirect,
+import { AdminHomePage } from '@/product/surfaces/admin-home-page';
+
+export const Route = createFileRoute('/')({
+  component: AdminHomePage,
 });
-
-function AdminIndexRedirect() {
-  return <Navigate to="/login" replace />;
-}

@@ -35,6 +35,7 @@ alwaysApply: true
 - [ ] `console.log`/`console.warn`/`console.error` 등 개발용 코드가 제거(또는 DEV 게이팅)됨.
 - [ ] 하드코딩된 테스트 데이터가 없음.
 - [ ] `bun run check:release`가 green.
+- [ ] Step/Phase 마감 시 **`82-work-doc-closeout-sync`**: §AI Todo Sync · roadmap · Plan YAML `[x]`/`[ ]` 갱신 (미동기화 = FAIL).
 - [ ] 실제 서비스에 바로 배포해도 이상하지 않은 상태로 마무리됨.
 
 ## 작업 종료 시 자기점검(강제)

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PHONARA concept B  Quad Prism (simple volumetric)">
+  <defs>
+    <linearGradient id="b-top" x1="160" y1="96" x2="352" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f2fff9"/>
+      <stop offset="0.5" stop-color="#a8ffd9"/>
+      <stop offset="1" stop-color="#5fd9a8"/>
+    </linearGradient>
+    <linearGradient id="b-left" x1="96" y1="200" x2="256" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7dffc8"/>
+      <stop offset="1" stop-color="#1a7a52"/>
+    </linearGradient>
+    <linearGradient id="b-right" x1="256" y1="200" x2="416" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5ce5ad"/>
+      <stop offset="1" stop-color="#0f5c3d"/>
+    </linearGradient>
+    <linearGradient id="b-front" x1="180" y1="260" x2="332" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3ec892"/>
+      <stop offset="1" stop-color="#0a3d28"/>
+    </linearGradient>
+    <linearGradient id="b-edge" x1="128" y1="120" x2="384" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.82"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="b-shadow" x="-16%" y="-16%" width="144%" height="144%">
+      <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#021810" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+  <g filter="url(#b-shadow)">
+    <!-- 4 equal faces converging  isometric lozenge (Earn�Trade�Sports�Casino facets) -->
+    <path fill="url(#b-left)" d="M128 196 L256 120 L256 320 L128 396 Z"/>
+    <path fill="url(#b-right)" d="M256 120 L384 196 L384 396 L256 320 Z"/>
+    <path fill="url(#b-front)" d="M128 396 L256 320 L384 396 L256 472 Z"/>
+    <path fill="url(#b-top)" d="M128 196 L256 120 L384 196 L256 272 Z"/>
+    <path fill="url(#b-edge)" d="M148 206 L256 142 L364 206 L256 252 Z" fill-opacity="0.55"/>
+    <circle cx="256" cy="248" r="18" fill="#ffffff" fill-opacity="0.88"/>
+  </g>
+</svg>

@@ -15,7 +15,12 @@ export interface GameConfig {
 export type GameField =
   | { kind: 'text'; key: string; labelKey: MessageKey; inputMode?: 'decimal' | 'numeric' }
   | { kind: 'number'; key: string; labelKey: MessageKey; min: number; max: number; step?: number }
-  | { kind: 'select'; key: string; labelKey: MessageKey; options: Array<{ value: string; labelKey: MessageKey }> }
+  | {
+      kind: 'select';
+      key: string;
+      labelKey: MessageKey;
+      options: Array<{ value: string; labelKey: MessageKey }>;
+    }
   | { kind: 'cells'; key: string; labelKey: MessageKey; max: number };
 
 export interface RoundCommitment {
@@ -57,3 +62,9 @@ export interface RecentBet {
   currency: Currency;
   created_at: string;
 }
+
+/** Manual `requestBet()` — no silent return. */
+export type ManualBetResult = 'placed' | 'confirm_opened' | 'blocked' | 'skipped';
+
+/** Auto `autoBet()` — confirm pref bypassed. */
+export type AutoBetResult = 'placed' | 'blocked';

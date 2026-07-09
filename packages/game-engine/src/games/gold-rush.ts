@@ -1,12 +1,7 @@
 import { z } from 'zod';
 import { registerGame, type GameDefinition } from '../registry';
 import { quantize6 } from '../lib/quantize';
-import {
-  PAYLINES_20,
-  slotPayoutMultiplier,
-  spinSlot,
-  type SlotConfig,
-} from '../lib/slot-engine';
+import { PAYLINES_20, slotPayoutMultiplier, spinSlot, type SlotConfig } from '../lib/slot-engine';
 
 export interface GoldRushSelection {
   lines: number;

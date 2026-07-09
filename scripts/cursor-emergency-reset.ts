@@ -17,10 +17,7 @@ import {
   WORKSPACE_ROOTS,
 } from './lib/workspace-artifacts';
 
-const REPO_ROOT = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  '..',
-);
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 function cleanArtifacts(): number {
   let removed = 0;
@@ -65,7 +62,9 @@ function portStatus(): string {
   for (const port of E2E_PORTS) {
     try {
       const out = execSync('netstat -ano', { encoding: 'utf8' });
-      const busy = out.split('\n').some((line) => line.includes('LISTENING') && line.includes(`:${port} `));
+      const busy = out
+        .split('\n')
+        .some((line) => line.includes('LISTENING') && line.includes(`:${port} `));
       lines.push(`  ${port}: ${busy ? 'BUSY' : 'free'}`);
     } catch {
       lines.push(`  ${port}: unknown`);
@@ -87,6 +86,8 @@ const killed = killOrphanRepoDevProcesses();
 const ports = killE2ePortListeners();
 const cleaned = cleanArtifacts();
 
-process.stdout.write(`[cursor:emergency-reset] killed ${killed} orphan(s), freed ${ports} port listener(s), cleaned ${cleaned} artifact path(s)\n`);
+process.stdout.write(
+  `[cursor:emergency-reset] killed ${killed} orphan(s), freed ${ports} port listener(s), cleaned ${cleaned} artifact path(s)\n`,
+);
 process.stdout.write(`[cursor:emergency-reset] E2E ports:\n${portStatus()}\n`);
 process.stdout.write('[cursor:emergency-reset] done — restart Cursor if UI still lags\n');

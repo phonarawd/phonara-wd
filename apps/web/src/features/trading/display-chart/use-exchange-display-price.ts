@@ -20,10 +20,7 @@ export function useExchangeDisplayPrice(marketSymbol: string | null) {
     return tail ? String(tail.close) : null;
   }, [candles, lastPrice]);
 
-  const display = useMemo(
-    () => (raw ? formatOraclePriceDisplay(raw, '') : null),
-    [raw],
-  );
+  const display = useMemo(() => (raw ? formatOraclePriceDisplay(raw, '') : null), [raw]);
 
   const prevRef = useRef<string | null>(null);
   const [dir, setDir] = useState<PriceDir>('flat');

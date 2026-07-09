@@ -1,5 +1,10 @@
 -- ============================================================
 -- Sportsbook place bet conservation (Wave-S3)
+--
+-- Authoritative stake lock: `rpc_place_sports_bet` only.
+-- Negative guards (odds_changed · stale · duplicate_fixture · cancelled fixture):
+--   sportsbook_place_negative_test.sql
+-- Exposure cap · RG limits: sportsbook_exposure_cap_test.sql · sportsbook_rg_loss_test.sql
 -- ============================================================
 
 BEGIN;

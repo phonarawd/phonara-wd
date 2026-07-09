@@ -34,7 +34,9 @@ export const PAYOUT_TABLES: Record<number, Record<PlinkoRisk, number[]>> = {
   },
   16: {
     low: [788, 51.8, 7.9, 2.4, 1.3, 1, 0.9, 0.8, 0.8, 0.8, 0.9, 1, 1.3, 2.4, 7.9, 51.8, 788],
-    medium: [2153.8, 135, 18.4, 4.3, 1.6, 0.9, 0.7, 0.6, 0.6, 0.6, 0.7, 0.9, 1.6, 4.3, 18.4, 135, 2153.8],
+    medium: [
+      2153.8, 135, 18.4, 4.3, 1.6, 0.9, 0.7, 0.6, 0.6, 0.6, 0.7, 0.9, 1.6, 4.3, 18.4, 135, 2153.8,
+    ],
     high: [3836, 239.7, 32, 6.8, 2.1, 0.9, 0.5, 0.3, 0.3, 0.3, 0.5, 0.9, 2.1, 6.8, 32, 239.7, 3836],
   },
 };
@@ -57,7 +59,10 @@ const DEFAULT_ROWS = 16;
 const plinkoDefinition: GameDefinition<PlinkoSelection, PlinkoResult> = {
   code: 'plinko',
   betSchema: z.object({
-    rows: z.number().int().refine((r) => [8, 12, 16].includes(r)),
+    rows: z
+      .number()
+      .int()
+      .refine((r) => [8, 12, 16].includes(r)),
     risk: z.enum(['low', 'medium', 'high']),
   }),
   floatCount: DEFAULT_ROWS,

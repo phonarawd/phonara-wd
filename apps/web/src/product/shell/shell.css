@@ -1,0 +1,5 @@
+/**
+ * §12.19.5 AppShell chrome geometry — BottomNav 56px · TopBar 56px · Earn chip 48px.
+ */
+@import './shell-chrome.css';
+@import './marketing-shell.css';

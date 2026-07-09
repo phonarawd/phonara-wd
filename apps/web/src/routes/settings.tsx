@@ -1,18 +1,18 @@
-import { createRoute } from '@tanstack/react-router';
-import { Route as rootRoute } from './__root';
-import { PresentationRoot } from '../presentation-import/presentation-root';
-import { ImportedSettingsPage } from '../presentation-import/pages/settings-page';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/settings',
-  component: ImportedSettingsRoute,
+import { getSession } from '@/lib/auth';
+import { SettingsHubPage } from '@/product/surfaces/settings/settings-hub-page';
+
+export const Route = createFileRoute('/settings')({
+  beforeLoad: async () => {
+    const session = await getSession();
+    if (!session) {
+      throw redirect({ to: '/login', replace: true });
+    }
+  },
+  component: SettingsRoutePage,
 });
 
-function ImportedSettingsRoute() {
-  return (
-    <PresentationRoot>
-      <ImportedSettingsPage />
-    </PresentationRoot>
-  );
+function SettingsRoutePage() {
+  return <SettingsHubPage />;
 }

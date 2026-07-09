@@ -3,18 +3,11 @@ import { toDecimal } from '@phonara/money';
 const CRITICAL_DISTANCE_PCT = 5;
 
 /** Display-only distance from oracle mark to server liquidation price. */
-export function formatLiquidationDistance(
-  mark: string,
-  liquidationPrice: string,
-): string | null {
+export function formatLiquidationDistance(mark: string, liquidationPrice: string): string | null {
   try {
     const markDecimal = toDecimal(mark);
     if (!markDecimal.greaterThan(0)) return null;
-    const distance = markDecimal
-      .minus(toDecimal(liquidationPrice))
-      .abs()
-      .div(markDecimal)
-      .mul(100);
+    const distance = markDecimal.minus(toDecimal(liquidationPrice)).abs().div(markDecimal).mul(100);
     return `${distance.toFixed(2)}%`;
   } catch {
     return null;

@@ -1,0 +1,87 @@
+---
+description: 작업 종료 시 docs/CURRENT_STATUS §AI Todo Sync · roadmap · Plan YAML 동기화 (non-waivable)
+alwaysApply: true
+---
+
+# Work Doc Closeout Sync (작업 종료 · AI Todo 체크)
+
+> **Phase D 유예:** Demolition 동안 §AI Todo Sync · `UI_REBUILD_WAVE` · `NEXT_STEP` 동기화 **금지** — `DEMOLITION_PLAN` batch 상태만 갱신 (`00-phase-d-demolition.mdc`).
+
+> **목적 (Phase R):** 다음 세션이 Step/Phase를 **재착수**하거나 YAML `completed`만 보고 **착각**하지 않게, 작업이 끝날 때마다 `.md` 완료 표식을 **동일 형식**으로 갱신한다.
+
+## 비-협상 (작업 "완료" 보고 전)
+
+게이트 green·코드 merge와 **별도**로, 아래 동기화가 끝나야만 해당 Step/Phase/하위 항목을 **DONE**이라고 보고한다.
+
+**FAIL =** 사용자-facing "완료"·§GREEN·Step N done 주장 **+** §AI Todo Sync 미갱신 · 상위 `[x]`인데 하위 `[ ]` 잔존 · Plan YAML과 CURRENT_STATUS 불일치.
+
+## 판정 정본 순서 (Phase R — Demolition 중 적용 안 함)
+
+1. **`docs/CURRENT_STATUS.md` → §AI Todo Sync** (Phase R)
+2. **Rebuild execution plan** (Phase R — [`REBUILD_PLAN_v1`](../../docs/PRODUCT/REBUILD_PLAN_v1.md))
+3. 매트릭스·`DOCS_INDEX` — 해당 surface/RPC/Admin 행만
+
+Cursor Plan YAML **`status: completed`만**으로 완료 판정 **금지** — §AI Todo Sync 표가 우선.
+
+## 표기 규약 (전 문서 통일)
+
+| 표기 | 의미 | 재착수 |
+|------|------|--------|
+| **`[x]` DONE** | Step/Phase/하위 항목 전부 게이트 포함 완료 | **금지** (확장·잔여만) |
+| **`[x]`** (하위) | 해당 bullet만 완료 | 상위가 `[ ]`이면 상위 DONE 주장 금지 |
+| **`[x]` partial** | 일부만 (예: D0 토큰) | 나머지 `[ ]` 명시 필수 |
+| **`[x]` impl partial** | AI `gate:ai-impl` L0~L4 green · heavy L5~L8 **대기** | operator/CI Verified 후 full DONE |
+| **`[ ]` NEXT** | 다음 큐 | — |
+| **`[ ]` pending** | 미착수 | — |
+
+- 완료일: `2026-MM-DD` (세션 실측)
+- 증거: gate 1줄 — **Implemented:** `gate:ai-impl --test <path> green · vitest N/N` · **Verified/DONE:** `wallet-d3 6/6` · `test:sql 75/75` · `stack:push-remote` · advisor 0 · operator E2E spec
+- **상위 Step `[x]`** 조건: 본문 DoD 전부 `[x]` 또는 명시적 defer(다른 Step 번호)
+
+## 작업 종료 체크리스트 (매 세션 · 구현 변경 시)
+
+작업을 "끝"으로 보고하기 **직전** 에이전트가 **직접** 수행:
+
+1. **범위 판정** — 이번 세션이 닫은 것: U-wave · surface · SSOT checklist item · todo id
+2. **`CURRENT_STATUS.md`**
+   - §AI Todo Sync 표: 해당 행 → `[x]` + 완료일 + 증거
+   - Active Queue 한 줄 갱신
+   - Last Verified Green Gates — 변경 surface만
+   - surface 섹션 표 추가/갱신 (gate evidence)
+3. **`docs/SSOT/UI_REBUILD_WAVE.md`** — Phase R only (Batch 11 deleted)
+4. **`docs/SSOT/NEXT_STEP.md`** — Phase R only (Batch 11 deleted)
+6. **자기검증**
+   ```bash
+   rg "source of truth|single active tactical|Always read.*PHONARA_ACTIVE" .cursorrules AGENTS.md .cursor/rules/00-core.mdc  # active execution ref 0
+   ```
+
+## Shell / IA / Nova — DONE vs partial (non-waivable)
+
+아래 카테고리는 **`typecheck` · vitest · `check:i18n`만으로 `[x] DONE` 불가**:
+
+| 카테고리 | `[x] DONE` 조건 | partial 허용 증거 |
+|----------|-----------------|-------------------|
+| NOVA N0–N10 · P6 shell | Consolidation **C5** green | `check:ui-architecture` known debt · E2E deferred |
+| Phase D D0/D1/D3/D4 shell/IA | C5 + visual smoke E2E | design-tokens only |
+| `ux-system` · per-page UX | C0–C5 + p4-rc visual | engine wire only |
+
+**FAIL =** N10 · P14 · Phase D `[x]` DONE 주장 + Consolidation C1–C4 미착수 · `check:ui-architecture --strict` red.
+
+**정직화 (2026-06-25):** 기존 NOVA `[x]` 행은 **implementation partial** 로 읽을 것 — §AI Todo Sync Consolidation Wave가 **수렴 정본**.
+
+## 착수 전 (duplicate 방지와 쌍)
+
+- 착수: `70-autonomy` §0 — §AI Todo Sync에서 **`[x]` DONE** 행은 **재착수 금지**
+- **예외:** `88-ui-consolidation-wave` C1–C4 — C0 표 부채 **수렴만** 허용 (parallel surface 추가 아님)
+- 종료: 본 규칙 — **`[ ]` → `[x]`** 갱신
+
+## operator 문서
+
+- Zone A 한국어 (`61-script-locale-hygiene`)
+- 사용자가 "문서 업데이트만" 요청하지 않아도, **구현 Step/Phase 마감 시 본 규칙은 자동 적용** (standing autonomy)
+
+## 교차 참조
+
+- `70-autonomy-and-delivery` §0.1 · `81-efficient-gate-execution` (게이트 후 closeout)
+- `88-ui-consolidation-wave` · `95-presentation-import-absorption` §Convergence
+- `00-core` · `.cursorrules` Non-negotiables

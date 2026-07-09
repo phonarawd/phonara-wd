@@ -1,9 +1,18 @@
-import { createRoute } from '@tanstack/react-router';
-import { Route as rootRoute } from './__root';
-import { ReferralLovableSurface } from '../presentation-import/referral/referral-lovable-surface';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/referral',
-  component: ReferralLovableSurface,
+import { getSession } from '@/lib/auth';
+import { ReferralPage } from '@/product/surfaces/referral/referral-page';
+
+export const Route = createFileRoute('/referral')({
+  beforeLoad: async () => {
+    const session = await getSession();
+    if (!session) {
+      throw redirect({ to: '/login', replace: true });
+    }
+  },
+  component: ReferralRoutePage,
 });
+
+function ReferralRoutePage() {
+  return <ReferralPage />;
+}

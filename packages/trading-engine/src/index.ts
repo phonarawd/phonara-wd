@@ -26,12 +26,20 @@ export {
 export {
   computeSpotBuy,
   computeSpotSell,
+  computeMajorSpotBuy,
   DEFAULT_SPOT_FEE,
+  computeSpotLimitBuyPreview,
+  computeSpotLimitSellPreview,
+  isSpotLimitCrossed,
+  isSpotStopEntryTriggered,
+  type SpotOrderSide,
   type SpotQuoteParams,
   type SpotBuyParams,
   type SpotSellParams,
   type SpotBuyResult,
   type SpotSellResult,
+  type MajorSpotBuyParams,
+  type MajorSpotBuyResult,
 } from './spot';
 
 export {

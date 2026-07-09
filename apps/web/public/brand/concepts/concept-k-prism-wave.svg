@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PHONARA concept prism wave">
+  <defs>
+    <linearGradient id="body" x1="132" y1="104" x2="396" y2="408" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#effff9"/>
+      <stop offset="0.4" stop-color="#9effd9"/>
+      <stop offset="1" stop-color="#1c9d6f"/>
+    </linearGradient>
+    <linearGradient id="shadow" x1="236" y1="156" x2="428" y2="404" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f6245" stop-opacity="0"/>
+      <stop offset="1" stop-color="#072b1e" stop-opacity="0.82"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#body)" d="M136 108h76v296h-76a20 20 0 0 1-20-20V128a20 20 0 0 1 20-20zm76 0h112c88.4 0 160 71.6 160 160S412.4 428 324 428H212V108zm96 56v208h40c52 0 96-44 96-104s-44-104-96-104h-40z"/>
+  <path fill="url(#shadow)" d="M240 108h112c88.4 0 160 71.6 160 160S440.4 428 352 428h-44c84 0 136-68 136-156 0-64-44-108-116-108h-88z"/>
+  <path fill="#ffffff" fill-opacity=".22" d="M152 122h180c66 0 116 44 116 108v10H152z"/>
+  <path fill="#76ffcb" d="M344 168a132 132 0 0 1 132 132h-30a102 102 0 0 0-102-102v-30z"/>
+  <path fill="#76ffcb" fill-opacity=".62" d="M360 148a160 160 0 0 1 160 160h-30a130 130 0 0 0-130-130v-30z"/>
+  <circle cx="456" cy="300" r="22" fill="#76ffcb"/>
+</svg>

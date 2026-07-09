@@ -14,8 +14,10 @@ import {
   zero,
   format,
   toDecimal,
+  DECIMALS,
 } from './index';
 import type { RateSnapshot } from './index';
+import type { Currency } from '@phonara/shared-types';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -57,6 +59,10 @@ describe('money construction', () => {
 
   it('throws on non-numeric string', () => {
     expect(() => money('abc', 'PHON')).toThrow('[money]');
+  });
+
+  it('accepts negative amounts (caller must guard sufficiency)', () => {
+    expect(phon('-1.5').amount).toBe('-1.500000');
   });
 });
 
@@ -140,7 +146,9 @@ describe('applyFeeRate', () => {
     // net = 100.123456 - 0.300370 = 99.823086
     const reconstructed = add(fee, net);
     // they sum back to original (minus truncation dust — net is also truncated)
-    expect(toDecimal(reconstructed.amount).lessThanOrEqualTo(toDecimal(original.amount))).toBe(true);
+    expect(toDecimal(reconstructed.amount).lessThanOrEqualTo(toDecimal(original.amount))).toBe(
+      true,
+    );
   });
 
   it('throws on negative fee rate', () => {
@@ -168,6 +176,16 @@ describe('convert', () => {
 
   it('throws when amount currency mismatches snapshot base', () => {
     expect(() => convert(usdt('100'), phonUsdtRate('0.01'))).toThrow('[money] convert');
+  });
+
+  it('converts at zero rate to zero output with zero fee', () => {
+    const result = convert(phon('1000'), phonUsdtRate('0'));
+    expect(result.output.amount).toBe('0.000000');
+    expect(isZero(result.fee)).toBe(true);
+  });
+
+  it('throws on negative FX rate', () => {
+    expect(() => convert(phon('100'), phonUsdtRate('-0.01'))).toThrow('[money]');
   });
 });
 
@@ -201,5 +219,21 @@ describe('float safety', () => {
     const a = phon('999999.999999');
     const b = phon('0.000001');
     expect(add(a, b).amount).toBe('1000000.000000');
+  });
+});
+
+describe('DECIMALS invariant', () => {
+  it('exports frozen currency decimal map', () => {
+    expect(Object.isFrozen(DECIMALS)).toBe(true);
+    expect(DECIMALS['PHON']).toBe(6);
+    expect(DECIMALS['USDT']).toBe(6);
+    expect(DECIMALS['KRW']).toBe(0);
+  });
+
+  it('rejects runtime mutation of DECIMALS', () => {
+    expect(() => {
+      (DECIMALS as Record<Currency, number>)['PHON'] = 8;
+    }).toThrow();
+    expect(DECIMALS['PHON']).toBe(6);
   });
 });

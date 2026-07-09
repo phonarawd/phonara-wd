@@ -1,0 +1,71 @@
+---
+description: 효율적 게이트 실행 — fail-fast 사다리·batch-fix·check:full은 최종 확인 전용 (저사양·세계 1위 팀 표준)
+alwaysApply: true
+---
+
+# 효율적 게이트 실행 (fail-fast · batch-fix · 저사양)
+
+> **목적:** "check:full 돌림 → 에러 1건 → 1건 고침 → 또 check:full → 또 1건"의 **저효율 루프 박멸**.
+> 저사양 PC에서 세계 1위 개발팀 수준으로 **한 번에 끝내는** fix-verify 규율.
+> 저사양 baseline·병렬 금지 정본: **`79-low-spec-pc.mdc`** · **`80-absolute-gate-prohibitions.mdc`** (이 룰은 그 위 **루프 효율** 계층 — 중복 아님, 보완).
+
+## 핵심 원칙 (전부 non-waivable)
+
+### 1. 게이트 사다리 — 싼 것 → 비싼 것, 위로만 1회씩 상승
+순서를 건너뛰지 않는다. 각 계층이 **완전 green**이어야 다음(더 비싼) 계층으로.
+
+| L | 게이트 | 비용 | 비고 |
+|---|--------|------|------|
+| L0 | `cursor:status` · `check:hygiene` | 즉시 | orphan·포트·residue |
+| **AI impl** | **`gate:ai-impl -- --test <path>`** | ~분 | **todo Implemented closeout 정본 (L0~L3 wrapper)** |
+| L1 | `typecheck` | ~2s | batch-fix 또는 gate:ai-impl 내부 |
+| L2 | `lint` | 캐시 | |
+| L3 | **타겟** vitest (`bun run test -- <path>`) | 초 | 변경 파일/패키지만 |
+| L4 | 전체 vitest (`maxWorkers: 1`) | 분 | L3 green 후 |
+| L5 | `db reset` → `test:sql` → **`stack:push-remote`** → remote advisor 0 | 분 | **SQL/migration 변경 시만** · agent 자율 **금지** (`80` G13) · operator 「gate 실행」 또는 CI |
+| L6 | **타겟** E2E spec (`test:e2e:casino -- <spec>` / `-g`) | 분 | **operator 「gate 실행」 또는 CI** — agent 자율 금지 |
+| L7 | 전체 `test:e2e` | 수십 분 | **CI 또는 operator 「gate 실행」 1회** |
+| L8 | `check:full` | 최장 | **CI 또는 operator 「gate 실행」 1회** — agent 자율 금지 |
+| L9 | **`82-work-doc-closeout-sync`** · §AI Todo Sync | 즉시 | **완료 보고 직전 필수** · 미동기화 = FAIL |
+
+### 2. 배치 수정 (batch-fix) — 1건씩 절대 금지
+- 게이트 1회 실행 → 그 출력의 **모든 에러를 끝까지 읽어 전부 수집** → **한 번에 전부 수정** → **같은 게이트 1회 재실행**.
+- 다음 단일 에러를 찾으려고 **상위(비싼) 게이트를 다시 돌리지 않는다**. 에러는 같은 계층에서 다 잡고 올라간다.
+
+### 3. check:full / 전체 E2E는 디버깅 도구가 아니다
+- **하위 사다리(L0~L6)가 전부 green일 때 최종 확인용으로 L7/L8을 1회만** 실행.
+- check:full·전체 E2E를 **에러 발견·반복 디버깅 루프로 사용 = FAIL**. (저사양에서 30분+ 낭비 = `80` G3 위반)
+
+### 4. 예측 우선 (predict-before-run)
+- 게이트를 태우기 전에 코드를 정적으로 읽고 실패를 **추론·선수정**. 관련 테스트·계약·타입을 먼저 확인.
+- 비싼 게이트로 에러를 "발견"하지 말 것 — 게이트는 **확인(confirm)**, 발견은 **읽기(read)**로.
+
+### 5. 최저 계층 재현 (cheapest reproduction)
+- E2E/통합 실패 시 → 즉시 **타겟 spec `-g` 또는 vitest 단위로 좁혀** 초 단위 fix-verify 루프 구성.
+- 분 단위 전체 재실행으로 반복 확인 금지. 좁힌 재현이 green이 된 **뒤에만** 넓은 게이트로 복귀.
+
+### 6. 범위 한정 + 한 방향 (no bounce)
+- 변경에 **영향받는** spec/test/package만 선택(79/80 "좁게 → 넓게").
+- 한 계층 green 후 상위로 올라가면 **되돌아 튀지 않는다**. 상위에서 깬 것이 하위 계층 원인이면 그 하위만 좁혀 고치고 다시 직선 상승.
+
+## 작업 루프 (매 변경 단위 고정)
+```text
+읽기·예측(선수정) → gate:ai-impl --test <path> (또는 L0→L1→L2→L3 batch-fix) →
+(SQL/migration 변경 시) L5 operator/CI → L6 operator/CI → [전부 green] → L7/L8 operator/CI 1회 → L9 doc sync
+```
+
+## FAIL = 비효율 루프 (작업 미완료)
+- check:full / 전체 E2E를 **에러 발견 루프**로 사용.
+- 1건 고치고 **즉시** 전체 E2E·check:full 재실행.
+- 하위 계층 green 없이 **check:full 직행**.
+- 게이트 출력 에러를 **일부만 보고 한 건만** 고침(나머지 무시 → 다음 실행에서 또 발견).
+- 같은 비싼 게이트를 **3회 이상** 같은 변경 맥락에서 반복(= 사다리·batch-fix 위반 신호).
+- 게이트 green인데 **§AI Todo Sync 미갱신**으로 완료 보고(= `82` 위반).
+
+## self-check
+```bash
+rg "게이트 사다리|batch-fix|check:full.*최종|L7|L8" .cursor/rules/81-efficient-gate-execution.mdc
+bun run cursor:status
+```
+
+교차 참조: `79-low-spec-pc.mdc` · `80-absolute-gate-prohibitions.mdc` · `40-testing.mdc` · `10-quality-gates.mdc` · **`82-work-doc-closeout-sync.mdc`**

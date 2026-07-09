@@ -172,4 +172,6 @@ if (violations.length > 0) {
   process.exit(1);
 }
 
-process.stdout.write('check:hygiene OK — cursorignore, watcher excludes, and session residue clean\n');
+process.stdout.write(
+  'check:hygiene OK — cursorignore, watcher excludes, and session residue clean\n',
+);
