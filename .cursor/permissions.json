@@ -42,6 +42,7 @@
       "Block raw playwright test / bunx playwright — use bun run test:e2e only when operator explicitly runs gate with PHONARA_ALLOW_LOCAL_HEAVY_GATE=1.",
       "Block parallel heavy gates (two of test:e2e, check:full, build, test:sql at the same time).",
       "Block reading or writing .env (not .env.example).",
+      "Block git push to main or master (any refspec) — use bun run git:push on feature branch only. Override: PHONARA_ALLOW_MAIN_PUSH=1.",
       "Block git push --force to main or master without explicit operator approval.",
       "Block docker volume prune with PHONARA_DOCKER_PURGE_VOLUMES without approval.",
       "Block Supabase MCP on any project other than yocjhjsdwoijfdrehzoq."

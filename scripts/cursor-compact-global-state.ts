@@ -8,7 +8,8 @@ import path from 'node:path';
 import { bytesToMb, cursorGlobalStateDbPath, fileSizeBytes } from './lib/cursor-metadata-sizes';
 import { pruneStateVscdbBackups } from './lib/cursor-vscdb-backup-prune';
 
-const GLOBAL_STATE_THRESHOLD_MB = 500;
+/** 8GB PCs: 300MB+ state.vscdb slows cold boot disk I/O — compact after quit. */
+const GLOBAL_STATE_THRESHOLD_MB = 280;
 
 function isCursorRunning(): boolean {
   try {

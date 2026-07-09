@@ -110,6 +110,10 @@
   "window.restoreWindows": "one",
   "workbench.startupEditor": "none",
   "workbench.localHistory.enabled": false,
+  "workbench.editor.restoreViewState": false,
+  "search.maintainFileSearchCache": false,
+  "git.autofetch": false,
+  "extensions.autoUpdate": false,
   "search.maxResults": 5000,
   "javascript": {
     "validate": {

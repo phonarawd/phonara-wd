@@ -18,6 +18,12 @@ alwaysApply: true
 
 Operator가 push·commit을 **명시**했을 때만 commit/push. 루프 중 재푸시는 동일 세션 standing grant.
 
+## Branch (non-waivable)
+
+- **`main` 직접 push 금지** — feature branch만 push (`phase-r/*` · `wip/*`)
+- `main`에서 작업 중: `bun run wip:branch -- "<topic>"` 먼저
+- CI green → **PR merge**로만 `main` 반영
+
 ## 루프 (non-waivable)
 
 ```text
@@ -45,7 +51,7 @@ preflight → L0~L4 local green → commit → push → ci:watch
 ## Push 후 CI 감시
 
 ```powershell
-git push origin <branch>
+bun run git:push
 bun run ci:watch
 # 타임아웃/백그라운드: gh run view <id> · gh run view <id> --log-failed
 ```

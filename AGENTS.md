@@ -19,6 +19,31 @@ Rules: `.cursor/rules/00-post-closeout-active-ssot.mdc` · denylist [`DEPRECATED
 - `DEMOLITION_PLAN` batch rows (DONE)
 - v2 deleted SSOT (`UI_REBUILD_WAVE` · `MASTER_TODO` · …) — Batch 11 `git rm`
 
+## Branch workflow (non-waivable)
+
+**`main`에 직접 push 금지** — 오류 시 main이 지저분해짐. feature branch → CI green → PR merge.
+
+```powershell
+# 1) main에서 작업 중이면 feature branch로 이동 (커밋·미커밋 변경 유지)
+bun run wip:branch -- "da-w2-shell-elevation"
+
+# 2) 마일스톤마다 checkpoint (미완성 OK — phase-r/* · wip/* 만)
+bun run wip:checkpoint -- "aurora backdrop policy"
+
+# 3) push는 feature branch만 (main 직접 push 자동 차단)
+bun run git:push
+
+# 4) CI green 확인 후 PR → main merge
+bun run ci:watch
+gh pr create --base main --head $(git branch --show-current)
+```
+
+| 브랜치 | 용도 |
+|--------|------|
+| `main` | merge-ready only · 직접 작업/push **금지** |
+| `phase-r/<topic>-<date>` | Phase R 구현 큐 (정본) |
+| `wip/<topic>` | 레거시 WIP (허용) |
+
 ## Gates
 
 > **로컬 전체 테스트 (Cursor):** `gate:local-autopilot` · `@test-autopilot` — 순차 · RAM 가드 · Docker on-demand  
@@ -74,7 +99,7 @@ Required jobs: **quality · sql · e2e · advisors**. 로컬 heavy gate **금지
 
 ```powershell
 bun run gate:ai-impl -- --test <owner-vitest-path>
-git push origin <branch>
+bun run git:push
 bun run ci:watch
 ```
 

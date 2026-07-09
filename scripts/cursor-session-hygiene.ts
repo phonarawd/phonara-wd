@@ -193,6 +193,7 @@ switch (mode) {
       maybeAutoCleanCursorLogs();
       maybeRenderFix();
       run('sync-excludes', 'bun', ['run', 'cursor:sync-excludes']);
+      run('git-hooks', 'bun', ['run', 'git:hooks:install']);
       stopIdleDockerIfSafe({ quiet: true });
       break;
     }

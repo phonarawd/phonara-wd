@@ -1,7 +1,12 @@
 /**
  * Move dirty WIP off main onto a dedicated branch — standard before long slices.
  */
-import { currentBranch, defaultWipBranchName, git, isProtectedBranch } from './lib/git-wip';
+import {
+  currentBranch,
+  defaultWipBranchName,
+  git,
+  isProtectedBranch,
+} from './lib/git-wip';
 
 const topic = process.argv.slice(2).join(' ').trim() || undefined;
 const branch = defaultWipBranchName(topic);
@@ -19,6 +24,8 @@ if (!isProtectedBranch(current)) {
   process.exit(0);
 }
 
+process.stdout.write(`[wip:branch] moving work off ${current} → ${branch}\n`);
+
 try {
   git(`show-ref --verify --quiet refs/heads/${branch}`);
   git(`checkout ${branch}`);
@@ -33,5 +40,6 @@ try {
 }
 
 process.stdout.write(
-  '[wip:branch] main stays merge-ready; checkpoint with: bun run wip:checkpoint\n',
+  '[wip:branch] main stays merge-ready; push feature branch only — PR when CI green\n',
 );
+process.stdout.write('[wip:branch] checkpoint: bun run wip:checkpoint -- "milestone note"\n');

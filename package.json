@@ -155,6 +155,8 @@
     "wip:status": "tsx scripts/git-wip-status.ts",
     "wip:branch": "tsx scripts/git-wip-branch.ts",
     "wip:checkpoint": "tsx scripts/git-wip-checkpoint.ts",
+    "git:push": "tsx scripts/git-push-feature.ts",
+    "git:hooks:install": "tsx scripts/install-git-hooks.ts",
     "cursor:clean-metadata": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/cursor-clean-metadata.ps1",
     "cursor:av-exclusions": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/configure-antivirus-exclusions.ps1 -OpenV3Lite",
     "rehearsal:backup": "tsx scripts/backup-rehearsal.ts",
