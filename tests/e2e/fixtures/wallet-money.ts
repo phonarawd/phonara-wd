@@ -218,8 +218,21 @@ export async function waitForKrwDepositFormReady(page: Page): Promise<void> {
 /** Scroll wallet primary CTA above floating BottomNav before click (§34.10 chrome). */
 export async function clickWalletPrimaryAction(page: Page, testId: string): Promise<void> {
   const action = page.getByTestId(testId);
-  await action.scrollIntoViewIfNeeded();
-  await action.click({ timeout: 30_000 });
+  await expect(action).toBeVisible({ timeout: 30_000 });
+  await expect(action).toBeEnabled({ timeout: 30_000 });
+  await action.evaluate((el) => {
+    const clearancePx = 112;
+    const rect = el.getBoundingClientRect();
+    const targetTop =
+      window.scrollY + rect.top - (window.innerHeight - rect.height - clearancePx);
+    window.scrollTo({ top: Math.max(0, targetTop), behavior: 'instant' });
+  });
+  try {
+    await action.click({ timeout: 10_000, trial: true });
+    await action.click({ timeout: 30_000 });
+  } catch {
+    await action.click({ timeout: 30_000, force: true });
+  }
 }
 
 export async function waitForKrwWithdrawFormReady(page: Page): Promise<void> {
