@@ -29,6 +29,7 @@ describe('standby-failure-cases (§5-B · 8s hang)', () => {
   it('case 1 — exe_missing: opt-in on but exe absent → skipped · work-end safe', () => {
     const result = runEmptyStandbyList({
       env: { PHONARA_EMPTY_STANDBY: '1' },
+      platform: 'win32',
       exists: () => false,
       spawnSync: () => {
         throw new Error('spawn must not run when exe is missing');
@@ -55,6 +56,7 @@ describe('standby-failure-cases (§5-B · 8s hang)', () => {
         PHONARA_EMPTY_STANDBY: '1',
         PHONARA_EMPTY_STANDBY_EXE: 'C:\\tools\\EmptyStandbyList.exe',
       },
+      platform: 'win32',
       exists: (filePath) => filePath.endsWith('EmptyStandbyList.exe'),
       spawnSync: spawn,
     });
@@ -79,6 +81,7 @@ describe('standby-failure-cases (§5-B · 8s hang)', () => {
         PHONARA_EMPTY_STANDBY: '1',
         PHONARA_EMPTY_STANDBY_EXE: 'C:\\tools\\EmptyStandbyList.exe',
       },
+      platform: 'win32',
       exists: () => true,
       spawnSync: spawn,
     });

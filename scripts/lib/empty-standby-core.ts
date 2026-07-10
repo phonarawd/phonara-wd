@@ -185,6 +185,8 @@ export function runEmptyStandbyList(options?: {
   spawnSync?: StandbySpawnSync;
   timeoutMs?: number;
   exists?: (filePath: string) => boolean;
+  /** Test injection — defaults to `process.platform`. */
+  platform?: NodeJS.Platform;
 }): StandbyRunResult {
   const env = options?.env ?? process.env;
   if (!emptyStandbyOptInEnabled(env)) {
@@ -199,7 +201,8 @@ export function runEmptyStandbyList(options?: {
     };
   }
 
-  if (process.platform !== 'win32') {
+  const platform = options?.platform ?? process.platform;
+  if (platform !== 'win32') {
     return {
       attempted: false,
       ok: true,
