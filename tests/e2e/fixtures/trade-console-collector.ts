@@ -33,8 +33,8 @@ export type TradeConsoleCollector = {
   readonly unallowlistedWarns: string[];
 };
 
-/** Browser/dev noise — not app console.* violations; errors still hard-fail otherwise. */
-const INFRA_CONSOLE_ERROR_PATTERNS = [
+/** Browser/dev noise — not app console.* violations; hard-fail on real app errors/warnings otherwise. */
+const INFRA_CONSOLE_NOISE_PATTERNS = [
   /favicon/i,
   /Failed to load resource.*404/i,
   /Failed to load resource.*403/i,
@@ -48,6 +48,8 @@ const INFRA_CONSOLE_ERROR_PATTERNS = [
   /** WebKit logs opaque CORS noise for Supabase REST during stale-oracle polling (browser-matrix E8). */
   /\/rest\/v1\/oracle_prices\?.*due to access control checks\./i,
   /\/rest\/v1\/market_circuit_breakers\?.*due to access control checks\./i,
+  /** Firefox font parser noise for self-hosted Pretendard Variable on reload (browser-matrix E8). */
+  /downloadable font:.*name records are not sorted.*Pretendard Variable/i,
 ] as const;
 
 const EXPIRES_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -108,8 +110,8 @@ function compileAllowlistPatterns(entries: readonly TradeConsoleAllowlistEntry[]
   return entries.map((entry) => new RegExp(entry.pattern));
 }
 
-function isInfraConsoleError(text: string): boolean {
-  return INFRA_CONSOLE_ERROR_PATTERNS.some((pattern) => pattern.test(text));
+export function isInfraConsoleNoise(text: string): boolean {
+  return INFRA_CONSOLE_NOISE_PATTERNS.some((pattern) => pattern.test(text));
 }
 
 function isAllowlistedWarn(text: string, patterns: RegExp[]): boolean {
@@ -151,7 +153,7 @@ export function attachTradeConsoleCollector(page: Page): TradeConsoleCollector {
     const type = msg.type();
 
     if (type === 'error') {
-      if (!isInfraConsoleError(text)) {
+      if (!isInfraConsoleNoise(text)) {
         collector.errors.push(text);
       }
       return;
@@ -159,14 +161,14 @@ export function attachTradeConsoleCollector(page: Page): TradeConsoleCollector {
 
     if (type === 'warning') {
       collector.warns.push(text);
-      if (!isAllowlistedWarn(text, warnPatterns)) {
+      if (!isInfraConsoleNoise(text) && !isAllowlistedWarn(text, warnPatterns)) {
         collector.unallowlistedWarns.push(text);
       }
     }
   });
 
   page.on('pageerror', (err) => {
-    if (!isInfraConsoleError(err.message)) {
+    if (!isInfraConsoleNoise(err.message)) {
       collector.errors.push(err.message);
     }
   });
