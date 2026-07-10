@@ -211,6 +211,11 @@
     "20260723000001_client_gate_precheck_read.sql": "ccaee8f1a80db3399c8938b796f7b4eaeda84c912de75e82f2d53cff65fa3c1e",
     "20260723000002_spot_major_buy_fee_conservation_fix.sql": "b51144d3f591eb2d11295d4f4c76e37585193db3dcb4f688c9bceef30246ae2b",
     "20260724000001_trade_wallet_realtime_publication.sql": "fa332e895ae12bf776d6e0d6c1d07ac4614b7d7b008d69bc65dee8817a5cb1c2",
-    "20260725000001_synthetic_book_definer_fmt6_fix.sql": "d912cb3b6a00763c8bfa4210d1ec2722e028138ad23ee2f68f577cbf77d50450"
+    "20260725000001_synthetic_book_definer_fmt6_fix.sql": "d912cb3b6a00763c8bfa4210d1ec2722e028138ad23ee2f68f577cbf77d50450",
+    "20260726000001_pir_system_account_lock_order.sql": "047d16f5a34cba1a34eb9818dafaab4c2efaa5f05fac3556bf929986df72c5b4",
+    "20260727000001_pir_realtime_narrow.sql": "c8243afae63548ca4c333101e8351b25056c5526cd107cda2f7dcfdbc814e460",
+    "20260728000001_pir_golden_earth.sql": "786ef7f1e85537e856a57d87b148ba943cb7b95ed6352a31eb9d65a0e0831506",
+    "20260729000001_pir_sweep_chunk.sql": "c699cfc2ffeb46f48ef84c543e53f16df1ed848b0f4b353353a99128a9b755da",
+    "20260730000001_pir_idempotency_handlers.sql": "20fec8e28227f65001e630660aeb6083d3a2efa2bdf33538fb8236b81a8eac4d"
   }
 }

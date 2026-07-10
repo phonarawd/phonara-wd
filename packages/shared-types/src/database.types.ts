@@ -5783,7 +5783,12 @@ export type Database = {
         Returns: number
       }
       _apply_funding_for_market: {
-        Args: { p_funding_period: string; p_market: string; p_rate: string }
+        Args: {
+          p_batch_limit?: number
+          p_funding_period: string
+          p_market: string
+          p_rate: string
+        }
         Returns: Json
       }
       _apply_liquidation_buffer: {
@@ -6415,6 +6420,7 @@ export type Database = {
         Args: { p_tier: Database["public"]["Enums"]["earn_vip_tier"] }
         Returns: number
       }
+      _golden_earth_secure_roll: { Args: { p_sides: number }; Returns: number }
       _golden_earth_tier_for_xp: {
         Args: { p_xp: number }
         Returns: Database["public"]["Enums"]["earn_vip_tier"]
@@ -6487,6 +6493,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      _lock_system_accounts: { Args: { p_codes: string[] }; Returns: undefined }
       _lock_wallet_internal: {
         Args: {
           p_amount: string
@@ -6576,6 +6583,18 @@ export type Database = {
       _pay_affiliate_settlement: {
         Args: { p_settlement_id: string }
         Returns: Json
+      }
+      _pir_game_bet_already_placed: {
+        Args: { p_idempotency_key: string; p_user_id: string }
+        Returns: Json
+      }
+      _pir_sports_bet_already_placed: {
+        Args: { p_idempotency_key: string; p_user_id: string }
+        Returns: Json
+      }
+      _pir_sweep_batch_limit: {
+        Args: { p_batch_limit: number }
+        Returns: number
       }
       _place_open_order_common: {
         Args: {
@@ -6806,9 +6825,10 @@ export type Database = {
       }
       _roulette_weighted_index: { Args: { p_roll: number }; Returns: number }
       _run_affiliate_settlements: {
-        Args: { p_settlement_date?: string }
+        Args: { p_batch_limit?: number; p_settlement_date?: string }
         Returns: Json
       }
+      _run_funding_accrual_logged: { Args: never; Returns: undefined }
       _run_liquidations_logged: { Args: never; Returns: undefined }
       _run_open_order_fills_logged: { Args: never; Returns: undefined }
       _run_phon_internal_oracle_logged: { Args: never; Returns: undefined }
@@ -7731,18 +7751,27 @@ export type Database = {
         Returns: Json
       }
       rpc_run_affiliate_settlements: {
-        Args: { p_settlement_date?: string }
+        Args: { p_batch_limit?: number; p_settlement_date?: string }
         Returns: Json
       }
       rpc_run_custody_reconciliation: { Args: never; Returns: Json }
-      rpc_run_funding_accrual: { Args: never; Returns: Json }
+      rpc_run_funding_accrual: {
+        Args: { p_batch_limit?: number }
+        Returns: Json
+      }
       rpc_run_invariant_checks: { Args: never; Returns: Json }
-      rpc_run_liquidations: { Args: never; Returns: Json }
+      rpc_run_liquidations: {
+        Args: { p_after_id?: string; p_batch_limit?: number }
+        Returns: Json
+      }
       rpc_run_open_order_fills: { Args: never; Returns: Json }
       rpc_run_phon_internal_oracle: { Args: never; Returns: Json }
       rpc_run_reconciliation: { Args: never; Returns: Json }
       rpc_run_spot_order_fills: { Args: never; Returns: Json }
-      rpc_run_stop_orders: { Args: never; Returns: Json }
+      rpc_run_stop_orders: {
+        Args: { p_after_id?: string; p_batch_limit?: number }
+        Returns: Json
+      }
       rpc_service_assess_circuit_breaker: {
         Args: { p_channel?: string; p_domain: string; p_provider: string }
         Returns: Json
