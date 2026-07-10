@@ -1,10 +1,16 @@
 # apps/admin — Phase R
 
-> **Phase R:** Admin desks live — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `da-w2-shell-elevation-infra` (#188) · DA W1 GATE `[x]` · DA W1 `[x]` · DA W0 `[x]` · R0 forensic `[x]`.
+> **Phase R:** Admin desks live — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `p2-gate-admin-table-dedup` (#207) · AdminTable `#206` `[x]` · §29.6.
 
 ## KEEP (engine glue + product desks)
 
-`hooks/admin/` · `domain/` · `contracts/` · `lib/auth.ts` · `contexts/auth-context.tsx` · `product/surfaces/` · `routes/`
+`hooks/admin/` · `domain/` · `contracts/` · `lib/auth.ts` · `contexts/auth-context.tsx` · `product/surfaces/` · `product/primitives/admin-table.tsx` · `routes/`
+
+## AdminTable (§29.6)
+
+- **정본:** `apps/admin/src/product/primitives/admin-table.tsx` · `@tanstack/react-table`
+- Desk 목록 = **AdminTable만** — native `<table>` · 로컬 `LoadingTable` **금지**
+- Vite/vitest alias: `@/product/primitives/admin-table` → admin local (web primitives alias보다 우선)
 
 ## High-risk RBAC (R0 · PIR P1)
 
