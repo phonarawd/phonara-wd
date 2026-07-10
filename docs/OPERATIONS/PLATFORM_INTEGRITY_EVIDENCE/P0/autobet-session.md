@@ -10,12 +10,12 @@
 
 ## 구현
 
-| 파일 | 변경 |
-|------|------|
-| `apps/web/src/features/casino/use-auto-bet-queue.ts` | `createAutoBetSession` · `stepAutoBetSession` · `markAutoBetStopRequested` · `sessionActiveRef` · `syncSession` |
-| `apps/web/src/product/surfaces/games/casino-game-shell.tsx` | 루프 지역 `session` · `pipeline.autoBet(fireStake)` |
-| `apps/web/src/features/casino/use-casino-round.ts` | `autoBet(stakeOverride?)` · `submitBet(stakeOverride?)` |
-| `apps/web/src/features/casino/__tests__/use-auto-bet-queue.test.ts` | RED-first: count=2 · stopOnLoss 누적 · martingale · 이중 Start |
+| 파일                                                                | 변경                                                                                                            |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `apps/web/src/features/casino/use-auto-bet-queue.ts`                | `createAutoBetSession` · `stepAutoBetSession` · `markAutoBetStopRequested` · `sessionActiveRef` · `syncSession` |
+| `apps/web/src/product/surfaces/games/casino-game-shell.tsx`         | 루프 지역 `session` · `pipeline.autoBet(fireStake)`                                                             |
+| `apps/web/src/features/casino/use-casino-round.ts`                  | `autoBet(stakeOverride?)` · `submitBet(stakeOverride?)`                                                         |
+| `apps/web/src/features/casino/__tests__/use-auto-bet-queue.test.ts` | RED-first: count=2 · stopOnLoss 누적 · martingale · 이중 Start                                                  |
 
 ## 증거
 

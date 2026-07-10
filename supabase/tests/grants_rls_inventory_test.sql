@@ -308,7 +308,7 @@ BEGIN
     'authenticated must EXECUTE rpc_partial_close_futures';
   ASSERT has_function_privilege('authenticated', 'public.rpc_update_futures_position_sltp(uuid, text, text)', 'EXECUTE'),
     'authenticated must EXECUTE rpc_update_futures_position_sltp';
-  ASSERT NOT has_function_privilege('authenticated', 'public._apply_funding_for_market(text, text, timestamp with time zone)', 'EXECUTE'),
+  ASSERT NOT has_function_privilege('authenticated', 'public._apply_funding_for_market(text, text, timestamp with time zone, integer)', 'EXECUTE'),
     'authenticated must NOT EXECUTE _apply_funding_for_market';
   ASSERT NOT has_function_privilege('authenticated', 'public._compute_funding_payment(text, text, position_side)', 'EXECUTE'),
     'authenticated must NOT EXECUTE _compute_funding_payment';
@@ -495,11 +495,11 @@ BEGIN
     'anon must NOT EXECUTE rpc_run_spot_order_fills';
   ASSERT has_function_privilege('service_role', 'public.rpc_run_spot_order_fills()', 'EXECUTE'),
     'service_role must EXECUTE rpc_run_spot_order_fills';
-  ASSERT NOT has_function_privilege('authenticated', 'public.rpc_run_funding_accrual()', 'EXECUTE'),
+  ASSERT NOT has_function_privilege('authenticated', 'public.rpc_run_funding_accrual(integer)', 'EXECUTE'),
     'authenticated must NOT EXECUTE rpc_run_funding_accrual (cron/service only)';
-  ASSERT NOT has_function_privilege('anon', 'public.rpc_run_funding_accrual()', 'EXECUTE'),
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_run_funding_accrual(integer)', 'EXECUTE'),
     'anon must NOT EXECUTE rpc_run_funding_accrual';
-  ASSERT has_function_privilege('service_role', 'public.rpc_run_funding_accrual()', 'EXECUTE'),
+  ASSERT has_function_privilege('service_role', 'public.rpc_run_funding_accrual(integer)', 'EXECUTE'),
     'service_role must EXECUTE rpc_run_funding_accrual';
   ASSERT NOT has_function_privilege('authenticated', 'public._fill_house_spot_order(uuid)', 'EXECUTE'),
     'authenticated must NOT EXECUTE _fill_house_spot_order (T1 settlement internal)';
@@ -507,6 +507,14 @@ BEGIN
     'anon must NOT EXECUTE _lock_system_accounts (PIR E1 internal)';
   ASSERT NOT has_function_privilege('authenticated', 'public._lock_system_accounts(text[])', 'EXECUTE'),
     'authenticated must NOT EXECUTE _lock_system_accounts (PIR E1 internal)';
+  ASSERT NOT has_function_privilege('anon', 'public._pir_game_bet_already_placed(uuid,text)', 'EXECUTE'),
+    'anon must NOT EXECUTE _pir_game_bet_already_placed (PIR E5 internal)';
+  ASSERT NOT has_function_privilege('authenticated', 'public._pir_game_bet_already_placed(uuid,text)', 'EXECUTE'),
+    'authenticated must NOT EXECUTE _pir_game_bet_already_placed (PIR E5 internal)';
+  ASSERT NOT has_function_privilege('anon', 'public._pir_sports_bet_already_placed(uuid,text)', 'EXECUTE'),
+    'anon must NOT EXECUTE _pir_sports_bet_already_placed (PIR E5 internal)';
+  ASSERT NOT has_function_privilege('authenticated', 'public._pir_sports_bet_already_placed(uuid,text)', 'EXECUTE'),
+    'authenticated must NOT EXECUTE _pir_sports_bet_already_placed (PIR E5 internal)';
 
   RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges match migrations 000045/053–055, affiliate approvals, sportsbook S1–S7, P0 edge contracts, and Trade Desk P3-B entry/cron pins';
 END;

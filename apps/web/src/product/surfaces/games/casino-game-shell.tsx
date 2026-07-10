@@ -272,7 +272,10 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
           />
 
           <div className="flex flex-col gap-1">
-            <label className="text-foreground-muted text-xs font-medium" htmlFor="casino-stake-input">
+            <label
+              className="text-foreground-muted text-xs font-medium"
+              htmlFor="casino-stake-input"
+            >
               {t('casino.stake')}
             </label>
             <input
@@ -330,7 +333,11 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
           )}
 
           {pipeline.errorKey ? (
-            <p className="text-danger m-0 text-sm" data-testid={CASINO_E2E_TESTIDS.error} role="alert">
+            <p
+              className="text-danger m-0 text-sm"
+              data-testid={CASINO_E2E_TESTIDS.error}
+              role="alert"
+            >
               {t(pipeline.errorKey)}
             </p>
           ) : null}

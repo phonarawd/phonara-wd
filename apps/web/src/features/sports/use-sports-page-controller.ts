@@ -114,8 +114,7 @@ export function useSportsPageController(
     visibleFixtureIds,
   });
 
-  const liveBoardIds =
-    mode === 'live' ? fixtures.map((row) => row.fixture_id) : ([] as string[]);
+  const liveBoardIds = mode === 'live' ? fixtures.map((row) => row.fixture_id) : ([] as string[]);
   const liveBoardStates = useLiveFixtureStates(liveBoardIds);
   const focusedLiveStateQuery = useLiveFixtureState(
     mode === 'fixture' && resolvedFixtureId ? resolvedFixtureId : undefined,

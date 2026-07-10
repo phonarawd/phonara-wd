@@ -32,19 +32,22 @@ export function PfStrip({
       <div className="flex items-center gap-2">
         <ShieldCheck className="text-accent size-4 shrink-0" aria-hidden />
         <span className="text-foreground text-sm font-medium">{t('casino.provablyFair')}</span>
-        <span
-          className="text-foreground-muted ml-auto text-xs"
-          data-testid="casino-pf-hash-status"
-        >
+        <span className="text-foreground-muted ml-auto text-xs" data-testid="casino-pf-hash-status">
           {hashReady ? t('casino.hashReady') : t('casino.hashMissing')}
         </span>
       </div>
-      <p className="text-foreground-muted m-0 truncate font-mono text-xs" data-testid="casino-pf-hash">
+      <p
+        className="text-foreground-muted m-0 truncate font-mono text-xs"
+        data-testid="casino-pf-hash"
+      >
         {serverSeedHash ?? '—'}
       </p>
       <div className="flex flex-wrap items-center gap-2 text-xs">
         <span className="text-foreground-muted">{t('casino.verify.seedHash')}</span>
-        <span className="text-foreground-muted truncate font-mono" data-testid="casino-pf-client-seed">
+        <span
+          className="text-foreground-muted truncate font-mono"
+          data-testid="casino-pf-client-seed"
+        >
           {clientSeed || '—'}
         </span>
         {verificationMatch !== null ? (

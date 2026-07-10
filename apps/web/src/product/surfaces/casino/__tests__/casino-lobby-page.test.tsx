@@ -32,10 +32,7 @@ describe('CasinoLobbyPage (p10-page-casino)', () => {
       'data-owner-todo',
       'p10-page-casino',
     );
-    expect(screen.getByTestId('casino-lobby-page')).toHaveAttribute(
-      'data-lobby-exposure',
-      'live',
-    );
+    expect(screen.getByTestId('casino-lobby-page')).toHaveAttribute('data-lobby-exposure', 'live');
     expect(screen.getByText('PHONARA 카지노')).toBeInTheDocument();
     expect(screen.getByTestId('casino-hub-play-tile')).toHaveAttribute(
       'data-card-variant',
@@ -52,10 +49,7 @@ describe('CasinoLobbyPage (p10-page-casino)', () => {
     expect(screen.getByTestId('casino-lobby-chip-table')).toBeInTheDocument();
     expect(screen.getByTestId('casino-lobby-chip-live')).toBeInTheDocument();
 
-    expect(screen.getByTestId('casino-lobby-play-crash')).toHaveAttribute(
-      'href',
-      '/games/crash',
-    );
+    expect(screen.getByTestId('casino-lobby-play-crash')).toHaveAttribute('href', '/games/crash');
     expect(screen.getByTestId('casino-lobby-play-mint_reels')).toHaveAttribute(
       'href',
       '/games/mint-reels',

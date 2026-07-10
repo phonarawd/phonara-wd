@@ -476,7 +476,12 @@ function serializeFrontmatter(
   meta: { name: string; overview: string; isProject: boolean },
   todos: PlanTodo[],
 ): string {
-  const lines: string[] = ['---', `name: ${meta.name}`, `overview: "${yamlEscapeContent(meta.overview)}"`, 'todos:'];
+  const lines: string[] = [
+    '---',
+    `name: ${meta.name}`,
+    `overview: "${yamlEscapeContent(meta.overview)}"`,
+    'todos:',
+  ];
   for (const todo of todos) {
     lines.push(`  - id: ${todo.id}`);
     lines.push(`    content: "${yamlEscapeContent(todo.content)}"`);
@@ -493,7 +498,10 @@ function repairBody(_corruptBody: string, cleanBackupBody: string): string {
 
 function countCorruption(text: string): number {
   const withoutQueryRoutes = text.replace(/\?section=[a-z|]+/g, '');
-  return (withoutQueryRoutes.match(/\?\?/g) ?? []).length + (withoutQueryRoutes.match(/\uFFFD/g) ?? []).length;
+  return (
+    (withoutQueryRoutes.match(/\?\?/g) ?? []).length +
+    (withoutQueryRoutes.match(/\uFFFD/g) ?? []).length
+  );
 }
 
 function main() {
@@ -526,10 +534,17 @@ function main() {
   if (dryRun) {
     console.log('\n[dry-run] overview:', repairedOverview.slice(0, 160));
     console.log('[dry-run] first todo:', repairedTodos[0]?.content);
-    const badTodos = repairedTodos.filter((t) => /[?\uFFFD]/.test(t.content.replace(/\?section=/g, '')));
+    const badTodos = repairedTodos.filter((t) =>
+      /[?\uFFFD]/.test(t.content.replace(/\?section=/g, '')),
+    );
     if (badTodos.length) {
       console.log(`[dry-run] todos with residual corruption: ${badTodos.length}`);
-      console.log(badTodos.slice(0, 5).map((t) => `${t.id}: ${t.content.slice(0, 100)}`).join('\n'));
+      console.log(
+        badTodos
+          .slice(0, 5)
+          .map((t) => `${t.id}: ${t.content.slice(0, 100)}`)
+          .join('\n'),
+      );
     }
     console.log('[dry-run] body start:', repairedBody.trimStart().slice(0, 120));
     return;

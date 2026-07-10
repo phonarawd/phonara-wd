@@ -79,9 +79,9 @@ S0는 클라이언트·RPC·멱등성 negative에 집중한다. **DB TX race dee
 > Plan `platform_integrity_remediation_v1` operator 승인 = 아래 **좁은 범위만** Engine Wave deep audit에서 **선행 Accepted**.  
 > 전체 DB TX race deep audit · SERIALIZABLE · multi-backend harness는 **여전히 defer**.
 
-| 감사 ID | PIR todo                    | Accepted 범위                                                                 | 비목표                                      |
-| ------- | --------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------- |
-| **C-2** | `pir-e1-system-lock-order`  | `_lock_system_accounts(TEXT[])` · spot buy/sell + `_fill_house_spot_order` 선잠금 · buy∥sell 동시성 SQL | position row concurrent close/open · OI multi-session · full wallet lock inventory |
+| 감사 ID | PIR todo                   | Accepted 범위                                                                                           | 비목표                                                                             |
+| ------- | -------------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **C-2** | `pir-e1-system-lock-order` | `_lock_system_accounts(TEXT[])` · spot buy/sell + `_fill_house_spot_order` 선잠금 · buy∥sell 동시성 SQL | position row concurrent close/open · OI multi-session · full wallet lock inventory |
 
 **정본:** ACTIVE_WORK_SSOT §Platform Integrity · Evidence [`E1/`](../../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md) (E1 슬롯은 `pir-e1` 착수 시 채움)
 

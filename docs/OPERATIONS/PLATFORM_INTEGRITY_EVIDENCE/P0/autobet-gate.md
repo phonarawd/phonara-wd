@@ -10,10 +10,10 @@ Wave P0 Presentation CRITICAL — casino auto-bet + shell 번들 `gate:ai-impl` 
 
 ## 번들
 
-| 경로 | 역할 |
-|------|------|
-| `apps/web/src/features/casino/__tests__/use-auto-bet-queue.test.ts` | 순수 세션 · count/stop/martingale · 이중 Start |
-| `apps/web/src/product/surfaces/games/__tests__/casino-game-shell.test.tsx` | shell 루프 · `autoBet(stakeOverride)` smoke |
+| 경로                                                                       | 역할                                           |
+| -------------------------------------------------------------------------- | ---------------------------------------------- |
+| `apps/web/src/features/casino/__tests__/use-auto-bet-queue.test.ts`        | 순수 세션 · count/stop/martingale · 이중 Start |
+| `apps/web/src/product/surfaces/games/__tests__/casino-game-shell.test.tsx` | shell 루프 · `autoBet(stakeOverride)` smoke    |
 
 ## 증거
 

@@ -107,9 +107,9 @@ describe('sports-exchange-parity-display-contract §22.2.5', () => {
       P10_SPORTS_PARITY_CONTRACT_AND_BOARD_TODO,
     );
     expect(findSportsComplaintRisk('sports-sgp-hidden-forever')?.mitigatedBy).toBe('built_hidden');
-    expect(listSportsComplaintRisksByOwnerTodo(P10_SPORTS_SLIP_ADVANCED_TODO).length).toBeGreaterThanOrEqual(
-      4,
-    );
+    expect(
+      listSportsComplaintRisksByOwnerTodo(P10_SPORTS_SLIP_ADVANCED_TODO).length,
+    ).toBeGreaterThanOrEqual(4);
   });
 
   it('lists pending Tier-A rows for later Sports# todos', () => {

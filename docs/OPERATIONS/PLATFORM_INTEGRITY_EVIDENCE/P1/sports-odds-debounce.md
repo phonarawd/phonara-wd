@@ -10,15 +10,15 @@
 
 ## 구현
 
-| 파일 | 변경 |
-|------|------|
-| `apps/web/src/features/sports/sports-odds-insert-debounce.ts` | `SPORTS_ODDS_INSERT_DEBOUNCE_MS=500` · outcomeId coalesce · dispose |
-| `apps/web/src/features/sports/sports-realtime-cache.ts` | `SportsOddsPatchScope` · `applySportsOddsInsertPatch` · fixture-scoped list/markets |
-| `apps/web/src/hooks/use-sports-realtime.ts` | odds INSERT → debouncer · miss drop · no full sports invalidate |
-| `apps/web/src/features/sports/use-sports-page-controller.ts` | `visibleFixtureIds` (board + focused detail) 전달 |
-| `__tests__/sports-odds-insert-debounce.test.ts` | coalesce · batch · dispose · floor |
-| `__tests__/sports-realtime-cache.test.ts` | scope + miss no-op |
-| `__tests__/use-sports-page-controller.test.ts` | visibleFixtureIds wire |
+| 파일                                                          | 변경                                                                                |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `apps/web/src/features/sports/sports-odds-insert-debounce.ts` | `SPORTS_ODDS_INSERT_DEBOUNCE_MS=500` · outcomeId coalesce · dispose                 |
+| `apps/web/src/features/sports/sports-realtime-cache.ts`       | `SportsOddsPatchScope` · `applySportsOddsInsertPatch` · fixture-scoped list/markets |
+| `apps/web/src/hooks/use-sports-realtime.ts`                   | odds INSERT → debouncer · miss drop · no full sports invalidate                     |
+| `apps/web/src/features/sports/use-sports-page-controller.ts`  | `visibleFixtureIds` (board + focused detail) 전달                                   |
+| `__tests__/sports-odds-insert-debounce.test.ts`               | coalesce · batch · dispose · floor                                                  |
+| `__tests__/sports-realtime-cache.test.ts`                     | scope + miss no-op                                                                  |
+| `__tests__/use-sports-page-controller.test.ts`                | visibleFixtureIds wire                                                              |
 
 ## 증거
 

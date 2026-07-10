@@ -89,7 +89,10 @@ export function WinTierOverlay({
         size="hero"
         className="text-2xl"
       />
-      <p className="text-foreground-muted m-0 tabular-nums text-sm" data-testid="casino-win-multiplier">
+      <p
+        className="text-foreground-muted m-0 tabular-nums text-sm"
+        data-testid="casino-win-multiplier"
+      >
         {multiplier}×
       </p>
       <Button

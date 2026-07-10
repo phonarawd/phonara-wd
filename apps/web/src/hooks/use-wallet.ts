@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import type { Tables } from '@phonara/shared-types';
 import { WALLET_LEDGER_ROW, WALLETS_ROW } from '@phonara/shared-types';
 import type { MessageKey } from '@phonara/i18n';
+import { walletLedgerQueryKeyPrefix } from '../domain/wallet-ledger-realtime-display-contract';
 import { useAuth } from '../contexts/auth-context';
 import { useRealtime } from './use-realtime';
 import { translateError } from '../lib/translate-error';
@@ -43,10 +44,11 @@ export function useWallet() {
     enabled: !!userId,
   });
 
+  // PIR E2: wallet_ledger dropped from publication — wallets UPDATE also refreshes ledger.
   useRealtime({
     table: 'wallets',
     filter: userId ? `user_id=eq.${userId}` : undefined,
-    invalidate: [walletKeys.all(userId)],
+    invalidate: [walletKeys.all(userId), walletLedgerQueryKeyPrefix(userId)],
     enabled: !!userId,
   });
 
@@ -81,8 +83,9 @@ export function useLedger(limit = 30) {
     enabled: !!userId,
   });
 
+  // PIR E2 dual belt: ledger page alone still refreshes on wallets (not wallet_ledger).
   useRealtime({
-    table: 'wallet_ledger',
+    table: 'wallets',
     filter: userId ? `user_id=eq.${userId}` : undefined,
     invalidate: [walletKeys.ledger(userId, limit)],
     enabled: !!userId,

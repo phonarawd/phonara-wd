@@ -13,11 +13,11 @@
 
 ## 산출 경로
 
-| 산출 | 경로 |
-| ---- | ---- |
-| Execute SSOT | `docs/SSOT/ACTIVE_WORK_SSOT.md` §Platform Integrity Remediation |
-| Evidence index | `docs/OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md` |
-| ADR 교차 | `docs/PRODUCT/ADR/008-engine-wave-db-tx-race-defer.md` §PIR |
+| 산출           | 경로                                                            |
+| -------------- | --------------------------------------------------------------- |
+| Execute SSOT   | `docs/SSOT/ACTIVE_WORK_SSOT.md` §Platform Integrity Remediation |
+| Evidence index | `docs/OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md`         |
+| ADR 교차       | `docs/PRODUCT/ADR/008-engine-wave-db-tx-race-defer.md` §PIR     |
 
 ## 다음
 

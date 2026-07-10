@@ -179,7 +179,10 @@ export function stepAutoBetSession(
   };
 }
 
-function toQueueState(session: AutoBetSessionState | null, fallbackStake: string): AutoBetQueueState {
+function toQueueState(
+  session: AutoBetSessionState | null,
+  fallbackStake: string,
+): AutoBetQueueState {
   if (!session) {
     return {
       status: 'idle',
@@ -209,14 +212,17 @@ export function useAutoBetQueue(initialStake: string) {
   const sessionRef = useRef<AutoBetSessionState | null>(null);
   const stopRequestedRef = useRef(false);
 
-  const mirror = useCallback((session: AutoBetSessionState | null, fallbackStake = initialStake) => {
-    const snap = toQueueState(session, fallbackStake);
-    setStatus(snap.status);
-    setRemaining(snap.remaining);
-    setCumulativeProfit(snap.cumulativeProfit);
-    setFiresPlaced(snap.firesPlaced);
-    setNextStake(snap.nextStake);
-  }, [initialStake]);
+  const mirror = useCallback(
+    (session: AutoBetSessionState | null, fallbackStake = initialStake) => {
+      const snap = toQueueState(session, fallbackStake);
+      setStatus(snap.status);
+      setRemaining(snap.remaining);
+      setCumulativeProfit(snap.cumulativeProfit);
+      setFiresPlaced(snap.firesPlaced);
+      setNextStake(snap.nextStake);
+    },
+    [initialStake],
+  );
 
   const snapshot = useCallback((): AutoBetQueueState => {
     return { status, remaining, cumulativeProfit, firesPlaced, nextStake };
@@ -301,9 +307,7 @@ export function useAutoBetQueue(initialStake: string) {
     (outcome: AutoBetFireOutcome): 'continue' | 'stop' => {
       const current = sessionRef.current;
       if (!current) return 'stop';
-      const withStop = stopRequestedRef.current
-        ? markAutoBetStopRequested(current)
-        : current;
+      const withStop = stopRequestedRef.current ? markAutoBetStopRequested(current) : current;
       const { state, decision } = stepAutoBetSession(withStop, outcome);
       sessionRef.current = decision === 'stop' ? null : state;
       if (decision === 'stop') {

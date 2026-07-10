@@ -11,11 +11,11 @@
 
 ## 구현
 
-| 파일 | 변경 |
-|------|------|
+| 파일                                                                   | 변경                                                              |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | `supabase/migrations/20260726000001_pir_system_account_lock_order.sql` | `_lock_system_accounts` · buy/sell/fill 선잠금 · REVOKE anon/auth |
-| `supabase/tests/pir_spot_buy_sell_deadlock_test.sql` | helper·call-site pin · reverse-array · cross-user buy∥sell Σ=0 |
-| `supabase/tests/grants_rls_inventory_test.sql` | `_lock_system_accounts` EXECUTE deny |
+| `supabase/tests/pir_spot_buy_sell_deadlock_test.sql`                   | helper·call-site pin · reverse-array · cross-user buy∥sell Σ=0    |
+| `supabase/tests/grants_rls_inventory_test.sql`                         | `_lock_system_accounts` EXECUTE deny                              |
 
 **선잠금 세트 (spot house):** `house_fee_phon` · `house_fee_usdt` · `house_liquidity_phon` · `house_liquidity_usdt`  
 (배열 순서는 무관 — helper가 `ORDER BY code`)
@@ -42,4 +42,5 @@ Remote: bun run stack:push-remote
 
 ## 다음
 
-`pir-e2-realtime-narrow` — publication DROP `wallet_ledger`/fills · `ledger_user_created_idx`
+`pir-e4-sweep-chunk` — liquidations/funding/stop/affiliate `LIMIT` + `has_more`  
+(E3 golden-earth **`[x]`** — [`E3/golden-earth.md`](../E3/golden-earth.md))

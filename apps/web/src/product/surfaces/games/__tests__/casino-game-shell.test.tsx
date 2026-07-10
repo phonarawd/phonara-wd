@@ -52,9 +52,8 @@ vi.mock('@/product/primitives/lib/use-prefers-reduced-motion', () => ({
 }));
 
 vi.mock('@tanstack/react-router', async () => {
-  const actual = await vi.importActual<typeof import('@tanstack/react-router')>(
-    '@tanstack/react-router',
-  );
+  const actual =
+    await vi.importActual<typeof import('@tanstack/react-router')>('@tanstack/react-router');
   return {
     ...actual,
     Link: ({ children, to }: { children: ReactNode; to: string }) => <a href={to}>{children}</a>,
@@ -103,13 +102,7 @@ describe('WinTierOverlay (p10-casino-replay-and-infra)', () => {
   it('shows Skip for big tier and calls onSkip', () => {
     const onSkip = vi.fn();
     wrap(
-      <WinTierOverlay
-        tier="big"
-        payout="250"
-        multiplier="25.00"
-        currency="USDT"
-        onSkip={onSkip}
-      />,
+      <WinTierOverlay tier="big" payout="250" multiplier="25.00" currency="USDT" onSkip={onSkip} />,
     );
     expect(screen.getByTestId('casino-win-tier-overlay')).toHaveAttribute('data-win-tier', 'big');
     fireEvent.click(screen.getByTestId('casino-win-tier-skip'));

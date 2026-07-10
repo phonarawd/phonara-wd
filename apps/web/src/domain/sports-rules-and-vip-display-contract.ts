@@ -12,17 +12,12 @@ import {
   SPORTS_VIP_ROUTE,
   SPORTS_VIP_UI_UNLOCK_TODO,
 } from './dead-controls-display-contract';
-import {
-  SPORTS_RULES_ROUTE,
-  SPORTS_VIP_ROUTE_HUB,
-} from './sports-hub-pages-display-contract';
+import { SPORTS_RULES_ROUTE, SPORTS_VIP_ROUTE_HUB } from './sports-hub-pages-display-contract';
 import { P10_SPORTS_LAYOUT_DEDUP_TODO } from './sports-exchange-parity-display-contract';
 
 export const P10_SPORTS_RULES_AND_VIP_TODO = 'p10-sports-rules-and-vip-stub' as const;
 
-export const P10_SPORTS_RULES_AND_VIP_PREREQUISITE_TODOS = [
-  P10_SPORTS_LAYOUT_DEDUP_TODO,
-] as const;
+export const P10_SPORTS_RULES_AND_VIP_PREREQUISITE_TODOS = [P10_SPORTS_LAYOUT_DEDUP_TODO] as const;
 
 /** Canonical rules route — hub-registered · no parallel `/betting/rules` page. */
 export const SPORTS_RULES_SURFACE_ROUTE = SPORTS_RULES_ROUTE;

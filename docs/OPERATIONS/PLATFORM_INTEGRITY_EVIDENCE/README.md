@@ -30,14 +30,14 @@ docs/OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/
   GATE/unblock-205.md          # pir-closeout-unblock-205 · §82
 ```
 
-| Wave     | 슬롯        | 증거 유형                                      | 상태                         |
-| -------- | ----------- | ---------------------------------------------- | ---------------------------- |
-| **W0**   | `W0/`       | SSOT 형제 큐 · Evidence 스캐폴드 · `#205` BLOCKED | **`[x]` DONE** 2026-07-11 |
-| P0       | `P0/`       | auto-bet session + `gate:ai-impl`              | session **`[x]`** · gate **`[x]`** 2026-07-11 |
-| P1       | `P1/`       | Admin RBAC · sports odds debounce              | admin-rbac **`[x]`** · sports debounce **`[x]`** 2026-07-11 |
-| E1–E5    | `E1/`…`E5/` | migration + SQL test · `stack:push-remote` · advisor 0 | E1 **`[x]`** · E2–E5 `[ ]` pending |
-| P2       | `P2/`       | quantize6 · PF golden vectors                  | `[ ]` pending                |
-| **GATE** | `GATE/`     | presentation bundle · CI required 4 · unblock `#205` | `[ ]` pending          |
+| Wave     | 슬롯        | 증거 유형                                                    | 상태                                                        |
+| -------- | ----------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
+| **W0**   | `W0/`       | SSOT 형제 큐 · Evidence 스캐폴드 · `#205` BLOCKED            | **`[x]` DONE** 2026-07-11                                   |
+| P0       | `P0/`       | auto-bet session + `gate:ai-impl`                            | session **`[x]`** · gate **`[x]`** 2026-07-11               |
+| P1       | `P1/`       | Admin RBAC · sports odds debounce                            | admin-rbac **`[x]`** · sports debounce **`[x]`** 2026-07-11 |
+| E1–E5    | `E1/`…`E5/` | migration + SQL test · `stack:push-remote` · advisor 0 ERROR | E1–E5 **`[x]`** 2026-07-11                                  |
+| P2       | `P2/`       | quantize6 · PF golden vectors                                | quantize-odds **`[x]`** · pf-golden **`[x]`** 2026-07-11    |
+| **GATE** | `GATE/`     | presentation bundle · CI required 4 · unblock `#205`         | platform-integrity **`[x]`** · unblock **`[ ]`**            |
 
 ---
 
@@ -56,38 +56,88 @@ PHONARA 정합: 로컬 = `gate:ai-impl` · heavy = **GitHub CI** · Engine Wave 
 
 ## W0 슬롯 (현재)
 
-| 파일                                         | 역할                                                         | 상태                  |
-| -------------------------------------------- | ------------------------------------------------------------ | --------------------- |
+| 파일                                           | 역할                                                                 | 상태                      |
+| ---------------------------------------------- | -------------------------------------------------------------------- | ------------------------- |
 | [`W0/ssot-bootstrap.md`](W0/ssot-bootstrap.md) | ACTIVE_WORK_SSOT 형제 큐 · `#205` BLOCKED · ADR-008 §PIR · 본 README | **`[x]` DONE** 2026-07-11 |
 
-**전역 NEXT:** `pir-e2-realtime-narrow`  
-**Track A `#205`:** **BLOCKED by PIR GATE** until `pir-gate-platform-integrity` + `pir-closeout-unblock-205`
+**전역 NEXT:** `pir-closeout-unblock-205`  
+**Track A `#205`:** **BLOCKED by PIR GATE** until `pir-closeout-unblock-205`
+
+---
+
+## GATE 슬롯
+
+| 파일 | 역할 | 상태 |
+|------|------|------|
+| [`GATE/platform-integrity.md`](GATE/platform-integrity.md) | presentation bundle · CI 4 · security-auditor PASS | **`[x]` DONE** 2026-07-11 |
+| [`GATE/unblock-205.md`](GATE/unblock-205.md) | §82 · NEXT = `#205` | `[ ]` pending |
 
 ---
 
 ## E1 슬롯
 
-| 파일 | 역할 | 상태 |
-|------|------|------|
+| 파일                                                 | 역할                                                                     | 상태                      |
+| ---------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------- |
 | [`E1/system-lock-order.md`](E1/system-lock-order.md) | `_lock_system_accounts` · buy/sell/fill · SQL 118/118 · remote advisor 0 | **`[x]` DONE** 2026-07-11 |
+
+---
+
+## E2 슬롯
+
+| 파일                                             | 역할                                                                                                     | 상태                      |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------------- |
+| [`E2/realtime-narrow.md`](E2/realtime-narrow.md) | publication DROP ledger/fills · `ledger_user_created_idx` · wallets invalidate · SQL 119/119 · advisor 0 | **`[x]` DONE** 2026-07-11 |
+
+---
+
+## E3 슬롯
+
+| 파일                                       | 역할                                                                         | 상태                      |
+| ------------------------------------------ | ---------------------------------------------------------------------------- | ------------------------- |
+| [`E3/golden-earth.md`](E3/golden-earth.md) | lock-late global · `gjp` idempotency · `gen_random_bytes` · remote advisor 0 | **`[x]` DONE** 2026-07-11 |
+
+---
+
+## E4 슬롯
+
+| 파일                                     | 역할                                                                          | 상태                      |
+| ---------------------------------------- | ----------------------------------------------------------------------------- | ------------------------- |
+| [`E4/sweep-chunk.md`](E4/sweep-chunk.md) | liq/funding/stop/affiliate `LIMIT`+`has_more` · cron drain · remote advisor 0 | **`[x]` DONE** 2026-07-11 |
+
+---
+
+## E5 슬롯
+
+| 파일                                                       | 역할                                                                           | 상태                      |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------- |
+| [`E5/idempotency-handlers.md`](E5/idempotency-handlers.md) | place/claim `unique_violation` → 기존 결과 · wallet recheck · remote advisor 0 | **`[x]` DONE** 2026-07-11 |
+
+---
+
+## P2 슬롯
+
+| 파일                                                 | 역할                                          | 상태                      |
+| ---------------------------------------------------- | --------------------------------------------- | ------------------------- |
+| [`P2/quantize-odds.md`](P2/quantize-odds.md)         | `quantize6` number 제거 · ingest string-only  | **`[x]` DONE** 2026-07-11 |
+| [`P2/pf-golden-vectors.md`](P2/pf-golden-vectors.md) | 12게임 PF 골든 벡터 pin · `check:determinism` | **`[x]` DONE** 2026-07-11 |
 
 ---
 
 ## P0 슬롯
 
-| 파일 | 역할 | 상태 |
-|------|------|------|
+| 파일                                             | 역할                                          | 상태                      |
+| ------------------------------------------------ | --------------------------------------------- | ------------------------- |
 | [`P0/autobet-session.md`](P0/autobet-session.md) | 순수 세션 리듀서 · stakeOverride · 이중 Start | **`[x]` DONE** 2026-07-11 |
-| [`P0/autobet-gate.md`](P0/autobet-gate.md) | `gate:ai-impl` bundle · vitest **13/13** | **`[x]` DONE** 2026-07-11 |
+| [`P0/autobet-gate.md`](P0/autobet-gate.md)       | `gate:ai-impl` bundle · vitest **13/13**      | **`[x]` DONE** 2026-07-11 |
 
 ---
 
 ## P1 슬롯
 
-| 파일 | 역할 | 상태 |
-|------|------|------|
-| [`P1/admin-rbac.md`](P1/admin-rbac.md) | grants fail-closed · localStorage DEV-only · vitest **17/17** | **`[x]` DONE** 2026-07-11 |
-| [`P1/sports-odds-debounce.md`](P1/sports-odds-debounce.md) | odds INSERT ≥500ms debounce · fixture scope | **`[x]` DONE** 2026-07-11 |
+| 파일                                                       | 역할                                                          | 상태                      |
+| ---------------------------------------------------------- | ------------------------------------------------------------- | ------------------------- |
+| [`P1/admin-rbac.md`](P1/admin-rbac.md)                     | grants fail-closed · localStorage DEV-only · vitest **17/17** | **`[x]` DONE** 2026-07-11 |
+| [`P1/sports-odds-debounce.md`](P1/sports-odds-debounce.md) | odds INSERT ≥500ms debounce · fixture scope                   | **`[x]` DONE** 2026-07-11 |
 
 ---
 

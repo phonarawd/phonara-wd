@@ -271,8 +271,7 @@ export const SPORTS_BOARD_SELECTABLE_MARKET_TYPES = [
   'prop_yes_no',
 ] as const;
 
-export type SportsBoardSelectableMarketType =
-  (typeof SPORTS_BOARD_SELECTABLE_MARKET_TYPES)[number];
+export type SportsBoardSelectableMarketType = (typeof SPORTS_BOARD_SELECTABLE_MARKET_TYPES)[number];
 
 export const SPORTS_BOARD_MARKETS_RPC = 'rpc_get_fixture_markets' as const;
 export const SPORTS_BOARD_MARKETS_HOOK = 'useGetFixtureMarkets' as const;
@@ -479,9 +478,7 @@ export function findSportsComplaintRisk(id: string): SportsUserComplaintRisk | u
   return SPORTS_USER_COMPLAINT_RISKS.find((row) => row.id === id);
 }
 
-export function listSportsComplaintRisksByOwnerTodo(
-  ownerTodo: string,
-): SportsUserComplaintRisk[] {
+export function listSportsComplaintRisksByOwnerTodo(ownerTodo: string): SportsUserComplaintRisk[] {
   return SPORTS_USER_COMPLAINT_RISKS.filter((row) => row.ownerTodo === ownerTodo);
 }
 

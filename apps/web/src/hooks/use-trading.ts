@@ -754,12 +754,8 @@ export function useSpotOrderFills() {
     staleTime: 10_000,
   });
 
-  useRealtime({
-    table: 'spot_order_fills',
-    event: 'INSERT',
-    invalidate: [tradingKeys.spotOrderFills(userId)],
-    enabled: !!userId,
-  });
+  // PIR E2: spot_order_fills dropped from publication — refresh via open_orders
+  // realtime (use-trade-realtime-feedback) + post-RPC invalidateSpotTrading.
 
   const refresh = useCallback(() => {
     void qc.invalidateQueries({ queryKey: tradingKeys.spotOrderFills(userId) });
@@ -852,12 +848,8 @@ export function useTradingOrderFills() {
     staleTime: 10_000,
   });
 
-  useRealtime({
-    table: 'trading_order_fills',
-    event: 'INSERT',
-    invalidate: [tradingKeys.orderFills(userId)],
-    enabled: !!userId,
-  });
+  // PIR E2: trading_order_fills dropped from publication — refresh via open_orders
+  // realtime (use-trade-realtime-feedback) + post-RPC invalidateTrading.
 
   const refresh = useCallback(() => {
     void qc.invalidateQueries({ queryKey: tradingKeys.orderFills(userId) });

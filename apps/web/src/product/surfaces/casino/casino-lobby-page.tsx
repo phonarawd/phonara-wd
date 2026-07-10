@@ -96,8 +96,7 @@ export function CasinoLobbyPage() {
   const gridCodes =
     category === 'all'
       ? filteredCodes.filter(
-          (code) =>
-            !(CASINO_LOBBY_FEATURED_GAME_CODES as readonly GameCode[]).includes(code),
+          (code) => !(CASINO_LOBBY_FEATURED_GAME_CODES as readonly GameCode[]).includes(code),
         )
       : filteredCodes;
   const pfEnabled = resolveCasinoLobbyPfCtaEnabled();
@@ -128,7 +127,10 @@ export function CasinoLobbyPage() {
             {t(CASINO_LOBBY_BALANCE_LABEL_KEY)}
           </p>
           {walletLoading ? (
-            <p className="text-foreground-muted m-0 text-sm" data-testid="casino-lobby-balance-loading">
+            <p
+              className="text-foreground-muted m-0 text-sm"
+              data-testid="casino-lobby-balance-loading"
+            >
               …
             </p>
           ) : (

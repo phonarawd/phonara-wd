@@ -23,16 +23,16 @@
 
 ## Engine · Gates · Ops (boundary / operator)
 
-| Doc                                                                                          | Role                     |
-| -------------------------------------------------------------------------------------------- | ------------------------ |
-| [`QUALITY_GATES.md`](QUALITY_GATES.md)                                                       | Quality gate ladder      |
-| [`SSOT/OPERATOR_GATES.md`](SSOT/OPERATOR_GATES.md)                                           | Operator gate entrypoint |
-| [`SSOT/ENGINE_BOUNDARY.md`](SSOT/ENGINE_BOUNDARY.md)                                         | Engine vs presentation   |
-| [`SSOT/PAYMENT_ARCHITECTURE_CANON.md`](SSOT/PAYMENT_ARCHITECTURE_CANON.md)                   | Payment rails canon      |
-| [`SSOT/CURSOR_AUTOPILOT.md`](SSOT/CURSOR_AUTOPILOT.md)                                       | Cursor setup             |
-| [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md)                                               | Dev environment          |
-| [`RUNBOOK.md`](RUNBOOK.md)                                                                   | Operations               |
-| [`OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md) | Pre-launch (operator)    |
+| Doc                                                                                                    | Role                                  |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------- |
+| [`QUALITY_GATES.md`](QUALITY_GATES.md)                                                                 | Quality gate ladder                   |
+| [`SSOT/OPERATOR_GATES.md`](SSOT/OPERATOR_GATES.md)                                                     | Operator gate entrypoint              |
+| [`SSOT/ENGINE_BOUNDARY.md`](SSOT/ENGINE_BOUNDARY.md)                                                   | Engine vs presentation                |
+| [`SSOT/PAYMENT_ARCHITECTURE_CANON.md`](SSOT/PAYMENT_ARCHITECTURE_CANON.md)                             | Payment rails canon                   |
+| [`SSOT/CURSOR_AUTOPILOT.md`](SSOT/CURSOR_AUTOPILOT.md)                                                 | Cursor setup                          |
+| [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md)                                                         | Dev environment                       |
+| [`RUNBOOK.md`](RUNBOOK.md)                                                                             | Operations                            |
+| [`OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md)           | Pre-launch (operator)                 |
 | [`OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md`](OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md) | PIR 형제 큐 evidence · `#205` BLOCKED |
 
 ## Audit reports (PQA §33 · read-only)

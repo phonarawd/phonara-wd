@@ -79,12 +79,8 @@ function outcomeButtonLabel(
   return selection;
 }
 
-function sortBoardMarkets(
-  markets: readonly SportsMarketSummary[],
-): SportsMarketSummary[] {
-  const order = new Map(
-    SPORTS_BOARD_SELECTABLE_MARKET_TYPES.map((type, index) => [type, index]),
-  );
+function sortBoardMarkets(markets: readonly SportsMarketSummary[]): SportsMarketSummary[] {
+  const order = new Map(SPORTS_BOARD_SELECTABLE_MARKET_TYPES.map((type, index) => [type, index]));
   return [...markets].sort((a, b) => {
     const ai = order.get(a.market_type as (typeof SPORTS_BOARD_SELECTABLE_MARKET_TYPES)[number]);
     const bi = order.get(b.market_type as (typeof SPORTS_BOARD_SELECTABLE_MARKET_TYPES)[number]);

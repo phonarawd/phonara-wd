@@ -10,12 +10,12 @@ Admin UI 역할 게이트를 `rpc_admin_list_role_grants` 정본으로 전환 ·
 
 ## 구현
 
-| 파일 | 변경 |
-|------|------|
-| `apps/admin/src/domain/admin-rbac.ts` | `parseAdminRoleGrants` · `resolveOperatorRoleFromGrants` · empty→viewer · DEV-only storage R/W |
-| `apps/admin/src/hooks/admin/useAdminOperatorRbac.ts` | grants query 정본 · `serverRole` · `setPreviewRole` prod no-op |
-| `apps/admin/src/domain/__tests__/admin-rbac.test.ts` | matrix · grants · DEV/prod storage **17/17** |
-| `apps/admin/AGENTS.md` | fail-closed · DEV-only preview 계약 |
+| 파일                                                 | 변경                                                                                           |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `apps/admin/src/domain/admin-rbac.ts`                | `parseAdminRoleGrants` · `resolveOperatorRoleFromGrants` · empty→viewer · DEV-only storage R/W |
+| `apps/admin/src/hooks/admin/useAdminOperatorRbac.ts` | grants query 정본 · `serverRole` · `setPreviewRole` prod no-op                                 |
+| `apps/admin/src/domain/__tests__/admin-rbac.test.ts` | matrix · grants · DEV/prod storage **17/17**                                                   |
+| `apps/admin/AGENTS.md`                               | fail-closed · DEV-only preview 계약                                                            |
 
 ## 증거
 

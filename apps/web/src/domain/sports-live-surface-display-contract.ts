@@ -11,9 +11,7 @@ import { P10_SPORTS_LIVE_SURFACE_TODO as PARITY_LIVE_TODO } from './sports-excha
 
 export const P10_SPORTS_LIVE_SURFACE_TODO = 'p10-sports-live-surface-wire' as const;
 
-export const P10_SPORTS_LIVE_PREREQUISITE_TODOS = [
-  'p10-sports-parity-contract-and-board',
-] as const;
+export const P10_SPORTS_LIVE_PREREQUISITE_TODOS = ['p10-sports-parity-contract-and-board'] as const;
 
 /** Canonical live route — must stay the hub-registered path (no parallel route). */
 export const SPORTS_LIVE_SURFACE_ROUTE = SPORTS_LIVE_ROUTE;
@@ -43,11 +41,9 @@ export const SPORTS_LIVE_SURFACE_OWNERS = [
 ] as const;
 
 /** Honest live-delay notice — engine applies delay server-side; UI does not invent ms. */
-export const SPORTS_LIVE_DELAY_NOTICE_KEY =
-  'sports.live.delayNotice' as const satisfies MessageKey;
+export const SPORTS_LIVE_DELAY_NOTICE_KEY = 'sports.live.delayNotice' as const satisfies MessageKey;
 
-export const SPORTS_LIVE_GOAL_SUSPEND_KEY =
-  'sports.live.goalSuspend' as const satisfies MessageKey;
+export const SPORTS_LIVE_GOAL_SUSPEND_KEY = 'sports.live.goalSuspend' as const satisfies MessageKey;
 
 export const SPORTS_LIVE_MARKET_SUSPEND_KEY =
   'sports.live.marketSuspend' as const satisfies MessageKey;
@@ -100,8 +96,7 @@ export function parseSportsLiveFixtureState(raw: unknown): SportsLiveFixtureStat
             market_id: m['market_id'],
             market_type: m['market_type'],
             status: m['status'],
-            suspended_until:
-              typeof m['suspended_until'] === 'string' ? m['suspended_until'] : null,
+            suspended_until: typeof m['suspended_until'] === 'string' ? m['suspended_until'] : null,
             suspend_reason: typeof m['suspend_reason'] === 'string' ? m['suspend_reason'] : null,
           },
         ];
@@ -117,8 +112,10 @@ export function parseSportsLiveFixtureState(raw: unknown): SportsLiveFixtureStat
     status: row['status'],
     suspended_until: typeof row['suspended_until'] === 'string' ? row['suspended_until'] : null,
     suspend_reason: typeof row['suspend_reason'] === 'string' ? row['suspend_reason'] : null,
-    result_home_goals: typeof row['result_home_goals'] === 'number' ? row['result_home_goals'] : null,
-    result_away_goals: typeof row['result_away_goals'] === 'number' ? row['result_away_goals'] : null,
+    result_home_goals:
+      typeof row['result_home_goals'] === 'number' ? row['result_home_goals'] : null,
+    result_away_goals:
+      typeof row['result_away_goals'] === 'number' ? row['result_away_goals'] : null,
     markets,
   };
 }
@@ -153,8 +150,7 @@ export function resolveSportsLiveSuspendKind(
     return 'fixture';
   }
   const marketSuspended = state.markets.some(
-    (m) =>
-      m.status === 'suspended' || isSportsLiveSuspendedUntil(m.suspended_until, nowMs),
+    (m) => m.status === 'suspended' || isSportsLiveSuspendedUntil(m.suspended_until, nowMs),
   );
   if (marketSuspended) {
     const goalMarket = state.markets.some((m) => {
@@ -166,9 +162,7 @@ export function resolveSportsLiveSuspendKind(
   return null;
 }
 
-export function resolveSportsLiveSuspendMessageKey(
-  kind: SportsLiveSuspendKind,
-): MessageKey | null {
+export function resolveSportsLiveSuspendMessageKey(kind: SportsLiveSuspendKind): MessageKey | null {
   if (kind === 'goal') return SPORTS_LIVE_GOAL_SUSPEND_KEY;
   if (kind === 'market' || kind === 'fixture') return SPORTS_LIVE_MARKET_SUSPEND_KEY;
   return null;

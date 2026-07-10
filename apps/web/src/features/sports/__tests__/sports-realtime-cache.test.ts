@@ -227,9 +227,15 @@ describe('sports-realtime-cache', () => {
       },
     ] satisfies SportsFixtureSummary[]);
 
-    const patched = patchSportsOddsInFixtureLists(qc, 'o-home', '2.25', '2026-06-26T12:05:00.000Z', {
-      fixtureIds: new Set(['f2']),
-    });
+    const patched = patchSportsOddsInFixtureLists(
+      qc,
+      'o-home',
+      '2.25',
+      '2026-06-26T12:05:00.000Z',
+      {
+        fixtureIds: new Set(['f2']),
+      },
+    );
 
     expect(patched).toBe(false);
     const rows = qc.getQueryData<SportsFixtureSummary[]>(['sports', 'fixtures', 'epl', 'live']);

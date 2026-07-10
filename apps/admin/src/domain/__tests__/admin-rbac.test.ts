@@ -81,10 +81,7 @@ describe('admin-rbac grants resolution (rpc_admin_list_role_grants)', () => {
   it('zero grant rows for user bootstraps owner (mirrors _admin_has_role)', () => {
     expect(resolveOperatorRoleFromGrants([], userId)).toBe('owner');
     expect(
-      resolveOperatorRoleFromGrants(
-        [{ userId: 'other', role: 'finance', enabled: true }],
-        userId,
-      ),
+      resolveOperatorRoleFromGrants([{ userId: 'other', role: 'finance', enabled: true }], userId),
     ).toBe('owner');
   });
 
@@ -95,9 +92,9 @@ describe('admin-rbac grants resolution (rpc_admin_list_role_grants)', () => {
   });
 
   it('disabled-only grants are fail-closed viewer', () => {
-    expect(
-      resolveOperatorRoleFromGrants([{ userId, role: 'owner', enabled: false }], userId),
-    ).toBe('viewer');
+    expect(resolveOperatorRoleFromGrants([{ userId, role: 'owner', enabled: false }], userId)).toBe(
+      'viewer',
+    );
   });
 });
 

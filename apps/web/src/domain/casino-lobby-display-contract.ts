@@ -11,9 +11,7 @@ import { CASINO_HUB_ROUTE } from './tournaments-pf-admin-display-contract';
 
 export const P10_PAGE_CASINO_TODO = 'p10-page-casino' as const;
 
-export const P10_PAGE_CASINO_PREREQUISITE_TODOS = [
-  'p10-sports-rules-and-vip-stub',
-] as const;
+export const P10_PAGE_CASINO_PREREQUISITE_TODOS = ['p10-sports-rules-and-vip-stub'] as const;
 
 /** Next YAML after lobby — shell + replay + AutoBet. */
 export const P10_CASINO_REPLAY_AND_INFRA_TODO = 'p10-casino-replay-and-infra' as const;
@@ -34,12 +32,7 @@ export const CASINO_LOBBY_ENGINE_STATUS = 'exists' as const;
 export const CASINO_LOBBY_EXPOSURE = 'live' as const;
 
 /** Plan §12.19.3 / §23 lobby chips — Originals · Slots · Table · Live. */
-export const CASINO_LOBBY_CATEGORY_CHIPS = [
-  'originals',
-  'slots',
-  'table',
-  'live',
-] as const;
+export const CASINO_LOBBY_CATEGORY_CHIPS = ['originals', 'slots', 'table', 'live'] as const;
 
 export type CasinoLobbyCategoryChip = (typeof CASINO_LOBBY_CATEGORY_CHIPS)[number];
 
@@ -58,16 +51,7 @@ export const CASINO_LOBBY_CATEGORY_GAME_CODES: Record<
   CasinoLobbyCategoryChip,
   readonly GameCode[]
 > = {
-  originals: [
-    'crash',
-    'limbo',
-    'dice',
-    'mines',
-    'hilo',
-    'plinko',
-    'deepshaft',
-    'momentum',
-  ],
+  originals: ['crash', 'limbo', 'dice', 'mines', 'hilo', 'plinko', 'deepshaft', 'momentum'],
   slots: ['mint_reels', 'gold_rush'],
   table: ['blackjack', 'roulette'],
   live: ['blackjack', 'roulette'],
@@ -93,7 +77,9 @@ export const CASINO_LOBBY_PF_DEFERRED_REASON_KEY =
   'casino.hub.pf.deferred' as const satisfies MessageKey;
 
 /** Canonical play path — `/games/$gameCode` (§12.11 · §23.1 · §26-6). */
-export function casinoLobbyGamePath(code: GameCode): `${typeof CASINO_GAMES_ROUTE_PREFIX}${string}` {
+export function casinoLobbyGamePath(
+  code: GameCode,
+): `${typeof CASINO_GAMES_ROUTE_PREFIX}${string}` {
   return `${CASINO_GAMES_ROUTE_PREFIX}${code.replace(/_/g, '-')}`;
 }
 

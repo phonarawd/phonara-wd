@@ -69,23 +69,16 @@ export function useAdminOperatorRbac() {
     };
   }, [previewEnabled]);
 
-  const role: AdminRbacRole =
-    previewEnabled && previewRole != null ? previewRole : serverRole;
+  const role: AdminRbacRole = previewEnabled && previewRole != null ? previewRole : serverRole;
 
-  const can = useCallback(
-    (action: AdminRbacAction) => canPerformAdminAction(role, action),
-    [role],
-  );
+  const can = useCallback((action: AdminRbacAction) => canPerformAdminAction(role, action), [role]);
 
-  const setPreviewRole = useCallback(
-    (next: AdminRbacRole) => {
-      if (!isAdminRbacDevPreviewEnabled()) return;
-      writeStoredOperatorRole(next);
-      setPreviewRoleState(next);
-      notifyRoleChange();
-    },
-    [],
-  );
+  const setPreviewRole = useCallback((next: AdminRbacRole) => {
+    if (!isAdminRbacDevPreviewEnabled()) return;
+    writeStoredOperatorRole(next);
+    setPreviewRoleState(next);
+    notifyRoleChange();
+  }, []);
 
   return {
     role,
