@@ -73,6 +73,7 @@ describe('resolveRouteRedirect', () => {
       pathname: '/sports/prematch',
     });
     expect(resolveRouteRedirect('/betting/vip')).toEqual({ pathname: '/sports/vip' });
+    expect(resolveRouteRedirect('/betting/rules')).toEqual({ pathname: '/sports/rules' });
     expect(resolveRouteRedirect('/betting/fx-99')).toEqual({
       pathname: '/sports/fixture/fx-99',
     });

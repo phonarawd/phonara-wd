@@ -1,11 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from '@tanstack/react-router';
 
-import {
-  SPORTS_VIP_DEFER_REASON_KEY,
-  SPORTS_VIP_ENGINE_TODO,
-  SPORTS_VIP_UI_UNLOCK_TODO,
-} from '@/domain/dead-controls-display-contract';
 import { isSportsLiveInPlayStatus } from '@/domain/sports-live-surface-display-contract';
 import {
   SPORTS_LEAGUE_FILTER_OPTIONS,
@@ -13,18 +8,22 @@ import {
   type SportsLeagueFilter,
   type SportsPageMode,
 } from '@/domain/sports-page-display-contract';
+import {
+  SPORTS_RULES_SEO_TITLE_KEY,
+  SPORTS_VIP_SEO_TITLE_KEY,
+} from '@/domain/sports-rules-and-vip-display-contract';
 import { useSportsPageController } from '@/features/sports/use-sports-page-controller';
 import { Button } from '@/product/primitives/button';
-import { Card, CardBody, CardHeader, CardTitle } from '@/product/primitives/card';
 import { Skeleton } from '@/product/primitives/skeleton';
 import { cn } from '@/product/primitives/lib/cn';
-import { EmptyState } from '@/product/primitives/empty-state';
 
 import { SportsBetSlipPanel } from './sports-bet-slip-panel';
 import { SportsFixtureBoard } from './sports-fixture-board';
 import { SportsFixtureMarketsPanel } from './sports-fixture-markets-panel';
 import { SportsLiveInPlayBanner } from './sports-live-inplay-banner';
 import { SportsMyBetsPanel } from './sports-my-bets-panel';
+import { SportsRulesPanel } from './sports-rules-panel';
+import { SportsVipStubPanel } from './sports-vip-stub-panel';
 
 export type SportsPageProps = {
   mode?: SportsPageMode;
@@ -74,47 +73,22 @@ function SportsLeagueRail({
   );
 }
 
-function SportsRulesPanel({ t }: { t: ReturnType<typeof useSportsPageController>['t'] }) {
-  return (
-    <Card data-testid="sports-rules-panel">
-      <CardHeader>
-        <CardTitle>{t('sports.subnav.rules')}</CardTitle>
-      </CardHeader>
-      <CardBody className="text-foreground-muted space-y-2 text-sm leading-relaxed">
-        <p className="m-0">{t('sports.fixture.settlementNotice.finished')}</p>
-        <p className="m-0">{t('sports.filter.display_only')}</p>
-      </CardBody>
-    </Card>
-  );
-}
-
-function SportsVipDeferPanel({ t }: { t: ReturnType<typeof useSportsPageController>['t'] }) {
-  return (
-    <div
-      data-testid="sports-vip-defer"
-      data-engine-todo={SPORTS_VIP_ENGINE_TODO}
-      data-ui-unlock-todo={SPORTS_VIP_UI_UNLOCK_TODO}
-    >
-      <EmptyState
-        title={t('sports.vip.defer.title')}
-        description={t(SPORTS_VIP_DEFER_REASON_KEY)}
-        actionLabel={t('sports.subnav.home')}
-        onAction={() => {
-          window.location.assign('/sports');
-        }}
-      />
-    </div>
-  );
-}
-
 /** Canonical `/sports/**` sportsbook — fixtures · slip · dual stake currency (P10). */
 export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
   const engine = useSportsPageController(mode, fixtureId);
   const { t, loading, mode: pageMode } = engine;
 
   useEffect(() => {
+    if (pageMode === 'rules') {
+      document.title = t(SPORTS_RULES_SEO_TITLE_KEY);
+      return;
+    }
+    if (pageMode === 'vip') {
+      document.title = t(SPORTS_VIP_SEO_TITLE_KEY);
+      return;
+    }
     document.title = t('seo.sports.title');
-  }, [t]);
+  }, [pageMode, t]);
 
   if (loading) {
     return <SportsLoadingShell />;
@@ -148,7 +122,11 @@ export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
         <h1 className="text-foreground m-0 text-2xl font-semibold md:text-3xl">
           {showFixture
             ? `${fixtureHome} ${t('sports.fixture.vs')} ${fixtureAway}`
-            : t('sports.hero.title')}
+            : showRules
+              ? t('sports.subnav.rules')
+              : showVip
+                ? t('sports.subnav.vip')
+                : t('sports.hero.title')}
         </h1>
         <p className="text-foreground-muted m-0 text-sm leading-relaxed">
           {showFixture
@@ -246,7 +224,7 @@ export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
           <SportsMyBetsPanel bets={engine.myBets} loading={engine.myBetsLoading} t={t} />
         ) : null}
         {showRules ? <SportsRulesPanel t={t} /> : null}
-        {showVip ? <SportsVipDeferPanel t={t} /> : null}
+        {showVip ? <SportsVipStubPanel t={t} /> : null}
       </main>
 
       {showSlip ? (

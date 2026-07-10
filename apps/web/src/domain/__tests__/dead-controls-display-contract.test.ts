@@ -5,6 +5,7 @@ import {
   PQA_DEAD_CONTROL_DEFER_REGISTRY,
   REWARD_TICKETS_ISSUANCE_STATUS,
   SPORTS_VIP_ENGINE_TODO,
+  SPORTS_VIP_UI_UNLOCK_TODO,
   TIER_KEEP_STATUS_ENGINE_TODO,
   TIER_KEEP_STATUS_UNAVAILABLE_REASON_KEY,
   assertPqaDeadControlRegistry,
@@ -55,6 +56,7 @@ describe('dead-controls-display-contract (PQA F3)', () => {
     expect(TIER_KEEP_STATUS_ENGINE_TODO).toBe('ew-e1-engine-decay-rpc');
     expect(CASINO_HUB_DEFER_TODO).toBe('p10-casino-replay-and-infra');
     expect(SPORTS_VIP_ENGINE_TODO).toBe('ew-e4-gate-tier-option-b');
+    expect(SPORTS_VIP_UI_UNLOCK_TODO).toBe('ew-e5-gap-surfaces-wire');
     expect(SETTINGS_API_KEYS_ENGINE_TODO).toBe('ew-e8-engine-api-keys');
     expect(REWARD_TICKETS_ISSUANCE_STATUS).toBe('read_only_no_grant_rpc');
   });

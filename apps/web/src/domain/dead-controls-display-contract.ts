@@ -19,7 +19,7 @@ export const CASINO_HUB_DEFER_TODO = 'p10-casino-replay-and-infra' as const;
 
 export const SPORTS_VIP_ROUTE = '/sports/vip' as const;
 export const SPORTS_VIP_ENGINE_TODO = 'ew-e4-gate-tier-option-b' as const;
-export const SPORTS_VIP_UI_UNLOCK_TODO = 'ew-e5-page-sports-vip' as const;
+export const SPORTS_VIP_UI_UNLOCK_TODO = 'ew-e5-gap-surfaces-wire' as const;
 
 export const TIER_KEEP_STATUS_ENGINE_TODO = 'ew-e1-engine-decay-rpc' as const;
 

@@ -3454,6 +3454,30 @@ export const presentationKoMessages = {
   'sports.vip.defer.title': 'VIP 마켓 준비 중',
   'sports.vip.defer.body':
     'VIP 전용 마켓은 Tier Option B 엔진(E4) 배포 후에 열릴 예정이에요. 지금은 일반 스포츠북을 이용해 주세요.',
+  'sports.vip.eligibility.title': 'VIP 베팅룸 자격',
+  'sports.vip.eligibility.tier': '플래티넘 이상',
+  'sports.vip.eligibility.body':
+    'VIP 전용 마켓은 플래티넘 이상 등급을 위한 자리예요. 등급 한도와 전용 라인은 엔진(E4) 배포 후 서버 기준으로 적용돼요.',
+  'sports.rules.intro':
+    '배당·정산·무효 처리는 모두 서버 기준이에요. 화면 숫자는 표시용이며 최종 결과는 RPC 정산을 따릅니다.',
+  'sports.rules.odds.title': '배당 표시',
+  'sports.rules.odds.body':
+    '표시 배당은 서버가 내려준 스냅샷이에요. 접수 시점의 배당은 베팅 확인 단계에서 다시 확인하세요.',
+  'sports.rules.settlement.title': '정산 시점',
+  'sports.rules.settlement.body':
+    '경기 종료·공식 결과 반영 후 서버가 정산해요. 클라이언트에서 예상 수익을 최종 지급액으로 쓰지 않아요.',
+  'sports.rules.void.title': '무효·취소',
+  'sports.rules.void.body':
+    '경기 취소·연기·마켓 무효 시 해당 베팅은 서버 정책에 따라 무효 또는 환불 처리돼요.',
+  'sports.rules.live.title': '라이브·지연',
+  'sports.rules.live.body':
+    '라이브 스코어·마켓 중단은 서버 지연·서스펜드 상태를 그대로 보여 줘요. 화면에서 점수를 다시 계산하지 않아요.',
+  'sports.rules.responsible.title': '책임 있는 이용',
+  'sports.rules.responsible.body':
+    '한도·자기 제한·도움 안내는 책임 게임 안내에서 확인할 수 있어요.',
+  'sports.rules.responsible.link': '책임 게임 안내 보기',
+  'seo.sports.rules.title': '스포츠 규칙 — PHONARA',
+  'seo.sports.vip.title': 'VIP 베팅룸 — PHONARA',
   'sports.system.minLegs': '시스템 베팅은 3폴 이상에서 선택할 수 있어요.',
   'sports.system.matrixInfo': '총 {count}장 조합 · 폴당 {stake} PHON',
   'sports.empty.featured': '추천 경기가 아직 없어요. 곧 새 마켓이 열릴 예정이에요.',

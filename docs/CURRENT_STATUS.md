@@ -71,11 +71,11 @@
 
 ## Next (유일한 구현 큐)
 
-**Phase R UI Rebuild** — [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) · **`p10-sports-live-surface-wire` `[x]` DONE** 2026-07-10 · **NEXT** `p10-sports-rules-and-vip-stub` #202 · §34 → P10 · preflight: [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
+**Phase R UI Rebuild** — [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) · **`p10-sports-rules-and-vip-stub` `[x]` DONE** 2026-07-10 · **NEXT** `p10-page-casino` #203 · §34 → P10 · preflight: [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
 
 **Trade 결함 0 수렴 (형제 큐)** — Plan `트레이딩_결함_0_수렴` · Phase A–C **`[x]` impl** 2026-07-08 · **NEXT** Phase D `phase-d-fills-pagination` (D1) → `phase-d-depth-chart` (D2) · preflight: [`ENGINE_UI_FULL_AUDIT_2026-07-08.md`](audit/ENGINE_UI_FULL_AUDIT_2026-07-08.md)
 
-## §AI Todo Sync (Phase R · YAML 정본 미러 · completed **201**/278 · pending **70** · cancelled **7** · 48차)
+## §AI Todo Sync (Phase R · YAML 정본 미러 · completed **202**/278 · pending **69** · cancelled **7** · 48차)
 
 > **정본:** Cursor Plan `phase_r_super-app_8bdf2c10` frontmatter · **278 ids** · `bun run check:plan-doc-sync` green 필수 · 기존 surface gate 증거 행은 유지 · 신규 id만 placeholder
 
@@ -282,7 +282,7 @@
 | `p10-sports-live-surface-wire` | `[x]` DONE | 2026-07-10 | `sports-live-surface-display-contract` · live banner · realtime · `gate:ai-impl` **33/33** |
 | `p10-sports-slip-advanced-wire` | `[x]` DONE | — | YAML #200 completed · surface/gate evidence pending doc sync |
 | `p10-sports-layout-dedup-gate` | `[x]` DONE | — | YAML #201 completed · surface/gate evidence pending doc sync |
-| `p10-sports-rules-and-vip-stub` | `[ ]` NEXT | — | YAML #202 pending |
+| `p10-sports-rules-and-vip-stub` | `[x]` DONE | 2026-07-10 | `sports-rules-and-vip-display-contract` · rules panel · VIP eligibility stub · `gate:ai-impl` **4/4** · sports-page+dead-controls+redirect **30/30** |
 | `p10-page-casino` | `[ ]` NEXT | — | YAML #203 pending |
 | `p10-casino-replay-and-infra` | `[ ]` NEXT | — | YAML #204 pending |
 | `p10-casino-fiat-hint-session-lock` | `[ ]` NEXT | — | YAML #205 pending |
@@ -360,4 +360,4 @@
 | `p2-defer-admin-vip` | `[x]` cancelled | — | YAML cancelled · DEFER — 구현 금지 |
 | `p2-defer-admin-support` | `[x]` cancelled | — | YAML cancelled · DEFER — 구현 금지 |
 
-§AI Todo Sync · YAML canonical **201/278 completed** · **NEXT:** `p10-sports-rules-and-vip-stub` (#202) · **preflight:** [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
+§AI Todo Sync · YAML canonical **202/278 completed** · **NEXT:** `p10-page-casino` (#203) · **preflight:** [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)

@@ -3509,6 +3509,30 @@ export const presentationEnMessages = {
   'sports.vip.defer.title': 'VIP markets coming next',
   'sports.vip.defer.body':
     'VIP-only markets unlock after the Tier Option B engine (E4) ships. Use the main sportsbook for now.',
+  'sports.vip.eligibility.title': 'VIP room eligibility',
+  'sports.vip.eligibility.tier': 'Platinum and above',
+  'sports.vip.eligibility.body':
+    'VIP markets are reserved for Platinum and above. Tier caps and dedicated lines apply from the server after the E4 engine ships.',
+  'sports.rules.intro':
+    'Odds, settlement, and voids are always server-trusted. On-screen figures are display-only; final results follow RPC settlement.',
+  'sports.rules.odds.title': 'Odds display',
+  'sports.rules.odds.body':
+    'Shown odds are the server snapshot. Confirm the odds at placement time in the bet confirmation step.',
+  'sports.rules.settlement.title': 'Settlement timing',
+  'sports.rules.settlement.body':
+    'The server settles after the fixture ends and official results land. Client payout previews are never final payouts.',
+  'sports.rules.void.title': 'Voids and cancellations',
+  'sports.rules.void.body':
+    'If a fixture is cancelled, postponed, or a market is voided, the server policy voids or refunds the affected bets.',
+  'sports.rules.live.title': 'Live and delay',
+  'sports.rules.live.body':
+    'Live scores and market suspends mirror server delay and suspend state. The UI never recomputes the score.',
+  'sports.rules.responsible.title': 'Responsible play',
+  'sports.rules.responsible.body':
+    'Limits, self-exclusion, and help resources are in the responsible gaming guide.',
+  'sports.rules.responsible.link': 'Open responsible gaming guide',
+  'seo.sports.rules.title': 'Sports rules — PHONARA',
+  'seo.sports.vip.title': 'VIP betting room — PHONARA',
   'sports.system.minLegs': 'System bets need at least 3 legs.',
   'sports.system.matrixInfo': '{count} combos · {stake} PHON per line',
   'sports.empty.featured': 'No featured fixtures yet. New markets will open soon.',

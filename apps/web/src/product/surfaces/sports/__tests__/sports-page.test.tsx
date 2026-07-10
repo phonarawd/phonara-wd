@@ -208,7 +208,7 @@ describe('SportsPage', () => {
     );
   });
 
-  it('renders vip defer panel with empty-state navigation', () => {
+  it('renders vip stub with eligibility strip and defer empty-state', () => {
     useSportsPageControllerMock.mockReturnValue(
       makeEngine({
         mode: 'vip',
@@ -221,8 +221,34 @@ describe('SportsPage', () => {
       </I18nProvider>,
     );
 
+    expect(screen.getByTestId('sports-vip-stub')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-vip-eligibility-strip')).toBeInTheDocument();
     expect(screen.getByTestId('sports-vip-defer')).toBeInTheDocument();
     expect(screen.getByText('sports.vip.defer.title')).toBeInTheDocument();
+    expect(screen.getByText('sports.vip.eligibility.title')).toBeInTheDocument();
+    expect(screen.queryByTestId('sports-bet-slip-panel')).not.toBeInTheDocument();
+  });
+
+  it('renders rules sections without slip rail', () => {
+    useSportsPageControllerMock.mockReturnValue(
+      makeEngine({
+        mode: 'rules',
+      }),
+    );
+
+    render(
+      <I18nProvider>
+        <SportsPage mode="rules" />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('sports-rules-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-rules-section-odds')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-rules-section-settlement')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-rules-responsible-link')).toHaveAttribute(
+      'href',
+      '/legal/responsible-gaming',
+    );
     expect(screen.queryByTestId('sports-bet-slip-panel')).not.toBeInTheDocument();
   });
 
