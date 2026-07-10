@@ -14,8 +14,7 @@ const ROOT = process.cwd();
 const OUT = join(ROOT, 'screenshots');
 const BASE = process.env.PHONARA_AUDIT_BASE ?? 'http://127.0.0.1:3000';
 const CHROME =
-  process.env.PHONARA_CHROME_PATH ??
-  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+  process.env.PHONARA_CHROME_PATH ?? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const DEBUG_PORT = Number(process.env.PHONARA_CDP_PORT ?? 9222);
 const SPAWN_VITE = process.env.PHONARA_AUDIT_NO_SPAWN !== '1';
 
@@ -116,10 +115,7 @@ async function connectCdp(wsUrl: string): Promise<CdpClient> {
   });
 
   let nextId = 1;
-  const pending = new Map<
-    number,
-    { resolve: (v: unknown) => void; reject: (e: Error) => void }
-  >();
+  const pending = new Map<number, { resolve: (v: unknown) => void; reject: (e: Error) => void }>();
 
   ws.addEventListener('message', (ev) => {
     const msg = JSON.parse(String(ev.data)) as {
@@ -297,9 +293,7 @@ async function main(): Promise<void> {
 
           const dir = join(OUT, vp.folder);
           await mkdir(dir, { recursive: true });
-          const scrolls: Array<'top' | 'mid' | 'end'> = MINIMAL
-            ? ['top']
-            : ['top', 'mid', 'end'];
+          const scrolls: Array<'top' | 'mid' | 'end'> = MINIMAL ? ['top'] : ['top', 'mid', 'end'];
           let nn = 1;
           for (const scroll of scrolls) {
             const fileName = `${route.pageId}_${vp.folder}_${theme}_${String(nn).padStart(2, '0')}.png`;
@@ -358,8 +352,7 @@ async function main(): Promise<void> {
       finishedAt: new Date().toISOString(),
       base: BASE,
       engine: 'chrome-cdp',
-      note:
-        'Auth-gated routes without session redirect to /login. True authenticated UI needs Docker stack + login pass. Playwright blocked by hook — used system Chrome CDP.',
+      note: 'Auth-gated routes without session redirect to /login. True authenticated UI needs Docker stack + login pass. Playwright blocked by hook — used system Chrome CDP.',
       counts: {
         png: manifest.length + 2,
         routes: ROUTES.length,

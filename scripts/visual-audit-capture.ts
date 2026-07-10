@@ -258,8 +258,7 @@ async function main(): Promise<void> {
       startedAt,
       finishedAt: new Date().toISOString(),
       base: BASE,
-      note:
-        'Auth-gated routes without local session redirect to /login. Docker/stack login pass needed for true home/trade/wallet/casino shots.',
+      note: 'Auth-gated routes without local session redirect to /login. Docker/stack login pass needed for true home/trade/wallet/casino shots.',
       counts: {
         png: manifest.length + hoverFiles.length,
         routes: ROUTES.length,

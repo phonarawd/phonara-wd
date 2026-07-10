@@ -200,7 +200,9 @@ async function gotoTradeRoute(page: Page, path: '/trade' | '/trade/futures'): Pr
         throw error;
       }
       // Reset navigation state before retry (cookies/localStorage for origin survive).
-      await page.goto('about:blank', { waitUntil: 'commit', timeout: 10_000 }).catch(() => undefined);
+      await page
+        .goto('about:blank', { waitUntil: 'commit', timeout: 10_000 })
+        .catch(() => undefined);
       await new Promise((resolve) => setTimeout(resolve, 250 * attempt));
     }
   }

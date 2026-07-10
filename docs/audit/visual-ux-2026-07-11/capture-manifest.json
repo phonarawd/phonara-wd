@@ -10,10 +10,7 @@
     "viewports": 2,
     "authRedirects": 10
   },
-  "hoverFiles": [
-    "hover/landing_cta_region_01.png",
-    "hover/landing_after_mousemove_01.png"
-  ],
+  "hoverFiles": ["hover/landing_cta_region_01.png", "hover/landing_after_mousemove_01.png"],
   "manifest": [
     {
       "file": "mobile/landing_mobile_dark_01.png",

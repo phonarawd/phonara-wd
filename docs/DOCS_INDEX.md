@@ -23,28 +23,28 @@
 
 ## Engine · Gates · Ops (boundary / operator)
 
-| Doc                                                                                                    | Role                                  |
-| ------------------------------------------------------------------------------------------------------ | ------------------------------------- |
-| [`QUALITY_GATES.md`](QUALITY_GATES.md)                                                                 | Quality gate ladder                   |
-| [`SSOT/OPERATOR_GATES.md`](SSOT/OPERATOR_GATES.md)                                                     | Operator gate entrypoint              |
-| [`SSOT/ENGINE_BOUNDARY.md`](SSOT/ENGINE_BOUNDARY.md)                                                   | Engine vs presentation                |
-| [`SSOT/PAYMENT_ARCHITECTURE_CANON.md`](SSOT/PAYMENT_ARCHITECTURE_CANON.md)                             | Payment rails canon                   |
-| [`SSOT/CURSOR_AUTOPILOT.md`](SSOT/CURSOR_AUTOPILOT.md)                                                 | Cursor setup                          |
-| [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md)                                                         | Dev environment                       |
-| [`RUNBOOK.md`](RUNBOOK.md)                                                                             | Operations                            |
-| [`OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md)           | Pre-launch (operator)                 |
+| Doc                                                                                                    | Role                                           |
+| ------------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| [`QUALITY_GATES.md`](QUALITY_GATES.md)                                                                 | Quality gate ladder                            |
+| [`SSOT/OPERATOR_GATES.md`](SSOT/OPERATOR_GATES.md)                                                     | Operator gate entrypoint                       |
+| [`SSOT/ENGINE_BOUNDARY.md`](SSOT/ENGINE_BOUNDARY.md)                                                   | Engine vs presentation                         |
+| [`SSOT/PAYMENT_ARCHITECTURE_CANON.md`](SSOT/PAYMENT_ARCHITECTURE_CANON.md)                             | Payment rails canon                            |
+| [`SSOT/CURSOR_AUTOPILOT.md`](SSOT/CURSOR_AUTOPILOT.md)                                                 | Cursor setup                                   |
+| [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md)                                                         | Dev environment                                |
+| [`RUNBOOK.md`](RUNBOOK.md)                                                                             | Operations                                     |
+| [`OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md)           | Pre-launch (operator)                          |
 | [`OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md`](OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md) | PIR evidence **`[x]` DONE** · `#205` unblocked |
 
 ## Audit reports (PQA §33 · read-only)
 
-| Doc                                                                                                              | Role                             |
-| ---------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| [`audit/PLATFORM_AUDIT_A_DB_GUARDS_2026-07-08.md`](audit/PLATFORM_AUDIT_A_DB_GUARDS_2026-07-08.md)               | Section A — guard/GRANT          |
-| [`audit/PLATFORM_AUDIT_B_RPC_CONTRACT_2026-07-08.md`](audit/PLATFORM_AUDIT_B_RPC_CONTRACT_2026-07-08.md)         | Section B — RPC/error/realtime   |
-| [`audit/PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md`](audit/PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md) | Section C — surface/dead control |
-| [`audit/PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md`](audit/PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md)         | Section D — app_config/ops       |
-| [`audit/PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md`](audit/PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md)   | **Section E — P0–P3 결함 대장**  |
-| [`audit/visual-ux-2026-07-11/README.md`](audit/visual-ux-2026-07-11/README.md)                                 | Visual/UX Director 입력 팩 · 스크린샷 스키마 |
+| Doc                                                                                                              | Role                                         |
+| ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| [`audit/PLATFORM_AUDIT_A_DB_GUARDS_2026-07-08.md`](audit/PLATFORM_AUDIT_A_DB_GUARDS_2026-07-08.md)               | Section A — guard/GRANT                      |
+| [`audit/PLATFORM_AUDIT_B_RPC_CONTRACT_2026-07-08.md`](audit/PLATFORM_AUDIT_B_RPC_CONTRACT_2026-07-08.md)         | Section B — RPC/error/realtime               |
+| [`audit/PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md`](audit/PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md) | Section C — surface/dead control             |
+| [`audit/PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md`](audit/PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md)         | Section D — app_config/ops                   |
+| [`audit/PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md`](audit/PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md)   | **Section E — P0–P3 결함 대장**              |
+| [`audit/visual-ux-2026-07-11/README.md`](audit/visual-ux-2026-07-11/README.md)                                   | Visual/UX Director 입력 팩 · 스크린샷 스키마 |
 
 재현: `bun run audit:pqa-c` · `bun run audit:pqa-d` · `bun run check:engine-foundation-parity`
 

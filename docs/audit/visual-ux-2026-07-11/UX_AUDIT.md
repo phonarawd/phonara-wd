@@ -12,13 +12,13 @@
 Earn (/home) | Wallet | Trade | Sports | Casino
 ```
 
-| 규칙 | 내용 |
-|------|------|
-| Subnav owner | `AppShell` only — surface 내부 `HorizontalSubnav` 금지 |
-| Cross-domain | navigate CTA만 — embed 금지 |
-| Earn desktop | side nav / rail |
-| Mobile chrome | TopBar + BottomNav + domain subnav |
-| Account / Settings / Legal | BottomNav 밖 · TopBar / deep link |
+| 규칙                       | 내용                                                   |
+| -------------------------- | ------------------------------------------------------ |
+| Subnav owner               | `AppShell` only — surface 내부 `HorizontalSubnav` 금지 |
+| Cross-domain               | navigate CTA만 — embed 금지                            |
+| Earn desktop               | side nav / rail                                        |
+| Mobile chrome              | TopBar + BottomNav + domain subnav                     |
+| Account / Settings / Legal | BottomNav 밖 · TopBar / deep link                      |
 
 도메인 경계 SOT: `apps/web/src/product/shell/surface-domain-boundary.ts`
 
@@ -122,40 +122,40 @@ Login → MFA → exception queues
 
 ## 3. 클릭 깊이 (대략)
 
-| 목표 | 탭/스텝 |
-|------|---------|
-| Earn → 미션 | 1–2 |
-| Wallet → 크립토 입금 Confirm | 3–4 |
-| Trade → 지정가 Confirm | 2–3 (desk) / 3–4 (mobile) |
-| Casino → 베팅 UI | 2 · stage 피드백 약함 |
-| Admin 출금 승인 | 2–3 + reason |
+| 목표                         | 탭/스텝                   |
+| ---------------------------- | ------------------------- |
+| Earn → 미션                  | 1–2                       |
+| Wallet → 크립토 입금 Confirm | 3–4                       |
+| Trade → 지정가 Confirm       | 2–3 (desk) / 3–4 (mobile) |
+| Casino → 베팅 UI             | 2 · stage 피드백 약함     |
+| Admin 출금 승인              | 2–3 + reason              |
 
 ---
 
 ## 4. UX 문제점
 
-| ID | 문제 | 심각도 | 비고 |
-|----|------|--------|------|
-| U1 | Casino stage placeholder — 플레이 피드백 단절 | P0 | 12게임 공통 |
-| U2 | Sports VIP stub | P1 | 기대 불일치 |
-| U3 | Landing first-fold 과밀 | P1 | hero budget |
-| U4 | Trade mobile 인지부하 | P1 | tabs+sticky+desk |
-| U5 | Fiat hint `#205` BLOCKED | P1 | 머니 신뢰 |
-| U6 | Earn→Casino navigate-only 맥락 단절 | P2 | 의도적 격리 |
-| U7 | Admin/Web 시각·카피 톤 불일치 가능 | P2 | shim |
+| ID  | 문제                                          | 심각도 | 비고             |
+| --- | --------------------------------------------- | ------ | ---------------- |
+| U1  | Casino stage placeholder — 플레이 피드백 단절 | P0     | 12게임 공통      |
+| U2  | Sports VIP stub                               | P1     | 기대 불일치      |
+| U3  | Landing first-fold 과밀                       | P1     | hero budget      |
+| U4  | Trade mobile 인지부하                         | P1     | tabs+sticky+desk |
+| U5  | Fiat hint `#205` BLOCKED                      | P1     | 머니 신뢰        |
+| U6  | Earn→Casino navigate-only 맥락 단절           | P2     | 의도적 격리      |
+| U7  | Admin/Web 시각·카피 톤 불일치 가능            | P2     | shim             |
 
 ---
 
 ## 5. 상태 문법 (노출 규칙 §32.7)
 
-| 상태 | 패턴 |
-|------|------|
-| 가능 | 동작 컨트롤 |
-| 불가 | disabled + reason (또는 hidden) |
-| 로딩 | Skeleton |
-| 에러 | ErrorPanel / banner + retry |
-| 빈 | EmptyState |
-| 잔액 0 | ZeroBalanceState |
+| 상태   | 패턴                            |
+| ------ | ------------------------------- |
+| 가능   | 동작 컨트롤                     |
+| 불가   | disabled + reason (또는 hidden) |
+| 로딩   | Skeleton                        |
+| 에러   | ErrorPanel / banner + retry     |
+| 빈     | EmptyState                      |
+| 잔액 0 | ZeroBalanceState                |
 
 **Dead control 0** — deferred stage는 카피로 완화 중이나 시각적으로는 빈 카드.
 
@@ -163,10 +163,10 @@ Login → MFA → exception queues
 
 ## 6. 개선 우선순위 (UX)
 
-1. Casino L1 stage (Pixi/canvas) × 12 — 피드백 루프 복구  
-2. `#205` fiat hint session lock  
-3. Sports VIP 실표면  
-4. Landing fold 절제  
-5. Trade mobile IA 단순화  
+1. Casino L1 stage (Pixi/canvas) × 12 — 피드백 루프 복구
+2. `#205` fiat hint session lock
+3. Sports VIP 실표면
+4. Landing fold 절제
+5. Trade mobile IA 단순화
 6. Onboarding → 첫 Earn 미션 직선화  
-)
+   )

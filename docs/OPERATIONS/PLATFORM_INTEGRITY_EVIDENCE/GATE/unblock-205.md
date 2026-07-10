@@ -10,10 +10,10 @@ PIR 형제 큐 마감 — Evidence GATE PASS를 근거로 Track A `#205` (`p10-c
 
 ## 선행 (전부 `[x]`)
 
-| Todo | Evidence |
-|------|----------|
+| Todo                          | Evidence                                         |
+| ----------------------------- | ------------------------------------------------ |
 | `pir-gate-platform-integrity` | [`platform-integrity.md`](platform-integrity.md) |
-| Wave W0–P2 · E1–E5 | [`../README.md`](../README.md) |
+| Wave W0–P2 · E1–E5            | [`../README.md`](../README.md)                   |
 
 ## DoD
 
