@@ -8,7 +8,7 @@
 | ----------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Engine Apex**               | `[x] FULLY CLOSED`                           | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어 예외만)                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | **Phase D Demolition**        | `[x] DONE`                                   | 삭제 확장 **금지**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| **Phase R UI Rebuild**        | **IN PROGRESS (§34 DA → P10)**               | **왕초보 큐:** To-do **위→아래** · completed **스킵** · **첫 pending 1개** (`p10-sports-parity-contract-and-board` #198) · Sports#0 `#197` **`[x]` DONE** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`** |
+| **Phase R UI Rebuild**        | **IN PROGRESS (§34 DA → P10)**               | **왕초보 큐:** To-do **위→아래** · completed **스킵** · **첫 pending 1개** (`p10-sports-slip-advanced-wire` #200) · Sports#2 `#199` **`[x]` DONE** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`** |
 | **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
@@ -70,13 +70,13 @@
 
 **Implemented (Phase E):** `rpc_set_trailing_stop` · `rpc_clear_trailing_stop` · `time_in_force` · `display_quantity` iceberg slices · `rpc_run_stop_orders` trailing peak · `rpc_run_open_order_fills` IOC/FOK expiry
 
-**NEXT:** **`p10-sports-parity-contract-and-board`** (#198) · Sports#0 `#197` **`[x]` DONE** 2026-07-10 · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
+**NEXT:** **`p10-sports-slip-advanced-wire`** (#200) · Sports#2 `#199` **`[x]` DONE** 2026-07-10 · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
 
 ## 읽을 것 (active)
 
 1. 본 문서 (`ACTIVE_WORK_SSOT.md`)
 2. Phase R 실행: [`docs/PRODUCT/REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md)
-3. YAML todo 정본: Cursor Plan `phase_r_super-app_8bdf2c10` (frontmatter · **278 ids** · Track A **243** + Track B **35** · completed **197** · pending **74** · cancelled **7** · §20.6.1–§20.6.3 · §20.13 · §20.13.2 Fiat# · **§20.13.3 Sports#·CasinoR#** · **§20.14 Launch** · **§35 Forensic R0** · **§34 DA W5 GATE** · §25.12.9.1-D · §22.2.4 · **§22.2.5 Sports Parity** · **§23.2.1 Casino one-shot replay** · **§32.7** · **52차** 2026-07-10 · orchestration SSOT=본 plan · execute sibling=`trade_desk_*`·`phonara_수렴_*`)
+3. YAML todo 정본: Cursor Plan `phase_r_super-app_8bdf2c10` (frontmatter · **278 ids** · Track A **243** + Track B **35** · completed **201** · pending **70** · cancelled **7** · §20.6.1–§20.6.3 · §20.13 · §20.13.2 Fiat# · **§20.13.3 Sports#·CasinoR#** · **§20.14 Launch** · **§35 Forensic R0** · **§34 DA W5 GATE** · §25.12.9.1-D · §22.2.4 · **§22.2.5 Sports Parity** · **§23.2.1 Casino one-shot replay** · **§32.7** · **52차** 2026-07-10 · orchestration SSOT=본 plan · execute sibling=`trade_desk_*`·`phonara_수렴_*`)
 4. 엔진 **상태 한 줄만**: [`docs/ENGINE_APEX_CLOSEOUT.md`](../ENGINE_APEX_CLOSEOUT.md) (게이트 수치 · 재착수 금지)
 5. UX **의도 참조** (실행 큐 아님): `docs/SSOT/*_UX_CANON.md` · `UX_REFERENCE_CANON.md`
 6. 경계: [`ENGINE_BOUNDARY.md`](ENGINE_BOUNDARY.md) · [`OPERATOR_GATES.md`](OPERATOR_GATES.md) · [`CI_GATE_AUTHORITY.md`](CI_GATE_AUTHORITY.md)
@@ -118,7 +118,7 @@ bun run check:advisors
 
 **P1 Foundation** → **P2 Admin** → P3 Auth → P4 Money → P5 Security → P6 Shell → **P7 Growth** → **P8 Core** → P9–P12 Product → P13 Soft Launch → E0–E7 Engine Wave
 
-**현재 NEXT:** **`p10-sports-parity-contract-and-board`** — §20.13.3 Sports#1 YAML **#198** · Sports#0 `#197` **`[x]` DONE** 2026-07-10 · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
+**현재 NEXT:** **`p10-sports-slip-advanced-wire`** — §20.13.3 Sports#3 YAML **#200** · Sports#2 `#199` **`[x]` DONE** 2026-07-10 · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
 
 **왕초보 작업법 (43차 · 이것만):**
 
@@ -190,7 +190,7 @@ bun run check:advisors
 
 **증거:** `gate:ai-impl` fiat bundle **113/113** (18 files) · `p4-gate-fiat-reference-world-class-display-contract` **6/6** · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
 
-**마지막 완료:** **`p10-sports-hub-pages` `[x]`** — §20.13.3 Sports#0 hub · Fiat#10 **`[x]`** · **NEXT `p10-sports-parity-contract-and-board` (#198)**
+**마지막 완료:** **`p10-sports-live-surface-wire` `[x]`** — §20.13.3 Sports#2 live in-play · Sports#1 **`[x]`** · **NEXT `p10-sports-slip-advanced-wire` (#200)**
 
 ## Sportsbook Home (`p10-page-sports` · §13.1.1 · §12.7 · YAML #168) — `[x]` DONE · 재착수 금지
 
@@ -241,11 +241,11 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** `sports-fiat-hint-display.ts` · `use-sports-fiat-hint.ts` · `sports-money-with-fiat-hint.tsx` · slip avail/stake/payout rows · `FiatHintDisclaimer` 1× · client odds multiply **0**
 
-**다음 todo:** **`p10-sports-parity-contract-and-board`** (#198)
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
 
 ## Sports Hub Pages (`p10-sports-hub-pages` · §20.13.3 Sports#0 · YAML #197) — `[x]` DONE · 재착수 금지
 
-> **선행:** `p10-sports-fiat-hint-wire` **`[x]`** · **후행:** `p10-sports-parity-contract-and-board` (#198)
+> **선행:** `p10-sports-fiat-hint-wire` **`[x]`** · **후행:** `p10-sports-parity-contract-and-board` (#198) **`[x]`**
 
 | Todo                       | 상태           | 완료일         | 증거                                                                                                                                                                                                        |
 | -------------------------- | -------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -253,7 +253,31 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** `sports-hub-pages-display-contract` · `sports.fixture.$fixtureId` route · `SportsFixtureMarketsPanel` · board→fixture Link · my-bets panel · §12.19.6 hub chips live
 
-**다음 todo:** **`p10-sports-parity-contract-and-board`** (#198)
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#2 **`[x]`**
+
+## Sports Live Surface Wire (`p10-sports-live-surface-wire` · §20.13.3 Sports#2 · YAML #199) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-sports-parity-contract-and-board` **`[x]`** · **후행:** `p10-sports-slip-advanced-wire` (#200)
+
+| Todo                                 | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
+| ------------------------------------ | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-sports-live-surface-wire`** | **`[x]` DONE** | **2026-07-10** | `sports-live-surface-display-contract` · `useLiveFixtureState`/`useLiveFixtureStates` · `useSportsRealtime` · suspend/score/delay banner · `/sports/live` 확장만 · `gate:ai-impl` **33/33** · engine **0** |
+
+**Implemented:** Live in-play wire — goal/market suspend 배너 · live delay notice · score 갱신 · realtime cache patch · parity `live-inplay-state`/`live-realtime-cache` → DONE · parallel live route **0**
+
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200)
+
+## Sports Parity + Multi-Market Board (`p10-sports-parity-contract-and-board` · §20.13.3 Sports#1 · YAML #198) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-sports-hub-pages` **`[x]`** · **후행:** `p10-sports-live-surface-wire` (#199) **`[x]`**
+
+| Todo                                       | 상태           | 완료일         | 증거                                                                                                                                                                                                                          |
+| ------------------------------------------ | -------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-sports-parity-contract-and-board`** | **`[x]` DONE** | **2026-07-10** | `sports-exchange-parity-display-contract` · `SPORTS_PARITY_MATRIX` · `SPORTS_UI_ZONE_OWNERS` · `SPORTS_USER_COMPLAINT_RISKS` · `SPORTS_ACTION_PATH_REGISTRY` · fixture multi-market board · `gate:ai-impl` **20/20** · engine **0** |
+
+**Implemented:** §22.2.5 parity contract · totals/spread/handicap/asian_handicap/btts/props selectable on `SportsFixtureMarketsPanel` · `sports-market-1x2-only` → live · parallel `market-board-v2` **0**
+
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#2 **`[x]`**
 
 ## Digital Aurora W5 GATE (`da-w5-gate-domain-cards` · §34.17 · YAML #195) — `[x]` DONE · 재착수 금지
 
@@ -265,7 +289,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** Domain cards GATE — unique scan cues · CVA fingerprints · Mission/Wallet/Casino owner wires verified
 
-**다음 todo:** **`p10-sports-parity-contract-and-board`** (#198) — Sports#0 **`[x]`**
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#2 **`[x]`**
 
 ## Digital Aurora W5 Domain Cards (`da-w5-cards-domain-variants` · §34.17 · YAML #194) — `[x]` DONE · 재착수 금지
 
@@ -277,7 +301,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** Domain card personalities — Mission(ring+glow) · Wallet-hero(aurora edge) · VIP(tier ramp) · Trade-dense(line-first) · Sports-odds(heatmap) · Casino-play(hover glow) · CVA only
 
-**다음 todo:** **`p10-sports-parity-contract-and-board`** (#198) — Sports#0 **`[x]`**
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
 
 ## Digital Aurora W4 GATE (`da-w4-gate-motion` · §34.15–34.16 · YAML #193) — `[x]` DONE · 재착수 금지
 
@@ -289,7 +313,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** reduced-motion GATE — hook media-query SOT · instant variants · aurora static · count-up L2/reduced instant verified
 
-**다음 todo:** **`p10-sports-parity-contract-and-board`** (#198) — Sports#0 **`[x]`**
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
 
 ## Digital Aurora W4 Motion BUNDLE (`da-w4-motion-system-bundle` · §34.15–34.16 · YAML #192) — `[x]` DONE · 재착수 금지
 
@@ -301,7 +325,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** interaction grammar wire · Signal Pulse display-only · reduced-motion instant
 
-**다음 todo:** **`p10-sports-parity-contract-and-board`** (#198) — Sports#0 **`[x]`**
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
 
 ## Digital Aurora W3 GATE (`da-w3-gate-ia-progressive` · §34.12–34.14 · YAML #191) — `[x]` DONE · 재착수 금지
 
@@ -313,7 +337,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** Progressive disclosure GATE — Fold1–2 above-fold · Fold3 collapsed · wallet-hero/trade ticket collapse verified
 
-**다음 todo:** **`p10-sports-parity-contract-and-board`** (#198) — Sports#0 **`[x]`**
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
 
 ## Digital Aurora W3 Progressive IA (`da-w3-ia-progressive-bundle` · §34.12–34.14 · YAML #190) — `[x]` DONE · 재착수 금지
 
@@ -325,7 +349,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** Progressive disclosure — Fold1 status+next · Fold2 money open · Fold3 collapsed · Fold4 missions≤3 · Fold5 navigate-only
 
-**다음 todo:** **`p10-sports-parity-contract-and-board`** (#198) — Sports#0 **`[x]`**
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
 
 ## Digital Aurora W2 GATE (`da-w2-gate-shell-elevation` · §34.10–34.11 · YAML #189) — `[x]` DONE · 재착수 금지
 
@@ -337,7 +361,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** Shell elevation GATE — aurora · floating BottomNav · Orbit Grid verified
 
-**다음 todo:** **`p10-sports-parity-contract-and-board`** (#198) — Sports#0 **`[x]`**
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
 
 ## Digital Aurora W2 Shell Elevation (`da-w2-shell-elevation-infra` · §34.10–34.11 · YAML #188) — `[x]` DONE · 재착수 금지
 
@@ -555,7 +579,7 @@ bun run gate:ai-impl -- --test apps/web/src/product/surfaces/trade
 
 ## Fiat Reference 큐 (§20.13.2 · YAML #158–167 · Launch E1–E4 **끝난 뒤** 순차)
 
-**착수:** **`p10-sports-hub-pages` `[x]`** · Fiat#10 **`[x]`** · **NEXT `p10-sports-parity-contract-and-board` (#198)** · To-do 순서대로 1개씩
+**착수:** **`p10-sports-live-surface-wire` `[x]`** · Sports#1 **`[x]`** · Sports#0 **`[x]`** · Fiat#10 **`[x]`** · **NEXT `p10-sports-slip-advanced-wire` (#200)** · To-do 순서대로 1개씩
 
 ```text
 #158  p4-fiat-reference-preflight          [x]
@@ -569,7 +593,7 @@ bun run gate:ai-impl -- --test apps/web/src/product/surfaces/trade
 #166  p5-page-settings-fiat-reference          [x]
 #167  p4-gate-fiat-reference-world-class          [x]
 #168  p10-page-sports                    [x]
-#169+ P10 (NEXT `p10-sports-parity-contract-and-board` · Sports#0 `[x]`)
+#169+ P10 (NEXT `p10-sports-slip-advanced-wire` · Sports#2 `[x]`)
 ```
 
 ## P9 Trade Base GATE (`p9-gate-trade` · §20.13) — `[x]` DONE · 재착수 금지

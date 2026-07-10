@@ -1,6 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import {
+  parseSportsLiveFixtureState,
+  type SportsLiveFixtureState,
+} from '@/domain/sports-live-surface-display-contract';
+
 import { useAuth } from '../../contexts/auth-context';
 import { supabase } from '../../lib/supabase';
+
+export type { SportsLiveFixtureState };
 
 function isVisualFixtureMode(): boolean {
   return false;
@@ -20,6 +28,11 @@ export interface SportsFixtureSummary {
   readonly away_name: string;
   readonly kickoff_at: string;
   readonly status: string;
+  /** Optional — patched from live-state / realtime (list RPC may omit). */
+  readonly result_home_goals?: number | null;
+  readonly result_away_goals?: number | null;
+  readonly suspended_until?: string | null;
+  readonly suspend_reason?: string | null;
   readonly match_1x2?: Readonly<
     Record<string, { outcome_id: string; odds: string; captured_at: string }>
   >;
@@ -122,6 +135,27 @@ const VISUAL_FIXTURE_MARKETS: SportsMarketSummary[] = [
       },
     ],
   },
+  {
+    market_id: 'visual-market-totals',
+    market_type: 'totals',
+    status: 'open',
+    outcomes: [
+      {
+        outcome_id: 'visual-over',
+        selection: 'over',
+        line: '2.5',
+        odds: '1.91',
+        captured_at: '2026-06-26T12:00:00.000Z',
+      },
+      {
+        outcome_id: 'visual-under',
+        selection: 'under',
+        line: '2.5',
+        odds: '1.93',
+        captured_at: '2026-06-26T12:00:00.000Z',
+      },
+    ],
+  },
 ];
 
 export function useGetFixtureMarkets(fixtureId: string | undefined) {
@@ -215,14 +249,48 @@ export function useLiveFixtureState(fixtureId: string | undefined) {
   return useQuery({
     queryKey: ['sports', 'live-state', fixtureId],
     enabled: Boolean(fixtureId),
-    queryFn: async () => {
-      return sportsRpc<unknown>('rpc_get_live_fixture_state', {
+    queryFn: async (): Promise<SportsLiveFixtureState | null> => {
+      const raw = await sportsRpc<unknown>('rpc_get_live_fixture_state', {
         p_fixture_id: fixtureId,
       });
+      return parseSportsLiveFixtureState(raw);
     },
     staleTime: 5_000,
     refetchInterval: 15_000,
   });
+}
+
+/** Batch live-state for `/sports/live` board rows — one query path, no per-page forks. */
+export function useLiveFixtureStates(fixtureIds: readonly string[]) {
+  const uniqueIds = [...new Set(fixtureIds.filter(Boolean))];
+
+  const queries = useQueries({
+    queries: uniqueIds.map((fixtureId) => ({
+      queryKey: ['sports', 'live-state', fixtureId] as const,
+      queryFn: async (): Promise<SportsLiveFixtureState | null> => {
+        const raw = await sportsRpc<unknown>('rpc_get_live_fixture_state', {
+          p_fixture_id: fixtureId,
+        });
+        return parseSportsLiveFixtureState(raw);
+      },
+      staleTime: 5_000,
+      refetchInterval: 15_000,
+      enabled: Boolean(fixtureId),
+    })),
+  });
+
+  const byFixtureId = new Map<string, SportsLiveFixtureState>();
+  uniqueIds.forEach((id, index) => {
+    const state = queries[index]?.data;
+    if (state) byFixtureId.set(id, state);
+  });
+
+  return {
+    byFixtureId,
+    loading: queries.some((q) => q.isLoading),
+    isFetching: queries.some((q) => q.isFetching),
+    fixtureIds: uniqueIds,
+  };
 }
 
 export function usePreviewSportsCashout(

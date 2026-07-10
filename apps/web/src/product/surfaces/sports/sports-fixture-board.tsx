@@ -2,6 +2,14 @@ import { Link } from '@tanstack/react-router';
 
 import type { SportsFixtureSummary } from '@/features/sports/use-sports-betting';
 import type { SportsSlipSelection } from '@/features/sports/use-sports-bet-slip-state';
+import {
+  formatSportsLiveScore,
+  isSportsLiveInPlayStatus,
+  resolveSportsLiveSuspendKind,
+  resolveSportsLiveSuspendMessageKey,
+  SPORTS_LIVE_BADGE_KEY,
+  type SportsLiveFixtureState,
+} from '@/domain/sports-live-surface-display-contract';
 import { resolveSportsLeagueLabelKey } from '@/domain/sports-page-display-contract';
 import { Button } from '@/product/primitives/button';
 import { Card } from '@/product/primitives/card';
@@ -17,6 +25,8 @@ type SportsFixtureBoardProps = {
   onToggleSelection: (leg: SportsSlipSelection) => void;
   onRetry: () => void;
   t: (key: MessageKey, params?: Record<string, string | number>) => string;
+  /** Sports#2 — optional live-state overlay for /sports/live rows. */
+  liveStatesByFixtureId?: ReadonlyMap<string, SportsLiveFixtureState>;
   className?: string;
 };
 
@@ -46,6 +56,13 @@ function buildSelectionLeg(
   };
 }
 
+function resolveRowLiveState(
+  fixture: SportsFixtureSummary,
+  liveStatesByFixtureId?: ReadonlyMap<string, SportsLiveFixtureState>,
+): SportsLiveFixtureState | null {
+  return liveStatesByFixtureId?.get(fixture.fixture_id) ?? null;
+}
+
 export function SportsFixtureBoard({
   fixtures,
   loading,
@@ -55,6 +72,7 @@ export function SportsFixtureBoard({
   onToggleSelection,
   onRetry,
   t,
+  liveStatesByFixtureId,
   className,
 }: SportsFixtureBoardProps) {
   if (loading) {
@@ -102,16 +120,63 @@ export function SportsFixtureBoard({
       {fixtures.map((fixture) => {
         const odds = fixture.match_1x2;
         const kickoff = formatKickoff(fixture.kickoff_at, 'ko');
+        const liveState = resolveRowLiveState(fixture, liveStatesByFixtureId);
+        const score = formatSportsLiveScore(
+          liveState?.result_home_goals ?? fixture.result_home_goals,
+          liveState?.result_away_goals ?? fixture.result_away_goals,
+        );
+        const suspendSource: SportsLiveFixtureState | null =
+          liveState ??
+          (fixture.suspended_until
+            ? {
+                fixture_id: fixture.fixture_id,
+                league_code: fixture.league_code,
+                home_name: fixture.home_name,
+                away_name: fixture.away_name,
+                kickoff_at: fixture.kickoff_at,
+                status: fixture.status,
+                suspended_until: fixture.suspended_until ?? null,
+                suspend_reason: fixture.suspend_reason ?? null,
+                result_home_goals: fixture.result_home_goals ?? null,
+                result_away_goals: fixture.result_away_goals ?? null,
+                markets: [],
+              }
+            : null);
+        const suspendKind = resolveSportsLiveSuspendKind(suspendSource);
+        const suspendKey = resolveSportsLiveSuspendMessageKey(suspendKind);
+        const showLiveBadge = isSportsLiveInPlayStatus(liveState?.status ?? fixture.status);
+        const marketsSuspended = suspendKind !== null;
+
         return (
           <Card
             key={fixture.fixture_id}
             variant="sports-odds"
             className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2"
             data-testid={`sports-fixture-row-${fixture.fixture_id}`}
+            data-live={showLiveBadge ? 'true' : 'false'}
+            data-suspend-kind={suspendKind ?? 'none'}
           >
             <div className="min-w-0">
-              <p className="text-foreground-muted m-0 text-xs">
-                {t(resolveSportsLeagueLabelKey(fixture.league_code))} · {kickoff}
+              <p className="text-foreground-muted m-0 flex flex-wrap items-center gap-1.5 text-xs">
+                {showLiveBadge ? (
+                  <span
+                    className="bg-danger/15 text-danger inline-flex rounded-(--ds-radius-sm) px-1.5 py-0.5 text-[0.6rem] font-semibold tracking-wide uppercase"
+                    data-testid={`sports-live-row-badge-${fixture.fixture_id}`}
+                  >
+                    {t(SPORTS_LIVE_BADGE_KEY)}
+                  </span>
+                ) : null}
+                <span>
+                  {t(resolveSportsLeagueLabelKey(fixture.league_code))} · {kickoff}
+                </span>
+                {score ? (
+                  <span
+                    className="text-foreground font-semibold tabular-nums"
+                    data-testid={`sports-live-row-score-${fixture.fixture_id}`}
+                  >
+                    {score}
+                  </span>
+                ) : null}
               </p>
               <Link
                 to="/sports/fixture/$fixtureId"
@@ -121,6 +186,14 @@ export function SportsFixtureBoard({
               >
                 {fixture.home_name} {t('sports.fixture.vs')} {fixture.away_name}
               </Link>
+              {suspendKey ? (
+                <p
+                  className="text-warning m-0 mt-0.5 text-xs"
+                  data-testid={`sports-live-row-suspend-${fixture.fixture_id}`}
+                >
+                  {t(suspendKey)}
+                </p>
+              ) : null}
             </div>
             <div className="flex shrink-0 items-center gap-1" data-testid="sports-fixture-odds">
               {(['home', 'draw', 'away'] as const).map((selection) => {
@@ -151,7 +224,7 @@ export function SportsFixtureBoard({
                     className="min-w-14 tabular-nums"
                     data-testid={`sports-odds-${fixture.fixture_id}-${selection}`}
                     aria-pressed={active}
-                    disabled={sportsBlocked}
+                    disabled={sportsBlocked || marketsSuspended}
                     onClick={() =>
                       onToggleSelection(
                         buildSelectionLeg(fixture, selection, cell.outcome_id, cell.odds),

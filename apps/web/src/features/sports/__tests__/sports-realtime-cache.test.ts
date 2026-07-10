@@ -142,12 +142,38 @@ describe('sports-realtime-cache', () => {
       status: 'scheduled',
     });
 
-    patchSportsLiveState(qc, 'f1', { status: 'live', home_name: 'Arsenal' });
+    patchSportsLiveState(qc, 'f1', {
+      status: 'live',
+      home_name: 'Arsenal',
+      result_home_goals: 1,
+      result_away_goals: 0,
+      suspend_reason: 'goal_event',
+    });
 
     expect(qc.getQueryData(['sports', 'live-state', 'f1'])).toEqual({
       home_name: 'Arsenal',
       away_name: 'B',
       status: 'live',
+      result_home_goals: 1,
+      result_away_goals: 0,
+      suspend_reason: 'goal_event',
+    });
+  });
+
+  it('maps realtime fixture rows including score fields', () => {
+    expect(
+      fixturePatchFromRealtimeRow({
+        id: 'f1',
+        status: 'live',
+        result_home_goals: 2,
+        result_away_goals: 1,
+        suspended_until: null,
+      }),
+    ).toEqual({
+      status: 'live',
+      result_home_goals: 2,
+      result_away_goals: 1,
+      suspended_until: null,
     });
   });
 

@@ -11,7 +11,18 @@ export function patchSportsFixtureLists(
   qc: QueryClient,
   fixtureId: string,
   patch: Partial<
-    Pick<SportsFixtureSummary, 'status' | 'home_name' | 'away_name' | 'kickoff_at' | 'league_code'>
+    Pick<
+      SportsFixtureSummary,
+      | 'status'
+      | 'home_name'
+      | 'away_name'
+      | 'kickoff_at'
+      | 'league_code'
+      | 'result_home_goals'
+      | 'result_away_goals'
+      | 'suspended_until'
+      | 'suspend_reason'
+    >
   >,
 ): void {
   qc.setQueriesData<SportsFixtureSummary[]>({ queryKey: sportsFixtureListKeyPrefix() }, (prev) => {
@@ -101,37 +112,6 @@ export function oddsPatchFromRealtimeRow(row: RealtimeRow | null | undefined): {
   };
 }
 
-export function fixturePatchFromRealtimeRow(row: RealtimeRow | null | undefined): {
-  status?: string;
-  home_name?: string;
-  away_name?: string;
-  kickoff_at?: string;
-  league_code?: string;
-} | null {
-  if (!row || typeof row['id'] !== 'string') return null;
-  const patch: {
-    status?: string;
-    home_name?: string;
-    away_name?: string;
-    kickoff_at?: string;
-    league_code?: string;
-  } = {};
-  if (typeof row['status'] === 'string') patch.status = row['status'];
-  if (typeof row['home_name'] === 'string') patch.home_name = row['home_name'];
-  if (typeof row['away_name'] === 'string') patch.away_name = row['away_name'];
-  if (typeof row['kickoff_at'] === 'string') patch.kickoff_at = row['kickoff_at'];
-  if (typeof row['league_code'] === 'string') patch.league_code = row['league_code'];
-  return patch;
-}
-
-export function marketPatchFromRealtimeRow(row: RealtimeRow | null | undefined): {
-  status?: string;
-} | null {
-  if (!row || typeof row['id'] !== 'string') return null;
-  if (typeof row['status'] !== 'string') return null;
-  return { status: row['status'] };
-}
-
 export function patchSportsLiveState(
   qc: QueryClient,
   fixtureId: string,
@@ -141,14 +121,69 @@ export function patchSportsLiveState(
     away_name: string;
     kickoff_at: string;
     league_code: string;
+    suspended_until: string | null;
+    suspend_reason: string | null;
+    result_home_goals: number | null;
+    result_away_goals: number | null;
   }>,
 ): void {
   qc.setQueryData(['sports', 'live-state', fixtureId], (prev: unknown) => {
     if (!prev || typeof prev !== 'object') {
-      return { ...patch };
+      return { fixture_id: fixtureId, markets: [], ...patch };
     }
     return { ...(prev as Record<string, unknown>), ...patch };
   });
+}
+
+export function fixturePatchFromRealtimeRow(row: RealtimeRow | null | undefined): {
+  status?: string;
+  home_name?: string;
+  away_name?: string;
+  kickoff_at?: string;
+  league_code?: string;
+  suspended_until?: string | null;
+  suspend_reason?: string | null;
+  result_home_goals?: number | null;
+  result_away_goals?: number | null;
+} | null {
+  if (!row || typeof row['id'] !== 'string') return null;
+  const patch: {
+    status?: string;
+    home_name?: string;
+    away_name?: string;
+    kickoff_at?: string;
+    league_code?: string;
+    suspended_until?: string | null;
+    suspend_reason?: string | null;
+    result_home_goals?: number | null;
+    result_away_goals?: number | null;
+  } = {};
+  if (typeof row['status'] === 'string') patch.status = row['status'];
+  if (typeof row['home_name'] === 'string') patch.home_name = row['home_name'];
+  if (typeof row['away_name'] === 'string') patch.away_name = row['away_name'];
+  if (typeof row['kickoff_at'] === 'string') patch.kickoff_at = row['kickoff_at'];
+  if (typeof row['league_code'] === 'string') patch.league_code = row['league_code'];
+  if (row['suspended_until'] === null || typeof row['suspended_until'] === 'string') {
+    patch.suspended_until = row['suspended_until'] as string | null;
+  }
+  if (row['suspend_reason'] === null || typeof row['suspend_reason'] === 'string') {
+    patch.suspend_reason = row['suspend_reason'] as string | null;
+  }
+  if (row['result_home_goals'] === null || typeof row['result_home_goals'] === 'number') {
+    patch.result_home_goals = row['result_home_goals'] as number | null;
+  }
+  if (row['result_away_goals'] === null || typeof row['result_away_goals'] === 'number') {
+    patch.result_away_goals = row['result_away_goals'] as number | null;
+  }
+  return patch;
+}
+
+export function marketPatchFromRealtimeRow(row: RealtimeRow | null | undefined): {
+  status?: string;
+} | null {
+  if (!row || typeof row['id'] !== 'string') return null;
+  if (typeof row['status'] !== 'string') return null;
+  return { status: row['status'] };
 }
 
 export function readFixtureIdFromRealtimePayload(payload: unknown): string | null {

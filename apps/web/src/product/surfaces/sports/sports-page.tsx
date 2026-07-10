@@ -6,6 +6,7 @@ import {
   SPORTS_VIP_ENGINE_TODO,
   SPORTS_VIP_UI_UNLOCK_TODO,
 } from '@/domain/dead-controls-display-contract';
+import { isSportsLiveInPlayStatus } from '@/domain/sports-live-surface-display-contract';
 import {
   SPORTS_LEAGUE_FILTER_OPTIONS,
   resolveSportsLeagueLabelKey,
@@ -22,6 +23,7 @@ import { EmptyState } from '@/product/primitives/empty-state';
 import { SportsBetSlipPanel } from './sports-bet-slip-panel';
 import { SportsFixtureBoard } from './sports-fixture-board';
 import { SportsFixtureMarketsPanel } from './sports-fixture-markets-panel';
+import { SportsLiveInPlayBanner } from './sports-live-inplay-banner';
 import { SportsMyBetsPanel } from './sports-my-bets-panel';
 
 export type SportsPageProps = {
@@ -122,6 +124,7 @@ export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
   const showRules = pageMode === 'rules';
   const showVip = pageMode === 'vip';
   const showFixture = pageMode === 'fixture';
+  const showLive = pageMode === 'live';
   const showListBoard = !showMyBets && !showRules && !showVip && !showFixture;
   const showSlip = showListBoard || showFixture;
   const showLeagueRail = showListBoard;
@@ -172,6 +175,26 @@ export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
       ) : null}
 
       <main className={cn('min-w-0 flex flex-col gap-4', !showLeagueRail && 'lg:col-start-2')}>
+        {showLive ? (
+          <SportsLiveInPlayBanner
+            state={engine.activeLiveState}
+            showDelayNotice
+            realtimeConnected={engine.realtimeConnected}
+            stale={engine.liveStatesStale && !engine.liveStatesLoading}
+            t={t}
+          />
+        ) : null}
+
+        {showFixture && engine.activeLiveState ? (
+          <SportsLiveInPlayBanner
+            state={engine.activeLiveState}
+            showDelayNotice={isSportsLiveInPlayStatus(engine.activeLiveState.status)}
+            realtimeConnected={engine.realtimeConnected}
+            stale={engine.liveStatesStale && !engine.liveStatesLoading}
+            t={t}
+          />
+        ) : null}
+
         {showListBoard ? (
           <>
             <div className="lg:hidden">
@@ -183,7 +206,7 @@ export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
             </div>
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-foreground m-0 text-base font-semibold">
-                {t('sports.board.title')}
+                {showLive ? t('sports.live.boardTitle') : t('sports.board.title')}
               </h2>
               <span className="text-foreground-muted text-xs tabular-nums">
                 {t('sports.board.count', { count: engine.fixtures.length })}
@@ -197,6 +220,7 @@ export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
               sportsBlocked={engine.sportsBlocked}
               onToggleSelection={engine.toggleSelection}
               onRetry={engine.refreshFixtures}
+              liveStatesByFixtureId={showLive ? engine.liveStatesByFixtureId : undefined}
               t={t}
             />
           </>

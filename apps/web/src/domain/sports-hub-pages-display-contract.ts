@@ -1,7 +1,7 @@
 /**
  * P10 Sports hub pages — prematch · fixture detail · my-bets (§20.13.3 Sports#0).
  * ENGINE:exists — `rpc_list_sports_fixtures` · `rpc_get_fixture_markets` · `rpc_list_my_sports_bets`.
- * Multi-market board (totals/spread/…) = Sports#1 `p10-sports-parity-contract-and-board`.
+ * Multi-market board selectable types = Sports#1 `sports-exchange-parity-display-contract.ts`.
  */
 
 import type { MessageKey } from '@phonara/i18n';
@@ -77,7 +77,7 @@ export const SPORTS_MY_BETS_LEGACY_ALIAS = '/my-bets' as const;
 
 export const SPORTS_FIXTURE_MARKETS_HOOK = 'useGetFixtureMarkets' as const;
 
-/** Sports#0 shows match_1x2 only; other market types unlock in Sports#1. */
+/** Primary quick-odds market on fixture list cards (board still shows all selectable types). */
 export const SPORTS_HUB_FIXTURE_PRIMARY_MARKET = 'match_1x2' as const;
 
 export const SPORTS_HUB_FIXTURE_SEO_TITLE_KEY = 'seo.sports.title' as const satisfies MessageKey;

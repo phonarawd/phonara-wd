@@ -121,6 +121,11 @@ function makeEngine(overrides: Partial<SportsPageControllerView> = {}): SportsPa
     myBetsLoading: false,
     myBets: [],
     refreshFixtures: vi.fn(),
+    liveStatesByFixtureId: new Map(),
+    activeLiveState: null,
+    liveStatesLoading: false,
+    liveStatesStale: false,
+    realtimeConnected: false,
     ...overrides,
   };
 }
@@ -239,7 +244,7 @@ describe('SportsPage', () => {
     expect(screen.queryByTestId('sports-bet-slip-panel')).not.toBeInTheDocument();
   });
 
-  it('renders fixture detail markets with slip rail', () => {
+  it('renders fixture multi-market board with slip rail', () => {
     const toggleSelection = vi.fn();
     useSportsPageControllerMock.mockReturnValue(
       makeEngine({
@@ -265,7 +270,35 @@ describe('SportsPage', () => {
             market_id: 'm-totals',
             market_type: 'totals',
             status: 'open',
-            outcomes: [],
+            outcomes: [
+              {
+                outcome_id: 'over-1',
+                selection: 'over',
+                line: '2.5',
+                odds: '1.90',
+                captured_at: '2026-07-06T12:00:00.000Z',
+              },
+              {
+                outcome_id: 'under-1',
+                selection: 'under',
+                line: '2.5',
+                odds: '1.95',
+                captured_at: '2026-07-06T12:00:00.000Z',
+              },
+            ],
+          },
+          {
+            market_id: 'm-btts',
+            market_type: 'btts',
+            status: 'open',
+            outcomes: [
+              {
+                outcome_id: 'btts-yes',
+                selection: 'yes',
+                odds: '1.80',
+                captured_at: '2026-07-06T12:00:00.000Z',
+              },
+            ],
           },
         ],
       }),
@@ -279,11 +312,88 @@ describe('SportsPage', () => {
 
     expect(screen.getByTestId('sports-page')).toHaveAttribute('data-sports-mode', 'fixture');
     expect(screen.getByTestId('sports-fixture-markets-panel')).toBeInTheDocument();
-    expect(screen.getByTestId('sports-fixture-markets-deferred')).toBeInTheDocument();
-    expect(screen.getByTestId('sports-bet-slip-panel')).toBeInTheDocument();
-    fireEvent.click(screen.getByTestId('sports-fixture-odds-home-1'));
-    expect(toggleSelection).toHaveBeenCalledWith(
-      expect.objectContaining({ outcomeId: 'home-1', fixtureId: 'fx-1' }),
+    expect(screen.getByTestId('sports-market-m-totals')).toHaveAttribute(
+      'data-market-type',
+      'totals',
     );
+    expect(screen.getByTestId('sports-market-m-btts')).toHaveAttribute('data-market-type', 'btts');
+    expect(screen.queryByTestId('sports-fixture-markets-deferred')).not.toBeInTheDocument();
+    expect(screen.getByTestId('sports-bet-slip-panel')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('sports-fixture-odds-over-1'));
+    expect(toggleSelection).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcomeId: 'over-1',
+        fixtureId: 'fx-1',
+        marketType: 'totals',
+      }),
+    );
+  });
+
+  it('renders live mode with delay notice, score, and suspend banner', () => {
+    const liveFixture: SportsFixtureSummary = {
+      ...sampleFixture,
+      status: 'live',
+    };
+    const future = new Date(Date.now() + 60_000).toISOString();
+    useSportsPageControllerMock.mockReturnValue(
+      makeEngine({
+        mode: 'live',
+        fixtures: [liveFixture],
+        realtimeConnected: true,
+        activeLiveState: {
+          fixture_id: 'fx-1',
+          league_code: 'epl',
+          home_name: 'Arsenal',
+          away_name: 'Chelsea',
+          kickoff_at: liveFixture.kickoff_at,
+          status: 'live',
+          suspended_until: future,
+          suspend_reason: 'goal_event',
+          result_home_goals: 2,
+          result_away_goals: 1,
+          markets: [
+            {
+              market_id: 'm-1',
+              market_type: 'match_1x2',
+              status: 'suspended',
+              suspended_until: future,
+              suspend_reason: 'goal_event',
+            },
+          ],
+        },
+        liveStatesByFixtureId: new Map([
+          [
+            'fx-1',
+            {
+              fixture_id: 'fx-1',
+              league_code: 'epl',
+              home_name: 'Arsenal',
+              away_name: 'Chelsea',
+              kickoff_at: liveFixture.kickoff_at,
+              status: 'live',
+              suspended_until: future,
+              suspend_reason: 'goal_event',
+              result_home_goals: 2,
+              result_away_goals: 1,
+              markets: [],
+            },
+          ],
+        ]),
+      }),
+    );
+
+    render(
+      <I18nProvider>
+        <SportsPage mode="live" />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('sports-page')).toHaveAttribute('data-sports-mode', 'live');
+    expect(screen.getByTestId('sports-live-inplay-banner')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-live-delay-notice')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-live-score')).toHaveTextContent('2–1');
+    expect(screen.getByTestId('sports-live-suspend-banner')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-live-row-score-fx-1')).toHaveTextContent('2–1');
+    expect(screen.getByTestId('sports-odds-fx-1-home')).toBeDisabled();
   });
 });

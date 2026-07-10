@@ -1,7 +1,7 @@
 # apps/web — Phase R scope
 
-> **Phase R:** Presentation rebuild in progress — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `p10-sports-parity-contract-and-board` (#198) · preflight: ACTIVE_WORK_SSOT.
-> **SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../docs/SSOT/ACTIVE_WORK_SSOT.md) · Plan **278 ids** · completed **197** · pending **74** (48차)
+> **Phase R:** Presentation rebuild in progress — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `p10-sports-rules-and-vip-stub` (#202) · preflight: ACTIVE_WORK_SSOT.
+> **SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../docs/SSOT/ACTIVE_WORK_SSOT.md) · Plan **278 ids** · completed **201** · pending **70** (48차)
 
 ## KEEP (engine glue)
 

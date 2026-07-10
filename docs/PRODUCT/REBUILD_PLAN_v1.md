@@ -1,7 +1,7 @@
 # Phase R — PrimeForge Super-App Rebuild (v1)
 
-> **상태:** `[x] operator 승인` (2026-07-04) · **실행 중** — Sports#0 **`[x]` DONE** (2026-07-10) · **NEXT** `p10-sports-parity-contract-and-board` (YAML #198)
-> **정본 큐:** Cursor Plan `phase_r_super-app_8bdf2c10` (YAML frontmatter · **278 ids** · §20.6.1: Track A **243** + Track B **35** · completed **197** · pending **74** · cancelled **7** · **52차** 2026-07-10 — §35 Forensic R0 · §34 DA W5 GATE · §22.2.5 Sports Parity · §23.2.1 Casino replay · E22/E23)
+> **상태:** `[x] operator 승인` (2026-07-04) · **실행 중** — Sports#2 **`[x]` DONE** (2026-07-10) · **NEXT** `p10-sports-slip-advanced-wire` (YAML #200)
+> **정본 큐:** Cursor Plan `phase_r_super-app_8bdf2c10` (YAML frontmatter · **278 ids** · §20.6.1: Track A **243** + Track B **35** · completed **201** · pending **70** · cancelled **7** · **52차** 2026-07-10 — §35 Forensic R0 · §34 DA W5 GATE · §22.2.5 Sports Parity · §23.2.1 Casino replay · E22/E23)
 > **World-Class:** §32 · E0–**E10** · §32.5 operator trust pages  
 > **Active SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md)
 
@@ -163,7 +163,7 @@ apps/web/src/product/
 | `p9-trade-audit-remediation-a1` | `[x]` DONE | 2026-07-06 | spot whitelist filter+cancel · `cancel-spot-open-order` · §12.19 isolation · `trade_audit_a1_a2_fix` plan |
 | `p9-trade-audit-remediation-a2` | `[x]` DONE | 2026-07-06 | `useTradeDeskViewport` · chart single mount · A2 desk tests · `trade_audit_a1_a2_fix` plan |
 
-**현재 NEXT:** **`p10-sports-parity-contract-and-board`** (#198) · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** / DA W2 GATE `#189` / DA W2 `#188` / DA W1 GATE `#187` / DA W1 `#186` / DA W0 `#185` / R0 `#180–184` / PQA / Fiat / `p10-page-sports` **`[x]`** · READ: [`ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md)
+**현재 NEXT:** **`p10-sports-slip-advanced-wire`** (#200) · Sports#2 `#199` **`[x]`** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** / DA W2 GATE `#189` / DA W2 `#188` / DA W1 GATE `#187` / DA W1 `#186` / DA W0 `#185` / R0 `#180–184` / PQA / Fiat / `p10-page-sports` **`[x]`** · READ: [`ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md)
 
 **Phase R money/trade 정본 (Plan §13.1):**
 

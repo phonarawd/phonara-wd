@@ -35,12 +35,21 @@ vi.mock('@/features/wallet/use-phon-balance-breakdown', () => ({
 }));
 
 const useGetFixtureMarketsMock = vi.hoisted(() => vi.fn());
+const useLiveFixtureStateMock = vi.hoisted(() => vi.fn());
+const useLiveFixtureStatesMock = vi.hoisted(() => vi.fn());
+const useSportsRealtimeMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@/features/sports/use-sports-betting', () => ({
   useListSportsFixtures: () => useListSportsFixturesMock(),
   useGetFixtureMarkets: (...args: unknown[]) => useGetFixtureMarketsMock(...args),
+  useLiveFixtureState: (...args: unknown[]) => useLiveFixtureStateMock(...args),
+  useLiveFixtureStates: (...args: unknown[]) => useLiveFixtureStatesMock(...args),
   useMySportsBets: () => useMySportsBetsMock(),
   usePlaceSportsBet: () => usePlaceSportsBetMock(),
+}));
+
+vi.mock('@/hooks/use-sports-realtime', () => ({
+  useSportsRealtime: (...args: unknown[]) => useSportsRealtimeMock(...args),
 }));
 
 vi.mock('@/features/sports/use-sports-bet-slip-state', () => ({
@@ -103,6 +112,21 @@ function seedSportsControllerMocks(overrides?: {
     isLoading: false,
     error: null,
     refetch: vi.fn(),
+  });
+  useLiveFixtureStateMock.mockReturnValue({
+    data: null,
+    isLoading: false,
+    isFetching: false,
+  });
+  useLiveFixtureStatesMock.mockReturnValue({
+    byFixtureId: new Map(),
+    loading: false,
+    isFetching: false,
+    fixtureIds: [],
+  });
+  useSportsRealtimeMock.mockReturnValue({
+    status: 'disabled',
+    connected: false,
   });
   useMySportsBetsMock.mockReturnValue({
     data: [],
