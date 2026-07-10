@@ -104,7 +104,8 @@ function normalizeJobName(name: string): string {
   if (lower.includes('typecheck') || lower.includes('quality')) return 'quality';
   if (lower.includes('sql')) return 'sql';
   if (lower.includes('e2e') && !lower.includes('browser')) return 'e2e';
-  if (lower.includes('advisor')) return 'advisors';
+  // Do not match "advisory" (e.g. browser-matrix advisory) as required advisors.
+  if (lower.includes('advisor') && !lower.includes('advisory')) return 'advisors';
   return lower;
 }
 

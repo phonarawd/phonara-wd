@@ -2,7 +2,7 @@
 
 > **Todo:** `pir-gate-platform-integrity`  
 > **완료일:** 2026-07-11  
-> **상태:** **`[x]` impl** (presentation L0~L4 · security-auditor PASS · CI required 4 **pending**)
+> **상태:** **`[x]` DONE** (presentation L0~L4 · security-auditor PASS · CI required 4)
 
 ## 목표
 
@@ -42,17 +42,33 @@ Scope: PIR E1–E5 migrations · pir_* SQL tests · client realtime invalidate p
 Agent: security-auditor (readonly)
 ```
 
-WARN (non-blocking): grants inventory optional pins for stop_orders arity / E3–E4 helpers; affiliate admin DEFINER pattern (advisor WARN expected).
+WARN (non-blocking): grants inventory optional pins; affiliate admin DEFINER pattern.
 
 ## Verified (CI)
 
 ```text
 Branch: phase-r/platform-integrity-2026-07-11
-Required: quality · sql · e2e · advisors
-Command: bun run ci:watch
+PR: https://github.com/rlawhdgus10041004-sys/phonara-gb/pull/3
+Run: https://github.com/rlawhdgus10041004-sys/phonara-gb/actions/runs/29121620586
+SHA: 8b34c88b
+
+Required:
+  ✓ quality (typecheck / lint / test / build)
+  ✓ sql (supabase db reset + SQL tests)
+  ✓ e2e (playwright e2e)
+  ✓ advisors (supabase security advisors · 0 ERROR)
+
+Advisory (non-blocking): e2e-browser-matrix red (WebKit timeout) — merge 차단 아님
 ```
 
-(CI run URL / sha filled after `ci:watch` green.)
+## GATE follow-up fixes (same PR)
+
+- `lock:migrations` for PIR E1–E5
+- database types sync from CI artifact
+- `rpc_run_affiliate_settlements` AAL2 (`20260731000001`)
+- `rpc_place_game_bet` RG entry+refresh restore (`20260732000001`) — E5 rewrite residue
+- standby tests `platform: 'win32'` injection for Linux CI
+- `ci-watch` normalize: do not map `advisory` → `advisors`
 
 ## 다음
 
