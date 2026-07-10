@@ -5,13 +5,17 @@ import {
   SPORTS_BALANCE_PERCENT_PRESETS,
   sportsStakeFromBalancePercent,
 } from '@/features/sports/sports-slip-display';
+import { useSportsFiatHint } from '@/features/sports/use-sports-fiat-hint';
 import { Button } from '@/product/primitives/button';
 import { ConfirmDialog } from '@/product/primitives/confirm-dialog';
 import { Input } from '@/product/primitives/input';
 import { MoneyDisplay } from '@/product/primitives/money-display';
+import { FiatHintDisclaimer } from '@/product/primitives/money-display-with-fiat-hint';
 import { SpendCurrencySelector } from '@/product/primitives/spend-currency-selector';
 import { cn } from '@/product/primitives/lib/cn';
 import type { MessageKey } from '@phonara/i18n';
+
+import { SportsMoneyWithFiatHint } from './sports-money-with-fiat-hint';
 
 type SportsBetSlipPanelProps = {
   slip: SportsBetSlipState;
@@ -44,7 +48,9 @@ export function SportsBetSlipPanel({
   t,
   className,
 }: SportsBetSlipPanelProps) {
+  const { showDisclaimer } = useSportsFiatHint();
   const avail = slip.stakeCurrency === 'PHON' ? phonAvail : usdtAvail;
+  const stakeRaw = slip.stake.replace(/,/g, '').trim();
 
   return (
     <>
@@ -174,14 +180,29 @@ export function SportsBetSlipPanel({
             <div className="flex items-baseline justify-between gap-2">
               <dt className="text-foreground-muted">{t('trade.order.avail')}</dt>
               <dd className="m-0" data-testid="sports-slip-avail">
-                <MoneyDisplay
+                <SportsMoneyWithFiatHint
                   amount={avail}
                   currency={slip.stakeCurrency}
                   showCurrency
+                  role="stake"
                   className="text-foreground text-sm font-medium"
                 />
               </dd>
             </div>
+            {stakeRaw ? (
+              <div className="flex items-baseline justify-between gap-2">
+                <dt className="text-foreground-muted">{t('sports.slip.stake')}</dt>
+                <dd className="m-0" data-testid="sports-slip-stake-hint">
+                  <SportsMoneyWithFiatHint
+                    amount={stakeRaw}
+                    currency={slip.stakeCurrency}
+                    showCurrency
+                    role="stake"
+                    className="text-foreground text-sm font-medium"
+                  />
+                </dd>
+              </div>
+            ) : null}
             {slip.combinedOddsDisplay ? (
               <div className="flex items-baseline justify-between gap-2">
                 <dt className="text-foreground-muted">{t('sports.slip.combined')}</dt>
@@ -192,10 +213,11 @@ export function SportsBetSlipPanel({
               <div className="flex items-baseline justify-between gap-2">
                 <dt className="text-foreground-muted">{t('sports.slip.payout')}</dt>
                 <dd className="m-0" data-testid="sports-slip-potential-payout">
-                  <MoneyDisplay
+                  <SportsMoneyWithFiatHint
                     amount={slip.potentialPayoutDisplay}
                     currency={slip.stakeCurrency}
                     showCurrency
+                    role="potential_return"
                     className="text-foreground text-sm font-medium"
                   />
                 </dd>
@@ -206,6 +228,8 @@ export function SportsBetSlipPanel({
               <dd className="text-foreground-muted m-0 text-xs">{t(slip.debitBucketKey)}</dd>
             </div>
           </dl>
+
+          {showDisclaimer ? <FiatHintDisclaimer /> : null}
 
           <Button
             type="button"

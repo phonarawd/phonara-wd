@@ -40,6 +40,18 @@ export const P8_CORE_REGISTERED_ROUTES = [
 ] as const;
 
 /**
+ * P10 Sports hub child routes — Sports#0 `p10-sports-hub-pages` (§12.19.6).
+ * Fixture detail `/sports/fixture/$fixtureId` is deep-link only (not a subnav chip).
+ */
+export const P10_SPORTS_HUB_REGISTERED_ROUTES = [
+  '/sports/prematch',
+  '/sports/live',
+  '/sports/my-bets',
+  '/sports/rules',
+  '/sports/vip',
+] as const;
+
+/**
  * §12.19.6 — Routes that may appear in domain subnav chips.
  * Extend only in the Part GATE todo that registers the matching TanStack route.
  * Unlisted targets stay hidden (dead link 0 · Strict Perfect).
@@ -54,6 +66,7 @@ export const SHELL_SUBNAV_REGISTERED_ROUTES: ReadonlySet<string> = new Set([
   ...P7_EARN_STAKING_ROUTES,
   ...P9_TRADE_REGISTERED_ROUTES,
   '/sports',
+  ...P10_SPORTS_HUB_REGISTERED_ROUTES,
   '/casino',
   '/install',
   '/onboarding',

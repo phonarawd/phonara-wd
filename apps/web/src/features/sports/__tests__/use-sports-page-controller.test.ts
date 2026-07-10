@@ -34,8 +34,11 @@ vi.mock('@/features/wallet/use-phon-balance-breakdown', () => ({
   usePhonBalanceBreakdown: () => usePhonBalanceBreakdownMock(),
 }));
 
+const useGetFixtureMarketsMock = vi.hoisted(() => vi.fn());
+
 vi.mock('@/features/sports/use-sports-betting', () => ({
   useListSportsFixtures: () => useListSportsFixturesMock(),
+  useGetFixtureMarkets: (...args: unknown[]) => useGetFixtureMarketsMock(...args),
   useMySportsBets: () => useMySportsBetsMock(),
   usePlaceSportsBet: () => usePlaceSportsBetMock(),
 }));
@@ -90,6 +93,12 @@ function seedSportsControllerMocks(overrides?: {
     loading: false,
   });
   useListSportsFixturesMock.mockReturnValue({
+    data: [],
+    isLoading: false,
+    error: null,
+    refetch: vi.fn(),
+  });
+  useGetFixtureMarketsMock.mockReturnValue({
     data: [],
     isLoading: false,
     error: null,

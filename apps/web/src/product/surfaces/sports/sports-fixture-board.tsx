@@ -1,3 +1,5 @@
+import { Link } from '@tanstack/react-router';
+
 import type { SportsFixtureSummary } from '@/features/sports/use-sports-betting';
 import type { SportsSlipSelection } from '@/features/sports/use-sports-bet-slip-state';
 import { resolveSportsLeagueLabelKey } from '@/domain/sports-page-display-contract';
@@ -111,9 +113,14 @@ export function SportsFixtureBoard({
               <p className="text-foreground-muted m-0 text-xs">
                 {t(resolveSportsLeagueLabelKey(fixture.league_code))} · {kickoff}
               </p>
-              <p className="text-foreground m-0 truncate text-sm font-medium">
+              <Link
+                to="/sports/fixture/$fixtureId"
+                params={{ fixtureId: fixture.fixture_id }}
+                className="text-foreground hover:text-accent m-0 block truncate text-sm font-medium no-underline"
+                data-testid={`sports-fixture-link-${fixture.fixture_id}`}
+              >
                 {fixture.home_name} {t('sports.fixture.vs')} {fixture.away_name}
-              </p>
+              </Link>
             </div>
             <div className="flex shrink-0 items-center gap-1" data-testid="sports-fixture-odds">
               {(['home', 'draw', 'away'] as const).map((selection) => {

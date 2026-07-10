@@ -23,20 +23,28 @@ import { useT } from '@/product/i18n';
 import { productToast } from '@/product/primitives/toast-zone';
 
 import {
+  useGetFixtureMarkets,
   useListSportsFixtures,
   useMySportsBets,
   usePlaceSportsBet,
   type SportsFixtureSummary,
+  type SportsMarketSummary,
 } from './use-sports-betting';
 import { useSportsBetSlipState, type SportsSlipSelection } from './use-sports-bet-slip-state';
 
 export type SportsPageControllerView = {
   t: ReturnType<typeof useT>;
   mode: SportsPageMode;
+  fixtureId: string | null;
   loading: boolean;
   fixturesLoading: boolean;
   fixturesErrorKey: MessageKey | null;
   fixtures: SportsFixtureSummary[];
+  activeFixture: SportsFixtureSummary | null;
+  fixtureMarkets: SportsMarketSummary[];
+  fixtureMarketsLoading: boolean;
+  fixtureMarketsErrorKey: MessageKey | null;
+  refreshFixtureMarkets: () => void;
   leagueFilter: SportsLeagueFilter;
   setLeagueFilter: (value: SportsLeagueFilter) => void;
   sportsBlocked: boolean;
@@ -60,7 +68,10 @@ export type SportsPageControllerView = {
   refreshFixtures: () => void;
 };
 
-export function useSportsPageController(mode: SportsPageMode = 'home'): SportsPageControllerView {
+export function useSportsPageController(
+  mode: SportsPageMode = 'home',
+  fixtureId?: string,
+): SportsPageControllerView {
   const t = useT();
   const { session } = useAuth();
   const { sportsBlocked, loading: gatesLoading } = usePlatformGates();
@@ -72,8 +83,10 @@ export function useSportsPageController(mode: SportsPageMode = 'home'): SportsPa
 
   const statusFilter = resolveSportsPageModeStatusFilter(mode);
   const leagueParam = leagueFilterToRpcParam(leagueFilter);
+  const resolvedFixtureId = mode === 'fixture' ? fixtureId : undefined;
 
   const fixturesQuery = useListSportsFixtures(leagueParam, statusFilter);
+  const fixtureMarketsQuery = useGetFixtureMarkets(resolvedFixtureId);
   const myBetsQuery = useMySportsBets(50);
   const placeBetMutation = usePlaceSportsBet();
 
@@ -154,16 +167,33 @@ export function useSportsPageController(mode: SportsPageMode = 'home'): SportsPa
   }, [canPlaceBet, placeBetMutation, slip]);
 
   const fixturesErrorKey = fixturesQuery.error ? translateError(fixturesQuery.error) : null;
+  const fixtureMarketsErrorKey = fixtureMarketsQuery.error
+    ? translateError(fixtureMarketsQuery.error)
+    : null;
+
+  const fixtures = fixturesQuery.data ?? [];
+  const activeFixture = useMemo(() => {
+    if (!resolvedFixtureId) return null;
+    return fixtures.find((row) => row.fixture_id === resolvedFixtureId) ?? null;
+  }, [fixtures, resolvedFixtureId]);
 
   const loading = gatesLoading || walletLoading || breakdownLoading;
 
   return {
     t,
     mode,
+    fixtureId: resolvedFixtureId ?? null,
     loading,
     fixturesLoading: fixturesQuery.isLoading,
     fixturesErrorKey,
-    fixtures: fixturesQuery.data ?? [],
+    fixtures,
+    activeFixture,
+    fixtureMarkets: fixtureMarketsQuery.data ?? [],
+    fixtureMarketsLoading: fixtureMarketsQuery.isLoading,
+    fixtureMarketsErrorKey,
+    refreshFixtureMarkets: () => {
+      void fixtureMarketsQuery.refetch();
+    },
     leagueFilter,
     setLeagueFilter,
     sportsBlocked: entryBlocked,

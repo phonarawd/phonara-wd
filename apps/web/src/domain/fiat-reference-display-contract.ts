@@ -76,6 +76,19 @@ export const P4_FIAT_REFERENCE_WORLD_CLASS_GATE_TODO =
   'p4-gate-fiat-reference-world-class' as const;
 
 /**
+ * Fiat#10 prerequisite — MoneyDisplayWithFiatHint + sports page before slip wire.
+ * Plan: `da-w5-gate-domain-cards` + `p4-fiat-money-display-hint` + `p10-page-sports`.
+ */
+export const P10_SPORTS_FIAT_HINT_WIRE_PREREQUISITE_TODOS = [
+  P4_FIAT_MONEY_DISPLAY_HINT_TODO,
+  'p10-page-sports',
+  'da-w5-gate-domain-cards',
+] as const;
+
+/** Fiat#10 owner todo — Sports slip stake+return secondary · odds-after · 30s trade-rate policy. */
+export const P10_SPORTS_FIAT_HINT_WIRE_TODO = 'p10-sports-fiat-hint-wire' as const;
+
+/**
  * Non-waivable boundary: FiatHint values are never settlement truth.
  * Mirrors `DISPLAY_ONLY_ODDS_SOURCE` on the sports ingest seam.
  */

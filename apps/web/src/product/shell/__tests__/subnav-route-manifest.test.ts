@@ -89,8 +89,15 @@ describe('subnav-route-manifest §12.19.6', () => {
     expect(visible.map((item) => item.to)).not.toContain('/staking');
   });
 
-  it('hides sports child routes until P10 manifest extends', () => {
+  it('shows sports hub child routes after P10 Sports#0 manifest', () => {
     const visible = filterRegisteredSubnavItems(SPORTS_SUBNAV);
-    expect(visible.map((item) => item.to)).toEqual(['/sports']);
+    expect(visible.map((item) => item.to)).toEqual([
+      '/sports',
+      '/sports/prematch',
+      '/sports/live',
+      '/sports/my-bets',
+      '/sports/rules',
+      '/sports/vip',
+    ]);
   });
 });

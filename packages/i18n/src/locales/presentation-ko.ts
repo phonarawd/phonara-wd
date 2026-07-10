@@ -3348,6 +3348,8 @@ export const presentationKoMessages = {
     '경기가 취소됐어요. 진행 중 베팅은 서버에서 정산돼요 — 나의 베팅에서 상태를 확인하세요.',
   'sports.fixture.vs': 'vs',
   'sports.fixture.noQuickOdds': '승무패 배당 없음',
+  'sports.fixture.marketsDeferred': '추가 마켓은 다음 단계에서 열립니다.',
+  'sports.fixture.detailFallback': '경기 상세',
   'bet.hub.sports.summary.title': '스포츠북 요약',
   'bet.hub.sports.summary.body':
     '라이브·예정 경기를 한눈에 확인하세요. 전체 마켓·슬립·베팅은 스포츠북에서 이용할 수 있어요.',

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Link } from '@tanstack/react-router';
 
 import {
   SPORTS_VIP_DEFER_REASON_KEY,
@@ -7,6 +8,7 @@ import {
 } from '@/domain/dead-controls-display-contract';
 import {
   SPORTS_LEAGUE_FILTER_OPTIONS,
+  resolveSportsLeagueLabelKey,
   type SportsLeagueFilter,
   type SportsPageMode,
 } from '@/domain/sports-page-display-contract';
@@ -15,14 +17,16 @@ import { Button } from '@/product/primitives/button';
 import { Card, CardBody, CardHeader, CardTitle } from '@/product/primitives/card';
 import { Skeleton } from '@/product/primitives/skeleton';
 import { cn } from '@/product/primitives/lib/cn';
+import { EmptyState } from '@/product/primitives/empty-state';
 
 import { SportsBetSlipPanel } from './sports-bet-slip-panel';
 import { SportsFixtureBoard } from './sports-fixture-board';
+import { SportsFixtureMarketsPanel } from './sports-fixture-markets-panel';
 import { SportsMyBetsPanel } from './sports-my-bets-panel';
-import { EmptyState } from '@/product/primitives/empty-state';
 
 export type SportsPageProps = {
   mode?: SportsPageMode;
+  fixtureId?: string;
 };
 
 function SportsLoadingShell() {
@@ -102,8 +106,8 @@ function SportsVipDeferPanel({ t }: { t: ReturnType<typeof useSportsPageControll
 }
 
 /** Canonical `/sports/**` sportsbook — fixtures · slip · dual stake currency (P10). */
-export function SportsPage({ mode = 'home' }: SportsPageProps) {
-  const engine = useSportsPageController(mode);
+export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
+  const engine = useSportsPageController(mode, fixtureId);
   const { t, loading, mode: pageMode } = engine;
 
   useEffect(() => {
@@ -117,7 +121,13 @@ export function SportsPage({ mode = 'home' }: SportsPageProps) {
   const showMyBets = pageMode === 'my-bets';
   const showRules = pageMode === 'rules';
   const showVip = pageMode === 'vip';
-  const showBoard = !showMyBets && !showRules && !showVip;
+  const showFixture = pageMode === 'fixture';
+  const showListBoard = !showMyBets && !showRules && !showVip && !showFixture;
+  const showSlip = showListBoard || showFixture;
+  const showLeagueRail = showListBoard;
+
+  const fixtureHome = engine.activeFixture?.home_name ?? t('sports.market.home');
+  const fixtureAway = engine.activeFixture?.away_name ?? t('sports.market.away');
 
   return (
     <div
@@ -126,25 +136,43 @@ export function SportsPage({ mode = 'home' }: SportsPageProps) {
       )}
       data-testid="sports-page"
       data-sports-mode={pageMode}
+      data-fixture-id={engine.fixtureId ?? undefined}
     >
       <header className="lg:col-span-3 space-y-1">
         <p className="text-accent m-0 text-xs font-semibold tracking-wide uppercase">
           {t('sports.hero.eyebrow')}
         </p>
         <h1 className="text-foreground m-0 text-2xl font-semibold md:text-3xl">
-          {t('sports.hero.title')}
+          {showFixture
+            ? `${fixtureHome} ${t('sports.fixture.vs')} ${fixtureAway}`
+            : t('sports.hero.title')}
         </h1>
-        <p className="text-foreground-muted m-0 text-sm leading-relaxed">{t('sports.hero.body')}</p>
+        <p className="text-foreground-muted m-0 text-sm leading-relaxed">
+          {showFixture
+            ? engine.activeFixture
+              ? t(resolveSportsLeagueLabelKey(engine.activeFixture.league_code))
+              : t('sports.fixture.detailFallback')
+            : t('sports.hero.body')}
+        </p>
+        {showFixture ? (
+          <Link
+            to="/sports/prematch"
+            className="text-accent m-0 inline-flex text-sm font-medium no-underline"
+            data-testid="sports-fixture-back-prematch"
+          >
+            {t('sports.subnav.prematch')}
+          </Link>
+        ) : null}
       </header>
 
-      {showBoard ? (
+      {showLeagueRail ? (
         <aside className="hidden lg:block" data-testid="sports-left-rail">
           <SportsLeagueRail value={engine.leagueFilter} onChange={engine.setLeagueFilter} t={t} />
         </aside>
       ) : null}
 
-      <main className="min-w-0 flex flex-col gap-4">
-        {showBoard ? (
+      <main className={cn('min-w-0 flex flex-col gap-4', !showLeagueRail && 'lg:col-start-2')}>
+        {showListBoard ? (
           <>
             <div className="lg:hidden">
               <SportsLeagueRail
@@ -174,6 +202,22 @@ export function SportsPage({ mode = 'home' }: SportsPageProps) {
           </>
         ) : null}
 
+        {showFixture && engine.fixtureId ? (
+          <SportsFixtureMarketsPanel
+            fixtureId={engine.fixtureId}
+            homeName={fixtureHome}
+            awayName={fixtureAway}
+            markets={engine.fixtureMarkets}
+            loading={engine.fixtureMarketsLoading}
+            errorKey={engine.fixtureMarketsErrorKey}
+            selectedOutcomeIds={engine.selectedOutcomeIds}
+            sportsBlocked={engine.sportsBlocked}
+            onToggleSelection={engine.toggleSelection}
+            onRetry={engine.refreshFixtureMarkets}
+            t={t}
+          />
+        ) : null}
+
         {showMyBets ? (
           <SportsMyBetsPanel bets={engine.myBets} loading={engine.myBetsLoading} t={t} />
         ) : null}
@@ -181,7 +225,7 @@ export function SportsPage({ mode = 'home' }: SportsPageProps) {
         {showVip ? <SportsVipDeferPanel t={t} /> : null}
       </main>
 
-      {showBoard ? (
+      {showSlip ? (
         <aside className="min-w-0" data-testid="sports-slip-rail">
           <SportsBetSlipPanel
             slip={engine.slip}

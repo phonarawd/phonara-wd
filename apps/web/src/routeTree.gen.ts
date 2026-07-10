@@ -44,6 +44,7 @@ import { Route as SportsRulesRouteImport } from './routes/sports.rules';
 import { Route as SportsPrematchRouteImport } from './routes/sports.prematch';
 import { Route as SportsMyBetsRouteImport } from './routes/sports.my-bets';
 import { Route as SportsLiveRouteImport } from './routes/sports.live';
+import { Route as SportsFixtureFixtureIdRouteImport } from './routes/sports.fixture.$fixtureId';
 import { Route as ShareEarningsRouteImport } from './routes/share.earnings';
 import { Route as SettingsSecurityRouteImport } from './routes/settings.security';
 import { Route as SettingsReferralRouteImport } from './routes/settings.referral';
@@ -251,6 +252,11 @@ const SportsLiveRoute = SportsLiveRouteImport.update({
   path: '/live',
   getParentRoute: () => SportsRoute,
 } as any);
+const SportsFixtureFixtureIdRoute = SportsFixtureFixtureIdRouteImport.update({
+  id: '/fixture/$fixtureId',
+  path: '/fixture/$fixtureId',
+  getParentRoute: () => SportsRoute,
+} as any);
 const ShareEarningsRoute = ShareEarningsRouteImport.update({
   id: '/share/earnings',
   path: '/share/earnings',
@@ -447,6 +453,7 @@ export interface FileRoutesByFullPath {
   '/settings/referral': typeof SettingsReferralRoute;
   '/settings/security': typeof SettingsSecurityRoute;
   '/share/earnings': typeof ShareEarningsRoute;
+  '/sports/fixture/$fixtureId': typeof SportsFixtureFixtureIdRoute;
   '/sports/live': typeof SportsLiveRoute;
   '/sports/my-bets': typeof SportsMyBetsRoute;
   '/sports/prematch': typeof SportsPrematchRoute;
@@ -511,6 +518,7 @@ export interface FileRoutesByTo {
   '/settings/referral': typeof SettingsReferralRoute;
   '/settings/security': typeof SettingsSecurityRoute;
   '/share/earnings': typeof ShareEarningsRoute;
+  '/sports/fixture/$fixtureId': typeof SportsFixtureFixtureIdRoute;
   '/sports/live': typeof SportsLiveRoute;
   '/sports/my-bets': typeof SportsMyBetsRoute;
   '/sports/prematch': typeof SportsPrematchRoute;
@@ -578,6 +586,7 @@ export interface FileRoutesById {
   '/settings/referral': typeof SettingsReferralRoute;
   '/settings/security': typeof SettingsSecurityRoute;
   '/share/earnings': typeof ShareEarningsRoute;
+  '/sports/fixture/$fixtureId': typeof SportsFixtureFixtureIdRoute;
   '/sports/live': typeof SportsLiveRoute;
   '/sports/my-bets': typeof SportsMyBetsRoute;
   '/sports/prematch': typeof SportsPrematchRoute;
@@ -648,6 +657,7 @@ export interface FileRouteTypes {
     | '/settings/referral'
     | '/settings/security'
     | '/share/earnings'
+    | '/sports/fixture/$fixtureId'
     | '/sports/live'
     | '/sports/my-bets'
     | '/sports/prematch'
@@ -712,6 +722,7 @@ export interface FileRouteTypes {
     | '/settings/referral'
     | '/settings/security'
     | '/share/earnings'
+    | '/sports/fixture/$fixtureId'
     | '/sports/live'
     | '/sports/my-bets'
     | '/sports/prematch'
@@ -778,6 +789,7 @@ export interface FileRouteTypes {
     | '/settings/referral'
     | '/settings/security'
     | '/share/earnings'
+    | '/sports/fixture/$fixtureId'
     | '/sports/live'
     | '/sports/my-bets'
     | '/sports/prematch'
@@ -1088,6 +1100,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SportsLiveRouteImport;
       parentRoute: typeof SportsRoute;
     };
+    '/sports/fixture/$fixtureId': {
+      id: '/sports/fixture/$fixtureId';
+      path: '/fixture/$fixtureId';
+      fullPath: '/sports/fixture/$fixtureId';
+      preLoaderRoute: typeof SportsFixtureFixtureIdRouteImport;
+      parentRoute: typeof SportsRoute;
+    };
     '/share/earnings': {
       id: '/share/earnings';
       path: '/share/earnings';
@@ -1377,6 +1396,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
 const SettingsRouteWithChildren = SettingsRoute._addFileChildren(SettingsRouteChildren);
 
 interface SportsRouteChildren {
+  SportsFixtureFixtureIdRoute: typeof SportsFixtureFixtureIdRoute;
   SportsLiveRoute: typeof SportsLiveRoute;
   SportsMyBetsRoute: typeof SportsMyBetsRoute;
   SportsPrematchRoute: typeof SportsPrematchRoute;
@@ -1386,6 +1406,7 @@ interface SportsRouteChildren {
 }
 
 const SportsRouteChildren: SportsRouteChildren = {
+  SportsFixtureFixtureIdRoute: SportsFixtureFixtureIdRoute,
   SportsLiveRoute: SportsLiveRoute,
   SportsMyBetsRoute: SportsMyBetsRoute,
   SportsPrematchRoute: SportsPrematchRoute,

@@ -3401,6 +3401,8 @@ export const presentationEnMessages = {
     'This fixture was cancelled. Open bets are settled on the server — check My Bets for status.',
   'sports.fixture.vs': 'vs',
   'sports.fixture.noQuickOdds': 'No 1X2 odds',
+  'sports.fixture.marketsDeferred': 'More markets unlock in the next sports step.',
+  'sports.fixture.detailFallback': 'Fixture detail',
   'bet.hub.sports.summary.title': 'Sportsbook snapshot',
   'bet.hub.sports.summary.body':
     'Live and upcoming fixtures at a glance. Open the full sportsbook for markets, slip, and bet placement.',

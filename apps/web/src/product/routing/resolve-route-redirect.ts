@@ -83,6 +83,21 @@ function resolvePrefixRule(
   };
 }
 
+/** Known `/betting/*` children that map 1:1 under `/sports/*` (not fixture ids). */
+const BETTING_SPORTS_CHILD_SEGMENTS = new Set(['prematch', 'live', 'my-bets', 'rules', 'vip']);
+
+/**
+ * Legacy `/betting/[match-id]` → `/sports/fixture/$fixtureId` (§12.7).
+ * Reserved sports children fall through to the `/betting/` prefix rule.
+ */
+function resolveBettingMatchIdRedirect(pathname: string): RouteRedirectTarget | null {
+  if (!pathname.startsWith('/betting/')) return null;
+  const suffix = pathname.slice('/betting/'.length);
+  if (!suffix || suffix.includes('/')) return null;
+  if (BETTING_SPORTS_CHILD_SEGMENTS.has(suffix)) return null;
+  return { pathname: `/sports/fixture/${suffix}` };
+}
+
 /** Strip legacy `?section=trade` on canonical `/trade` (Bet hub history). */
 function resolveLegacyTradeSectionStrip(
   pathname: string,
@@ -127,6 +142,9 @@ export function resolveRouteRedirect(
       if (target) return target;
     }
   }
+
+  const bettingMatch = resolveBettingMatchIdRedirect(normalizedPath);
+  if (bettingMatch) return bettingMatch;
 
   for (const rule of ROUTE_REDIRECT_RULES) {
     if (rule.kind === 'prefix') {

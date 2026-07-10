@@ -1,3 +1,4 @@
+import { createElement, type ReactNode } from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -7,9 +8,51 @@ import { I18nProvider } from '@/product/i18n';
 import { SportsPage } from '@/product/surfaces/sports/sports-page';
 
 const useSportsPageControllerMock = vi.hoisted(() => vi.fn());
+const useSportsFiatHintMock = vi.hoisted(() =>
+  vi.fn(() => ({
+    targetFiat: 'OFF' as const,
+    showDisclaimer: false,
+    hintFor: () => ({
+      displayOnly: true as const,
+      disabled: true,
+      formattedHint: '',
+      targetFiat: 'OFF' as const,
+      asOf: '',
+      stale: false,
+      sourceCurrency: 'USDT',
+    }),
+  })),
+);
 
 vi.mock('@/features/sports/use-sports-page-controller', () => ({
   useSportsPageController: useSportsPageControllerMock,
+}));
+
+vi.mock('@/features/sports/use-sports-fiat-hint', () => ({
+  useSportsFiatHint: useSportsFiatHintMock,
+}));
+
+vi.mock('@tanstack/react-router', () => ({
+  Link: ({
+    children,
+    to,
+    params,
+    ...rest
+  }: {
+    children: ReactNode;
+    to: string;
+    params?: Record<string, string>;
+    className?: string;
+    'data-testid'?: string;
+  }) =>
+    createElement(
+      'a',
+      {
+        href: params?.fixtureId ? String(to).replace('$fixtureId', params.fixtureId) : to,
+        ...rest,
+      },
+      children,
+    ),
 }));
 
 const sampleFixture: SportsFixtureSummary = {
@@ -48,10 +91,16 @@ function makeEngine(overrides: Partial<SportsPageControllerView> = {}): SportsPa
   return {
     t: (key: string) => key,
     mode: 'home',
+    fixtureId: null,
     loading: false,
     fixturesLoading: false,
     fixturesErrorKey: null,
     fixtures: [sampleFixture],
+    activeFixture: null,
+    fixtureMarkets: [],
+    fixtureMarketsLoading: false,
+    fixtureMarketsErrorKey: null,
+    refreshFixtureMarkets: vi.fn(),
     leagueFilter: 'all',
     setLeagueFilter: vi.fn(),
     sportsBlocked: false,
@@ -188,5 +237,53 @@ describe('SportsPage', () => {
 
     expect(screen.getByTestId('sports-my-bets-panel')).toBeInTheDocument();
     expect(screen.queryByTestId('sports-bet-slip-panel')).not.toBeInTheDocument();
+  });
+
+  it('renders fixture detail markets with slip rail', () => {
+    const toggleSelection = vi.fn();
+    useSportsPageControllerMock.mockReturnValue(
+      makeEngine({
+        mode: 'fixture',
+        fixtureId: 'fx-1',
+        activeFixture: sampleFixture,
+        toggleSelection,
+        fixtureMarkets: [
+          {
+            market_id: 'm-1x2',
+            market_type: 'match_1x2',
+            status: 'open',
+            outcomes: [
+              {
+                outcome_id: 'home-1',
+                selection: 'home',
+                odds: '1.95',
+                captured_at: '2026-07-06T12:00:00.000Z',
+              },
+            ],
+          },
+          {
+            market_id: 'm-totals',
+            market_type: 'totals',
+            status: 'open',
+            outcomes: [],
+          },
+        ],
+      }),
+    );
+
+    render(
+      <I18nProvider>
+        <SportsPage mode="fixture" fixtureId="fx-1" />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('sports-page')).toHaveAttribute('data-sports-mode', 'fixture');
+    expect(screen.getByTestId('sports-fixture-markets-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-fixture-markets-deferred')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-bet-slip-panel')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('sports-fixture-odds-home-1'));
+    expect(toggleSelection).toHaveBeenCalledWith(
+      expect.objectContaining({ outcomeId: 'home-1', fixtureId: 'fx-1' }),
+    );
   });
 });

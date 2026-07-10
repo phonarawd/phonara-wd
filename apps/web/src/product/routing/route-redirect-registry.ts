@@ -66,6 +66,7 @@ export const ROUTE_REDIRECT_RULES: readonly RouteRedirectRule[] = [
   { kind: 'exact', from: '/deposit/history', to: '/wallet/deposit', search: { tab: 'history' } },
   { kind: 'exact', from: '/withdraw/history', to: '/wallet/withdraw', search: { tab: 'history' } },
   { kind: 'exact', from: '/betting/vip', to: '/sports/vip' },
+  { kind: 'exact', from: '/my-bets', to: '/sports/my-bets' },
   { kind: 'exact', from: '/settings/profile', to: '/account/profile' },
   { kind: 'exact', from: '/settings/language', to: '/settings/preferences' },
   { kind: 'exact', from: '/admin/missions', to: '/admin/earn/missions' },
