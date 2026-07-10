@@ -216,6 +216,7 @@
     "20260727000001_pir_realtime_narrow.sql": "c8243afae63548ca4c333101e8351b25056c5526cd107cda2f7dcfdbc814e460",
     "20260728000001_pir_golden_earth.sql": "786ef7f1e85537e856a57d87b148ba943cb7b95ed6352a31eb9d65a0e0831506",
     "20260729000001_pir_sweep_chunk.sql": "c699cfc2ffeb46f48ef84c543e53f16df1ed848b0f4b353353a99128a9b755da",
-    "20260730000001_pir_idempotency_handlers.sql": "20fec8e28227f65001e630660aeb6083d3a2efa2bdf33538fb8236b81a8eac4d"
+    "20260730000001_pir_idempotency_handlers.sql": "20fec8e28227f65001e630660aeb6083d3a2efa2bdf33538fb8236b81a8eac4d",
+    "20260731000001_pir_affiliate_settlements_aal2.sql": "8098eff26a859b1ff7fbddab0bbb98a890bd0973277a6312b3e7a29dd7a126dc"
   }
 }

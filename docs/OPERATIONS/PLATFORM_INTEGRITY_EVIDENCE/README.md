@@ -67,10 +67,10 @@ PHONARA 정합: 로컬 = `gate:ai-impl` · heavy = **GitHub CI** · Engine Wave 
 
 ## GATE 슬롯
 
-| 파일 | 역할 | 상태 |
-|------|------|------|
+| 파일                                                       | 역할                                               | 상태                      |
+| ---------------------------------------------------------- | -------------------------------------------------- | ------------------------- |
 | [`GATE/platform-integrity.md`](GATE/platform-integrity.md) | presentation bundle · CI 4 · security-auditor PASS | **`[x]` DONE** 2026-07-11 |
-| [`GATE/unblock-205.md`](GATE/unblock-205.md) | §82 · NEXT = `#205` | `[ ]` pending |
+| [`GATE/unblock-205.md`](GATE/unblock-205.md)               | §82 · NEXT = `#205`                                | `[ ]` pending             |
 
 ---
 
