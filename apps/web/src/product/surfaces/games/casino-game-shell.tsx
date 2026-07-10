@@ -21,12 +21,17 @@ import {
   type AutoBetConfig,
   type AutoBetSessionState,
 } from '@/features/casino/use-auto-bet-queue';
+import { useCasinoFiatHint } from '@/features/casino/use-casino-fiat-hint';
 import { useCasinoRoundPipeline } from '@/features/casino/use-casino-round';
 import { useAuth } from '@/contexts/auth-context';
 import { useWallet } from '@/hooks/use-wallet';
 import { useT } from '@/product/i18n';
 import { Button } from '@/product/primitives/button';
-import { MoneyDisplay } from '@/product/primitives/money-display';
+import {
+  FiatHintDisclaimer,
+  FiatHintSecondaryLine,
+  MoneyDisplayWithFiatHintSlot,
+} from '@/product/primitives/money-display-with-fiat-hint';
 import {
   SpendCurrencySelector,
   type SpendCurrency,
@@ -34,9 +39,11 @@ import {
 import { AutoBetPanel } from '@/product/surfaces/games/auto-bet-panel';
 import { BetModeTabs, type CasinoBetMode } from '@/product/surfaces/games/bet-mode-tabs';
 import { CasinoGameStagePlaceholder } from '@/product/surfaces/games/casino-game-stage-placeholder';
+import { CasinoMoneyWithFiatHint } from '@/product/surfaces/games/casino-money-with-fiat-hint';
 import { GameOutcomeLayer } from '@/product/surfaces/games/game-outcome-layer';
 import { PfStrip } from '@/product/surfaces/games/pf-strip';
 import { WinTierOverlay } from '@/product/surfaces/games/win-tier-overlay';
+import { P10_CASINO_FIAT_HINT_SESSION_LOCK_TODO } from '@/domain/fiat-reference-display-contract';
 
 function profitDeltaFromBet(stake: string, payout: string, won: boolean): string {
   try {
@@ -67,6 +74,8 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
   const { session } = useAuth();
   const userId = session?.user.id ?? null;
   const { wallet } = useWallet();
+  const { lockSession, unlockSession, sessionLocked, showDisclaimer, hintFor } =
+    useCasinoFiatHint();
   const config = GAME_BY_CODE[gameCode];
 
   const [currency, setCurrency] = useState<SpendCurrency>('USDT');
@@ -130,8 +139,15 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     setWinTier('none');
     setOverlayOpen(false);
     setLastStake(next.defaultStake);
+    unlockSession();
     // Reset when navigating between game codes only.
   }, [gameCode]);
+
+  useEffect(() => {
+    return () => {
+      unlockSession();
+    };
+  }, [unlockSession]);
 
   const balanceAmount =
     currency === 'PHON' ? (wallet?.phon_available ?? '0') : (wallet?.usdt_available ?? '0');
@@ -152,10 +168,14 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
   }, []);
 
   const handleManualBet = useCallback(async () => {
+    lockSession();
     const result = await pipeline.requestBet();
-    if (result !== 'placed') return;
+    if (result !== 'placed') {
+      unlockSession();
+      return;
+    }
     // bet state updates via pipeline; effect below presents when bet lands
-  }, [pipeline]);
+  }, [lockSession, pipeline, unlockSession]);
 
   useEffect(() => {
     if (!pipeline.bet) return;
@@ -171,6 +191,9 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
       autoQueue.reset(stake);
       return;
     }
+
+    // Fiat#11 — lock once at auto session open; spins reuse the same rate snapshot.
+    lockSession();
 
     void (async () => {
       let session: AutoBetSessionState = initial;
@@ -195,165 +218,202 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
         presentSettle(placed.payout, placed.status, fireStake);
         if (decision === 'stop') break;
       }
+      unlockSession();
     })();
-  }, [autoConfig, autoQueue, pipeline, presentSettle, stake]);
+  }, [autoConfig, autoQueue, lockSession, pipeline, presentSettle, stake, unlockSession]);
 
   const lockStake = autoQueue.isActive;
+
+  const stakeHint = hintFor(stake, currency);
 
   return (
     <section
       className="mx-auto flex w-full max-w-5xl flex-col gap-4 py-4 md:py-6"
       data-testid="casino-game-shell"
       data-owner-todo={P10_CASINO_REPLAY_AND_INFRA_TODO}
+      data-fiat-hint-todo={P10_CASINO_FIAT_HINT_SESSION_LOCK_TODO}
+      data-casino-fiat-session-locked={sessionLocked ? 'true' : 'false'}
       data-game-code={gameCode}
       data-stake-currency-exposure={CASINO_STAKE_CURRENCY_EXPOSURE}
     >
-      <header className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-        <div className="flex flex-col gap-1">
-          <Link
-            to="/casino"
-            className="text-accent text-sm font-medium no-underline"
-            data-testid="casino-shell-back-lobby"
-          >
-            {t('casino.subnav.lobby')}
-          </Link>
-          <h1 className="text-foreground m-0 text-2xl font-semibold md:text-3xl">
-            {t(config.labelKey)}
-          </h1>
-          <p className="text-foreground-muted m-0 text-sm leading-relaxed">
-            {t(config.descriptionKey)}
-          </p>
-        </div>
-        <div
-          className="border-line bg-surface-raised flex flex-col gap-1 rounded-md border px-3 py-2"
-          data-testid="casino-shell-balance"
-        >
-          <span className="text-foreground-muted text-xs">{t('casino.rocket.balance')}</span>
-          <MoneyDisplay amount={balanceAmount} currency={currency} showCurrency />
-        </div>
-      </header>
-
-      <div className="relative grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.8fr)]">
-        <div className="relative flex flex-col gap-3">
-          <CasinoGameStagePlaceholder gameCode={gameCode} />
-          {overlayOpen ? (
-            <WinTierOverlay
-              tier={winTier}
-              payout={lastPayout}
-              multiplier={lastMultiplier}
-              currency={currency}
-              autoBetActive={autoQueue.isActive}
-              onSkip={() => setOverlayOpen(false)}
-            />
-          ) : null}
-          {pipeline.bet ? (
-            <GameOutcomeLayer
-              tier={winTier}
-              payout={lastPayout}
-              stake={lastStake}
-              currency={currency}
-            />
-          ) : null}
-          <PfStrip
-            serverSeedHash={pipeline.commitment?.server_seed_hash ?? null}
-            clientSeed={clientSeed}
-            verificationMatch={verificationMatch}
-          />
-        </div>
-
-        <aside className="border-line bg-surface flex flex-col gap-4 rounded-md border p-4">
-          <SpendCurrencySelector
-            value={currency}
-            onChange={setCurrency}
-            disabled={lockStake || pipeline.busy}
-            testId="casino-stake-currency"
-            currencyTestIdPrefix="casino-stake-currency"
-            showHelpTip
-          />
-
+      <MoneyDisplayWithFiatHintSlot disclaimerSlot={showDisclaimer ? <FiatHintDisclaimer /> : null}>
+        <header className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col gap-1">
-            <label
-              className="text-foreground-muted text-xs font-medium"
-              htmlFor="casino-stake-input"
+            <Link
+              to="/casino"
+              className="text-accent text-sm font-medium no-underline"
+              data-testid="casino-shell-back-lobby"
             >
-              {t('casino.stake')}
-            </label>
-            <input
-              id="casino-stake-input"
-              type="text"
-              inputMode="decimal"
-              className="border-line bg-surface-raised text-foreground min-h-12 rounded-md border px-3 tabular-nums"
-              value={stake}
-              disabled={lockStake || pipeline.busy}
-              data-testid={CASINO_E2E_TESTIDS.stakeInput}
-              onChange={(e) => {
-                setStake(e.target.value);
-                setAutoConfig((prev) => ({ ...prev, baseStake: e.target.value }));
-              }}
+              {t('casino.subnav.lobby')}
+            </Link>
+            <h1 className="text-foreground m-0 text-2xl font-semibold md:text-3xl">
+              {t(config.labelKey)}
+            </h1>
+            <p className="text-foreground-muted m-0 text-sm leading-relaxed">
+              {t(config.descriptionKey)}
+            </p>
+          </div>
+          <div
+            className="border-line bg-surface-raised flex flex-col gap-1 rounded-md border px-3 py-2"
+            data-testid="casino-shell-balance"
+          >
+            <span className="text-foreground-muted text-xs">{t('casino.rocket.balance')}</span>
+            <CasinoMoneyWithFiatHint
+              amount={balanceAmount}
+              currency={currency}
+              showCurrency
+              role="stake"
+            />
+          </div>
+        </header>
+
+        <div className="relative grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.8fr)]">
+          <div className="relative flex flex-col gap-3">
+            <CasinoGameStagePlaceholder gameCode={gameCode} />
+            {overlayOpen ? (
+              <WinTierOverlay
+                tier={winTier}
+                payout={lastPayout}
+                multiplier={lastMultiplier}
+                currency={currency}
+                autoBetActive={autoQueue.isActive}
+                onSkip={() => setOverlayOpen(false)}
+              />
+            ) : null}
+            {pipeline.bet ? (
+              <GameOutcomeLayer
+                tier={winTier}
+                payout={lastPayout}
+                stake={lastStake}
+                currency={currency}
+              />
+            ) : null}
+            <PfStrip
+              serverSeedHash={pipeline.commitment?.server_seed_hash ?? null}
+              clientSeed={clientSeed}
+              verificationMatch={verificationMatch}
             />
           </div>
 
-          <BetModeTabs mode={betMode} onChange={setBetMode} disabled={lockStake || pipeline.busy} />
-
-          {betMode === 'manual' ? (
-            <div className="flex flex-col gap-2">
-              <Button
-                type="button"
-                variant="secondary"
-                disabled={pipeline.busy}
-                data-testid={CASINO_E2E_TESTIDS.prepareHash}
-                onClick={() => void pipeline.prepareRound()}
-              >
-                {t('casino.prepareHash')}
-              </Button>
-              <Button
-                type="button"
-                variant="bet"
-                disabled={pipeline.busy || !pipeline.commitment}
-                data-testid={CASINO_E2E_TESTIDS.placeBet}
-                onClick={() => void handleManualBet()}
-              >
-                {t('casino.placeBet')}
-              </Button>
-            </div>
-          ) : (
-            <AutoBetPanel
-              currency={currency}
-              config={autoConfig}
-              onConfigChange={setAutoConfig}
-              status={autoQueue.status}
-              remaining={autoQueue.remaining}
-              cumulativeProfit={autoQueue.cumulativeProfit}
-              nextStake={autoQueue.nextStake}
-              canStart={autoQueue.canStart(autoConfig)}
-              onStart={handleAutoStart}
-              onStop={autoQueue.requestStop}
-              disabled={pipeline.busy}
+          <aside className="border-line bg-surface flex flex-col gap-4 rounded-md border p-4">
+            <SpendCurrencySelector
+              value={currency}
+              onChange={setCurrency}
+              disabled={lockStake || pipeline.busy}
+              testId="casino-stake-currency"
+              currencyTestIdPrefix="casino-stake-currency"
+              showHelpTip
             />
-          )}
 
-          {pipeline.errorKey ? (
-            <p
-              className="text-danger m-0 text-sm"
-              data-testid={CASINO_E2E_TESTIDS.error}
-              role="alert"
-            >
-              {t(pipeline.errorKey)}
-            </p>
-          ) : null}
+            <div className="flex flex-col gap-1">
+              <label
+                className="text-foreground-muted text-xs font-medium"
+                htmlFor="casino-stake-input"
+              >
+                {t('casino.stake')}
+              </label>
+              <input
+                id="casino-stake-input"
+                type="text"
+                inputMode="decimal"
+                className="border-line bg-surface-raised text-foreground min-h-12 rounded-md border px-3 tabular-nums"
+                value={stake}
+                disabled={lockStake || pipeline.busy}
+                data-testid={CASINO_E2E_TESTIDS.stakeInput}
+                onChange={(e) => {
+                  setStake(e.target.value);
+                  setAutoConfig((prev) => ({ ...prev, baseStake: e.target.value }));
+                }}
+              />
+              {!stakeHint.disabled ? (
+                <span
+                  data-testid="casino-stake-fiat-hint"
+                  data-casino-fiat-hint-role="stake"
+                  data-casino-fiat-session-locked={sessionLocked ? 'true' : 'false'}
+                  data-fiat-hint-todo={P10_CASINO_FIAT_HINT_SESSION_LOCK_TODO}
+                >
+                  <FiatHintSecondaryLine fiatHint={stakeHint} hintLayout="secondary" />
+                </span>
+              ) : null}
+            </div>
 
-          {recentBets.length > 0 ? (
-            <ul className="m-0 flex list-none flex-col gap-1 p-0" data-testid="casino-shell-recent">
-              {recentBets.slice(0, 5).map((row) => (
-                <li key={row.id} className="text-foreground-muted flex justify-between text-xs">
-                  <span>{row.status}</span>
-                  <MoneyDisplay amount={row.payout ?? '0'} currency={row.currency} showCurrency />
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </aside>
-      </div>
+            <BetModeTabs
+              mode={betMode}
+              onChange={setBetMode}
+              disabled={lockStake || pipeline.busy}
+            />
+
+            {betMode === 'manual' ? (
+              <div className="flex flex-col gap-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={pipeline.busy}
+                  data-testid={CASINO_E2E_TESTIDS.prepareHash}
+                  onClick={() => {
+                    unlockSession();
+                    void pipeline.prepareRound();
+                  }}
+                >
+                  {t('casino.prepareHash')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="bet"
+                  disabled={pipeline.busy || !pipeline.commitment}
+                  data-testid={CASINO_E2E_TESTIDS.placeBet}
+                  onClick={() => void handleManualBet()}
+                >
+                  {t('casino.placeBet')}
+                </Button>
+              </div>
+            ) : (
+              <AutoBetPanel
+                currency={currency}
+                config={autoConfig}
+                onConfigChange={setAutoConfig}
+                status={autoQueue.status}
+                remaining={autoQueue.remaining}
+                cumulativeProfit={autoQueue.cumulativeProfit}
+                nextStake={autoQueue.nextStake}
+                canStart={autoQueue.canStart(autoConfig)}
+                onStart={handleAutoStart}
+                onStop={autoQueue.requestStop}
+                disabled={pipeline.busy}
+              />
+            )}
+
+            {pipeline.errorKey ? (
+              <p
+                className="text-danger m-0 text-sm"
+                data-testid={CASINO_E2E_TESTIDS.error}
+                role="alert"
+              >
+                {t(pipeline.errorKey)}
+              </p>
+            ) : null}
+
+            {recentBets.length > 0 ? (
+              <ul
+                className="m-0 flex list-none flex-col gap-1 p-0"
+                data-testid="casino-shell-recent"
+              >
+                {recentBets.slice(0, 5).map((row) => (
+                  <li key={row.id} className="text-foreground-muted flex justify-between text-xs">
+                    <span>{row.status}</span>
+                    <CasinoMoneyWithFiatHint
+                      amount={row.payout ?? '0'}
+                      currency={row.currency}
+                      showCurrency
+                      role="win"
+                    />
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </aside>
+        </div>
+      </MoneyDisplayWithFiatHintSlot>
     </section>
   );
 }

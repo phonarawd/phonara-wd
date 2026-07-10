@@ -8,13 +8,13 @@ import type { MessageKey } from '@phonara/i18n';
 import { toDecimal } from '@phonara/money';
 
 import { CASINO_GAMES_ROUTE_PREFIX, P10_PAGE_CASINO_TODO } from './casino-lobby-display-contract';
+import { P10_CASINO_FIAT_HINT_SESSION_LOCK_TODO } from './fiat-reference-display-contract';
+
+export { P10_CASINO_FIAT_HINT_SESSION_LOCK_TODO };
 
 export const P10_CASINO_REPLAY_AND_INFRA_TODO = 'p10-casino-replay-and-infra' as const;
 
 export const P10_CASINO_REPLAY_PREREQUISITE_TODOS = [P10_PAGE_CASINO_TODO] as const;
-
-/** Next YAML after shell infra — Fiat#11 session-lock hint. */
-export const P10_CASINO_FIAT_HINT_SESSION_LOCK_TODO = 'p10-casino-fiat-hint-session-lock' as const;
 
 export const CASINO_GAME_SHELL_SURFACE_OWNER = 'casino-game-shell.tsx' as const;
 export const CASINO_GAME_ROUTE_OWNER = 'games.$gameCode.tsx' as const;

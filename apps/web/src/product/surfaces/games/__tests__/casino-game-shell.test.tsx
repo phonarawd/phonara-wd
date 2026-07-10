@@ -47,6 +47,26 @@ vi.mock('@/features/casino/use-casino-round', () => ({
   }),
 }));
 
+vi.mock('@/features/casino/use-casino-fiat-hint', () => ({
+  useCasinoFiatHint: () => ({
+    targetFiat: 'KRW',
+    sessionLocked: false,
+    lockedAt: null,
+    hintFor: () => ({
+      displayOnly: true,
+      formattedHint: '',
+      targetFiat: 'OFF',
+      asOf: '',
+      stale: false,
+      disabled: true,
+      sourceCurrency: 'USDT',
+    }),
+    lockSession: vi.fn(),
+    unlockSession: vi.fn(),
+    showDisclaimer: false,
+  }),
+}));
+
 vi.mock('@/product/primitives/lib/use-prefers-reduced-motion', () => ({
   usePrefersReducedMotion: () => false,
 }));
@@ -80,6 +100,14 @@ describe('CasinoGameShell (p10-casino-replay-and-infra)', () => {
     expect(screen.getByTestId('casino-game-shell')).toHaveAttribute(
       'data-owner-todo',
       'p10-casino-replay-and-infra',
+    );
+    expect(screen.getByTestId('casino-game-shell')).toHaveAttribute(
+      'data-fiat-hint-todo',
+      'p10-casino-fiat-hint-session-lock',
+    );
+    expect(screen.getByTestId('casino-game-shell')).toHaveAttribute(
+      'data-casino-fiat-session-locked',
+      'false',
     );
     expect(screen.getByTestId('casino-game-shell')).toHaveAttribute(
       'data-stake-currency-exposure',

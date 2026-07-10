@@ -2,8 +2,8 @@ import type { Currency } from '@phonara/shared-types';
 
 import type { CasinoWinTier } from '@/domain/casino-outcome-replay-contract';
 import { useT } from '@/product/i18n';
-import { MoneyDisplay } from '@/product/primitives/money-display';
 import { cn } from '@/product/primitives/lib/cn';
+import { CasinoMoneyWithFiatHint } from '@/product/surfaces/games/casino-money-with-fiat-hint';
 
 export type GameOutcomeLayerProps = {
   tier: CasinoWinTier;
@@ -33,9 +33,21 @@ export function GameOutcomeLayer({
       data-win-tier={tier}
     >
       <span className="text-foreground-muted text-xs">{t('casino.lastPayout')}</span>
-      <MoneyDisplay amount={payout} currency={currency} showCurrency className="text-sm" />
+      <CasinoMoneyWithFiatHint
+        amount={payout}
+        currency={currency}
+        showCurrency
+        role="win"
+        className="text-sm"
+      />
       <span className="text-foreground-muted text-xs">{t('casino.stake')}</span>
-      <MoneyDisplay amount={stake} currency={currency} showCurrency className="text-sm" />
+      <CasinoMoneyWithFiatHint
+        amount={stake}
+        currency={currency}
+        showCurrency
+        role="stake"
+        className="text-sm"
+      />
     </div>
   );
 }

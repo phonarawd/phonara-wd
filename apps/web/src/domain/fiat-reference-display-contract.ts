@@ -89,6 +89,18 @@ export const P10_SPORTS_FIAT_HINT_WIRE_PREREQUISITE_TODOS = [
 export const P10_SPORTS_FIAT_HINT_WIRE_TODO = 'p10-sports-fiat-hint-wire' as const;
 
 /**
+ * Fiat#11 prerequisite — MoneyDisplayWithFiatHint + casino replay shell before session-lock.
+ * Plan: `p4-fiat-money-display-hint` + `p10-casino-replay-and-infra`.
+ */
+export const P10_CASINO_FIAT_HINT_SESSION_LOCK_PREREQUISITE_TODOS = [
+  P4_FIAT_MONEY_DISPLAY_HINT_TODO,
+  'p10-casino-replay-and-infra',
+] as const;
+
+/** Fiat#11 owner todo — Casino stake·win secondary · session-locked rate · spin drift 0. */
+export const P10_CASINO_FIAT_HINT_SESSION_LOCK_TODO = 'p10-casino-fiat-hint-session-lock' as const;
+
+/**
  * Non-waivable boundary: FiatHint values are never settlement truth.
  * Mirrors `DISPLAY_ONLY_ODDS_SOURCE` on the sports ingest seam.
  */
