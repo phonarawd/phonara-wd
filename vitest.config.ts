@@ -70,6 +70,10 @@ export default defineConfig({
         resolve: {
           alias: [
             {
+              find: '@/product/primitives/admin-table',
+              replacement: path.resolve(root, 'apps/admin/src/product/primitives/admin-table.tsx'),
+            },
+            {
               find: '@/product/primitives',
               replacement: path.resolve(root, 'apps/web/src/product/primitives'),
             },

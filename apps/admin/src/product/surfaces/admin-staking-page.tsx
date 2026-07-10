@@ -7,12 +7,12 @@ import type { MessageKey } from '@phonara/i18n';
 import { useAdminStakingDesk, type AdminStakingPoolRow } from '@/hooks/admin/useAdminStakingDesk';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { cn } from '@/product/primitives/lib/cn';
-import { Skeleton } from '@/product/primitives/skeleton';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 import { AdminQueueActionDialog } from '@/product/surfaces/admin-queue-action-dialog';
 
@@ -61,20 +61,6 @@ function poolSummary(pool: AdminStakingPoolRow, t: ReturnType<typeof useT>): str
   return `${t(termLabelKey(pool.term))} · ${pool.estimatedApr}% APR · ${formatLockDays(pool, t)} · ${status}`;
 }
 
-function LoadingTable({ rows, cols }: { rows: number; cols: number }) {
-  return (
-    <div className="space-y-2" aria-busy="true">
-      {Array.from({ length: rows }, (_, rowIndex) => (
-        <div key={rowIndex} className="flex gap-3">
-          {Array.from({ length: cols }, (_, colIndex) => (
-            <Skeleton key={colIndex} className="h-10 flex-1" />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
-
 /** Admin staking desk (`/staking`) — pool list read + activate/deactivate (§29.2 R0·R3). */
 export function AdminStakingPage() {
   const t = useT();
@@ -89,6 +75,39 @@ export function AdminStakingPage() {
   const [actionLoading, setActionLoading] = useState(false);
 
   const activeCount = useMemo(() => pools.filter((row) => row.isActive).length, [pools]);
+
+  const poolColumns = useMemo(
+    () => [
+      {
+        id: 'term',
+        header: t('admin.staking.col.term'),
+        cell: ({ row }: { row: AdminStakingPoolRow }) => t(termLabelKey(row.term)),
+      },
+      {
+        id: 'apr',
+        header: t('admin.staking.col.apr'),
+        cell: ({ row }: { row: AdminStakingPoolRow }) => `${row.estimatedApr}%`,
+        meta: { className: 'tabular-nums' },
+      },
+      {
+        id: 'lockDays',
+        header: t('admin.staking.col.lockDays'),
+        cell: ({ row }: { row: AdminStakingPoolRow }) => formatLockDays(row, t),
+        meta: { className: 'text-foreground-muted tabular-nums' },
+      },
+      {
+        id: 'status',
+        header: t('admin.staking.col.status'),
+        cell: ({ row }: { row: AdminStakingPoolRow }) => (
+          <StatusBadge
+            state={poolStatusState(row.isActive)}
+            label={row.isActive ? t('admin.staking.active') : t('admin.staking.inactive')}
+          />
+        ),
+      },
+    ],
+    [t],
+  );
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -162,78 +181,54 @@ export function AdminStakingPage() {
           actionLabel={t('admin.overview.action.refresh')}
           onAction={() => void handleRefresh()}
         />
-      ) : loading ? (
-        <LoadingTable rows={4} cols={5} />
-      ) : pools.length === 0 ? (
-        <EmptyState
-          title={t('admin.overview.empty.title')}
-          description={t('admin.staking.empty.desc')}
-          actionLabel={t('admin.staking.empty.cta')}
-          onAction={() => {
-            goTo('/ops');
-          }}
-        />
       ) : (
         <>
-          <p className="text-foreground-muted m-0 text-sm">
-            {t('admin.staking.summary.active', { count: String(activeCount) })}
-          </p>
+          {!loading && pools.length > 0 ? (
+            <p className="text-foreground-muted m-0 text-sm">
+              {t('admin.staking.summary.active', { count: String(activeCount) })}
+            </p>
+          ) : null}
 
-          <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-            <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-              <thead className="bg-surface-raised text-foreground-muted">
-                <tr>
-                  <th className="px-4 py-3 font-medium">{t('admin.staking.col.term')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.staking.col.apr')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.staking.col.lockDays')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.staking.col.status')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.staking.col.action')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pools.map((pool) => (
-                  <tr key={pool.id} className="border-line border-t">
-                    <td className="text-foreground px-4 py-3">{t(termLabelKey(pool.term))}</td>
-                    <td className="text-foreground px-4 py-3 tabular-nums">{pool.estimatedApr}%</td>
-                    <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                      {formatLockDays(pool, t)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge
-                        state={poolStatusState(pool.isActive)}
-                        label={
-                          pool.isActive ? t('admin.staking.active') : t('admin.staking.inactive')
-                        }
-                      />
-                    </td>
-                    <td className="px-4 py-3">
-                      <Button
-                        size="sm"
-                        variant={pool.isActive ? 'outline' : 'primary'}
-                        disabled={busy}
-                        onClick={() =>
-                          setToggleTarget({
-                            pool,
-                            nextActive: !pool.isActive,
-                            titleKey: pool.isActive
-                              ? 'admin.staking.dialog.deactivate'
-                              : 'admin.staking.dialog.activate',
-                            confirmKey: pool.isActive
-                              ? 'admin.staking.deactivate'
-                              : 'admin.staking.activate',
-                          })
-                        }
-                      >
-                        {pool.isActive
-                          ? t('admin.staking.deactivate')
-                          : t('admin.staking.activate')}
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <AdminTable
+            columns={poolColumns}
+            rows={pools}
+            getRowId={(row) => row.id}
+            loading={loading}
+            loadingRowCount={4}
+            minWidth={720}
+            empty={
+              <EmptyState
+                title={t('admin.overview.empty.title')}
+                description={t('admin.staking.empty.desc')}
+                actionLabel={t('admin.staking.empty.cta')}
+                onAction={() => {
+                  goTo('/ops');
+                }}
+              />
+            }
+            rowActionsHeader={t('admin.staking.col.action')}
+            rowActions={(pool) => (
+              <Button
+                size="sm"
+                variant={pool.isActive ? 'outline' : 'primary'}
+                disabled={busy}
+                onClick={() =>
+                  setToggleTarget({
+                    pool,
+                    nextActive: !pool.isActive,
+                    titleKey: pool.isActive
+                      ? 'admin.staking.dialog.deactivate'
+                      : 'admin.staking.dialog.activate',
+                    confirmKey: pool.isActive
+                      ? 'admin.staking.deactivate'
+                      : 'admin.staking.activate',
+                  })
+                }
+              >
+                {pool.isActive ? t('admin.staking.deactivate') : t('admin.staking.activate')}
+              </Button>
+            )}
+          />
 
           {auditEvents.length > 0 ? (
             <section className="space-y-3">

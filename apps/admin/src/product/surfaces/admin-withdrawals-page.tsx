@@ -19,6 +19,8 @@ import { useT } from '@/product/i18n';
 
 import { ADMIN_RBAC_DENIED_KEY, adminRbacActionProps } from '@/product/surfaces/admin-rbac-action';
 
+import { AdminTable } from '@/product/primitives/admin-table';
+
 import { HowItWorks } from '@/product/primitives/how-it-works';
 
 import { Button } from '@/product/primitives/button';
@@ -291,166 +293,130 @@ export function AdminWithdrawalsPage() {
                 className="max-w-md"
               />
 
-              {visibleRows.length === 0 ? (
-                <EmptyState
-                  title={t('admin.overview.empty.title')}
-                  description={t('admin.wallet.withdraw.empty')}
-                  actionLabel={t('admin.withdrawals.empty.cta')}
-                  onAction={() => {
-                    goTo('/queues');
-                  }}
-                />
-              ) : (
-                <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                  <table className="w-full min-w-[800px] border-collapse text-left text-sm">
-                    <thead className="bg-surface-raised text-foreground-muted">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.wallet.withdraw.col.user')}
-                        </th>
-
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.wallet.withdraw.col.amount')}
-                        </th>
-
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.withdrawals.col.method')}
-                        </th>
-
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.wallet.withdraw.col.destination')}
-                        </th>
-
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.wallet.withdraw.col.status')}
-                        </th>
-
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.wallet.withdraw.col.created')}
-                        </th>
-
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.wallet.withdraw.col.action')}
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      {visibleRows.map((row) => (
-                        <tr key={row.id} className="border-line border-t">
-                          <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                            {row.userId}
-                          </td>
-
-                          <td className="text-foreground px-4 py-3 tabular-nums">
-                            {formatAmountString(row.amount, row.currency)}
-                          </td>
-
-                          <td className="text-foreground-muted px-4 py-3">
-                            {t(METHOD_FILTER_KEYS[row.method])}
-                          </td>
-
-                          <td className="text-foreground-muted max-w-48 truncate px-4 py-3">
-                            {row.destinationSummary}
-                          </td>
-
-                          <td className="px-4 py-3">
-                            <StatusBadge state={withdrawStatusState(row.status)} />
-                          </td>
-
-                          <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                            {formatWhen(row.createdAt, locale)}
-
-                            {isOverdueSla(row.slaDueAt) ? (
-                              <span className="text-danger ml-2 text-xs">
-                                {t('admin.queues.col.sla')}
-                              </span>
-                            ) : null}
-                          </td>
-
-                          <td className="px-4 py-3">
-                            <div className="flex flex-wrap gap-2">
-                              {row.status === 'pending' ? (
-                                <>
-                                  <Button
-                                    variant="primary"
-                                    size="sm"
-                                    {...adminRbacActionProps(canApproveWithdraw, rbacDenied)}
-                                    onClick={() => {
-                                      if (!canApproveWithdraw) return;
-                                      openAction({
-                                        kind: 'approveWithdraw',
-
-                                        id: row.id,
-
-                                        titleKey: 'admin.withdrawals.dialog.approve',
-
-                                        confirmKey: 'admin.withdrawals.action.approve',
-
-                                        summary: formatRowSummary(row),
-                                      });
-                                    }}
-                                  >
-                                    {t('admin.withdrawals.action.approve')}
-                                  </Button>
-
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    {...adminRbacActionProps(canRejectWithdraw, rbacDenied)}
-                                    onClick={() => {
-                                      if (!canRejectWithdraw) return;
-                                      openAction({
-                                        kind: 'rejectWithdraw',
-
-                                        id: row.id,
-
-                                        titleKey: 'admin.withdrawals.dialog.reject',
-
-                                        confirmKey: 'admin.withdrawals.action.reject',
-
-                                        destructive: true,
-
-                                        summary: formatRowSummary(row),
-                                      });
-                                    }}
-                                  >
-                                    {t('admin.withdrawals.action.reject')}
-                                  </Button>
-                                </>
-                              ) : null}
-
-                              {row.status === 'approved' ? (
-                                <Button
-                                  variant="primary"
-                                  size="sm"
-                                  {...adminRbacActionProps(canApproveWithdraw, rbacDenied)}
-                                  onClick={() => {
-                                    if (!canApproveWithdraw) return;
-                                    openAction({
-                                      kind: 'markSent',
-
-                                      id: row.id,
-
-                                      titleKey: 'admin.withdrawals.dialog.markSent',
-
-                                      confirmKey: 'admin.withdrawals.action.markSent',
-
-                                      summary: formatRowSummary(row),
-                                    });
-                                  }}
-                                >
-                                  {t('admin.withdrawals.action.markSent')}
-                                </Button>
-                              ) : null}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              <AdminTable
+                columns={[
+                  {
+                    id: 'user',
+                    header: t('admin.wallet.withdraw.col.user'),
+                    cell: ({ row }) => row.userId,
+                    meta: { className: 'text-foreground-muted tabular-nums' },
+                  },
+                  {
+                    id: 'amount',
+                    header: t('admin.wallet.withdraw.col.amount'),
+                    cell: ({ row }) => formatAmountString(row.amount, row.currency),
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'method',
+                    header: t('admin.withdrawals.col.method'),
+                    cell: ({ row }) => t(METHOD_FILTER_KEYS[row.method]),
+                    meta: { className: 'text-foreground-muted' },
+                  },
+                  {
+                    id: 'destination',
+                    header: t('admin.wallet.withdraw.col.destination'),
+                    cell: ({ row }) => row.destinationSummary,
+                    meta: { className: 'text-foreground-muted max-w-48 truncate' },
+                  },
+                  {
+                    id: 'status',
+                    header: t('admin.wallet.withdraw.col.status'),
+                    cell: ({ row }) => <StatusBadge state={withdrawStatusState(row.status)} />,
+                  },
+                  {
+                    id: 'created',
+                    header: t('admin.wallet.withdraw.col.created'),
+                    cell: ({ row }) => (
+                      <>
+                        {formatWhen(row.createdAt, locale)}
+                        {isOverdueSla(row.slaDueAt) ? (
+                          <span className="text-danger ml-2 text-xs">
+                            {t('admin.queues.col.sla')}
+                          </span>
+                        ) : null}
+                      </>
+                    ),
+                    meta: { className: 'text-foreground-muted tabular-nums' },
+                  },
+                ]}
+                rows={visibleRows}
+                getRowId={(row) => row.id}
+                minWidth={800}
+                empty={
+                  <EmptyState
+                    title={t('admin.overview.empty.title')}
+                    description={t('admin.wallet.withdraw.empty')}
+                    actionLabel={t('admin.withdrawals.empty.cta')}
+                    onAction={() => {
+                      goTo('/queues');
+                    }}
+                  />
+                }
+                rowActionsHeader={t('admin.wallet.withdraw.col.action')}
+                rowActions={(row) => (
+                  <>
+                    {row.status === 'pending' ? (
+                      <>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          {...adminRbacActionProps(canApproveWithdraw, rbacDenied)}
+                          onClick={() => {
+                            if (!canApproveWithdraw) return;
+                            openAction({
+                              kind: 'approveWithdraw',
+                              id: row.id,
+                              titleKey: 'admin.withdrawals.dialog.approve',
+                              confirmKey: 'admin.withdrawals.action.approve',
+                              summary: formatRowSummary(row),
+                            });
+                          }}
+                        >
+                          {t('admin.withdrawals.action.approve')}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          {...adminRbacActionProps(canRejectWithdraw, rbacDenied)}
+                          onClick={() => {
+                            if (!canRejectWithdraw) return;
+                            openAction({
+                              kind: 'rejectWithdraw',
+                              id: row.id,
+                              titleKey: 'admin.withdrawals.dialog.reject',
+                              confirmKey: 'admin.withdrawals.action.reject',
+                              destructive: true,
+                              summary: formatRowSummary(row),
+                            });
+                          }}
+                        >
+                          {t('admin.withdrawals.action.reject')}
+                        </Button>
+                      </>
+                    ) : null}
+                    {row.status === 'approved' ? (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        {...adminRbacActionProps(canApproveWithdraw, rbacDenied)}
+                        onClick={() => {
+                          if (!canApproveWithdraw) return;
+                          openAction({
+                            kind: 'markSent',
+                            id: row.id,
+                            titleKey: 'admin.withdrawals.dialog.markSent',
+                            confirmKey: 'admin.withdrawals.action.markSent',
+                            summary: formatRowSummary(row),
+                          });
+                        }}
+                      >
+                        {t('admin.withdrawals.action.markSent')}
+                      </Button>
+                    ) : null}
+                  </>
+                )}
+              />
             </section>
           </TabsContent>
         </Tabs>

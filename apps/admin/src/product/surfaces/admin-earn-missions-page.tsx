@@ -8,11 +8,11 @@ import { useAdminMissionsDesk } from '@/hooks/admin/useAdminMissionsDesk';
 import type { AdminViralMissionRow } from '@/product/bridge/parse-admin-missions-config';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { cn } from '@/product/primitives/lib/cn';
-import { Skeleton } from '@/product/primitives/skeleton';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/product/primitives/tabs';
 
@@ -98,111 +98,99 @@ export function AdminEarnMissionsPage() {
           </TabsList>
 
           <TabsContent value="viral" className="space-y-3">
-            {isLoading ? (
-              <LoadingTable rows={5} cols={5} />
-            ) : viralMissions.length === 0 ? (
-              <EmptyState
-                title={t('admin.overview.empty.title')}
-                description={t('admin.missions.empty.viral')}
-                actionLabel={t('admin.missions.empty.cta')}
-                onAction={() => {
-                  goTo('/ops');
-                }}
-              />
-            ) : (
-              <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-                  <thead className="bg-surface-raised text-foreground-muted">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">{t('admin.missions.col.mission')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.missions.col.reward')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.missions.col.quota')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.missions.col.extra')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.missions.col.exposure')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {viralMissions.map((row) => (
-                      <tr key={row.id} className="border-line border-t">
-                        <td className="text-foreground px-4 py-3">{t(row.labelKey)}</td>
-                        <td className="text-foreground px-4 py-3 tabular-nums">
-                          {row.rewardPhon} PHON
-                        </td>
-                        <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                          {row.quota} {t(row.quotaPeriodKey)}
-                        </td>
-                        <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                          {row.extraValue && row.extraLabelKey
-                            ? `${row.extraValue} · ${t(row.extraLabelKey)}`
-                            : '—'}
-                        </td>
-                        <td className="px-4 py-3">
-                          <StatusBadge
-                            state={exposureStatus(row.exposure)}
-                            label={t(exposureLabelKey(row.exposure))}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <AdminTable
+              columns={[
+                {
+                  id: 'mission',
+                  header: t('admin.missions.col.mission'),
+                  cell: ({ row }) => t(row.labelKey),
+                },
+                {
+                  id: 'reward',
+                  header: t('admin.missions.col.reward'),
+                  cell: ({ row }) => `${row.rewardPhon} PHON`,
+                  meta: { className: 'tabular-nums' },
+                },
+                {
+                  id: 'quota',
+                  header: t('admin.missions.col.quota'),
+                  cell: ({ row }) => `${row.quota} ${t(row.quotaPeriodKey)}`,
+                  meta: { className: 'text-foreground-muted tabular-nums' },
+                },
+                {
+                  id: 'extra',
+                  header: t('admin.missions.col.extra'),
+                  cell: ({ row }) =>
+                    row.extraValue && row.extraLabelKey
+                      ? `${row.extraValue} · ${t(row.extraLabelKey)}`
+                      : '—',
+                  meta: { className: 'text-foreground-muted tabular-nums' },
+                },
+                {
+                  id: 'exposure',
+                  header: t('admin.missions.col.exposure'),
+                  cell: ({ row }) => (
+                    <StatusBadge
+                      state={exposureStatus(row.exposure)}
+                      label={t(exposureLabelKey(row.exposure))}
+                    />
+                  ),
+                },
+              ]}
+              rows={viralMissions}
+              getRowId={(row) => row.id}
+              loading={isLoading}
+              loadingRowCount={5}
+              minWidth={760}
+              empty={
+                <EmptyState
+                  title={t('admin.overview.empty.title')}
+                  description={t('admin.missions.empty.viral')}
+                  actionLabel={t('admin.missions.empty.cta')}
+                  onAction={() => goTo('/ops')}
+                />
+              }
+            />
           </TabsContent>
 
           <TabsContent value="limits" className="space-y-3">
-            {isLoading ? (
-              <LoadingTable rows={6} cols={3} />
-            ) : earnLimits.length === 0 ? (
-              <EmptyState
-                title={t('admin.overview.empty.title')}
-                description={t('admin.missions.empty.limits')}
-                actionLabel={t('admin.missions.empty.cta')}
-                onAction={() => {
-                  goTo('/ops');
-                }}
-              />
-            ) : (
-              <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-                  <thead className="bg-surface-raised text-foreground-muted">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">{t('admin.missions.col.setting')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.missions.col.value')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.missions.col.note')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {earnLimits.map((row) => (
-                      <tr key={row.key} className="border-line border-t">
-                        <td className="text-foreground px-4 py-3">{t(row.labelKey)}</td>
-                        <td className="text-foreground px-4 py-3 tabular-nums">{row.value}</td>
-                        <td className="text-foreground-muted px-4 py-3">
-                          {row.description ?? '—'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <AdminTable
+              columns={[
+                {
+                  id: 'setting',
+                  header: t('admin.missions.col.setting'),
+                  cell: ({ row }) => t(row.labelKey),
+                },
+                {
+                  id: 'value',
+                  header: t('admin.missions.col.value'),
+                  cell: ({ row }) => row.value,
+                  meta: { className: 'tabular-nums' },
+                },
+                {
+                  id: 'note',
+                  header: t('admin.missions.col.note'),
+                  cell: ({ row }) => row.description ?? '—',
+                  meta: { className: 'text-foreground-muted' },
+                },
+              ]}
+              rows={earnLimits}
+              getRowId={(row) => row.key}
+              loading={isLoading}
+              loadingRowCount={6}
+              minWidth={640}
+              empty={
+                <EmptyState
+                  title={t('admin.overview.empty.title')}
+                  description={t('admin.missions.empty.limits')}
+                  actionLabel={t('admin.missions.empty.cta')}
+                  onAction={() => goTo('/ops')}
+                />
+              }
+            />
           </TabsContent>
         </Tabs>
       )}
-    </div>
-  );
-}
-
-function LoadingTable({ rows, cols }: { rows: number; cols: number }) {
-  return (
-    <div className="space-y-2" aria-busy="true">
-      {Array.from({ length: rows }, (_, rowIndex) => (
-        <div key={rowIndex} className="flex gap-3">
-          {Array.from({ length: cols }, (_, colIndex) => (
-            <Skeleton key={colIndex} className="h-10 flex-1" />
-          ))}
-        </div>
-      ))}
     </div>
   );
 }

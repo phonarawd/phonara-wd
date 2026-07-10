@@ -25,6 +25,11 @@ export default defineConfig({
   resolve: {
     dedupe: ['react', 'react-dom'],
     alias: [
+      // Admin-only primitives (§29.6) — must resolve before shared web primitives alias.
+      {
+        find: '@/product/primitives/admin-table',
+        replacement: `${adminSrc}/product/primitives/admin-table.tsx`,
+      },
       { find: '@/product/primitives', replacement: `${webProduct}/primitives` },
       { find: '@/product/tokens', replacement: `${webProduct}/tokens` },
       {
@@ -46,6 +51,7 @@ export default defineConfig({
       'react/jsx-runtime',
       '@tanstack/react-router',
       '@tanstack/react-query',
+      '@tanstack/react-table',
       '@supabase/supabase-js',
       'zod',
       'lucide-react',

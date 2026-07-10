@@ -12,13 +12,13 @@ import {
 import { formatAmountString } from '@/hooks/admin/useAdminWalletDesk';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { Input } from '@/product/primitives/input';
 import { cn } from '@/product/primitives/lib/cn';
-import { Skeleton } from '@/product/primitives/skeleton';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/product/primitives/tabs';
 
@@ -51,20 +51,6 @@ function settlementStatusState(state: SettlementState): MoneyStatusState {
   if (state === 'paid') return 'settled';
   if (state === 'approved') return 'reviewing';
   return 'pending';
-}
-
-function LoadingTable({ rows, cols }: { rows: number; cols: number }) {
-  return (
-    <div className="space-y-2" aria-busy="true">
-      {Array.from({ length: rows }, (_, rowIndex) => (
-        <div key={rowIndex} className="flex gap-3">
-          {Array.from({ length: cols }, (_, colIndex) => (
-            <Skeleton key={colIndex} className="h-10 flex-1" />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
 }
 
 /** Admin earn desk (`/earn`) — settlements read + approve · agents Tier C deferred (§29.2). */
@@ -272,9 +258,7 @@ export function AdminEarnPage() {
               />
             </section>
 
-            {loading ? (
-              <LoadingTable rows={5} cols={6} />
-            ) : settlements.length === 0 ? (
+            {!loading && settlements.length === 0 ? (
               <EmptyState
                 title={t('admin.overview.empty.title')}
                 description={t('admin.earn.settlements.empty')}
@@ -312,81 +296,73 @@ export function AdminEarnPage() {
                   </div>
                 </div>
 
-                {filteredSettlements.length === 0 ? (
-                  <EmptyState
-                    title={t('admin.overview.empty.title')}
-                    description={t('admin.earn.settlements.empty')}
-                    actionLabel={t('admin.referrals.empty.clearSearch')}
-                    onAction={() => setSettlementFilters({ search: '', state: 'all' })}
-                  />
-                ) : (
-                  <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                    <table className="w-full min-w-[880px] border-collapse text-left text-sm">
-                      <thead className="bg-surface-raised text-foreground-muted">
-                        <tr>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.settlements.col.agent')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.settlements.col.period')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.settlements.col.amount')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.settlements.col.state')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.settlements.col.createdAt')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.settlements.col.action')}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredSettlements.map((row) => (
-                          <tr key={row.id} className="border-line border-t">
-                            <td className="text-foreground px-4 py-3">
-                              <div className="font-medium">{row.agentCode}</div>
-                              <div className="text-foreground-muted text-xs">
-                                {row.agentDisplayName}
-                              </div>
-                            </td>
-                            <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                              {row.periodKey}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {formatAmountString(row.amount, row.currency)}
-                            </td>
-                            <td className="px-4 py-3">
-                              <StatusBadge
-                                state={settlementStatusState(row.state)}
-                                label={t(SETTLEMENT_STATE_KEYS[row.state])}
-                              />
-                            </td>
-                            <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                              {formatWhen(row.createdAt, locale)}
-                            </td>
-                            <td className="px-4 py-3">
-                              {row.state === 'pending' ? (
-                                <Button
-                                  variant="primary"
-                                  size="sm"
-                                  onClick={() => approveSettlement(row.id)}
-                                >
-                                  {t('admin.earn.settlements.action.approve')}
-                                </Button>
-                              ) : (
-                                <span className="text-foreground-muted text-xs">—</span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                <AdminTable
+                  columns={[
+                    {
+                      id: 'agent',
+                      header: t('admin.earn.settlements.col.agent'),
+                      cell: ({ row }) => (
+                        <>
+                          <div className="font-medium">{row.agentCode}</div>
+                          <div className="text-foreground-muted text-xs">
+                            {row.agentDisplayName}
+                          </div>
+                        </>
+                      ),
+                    },
+                    {
+                      id: 'period',
+                      header: t('admin.earn.settlements.col.period'),
+                      cell: ({ row }) => row.periodKey,
+                      meta: { className: 'text-foreground-muted tabular-nums' },
+                    },
+                    {
+                      id: 'amount',
+                      header: t('admin.earn.settlements.col.amount'),
+                      cell: ({ row }) => formatAmountString(row.amount, row.currency),
+                      meta: { className: 'tabular-nums' },
+                    },
+                    {
+                      id: 'state',
+                      header: t('admin.earn.settlements.col.state'),
+                      cell: ({ row }) => (
+                        <StatusBadge
+                          state={settlementStatusState(row.state)}
+                          label={t(SETTLEMENT_STATE_KEYS[row.state])}
+                        />
+                      ),
+                    },
+                    {
+                      id: 'createdAt',
+                      header: t('admin.earn.settlements.col.createdAt'),
+                      cell: ({ row }) => formatWhen(row.createdAt, locale),
+                      meta: { className: 'text-foreground-muted tabular-nums' },
+                    },
+                  ]}
+                  rows={filteredSettlements}
+                  getRowId={(row) => row.id}
+                  loading={loading}
+                  loadingRowCount={5}
+                  minWidth={880}
+                  empty={
+                    <EmptyState
+                      title={t('admin.overview.empty.title')}
+                      description={t('admin.earn.settlements.empty')}
+                      actionLabel={t('admin.referrals.empty.clearSearch')}
+                      onAction={() => setSettlementFilters({ search: '', state: 'all' })}
+                    />
+                  }
+                  rowActionsHeader={t('admin.earn.settlements.col.action')}
+                  rowActions={(row) =>
+                    row.state === 'pending' ? (
+                      <Button variant="primary" size="sm" onClick={() => approveSettlement(row.id)}>
+                        {t('admin.earn.settlements.action.approve')}
+                      </Button>
+                    ) : (
+                      <span className="text-foreground-muted text-xs">—</span>
+                    )
+                  }
+                />
               </section>
             )}
           </TabsContent>
@@ -399,7 +375,7 @@ export function AdminEarnPage() {
               </CardHeader>
             </Card>
 
-            {agents.length === 0 ? (
+            {!loading && agents.length === 0 ? (
               <EmptyState
                 title={t('admin.overview.empty.title')}
                 description={t('admin.earn.agents.empty')}
@@ -422,63 +398,60 @@ export function AdminEarnPage() {
                   />
                 </div>
 
-                {filteredAgents.length === 0 ? (
-                  <EmptyState
-                    title={t('admin.overview.empty.title')}
-                    description={t('admin.earn.agents.empty')}
-                    actionLabel={t('admin.referrals.empty.clearSearch')}
-                    onAction={() => setAgentFilters({ search: '', tier: 'all', status: 'all' })}
-                  />
-                ) : (
-                  <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                    <table className="w-full min-w-[920px] border-collapse text-left text-sm">
-                      <thead className="bg-surface-raised text-foreground-muted">
-                        <tr>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.agents.col.agent')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.agents.col.tier')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.agents.col.referrals')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.agents.col.pendingPayout')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.agents.col.status')}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredAgents.map((row) => (
-                          <tr key={row.id} className="border-line border-t">
-                            <td className="text-foreground px-4 py-3">
-                              <div className="font-medium">{row.agentCode}</div>
-                              <div className="text-foreground-muted text-xs">{row.displayName}</div>
-                            </td>
-                            <td className="text-foreground px-4 py-3">
-                              {t(AGENT_TIER_KEYS[row.tier])}
-                            </td>
-                            <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                              {row.referralCount}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {row.pendingPayout}
-                            </td>
-                            <td className="px-4 py-3">
-                              <StatusBadge
-                                state={row.status === 'active' ? 'settled' : 'pending'}
-                                label={t(`admin.earn.agents.status.${row.status}` as MessageKey)}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                <AdminTable
+                  columns={[
+                    {
+                      id: 'agent',
+                      header: t('admin.earn.agents.col.agent'),
+                      cell: ({ row }) => (
+                        <>
+                          <div className="font-medium">{row.agentCode}</div>
+                          <div className="text-foreground-muted text-xs">{row.displayName}</div>
+                        </>
+                      ),
+                    },
+                    {
+                      id: 'tier',
+                      header: t('admin.earn.agents.col.tier'),
+                      cell: ({ row }) => t(AGENT_TIER_KEYS[row.tier]),
+                    },
+                    {
+                      id: 'referrals',
+                      header: t('admin.earn.agents.col.referrals'),
+                      cell: ({ row }) => row.referralCount,
+                      meta: { className: 'text-foreground-muted tabular-nums' },
+                    },
+                    {
+                      id: 'pendingPayout',
+                      header: t('admin.earn.agents.col.pendingPayout'),
+                      cell: ({ row }) => row.pendingPayout,
+                      meta: { className: 'tabular-nums' },
+                    },
+                    {
+                      id: 'status',
+                      header: t('admin.earn.agents.col.status'),
+                      cell: ({ row }) => (
+                        <StatusBadge
+                          state={row.status === 'active' ? 'settled' : 'pending'}
+                          label={t(`admin.earn.agents.status.${row.status}` as MessageKey)}
+                        />
+                      ),
+                    },
+                  ]}
+                  rows={filteredAgents}
+                  getRowId={(row) => row.id}
+                  loading={loading}
+                  loadingRowCount={5}
+                  minWidth={920}
+                  empty={
+                    <EmptyState
+                      title={t('admin.overview.empty.title')}
+                      description={t('admin.earn.agents.empty')}
+                      actionLabel={t('admin.referrals.empty.clearSearch')}
+                      onAction={() => setAgentFilters({ search: '', tier: 'all', status: 'all' })}
+                    />
+                  }
+                />
               </section>
             )}
           </TabsContent>

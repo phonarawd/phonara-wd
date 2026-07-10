@@ -13,6 +13,7 @@ import {
 } from '@/hooks/admin/useAdminWalletDesk';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
@@ -262,96 +263,97 @@ export function AdminDepositsPage() {
                 className="max-w-md"
               />
 
-              {visibleRows.length === 0 ? (
-                <EmptyState
-                  title={t('admin.overview.empty.title')}
-                  description={t('admin.wallet.depositRecon.empty')}
-                  actionLabel={t('admin.deposits.empty.cta')}
-                  onAction={() => {
-                    goTo('/queues');
-                  }}
-                />
-              ) : (
-                <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                  <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-                    <thead className="bg-surface-raised text-foreground-muted">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">{t('admin.queues.col.details')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.queues.col.amount')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.deposits.col.method')}</th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.wallet.depositRecon.col.reference')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">{t('admin.queues.col.status')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.queues.col.created')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.queues.col.action')}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {visibleRows.map((row) => {
-                        const matchConfig = MATCH_ACTION_KEYS[row.method];
-                        return (
-                          <tr key={row.id} className="border-line border-t">
-                            <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                              {row.userId}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {formatAmountString(row.amount, depositCurrency(row.method))}
-                            </td>
-                            <td className="text-foreground-muted px-4 py-3">
-                              {t(METHOD_FILTER_KEYS[row.method])}
-                            </td>
-                            <td className="text-foreground-muted max-w-48 truncate px-4 py-3">
-                              {row.reference ?? '—'}
-                            </td>
-                            <td className="px-4 py-3">
-                              <StatusBadge state={depositStatusState(row.status)} />
-                            </td>
-                            <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                              {formatWhen(row.createdAt, locale)}
-                            </td>
-                            <td className="px-4 py-3">
-                              <div className="flex flex-wrap gap-2">
-                                <Button
-                                  variant="primary"
-                                  size="sm"
-                                  onClick={() =>
-                                    openAction({
-                                      kind: matchConfig.kind,
-                                      id: row.id,
-                                      titleKey: matchConfig.dialog,
-                                      confirmKey: matchConfig.action,
-                                      summary: formatRowSummary(row),
-                                    })
-                                  }
-                                >
-                                  {t(matchConfig.action)}
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() =>
-                                    openAction({
-                                      kind: 'flag',
-                                      id: row.id,
-                                      titleKey: 'admin.deposits.dialog.flag',
-                                      confirmKey: 'admin.deposits.action.flag',
-                                      destructive: true,
-                                      summary: formatRowSummary(row),
-                                    })
-                                  }
-                                >
-                                  {t('admin.deposits.action.flag')}
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              <AdminTable
+                columns={[
+                  {
+                    id: 'details',
+                    header: t('admin.queues.col.details'),
+                    cell: ({ row }) => row.userId,
+                    meta: { className: 'text-foreground-muted tabular-nums' },
+                  },
+                  {
+                    id: 'amount',
+                    header: t('admin.queues.col.amount'),
+                    cell: ({ row }) => formatAmountString(row.amount, depositCurrency(row.method)),
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'method',
+                    header: t('admin.deposits.col.method'),
+                    cell: ({ row }) => t(METHOD_FILTER_KEYS[row.method]),
+                    meta: { className: 'text-foreground-muted' },
+                  },
+                  {
+                    id: 'reference',
+                    header: t('admin.wallet.depositRecon.col.reference'),
+                    cell: ({ row }) => row.reference ?? '—',
+                    meta: { className: 'text-foreground-muted max-w-48 truncate' },
+                  },
+                  {
+                    id: 'status',
+                    header: t('admin.queues.col.status'),
+                    cell: ({ row }) => <StatusBadge state={depositStatusState(row.status)} />,
+                  },
+                  {
+                    id: 'created',
+                    header: t('admin.queues.col.created'),
+                    cell: ({ row }) => formatWhen(row.createdAt, locale),
+                    meta: { className: 'text-foreground-muted tabular-nums' },
+                  },
+                ]}
+                rows={visibleRows}
+                getRowId={(row) => row.id}
+                minWidth={720}
+                empty={
+                  <EmptyState
+                    title={t('admin.overview.empty.title')}
+                    description={t('admin.wallet.depositRecon.empty')}
+                    actionLabel={t('admin.deposits.empty.cta')}
+                    onAction={() => {
+                      goTo('/queues');
+                    }}
+                  />
+                }
+                rowActionsHeader={t('admin.queues.col.action')}
+                rowActions={(row) => {
+                  const matchConfig = MATCH_ACTION_KEYS[row.method];
+                  return (
+                    <>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() =>
+                          openAction({
+                            kind: matchConfig.kind,
+                            id: row.id,
+                            titleKey: matchConfig.dialog,
+                            confirmKey: matchConfig.action,
+                            summary: formatRowSummary(row),
+                          })
+                        }
+                      >
+                        {t(matchConfig.action)}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          openAction({
+                            kind: 'flag',
+                            id: row.id,
+                            titleKey: 'admin.deposits.dialog.flag',
+                            confirmKey: 'admin.deposits.action.flag',
+                            destructive: true,
+                            summary: formatRowSummary(row),
+                          })
+                        }
+                      >
+                        {t('admin.deposits.action.flag')}
+                      </Button>
+                    </>
+                  );
+                }}
+              />
             </section>
           </TabsContent>
         </Tabs>
