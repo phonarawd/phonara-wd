@@ -1347,6 +1347,10 @@ export const presentationKoMessages = {
   'casino.hub.featured.slide3.title': 'Mines · 잭팟 누적 중',
   'casino.hub.hero.desc': '오리지널 · 라이브 · 슬롯. Provably Fair로 공정하게.',
   'casino.hub.hero.title': 'PHONARA 카지노',
+  'casino.hub.balance.label': '이용 가능 잔액',
+  'casino.hub.featured.sectionTitle': '추천 게임',
+  'casino.hub.grid.sectionTitle': '전체 게임',
+  'casino.hub.pf.deferred': '공정성 검증기는 다음 카지노 웨이브에서 열립니다.',
   'casino.hub.defer.title': '카지노 게임 준비 중',
   'casino.hub.defer.subtitle':
     '게임 로비와 Provably Fair 데스크는 P10 카지노 인프라와 함께 열릴 예정이에요.',
@@ -1633,6 +1637,7 @@ export const presentationKoMessages = {
   'casino.tabs.new': '신규',
   'casino.tabs.originals': '오리지널',
   'casino.tabs.slots': '슬롯',
+  'casino.tabs.table': '테이블',
   'casino.ticker.title': '실시간 당첨',
   'casino.tournament.crypto_crash_cup.subtitle': 'Crash · 멀티 ×10 이상 카운트',
   'casino.tournament.crypto_crash_cup.title': '크립토 크래시 컵',

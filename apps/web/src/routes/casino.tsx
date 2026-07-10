@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
 import { getSession } from '@/lib/auth';
-import { CasinoHubDeferPage } from '@/product/surfaces/casino/casino-hub-defer-page';
+import { CasinoLobbyPage } from '@/product/surfaces/casino/casino-lobby-page';
 
 export const Route = createFileRoute('/casino')({
   beforeLoad: async () => {
@@ -14,5 +14,5 @@ export const Route = createFileRoute('/casino')({
 });
 
 function CasinoRoutePage() {
-  return <CasinoHubDeferPage />;
+  return <CasinoLobbyPage />;
 }

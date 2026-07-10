@@ -1,10 +1,9 @@
 import type { GameCode } from '@phonara/game-engine';
 import type { GameConfig } from './types';
 
-/** URL path for a casino game route (engine code → hyphenated path). */
+/** URL path for a casino game route — canonical `/games/$gameCode` (§12.11 · §23.1). */
 export function casinoGamePath(code: GameCode): string {
-  if (code === 'dice') return '/casino/dice';
-  return `/casino/${code.replace(/_/g, '-')}`;
+  return `/games/${code.replace(/_/g, '-')}`;
 }
 
 export const GAME_CONFIGS: GameConfig[] = [

@@ -9,7 +9,7 @@ import { DA_W5_DOMAIN_CARD_VARIANTS } from '@/domain/da-w5-cards-domain-variants
 import { I18nProvider } from '@/product/i18n';
 import { Card } from '@/product/primitives/card';
 import { MissionCard } from '@/product/primitives/mission-card';
-import { CasinoHubDeferPage } from '@/product/surfaces/casino/casino-hub-defer-page';
+import { CasinoLobbyPage } from '@/product/surfaces/casino/casino-lobby-page';
 import { WalletBalanceHero } from '@/product/surfaces/wallet/wallet-balance-hero';
 
 vi.mock('@tanstack/react-router', async (importOriginal) => {
@@ -23,6 +23,18 @@ vi.mock('@tanstack/react-router', async (importOriginal) => {
     ),
   };
 });
+
+vi.mock('@/hooks/use-wallet', () => ({
+  useWallet: () => ({
+    wallet: {
+      usdt_available: '10.000000',
+      phon_available: '20.000000',
+    },
+    loading: false,
+    error: null,
+    refetch: vi.fn(),
+  }),
+}));
 
 beforeEach(() => {
   window.localStorage.setItem('phonara.locale', 'ko');
@@ -48,7 +60,7 @@ describe('da-w5-gate-domain-cards · 0.2s scan distinguish (§34.17 · YAML #195
             detailsTitle="Breakdown"
             details={<span>locked</span>}
           />
-          <CasinoHubDeferPage />
+          <CasinoLobbyPage />
         </div>
       </I18nProvider>,
     );

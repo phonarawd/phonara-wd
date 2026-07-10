@@ -47,7 +47,7 @@ export const DA_W5_GATE_SCAN_DISTINGUISH_MARKERS = {
 export const DA_W5_GATE_PRIMARY_OWNER_PATHS = [
   'product/primitives/mission-card.tsx',
   'product/surfaces/wallet/wallet-balance-hero.tsx',
-  'product/surfaces/casino/casino-hub-defer-page.tsx',
+  'product/surfaces/casino/casino-lobby-page.tsx',
 ] as const;
 
 /** On-disk artifacts required for W5 domain cards GATE. */
@@ -68,7 +68,7 @@ export const DA_W5_GATE_DOMAIN_CARDS_TEST_PATHS = [
   'apps/web/src/product/tokens/__tests__/domain-card-personalities.test.ts',
   'apps/web/src/product/surfaces/__tests__/da-w5-gate-domain-cards.test.tsx',
   'apps/web/src/product/surfaces/wallet/__tests__/wallet-page.test.tsx',
-  'apps/web/src/product/surfaces/casino/__tests__/casino-hub-defer-page.test.tsx',
+  'apps/web/src/product/surfaces/casino/__tests__/casino-lobby-page.test.tsx',
 ] as const;
 
 /** Operator VISUAL advisory checklist (§34.31 · advisory until da-w7 / §20.12 full). */

@@ -60,7 +60,7 @@ export const DA_W5_CARDS_DOMAIN_VARIANTS_ARTIFACT_PATHS = [
   'product/surfaces/trade/futures-order-ticket.tsx',
   'product/surfaces/trade/spot-order-book-panel.tsx',
   'product/surfaces/sports/sports-fixture-board.tsx',
-  'product/surfaces/casino/casino-hub-defer-page.tsx',
+  'product/surfaces/casino/casino-lobby-page.tsx',
 ] as const;
 
 /** gate:ai-impl owner paths — CVA + wire consumers. */
@@ -71,7 +71,7 @@ export const DA_W5_CARDS_DOMAIN_VARIANTS_TEST_PATHS = [
   'apps/web/src/product/surfaces/wallet/__tests__/wallet-page.test.tsx',
   'apps/web/src/product/surfaces/tier/__tests__/tier-me-page.test.tsx',
   'apps/web/src/product/surfaces/sports/__tests__/sports-page.test.tsx',
-  'apps/web/src/product/surfaces/casino/__tests__/casino-hub-defer-page.test.tsx',
+  'apps/web/src/product/surfaces/casino/__tests__/casino-lobby-page.test.tsx',
   'apps/web/src/product/surfaces/trade/__tests__/spot-order-ticket.test.tsx',
 ] as const;
 

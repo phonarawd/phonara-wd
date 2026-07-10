@@ -8,7 +8,7 @@
 | ----------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Engine Apex**               | `[x] FULLY CLOSED`                           | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어 예외만)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | **Phase D Demolition**        | `[x] DONE`                                   | 삭제 확장 **금지**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| **Phase R UI Rebuild**        | **IN PROGRESS (§34 DA → P10)**               | **왕초보 큐:** To-do **위→아래** · completed **스킵** · **첫 pending 1개** (`p10-page-casino` #203) · Sports#4 `#202` **`[x]` DONE** · Sports#3 `#200` **`[x]`** · Sports#2 `#199` **`[x]` DONE** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`** |
+| **Phase R UI Rebuild**        | **IN PROGRESS (§34 DA → P10)**               | **왕초보 큐:** To-do **위→아래** · completed **스킵** · **첫 pending 1개** (`p10-casino-replay-and-infra` #204) · Casino lobby `#203` **`[x]` DONE** · Sports#4 `#202` **`[x]`** · Sports#3 `#200` **`[x]`** · Sports#2 `#199` **`[x]`** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`** |
 | **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | **Cursor 8GB perf (v4.4.5)**  | **`[x]` DONE**                               | `cursor:perf-rollout` diagnosis-first · `high-remediation` dry-run 기본 · evidence JSONL · summary remediation assert · tsserver/argv **옵트인** (`--include-tsserver-tuning`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -83,7 +83,7 @@
 
 **Implemented (Phase E):** `rpc_set_trailing_stop` · `rpc_clear_trailing_stop` · `time_in_force` · `display_quantity` iceberg slices · `rpc_run_stop_orders` trailing peak · `rpc_run_open_order_fills` IOC/FOK expiry
 
-**NEXT:** **`p10-page-casino`** (#203) · Sports#4 `#202` **`[x]` DONE** 2026-07-10 · Sports#3 `#200` **`[x]`** · Sports#2 `#199` **`[x]` DONE** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
+**NEXT:** **`p10-casino-replay-and-infra`** (#204) · Casino lobby `#203` **`[x]` DONE** 2026-07-10 · Sports#4 `#202` **`[x]`** · Sports#3 `#200` **`[x]`** · Sports#2 `#199` **`[x]`** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
 
 ## 읽을 것 (active)
 
@@ -131,7 +131,7 @@ bun run check:advisors
 
 **P1 Foundation** → **P2 Admin** → P3 Auth → P4 Money → P5 Security → P6 Shell → **P7 Growth** → **P8 Core** → P9–P12 Product → P13 Soft Launch → E0–E7 Engine Wave
 
-**현재 NEXT:** **`p10-page-casino`** — YAML **#203** · Sports#4 `#202` **`[x]` DONE** 2026-07-10 · Sports#3 `#200` **`[x]`** · Sports#2 `#199` **`[x]`** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
+**현재 NEXT:** **`p10-casino-replay-and-infra`** — YAML **#204** · Casino lobby `#203` **`[x]` DONE** 2026-07-10 · Sports#4 `#202` **`[x]`** · Sports#3 `#200` **`[x]`** · Sports#2 `#199` **`[x]`** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
 
 **왕초보 작업법 (43차 · 이것만):**
 
@@ -203,7 +203,7 @@ bun run check:advisors
 
 **증거:** `gate:ai-impl` fiat bundle **113/113** (18 files) · `p4-gate-fiat-reference-world-class-display-contract` **6/6** · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
 
-**마지막 완료:** **`p10-sports-rules-and-vip-stub` `[x]`** — §20.13.3 Sports#4 rules+VIP stub · Sports#2 **`[x]`** · **NEXT `p10-page-casino` (#203)**
+**마지막 완료:** **`p10-page-casino` `[x]`** — §23 casino lobby Stake grid · Sports#4 **`[x]`** · **NEXT `p10-casino-replay-and-infra` (#204)**
 
 ## Sportsbook Home (`p10-page-sports` · §13.1.1 · §12.7 · YAML #168) — `[x]` DONE · 재착수 금지
 
@@ -278,11 +278,23 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** Live in-play wire — goal/market suspend 배너 · live delay notice · score 갱신 · realtime cache patch · parity `live-inplay-state`/`live-realtime-cache` → DONE · parallel live route **0**
 
-**다음 todo:** **`p10-page-casino`** (#203) — Sports#4 **`[x]`**
+**다음 todo:** **`p10-casino-replay-and-infra`** (#204) — Casino lobby **`[x]`**
+
+## Casino Lobby (`p10-page-casino` · §23 · YAML #203) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-sports-rules-and-vip-stub` **`[x]`** · **후행:** `p10-casino-replay-and-infra` (#204)
+
+| Todo                  | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
+| --------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-page-casino`** | **`[x]` DONE** | **2026-07-10** | `casino-lobby-display-contract` · `/casino` Stake grid · Originals/Slots/Table/Live · featured · balance RPC display · PF CTA deferred · `casinoGamePath` → `/games/$code` · `gate:ai-impl` **26/26** · engine **0** |
+
+**Implemented:** Lobby discovery live · category chips · featured+grid · wallet balance display-only · PF strip disabled+reason until fairness · dead-controls hub → live · parallel defer page **0**
+
+**다음 todo:** **`p10-casino-replay-and-infra`** (#204)
 
 ## Sports Rules + VIP Stub (`p10-sports-rules-and-vip-stub` · §20.13.3 Sports#4 · YAML #202) — `[x]` DONE · 재착수 금지
 
-> **선행:** `p10-sports-layout-dedup-gate` **`[x]`** · **후행:** `p10-page-casino` (#203)
+> **선행:** `p10-sports-layout-dedup-gate` **`[x]`** · **후행:** `p10-page-casino` (#203) **`[x]`**
 
 | Todo                                | 상태           | 완료일         | 증거                                                                                                                                                                                                                            |
 | ----------------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -290,7 +302,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** Rules panel (odds/settlement/void/live/responsible) · VIP STUB with eligibility strip · dead-controls unlock todo → `ew-e5-gap-surfaces-wire` · parallel rules/vip page **0**
 
-**다음 todo:** **`p10-page-casino`** (#203)
+**다음 todo:** **`p10-casino-replay-and-infra`** (#204) — Casino lobby **`[x]`**
 
 ## Sports Parity + Multi-Market Board (`p10-sports-parity-contract-and-board` · §20.13.3 Sports#1 · YAML #198) — `[x]` DONE · 재착수 금지
 
@@ -604,7 +616,7 @@ bun run gate:ai-impl -- --test apps/web/src/product/surfaces/trade
 
 ## Fiat Reference 큐 (§20.13.2 · YAML #158–167 · Launch E1–E4 **끝난 뒤** 순차)
 
-**착수:** **`p10-sports-rules-and-vip-stub` `[x]`** · Sports#3/2/1/0 **`[x]`** · Fiat#10 **`[x]`** · **NEXT `p10-page-casino` (#203)** · To-do 순서대로 1개씩
+**착수:** **`p10-page-casino` `[x]`** · Sports#4/3/2/1/0 **`[x]`** · Fiat#10 **`[x]`** · **NEXT `p10-casino-replay-and-infra` (#204)** · To-do 순서대로 1개씩
 
 ```text
 #158  p4-fiat-reference-preflight          [x]
@@ -618,7 +630,7 @@ bun run gate:ai-impl -- --test apps/web/src/product/surfaces/trade
 #166  p5-page-settings-fiat-reference          [x]
 #167  p4-gate-fiat-reference-world-class          [x]
 #168  p10-page-sports                    [x]
-#169+ P10 (NEXT `p10-page-casino` · Sports#4 `[x]`)
+#169+ P10 (NEXT `p10-casino-replay-and-infra` · Casino lobby `[x]`)
 ```
 
 ## P9 Trade Base GATE (`p9-gate-trade` · §20.13) — `[x]` DONE · 재착수 금지

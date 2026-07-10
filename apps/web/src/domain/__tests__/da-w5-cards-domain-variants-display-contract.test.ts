@@ -101,7 +101,7 @@ describe('da-w5-cards-domain-variants-display-contract §34.17 · YAML #194', ()
     expect(sports).toContain('variant="sports-odds"');
 
     const casino = readFileSync(
-      resolve(WEB_SRC, 'product/surfaces/casino/casino-hub-defer-page.tsx'),
+      resolve(WEB_SRC, 'product/surfaces/casino/casino-lobby-page.tsx'),
       'utf8',
     );
     expect(casino).toContain('variant="casino-play"');

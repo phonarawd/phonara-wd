@@ -1354,6 +1354,10 @@ export const presentationEnMessages = {
   'casino.hub.featured.slide3.title': 'Mines · jackpot growing',
   'casino.hub.hero.desc': 'Originals · Live · Slots. Provably fair, every spin.',
   'casino.hub.hero.title': 'PHONARA Casino',
+  'casino.hub.balance.label': 'Available balance',
+  'casino.hub.featured.sectionTitle': 'Featured',
+  'casino.hub.grid.sectionTitle': 'All games',
+  'casino.hub.pf.deferred': 'Fairness verifier opens with the next casino wave.',
   'casino.hub.defer.title': 'Casino games coming next',
   'casino.hub.defer.subtitle':
     'The game lobby and Provably Fair desk open with P10 casino infrastructure.',
@@ -1645,6 +1649,7 @@ export const presentationEnMessages = {
   'casino.tabs.new': 'New',
   'casino.tabs.originals': 'Originals',
   'casino.tabs.slots': 'Slots',
+  'casino.tabs.table': 'Table',
   'casino.ticker.title': 'Live Wins',
   'casino.tournament.crypto_crash_cup.subtitle': 'Crash · multipliers ≥ ×10',
   'casino.tournament.crypto_crash_cup.title': 'Crypto Crash Cup',

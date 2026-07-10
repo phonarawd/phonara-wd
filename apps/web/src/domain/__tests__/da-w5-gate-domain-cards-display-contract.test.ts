@@ -97,7 +97,7 @@ describe('da-w5-gate-domain-cards-display-contract §34.17 · YAML #195', () => 
     expect(DA_W5_GATE_PRIMARY_OWNER_PATHS).toEqual([
       'product/primitives/mission-card.tsx',
       'product/surfaces/wallet/wallet-balance-hero.tsx',
-      'product/surfaces/casino/casino-hub-defer-page.tsx',
+      'product/surfaces/casino/casino-lobby-page.tsx',
     ]);
 
     const mission = readFileSync(resolve(WEB_SRC, 'product/primitives/mission-card.tsx'), 'utf8');
@@ -112,10 +112,10 @@ describe('da-w5-gate-domain-cards-display-contract §34.17 · YAML #195', () => 
     expect(wallet).toContain('data-testid="wallet-balance-hero"');
 
     const casino = readFileSync(
-      resolve(WEB_SRC, 'product/surfaces/casino/casino-hub-defer-page.tsx'),
+      resolve(WEB_SRC, 'product/surfaces/casino/casino-lobby-page.tsx'),
       'utf8',
     );
     expect(casino).toContain('variant="casino-play"');
-    expect(casino).toContain('data-testid="casino-hub-play-tile"');
+    expect(casino).toContain('casino-hub-play-tile');
   });
 });

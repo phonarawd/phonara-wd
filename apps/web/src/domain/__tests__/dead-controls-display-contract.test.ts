@@ -28,10 +28,15 @@ describe('dead-controls-display-contract (PQA F3)', () => {
     expect(PQA_DEAD_CONTROL_DEFER_REGISTRY.length).toBeGreaterThanOrEqual(5);
     const ids = PQA_DEAD_CONTROL_DEFER_REGISTRY.map((row) => row.id);
     expect(ids).toContain('casino-route-hub-stub');
+    expect(ids).toContain('casino-round-hook-orphan');
     expect(ids).toContain('settings-api-keys-stub');
     expect(ids).toContain('sports-vip-coming-soon');
     expect(ids).toContain('tier-keep-status-claim-blocked');
     expect(ids).toContain('user-reward-tickets-zero-issuance');
+
+    const hub = PQA_DEAD_CONTROL_DEFER_REGISTRY.find((row) => row.id === 'casino-route-hub-stub');
+    expect(hub?.mitigatedBy).toBe('live');
+    expect(hub?.engineTodo).toBe('p10-page-casino');
   });
 
   it('blocks tier-keepStatus claim until E1 engine ships', () => {

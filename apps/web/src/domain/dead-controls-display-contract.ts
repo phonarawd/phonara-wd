@@ -15,7 +15,11 @@ import { TIER_KEEP_STATUS_RPC, TIER_KEEP_STATUS_UI_ID } from './tier-me-display-
 export const PQA_FIX_DEAD_CONTROLS_TODO = 'pqa-fix-dead-controls' as const;
 
 export const CASINO_ROUND_HOOK_OWNER = 'apps/web/src/features/casino/use-casino-round.ts' as const;
+/** Game shell / round pipeline — still deferred until CasinoR#1 + game batches. */
 export const CASINO_HUB_DEFER_TODO = 'p10-casino-replay-and-infra' as const;
+
+/** Lobby discovery is live (`p10-page-casino`) — hub stub row mitigatedBy=live. */
+export const CASINO_LOBBY_LIVE_TODO = 'p10-page-casino' as const;
 
 export const SPORTS_VIP_ROUTE = '/sports/vip' as const;
 export const SPORTS_VIP_ENGINE_TODO = 'ew-e4-gate-tier-option-b' as const;
@@ -55,17 +59,16 @@ export const PQA_DEAD_CONTROL_DEFER_REGISTRY: readonly DeadControlDeferRow[] = [
   {
     id: 'casino-route-hub-stub',
     route: CASINO_HUB_ROUTE,
-    mitigatedBy: 'defer_stub',
-    disabledReasonKey: CASINO_HUB_DEFER_REASON_KEY,
-    engineTodo: CASINO_HUB_DEFER_TODO,
-    note: 'DomainHub replaced — game surfaces deferred to P10 casino infra',
+    mitigatedBy: 'live',
+    engineTodo: CASINO_LOBBY_LIVE_TODO,
+    note: 'p10-page-casino lobby live — category/featured/grid · play surfaces still deferred',
   },
   {
     id: 'casino-round-hook-orphan',
     route: CASINO_HUB_ROUTE,
     mitigatedBy: 'defer_stub',
     engineTodo: CASINO_HUB_DEFER_TODO,
-    note: 'useCasinoRoundPipeline exists · 0 mounted game surfaces until P10',
+    note: 'useCasinoRoundPipeline exists · 0 mounted game surfaces until CasinoR#1 + batches',
   },
   {
     id: 'settings-api-keys-stub',
