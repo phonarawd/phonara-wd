@@ -72,4 +72,4 @@ Advisory (non-blocking): e2e-browser-matrix red (WebKit timeout) — merge 차�
 
 ## 다음
 
-`pir-closeout-unblock-205` — §82 · ACTIVE_WORK_SSOT NEXT = `#205` · Evidence GATE PASS
+`pir-closeout-unblock-205` **`[x]` DONE** 2026-07-11 — [`unblock-205.md`](unblock-205.md) · 전역 NEXT = `#205`

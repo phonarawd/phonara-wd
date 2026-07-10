@@ -2,7 +2,7 @@
 
 > **목적:** PIR 감사·장애 시 문서보다 먼저 찾는 **증거 인덱스**  
 > **Plan:** `platform_integrity_remediation_v1` · execute SSOT = [`ACTIVE_WORK_SSOT.md`](../../SSOT/ACTIVE_WORK_SSOT.md) §Platform Integrity  
-> **차단:** Track A `#205` (`p10-casino-fiat-hint-session-lock`) — **PIR GATE green 전 착수 금지**  
+> **상태:** **`[x]` DONE** 2026-07-11 — Track A `#205` **UNBLOCKED**  
 > **바이너리:** CI artifact 링크만 — repo root `/evidence` **금지** (G12)
 
 **경로 (단일 SOT):** `docs/OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/`
@@ -37,7 +37,7 @@ docs/OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/
 | P1       | `P1/`       | Admin RBAC · sports odds debounce                            | admin-rbac **`[x]`** · sports debounce **`[x]`** 2026-07-11 |
 | E1–E5    | `E1/`…`E5/` | migration + SQL test · `stack:push-remote` · advisor 0 ERROR | E1–E5 **`[x]`** 2026-07-11                                  |
 | P2       | `P2/`       | quantize6 · PF golden vectors                                | quantize-odds **`[x]`** · pf-golden **`[x]`** 2026-07-11    |
-| **GATE** | `GATE/`     | presentation bundle · CI required 4 · unblock `#205`         | platform-integrity **`[x]`** · unblock **`[ ]`**            |
+| **GATE** | `GATE/`     | presentation bundle · CI required 4 · unblock `#205`         | platform-integrity **`[x]`** · unblock **`[x]`** 2026-07-11 |
 
 ---
 
@@ -60,8 +60,8 @@ PHONARA 정합: 로컬 = `gate:ai-impl` · heavy = **GitHub CI** · Engine Wave 
 | ---------------------------------------------- | -------------------------------------------------------------------- | ------------------------- |
 | [`W0/ssot-bootstrap.md`](W0/ssot-bootstrap.md) | ACTIVE_WORK_SSOT 형제 큐 · `#205` BLOCKED · ADR-008 §PIR · 본 README | **`[x]` DONE** 2026-07-11 |
 
-**전역 NEXT:** `pir-closeout-unblock-205`  
-**Track A `#205`:** **BLOCKED by PIR GATE** until `pir-closeout-unblock-205`
+**전역 NEXT:** `p10-casino-fiat-hint-session-lock` (#205)  
+**Track A `#205`:** **UNBLOCKED** — `pir-closeout-unblock-205` `[x]`
 
 ---
 
@@ -70,7 +70,7 @@ PHONARA 정합: 로컬 = `gate:ai-impl` · heavy = **GitHub CI** · Engine Wave 
 | 파일                                                       | 역할                                               | 상태                      |
 | ---------------------------------------------------------- | -------------------------------------------------- | ------------------------- |
 | [`GATE/platform-integrity.md`](GATE/platform-integrity.md) | presentation bundle · CI 4 · security-auditor PASS | **`[x]` DONE** 2026-07-11 |
-| [`GATE/unblock-205.md`](GATE/unblock-205.md)               | §82 · NEXT = `#205`                                | `[ ]` pending             |
+| [`GATE/unblock-205.md`](GATE/unblock-205.md)               | §82 · NEXT = `#205`                                | **`[x]` DONE** 2026-07-11 |
 
 ---
 
@@ -153,6 +153,6 @@ PHONARA 정합: 로컬 = `gate:ai-impl` · heavy = **GitHub CI** · Engine Wave 
 ## `#205` 재개 조건
 
 ```text
-pir-gate-platform-integrity [x] + pir-closeout-unblock-205 [x]
+pir-gate-platform-integrity [x] + pir-closeout-unblock-205 [x]  ← 충족 2026-07-11
   → phase_r Track A 첫 pending = p10-casino-fiat-hint-session-lock (#205)
 ```
