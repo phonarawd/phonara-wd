@@ -50,6 +50,9 @@ export const EPHEMERAL_AUTH_PATHS = ['tests/e2e/.auth.json', 'tests/e2e/.admin-a
 /** Repo-local Cursor/MCP ephemeral files — never commit. */
 export const CURSOR_EPHEMERAL_PATHS = ['.cursor/mcp-smoke-stderr.txt'] as const;
 
+/** Local perf rollout artifacts (gate-diagnosis · evidence · remediation). */
+export const CURSOR_PERF_DIR = '.cursor/perf' as const;
+
 /**
  * Archival / legacy paths excluded from Cursor index (P8 — Final UI Reset).
  * High-volume PNG mockups, deleted-doc staging, and superseded visual baselines.
@@ -106,6 +109,7 @@ export const CURSORIGNORE_REQUIRED_PATTERNS = [
   'docs/archive/',
   'tests/visual/mockups/',
   'tests/visual/m0-baselines/',
+  '.cursor/perf/',
 ] as const;
 
 /**

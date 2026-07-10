@@ -57,6 +57,7 @@ setup/.env.secrets
 
 # MCP smoke test ephemeral stderr (scripts/test-supabase-mcp-smoke.ps1)
 .cursor/mcp-smoke-stderr.txt
+.cursor/perf/
 
 # Security tooling run artifacts (regenerated each drill/audit/pentest)
 /1000

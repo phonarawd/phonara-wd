@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { auditCursorArgv } from './lib/cursor-argv';
 import { shallowDirSizeBytes, cursorSnapshotsDir } from './lib/cursor-metadata-sizes';
 import { killOrphanRepoDevProcesses } from './lib/cursor-dev-processes';
+import { maybeRunEmptyStandby } from './lib/empty-standby-core';
 import { stopIdleDockerIfSafe } from './lib/docker-idle-stop';
 import { getBlockedE2ePorts, killE2ePortListeners } from './lib/e2e-lifecycle';
 import { spawnSyncSafe } from './lib/spawn-safe';
@@ -211,6 +212,7 @@ switch (mode) {
   case 'end':
   case 'work-end':
     coreHygiene({ killOrphans: true, killPorts: true, cleanArtifacts: true });
+    maybeRunEmptyStandby();
     workEndTeardown();
     process.stdout.write('[cursor:hygiene] work-end complete — Cursor ready (low-spec idle)\n');
     break;
@@ -231,6 +233,7 @@ switch (mode) {
   }
   case 'after-heavy':
     coreHygiene({ killOrphans: true, killPorts: true, cleanArtifacts: true });
+    maybeRunEmptyStandby();
     workEndTeardown();
     break;
   case 'before-heavy':
