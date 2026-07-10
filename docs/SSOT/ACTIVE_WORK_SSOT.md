@@ -1,4 +1,4 @@
-# Active Work SSOT (2026-07-06)
+# Active Work SSOT (2026-07-11)
 
 > **유일한 실행 큐 정본.** 그 외 `.md` (엔진 evidence · v2 wave · Demolition batch · forensic)는 **이력·감사 전용** — 구현 큐로 읽지 않는다.
 
@@ -6,9 +6,10 @@
 
 | 영역                          | 상태                                         | AI 행동                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ----------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Engine Apex**               | `[x] FULLY CLOSED`                           | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어 예외만)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| **Engine Apex**               | `[x] FULLY CLOSED`                           | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어·**PIR Wave E** 예외만)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | **Phase D Demolition**        | `[x] DONE`                                   | 삭제 확장 **금지**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| **Phase R UI Rebuild**        | **IN PROGRESS (§34 DA → P10)**               | **왕초보 큐:** To-do **위→아래** · completed **스킵** · **첫 pending 1개** (`p10-casino-replay-and-infra` #204) · Casino lobby `#203` **`[x]` DONE** · Sports#4 `#202` **`[x]`** · Sports#3 `#200` **`[x]`** · Sports#2 `#199` **`[x]`** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`** |
+| **Platform Integrity (PIR)**  | **IN PROGRESS · Wave E1 system-lock-order `[x]`**  | Plan `platform_integrity_remediation_v1` · **NEXT `pir-e2-realtime-narrow`** · Track A `#205` **BLOCKED by PIR GATE** · Evidence [`PLATFORM_INTEGRITY_EVIDENCE/`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md)                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **Phase R UI Rebuild**        | **IN PROGRESS (§34 DA → P10)**               | **왕초보 큐:** To-do **위→아래** · completed **스킵** · Track A 첫 pending `#205` **`BLOCKED by PIR GATE`** (PIR closeout 후 재개) · CasinoR#1 `#204` **`[x]` DONE** · Casino lobby `#203` **`[x]`** · Sports#4 `#202` **`[x]`** · Sports#3 `#200` **`[x]`** · Sports#2 `#199` **`[x]`** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`** |
 | **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | **Cursor 8GB perf (v4.4.5)**  | **`[x]` DONE**                               | `cursor:perf-rollout` diagnosis-first · `high-remediation` dry-run 기본 · evidence JSONL · summary remediation assert · tsserver/argv **옵트인** (`--include-tsserver-tuning`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -24,6 +25,41 @@
 **Implemented:** `gate:ai-impl` perf scripts **90/90** · `cursor-dev-processes` DRIFT · `dominant-ram-consumer` 경계 fixture · `claude-desktop-processes` allowlist · `parse-migrations-lock` SOT · `schtasks-lifecycle` Query-first · standby 8s · `.cursor/perf/` workspace-artifacts
 
 **Operator:** `bun run cursor:perf-rollout` → `RESTART_CURSOR_REQUIRED` 시 Cursor 재시작 · HIGH 시 `--confirm-high-remediation` 확인 후 · Max Context UNVERIFIED 시 `--attest-max-context=6k` 또는 evidence 제출
+
+## Platform Integrity Remediation (Plan `platform_integrity_remediation_v1` · execute SSOT)
+
+> **형제 큐:** Phase R Track A와 **독립** — `trade_desk_*` 패턴 · **#205 선행 게이트**  
+> **차단:** `p10-casino-fiat-hint-session-lock` (#205) 및 이후 Casino/P10 · **PIR GATE green 전 착수 금지**  
+> **근거:** 2026-07-11 READ-ONLY 감사 (DB · 엔진 · Realtime/Edge)  
+> **Evidence:** [`PLATFORM_INTEGRITY_EVIDENCE/README.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md)  
+> **ADR-008 교차:** C-2 system-account 잠금순서 = Engine Wave DB TX deep audit의 **부분 Accepted** ([`008-engine-wave-db-tx-race-defer.md`](../PRODUCT/ADR/008-engine-wave-db-tx-race-defer.md) §PIR)
+
+| Todo                              | 상태              | 완료일         | 증거                                                                                          |
+| --------------------------------- | ----------------- | -------------- | --------------------------------------------------------------------------------------------- |
+| **`pir-w0-ssot`**                 | **`[x]` DONE**    | **2026-07-11** | ACTIVE_WORK_SSOT 형제 큐 · Evidence 스캐폴드 · `#205` BLOCKED · ADR-008 §PIR                  |
+| `pir-p0-autobet-session`          | **`[x]` DONE**    | **2026-07-11** | 순수 `stepAutoBetSession` · 루프 지역 상태 · `sessionActiveRef` · `autoBet(stakeOverride)` · vitest **9/9** · shell **4/4** |
+| `pir-p0-autobet-gate`             | **`[x]` DONE**    | **2026-07-11** | `gate:ai-impl` auto-bet+shell · L0~L4 green · vitest **13/13** · Evidence [`P0/autobet-gate.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/P0/autobet-gate.md) |
+| `pir-p1-admin-rbac`               | **`[x]` DONE**    | **2026-07-11** | `rpc_admin_list_role_grants` fail-closed · localStorage DEV-only · vitest **17/17** · Evidence [`P1/admin-rbac.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/P1/admin-rbac.md) |
+| `pir-p1-sports-odds-debounce`     | **`[x]` DONE**    | **2026-07-11** | odds INSERT ≥500ms debounce · fixture-only patch · no full `['sports']` invalidate · Evidence [`P1/sports-odds-debounce.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/P1/sports-odds-debounce.md) |
+| `pir-e1-system-lock-order`        | **`[x]` DONE**    | **2026-07-11** | `_lock_system_accounts` · buy/sell/fill 선잠금 · SQL 118/118 · `stack:push-remote` · advisor 0 · Evidence [`E1/system-lock-order.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/E1/system-lock-order.md) |
+| `pir-e2-realtime-narrow`          | `[ ]` **NEXT**    | —              | publication DROP `wallet_ledger`/fills · `ledger_user_created_idx`                            |
+| `pir-e3-golden-earth`             | `[ ]` pending     | —              | 전역 카운터 TX 말단 · 잭팟 idempotency                                                        |
+| `pir-e4-sweep-chunk`              | `[ ]` pending     | —              | liquidations/funding/stop/affiliate `LIMIT` + `has_more`                                      |
+| `pir-e5-idempotency-handlers`     | `[ ]` pending     | —              | place/claim `unique_violation` → 기존 결과                                                    |
+| `pir-p2-quantize-odds`            | `[ ]` pending     | —              | `quantize6` number 제거 · ingest string-only                                                  |
+| `pir-p2-pf-golden-vectors`        | `[ ]` pending     | —              | 12게임 PF 골든 벡터 pin (권위=SQL)                                                            |
+| `pir-gate-platform-integrity`     | `[ ]` pending     | —              | presentation + CI required 4 · security-auditor                                               |
+| `pir-closeout-unblock-205`        | `[ ]` pending     | —              | §82 · NEXT = `#205` · Evidence GATE PASS                                                      |
+
+**현재 NEXT (전역):** **`pir-e2-realtime-narrow`** — Wave E Engine RED STOP (Realtime publication narrow + ledger index)  
+**Track A `#205`:** **`BLOCKED by PIR GATE`** — `pir-gate-platform-integrity` + `pir-closeout-unblock-205` `[x]` 후에만 재개
+
+**재개 조건:**
+
+```text
+pir-gate-platform-integrity [x] + pir-closeout-unblock-205 [x]
+  → phase_r Track A 첫 pending = p10-casino-fiat-hint-session-lock (#205)
+```
 
 ## Trade Desk Remediation (Plan `trade_desk_remediation_v3` · execute SSOT)
 
@@ -83,7 +119,7 @@
 
 **Implemented (Phase E):** `rpc_set_trailing_stop` · `rpc_clear_trailing_stop` · `time_in_force` · `display_quantity` iceberg slices · `rpc_run_stop_orders` trailing peak · `rpc_run_open_order_fills` IOC/FOK expiry
 
-**NEXT:** **`p10-casino-replay-and-infra`** (#204) · Casino lobby `#203` **`[x]` DONE** 2026-07-10 · Sports#4 `#202` **`[x]`** · Sports#3 `#200` **`[x]`** · Sports#2 `#199` **`[x]`** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
+**NEXT:** **`pir-e1-system-lock-order`** (PIR) · Track A `#205` **`BLOCKED by PIR GATE`** · CasinoR#1 `#204` **`[x]` DONE** 2026-07-10 · Casino lobby `#203` **`[x]`** · Sports#4–0 · Fiat#10 · DA W5…W0 · R0 · PQA §33 **`[x]`**
 
 ## 읽을 것 (active)
 
@@ -131,16 +167,16 @@ bun run check:advisors
 
 **P1 Foundation** → **P2 Admin** → P3 Auth → P4 Money → P5 Security → P6 Shell → **P7 Growth** → **P8 Core** → P9–P12 Product → P13 Soft Launch → E0–E7 Engine Wave
 
-**현재 NEXT:** **`p10-casino-replay-and-infra`** — YAML **#204** · Casino lobby `#203` **`[x]` DONE** 2026-07-10 · Sports#4 `#202` **`[x]`** · Sports#3 `#200` **`[x]`** · Sports#2 `#199` **`[x]`** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
+**현재 NEXT:** **`pir-e1-system-lock-order`** (Plan `platform_integrity_remediation_v1`) — Track A **`p10-casino-fiat-hint-session-lock` (#205) = BLOCKED by PIR GATE** · CasinoR#1 `#204` **`[x]` DONE** 2026-07-10 · Casino lobby `#203` **`[x]`** · Sports#4–0 · Fiat#10 · DA · R0 · PQA **`[x]`**
 
 **왕초보 작업법 (43차 · 이것만):**
 
-1. Cursor Plan To-do **위에서 아래로** 본다
-2. **`completed`(체크됨)는 건너뛴다**
-3. **첫 `pending`(빈 원) 1개만** 한다 — agent impl 완료 후 operator **`VISUAL APPROVED: p9-operator-visual-signoff`** → YAML #152 completed → **28번 gate**
-4. 끝나면 다음 pending — **순서 바꾸지 않음** · **병렬 없음**
+1. **PIR 형제 큐가 열려 있으면** ACTIVE_WORK_SSOT Platform Integrity 표 **위→아래** 첫 pending 1개만 (지금 = `pir-e1-system-lock-order`)
+2. Cursor Plan To-do **위에서 아래로** 본다
+3. **`completed`(체크됨)는 건너뛴다**
+4. Track A `#205`는 **PIR GATE green 전 착수 금지**
 
-**직선 큐 (pending 구간):** … Fiat (#158–167) → `p10-page-sports` (#168) → **PQA (#169–179 `[x]`)** → **§35 R0 (#180–184 `[x]`)** → **DA W0+ (#185+)** → P10 잔여 → P11 → P12 → P13 → T1/T2 → Engine Wave
+**직선 큐 (pending 구간):** **PIR** (`pir-e1-system-lock-order` → … → `pir-closeout-unblock-205`) → Track A `#205` → P10 잔여 → P11 → P12 → P13 → T1/T2 → Engine Wave (잔여 DB TX deep audit)
 
 **품질 바 (운영자):** §13.1.2 — UX=거래소급 · 정산=플랫폼 내부 only · chart/WS **display-only** · §32.7 — 노출=동작|disabled+reason|hidden · §22.2.4 표시=RPC · dead control 0
 
@@ -616,7 +652,7 @@ bun run gate:ai-impl -- --test apps/web/src/product/surfaces/trade
 
 ## Fiat Reference 큐 (§20.13.2 · YAML #158–167 · Launch E1–E4 **끝난 뒤** 순차)
 
-**착수:** **`p10-page-casino` `[x]`** · Sports#4/3/2/1/0 **`[x]`** · Fiat#10 **`[x]`** · **NEXT `p10-casino-replay-and-infra` (#204)** · To-do 순서대로 1개씩
+**착수:** **`p10-casino-replay-and-infra` `[x]`** · Casino lobby **`[x]`** · Sports#4/3/2/1/0 **`[x]`** · Fiat#10 **`[x]`** · **전역 NEXT `pir-e1-system-lock-order`** · Track A `#205` **`BLOCKED by PIR GATE`** · To-do 순서대로 1개씩
 
 ```text
 #158  p4-fiat-reference-preflight          [x]

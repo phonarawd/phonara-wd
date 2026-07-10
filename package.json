@@ -83,6 +83,7 @@
     "check:ui-architecture": "tsx scripts/check-ui-architecture.ts",
     "check:phase-r-guards": "tsx scripts/check-phase-r-guards.ts",
     "check:plan-yaml": "tsx scripts/check-plan-yaml.ts",
+    "repair:plan-encoding": "tsx scripts/repair-plan-encoding.ts",
     "check:plan-doc-sync": "tsx scripts/check-plan-doc-sync.ts",
     "sync:plan-doc-mirror": "tsx scripts/sync-plan-doc-mirror.ts",
     "check:design-tokens": "tsx scripts/check-design-tokens.ts",

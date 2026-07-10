@@ -101,9 +101,19 @@ export function useSportsPageController(
   const myBetsQuery = useMySportsBets(50);
   const placeBetMutation = usePlaceSportsBet();
 
-  const realtime = useSportsRealtime({ enabled: liveSurfaceActive });
-
   const fixtures = fixturesQuery.data ?? [];
+  /** On-screen fixtures for odds INSERT debounce scope (PIR pir-p1-sports-odds-debounce). */
+  const visibleFixtureIds = useMemo(() => {
+    const ids = new Set(fixtures.map((row) => row.fixture_id));
+    if (resolvedFixtureId) ids.add(resolvedFixtureId);
+    return ids;
+  }, [fixtures, resolvedFixtureId]);
+
+  const realtime = useSportsRealtime({
+    enabled: liveSurfaceActive,
+    visibleFixtureIds,
+  });
+
   const liveBoardIds =
     mode === 'live' ? fixtures.map((row) => row.fixture_id) : ([] as string[]);
   const liveBoardStates = useLiveFixtureStates(liveBoardIds);

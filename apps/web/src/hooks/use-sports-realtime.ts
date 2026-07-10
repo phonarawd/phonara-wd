@@ -1,22 +1,26 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-function isVisualFixtureMode(): boolean {
-  return false;
-}
 import {
+  applySportsOddsInsertPatch,
   fixturePatchFromRealtimeRow,
   marketPatchFromRealtimeRow,
   oddsPatchFromRealtimeRow,
   patchSportsFixtureLists,
   patchSportsFixtureMarkets,
   patchSportsLiveState,
-  patchSportsOddsInFixtureLists,
-  patchSportsOddsInMarkets,
   readFixtureIdFromRealtimePayload,
   readMarketIdFromRealtimePayload,
   removeSportsFixtureFromLists,
 } from '../features/sports/sports-realtime-cache';
+import {
+  createSportsOddsInsertDebouncer,
+  SPORTS_ODDS_INSERT_DEBOUNCE_MS,
+} from '../features/sports/sports-odds-insert-debounce';
 import { useRealtime, type RealtimeConnectionStatus } from './use-realtime';
+
+function isVisualFixtureMode(): boolean {
+  return false;
+}
 
 type PostgresChangePayload = {
   eventType?: 'INSERT' | 'UPDATE' | 'DELETE';
@@ -34,6 +38,12 @@ function readEventType(payload: unknown): PostgresChangePayload['eventType'] | u
 
 export interface UseSportsRealtimeOptions {
   enabled?: boolean;
+  /**
+   * Fixture ids currently on screen (board + focused detail).
+   * Odds INSERT patches are scoped to this set; unknown outcomes are dropped
+   * (no full `['sports']` invalidate).
+   */
+  visibleFixtureIds?: ReadonlySet<string>;
 }
 
 export interface UseSportsRealtimeResult {
@@ -41,13 +51,19 @@ export interface UseSportsRealtimeResult {
   connected: boolean;
 }
 
+export { SPORTS_ODDS_INSERT_DEBOUNCE_MS };
+
 /**
  * Subscribe to sports fixtures/markets/odds Realtime and patch react-query caches.
  * Display-only — settlement RPCs remain unchanged (money-safe).
+ *
+ * Odds INSERT path: ≥500ms trailing debounce · on-screen fixture scope · no full sports invalidate.
  */
 export function useSportsRealtime(options: UseSportsRealtimeOptions = {}): UseSportsRealtimeResult {
   const qc = useQueryClient();
   const enabled = (options.enabled ?? true) && !isVisualFixtureMode();
+  const visibleFixtureIdsRef = useRef(options.visibleFixtureIds);
+  visibleFixtureIdsRef.current = options.visibleFixtureIds;
 
   const invalidateSportsDisplay = useCallback(() => {
     void qc.invalidateQueries({ queryKey: ['sports'] });
@@ -99,8 +115,26 @@ export function useSportsRealtime(options: UseSportsRealtimeOptions = {}): UseSp
 
       void qc.invalidateQueries({ queryKey: ['sports', 'fixtures'] });
     },
+    [qc, invalidateSportsDisplay],
+  );
+
+  const oddsDebouncer = useMemo(
+    () =>
+      createSportsOddsInsertDebouncer({
+        debounceMs: SPORTS_ODDS_INSERT_DEBOUNCE_MS,
+        flush: (patches) => {
+          const fixtureIds = visibleFixtureIdsRef.current;
+          const scope = fixtureIds ? { fixtureIds } : undefined;
+          for (const patch of patches) {
+            // Miss = drop. Never invalidate full ['sports'] on odds INSERT fanout.
+            applySportsOddsInsertPatch(qc, patch, scope);
+          }
+        },
+      }),
     [qc],
   );
+
+  useEffect(() => () => oddsDebouncer.dispose(), [oddsDebouncer]);
 
   const fixturesRt = useRealtime({
     table: 'sports_fixtures',
@@ -119,28 +153,12 @@ export function useSportsRealtime(options: UseSportsRealtimeOptions = {}): UseSp
       const row = (payload as PostgresChangePayload).new;
       const patch = oddsPatchFromRealtimeRow(row);
       if (!patch) {
-        invalidateSportsDisplay();
+        // Malformed row — drop; do not fan out a full sports refetch.
         return;
       }
-
-      const listPatched = patchSportsOddsInFixtureLists(
-        qc,
-        patch.outcomeId,
-        patch.odds,
-        patch.capturedAt,
-      );
-      const marketsPatched = patchSportsOddsInMarkets(
-        qc,
-        patch.outcomeId,
-        patch.odds,
-        patch.capturedAt,
-      );
-
-      if (!listPatched && !marketsPatched) {
-        invalidateSportsDisplay();
-      }
+      oddsDebouncer.enqueue(patch);
     },
-    [qc, invalidateSportsDisplay],
+    [oddsDebouncer],
   );
 
   const oddsRt = useRealtime({

@@ -79,7 +79,7 @@
 
 ## Next (유일한 구현 큐)
 
-**Phase R UI Rebuild** — [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) · **Cursor 8GB perf `phase0-gate` `[x]` DONE** 2026-07-10 · **`p10-sports-rules-and-vip-stub` `[x]` DONE** 2026-07-10 · **NEXT** `p10-page-casino` #203 · §34 → P10 · preflight: [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
+**Phase R UI Rebuild** — [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) · **Cursor 8GB perf `phase0-gate` `[x]` DONE** 2026-07-10 · **PIR Wave P1 sports-odds-debounce `[x]`** · **전역 NEXT** `pir-e1-system-lock-order` · Track A `#205` **BLOCKED by PIR GATE** · CasinoR#1 `#204` `[x]` · Casino lobby `#203` `[x]` · §34 → P10 · preflight: [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
 
 **Trade 결함 0 수렴 (형제 큐)** — Plan `트레이딩_결함_0_수렴` · Phase A–C **`[x]` impl** 2026-07-08 · **NEXT** Phase D `phase-d-fills-pagination` (D1) → `phase-d-depth-chart` (D2) · preflight: [`ENGINE_UI_FULL_AUDIT_2026-07-08.md`](audit/ENGINE_UI_FULL_AUDIT_2026-07-08.md)
 
@@ -294,7 +294,7 @@
 | `p10-sports-rules-and-vip-stub`         | `[x]` DONE      | 2026-07-10 | `sports-rules-and-vip-display-contract` · rules panel · VIP eligibility stub · `gate:ai-impl` **4/4** · sports-page+dead-controls+redirect **30/30** |
 | `p10-page-casino`                       | `[ ]` NEXT      | —          | YAML #203 pending                                                                                                                                    |
 | `p10-casino-replay-and-infra`           | `[ ]` NEXT      | —          | YAML #204 pending                                                                                                                                    |
-| `p10-casino-fiat-hint-session-lock`     | `[ ]` NEXT      | —          | YAML #205 pending                                                                                                                                    |
+| `p10-casino-fiat-hint-session-lock`     | `[ ]` **BLOCKED** | —          | YAML #205 · **BLOCKED by PIR GATE** (`platform_integrity_remediation_v1`) · 재개 = `pir-closeout-unblock-205` |
 | `p10-games-batch-a`                     | `[ ]` NEXT      | —          | YAML #206 pending                                                                                                                                    |
 | `p10-games-batch-b`                     | `[ ]` NEXT      | —          | YAML #207 pending                                                                                                                                    |
 | `p10-games-batch-c`                     | `[ ]` NEXT      | —          | YAML #208 pending                                                                                                                                    |

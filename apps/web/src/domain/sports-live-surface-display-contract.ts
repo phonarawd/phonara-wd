@@ -22,6 +22,8 @@ export const SPORTS_LIVE_STATE_RPC = 'rpc_get_live_fixture_state' as const;
 export const SPORTS_LIVE_STATE_HOOK = 'useLiveFixtureState' as const;
 export const SPORTS_LIVE_REALTIME_HOOK = 'useSportsRealtime' as const;
 export const SPORTS_LIVE_REALTIME_CACHE = 'sports-realtime-cache.ts' as const;
+/** PIR pir-p1 — odds INSERT trailing debounce (≥500ms) + visible-fixture scope. */
+export const SPORTS_LIVE_ODDS_INSERT_DEBOUNCE = 'sports-odds-insert-debounce.ts' as const;
 
 export const SPORTS_LIVE_BANNER_OWNER = 'sports-live-inplay-banner.tsx' as const;
 export const SPORTS_LIVE_BOARD_OWNER = 'sports-fixture-board.tsx' as const;
@@ -37,6 +39,7 @@ export const SPORTS_LIVE_SURFACE_OWNERS = [
   'use-sports-betting.ts',
   'use-sports-realtime.ts',
   SPORTS_LIVE_REALTIME_CACHE,
+  SPORTS_LIVE_ODDS_INSERT_DEBOUNCE,
 ] as const;
 
 /** Honest live-delay notice — engine applies delay server-side; UI does not invent ms. */

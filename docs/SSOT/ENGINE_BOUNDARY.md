@@ -109,6 +109,8 @@ Account/onboarding controller freeze 기록은 pre-demolition history다. Phase 
 
 **S0 명시 (non-waivable):** S0 PASS = UI Race + RPC Race 검증 — **DB Transaction Race deep audit 미포함** ([`008`](../PRODUCT/ADR/008-engine-wave-db-tx-race-defer.md)).
 
+**PIR 부분 Accepted (2026-07-11):** Plan `platform_integrity_remediation_v1` · `pir-e1-system-lock-order` — wallet/`system_accounts` 잠금순서만 ([`008` §PIR](../PRODUCT/ADR/008-engine-wave-db-tx-race-defer.md)). 전체 deep audit · multi-session harness는 **여전히 defer**. Evidence: [`PLATFORM_INTEGRITY_EVIDENCE/`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md).
+
 **UX-only (Engine Wave 아님):** Tablet 768 · swipe — Trade Desk P2.
 
 ---

@@ -149,8 +149,8 @@ export const TRADE_DUAL_CURRENCY_MATRIX: readonly TradeDualCurrencyRow[] = [
     usdt: true,
     phon: true,
     engineRpc: 'game bet p_currency',
-    phonara: 'no',
-    ownerTodo: 'p10-casino-replay-and-infra',
+    phonara: 'yes',
+    ownerTodo: null,
   },
   {
     id: 'staking-pool-currency',

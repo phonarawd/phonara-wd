@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadRepoEnvFiles } from './lib/load-repo-env';
 import { auditCursorArgv } from './lib/cursor-argv';
 import { shallowDirSizeBytes, cursorSnapshotsDir } from './lib/cursor-metadata-sizes';
 import { killOrphanRepoDevProcesses } from './lib/cursor-dev-processes';
@@ -12,6 +13,9 @@ import { spawnSyncSafe } from './lib/spawn-safe';
 import { SESSION_RESIDUE_DIRS } from './lib/workspace-artifacts';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+// tsx hook paths do not inherit Bun `.env` injection — respect PHONARA_KEEP_STACK / AUTO_QUIT.
+loadRepoEnvFiles(REPO_ROOT);
 
 type HygieneMode = 'start' | 'end' | 'work-end' | 'after-heavy' | 'before-heavy' | 'agent-stop';
 

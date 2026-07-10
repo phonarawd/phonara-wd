@@ -6,9 +6,11 @@
 
 `hooks/admin/` · `domain/` · `contracts/` · `lib/auth.ts` · `contexts/auth-context.tsx` · `product/surfaces/` · `routes/`
 
-## High-risk RBAC (R0)
+## High-risk RBAC (R0 · PIR P1)
 
-- `useAdminOperatorRbac` / `canPerformAdminAction` gate queues · withdrawals · rewards · ops kill/halt
+- `useAdminOperatorRbac` — authority = `rpc_admin_list_role_grants` · **fail-closed** (viewer) while loading/error
+- localStorage role preview = **DEV only** — production cannot elevate to owner via storage
+- `canPerformAdminAction` gates queues · withdrawals · rewards · ops kill/halt
 - Kill switches mounted on `/ops` via `confirmKillSwitch`
 - Desk route SOT: `domain/admin-security-display-contract.ts` (no `/casino` · `/cms` ghosts)
 

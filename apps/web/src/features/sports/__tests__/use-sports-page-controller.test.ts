@@ -195,4 +195,32 @@ describe('useSportsPageController · LAUNCH_GATES.sportsBetting', () => {
 
     expect(result.current.canPlaceBet).toBe(false);
   });
+
+  it('passes visibleFixtureIds into sports realtime for odds INSERT scope', () => {
+    useListSportsFixturesMock.mockReturnValue({
+      data: [
+        {
+          fixture_id: 'fx-board',
+          league_code: 'epl',
+          home_name: 'A',
+          away_name: 'B',
+          kickoff_at: '2026-07-11T12:00:00.000Z',
+          status: 'live',
+        },
+      ],
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    renderHook(() => useSportsPageController('fixture', 'fx-detail'));
+
+    expect(useSportsRealtimeMock).toHaveBeenCalled();
+    const opts = useSportsRealtimeMock.mock.calls.at(-1)?.[0] as {
+      enabled: boolean;
+      visibleFixtureIds: Set<string>;
+    };
+    expect(opts.enabled).toBe(true);
+    expect([...opts.visibleFixtureIds].sort()).toEqual(['fx-board', 'fx-detail']);
+  });
 });

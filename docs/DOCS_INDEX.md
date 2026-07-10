@@ -33,6 +33,7 @@
 | [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md)                                               | Dev environment          |
 | [`RUNBOOK.md`](RUNBOOK.md)                                                                   | Operations               |
 | [`OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md) | Pre-launch (operator)    |
+| [`OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md`](OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md) | PIR 형제 큐 evidence · `#205` BLOCKED |
 
 ## Audit reports (PQA §33 · read-only)
 

@@ -204,10 +204,9 @@ describe('trade-exchange-parity-display-contract §13.1.1 TRADE_DUAL_CURRENCY_MA
 
   it('maps sports and casino stake currency to P10 todos', () => {
     expect(findTradeDualCurrencyRow('sports-slip-currency')?.ownerTodo).toBeNull();
-    expect(findTradeDualCurrencyRow('casino-stake-currency')?.ownerTodo).toBe(
-      'p10-casino-replay-and-infra',
-    );
+    expect(findTradeDualCurrencyRow('casino-stake-currency')?.ownerTodo).toBeNull();
     expect(findTradeDualCurrencyRow('sports-slip-currency')?.phonara).toBe('yes');
+    expect(findTradeDualCurrencyRow('casino-stake-currency')?.phonara).toBe('yes');
   });
 });
 

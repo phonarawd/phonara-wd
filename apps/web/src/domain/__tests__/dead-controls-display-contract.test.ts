@@ -37,6 +37,12 @@ describe('dead-controls-display-contract (PQA F3)', () => {
     const hub = PQA_DEAD_CONTROL_DEFER_REGISTRY.find((row) => row.id === 'casino-route-hub-stub');
     expect(hub?.mitigatedBy).toBe('live');
     expect(hub?.engineTodo).toBe('p10-page-casino');
+
+    const roundHook = PQA_DEAD_CONTROL_DEFER_REGISTRY.find(
+      (row) => row.id === 'casino-round-hook-orphan',
+    );
+    expect(roundHook?.mitigatedBy).toBe('live');
+    expect(roundHook?.engineTodo).toBe('p10-casino-replay-and-infra');
   });
 
   it('blocks tier-keepStatus claim until E1 engine ships', () => {

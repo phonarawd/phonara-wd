@@ -503,6 +503,10 @@ BEGIN
     'service_role must EXECUTE rpc_run_funding_accrual';
   ASSERT NOT has_function_privilege('authenticated', 'public._fill_house_spot_order(uuid)', 'EXECUTE'),
     'authenticated must NOT EXECUTE _fill_house_spot_order (T1 settlement internal)';
+  ASSERT NOT has_function_privilege('anon', 'public._lock_system_accounts(text[])', 'EXECUTE'),
+    'anon must NOT EXECUTE _lock_system_accounts (PIR E1 internal)';
+  ASSERT NOT has_function_privilege('authenticated', 'public._lock_system_accounts(text[])', 'EXECUTE'),
+    'authenticated must NOT EXECUTE _lock_system_accounts (PIR E1 internal)';
 
   RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges match migrations 000045/053–055, affiliate approvals, sportsbook S1–S7, P0 edge contracts, and Trade Desk P3-B entry/cron pins';
 END;

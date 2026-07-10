@@ -15,8 +15,9 @@ import { TIER_KEEP_STATUS_RPC, TIER_KEEP_STATUS_UI_ID } from './tier-me-display-
 export const PQA_FIX_DEAD_CONTROLS_TODO = 'pqa-fix-dead-controls' as const;
 
 export const CASINO_ROUND_HOOK_OWNER = 'apps/web/src/features/casino/use-casino-round.ts' as const;
-/** Game shell / round pipeline — still deferred until CasinoR#1 + game batches. */
+/** CasinoR#1 shell mounts pipeline — per-game stages remain batch todos. */
 export const CASINO_HUB_DEFER_TODO = 'p10-casino-replay-and-infra' as const;
+export const CASINO_GAME_SHELL_LIVE_TODO = 'p10-casino-replay-and-infra' as const;
 
 /** Lobby discovery is live (`p10-page-casino`) — hub stub row mitigatedBy=live. */
 export const CASINO_LOBBY_LIVE_TODO = 'p10-page-casino' as const;
@@ -65,10 +66,10 @@ export const PQA_DEAD_CONTROL_DEFER_REGISTRY: readonly DeadControlDeferRow[] = [
   },
   {
     id: 'casino-round-hook-orphan',
-    route: CASINO_HUB_ROUTE,
-    mitigatedBy: 'defer_stub',
-    engineTodo: CASINO_HUB_DEFER_TODO,
-    note: 'useCasinoRoundPipeline exists · 0 mounted game surfaces until CasinoR#1 + batches',
+    route: '/games/$gameCode',
+    mitigatedBy: 'live',
+    engineTodo: CASINO_GAME_SHELL_LIVE_TODO,
+    note: 'CasinoGameShell mounts useCasinoRoundPipeline · L1 stages deferred to p10-games-batch-*',
   },
   {
     id: 'settings-api-keys-stub',

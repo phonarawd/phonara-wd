@@ -49,16 +49,24 @@ export function patchSportsFixtureMarkets(
   });
 }
 
+export type SportsOddsPatchScope = {
+  /** When set, only fixtures in this set are patched (on-screen / loaded board). */
+  readonly fixtureIds?: ReadonlySet<string>;
+};
+
 export function patchSportsOddsInFixtureLists(
   qc: QueryClient,
   outcomeId: string,
   odds: string,
   capturedAt: string,
+  scope?: SportsOddsPatchScope,
 ): boolean {
   let patched = false;
+  const fixtureIds = scope?.fixtureIds;
   qc.setQueriesData<SportsFixtureSummary[]>({ queryKey: sportsFixtureListKeyPrefix() }, (prev) => {
     if (!prev) return prev;
     return prev.map((fixture) => {
+      if (fixtureIds && !fixtureIds.has(fixture.fixture_id)) return fixture;
       if (!fixture.match_1x2) return fixture;
       let changed = false;
       const nextMatch1x2 = { ...fixture.match_1x2 };
@@ -79,22 +87,59 @@ export function patchSportsOddsInMarkets(
   outcomeId: string,
   odds: string,
   capturedAt: string,
+  scope?: SportsOddsPatchScope,
 ): boolean {
   let patched = false;
-  qc.setQueriesData<SportsMarketSummary[]>({ queryKey: ['sports', 'fixture-markets'] }, (prev) => {
-    if (!prev) return prev;
-    return prev.map((market) => {
+  const fixtureIds = scope?.fixtureIds;
+  const queries = qc.getQueriesData<SportsMarketSummary[]>({
+    queryKey: ['sports', 'fixture-markets'],
+  });
+  for (const [queryKey, prev] of queries) {
+    if (!prev) continue;
+    const fixtureIdFromKey = typeof queryKey[2] === 'string' ? queryKey[2] : null;
+    if (fixtureIds && fixtureIdFromKey && !fixtureIds.has(fixtureIdFromKey)) continue;
+
+    let queryChanged = false;
+    const next = prev.map((market) => {
       let changed = false;
       const outcomes = market.outcomes.map((outcome) => {
         if (outcome.outcome_id !== outcomeId) return outcome;
         changed = true;
         return { ...outcome, odds, captured_at: capturedAt };
       });
-      if (changed) patched = true;
-      return changed ? { ...market, outcomes } : market;
+      if (!changed) return market;
+      queryChanged = true;
+      return { ...market, outcomes };
     });
-  });
+    if (queryChanged) {
+      patched = true;
+      qc.setQueryData(queryKey, next);
+    }
+  }
   return patched;
+}
+
+/** Apply one odds patch to list + markets caches. Miss = no-op (never full sports invalidate). */
+export function applySportsOddsInsertPatch(
+  qc: QueryClient,
+  patch: { outcomeId: string; odds: string; capturedAt: string },
+  scope?: SportsOddsPatchScope,
+): boolean {
+  const listPatched = patchSportsOddsInFixtureLists(
+    qc,
+    patch.outcomeId,
+    patch.odds,
+    patch.capturedAt,
+    scope,
+  );
+  const marketsPatched = patchSportsOddsInMarkets(
+    qc,
+    patch.outcomeId,
+    patch.odds,
+    patch.capturedAt,
+    scope,
+  );
+  return listPatched || marketsPatched;
 }
 
 export function oddsPatchFromRealtimeRow(row: RealtimeRow | null | undefined): {
