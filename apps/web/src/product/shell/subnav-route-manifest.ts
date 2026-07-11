@@ -65,7 +65,13 @@ export const P11_SIDE_INCOME_REGISTERED_ROUTES = [
 ] as const;
 
 /** P11 wallet redeem — `p11-page-wallet-redeem` (§12.19.6 · YAML #220). */
-export const P11_WALLET_REDEEM_REGISTERED_ROUTES = ['/wallet/redeem'] as const;
+export const P11_WALLET_REDEEM_REGISTERED_ROUTES = [
+  '/wallet/redeem',
+  '/wallet/redeem/giftcard',
+] as const;
+
+/** E10 wallet transfer — `ew-e10-wallet-settings-ui`. */
+export const E10_WALLET_TRANSFER_REGISTERED_ROUTES = ['/wallet/transfer'] as const;
 
 /**
  * §12.19.6 — Routes that may appear in domain subnav chips.
@@ -92,6 +98,7 @@ export const SHELL_SUBNAV_REGISTERED_ROUTES: ReadonlySet<string> = new Set([
   ...P8_CORE_REGISTERED_ROUTES,
   ...P11_SIDE_INCOME_REGISTERED_ROUTES,
   ...P11_WALLET_REDEEM_REGISTERED_ROUTES,
+  ...E10_WALLET_TRANSFER_REGISTERED_ROUTES,
 ]);
 
 /** Filter subnav items to registered routes only (§12.19.6). */

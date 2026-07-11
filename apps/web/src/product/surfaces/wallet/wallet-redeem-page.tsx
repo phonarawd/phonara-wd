@@ -19,6 +19,7 @@ const RAIL_ICONS: Record<WalletRedeemRailId, typeof Banknote> = {
   krw: Banknote,
   crypto: Coins,
   giftcard: Gift,
+  giftcard_out: Gift,
 };
 
 function WalletRedeemLoadingShell() {

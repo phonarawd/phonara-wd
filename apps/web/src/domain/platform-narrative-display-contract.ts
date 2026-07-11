@@ -50,10 +50,11 @@ export const PLATFORM_PILLAR_ROUTES: Readonly<Record<PlatformPillarId, string>> 
   play: '/trade',
 };
 
-/** E-Wave STUB routes — hidden from IA until engine gate green (§22.5). */
+/**
+ * E-Wave STUB routes — hidden from IA until engine/UI unlock (§22.5).
+ * `/wallet/transfer` · `/settings/api-keys` unlocked by `ew-e10-wallet-settings-ui`.
+ */
 export const PLATFORM_EWAVE_HIDDEN_ROUTES = [
-  '/wallet/transfer',
-  '/settings/api-keys',
   '/support/ticket',
   '/support/chat',
   '/tier/leaderboard',

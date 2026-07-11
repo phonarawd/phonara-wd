@@ -1,5 +1,6 @@
 import { Link, useRouterState } from '@tanstack/react-router';
 
+import { canAccessAdminSupportDesk } from '@/domain/admin-support-desk-display-contract';
 import { canAccessAdminTeamDesk } from '@/domain/admin-team-desk-display-contract';
 import { useAdminOperatorRbac, type AdminRbacRole } from '@/hooks/admin/useAdminOperatorRbac';
 import { useT } from '@/product/i18n';
@@ -59,15 +60,18 @@ const ADMIN_NAV: NavEntry[] = [
   { kind: 'leaf', labelKey: 'admin.nav.audit', to: '/audit' },
   { kind: 'leaf', labelKey: 'admin.nav.settings', to: '/settings' },
   { kind: 'leaf', labelKey: 'admin.nav.team', to: '/team' },
+  { kind: 'leaf', labelKey: 'admin.nav.support', to: '/support' },
   { kind: 'leaf', labelKey: 'admin.nav.mfa', to: '/mfa/policy' },
   { kind: 'leaf', labelKey: 'admin.nav.ops', to: '/ops' },
 ];
 
-/** Owner-only `/team` — full role allowlist ships with later RBAC nav pass. */
+/** Owner-only `/team` · owner/support `/support` — server RPC still authoritative. */
 function filterNavForRole(entries: NavEntry[], role: AdminRbacRole): NavEntry[] {
   const showTeam = canAccessAdminTeamDesk(role);
+  const showSupport = canAccessAdminSupportDesk(role);
   return entries.filter((entry) => {
     if (entry.kind === 'leaf' && entry.to === '/team') return showTeam;
+    if (entry.kind === 'leaf' && entry.to === '/support') return showSupport;
     return true;
   });
 }
@@ -211,6 +215,10 @@ export function resolveAdminNavTitleKey(pathname: string): MessageKey {
 
   if (current === '/team') {
     return 'admin.nav.team';
+  }
+
+  if (current === '/support') {
+    return 'admin.nav.support';
   }
 
   for (const entry of ADMIN_NAV) {

@@ -98,11 +98,10 @@ export const PQA_DEAD_CONTROL_DEFER_REGISTRY: readonly DeadControlDeferRow[] = [
   {
     id: 'settings-api-keys-stub',
     route: SETTINGS_API_KEYS_ROUTE,
-    mitigatedBy: 'disabled+key',
-    disabledReasonKey: SETTINGS_API_KEYS_CREATE_DISABLED_REASON_KEY,
+    mitigatedBy: 'live',
     engineTodo: SETTINGS_API_KEYS_ENGINE_TODO,
     uiUnlockTodo: SETTINGS_API_KEYS_UI_UNLOCK_TODO,
-    note: 'Trading bot API E8 engine ready — hub IA built_hidden until E10 · CRUD defer_stub while financialConnectivityLive=false',
+    note: 'Trading bot API E10 live — hub IA + list/create/revoke via financialConnectivityLive',
   },
   {
     id: 'sports-vip-coming-soon',
@@ -129,7 +128,7 @@ export const PQA_DEAD_CONTROL_DEFER_REGISTRY: readonly DeadControlDeferRow[] = [
     disabledReasonKey: SUPPORT_TICKET_DEFER_REASON_KEY,
     engineTodo: SUPPORT_TICKET_ENGINE_TODO,
     uiUnlockTodo: SUPPORT_TICKET_UI_UNLOCK_TODO,
-    note: 'Support tickets ENGINE:gap — IA built_hidden · direct URL defer stub until E9',
+    note: 'Support tickets E9 engine ready — IA built_hidden · direct URL defer stub until admin/E10 UI unlock',
   },
   {
     id: 'system-status-stub',

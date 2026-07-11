@@ -15,6 +15,7 @@ import { Route as UsersRouteImport } from './routes/users'
 import { Route as TiersRouteImport } from './routes/tiers'
 import { Route as TierBenefitsRouteImport } from './routes/tier-benefits'
 import { Route as TeamRouteImport } from './routes/team'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as StakingRouteImport } from './routes/staking'
 import { Route as SportsRouteImport } from './routes/sports'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -70,6 +71,11 @@ const TierBenefitsRoute = TierBenefitsRouteImport.update({
 const TeamRoute = TeamRouteImport.update({
   id: '/team',
   path: '/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StakingRoute = StakingRouteImport.update({
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/sports': typeof SportsRoute
   '/staking': typeof StakingRoute
+  '/support': typeof SupportRoute
   '/team': typeof TeamRoute
   '/tier-benefits': typeof TierBenefitsRoute
   '/tiers': typeof TiersRoute
@@ -254,6 +261,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/sports': typeof SportsRoute
   '/staking': typeof StakingRoute
+  '/support': typeof SupportRoute
   '/team': typeof TeamRoute
   '/tier-benefits': typeof TierBenefitsRoute
   '/tiers': typeof TiersRoute
@@ -289,6 +297,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/sports': typeof SportsRoute
   '/staking': typeof StakingRoute
+  '/support': typeof SupportRoute
   '/team': typeof TeamRoute
   '/tier-benefits': typeof TierBenefitsRoute
   '/tiers': typeof TiersRoute
@@ -325,6 +334,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sports'
     | '/staking'
+    | '/support'
     | '/team'
     | '/tier-benefits'
     | '/tiers'
@@ -358,6 +368,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sports'
     | '/staking'
+    | '/support'
     | '/team'
     | '/tier-benefits'
     | '/tiers'
@@ -392,6 +403,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sports'
     | '/staking'
+    | '/support'
     | '/team'
     | '/tier-benefits'
     | '/tiers'
@@ -427,6 +439,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SportsRoute: typeof SportsRoute
   StakingRoute: typeof StakingRoute
+  SupportRoute: typeof SupportRoute
   TeamRoute: typeof TeamRoute
   TierBenefitsRoute: typeof TierBenefitsRoute
   TiersRoute: typeof TiersRoute
@@ -480,6 +493,13 @@ declare module '@tanstack/react-router' {
       path: '/team'
       fullPath: '/team'
       preLoaderRoute: typeof TeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/staking': {
@@ -713,6 +733,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SportsRoute: SportsRoute,
   StakingRoute: StakingRoute,
+  SupportRoute: SupportRoute,
   TeamRoute: TeamRoute,
   TierBenefitsRoute: TierBenefitsRoute,
   TiersRoute: TiersRoute,

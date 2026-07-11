@@ -45,6 +45,7 @@ export const ADMIN_DESK_ROUTES = [
   '/audit',
   '/settings',
   '/team',
+  '/support',
   '/ops',
   ADMIN_MFA_POLICY_ROUTE,
 ] as const;
@@ -75,6 +76,7 @@ export const ADMIN_DESK_ROUTE_PAGES: Readonly<Record<AdminDeskRoute, string>> = 
   '/audit': 'AdminAuditPage',
   '/settings': 'AdminSettingsPage',
   '/team': 'AdminTeamPage',
+  '/support': 'AdminSupportPage',
   '/ops': 'AdminOpsPage',
   '/mfa/policy': 'AdminMfaPage',
 };
@@ -122,6 +124,7 @@ export const ADMIN_USER_CORRESPONDENCE: Readonly<
   { userSurface: '/staking', adminRoute: '/staking', wireStatus: 'wired' },
   { userSurface: '/account', adminRoute: '/users', wireStatus: 'wired' },
   { userSurface: '/announcements', adminRoute: '/cms', wireStatus: 'wired' },
+  { userSurface: '/support', adminRoute: '/support', wireStatus: 'wired' },
   { userSurface: '/', adminRoute: '/settings', wireStatus: 'wired' },
 ];
 
@@ -152,6 +155,7 @@ export const ADMIN_ROUTE_WIRE_STATUS: Readonly<Record<AdminMfaRoute | AdminDeskR
   '/audit': 'wired',
   '/settings': 'wired',
   '/team': 'wired',
+  '/support': 'wired',
   '/ops': 'wired',
 };
 
@@ -180,6 +184,7 @@ export const ADMIN_DESK_SURFACES = [
   'apps/admin/src/routes/audit.tsx',
   'apps/admin/src/routes/settings.tsx',
   'apps/admin/src/routes/team.tsx',
+  'apps/admin/src/routes/support.tsx',
   'apps/admin/src/routes/ops.tsx',
   'apps/admin/src/routes/mfa/policy.tsx',
 ] as const;

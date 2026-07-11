@@ -59,7 +59,7 @@ describe('ew-e8-financial-display-contract (E8 WAVE)', () => {
       'p2p_usdt',
     ]);
     expect(isEwE8FinancialEngineReady()).toBe(true);
-    expect(isEwE8FinancialUiUnlocked()).toBe(false);
+    expect(isEwE8FinancialUiUnlocked()).toBe(true);
   });
 
   it('requires ADR + migration + SQL test · preserves deposit · gates live UI', () => {

@@ -4,8 +4,10 @@
 > **승인 todo:** `ew-e0-adr-approval` (#239) · Plan `phase_r_super-app_8bdf2c10`  
 > **선행:** `check:plan-yaml` green · Track A T2 `launch-scale-t2-triggers` (#238) `[x]` DONE  
 > **후행:** E7 GATE `ew-e7-gate-engine-wave` (#253) **`[x]`** 2026-07-12 · E7 WAVE `#252` **`[x]`** · E6 GATE `#251` **`[x]`** 2026-07-12 · E6 WAVE `#250` **`[x]`** · E5 GATE `#249` **`[x]`** 2026-07-11 · E5 WIRE `#248` **`[x]`** · E4 GATE `#247` **`[x]`** · E4 WAVE `#246` **`[x]`** · E3 GATE `#245` **`[x]`** · E3 WAVE `#244` **`[x]`** · E2 GATE `#243` **`[x]`** · E2 WAVE **`[x]`** · E1 **`[x]`** · E0 **`[x]`**  
-> **다음:** `ew-e8-gate-financial`  
-> **후행:** E8 WAVE **`[x]` DONE** 2026-07-12 · ADR-018 · P2P · API keys · giftcard redeem  
+> **다음:** `ew-e9-page-admin-support`  
+> **후행:** E9 GATE **`[x]` DONE** 2026-07-12 · remote `ew_e9_app_install_enum` + `ew_e9_identity_support` · advisor **0**  
+> **후행:** E9 WAVE **`[x]` DONE** 2026-07-12 · ADR-019 · SIWE · tickets · analytics · app-install · tier LB  
+> **후행:** E8 GATE **`[x]` DONE** 2026-07-12 · WAVE **`[x]`** · ADR-018 · P2P · API keys · giftcard redeem · remote `ew_e8_financial` · advisor **0**  
 > **후행:** E23 UI unlock **`[x]` DONE** 2026-07-12 · GATE **`[x]`** · WAVE **`[x]`** · ADR-017 · progressive · live crash · PF seed  
 > **후행:** E22 UI unlock **`[x]` DONE** 2026-07-12  
 > **후행:** E22 GATE **`[x]` DONE** 2026-07-12 · remote `ew_e22_sports_parity` · advisor **0** · unlock path built_hidden  
@@ -146,3 +148,7 @@ E0 Accepted (본 ADR)
 - [x] E23 Casino live GATE `ew-e23-gate-casino-live` — remote `ew_e23_casino_live` · advisor 0 · casino_parity E23 GROWTH · 후행 UI unlock **`[x]`**
 - [x] E23 Casino UI unlock `ew-e23-ui-casino-live-unlocks` — `casinoLiveLive` · live crash · progressive · fairness seed · 후행 `ew-e8-financial-wave`
 - [x] E8 Financial WAVE `ew-e8-financial-wave` — [`018-financial-connectivity.md`](018-financial-connectivity.md) · P2P · API keys · giftcard redeem · 후행 GATE `ew-e8-gate-financial`
+- [x] E8 Financial GATE `ew-e8-gate-financial` — `stack:push-remote` · advisor 0 · SQL Σ=0 (CI) · 후행 `ew-e9-identity-wave`
+- [x] E9 Identity+Support WAVE `ew-e9-identity-wave` — [`019-identity-support-analytics.md`](019-identity-support-analytics.md) · SIWE · tickets · analytics · app-install · tier LB · 후행 GATE `ew-e9-gate-identity-support`
+- [x] E9 Identity+Support GATE `ew-e9-gate-identity-support` — `stack:push-remote` · advisor 0 · SQL E9-0..E9-5 (CI) · 후행 `ew-e9-page-admin-support`
+- [x] E10 Platform Engine WAVE `ew-e10-platform-engine-wave` — [`020-platform-engine.md`](020-platform-engine.md) · KRW proof · mission chains · co-bet · recommend · 후행 Admin/UI/GATE

@@ -21,11 +21,18 @@ describe('admin-rbac permission matrix', () => {
     expect(canPerformAdminAction('owner', 'queues.withdraw.approve')).toBe(true);
     expect(canPerformAdminAction('owner', 'access.rbac.manage')).toBe(true);
     expect(canPerformAdminAction('owner', 'operations.kill_switch')).toBe(true);
+    expect(canPerformAdminAction('owner', 'support.tickets.resolve')).toBe(true);
   });
 
   it('viewer cannot approve withdrawals or toggle kill switches', () => {
     expect(canPerformAdminAction('viewer', 'queues.withdraw.approve')).toBe(false);
     expect(canPerformAdminAction('viewer', 'operations.kill_switch')).toBe(false);
+    expect(canPerformAdminAction('viewer', 'support.tickets.resolve')).toBe(false);
+  });
+
+  it('support can resolve tickets · finance cannot', () => {
+    expect(canPerformAdminAction('support', 'support.tickets.resolve')).toBe(true);
+    expect(canPerformAdminAction('finance', 'support.tickets.resolve')).toBe(false);
   });
 
   it('finance can approve withdrawals but not manage RBAC grants', () => {

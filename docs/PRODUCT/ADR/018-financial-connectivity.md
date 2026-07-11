@@ -3,7 +3,7 @@
 > **상태:** `[x]` Accepted · **날짜:** 2026-07-12  
 > **플랜:** `phase_r_super-app_8bdf2c10` · todo `ew-e8-financial-wave`  
 > **선행:** E23 UI `ew-e23-ui-casino-live-unlocks` **`[x]` DONE** 2026-07-12  
-> **후행:** GATE `ew-e8-gate-financial` → UI `ew-e10-wallet-settings-ui`  
+> **후행:** GATE `ew-e8-gate-financial` **`[x]` DONE** 2026-07-12 → `ew-e9-identity-wave` → UI `ew-e10-wallet-settings-ui` **`[x]` DONE** 2026-07-12  
 > **코드 계약:** [`ew-e8-financial-display-contract.ts`](../../../apps/web/src/domain/ew-e8-financial-display-contract.ts)  
 > **스펙 정본:** Plan §12.18 · §21.1 E8 · ENGINE_GAP_ADR E8 · `LEGAL_BASIS.md` re-review #2
 
@@ -80,8 +80,8 @@ Track B E8 = 본 ADR + 동일 PR 엔진 (51차 WAVE merge).
 | 단계 | 내용 |
 | ---- | ---- |
 | **본 WAVE** | ADR + migration + RPCs + SQL + display contract · `LAUNCH_GATES.financialConnectivityEngine=true` |
-| **GATE** `ew-e8-gate-financial` | `test:sql` · `stack:push-remote` · advisor 0 |
-| **E10** `ew-e10-wallet-settings-ui` | `/wallet/transfer` · `/settings/api-keys` hub · redeem reverse wire · `financialConnectivityLive` |
+| **GATE** `ew-e8-gate-financial` | **`[x]` DONE** 2026-07-12 — `stack:push-remote` · advisor 0 · SQL Σ=0 (CI) |
+| **E10** `ew-e10-wallet-settings-ui` | `/wallet/transfer` · `/settings/api-keys` hub · redeem reverse wire · `financialConnectivityLive` **`[x]` DONE** 2026-07-12 |
 
 ## Consequences
 
@@ -97,7 +97,7 @@ Track B E8 = 본 ADR + 동일 PR 엔진 (51차 WAVE merge).
 | ---- | ---- |
 | SQL | `ew_e8_financial_test.sql` E8-0..E8-4 · CI sql authoritative (G13) |
 | Vitest | `ew-e8-financial-display-contract` |
-| Remote | GATE: `stack:push-remote` · advisor 0 ERROR |
+| Remote | GATE **`[x]` DONE** 2026-07-12: `stack:push-remote` · advisor 0 ERROR · tail `20260711192506_ew_e8_financial` |
 
 ## Operator sign-off
 

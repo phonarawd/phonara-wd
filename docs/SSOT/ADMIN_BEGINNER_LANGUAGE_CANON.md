@@ -95,7 +95,7 @@
 
 - [x] `admin-beginner-language-display-contract` test green (`p13-prep-admin-canonical-docs`)
 - [x] SSOT 3종 + display contract **동일 PR** (50차 merge)
-- [x] §12.14 ↔ §29.2 planned desks (`/admin/team` · `/support` · `/earn/activity`) pin
+- [x] §12.14 ↔ §29.2 desks (`/admin/team` · `/admin/support` · `/earn/activity`) pin · support **wired** (`ew-e9-page-admin-support`)
 - [x] `rg` 금지어 admin product surfaces 0 (soft-launch spot-check) — `p13-soft-launch-admin-spotcheck` 2026-07-11
 - [ ] 모든 P2+ desk에 `admin.help.*` 3줄 (desk UI wire)
 - [x] `p13-soft-launch-bundle` operator 초등어 spot-check — **`[x]`** 2026-07-11

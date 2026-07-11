@@ -8,7 +8,7 @@ import {
   type AdminViralReferralSnapshot,
   type AdminViralStatsPartialFlags,
 } from '@/product/bridge/parse-admin-viral-stats';
-import { supabase } from '../../lib/supabase';
+import { callRpc } from '../../lib/rpc';
 import type { UseAdminViralStatsDesk } from './useAdminViralStatsDeskMock';
 
 export type { UseAdminViralStatsDesk } from './useAdminViralStatsDeskMock';
@@ -59,12 +59,7 @@ export function useAdminViralStatsDesk(): UseAdminViralStatsDesk {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: QUERY_KEY,
     queryFn: async () => {
-      const { data: raw, error } = await (
-        supabase as {
-          rpc: (fn: string, args?: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
-        }
-      ).rpc('rpc_admin_get_viral_analytics');
-      if (error) throw error;
+      const raw = await callRpc('rpc_admin_get_viral_analytics');
       return (raw ?? {}) as ViralAnalyticsRpc;
     },
     staleTime: 15_000,

@@ -97,7 +97,7 @@ Plan §12.14 표의 Admin canonical route는 본 매트릭스·초등어 메뉴�
 | `/admin/settings` | 설정 | P2 live |
 | `/admin/ops` | 시스템 상태 | P2 live |
 | `/admin/team` | 직원 권한 | **P13** `p13-prep-admin-team-desk` **`[x]`** |
-| `/admin/support` | 회원 문의 | **E9** `ew-e9-page-admin-support` |
+| `/admin/support` | 회원 문의 | **E9** `ew-e9-page-admin-support` **`[x]`** |
 | `/admin/earn/activity` | 회원 활동 보기 | **E6** |
 
 ---
@@ -108,10 +108,10 @@ Plan §12.14 표의 Admin canonical route는 본 매트릭스·초등어 메뉴�
 | ---------------------------------------------------- | ------- | ------------------------------------ |
 | `/admin/team`                                        | wired   | `p13-prep-admin-team-desk` **`[x]`** |
 | ops Web Push (settings CTA → `/queues`)              | wired   | `p13-admin-ops-push` **`[x]`**       |
-| `/admin/support`                                     | planned | `ew-e9-page-admin-support`           |
+| `/admin/support`                                     | wired   | `ew-e9-page-admin-support` **`[x]`** |
 | `/admin/earn/activity`                               | planned | `ew-e6-page-admin-earn-activity`     |
 | `/admin/audit` CSV                                   | planned | `ew-e6-page-admin-audit-export`      |
-| deposits 증빙                                        | planned | `ew-e10-page-admin-krw-proof-review` |
+| deposits 증빙                                        | wired   | `ew-e10-page-admin-krw-proof-review` **`[x]`** |
 | `/admin/promotions` · `/admin/cms` · `/admin/casino` | E-Wave  | `ew-e6-*`                            |
 
 ---

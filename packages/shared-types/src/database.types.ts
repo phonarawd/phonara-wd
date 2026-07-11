@@ -11,6 +11,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -628,6 +633,44 @@ export type Database = {
         }
         Relationships: []
       }
+      app_install_attributions: {
+        Row: {
+          client_event_id: string | null
+          id: string
+          installed_at: string
+          metadata: Json
+          platform: string
+          recorded_at: string
+          user_id: string
+        }
+        Insert: {
+          client_event_id?: string | null
+          id?: string
+          installed_at?: string
+          metadata?: Json
+          platform: string
+          recorded_at?: string
+          user_id: string
+        }
+        Update: {
+          client_event_id?: string | null
+          id?: string
+          installed_at?: string
+          metadata?: Json
+          platform?: string
+          recorded_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_install_attributions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -909,6 +952,118 @@ export type Database = {
           {
             foreignKeyName: "cms_content_updated_by_fkey"
             columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      co_mission_claims: {
+        Row: {
+          claimed_at: string
+          id: string
+          ledger_entry_id: string | null
+          mission: Database["public"]["Enums"]["co_mission_code"]
+          phon_awarded: string
+          session_id: string
+          user_id: string
+          window_key: string
+        }
+        Insert: {
+          claimed_at?: string
+          id?: string
+          ledger_entry_id?: string | null
+          mission: Database["public"]["Enums"]["co_mission_code"]
+          phon_awarded?: string
+          session_id: string
+          user_id: string
+          window_key: string
+        }
+        Update: {
+          claimed_at?: string
+          id?: string
+          ledger_entry_id?: string | null
+          mission?: Database["public"]["Enums"]["co_mission_code"]
+          phon_awarded?: string
+          session_id?: string
+          user_id?: string
+          window_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "co_mission_claims_ledger_entry_id_fkey"
+            columns: ["ledger_entry_id"]
+            isOneToOne: false
+            referencedRelation: "wallet_ledger"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "co_mission_claims_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "co_mission_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "co_mission_claims_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      co_mission_sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          initiator_id: string
+          initiator_ready_at: string | null
+          mission: Database["public"]["Enums"]["co_mission_code"]
+          partner_id: string
+          partner_ready_at: string | null
+          status: string
+          updated_at: string
+          window_key: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          initiator_id: string
+          initiator_ready_at?: string | null
+          mission: Database["public"]["Enums"]["co_mission_code"]
+          partner_id: string
+          partner_ready_at?: string | null
+          status?: string
+          updated_at?: string
+          window_key: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          initiator_id?: string
+          initiator_ready_at?: string | null
+          mission?: Database["public"]["Enums"]["co_mission_code"]
+          partner_id?: string
+          partner_ready_at?: string | null
+          status?: string
+          updated_at?: string
+          window_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "co_mission_sessions_initiator_id_fkey"
+            columns: ["initiator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "co_mission_sessions_partner_id_fkey"
+            columns: ["partner_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -1589,6 +1744,98 @@ export type Database = {
           },
         ]
       }
+      game_progressive_sessions: {
+        Row: {
+          bet_id: string | null
+          client_seed: string
+          created_at: string
+          currency: Database["public"]["Enums"]["currency"]
+          current_multiplier: string
+          expires_at: string
+          game: Database["public"]["Enums"]["game_code"]
+          id: string
+          idempotency_key: string
+          nonce: number
+          public_state: Json
+          round_id: string
+          secret_state: Json
+          settled_at: string | null
+          stake: string
+          stake_lock_id: string | null
+          status: Database["public"]["Enums"]["progressive_session_status"]
+          user_id: string
+        }
+        Insert: {
+          bet_id?: string | null
+          client_seed: string
+          created_at?: string
+          currency: Database["public"]["Enums"]["currency"]
+          current_multiplier?: string
+          expires_at: string
+          game: Database["public"]["Enums"]["game_code"]
+          id?: string
+          idempotency_key: string
+          nonce?: number
+          public_state: Json
+          round_id: string
+          secret_state: Json
+          settled_at?: string | null
+          stake: string
+          stake_lock_id?: string | null
+          status?: Database["public"]["Enums"]["progressive_session_status"]
+          user_id: string
+        }
+        Update: {
+          bet_id?: string | null
+          client_seed?: string
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency"]
+          current_multiplier?: string
+          expires_at?: string
+          game?: Database["public"]["Enums"]["game_code"]
+          id?: string
+          idempotency_key?: string
+          nonce?: number
+          public_state?: Json
+          round_id?: string
+          secret_state?: Json
+          settled_at?: string | null
+          stake?: string
+          stake_lock_id?: string | null
+          status?: Database["public"]["Enums"]["progressive_session_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_progressive_sessions_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "game_rounds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_progressive_sessions_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "v_game_rounds_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_progressive_sessions_stake_lock_id_fkey"
+            columns: ["stake_lock_id"]
+            isOneToOne: false
+            referencedRelation: "wallet_ledger"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_progressive_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       game_rounds: {
         Row: {
           created_at: string
@@ -1817,6 +2064,118 @@ export type Database = {
         }
         Relationships: []
       }
+      giftcard_redeem_requests: {
+        Row: {
+          admin_note: string | null
+          client_request_id: string | null
+          created_at: string
+          debit_ledger_id: string | null
+          face_value_krw: string
+          fee_market_id: string | null
+          fee_phon: string
+          fee_rate_bps: number
+          fulfilled_at: string | null
+          id: string
+          kind: Database["public"]["Enums"]["giftcard_kind"]
+          phon_cost: string
+          phon_gross: string
+          rate_snapshot_id: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          wallet_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          client_request_id?: string | null
+          created_at?: string
+          debit_ledger_id?: string | null
+          face_value_krw: string
+          fee_market_id?: string | null
+          fee_phon: string
+          fee_rate_bps: number
+          fulfilled_at?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["giftcard_kind"]
+          phon_cost: string
+          phon_gross: string
+          rate_snapshot_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          wallet_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          client_request_id?: string | null
+          created_at?: string
+          debit_ledger_id?: string | null
+          face_value_krw?: string
+          fee_market_id?: string | null
+          fee_phon?: string
+          fee_rate_bps?: number
+          fulfilled_at?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["giftcard_kind"]
+          phon_cost?: string
+          phon_gross?: string
+          rate_snapshot_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "giftcard_redeem_requests_debit_ledger_id_fkey"
+            columns: ["debit_ledger_id"]
+            isOneToOne: false
+            referencedRelation: "wallet_ledger"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "giftcard_redeem_requests_fee_market_id_fkey"
+            columns: ["fee_market_id"]
+            isOneToOne: false
+            referencedRelation: "giftcard_fee_market"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "giftcard_redeem_requests_rate_snapshot_id_fkey"
+            columns: ["rate_snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "exchange_rate_snapshots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "giftcard_redeem_requests_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "giftcard_redeem_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "giftcard_redeem_requests_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       golden_earth_daily: {
         Row: {
           bonus_taps: number
@@ -1964,6 +2323,11 @@ export type Database = {
           expires_at: string
           id: string
           matched_at: string | null
+          proof_path: string | null
+          proof_review_note: string | null
+          proof_reviewed_at: string | null
+          proof_status: string
+          proof_uploaded_at: string | null
           rate_snapshot_id: string | null
           reference_code: string
           status: Database["public"]["Enums"]["deposit_status"]
@@ -1980,6 +2344,11 @@ export type Database = {
           expires_at?: string
           id?: string
           matched_at?: string | null
+          proof_path?: string | null
+          proof_review_note?: string | null
+          proof_reviewed_at?: string | null
+          proof_status?: string
+          proof_uploaded_at?: string | null
           rate_snapshot_id?: string | null
           reference_code: string
           status?: Database["public"]["Enums"]["deposit_status"]
@@ -1996,6 +2365,11 @@ export type Database = {
           expires_at?: string
           id?: string
           matched_at?: string | null
+          proof_path?: string | null
+          proof_review_note?: string | null
+          proof_reviewed_at?: string | null
+          proof_status?: string
+          proof_uploaded_at?: string | null
           rate_snapshot_id?: string | null
           reference_code?: string
           status?: Database["public"]["Enums"]["deposit_status"]
@@ -2135,6 +2509,121 @@ export type Database = {
         }
         Relationships: []
       }
+      live_crash_bets: {
+        Row: {
+          auto_cashout: string | null
+          cashout_multiplier: string | null
+          client_seed: string
+          created_at: string
+          currency: Database["public"]["Enums"]["currency"]
+          id: string
+          idempotency_key: string
+          nonce: number
+          payout: string | null
+          round_id: string
+          settled_at: string | null
+          stake: string
+          stake_lock_id: string | null
+          status: Database["public"]["Enums"]["live_crash_bet_status"]
+          user_id: string
+        }
+        Insert: {
+          auto_cashout?: string | null
+          cashout_multiplier?: string | null
+          client_seed: string
+          created_at?: string
+          currency: Database["public"]["Enums"]["currency"]
+          id?: string
+          idempotency_key: string
+          nonce?: number
+          payout?: string | null
+          round_id: string
+          settled_at?: string | null
+          stake: string
+          stake_lock_id?: string | null
+          status?: Database["public"]["Enums"]["live_crash_bet_status"]
+          user_id: string
+        }
+        Update: {
+          auto_cashout?: string | null
+          cashout_multiplier?: string | null
+          client_seed?: string
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency"]
+          id?: string
+          idempotency_key?: string
+          nonce?: number
+          payout?: string | null
+          round_id?: string
+          settled_at?: string | null
+          stake?: string
+          stake_lock_id?: string | null
+          status?: Database["public"]["Enums"]["live_crash_bet_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_crash_bets_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "live_crash_rounds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "live_crash_bets_stake_lock_id_fkey"
+            columns: ["stake_lock_id"]
+            isOneToOne: false
+            referencedRelation: "wallet_ledger"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "live_crash_bets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      live_crash_rounds: {
+        Row: {
+          betting_closes_at: string
+          crash_multiplier: string | null
+          crashed_at: string | null
+          created_at: string
+          flew_at: string | null
+          id: string
+          sequence_no: number
+          server_seed: string
+          server_seed_hash: string
+          status: Database["public"]["Enums"]["live_crash_round_status"]
+        }
+        Insert: {
+          betting_closes_at: string
+          crash_multiplier?: string | null
+          crashed_at?: string | null
+          created_at?: string
+          flew_at?: string | null
+          id?: string
+          sequence_no?: never
+          server_seed: string
+          server_seed_hash: string
+          status?: Database["public"]["Enums"]["live_crash_round_status"]
+        }
+        Update: {
+          betting_closes_at?: string
+          crash_multiplier?: string | null
+          crashed_at?: string | null
+          created_at?: string
+          flew_at?: string | null
+          id?: string
+          sequence_no?: never
+          server_seed?: string
+          server_seed_hash?: string
+          status?: Database["public"]["Enums"]["live_crash_round_status"]
+        }
+        Relationships: []
+      }
       margin_accounts: {
         Row: {
           cross_collateral_phon: string
@@ -2268,6 +2757,65 @@ export type Database = {
           updated_by?: string | null
         }
         Relationships: []
+      }
+      mission_catalog: {
+        Row: {
+          catalog_key: string
+          config_key: string
+          created_at: string
+          enabled: boolean
+          exposure: string
+          extra_config_key: string | null
+          family: string
+          id: string
+          mission_code: string | null
+          quota_config_key: string | null
+          sort_order: number
+          title_i18n_key: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          catalog_key: string
+          config_key: string
+          created_at?: string
+          enabled?: boolean
+          exposure?: string
+          extra_config_key?: string | null
+          family: string
+          id?: string
+          mission_code?: string | null
+          quota_config_key?: string | null
+          sort_order?: number
+          title_i18n_key: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          catalog_key?: string
+          config_key?: string
+          created_at?: string
+          enabled?: boolean
+          exposure?: string
+          extra_config_key?: string | null
+          family?: string
+          id?: string
+          mission_code?: string | null
+          quota_config_key?: string | null
+          sort_order?: number
+          title_i18n_key?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_catalog_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       missions: {
         Row: {
@@ -2746,6 +3294,86 @@ export type Database = {
         }
         Relationships: []
       }
+      p2p_transfers: {
+        Row: {
+          amount: string
+          client_request_id: string | null
+          created_at: string
+          currency: Database["public"]["Enums"]["currency"]
+          fee_amount: string
+          fee_ledger_id: string | null
+          id: string
+          memo: string | null
+          net_amount: string
+          recipient_id: string
+          recipient_ledger_id: string | null
+          sender_id: string
+          sender_ledger_id: string | null
+          status: string
+        }
+        Insert: {
+          amount: string
+          client_request_id?: string | null
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency"]
+          fee_amount?: string
+          fee_ledger_id?: string | null
+          id?: string
+          memo?: string | null
+          net_amount: string
+          recipient_id: string
+          recipient_ledger_id?: string | null
+          sender_id: string
+          sender_ledger_id?: string | null
+          status?: string
+        }
+        Update: {
+          amount?: string
+          client_request_id?: string | null
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency"]
+          fee_amount?: string
+          fee_ledger_id?: string | null
+          id?: string
+          memo?: string | null
+          net_amount?: string
+          recipient_id?: string
+          recipient_ledger_id?: string | null
+          sender_id?: string
+          sender_ledger_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "p2p_transfers_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "p2p_transfers_recipient_ledger_id_fkey"
+            columns: ["recipient_ledger_id"]
+            isOneToOne: false
+            referencedRelation: "wallet_ledger"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "p2p_transfers_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "p2p_transfers_sender_ledger_id_fkey"
+            columns: ["sender_ledger_id"]
+            isOneToOne: false
+            referencedRelation: "wallet_ledger"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pg_webhook_replay: {
         Row: {
           canonical_body_hash: string
@@ -2894,6 +3522,50 @@ export type Database = {
           symbol?: string
         }
         Relationships: []
+      }
+      product_analytics_events: {
+        Row: {
+          anonymous_id: string | null
+          client_event_id: string | null
+          event_name: string
+          id: string
+          occurred_at: string
+          properties: Json
+          received_at: string
+          surface: string | null
+          user_id: string | null
+        }
+        Insert: {
+          anonymous_id?: string | null
+          client_event_id?: string | null
+          event_name: string
+          id?: string
+          occurred_at?: string
+          properties?: Json
+          received_at?: string
+          surface?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          anonymous_id?: string | null
+          client_event_id?: string | null
+          event_name?: string
+          id?: string
+          occurred_at?: string
+          properties?: Json
+          received_at?: string
+          surface?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_analytics_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -3697,6 +4369,59 @@ export type Database = {
           },
         ]
       }
+      siwe_challenges: {
+        Row: {
+          address: string
+          chain_id: number
+          consumed_at: string | null
+          created_at: string
+          domain: string
+          expires_at: string
+          id: string
+          issued_at: string
+          nonce: string
+          statement: string
+          uri: string
+          user_id: string | null
+        }
+        Insert: {
+          address: string
+          chain_id?: number
+          consumed_at?: string | null
+          created_at?: string
+          domain: string
+          expires_at: string
+          id?: string
+          issued_at?: string
+          nonce: string
+          statement: string
+          uri: string
+          user_id?: string | null
+        }
+        Update: {
+          address?: string
+          chain_id?: number
+          consumed_at?: string | null
+          created_at?: string
+          domain?: string
+          expires_at?: string
+          id?: string
+          issued_at?: string
+          nonce?: string
+          statement?: string
+          uri?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siwe_challenges_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sports_bet_legs: {
         Row: {
           bet_id: string
@@ -3761,6 +4486,8 @@ export type Database = {
           house_transfer_id: string | null
           id: string
           idempotency_key: string
+          original_stake: string | null
+          partial_cashout_total: string
           payout_ledger_id: string | null
           potential_payout: string
           settled_at: string | null
@@ -3782,6 +4509,8 @@ export type Database = {
           house_transfer_id?: string | null
           id?: string
           idempotency_key: string
+          original_stake?: string | null
+          partial_cashout_total?: string
           payout_ledger_id?: string | null
           potential_payout: string
           settled_at?: string | null
@@ -3803,6 +4532,8 @@ export type Database = {
           house_transfer_id?: string | null
           id?: string
           idempotency_key?: string
+          original_stake?: string | null
+          partial_cashout_total?: string
           payout_ledger_id?: string | null
           potential_payout?: string
           settled_at?: string | null
@@ -4286,6 +5017,30 @@ export type Database = {
           secondary_away?: number | null
           secondary_home?: number | null
           secondary_source?: string
+        }
+        Relationships: []
+      }
+      sports_sport_catalog: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          i18n_key: string
+          sort_order: number
+          sport_code: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          i18n_key: string
+          sort_order?: number
+          sport_code: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          i18n_key?: string
+          sort_order?: number
+          sport_code?: string
         }
         Relationships: []
       }
@@ -4773,6 +5528,69 @@ export type Database = {
           },
         ]
       }
+      support_tickets: {
+        Row: {
+          body: string
+          category: string
+          client_request_id: string | null
+          created_at: string
+          id: string
+          priority: string
+          resolution_note: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          category: string
+          client_request_id?: string | null
+          created_at?: string
+          id?: string
+          priority?: string
+          resolution_note?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          category?: string
+          client_request_id?: string | null
+          created_at?: string
+          id?: string
+          priority?: string
+          resolution_note?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       system_account_ledger: {
         Row: {
           account_code: string
@@ -4871,6 +5689,148 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      tier_admin_events: {
+        Row: {
+          actor_id: string
+          created_at: string
+          from_tier: Database["public"]["Enums"]["earn_vip_tier"]
+          from_xp: number
+          id: string
+          reason: string
+          to_tier: Database["public"]["Enums"]["earn_vip_tier"]
+          to_xp: number
+          user_id: string
+        }
+        Insert: {
+          actor_id: string
+          created_at?: string
+          from_tier: Database["public"]["Enums"]["earn_vip_tier"]
+          from_xp: number
+          id?: string
+          reason: string
+          to_tier: Database["public"]["Enums"]["earn_vip_tier"]
+          to_xp: number
+          user_id: string
+        }
+        Update: {
+          actor_id?: string
+          created_at?: string
+          from_tier?: Database["public"]["Enums"]["earn_vip_tier"]
+          from_xp?: number
+          id?: string
+          reason?: string
+          to_tier?: Database["public"]["Enums"]["earn_vip_tier"]
+          to_xp?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tier_admin_events_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tier_admin_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tier_decay_events: {
+        Row: {
+          created_at: string
+          from_tier: Database["public"]["Enums"]["earn_vip_tier"]
+          grace_days: number
+          id: string
+          reason: string
+          to_tier: Database["public"]["Enums"]["earn_vip_tier"]
+          user_id: string
+          xp_after: number
+          xp_before: number
+        }
+        Insert: {
+          created_at?: string
+          from_tier: Database["public"]["Enums"]["earn_vip_tier"]
+          grace_days: number
+          id?: string
+          reason?: string
+          to_tier: Database["public"]["Enums"]["earn_vip_tier"]
+          user_id: string
+          xp_after: number
+          xp_before: number
+        }
+        Update: {
+          created_at?: string
+          from_tier?: Database["public"]["Enums"]["earn_vip_tier"]
+          grace_days?: number
+          id?: string
+          reason?: string
+          to_tier?: Database["public"]["Enums"]["earn_vip_tier"]
+          user_id?: string
+          xp_after?: number
+          xp_before?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tier_decay_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trading_api_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          revoked_at: string | null
+          scopes: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name: string
+          revoked_at?: string | null
+          scopes?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          revoked_at?: string | null
+          scopes?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trading_api_keys_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       trading_open_orders: {
         Row: {
@@ -5081,6 +6041,9 @@ export type Database = {
       }
       user_earn_vip: {
         Row: {
+          decay_warnings_sent: number[]
+          last_decay_at: string | null
+          last_qualifying_at: string | null
           tier: Database["public"]["Enums"]["earn_vip_tier"]
           tier_upgraded_on: string | null
           updated_at: string
@@ -5088,6 +6051,9 @@ export type Database = {
           xp: number
         }
         Insert: {
+          decay_warnings_sent?: number[]
+          last_decay_at?: string | null
+          last_qualifying_at?: string | null
           tier?: Database["public"]["Enums"]["earn_vip_tier"]
           tier_upgraded_on?: string | null
           updated_at?: string
@@ -5095,6 +6061,9 @@ export type Database = {
           xp?: number
         }
         Update: {
+          decay_warnings_sent?: number[]
+          last_decay_at?: string | null
+          last_qualifying_at?: string | null
           tier?: Database["public"]["Enums"]["earn_vip_tier"]
           tier_upgraded_on?: string | null
           updated_at?: string
@@ -5104,6 +6073,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "user_earn_vip_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_game_pf_state: {
+        Row: {
+          active_server_seed: string
+          active_server_seed_hash: string
+          client_seed: string
+          next_nonce: number
+          previous_server_seed: string | null
+          rotated_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active_server_seed: string
+          active_server_seed_hash: string
+          client_seed: string
+          next_nonce?: number
+          previous_server_seed?: string | null
+          rotated_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active_server_seed?: string
+          active_server_seed_hash?: string
+          client_seed?: string
+          next_nonce?: number
+          previous_server_seed?: string | null
+          rotated_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_game_pf_state_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "profiles"
@@ -5170,6 +6180,47 @@ export type Database = {
             foreignKeyName: "user_streaks_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_wallet_identities: {
+        Row: {
+          address: string
+          chain_id: number
+          chain_namespace: string
+          created_at: string
+          id: string
+          last_login_at: string | null
+          user_id: string
+          verified_at: string
+        }
+        Insert: {
+          address: string
+          chain_id?: number
+          chain_namespace?: string
+          created_at?: string
+          id?: string
+          last_login_at?: string | null
+          user_id: string
+          verified_at?: string
+        }
+        Update: {
+          address?: string
+          chain_id?: number
+          chain_namespace?: string
+          created_at?: string
+          id?: string
+          last_login_at?: string | null
+          user_id?: string
+          verified_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_wallet_identities_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -5403,6 +6454,54 @@ export type Database = {
             foreignKeyName: "welcome_bonuses_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whale_mission_claims: {
+        Row: {
+          claimed_at: string
+          client_request_id: string | null
+          deposit_phon: string
+          id: string
+          ledger_entry_id: string | null
+          mission: Database["public"]["Enums"]["whale_mission_code"]
+          phon_awarded: string
+          user_id: string
+        }
+        Insert: {
+          claimed_at?: string
+          client_request_id?: string | null
+          deposit_phon?: string
+          id?: string
+          ledger_entry_id?: string | null
+          mission: Database["public"]["Enums"]["whale_mission_code"]
+          phon_awarded?: string
+          user_id: string
+        }
+        Update: {
+          claimed_at?: string
+          client_request_id?: string | null
+          deposit_phon?: string
+          id?: string
+          ledger_entry_id?: string | null
+          mission?: Database["public"]["Enums"]["whale_mission_code"]
+          phon_awarded?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whale_mission_claims_ledger_entry_id_fkey"
+            columns: ["ledger_entry_id"]
+            isOneToOne: false
+            referencedRelation: "wallet_ledger"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whale_mission_claims_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -5740,6 +6839,10 @@ export type Database = {
         Args: { p_child_id: string; p_parent_id: string }
         Returns: undefined
       }
+      _affiliate_rank_window_start: {
+        Args: { p_now: string; p_window: string }
+        Returns: string
+      }
       _affiliate_refresh_tier_snapshots: {
         Args: { p_snapshot_date?: string }
         Returns: Json
@@ -5833,6 +6936,15 @@ export type Database = {
         Returns: undefined
       }
       _assert_funding_settlement_enabled: { Args: never; Returns: undefined }
+      _assert_futures_open_allowed: {
+        Args: {
+          p_market: string
+          p_reduce_only: boolean
+          p_side: Database["public"]["Enums"]["position_side"]
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       _assert_game_exposure_cap: {
         Args: {
           p_currency: Database["public"]["Enums"]["currency"]
@@ -5865,6 +6977,10 @@ export type Database = {
       }
       _assert_kyc_withdrawal_gate: {
         Args: { p_user_id?: string }
+        Returns: undefined
+      }
+      _assert_mission_catalog_claimable: {
+        Args: { p_mission: Database["public"]["Enums"]["viral_mission_code"] }
         Returns: undefined
       }
       _assert_not_geo_blocked: {
@@ -6013,6 +7129,27 @@ export type Database = {
       _circuit_breaker_failure_threshold: {
         Args: { p_domain: string }
         Returns: number
+      }
+      _cms_assert_tier_range: {
+        Args: {
+          p_max: Database["public"]["Enums"]["earn_vip_tier"]
+          p_min: Database["public"]["Enums"]["earn_vip_tier"]
+        }
+        Returns: undefined
+      }
+      _cms_mask_display_name: { Args: { p_raw: string }; Returns: string }
+      _co_mission_day_window: { Args: never; Returns: string }
+      _co_mission_partners_linked: {
+        Args: { p_a: string; p_b: string }
+        Returns: boolean
+      }
+      _co_mission_reward: {
+        Args: { p_mission: Database["public"]["Enums"]["co_mission_code"] }
+        Returns: string
+      }
+      _co_mission_share_eligible: {
+        Args: { p_user_id: string; p_window: string }
+        Returns: boolean
       }
       _compute_funding_payment: {
         Args: {
@@ -6163,6 +7300,38 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: Database["public"]["Enums"]["earn_vip_tier"]
       }
+      _earn_vip_assert_leverage: {
+        Args: { p_leverage: number; p_market_max: number; p_user_id: string }
+        Returns: undefined
+      }
+      _earn_vip_assert_withdrawal_daily: {
+        Args: {
+          p_amount: number
+          p_currency: Database["public"]["Enums"]["currency"]
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      _earn_vip_fee_discount_bps: {
+        Args: { p_tier: Database["public"]["Enums"]["earn_vip_tier"] }
+        Returns: number
+      }
+      _earn_vip_fee_rate: {
+        Args: { p_base_rate: number; p_user_id: string }
+        Returns: number
+      }
+      _earn_vip_stake_mult: {
+        Args: { p_tier: Database["public"]["Enums"]["earn_vip_tier"] }
+        Returns: number
+      }
+      _earn_vip_trade_leverage_cap: {
+        Args: { p_tier: Database["public"]["Enums"]["earn_vip_tier"] }
+        Returns: number
+      }
+      _earn_vip_withdrawal_daily_cap: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
       _enforce_rate_limit: {
         Args: { p_rpc_name: string; p_user_id: string }
         Returns: undefined
@@ -6227,6 +7396,9 @@ export type Database = {
       _ensure_user_earn_vip: {
         Args: { p_user_id: string }
         Returns: {
+          decay_warnings_sent: number[]
+          last_decay_at: string | null
+          last_qualifying_at: string | null
           tier: Database["public"]["Enums"]["earn_vip_tier"]
           tier_upgraded_on: string | null
           updated_at: string
@@ -6303,6 +7475,29 @@ export type Database = {
         }
         Returns: number
       }
+      _game_pf_ensure_state: {
+        Args: { p_user_id: string }
+        Returns: {
+          active_server_seed: string
+          active_server_seed_hash: string
+          client_seed: string
+          next_nonce: number
+          previous_server_seed: string | null
+          rotated_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_game_pf_state"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      _game_pf_has_blocking_activity: {
+        Args: { p_user_id: string }
+        Returns: boolean
+      }
       _game_result: {
         Args: {
           p_client_seed: string
@@ -6370,6 +7565,13 @@ export type Database = {
         Returns: boolean
       }
       _giftcard_fee_market_stale_days: { Args: never; Returns: number }
+      _giftcard_redeem_quote: {
+        Args: {
+          p_face_krw: string
+          p_kind: Database["public"]["Enums"]["giftcard_kind"]
+        }
+        Returns: Json
+      }
       _gold_rush_paytable: { Args: never; Returns: Json }
       _gold_rush_reels: { Args: never; Returns: number[] }
       _golden_earth_base_cap: {
@@ -6443,6 +7645,15 @@ export type Database = {
         Args: { p_xp: number }
         Returns: Database["public"]["Enums"]["earn_vip_tier"]
       }
+      _grant_co_mission_claim: {
+        Args: {
+          p_mission: Database["public"]["Enums"]["co_mission_code"]
+          p_session_id: string
+          p_user_id: string
+          p_window_key: string
+        }
+        Returns: string
+      }
       _grant_mission: {
         Args: {
           p_mission: Database["public"]["Enums"]["mission_code"]
@@ -6501,6 +7712,18 @@ export type Database = {
         Args: { p_mark: number; p_position_id: string }
         Returns: string
       }
+      _live_crash_current_mult: {
+        Args: { p_crash_mult: string; p_flew_at: string }
+        Returns: number
+      }
+      _live_crash_settle_bet: {
+        Args: {
+          p_bet_id: string
+          p_cashout_mult: number
+          p_status: Database["public"]["Enums"]["live_crash_bet_status"]
+        }
+        Returns: Json
+      }
       _lock_spot_sell_base: {
         Args: {
           p_base: string
@@ -6540,6 +7763,14 @@ export type Database = {
       _mirror_phon_usdt_perp_mark: {
         Args: { p_price: string; p_reason?: string; p_source: string }
         Returns: Json
+      }
+      _mission_catalog_assert_numeric_text: {
+        Args: { p_label: string; p_value: string }
+        Returns: undefined
+      }
+      _mission_catalog_is_forbidden_code: {
+        Args: { p_code: string }
+        Returns: boolean
       }
       _momentum_cash_payout_mult: { Args: { p_combo: number }; Returns: number }
       _momentum_combo_mult: { Args: { p_combo: number }; Returns: number }
@@ -6590,6 +7821,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      _p2p_resolve_recipient: { Args: { p_recipient: string }; Returns: string }
       _parse_time_in_force: {
         Args: { p_tif: string }
         Returns: Database["public"]["Enums"]["time_in_force"]
@@ -6625,6 +7857,7 @@ export type Database = {
           p_market: string
           p_order_type: Database["public"]["Enums"]["order_type"]
           p_price: string
+          p_reduce_only?: boolean
           p_side: string
           p_stop_price: string
           p_time_in_force?: string
@@ -6657,6 +7890,26 @@ export type Database = {
           p_take_profit: string
         }
         Returns: boolean
+      }
+      _product_analytics_event_allowed: {
+        Args: { p_name: string }
+        Returns: boolean
+      }
+      _progressive_session_public: {
+        Args: {
+          p_row: Database["public"]["Tables"]["game_progressive_sessions"]["Row"]
+        }
+        Returns: Json
+      }
+      _progressive_settle_session: {
+        Args: {
+          p_multiplier: number
+          p_public_state: Json
+          p_result_payload: Json
+          p_session_id: string
+          p_status: Database["public"]["Enums"]["progressive_session_status"]
+        }
+        Returns: Json
       }
       _promote_completed_bonus_wagering: {
         Args: { p_user_id: string }
@@ -6879,6 +8132,7 @@ export type Database = {
         }
         Returns: Json
       }
+      _siwe_normalize_address: { Args: { p_address: string }; Returns: string }
       _slot_line_mult: {
         Args: { p_paytable: Json; p_symbols: number[] }
         Returns: number
@@ -6952,6 +8206,14 @@ export type Database = {
         Returns: number
       }
       _sports_odds_max_age_sec: { Args: never; Returns: number }
+      _sports_resolve_place_odds: {
+        Args: {
+          p_client_odds: string
+          p_latest_odds: string
+          p_policy: Database["public"]["Enums"]["sports_odds_acceptance"]
+        }
+        Returns: string
+      }
       _sports_settle_all_score_markets: {
         Args: {
           p_away_goals: number
@@ -6961,6 +8223,14 @@ export type Database = {
         Returns: Json
       }
       _sports_settle_btts_legs: {
+        Args: {
+          p_away_goals: number
+          p_fixture_id: string
+          p_home_goals: number
+        }
+        Returns: number
+      }
+      _sports_settle_correct_score_legs: {
         Args: {
           p_away_goals: number
           p_fixture_id: string
@@ -7034,6 +8304,62 @@ export type Database = {
         Returns: undefined
       }
       _sync_threshold_ops_alerts: { Args: never; Returns: Json }
+      _tier_decay_apply_one: {
+        Args: { p_as_of?: string; p_user_id: string }
+        Returns: Json
+      }
+      _tier_decay_config_int: {
+        Args: { p_default: number; p_key: string }
+        Returns: number
+      }
+      _tier_decay_config_numeric: {
+        Args: { p_default: number; p_key: string }
+        Returns: number
+      }
+      _tier_decay_grace_days: {
+        Args: { p_tier: Database["public"]["Enums"]["earn_vip_tier"] }
+        Returns: number
+      }
+      _tier_decay_krw_deposited: {
+        Args: { p_since: string; p_user_id: string }
+        Returns: number
+      }
+      _tier_decay_maybe_warn: {
+        Args: { p_as_of?: string; p_user_id: string }
+        Returns: Json
+      }
+      _tier_decay_meets_maintenance: {
+        Args: {
+          p_as_of?: string
+          p_tier: Database["public"]["Enums"]["earn_vip_tier"]
+          p_user_id: string
+        }
+        Returns: boolean
+      }
+      _tier_decay_previous: {
+        Args: { p_tier: Database["public"]["Enums"]["earn_vip_tier"] }
+        Returns: Database["public"]["Enums"]["earn_vip_tier"]
+      }
+      _tier_decay_touch_qualifying: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
+      _tier_decay_usdt_volume: {
+        Args: { p_since: string; p_user_id: string }
+        Returns: number
+      }
+      _tier_decay_window_start: {
+        Args: {
+          p_as_of?: string
+          p_tier: Database["public"]["Enums"]["earn_vip_tier"]
+        }
+        Returns: string
+      }
+      _tier_decay_xp_cap: {
+        Args: { p_tier: Database["public"]["Enums"]["earn_vip_tier"] }
+        Returns: number
+      }
+      _trading_api_key_hash: { Args: { p_secret: string }; Returns: string }
       _trailing_stop_activation_met: {
         Args: {
           p_activation: string
@@ -7108,6 +8434,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      _user_position_mode: {
+        Args: { p_user_id: string }
+        Returns: Database["public"]["Enums"]["position_mode"]
+      }
       _uuid_from_md5: { Args: { p_value: string }; Returns: string }
       _viral_mission_reward: {
         Args: { p_mission: Database["public"]["Enums"]["viral_mission_code"] }
@@ -7126,6 +8456,18 @@ export type Database = {
       }
       _viral_quota_window_key: {
         Args: { p_mission: Database["public"]["Enums"]["viral_mission_code"] }
+        Returns: string
+      }
+      _whale_lifetime_deposit_phon: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
+      _whale_mission_reward: {
+        Args: { p_mission: Database["public"]["Enums"]["whale_mission_code"] }
+        Returns: string
+      }
+      _whale_mission_threshold: {
+        Args: { p_mission: Database["public"]["Enums"]["whale_mission_code"] }
         Returns: string
       }
       _wl_row_hash: {
@@ -7153,6 +8495,7 @@ export type Database = {
           referrer_id: string
         }[]
       }
+      rpc_accept_co_mission: { Args: { p_session_id: string }; Returns: Json }
       rpc_ack_ops_alert: {
         Args: { p_alert_id: string; p_reason: string }
         Returns: Json
@@ -7173,7 +8516,12 @@ export type Database = {
         Args: { p_deposit_id: string; p_reason: string }
         Returns: Json
       }
+      rpc_admin_fulfill_giftcard_redeem: {
+        Args: { p_reason: string; p_redeem_id: string }
+        Returns: Json
+      }
       rpc_admin_get_ops_dashboard: { Args: never; Returns: Json }
+      rpc_admin_get_product_analytics: { Args: never; Returns: Json }
       rpc_admin_get_viral_analytics: { Args: never; Returns: Json }
       rpc_admin_halt_market: {
         Args: { p_reason: string; p_symbol: string }
@@ -7192,6 +8540,7 @@ export type Database = {
         Returns: Json[]
       }
       rpc_admin_list_mfa_policy: { Args: never; Returns: Json }
+      rpc_admin_list_mission_catalog: { Args: never; Returns: Json[] }
       rpc_admin_list_outcome_liability: {
         Args: { p_limit?: number; p_outcome_id: string }
         Returns: Json
@@ -7227,6 +8576,10 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      rpc_admin_list_support_tickets: {
+        Args: { p_limit?: number; p_status?: string }
+        Returns: Json
+      }
       rpc_admin_list_trade_market_breakers: { Args: never; Returns: Json[] }
       rpc_admin_list_unsettled_sports_fixtures: {
         Args: { p_limit?: number }
@@ -7261,12 +8614,28 @@ export type Database = {
         Args: { p_deposit_id: string; p_reason: string; p_transfer_id: string }
         Returns: Json
       }
+      rpc_admin_reject_giftcard_redeem: {
+        Args: { p_reason: string; p_redeem_id: string }
+        Returns: Json
+      }
       rpc_admin_release_self_exclusion: {
         Args: { p_exclusion_id: string; p_reason: string }
         Returns: Json
       }
+      rpc_admin_resolve_support_ticket: {
+        Args: {
+          p_reason: string
+          p_resolution_note?: string
+          p_ticket_id: string
+        }
+        Returns: Json
+      }
       rpc_admin_resume_sports_market: {
         Args: { p_market_id: string; p_reason: string }
+        Returns: Json
+      }
+      rpc_admin_review_krw_deposit_proof: {
+        Args: { p_decision: string; p_deposit_id: string; p_reason: string }
         Returns: Json
       }
       rpc_admin_set_alert_threshold: {
@@ -7302,15 +8671,6 @@ export type Database = {
         }
         Returns: Json
       }
-      rpc_admin_set_user_earn_vip_tier: {
-        Args: {
-          p_reason: string
-          p_tier: string
-          p_user_id: string
-          p_xp?: number
-        }
-        Returns: Json
-      }
       rpc_admin_set_sports_risk_tier: {
         Args: {
           p_live_delay_ms?: number
@@ -7327,6 +8687,15 @@ export type Database = {
       }
       rpc_admin_set_user_activity: {
         Args: { p_action: string; p_reason: string; p_user_id: string }
+        Returns: Json
+      }
+      rpc_admin_set_user_earn_vip_tier: {
+        Args: {
+          p_reason: string
+          p_tier: string
+          p_user_id: string
+          p_xp?: number
+        }
         Returns: Json
       }
       rpc_admin_settle_sports_fixture_quorum: {
@@ -7349,6 +8718,10 @@ export type Database = {
         Args: { p_payload: Json }
         Returns: Json
       }
+      rpc_admin_upsert_mission_catalog: {
+        Args: { p_payload: Json }
+        Returns: Json
+      }
       rpc_admin_void_game_bet: {
         Args: { p_bet_id: string; p_reason: string }
         Returns: Json
@@ -7361,8 +8734,12 @@ export type Database = {
         Args: { p_reason: string; p_withdrawal_id: string }
         Returns: Json
       }
-      rpc_accept_co_mission: {
-        Args: { p_session_id: string }
+      rpc_attach_krw_deposit_proof: {
+        Args: {
+          p_client_request_id: string
+          p_deposit_id: string
+          p_proof_path: string
+        }
         Returns: Json
       }
       rpc_cancel_game_bet: { Args: { p_bet_id: string }; Returns: Json }
@@ -7392,12 +8769,12 @@ export type Database = {
         Args: { p_client_request_id?: string; p_mission: string }
         Returns: Json
       }
-      rpc_claim_whale_mission: {
-        Args: { p_client_request_id?: string; p_mission: string }
-        Returns: Json
-      }
       rpc_claim_welcome_bonus: {
         Args: { p_idempotency_key?: string }
+        Returns: Json
+      }
+      rpc_claim_whale_mission: {
+        Args: { p_client_request_id?: string; p_mission: string }
         Returns: Json
       }
       rpc_clear_risk_flag: {
@@ -7412,10 +8789,7 @@ export type Database = {
         Args: { p_position_id: string }
         Returns: Json
       }
-      rpc_complete_co_mission: {
-        Args: { p_session_id: string }
-        Returns: Json
-      }
+      rpc_complete_co_mission: { Args: { p_session_id: string }; Returns: Json }
       rpc_complete_mission: { Args: { p_mission: string }; Returns: Json }
       rpc_contribute_insurance_capital: {
         Args: {
@@ -7453,8 +8827,33 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_create_giftcard_redeem_request: {
+        Args: {
+          p_client_request_id?: string
+          p_face_value_krw: string
+          p_kind: string
+        }
+        Returns: Json
+      }
       rpc_create_krw_deposit_request: {
         Args: { p_amount_krw: string; p_client_request_id?: string }
+        Returns: Json
+      }
+      rpc_create_siwe_challenge: {
+        Args: { p_address: string; p_chain_id?: number }
+        Returns: Json
+      }
+      rpc_create_support_ticket: {
+        Args: {
+          p_body: string
+          p_category: string
+          p_client_request_id?: string
+          p_subject: string
+        }
+        Returns: Json
+      }
+      rpc_create_trading_api_key: {
+        Args: { p_name: string; p_scopes?: string[] }
         Returns: Json
       }
       rpc_disable_market_source: {
@@ -7465,12 +8864,16 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_get_affiliate_rank_leaderboard: {
+        Args: { p_limit?: number; p_window?: string }
+        Returns: Json
+      }
       rpc_get_candles: {
         Args: { p_interval: string; p_limit?: number; p_symbol: string }
         Returns: Json
       }
-      rpc_get_compliance_status: { Args: never; Returns: Json }
       rpc_get_co_mission_status: { Args: never; Returns: Json[] }
+      rpc_get_compliance_status: { Args: never; Returns: Json }
       rpc_get_crypto_deposit_address: {
         Args: { p_asset?: string; p_chain?: string }
         Returns: Json
@@ -7478,13 +8881,8 @@ export type Database = {
       rpc_get_dr_health_summary: { Args: never; Returns: Json }
       rpc_get_earn_activity_feed: { Args: { p_limit?: number }; Returns: Json }
       rpc_get_earn_hub_status: { Args: never; Returns: Json }
-      rpc_get_affiliate_rank_leaderboard: {
-        Args: { p_limit?: number; p_window?: string }
-        Returns: Json
-      }
-      rpc_get_tier_decay_status: { Args: never; Returns: Json }
-      rpc_get_user_tier_summary: { Args: never; Returns: Json }
       rpc_get_fixture_markets: { Args: { p_fixture_id: string }; Returns: Json }
+      rpc_get_game_pf_state: { Args: never; Returns: Json }
       rpc_get_golden_earth_status: { Args: never; Returns: Json }
       rpc_get_live_fixture_state: {
         Args: { p_fixture_id: string }
@@ -7496,16 +8894,21 @@ export type Database = {
       }
       rpc_get_ops_health: { Args: never; Returns: Json }
       rpc_get_phon_balance_breakdown: { Args: never; Returns: Json }
+      rpc_get_position_mode: { Args: never; Returns: Json }
       rpc_get_repeatable_mission_status: {
         Args: { p_lane?: string }
         Returns: Json
       }
       rpc_get_reward_config: { Args: never; Returns: Json }
       rpc_get_sports_bet: { Args: { p_bet_id: string }; Returns: Json }
+      rpc_get_support_ticket: { Args: { p_ticket_id: string }; Returns: Json }
       rpc_get_synthetic_book: {
         Args: { p_levels?: number; p_symbol: string }
         Returns: Json
       }
+      rpc_get_tier_decay_status: { Args: never; Returns: Json }
+      rpc_get_tier_leaderboard: { Args: { p_limit?: number }; Returns: Json }
+      rpc_get_user_tier_summary: { Args: never; Returns: Json }
       rpc_get_viral_mission_status: { Args: never; Returns: Json }
       rpc_get_whale_mission_status: { Args: never; Returns: Json[] }
       rpc_golden_earth_tap: {
@@ -7513,10 +8916,6 @@ export type Database = {
         Returns: Json
       }
       rpc_ingest_sports_c1: { Args: { p_message: Json }; Returns: Json }
-      rpc_invite_co_mission: {
-        Args: { p_mission: string; p_partner_id: string }
-        Returns: Json
-      }
       rpc_ingest_sports_c1_batch: { Args: { p_messages: Json }; Returns: Json }
       rpc_ingest_sports_fixture_status: {
         Args: {
@@ -7530,6 +8929,10 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_invite_co_mission: {
+        Args: { p_mission: string; p_partner_id: string }
+        Returns: Json
+      }
       rpc_liquidate_position: { Args: { p_position_id: string }; Returns: Json }
       rpc_list_cms_content: {
         Args: { p_kind?: string; p_locale?: string; p_surface?: string }
@@ -7537,11 +8940,16 @@ export type Database = {
       }
       rpc_list_giftcard_fee_market: { Args: never; Returns: Json[] }
       rpc_list_my_sports_bets: { Args: { p_limit?: number }; Returns: Json[] }
+      rpc_list_p2p_transfers: { Args: { p_limit?: number }; Returns: Json }
+      rpc_list_sports_catalog: { Args: never; Returns: Json }
       rpc_list_sports_fixtures: {
         Args: { p_date?: string; p_league?: string; p_status?: string }
         Returns: Json[]
       }
       rpc_list_sports_market_types: { Args: never; Returns: Json[] }
+      rpc_list_support_tickets: { Args: { p_limit?: number }; Returns: Json }
+      rpc_list_trading_api_keys: { Args: never; Returns: Json }
+      rpc_list_wallet_identities: { Args: never; Returns: Json }
       rpc_list_withdrawal_addresses: {
         Args: never
         Returns: {
@@ -7561,6 +8969,23 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      rpc_live_crash_advance: { Args: never; Returns: Json }
+      rpc_live_crash_cashout: {
+        Args: { p_bet_id: string; p_idempotency_key: string }
+        Returns: Json
+      }
+      rpc_live_crash_get_current: { Args: never; Returns: Json }
+      rpc_live_crash_place_bet: {
+        Args: {
+          p_auto_cashout: string
+          p_client_seed: string
+          p_currency: string
+          p_idempotency_key: string
+          p_stake: string
+          p_use_account_pf?: boolean
+        }
+        Returns: Json
       }
       rpc_lock_wallet: {
         Args: {
@@ -7590,22 +9015,45 @@ export type Database = {
         Returns: Json
       }
       rpc_open_game_round: { Args: { p_game: string }; Returns: Json }
+      rpc_partial_cashout_sports_bet: {
+        Args: {
+          p_bet_id: string
+          p_cashout_amount: string
+          p_idempotency_key: string
+          p_stake_portion: string
+        }
+        Returns: Json
+      }
       rpc_partial_close_futures: {
         Args: { p_close_ratio: string; p_position_id: string }
         Returns: Json
       }
-      rpc_place_game_bet: {
-        Args: {
-          p_client_seed: string
-          p_currency: string
-          p_expected_result?: Json
-          p_idempotency_key: string
-          p_round_id: string
-          p_selection: Json
-          p_stake: string
-        }
-        Returns: Json
-      }
+      rpc_place_game_bet:
+        | {
+            Args: {
+              p_client_seed: string
+              p_currency: string
+              p_expected_result?: Json
+              p_idempotency_key: string
+              p_round_id: string
+              p_selection: Json
+              p_stake: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_client_seed: string
+              p_currency: string
+              p_expected_result?: Json
+              p_idempotency_key: string
+              p_round_id: string
+              p_selection: Json
+              p_stake: string
+              p_use_account_pf?: boolean
+            }
+            Returns: Json
+          }
       rpc_place_limit_order: {
         Args: {
           p_client_request_id: string
@@ -7629,6 +9077,7 @@ export type Database = {
           p_idempotency_key: string
           p_ip_hash?: string
           p_legs: Json
+          p_odds_acceptance?: string
           p_stake: string
         }
         Returns: Json
@@ -7688,7 +9137,15 @@ export type Database = {
         Args: { p_face_value_krw: string; p_kind: string }
         Returns: Json
       }
+      rpc_preview_giftcard_redeem: {
+        Args: { p_face_value_krw: string; p_kind: string }
+        Returns: Json
+      }
       rpc_preview_sports_cashout: { Args: { p_bet_id: string }; Returns: Json }
+      rpc_preview_sports_partial_cashout: {
+        Args: { p_bet_id: string; p_stake_portion: string }
+        Returns: Json
+      }
       rpc_process_bank_transfer: {
         Args: {
           p_amount_krw: string
@@ -7712,6 +9169,38 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_progressive_cashout: {
+        Args: { p_idempotency_key: string; p_session_id: string }
+        Returns: Json
+      }
+      rpc_progressive_start: {
+        Args: {
+          p_client_seed: string
+          p_currency: string
+          p_game: string
+          p_idempotency_key: string
+          p_init: Json
+          p_stake: string
+          p_use_account_pf?: boolean
+        }
+        Returns: Json
+      }
+      rpc_progressive_step: {
+        Args: {
+          p_action: Json
+          p_idempotency_key: string
+          p_session_id: string
+        }
+        Returns: Json
+      }
+      rpc_record_app_install_attribution: {
+        Args: {
+          p_client_event_id?: string
+          p_metadata?: Json
+          p_platform: string
+        }
+        Returns: Json
+      }
       rpc_record_consent: {
         Args: {
           p_accepted: boolean
@@ -7720,6 +9209,17 @@ export type Database = {
           p_ip_address?: string
           p_locale?: string
           p_user_agent?: string
+        }
+        Returns: Json
+      }
+      rpc_record_product_analytics_event: {
+        Args: {
+          p_anonymous_id?: string
+          p_client_event_id?: string
+          p_event_name: string
+          p_occurred_at?: string
+          p_properties?: Json
+          p_surface?: string
         }
         Returns: Json
       }
@@ -7804,14 +9304,16 @@ export type Database = {
         Args: { p_reason: string; p_status: string; p_submission_id: string }
         Returns: Json
       }
+      rpc_revoke_trading_api_key: { Args: { p_key_id: string }; Returns: Json }
+      rpc_rotate_game_server_seed: {
+        Args: { p_new_client_seed?: string }
+        Returns: Json
+      }
       rpc_run_affiliate_settlements: {
         Args: { p_batch_limit?: number; p_settlement_date?: string }
         Returns: Json
       }
-      rpc_run_cms_publish_scheduled: {
-        Args: { p_now?: string }
-        Returns: Json
-      }
+      rpc_run_cms_publish_scheduled: { Args: { p_now?: string }; Returns: Json }
       rpc_run_custody_reconciliation: { Args: never; Returns: Json }
       rpc_run_funding_accrual: {
         Args: { p_batch_limit?: number }
@@ -7828,6 +9330,10 @@ export type Database = {
       rpc_run_spot_order_fills: { Args: never; Returns: Json }
       rpc_run_stop_orders: {
         Args: { p_after_id?: string; p_batch_limit?: number }
+        Returns: Json
+      }
+      rpc_run_tier_decay: {
+        Args: { p_as_of?: string; p_limit?: number }
         Returns: Json
       }
       rpc_service_assess_circuit_breaker: {
@@ -7876,6 +9382,10 @@ export type Database = {
           p_provider_attempted?: boolean
           p_worker_id: string
         }
+        Returns: Json
+      }
+      rpc_service_complete_siwe_login: {
+        Args: { p_address: string; p_challenge_id: string; p_user_id: string }
         Returns: Json
       }
       rpc_service_enqueue_ops_telegram_digest: {
@@ -7970,9 +9480,11 @@ export type Database = {
         Args: { p_enabled: boolean; p_feature: string; p_reason: string }
         Returns: Json
       }
+      rpc_set_game_client_seed: {
+        Args: { p_client_seed: string }
+        Returns: Json
+      }
       rpc_set_margin_mode: { Args: { p_mode: string }; Returns: Json }
-      rpc_set_position_mode: { Args: { p_mode: string }; Returns: Json }
-      rpc_get_position_mode: { Args: Record<string, never>; Returns: Json }
       rpc_set_market_limits: {
         Args: {
           p_market: string
@@ -7994,6 +9506,7 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_set_position_mode: { Args: { p_mode: string }; Returns: Json }
       rpc_set_rg_limit: {
         Args: {
           p_amount: string
@@ -8100,12 +9613,22 @@ export type Database = {
         Returns: Json
       }
       rpc_sweep_stale_game_bets: { Args: never; Returns: Json }
+      rpc_sweep_stale_progressive_sessions: { Args: never; Returns: Json }
       rpc_sync_ops_alerts_from_health: { Args: never; Returns: Json }
       rpc_sync_sports_ingest_ops_alerts: {
         Args: {
           p_rest_stale_ms?: number
           p_settle_stale_ms?: number
           p_ws_stale_ms?: number
+        }
+        Returns: Json
+      }
+      rpc_transfer_to_user: {
+        Args: {
+          p_amount: string
+          p_client_request_id?: string
+          p_memo?: string
+          p_recipient: string
         }
         Returns: Json
       }
@@ -8200,6 +9723,7 @@ export type Database = {
       bet_status: "pending" | "won" | "lost" | "cancelled"
       cms_content_kind: "page" | "notice" | "promo" | "banner"
       cms_publish_status: "draft" | "scheduled" | "published" | "archived"
+      co_mission_code: "co_share_referral"
       consent_doc_type:
         | "terms_of_service"
         | "privacy_policy"
@@ -8222,7 +9746,13 @@ export type Database = {
         | "unmatched"
         | "disputed"
         | "admin_rejected"
-      earn_vip_tier: "bronze" | "silver" | "gold" | "platinum" | "diamond" | "prime_elite"
+      earn_vip_tier:
+        | "bronze"
+        | "silver"
+        | "gold"
+        | "platinum"
+        | "diamond"
+        | "prime_elite"
       game_code:
         | "crash"
         | "limbo"
@@ -8249,8 +9779,9 @@ export type Database = {
         | "phone_verified"
         | "id_verified"
       ledger_direction: "credit" | "debit" | "lock" | "unlock" | "reverse"
+      live_crash_bet_status: "pending" | "cashed_out" | "busted" | "refunded"
+      live_crash_round_status: "betting" | "flying" | "crashed" | "void"
       margin_mode: "isolated" | "cross"
-      position_mode: "one_way" | "hedge"
       mission_code:
         | "complete_profile"
         | "first_trade"
@@ -8268,8 +9799,15 @@ export type Database = {
         | "cancelled"
         | "triggered"
       order_type: "market" | "limit" | "stop_market" | "stop_limit"
+      position_mode: "one_way" | "hedge"
       position_side: "long" | "short"
       position_status: "open" | "closed" | "liquidated"
+      progressive_session_status:
+        | "active"
+        | "cashed_out"
+        | "busted"
+        | "expired"
+        | "cancelled"
       referral_state:
         | "registered"
         | "pending"
@@ -8310,6 +9848,7 @@ export type Database = {
         | "cancelled"
       sports_leg_status: "pending" | "won" | "lost" | "void"
       sports_market_status: "open" | "suspended" | "closed"
+      sports_odds_acceptance: "strict" | "accept_any" | "accept_better"
       sports_risk_tier: "normal" | "restricted" | "sharp" | "banned"
       sports_selection:
         | "home"
@@ -8319,6 +9858,7 @@ export type Database = {
         | "under"
         | "yes"
         | "no"
+        | "score"
       spot_side: "buy" | "sell"
       staking_status: "active" | "unstaked"
       staking_term: "flexible" | "days_7" | "days_30" | "days_90"
@@ -8330,6 +9870,8 @@ export type Database = {
         | "invite_friend_signup"
         | "affiliate_content_post"
         | "viral_streak_share"
+        | "app_install"
+      whale_mission_code: "whale_deposit_1m"
       withdrawal_status:
         | "pending"
         | "approved"
@@ -8474,6 +10016,7 @@ export const Constants = {
       bet_status: ["pending", "won", "lost", "cancelled"],
       cms_content_kind: ["page", "notice", "promo", "banner"],
       cms_publish_status: ["draft", "scheduled", "published", "archived"],
+      co_mission_code: ["co_share_referral"],
       consent_doc_type: [
         "terms_of_service",
         "privacy_policy",
@@ -8498,7 +10041,14 @@ export const Constants = {
         "disputed",
         "admin_rejected",
       ],
-      earn_vip_tier: ["bronze", "silver", "gold", "platinum", "diamond", "prime_elite"],
+      earn_vip_tier: [
+        "bronze",
+        "silver",
+        "gold",
+        "platinum",
+        "diamond",
+        "prime_elite",
+      ],
       game_code: [
         "crash",
         "limbo",
@@ -8528,8 +10078,9 @@ export const Constants = {
         "id_verified",
       ],
       ledger_direction: ["credit", "debit", "lock", "unlock", "reverse"],
+      live_crash_bet_status: ["pending", "cashed_out", "busted", "refunded"],
+      live_crash_round_status: ["betting", "flying", "crashed", "void"],
       margin_mode: ["isolated", "cross"],
-      position_mode: ["one_way", "hedge"],
       mission_code: [
         "complete_profile",
         "first_trade",
@@ -8549,8 +10100,16 @@ export const Constants = {
         "triggered",
       ],
       order_type: ["market", "limit", "stop_market", "stop_limit"],
+      position_mode: ["one_way", "hedge"],
       position_side: ["long", "short"],
       position_status: ["open", "closed", "liquidated"],
+      progressive_session_status: [
+        "active",
+        "cashed_out",
+        "busted",
+        "expired",
+        "cancelled",
+      ],
       referral_state: ["registered", "pending", "qualified", "blocked", "paid"],
       repeatable_mission_code: [
         "weekly_play5",
@@ -8589,8 +10148,18 @@ export const Constants = {
       ],
       sports_leg_status: ["pending", "won", "lost", "void"],
       sports_market_status: ["open", "suspended", "closed"],
+      sports_odds_acceptance: ["strict", "accept_any", "accept_better"],
       sports_risk_tier: ["normal", "restricted", "sharp", "banned"],
-      sports_selection: ["home", "draw", "away", "over", "under", "yes", "no"],
+      sports_selection: [
+        "home",
+        "draw",
+        "away",
+        "over",
+        "under",
+        "yes",
+        "no",
+        "score",
+      ],
       spot_side: ["buy", "sell"],
       staking_status: ["active", "unstaked"],
       staking_term: ["flexible", "days_7", "days_30", "days_90"],
@@ -8602,7 +10171,9 @@ export const Constants = {
         "invite_friend_signup",
         "affiliate_content_post",
         "viral_streak_share",
+        "app_install",
       ],
+      whale_mission_code: ["whale_deposit_1m"],
       withdrawal_status: [
         "pending",
         "approved",

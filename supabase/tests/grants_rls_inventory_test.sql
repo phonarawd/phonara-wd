@@ -730,7 +730,117 @@ BEGIN
   ASSERT NOT has_function_privilege('authenticated', 'public._cms_mask_display_name(text)', 'EXECUTE'),
     'authenticated must NOT EXECUTE _cms_mask_display_name';
 
-  RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges + E1 tier decay + E3 viral cms';
+  -- E9 Identity+Support tables
+  ASSERT NOT has_table_privilege('anon', 'public.siwe_challenges', 'SELECT'),
+    'anon must NOT SELECT siwe_challenges';
+  ASSERT NOT has_table_privilege('authenticated', 'public.siwe_challenges', 'SELECT'),
+    'authenticated must NOT SELECT siwe_challenges';
+  ASSERT NOT has_table_privilege('anon', 'public.support_tickets', 'SELECT'),
+    'anon must NOT SELECT support_tickets';
+  ASSERT has_table_privilege('authenticated', 'public.support_tickets', 'SELECT'),
+    'authenticated may SELECT support_tickets (own/admin RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.support_tickets', 'INSERT'),
+    'authenticated must NOT INSERT support_tickets directly';
+  ASSERT NOT has_table_privilege('anon', 'public.product_analytics_events', 'SELECT'),
+    'anon must NOT SELECT product_analytics_events';
+  ASSERT has_table_privilege('authenticated', 'public.product_analytics_events', 'SELECT'),
+    'authenticated may SELECT product_analytics_events (admin RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.product_analytics_events', 'INSERT'),
+    'authenticated must NOT INSERT product_analytics_events directly';
+  ASSERT NOT has_table_privilege('anon', 'public.app_install_attributions', 'SELECT'),
+    'anon must NOT SELECT app_install_attributions';
+  ASSERT has_table_privilege('authenticated', 'public.app_install_attributions', 'SELECT'),
+    'authenticated may SELECT app_install_attributions (own/admin RLS)';
+
+  -- E9 Identity+Support RPCs
+  ASSERT has_function_privilege('anon', 'public.rpc_create_siwe_challenge(text, integer)', 'EXECUTE'),
+    'anon may EXECUTE rpc_create_siwe_challenge';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_create_siwe_challenge(text, integer)', 'EXECUTE'),
+    'authenticated may EXECUTE rpc_create_siwe_challenge';
+  ASSERT NOT has_function_privilege(
+    'anon',
+    'public.rpc_service_complete_siwe_login(uuid, text, uuid)',
+    'EXECUTE'
+  ),
+    'anon must NOT EXECUTE rpc_service_complete_siwe_login';
+  ASSERT NOT has_function_privilege(
+    'authenticated',
+    'public.rpc_service_complete_siwe_login(uuid, text, uuid)',
+    'EXECUTE'
+  ),
+    'authenticated must NOT EXECUTE rpc_service_complete_siwe_login';
+  ASSERT has_function_privilege(
+    'service_role',
+    'public.rpc_service_complete_siwe_login(uuid, text, uuid)',
+    'EXECUTE'
+  ),
+    'service_role must EXECUTE rpc_service_complete_siwe_login';
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_create_support_ticket(text, text, text, text)', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_create_support_ticket';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_create_support_ticket(text, text, text, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_create_support_ticket';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_admin_list_support_tickets(text, integer)', 'EXECUTE'),
+    'authenticated may EXECUTE rpc_admin_list_support_tickets (admin body guard)';
+  ASSERT has_function_privilege(
+    'authenticated',
+    'public.rpc_admin_resolve_support_ticket(uuid, text, text)',
+    'EXECUTE'
+  ),
+    'authenticated may EXECUTE rpc_admin_resolve_support_ticket (admin body guard)';
+  ASSERT has_function_privilege(
+    'anon',
+    'public.rpc_record_product_analytics_event(text, text, jsonb, text, text, timestamp with time zone)',
+    'EXECUTE'
+  ),
+    'anon may EXECUTE rpc_record_product_analytics_event';
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_get_tier_leaderboard(integer)', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_get_tier_leaderboard';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_get_tier_leaderboard(integer)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_get_tier_leaderboard';
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_record_app_install_attribution(text, text, jsonb)', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_record_app_install_attribution';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_record_app_install_attribution(text, text, jsonb)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_record_app_install_attribution';
+
+  -- E10 Platform Engine tables
+  ASSERT NOT has_table_privilege('anon', 'public.mission_chains', 'SELECT'),
+    'anon must NOT SELECT mission_chains';
+  ASSERT has_table_privilege('authenticated', 'public.mission_chains', 'SELECT'),
+    'authenticated may SELECT mission_chains';
+  ASSERT NOT has_table_privilege('authenticated', 'public.mission_chains', 'INSERT'),
+    'authenticated must NOT INSERT mission_chains directly';
+  ASSERT NOT has_table_privilege('anon', 'public.co_bet_sessions', 'SELECT'),
+    'anon must NOT SELECT co_bet_sessions';
+  ASSERT has_table_privilege('authenticated', 'public.co_bet_sessions', 'SELECT'),
+    'authenticated may SELECT co_bet_sessions (participant RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.co_bet_sessions', 'INSERT'),
+    'authenticated must NOT INSERT co_bet_sessions directly';
+  ASSERT NOT has_table_privilege('anon', 'public.co_bet_claims', 'SELECT'),
+    'anon must NOT SELECT co_bet_claims';
+  ASSERT has_table_privilege('authenticated', 'public.co_bet_claims', 'SELECT'),
+    'authenticated may SELECT co_bet_claims (own RLS)';
+
+  -- E10 Platform Engine RPCs
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_attach_krw_deposit_proof(uuid, text, text)', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_attach_krw_deposit_proof';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_attach_krw_deposit_proof(uuid, text, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_attach_krw_deposit_proof';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_admin_review_krw_deposit_proof(uuid, text, text)', 'EXECUTE'),
+    'authenticated may EXECUTE rpc_admin_review_krw_deposit_proof (admin body guard)';
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_list_mission_chains()', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_list_mission_chains';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_list_mission_chains()', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_list_mission_chains';
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_invite_co_bet(uuid, uuid)', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_invite_co_bet';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_invite_co_bet(uuid, uuid)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_invite_co_bet';
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_recommend_missions(integer)', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_recommend_missions';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_recommend_missions(integer)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_recommend_missions';
+
+  RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges + E1 tier decay + E3 viral cms + E9 identity + E10 platform';
 END;
 $$;
 

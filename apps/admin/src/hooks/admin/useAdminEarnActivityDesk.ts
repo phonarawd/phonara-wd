@@ -2,8 +2,11 @@ import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { getOpsDashboardRaw } from '@/domain/ops';
-import { parseOpsDashboard } from '@/product/bridge/parse-ops-dashboard';
-import { supabase } from '../../lib/supabase';
+import {
+  parseOpsDashboard,
+  type OpsDashboardQueueRow,
+} from '@/product/bridge/parse-ops-dashboard';
+import { callRpc } from '../../lib/rpc';
 
 type ViralAnalyticsRpc = {
   referrals?: {
@@ -24,21 +27,18 @@ export type AdminEarnActivityMissionClaim = {
   phonAwardedTotal: string;
 };
 
+const EMPTY_QUEUES: OpsDashboardQueueRow[] = [];
+
 /** Read-only E6 activity desk — Ops dashboard queues plus viral aggregate snapshots. */
 export function useAdminEarnActivityDesk() {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['admin-earn-activity-desk'],
     queryFn: async () => {
-      const [opsDashboard, viralResult] = await Promise.all([
+      const [opsDashboard, viralRaw] = await Promise.all([
         getOpsDashboardRaw().then(parseOpsDashboard),
-        (
-          supabase as {
-            rpc: (fn: string, args?: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
-          }
-        ).rpc('rpc_admin_get_viral_analytics'),
+        callRpc('rpc_admin_get_viral_analytics'),
       ]);
-      if (viralResult.error) throw viralResult.error;
-      return { opsDashboard, viral: (viralResult.data ?? {}) as ViralAnalyticsRpc };
+      return { opsDashboard, viral: (viralRaw ?? {}) as ViralAnalyticsRpc };
     },
     staleTime: 15_000,
     refetchInterval: 30_000,
@@ -68,7 +68,7 @@ export function useAdminEarnActivityDesk() {
   }, [refetch]);
 
   return {
-    queueRows: data?.opsDashboard.exceptionQueues ?? [],
+    queueRows: data?.opsDashboard.exceptionQueues ?? EMPTY_QUEUES,
     alerts: data?.opsDashboard.opsAlerts ?? { open: 0, critical: 0 },
     referralSnapshot,
     missionClaimTotals,

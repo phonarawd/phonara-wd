@@ -112,7 +112,6 @@ export function assertEwE8FinancialWaveSync(): void {
   if (!isEwE8FinancialEngineReady()) {
     throw new Error('E8 engine RPCs / launch gate not ready');
   }
-  if (LAUNCH_GATES.financialConnectivityLive !== false) {
-    throw new Error('E8 WAVE must keep financialConnectivityLive=false');
-  }
+  // Hub live (`financialConnectivityLive`) is owned by `ew-e10-wallet-settings-ui` —
+  // WAVE readiness does not require it false after UI unlock.
 }

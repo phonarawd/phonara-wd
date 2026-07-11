@@ -86,7 +86,51 @@ export const LAUNCH_GATES = {
   financialConnectivityEngine: true,
   /**
    * E8/E10 UI — `/wallet/transfer` · API keys hub · redeem reverse wire.
-   * WAVE keeps false; GATE remote + `ew-e10-wallet-settings-ui` unlock.
+   * `ew-e10-wallet-settings-ui` flips after GATE remote verify.
    */
-  financialConnectivityLive: false,
+  financialConnectivityLive: true,
+  /** E9 — SIWE · support tickets · product analytics · app-install · tier LB engine. */
+  identitySupportEngine: true,
+  /**
+   * E9/E10 UI — SIWE login surface live unlock.
+   * WAVE keeps false; GATE remote + login wire unlock.
+   */
+  siweLoginLive: false,
+  /**
+   * E9/E10 UI — `/support/ticket` live unlock.
+   * WAVE keeps false; `ew-e9-page-admin-support` / E10 trust UI unlock.
+   */
+  supportTicketsLive: false,
+  /**
+   * E9/E10 UI — `/tier/leaderboard` live unlock.
+   * WAVE keeps false; E10 trust-support UI unlock.
+   */
+  tierLeaderboardLive: false,
+  /**
+   * E9/E10 UI — app-install mission hub tab live unlock.
+   * WAVE keeps false; E10 growth UI unlock.
+   */
+  appInstallMissionLive: false,
+  /** E10 — KRW proof · mission chains · co-bet · recommend engine. */
+  platformEngine: true,
+  /**
+   * E10 UI — KRW deposit proof upload live unlock.
+   * WAVE keeps false; wallet deposit + Admin review unlock.
+   */
+  krwDepositProofLive: false,
+  /**
+   * E10 UI — mission chain hub unlock on `/home/missions`.
+   * WAVE keeps false; growth/missions UI unlock.
+   */
+  missionChainsLive: false,
+  /**
+   * E10 UI — co-bet sports social unlock.
+   * WAVE keeps false; sports social UI unlock.
+   */
+  coBetLive: false,
+  /**
+   * E10 UI — rule-based mission recommend carousel unlock.
+   * WAVE keeps false; earn hub unlock.
+   */
+  mlMissionRecommendLive: false,
 } as const;

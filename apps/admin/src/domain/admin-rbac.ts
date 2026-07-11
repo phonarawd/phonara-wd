@@ -12,7 +12,8 @@ export type AdminRbacAction =
   | 'casino.manage'
   | 'earn.settlement.approve'
   | 'access.rbac.manage'
-  | 'alerts.manage';
+  | 'alerts.manage'
+  | 'support.tickets.resolve';
 
 export type AdminRoleGrantRow = {
   userId: string;
@@ -54,6 +55,7 @@ const PERMISSIONS: Record<AdminRbacAction, readonly AdminRbacRole[]> = {
   'earn.settlement.approve': ['owner', 'finance'],
   'access.rbac.manage': ['owner'],
   'alerts.manage': ['owner', 'risk', 'operator', 'support'],
+  'support.tickets.resolve': ['owner', 'support'],
 };
 
 type DevEnv = { DEV?: boolean };

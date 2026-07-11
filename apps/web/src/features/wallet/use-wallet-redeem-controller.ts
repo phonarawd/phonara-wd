@@ -4,7 +4,7 @@ import type { MessageKey } from '@phonara/i18n';
 import { useAuth } from '@/contexts/auth-context';
 import {
   resolveRedeemRailDisabled,
-  WALLET_REDEEM_RAILS,
+  resolveWalletRedeemRails,
   type WalletRedeemRailView,
 } from '@/domain/wallet-redeem-display-contract';
 import { useComplianceStatus } from '@/hooks/use-compliance-status';
@@ -45,7 +45,7 @@ export function useWalletRedeemController(): WalletRedeemControllerView {
 
   const rails = useMemo(
     () =>
-      WALLET_REDEEM_RAILS.map((rail) => ({
+      resolveWalletRedeemRails().map((rail) => ({
         ...rail,
         disabled: resolveRedeemRailDisabled({
           rail,

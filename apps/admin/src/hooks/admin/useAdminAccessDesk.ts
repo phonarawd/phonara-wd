@@ -36,7 +36,7 @@ const ROLE_META: Record<RbacRoleKey, { labelKey: string; routesSummary: string }
     routesSummary: 'operations · earn · audit',
   },
   risk: { labelKey: 'admin.access.role.risk.label', routesSummary: 'alerts · audit · users' },
-  support: { labelKey: 'admin.access.role.support.label', routesSummary: 'queues · users · cms' },
+  support: { labelKey: 'admin.access.role.support.label', routesSummary: 'queues · users · support · cms' },
   operator: {
     labelKey: 'admin.access.role.operator.label',
     routesSummary: 'casino · sports · cms',

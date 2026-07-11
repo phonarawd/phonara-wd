@@ -382,7 +382,8 @@ export function AdminQueuesPage() {
     tabCounts.kyc === 0 &&
     tabCounts.str === 0 &&
     tabCounts.risk === 0 &&
-    tabCounts.review === 0;
+    tabCounts.review === 0 &&
+    Number(summary.supportOpen ?? 0) === 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -447,6 +448,32 @@ export function AdminQueuesPage() {
           <MetricCard label={t('admin.ops.exception.autoOk')} value={summary.autoOk} />
         </div>
       </section>
+
+      {Number(summary.supportOpen ?? 0) > 0 ? (
+        <section
+          className="border-line bg-surface-raised flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between"
+          data-testid="admin-queues-support-convergence"
+        >
+          <div className="space-y-1">
+            <p className="text-foreground m-0 text-sm font-semibold">
+              {t('admin.queues.support.title')}
+            </p>
+            <p className="text-foreground-muted m-0 text-sm">
+              {t('admin.queues.support.pending', { count: summary.supportOpen })}
+            </p>
+          </div>
+          <Button
+            size="md"
+            variant="outline"
+            onClick={() => {
+              goTo('/support');
+            }}
+            data-testid="admin-queues-to-support"
+          >
+            {t('admin.queues.support.cta')}
+          </Button>
+        </section>
+      ) : null}
 
       {showGlobalEmpty ? (
         <EmptyState

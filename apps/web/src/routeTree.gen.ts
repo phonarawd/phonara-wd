@@ -42,6 +42,7 @@ import { Route as FeaturesIndexRouteImport } from './routes/features.index'
 import { Route as CasinoIndexRouteImport } from './routes/casino.index'
 import { Route as AccountIndexRouteImport } from './routes/account.index'
 import { Route as WalletWithdrawRouteImport } from './routes/wallet.withdraw'
+import { Route as WalletTransferRouteImport } from './routes/wallet.transfer'
 import { Route as WalletRedeemRouteImport } from './routes/wallet.redeem'
 import { Route as WalletDepositRouteImport } from './routes/wallet.deposit'
 import { Route as TradePositionsRouteImport } from './routes/trade.positions'
@@ -92,6 +93,7 @@ import { Route as WalletWithdrawIndexRouteImport } from './routes/wallet.withdra
 import { Route as WalletDepositIndexRouteImport } from './routes/wallet.deposit.index'
 import { Route as WalletWithdrawKrwRouteImport } from './routes/wallet.withdraw.krw'
 import { Route as WalletWithdrawCryptoRouteImport } from './routes/wallet.withdraw.crypto'
+import { Route as WalletRedeemGiftcardRouteImport } from './routes/wallet.redeem.giftcard'
 import { Route as WalletDepositKrwRouteImport } from './routes/wallet.deposit.krw'
 import { Route as WalletDepositGiftcardRouteImport } from './routes/wallet.deposit.giftcard'
 import { Route as WalletDepositCryptoRouteImport } from './routes/wallet.deposit.crypto'
@@ -262,6 +264,11 @@ const AccountIndexRoute = AccountIndexRouteImport.update({
 const WalletWithdrawRoute = WalletWithdrawRouteImport.update({
   id: '/withdraw',
   path: '/withdraw',
+  getParentRoute: () => WalletRoute,
+} as any)
+const WalletTransferRoute = WalletTransferRouteImport.update({
+  id: '/transfer',
+  path: '/transfer',
   getParentRoute: () => WalletRoute,
 } as any)
 const WalletRedeemRoute = WalletRedeemRouteImport.update({
@@ -515,6 +522,11 @@ const WalletWithdrawCryptoRoute = WalletWithdrawCryptoRouteImport.update({
   path: '/crypto',
   getParentRoute: () => WalletWithdrawRoute,
 } as any)
+const WalletRedeemGiftcardRoute = WalletRedeemGiftcardRouteImport.update({
+  id: '/giftcard',
+  path: '/giftcard',
+  getParentRoute: () => WalletRedeemRoute,
+} as any)
 const WalletDepositKrwRoute = WalletDepositKrwRouteImport.update({
   id: '/krw',
   path: '/krw',
@@ -615,7 +627,8 @@ export interface FileRoutesByFullPath {
   '/trade/orders': typeof TradeOrdersRoute
   '/trade/positions': typeof TradePositionsRoute
   '/wallet/deposit': typeof WalletDepositRouteWithChildren
-  '/wallet/redeem': typeof WalletRedeemRoute
+  '/wallet/redeem': typeof WalletRedeemRouteWithChildren
+  '/wallet/transfer': typeof WalletTransferRoute
   '/wallet/withdraw': typeof WalletWithdrawRouteWithChildren
   '/account/': typeof AccountIndexRoute
   '/casino/': typeof CasinoIndexRoute
@@ -632,6 +645,7 @@ export interface FileRoutesByFullPath {
   '/wallet/deposit/crypto': typeof WalletDepositCryptoRoute
   '/wallet/deposit/giftcard': typeof WalletDepositGiftcardRoute
   '/wallet/deposit/krw': typeof WalletDepositKrwRoute
+  '/wallet/redeem/giftcard': typeof WalletRedeemGiftcardRoute
   '/wallet/withdraw/crypto': typeof WalletWithdrawCryptoRoute
   '/wallet/withdraw/krw': typeof WalletWithdrawKrwRoute
   '/wallet/deposit/': typeof WalletDepositIndexRoute
@@ -700,7 +714,8 @@ export interface FileRoutesByTo {
   '/trade/futures': typeof TradeFuturesRoute
   '/trade/orders': typeof TradeOrdersRoute
   '/trade/positions': typeof TradePositionsRoute
-  '/wallet/redeem': typeof WalletRedeemRoute
+  '/wallet/redeem': typeof WalletRedeemRouteWithChildren
+  '/wallet/transfer': typeof WalletTransferRoute
   '/account': typeof AccountIndexRoute
   '/casino': typeof CasinoIndexRoute
   '/features': typeof FeaturesIndexRoute
@@ -716,6 +731,7 @@ export interface FileRoutesByTo {
   '/wallet/deposit/crypto': typeof WalletDepositCryptoRoute
   '/wallet/deposit/giftcard': typeof WalletDepositGiftcardRoute
   '/wallet/deposit/krw': typeof WalletDepositKrwRoute
+  '/wallet/redeem/giftcard': typeof WalletRedeemGiftcardRoute
   '/wallet/withdraw/crypto': typeof WalletWithdrawCryptoRoute
   '/wallet/withdraw/krw': typeof WalletWithdrawKrwRoute
   '/wallet/deposit': typeof WalletDepositIndexRoute
@@ -791,7 +807,8 @@ export interface FileRoutesById {
   '/trade/orders': typeof TradeOrdersRoute
   '/trade/positions': typeof TradePositionsRoute
   '/wallet/deposit': typeof WalletDepositRouteWithChildren
-  '/wallet/redeem': typeof WalletRedeemRoute
+  '/wallet/redeem': typeof WalletRedeemRouteWithChildren
+  '/wallet/transfer': typeof WalletTransferRoute
   '/wallet/withdraw': typeof WalletWithdrawRouteWithChildren
   '/account/': typeof AccountIndexRoute
   '/casino/': typeof CasinoIndexRoute
@@ -808,6 +825,7 @@ export interface FileRoutesById {
   '/wallet/deposit/crypto': typeof WalletDepositCryptoRoute
   '/wallet/deposit/giftcard': typeof WalletDepositGiftcardRoute
   '/wallet/deposit/krw': typeof WalletDepositKrwRoute
+  '/wallet/redeem/giftcard': typeof WalletRedeemGiftcardRoute
   '/wallet/withdraw/crypto': typeof WalletWithdrawCryptoRoute
   '/wallet/withdraw/krw': typeof WalletWithdrawKrwRoute
   '/wallet/deposit/': typeof WalletDepositIndexRoute
@@ -885,6 +903,7 @@ export interface FileRouteTypes {
     | '/trade/positions'
     | '/wallet/deposit'
     | '/wallet/redeem'
+    | '/wallet/transfer'
     | '/wallet/withdraw'
     | '/account/'
     | '/casino/'
@@ -901,6 +920,7 @@ export interface FileRouteTypes {
     | '/wallet/deposit/crypto'
     | '/wallet/deposit/giftcard'
     | '/wallet/deposit/krw'
+    | '/wallet/redeem/giftcard'
     | '/wallet/withdraw/crypto'
     | '/wallet/withdraw/krw'
     | '/wallet/deposit/'
@@ -970,6 +990,7 @@ export interface FileRouteTypes {
     | '/trade/orders'
     | '/trade/positions'
     | '/wallet/redeem'
+    | '/wallet/transfer'
     | '/account'
     | '/casino'
     | '/features'
@@ -985,6 +1006,7 @@ export interface FileRouteTypes {
     | '/wallet/deposit/crypto'
     | '/wallet/deposit/giftcard'
     | '/wallet/deposit/krw'
+    | '/wallet/redeem/giftcard'
     | '/wallet/withdraw/crypto'
     | '/wallet/withdraw/krw'
     | '/wallet/deposit'
@@ -1060,6 +1082,7 @@ export interface FileRouteTypes {
     | '/trade/positions'
     | '/wallet/deposit'
     | '/wallet/redeem'
+    | '/wallet/transfer'
     | '/wallet/withdraw'
     | '/account/'
     | '/casino/'
@@ -1076,6 +1099,7 @@ export interface FileRouteTypes {
     | '/wallet/deposit/crypto'
     | '/wallet/deposit/giftcard'
     | '/wallet/deposit/krw'
+    | '/wallet/redeem/giftcard'
     | '/wallet/withdraw/crypto'
     | '/wallet/withdraw/krw'
     | '/wallet/deposit/'
@@ -1365,6 +1389,13 @@ declare module '@tanstack/react-router' {
       path: '/withdraw'
       fullPath: '/wallet/withdraw'
       preLoaderRoute: typeof WalletWithdrawRouteImport
+      parentRoute: typeof WalletRoute
+    }
+    '/wallet/transfer': {
+      id: '/wallet/transfer'
+      path: '/transfer'
+      fullPath: '/wallet/transfer'
+      preLoaderRoute: typeof WalletTransferRouteImport
       parentRoute: typeof WalletRoute
     }
     '/wallet/redeem': {
@@ -1717,6 +1748,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WalletWithdrawCryptoRouteImport
       parentRoute: typeof WalletWithdrawRoute
     }
+    '/wallet/redeem/giftcard': {
+      id: '/wallet/redeem/giftcard'
+      path: '/giftcard'
+      fullPath: '/wallet/redeem/giftcard'
+      preLoaderRoute: typeof WalletRedeemGiftcardRouteImport
+      parentRoute: typeof WalletRedeemRoute
+    }
     '/wallet/deposit/krw': {
       id: '/wallet/deposit/krw'
       path: '/krw'
@@ -1921,6 +1959,18 @@ const WalletDepositRouteWithChildren = WalletDepositRoute._addFileChildren(
   WalletDepositRouteChildren,
 )
 
+interface WalletRedeemRouteChildren {
+  WalletRedeemGiftcardRoute: typeof WalletRedeemGiftcardRoute
+}
+
+const WalletRedeemRouteChildren: WalletRedeemRouteChildren = {
+  WalletRedeemGiftcardRoute: WalletRedeemGiftcardRoute,
+}
+
+const WalletRedeemRouteWithChildren = WalletRedeemRoute._addFileChildren(
+  WalletRedeemRouteChildren,
+)
+
 interface WalletWithdrawRouteChildren {
   WalletWithdrawCryptoRoute: typeof WalletWithdrawCryptoRoute
   WalletWithdrawKrwRoute: typeof WalletWithdrawKrwRoute
@@ -1939,14 +1989,16 @@ const WalletWithdrawRouteWithChildren = WalletWithdrawRoute._addFileChildren(
 
 interface WalletRouteChildren {
   WalletDepositRoute: typeof WalletDepositRouteWithChildren
-  WalletRedeemRoute: typeof WalletRedeemRoute
+  WalletRedeemRoute: typeof WalletRedeemRouteWithChildren
+  WalletTransferRoute: typeof WalletTransferRoute
   WalletWithdrawRoute: typeof WalletWithdrawRouteWithChildren
   WalletIndexRoute: typeof WalletIndexRoute
 }
 
 const WalletRouteChildren: WalletRouteChildren = {
   WalletDepositRoute: WalletDepositRouteWithChildren,
-  WalletRedeemRoute: WalletRedeemRoute,
+  WalletRedeemRoute: WalletRedeemRouteWithChildren,
+  WalletTransferRoute: WalletTransferRoute,
   WalletWithdrawRoute: WalletWithdrawRouteWithChildren,
   WalletIndexRoute: WalletIndexRoute,
 }

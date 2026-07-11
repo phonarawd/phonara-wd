@@ -1,6 +1,6 @@
 # apps/web — Phase R scope
 
-> **Phase R:** Presentation rebuild in progress — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `ew-e8-gate-financial` · E8 WAVE `[x]` · E23 UI `[x]` · E23 GATE `[x]` · E23 WAVE `[x]` · preflight: ACTIVE_WORK_SSOT.
+> **Phase R:** Presentation rebuild in progress — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `ew-e10-trust-support-ui` · E10 wallet+settings `[x]` · E10 Admin KRW proof `[x]` · E10 WAVE `[x]` · E9 Admin support `[x]` · E9 GATE `[x]` · E9 WAVE `[x]` · E8 GATE `[x]` · E8 WAVE `[x]` · E23 UI `[x]` · E23 GATE `[x]` · E23 WAVE `[x]` · preflight: ACTIVE_WORK_SSOT.
 > **SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../docs/SSOT/ACTIVE_WORK_SSOT.md) · Plan **280 ids** · completed **219** · pending **54** (53차)
 
 ## KEEP (engine glue)

@@ -37,6 +37,12 @@ describe('dead-controls-display-contract (PQA F3)', () => {
     expect(hub?.mitigatedBy).toBe('live');
     expect(hub?.engineTodo).toBe('p10-page-casino');
 
+    const apiKeys = PQA_DEAD_CONTROL_DEFER_REGISTRY.find(
+      (row) => row.id === 'settings-api-keys-stub',
+    );
+    expect(apiKeys?.mitigatedBy).toBe('live');
+    expect(apiKeys?.engineTodo).toBe(SETTINGS_API_KEYS_ENGINE_TODO);
+
     const roundHook = PQA_DEAD_CONTROL_DEFER_REGISTRY.find(
       (row) => row.id === 'casino-round-hook-orphan',
     );

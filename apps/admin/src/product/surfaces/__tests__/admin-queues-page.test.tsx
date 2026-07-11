@@ -20,6 +20,7 @@ vi.mock('@/hooks/admin/useAdminExceptionQueueSummary', () => ({
     retryFailed: '1',
     onHold: '2',
     totalExceptions: '6',
+    supportOpen: '0',
   }),
 }));
 

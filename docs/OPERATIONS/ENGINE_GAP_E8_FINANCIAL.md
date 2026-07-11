@@ -24,8 +24,8 @@
 | ---- | ---- |
 | `gate:ai-impl` ew-e8-financial | vitest **9/9** · typecheck · i18n · release |
 | SQL | `ew_e8_financial_test.sql` E8-0..E8-4 · **CI sql authoritative** (G13) |
-| Remote | GATE: `stack:push-remote` · advisor **0** — see `ENGINE_GAP_E8_GATE_FINANCIAL.md` (후행) |
+| Remote | GATE **`[x]`** — see [`ENGINE_GAP_E8_GATE_FINANCIAL.md`](ENGINE_GAP_E8_GATE_FINANCIAL.md) |
 
 ## 다음
 
-`ew-e8-gate-financial` — `test:sql` Σ=0 · `stack:push-remote` · advisor 0 · 이후 E10 UI unlock.
+`ew-e8-gate-financial` **`[x]` DONE** 2026-07-12 — next `ew-e9-identity-wave` · E10 hub UI later.

@@ -9,7 +9,7 @@
 | **Engine Apex**               | `[x] FULLY CLOSED`                           | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어·**PIR Wave E** 예외만)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | **Phase D Demolition**        | `[x] DONE`                                   | 삭제 확장 **금지**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | **Platform Integrity (PIR)**  | **`[x]` DONE** 2026-07-11                    | Plan `platform_integrity_remediation_v1` **전부 `[x]`** · Evidence [`PLATFORM_INTEGRITY_EVIDENCE/`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md) · `#205` **unblocked**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| **Phase R UI Rebuild**        | **IN PROGRESS (Track B E-Wave)** | **왕초보 큐:** To-do **위→아래** · completed **스킵** · Track B **`ew-e8-financial-wave` `[x]` DONE** · **다음 `ew-e8-gate-financial`** · E23 UI `[x]` · E23 GATE `[x]` · E23 WAVE `[x]` · E22–E0 · T2/T1 · P13 · DA · PQA **`[x]`** |
+| **Phase R UI Rebuild**        | **IN PROGRESS (Track B E-Wave)** | **왕초보 큐:** To-do **위→아래** · completed **스킵** · Track B **`ew-e10-wallet-settings-ui` `[x]` DONE** · **다음 `ew-e10-trust-support-ui`** · E10 Admin KRW proof `[x]` · E10 WAVE `[x]` · E9 Admin support `[x]` · E9 GATE `[x]` · E9 WAVE `[x]` · E8 GATE `[x]` · E8 WAVE `[x]` · E23 UI `[x]` · E23 GATE `[x]` · E23 WAVE `[x]` · E22–E0 · T2/T1 · P13 · DA · PQA **`[x]`** |
 | **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | **Cursor 8GB perf (v4.4.5)**  | **`[x]` DONE**                               | `cursor:perf-rollout` diagnosis-first · `high-remediation` dry-run 기본 · evidence JSONL · summary remediation assert · tsserver/argv **옵트인** (`--include-tsserver-tuning`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
@@ -50,21 +50,106 @@
 | `pir-gate-platform-integrity`  | **`[x]` DONE** | **2026-07-11** | `gate:ai-impl` PIR bundle vitest **53/53** · `phase-r-guards --strict` · i18n/release · security-auditor **PASS ERROR 0** · CI quality·sql·e2e·advisors green ([run 29121620586](https://github.com/rlawhdgus10041004-sys/phonara-gb/actions/runs/29121620586)) · Evidence [`GATE/platform-integrity.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/GATE/platform-integrity.md) |
 | **`pir-closeout-unblock-205`** | **`[x]` DONE** | **2026-07-11** | §82 · NEXT = `#205` · Evidence [`GATE/unblock-205.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/GATE/unblock-205.md) · Plan YAML completed                                                                                                                                                                                                                                     |
 
-**현재 NEXT (전역):** **`ew-e8-gate-financial`** — E8 WAVE **`[x]` DONE** 2026-07-12 · E23 UI unlock **`[x]` DONE** 2026-07-12 · E23 GATE **`[x]` DONE** 2026-07-12 · E23 WAVE **`[x]` DONE** 2026-07-12 · E22–E0 · T2/T1 · P13 **`[x]`**
+**현재 NEXT (전역):** **`ew-e10-trust-support-ui`** — E10 wallet+settings UI **`[x]` DONE** 2026-07-12 · E10 Admin KRW proof **`[x]` DONE** 2026-07-12 · E10 Platform WAVE **`[x]` DONE** 2026-07-12 · E9 Admin support **`[x]` DONE** 2026-07-12 · E9 GATE **`[x]` DONE** 2026-07-12 · E9 WAVE **`[x]` DONE** 2026-07-12 · E8 GATE **`[x]` DONE** 2026-07-12 · E8 WAVE **`[x]` DONE** 2026-07-12 · E23–E0 · T2/T1 · P13 **`[x]`**
 
-## Track B E8 Financial WAVE (`ew-e8-financial-wave` · §21.1) — `[x]` DONE · 재착수 금지
+## Track B E10 Wallet+Settings UI (`ew-e10-wallet-settings-ui` · §21.1) — `[x]` DONE · 재착수 금지
 
-> **선행:** E23 UI `ew-e23-ui-casino-live-unlocks` **`[x]`** · **후행:** `ew-e8-gate-financial`
+> **선행:** E10 WAVE `ew-e10-platform-engine-wave` **`[x]`** · Admin KRW proof **`[x]`** · E8 GATE **`[x]`** · **후행:** `ew-e10-trust-support-ui`
+
+| Todo | 상태 | 완료일 | 증거 |
+| ---- | ---- | ------ | ---- |
+| **`ew-e10-wallet-settings-ui`** | **`[x]` DONE** | **2026-07-12** | `/wallet/transfer` · `/settings/api-keys` · redeem reverse · `financialConnectivityLive` · [`ENGINE_GAP_E10_WALLET_SETTINGS_UI.md`](../OPERATIONS/ENGINE_GAP_E10_WALLET_SETTINGS_UI.md) |
+
+**Implemented:** transfer hub · API keys CRUD · giftcard redeem reverse · launch gate live
+
+**증거:** `gate:ai-impl` L0–L4 green · vitest **13/13** · `financialConnectivityLive=true` · wire transfer/api-keys/redeem **live**
+
+**다음 todo:** `ew-e10-trust-support-ui`
+
+## Track B E10 Admin KRW Proof Review (`ew-e10-page-admin-krw-proof-review` · §29.2) — `[x]` DONE · 재착수 금지
+
+> **선행:** E10 WAVE `ew-e10-platform-engine-wave` **`[x]`** · **후행:** `ew-e10-wallet-settings-ui` **`[x]`**
+
+| Todo | 상태 | 완료일 | 증거 |
+| ---- | ---- | ------ | ---- |
+| **`ew-e10-page-admin-krw-proof-review`** | **`[x]` DONE** | **2026-07-12** | `/admin/deposits` 증빙 보기·맞음 표시 · [`ENGINE_GAP_E10_ADMIN_KRW_PROOF.md`](../OPERATIONS/ENGINE_GAP_E10_ADMIN_KRW_PROOF.md) |
+
+**Implemented:** `AdminDepositsPage` proof column · view signed URL · `rpc_admin_review_krw_deposit_proof` · **원장 이동 0** notice · beginner §29.2 RPC pin · display contract
+
+**증거:** `gate:ai-impl` admin-krw-proof · vitest display+deposits page
+
+**다음 todo:** `ew-e10-trust-support-ui` (wallet-settings `[x]`)
+
+## Track B E10 Platform Engine WAVE (`ew-e10-platform-engine-wave` · §21.1) — `[x]` DONE · 재착수 금지
+
+> **선행:** E9 GATE `ew-e9-gate-identity-support` **`[x]`** · **후행:** `ew-e10-page-admin-krw-proof-review` **`[x]`**
+
+| Todo | 상태 | 완료일 | 증거 |
+| ---- | ---- | ------ | ---- |
+| **`ew-e10-platform-engine-wave`** | **`[x]` DONE** | **2026-07-12** | ADR-020 · KRW proof · mission chains · co-bet · recommend · [`ENGINE_GAP_E10_PLATFORM.md`](../OPERATIONS/ENGINE_GAP_E10_PLATFORM.md) |
+
+**Implemented (WAVE):** ADR-020 · `ew_e10_platform_engine` · `platformEngine=true` · live flags **false** · EXISTS KRW match / E7 co-mission remigration **0**
+
+**증거:** `gate:ai-impl` ew-e10-platform · vitest display contract · SQL E10-0..E10-5 artifact (CI authoritative · G13) · GATE remote apply = 후행
+
+**다음 todo:** `ew-e10-trust-support-ui` (Admin KRW proof `[x]` · wallet-settings `[x]`)
+
+## Track B E9 Admin Support Desk (`ew-e9-page-admin-support` · §29.5) — `[x]` DONE · 재착수 금지
+> **선행:** E9 GATE `ew-e9-gate-identity-support` **`[x]`** · **후행:** `ew-e10-platform-engine-wave` **`[x]`**
+
+| Todo | 상태 | 완료일 | 증거 |
+| ---- | ---- | ------ | ---- |
+| **`ew-e9-page-admin-support`** | **`[x]` DONE** | **2026-07-12** | `/admin/support` · list/resolve · queues 수렴 · [`ENGINE_GAP_E9_ADMIN_SUPPORT.md`](../OPERATIONS/ENGINE_GAP_E9_ADMIN_SUPPORT.md) |
+
+**Implemented:** `AdminSupportPage` · `useAdminSupportDesk` · nav owner/support · `AdminTable` · queues open-ticket banner · beginner i18n · display contract
+
+**증거:** `gate:ai-impl` admin-support · vitest desk+page **9/9** · typecheck · i18n · release · related admin contracts **34/34**
+
+**다음 todo:** `ew-e10-trust-support-ui` (Admin KRW proof `[x]` · wallet-settings `[x]`)
+
+## Track B E9 Identity+Support GATE (`ew-e9-gate-identity-support` · §21.1) — `[x]` DONE · 재착수 금지
+
+> **선행:** E9 WAVE `ew-e9-identity-wave` **`[x]`** · **후행:** `ew-e9-page-admin-support` **`[x]`**
+
+| Todo | 상태 | 완료일 | 증거 |
+| ---- | ---- | ------ | ---- |
+| **`ew-e9-identity-wave`** | **`[x]` DONE** | **2026-07-12** | ADR-019 · SIWE · tickets · analytics · app-install · tier LB · [`ENGINE_GAP_E9_IDENTITY_SUPPORT.md`](../OPERATIONS/ENGINE_GAP_E9_IDENTITY_SUPPORT.md) |
+| **`ew-e9-gate-identity-support`** | **`[x]` DONE** | **2026-07-12** | `stack:push-remote` · advisor **0** · SQL E9-0..E9-5 (CI) · [`ENGINE_GAP_E9_GATE_IDENTITY_SUPPORT.md`](../OPERATIONS/ENGINE_GAP_E9_GATE_IDENTITY_SUPPORT.md) |
+
+**Implemented (GATE):** remote `ew_e9_app_install_enum` (tail `20260711194352`) · `ew_e9_identity_support` (tail `20260711194354`) · advisor **0 ERROR** · GATE display contract · hubs `built_hidden` · live flags **false** · EXISTS passkey/viral/affiliate remigration **0**
+
+**증거:** `gate:ai-impl` ew-e9-gate-identity · vitest GATE+WAVE · `stack:push-remote` OK · advisor **0** · SQL E9-0..E9-5 **CI authoritative** (G13)
+
+**다음 todo:** `ew-e10-trust-support-ui` (Admin KRW proof `[x]` · Admin support `[x]` · wallet-settings `[x]`)
+
+## Track B E9 Identity+Support WAVE (`ew-e9-identity-wave` · §21.1) — `[x]` DONE · 재착수 금지
+
+> **선행:** E8 GATE `ew-e8-gate-financial` **`[x]`** · **후행:** `ew-e9-gate-identity-support` **`[x]`**
+
+| Todo | 상태 | 완료일 | 증거 |
+| ---- | ---- | ------ | ---- |
+| **`ew-e9-identity-wave`** | **`[x]` DONE** | **2026-07-12** | ADR-019 · SIWE · tickets · analytics · app-install · tier LB · [`ENGINE_GAP_E9_IDENTITY_SUPPORT.md`](../OPERATIONS/ENGINE_GAP_E9_IDENTITY_SUPPORT.md) |
+
+**Implemented (WAVE):** ADR-019 · `ew_e9_app_install_enum` · `ew_e9_identity_support` · edge `siwe-auth` · `LAUNCH_GATES.identitySupportEngine=true` · live flags **false** · EXISTS passkey/viral/affiliate remigration **0**
+
+**증거:** `gate:ai-impl` ew-e9-identity · vitest display contract · SQL E9-0..E9-5 artifact (CI authoritative · G13) · GATE remote apply **`[x]`**
+
+**다음 todo:** `ew-e10-trust-support-ui` (Admin KRW proof `[x]` · Admin support `[x]` · E9 GATE `[x]` · wallet-settings `[x]`)
+
+## Track B E8 Financial GATE (`ew-e8-gate-financial` · §21.1) — `[x]` DONE · 재착수 금지
+
+> **선행:** E8 WAVE `ew-e8-financial-wave` **`[x]`** · **후행:** `ew-e9-identity-wave` **`[x]`**
 
 | Todo | 상태 | 완료일 | 증거 |
 | ---- | ---- | ------ | ---- |
 | **`ew-e8-financial-wave`** | **`[x]` DONE** | **2026-07-12** | ADR-018 · P2P · API keys · giftcard redeem · [`ENGINE_GAP_E8_FINANCIAL.md`](../OPERATIONS/ENGINE_GAP_E8_FINANCIAL.md) |
+| **`ew-e8-gate-financial`** | **`[x]` DONE** | **2026-07-12** | `stack:push-remote` · advisor **0** · SQL Σ=0 (CI) · [`ENGINE_GAP_E8_GATE_FINANCIAL.md`](../OPERATIONS/ENGINE_GAP_E8_GATE_FINANCIAL.md) |
 
-**Implemented:** `018-financial-connectivity.md` · `ew_e8_financial` migration · `rpc_transfer_to_user` · trading API keys · giftcard redeem reverse · `LAUNCH_GATES.financialConnectivityEngine=true` · `financialConnectivityLive=false` · EXISTS giftcard deposit remigration **0**
+**Implemented (GATE):** remote `ew_e8_financial` (tail `20260711192506`) · advisor **0 ERROR** · GATE display contract · hub `built_hidden` · `financialConnectivityLive=false` · EXISTS deposit pin
 
-**증거:** `gate:ai-impl` ew-e8-financial · vitest **9/9** (ew-e8 + settings-api-keys + dead-controls) · SQL test artifact (CI authoritative · G13) · GATE remote apply **pending**
+**증거:** `gate:ai-impl` ew-e8-gate-financial · vitest GATE+WAVE · `stack:push-remote` OK · advisor **0** · SQL E8-0..E8-4 Σ=0 **CI authoritative** (G13)
 
-**다음 todo:** `ew-e8-gate-financial`
+**다음 todo:** `ew-e10-trust-support-ui` (E10 wallet-settings `[x]` · Admin KRW proof `[x]` · Admin support `[x]` · E9 GATE `[x]`)
 
 **Track A `#236` P13 Launch Closeout:** **`[x]` DONE** 2026-07-11 — legacy class purge · docs sync · CI gate pin · `gate:ai-impl` **16/16** · `check:design-tokens --strict` · migration **0** · [`P13_LAUNCH_CLOSEOUT_BUNDLE.md`](../OPERATIONS/P13_LAUNCH_CLOSEOUT_BUNDLE.md)
 **Track A `#235` DA W7 VISUAL:** agent impl `[x]` 2026-07-11 — Home+Shell+Trade · 390/768/1024/2560 · preview · axe 0 · dead control 0 · `gate:ai-impl` **22/22** · Plan YAML `completed` = operator `VISUAL APPROVED: da-w7` 후
@@ -95,8 +180,8 @@
 **재개 조건 (충족):**
 
 ```text
-ew-e8-financial-wave [x] DONE
-  → phase_r Track B 다음 = ew-e8-gate-financial
+ew-e10-wallet-settings-ui [x] DONE
+  → phase_r Track B 다음 = ew-e10-trust-support-ui
 ```
 
 ## Trade Desk Remediation (Plan `trade_desk_remediation_v3` · execute SSOT)

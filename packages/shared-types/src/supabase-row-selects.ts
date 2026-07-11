@@ -10,7 +10,7 @@ export const PROFILES_ROW =
   'id,username,display_name,legal_name,avatar_url,locale,role,kyc_tier,is_banned,ban_reason,activity_frozen,referrer_id,created_at,updated_at';
 
 export const KRW_DEPOSIT_REQUESTS_ROW =
-  'id,user_id,wallet_id,amount_krw,expected_phon,reference_code,status,rate_snapshot_id,expires_at,matched_at,credited_at,admin_note,created_at,updated_at';
+  'id,user_id,wallet_id,amount_krw,expected_phon,reference_code,status,rate_snapshot_id,expires_at,matched_at,credited_at,admin_note,proof_path,proof_uploaded_at,proof_status,proof_reviewed_at,proof_review_note,created_at,updated_at';
 
 export const CRYPTO_DEPOSIT_REQUESTS_ROW =
   'id,user_id,wallet_id,address_id,asset,chain,amount,tx_hash,confirmations_required,confirmations_seen,status,expires_at,matched_at,credited_at,created_at,updated_at';

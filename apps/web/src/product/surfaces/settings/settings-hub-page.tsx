@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Bell, Building2, ChevronRight, Fingerprint, Globe2, Palette, Users } from 'lucide-react';
+import { Bell, Building2, ChevronRight, Fingerprint, Globe2, KeyRound, Palette, Users } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 import {
@@ -23,6 +23,7 @@ const NAV_ITEM_ICONS: Readonly<Record<string, LucideIcon>> = {
   'notifications-prefs': Bell,
   'notifications-inbox': Bell,
   preferences: Palette,
+  'api-keys': KeyRound,
 };
 
 const HUB_GROUP_ORDER: readonly SettingsHubNavGroup[] = ['alerts', 'account', 'display'] as const;

@@ -58,7 +58,7 @@ export function useAdminUserTierDesk(userId: string) {
           .maybeSingle(),
         (
           supabase as {
-            rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
+            rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
           }
         ).rpc('rpc_admin_list_users', { p_search: userId, p_limit: 5 }),
       ]);
@@ -101,7 +101,7 @@ export function useAdminUserTierDesk(userId: string) {
     mutationFn: async (input: AdminSetEarnVipTierInput) => {
       const { error } = await (
         supabase as {
-          rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
+          rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
         }
       ).rpc(ADMIN_SET_EARN_VIP_TIER_RPC, {
         p_user_id: userId,

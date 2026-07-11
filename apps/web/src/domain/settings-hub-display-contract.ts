@@ -16,6 +16,10 @@ import {
   writeNotificationLocalPref,
 } from './notifications-pwa-display-contract';
 import { NOTIFICATIONS_PREFS_ROUTE } from './notifications-center-display-contract';
+import {
+  SETTINGS_API_KEYS_ROUTE,
+  shouldExposeSettingsApiKeysInHubNav,
+} from './settings-api-keys-display-contract';
 
 export const SETTINGS_HUB_ROUTE = NOTIFICATIONS_SETTINGS_ROUTE;
 
@@ -90,6 +94,13 @@ export const SETTINGS_HUB_NAV_ITEMS: readonly SettingsHubNavItem[] = [
     hintKey: 'settings.display.sectionHint',
     group: 'display',
   },
+  {
+    id: 'api-keys',
+    route: SETTINGS_API_KEYS_ROUTE,
+    labelKey: 'settings.hub.link.apiKeys',
+    hintKey: 'settings.hub.link.apiKeysHint',
+    group: 'account',
+  },
 ] as const;
 
 /** Quick toggles on hub — full topic list lives on `/settings/notifications`. */
@@ -111,7 +122,13 @@ export function resolveSettingsHubNavItems(
   hiddenRoutes: readonly string[] = PLATFORM_EWAVE_HIDDEN_ROUTES,
 ): SettingsHubNavItem[] {
   const hidden = new Set(hiddenRoutes);
-  return SETTINGS_HUB_NAV_ITEMS.filter((item) => !hidden.has(item.route));
+  return SETTINGS_HUB_NAV_ITEMS.filter((item) => {
+    if (hidden.has(item.route)) return false;
+    if (item.route === SETTINGS_API_KEYS_ROUTE) {
+      return shouldExposeSettingsApiKeysInHubNav();
+    }
+    return true;
+  });
 }
 
 export function resolveSettingsHubGroupLabelKey(group: SettingsHubNavGroup): MessageKey {

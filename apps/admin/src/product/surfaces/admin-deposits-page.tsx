@@ -5,10 +5,15 @@ import { RefreshCw } from 'lucide-react';
 import type { MessageKey } from '@phonara/i18n';
 
 import {
+  isAdminKrwProofPending,
+  isAdminKrwProofViewable,
+} from '@/domain/admin-krw-proof-review-display-contract';
+import {
   useAdminWalletDesk,
   formatAmountString,
   type AdminDepositReconRow,
   type DepositMethod,
+  type DepositProofStatus,
   type DepositStatus,
 } from '@/hooks/admin/useAdminWalletDesk';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
@@ -17,6 +22,13 @@ import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/product/primitives/dialog';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { Input } from '@/product/primitives/input';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
@@ -26,7 +38,12 @@ import { AdminQueueActionDialog } from '@/product/surfaces/admin-queue-action-di
 
 type MethodTab = 'all' | DepositMethod;
 
-type DepositActionKind = 'matchKrw' | 'matchCrypto' | 'approveGiftcard' | 'flag';
+type DepositActionKind =
+  | 'matchKrw'
+  | 'matchCrypto'
+  | 'approveGiftcard'
+  | 'flag'
+  | 'approveProof';
 
 interface DepositActionTarget {
   kind: DepositActionKind;
@@ -64,6 +81,13 @@ const MATCH_ACTION_KEYS: Record<
   },
 };
 
+const PROOF_STATUS_LABEL_KEYS: Record<DepositProofStatus, MessageKey> = {
+  none: 'admin.deposits.proofStatus.none',
+  pending: 'admin.deposits.proofStatus.pending',
+  approved: 'admin.deposits.proofStatus.approved',
+  rejected: 'admin.deposits.proofStatus.rejected',
+};
+
 function formatWhen(iso: string | null | undefined, locale: string): string {
   if (!iso) return '—';
   try {
@@ -87,6 +111,13 @@ function depositStatusState(status: DepositStatus): MoneyStatusState {
   return 'pending';
 }
 
+function proofStatusState(status: DepositProofStatus): MoneyStatusState {
+  if (status === 'pending') return 'reviewing';
+  if (status === 'approved') return 'settled';
+  if (status === 'rejected') return 'rejected';
+  return 'pending';
+}
+
 function isActionableDeposit(status: DepositStatus): boolean {
   return status === 'pending' || status === 'confirming' || status === 'pending_review';
 }
@@ -95,7 +126,7 @@ function pendingDeposits(rows: AdminDepositReconRow[]): AdminDepositReconRow[] {
   return rows.filter((row) => isActionableDeposit(row.status));
 }
 
-/** Admin deposit recon desk (`/deposits`) — `useAdminWalletDesk` match/flag actions (§29.2). */
+/** Admin deposit recon desk (`/deposits`) — match/flag + E10 KRW proof review (§29.2). */
 export function AdminDepositsPage() {
   const t = useT();
   const goTo = useAdminRouteNavigate();
@@ -108,14 +139,23 @@ export function AdminDepositsPage() {
     setDepositFilters,
     matchDeposit,
     flagDeposit,
+    reviewKrwDepositProof,
+    getKrwDepositProofUrl,
   } = useAdminWalletDesk();
 
   const [methodTab, setMethodTab] = useState<MethodTab>('all');
   const [refreshing, setRefreshing] = useState(false);
   const [actionTarget, setActionTarget] = useState<DepositActionTarget | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [proofPreviewUrl, setProofPreviewUrl] = useState<string | null>(null);
+  const [proofPreviewOpen, setProofPreviewOpen] = useState(false);
+  const [proofPreviewLoading, setProofPreviewLoading] = useState(false);
 
   const pendingRows = useMemo(() => pendingDeposits(deposits), [deposits]);
+  const pendingProofCount = useMemo(
+    () => pendingRows.filter((row) => isAdminKrwProofPending(row.proofStatus)).length,
+    [pendingRows],
+  );
 
   const methodCounts = useMemo(() => {
     const counts: Record<MethodTab, number> = {
@@ -147,9 +187,24 @@ export function AdminDepositsPage() {
       if (actionTarget.kind === 'flag') {
         return await flagDeposit(actionTarget.id, reason);
       }
+      if (actionTarget.kind === 'approveProof') {
+        return await reviewKrwDepositProof(actionTarget.id, 'approved', reason);
+      }
       return await matchDeposit(actionTarget.id, reason);
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handleViewProof = async (row: AdminDepositReconRow) => {
+    if (!row.proofPath) return;
+    setProofPreviewLoading(true);
+    setProofPreviewOpen(true);
+    try {
+      const url = await getKrwDepositProofUrl(row.proofPath);
+      setProofPreviewUrl(url);
+    } finally {
+      setProofPreviewLoading(false);
     }
   };
 
@@ -173,6 +228,11 @@ export function AdminDepositsPage() {
               ? t('admin.deposits.summary.pending', { count: pendingRows.length })
               : t('admin.overview.empty.title')}
           </p>
+          {pendingProofCount > 0 ? (
+            <p className="text-foreground-muted m-0 text-sm">
+              {t('admin.deposits.summary.proofPending', { count: pendingProofCount })}
+            </p>
+          ) : null}
           <p className="text-foreground-muted m-0 text-sm">{t('admin.deposits.description')}</p>
         </div>
         <Button
@@ -290,6 +350,22 @@ export function AdminDepositsPage() {
                     meta: { className: 'text-foreground-muted max-w-48 truncate' },
                   },
                   {
+                    id: 'proof',
+                    header: t('admin.deposits.col.proof'),
+                    cell: ({ row }) => {
+                      if (row.method !== 'krw') return '—';
+                      const status = row.proofStatus ?? 'none';
+                      if (status === 'none') {
+                        return (
+                          <span className="text-foreground-muted">
+                            {t(PROOF_STATUS_LABEL_KEYS.none)}
+                          </span>
+                        );
+                      }
+                      return <StatusBadge state={proofStatusState(status)} />;
+                    },
+                  },
+                  {
                     id: 'status',
                     header: t('admin.queues.col.status'),
                     cell: ({ row }) => <StatusBadge state={depositStatusState(row.status)} />,
@@ -303,7 +379,7 @@ export function AdminDepositsPage() {
                 ]}
                 rows={visibleRows}
                 getRowId={(row) => row.id}
-                minWidth={720}
+                minWidth={860}
                 empty={
                   <EmptyState
                     title={t('admin.overview.empty.title')}
@@ -317,8 +393,42 @@ export function AdminDepositsPage() {
                 rowActionsHeader={t('admin.queues.col.action')}
                 rowActions={(row) => {
                   const matchConfig = MATCH_ACTION_KEYS[row.method];
+                  const canViewProof = isAdminKrwProofViewable(row.proofStatus, row.proofPath);
+                  const canReviewProof = isAdminKrwProofPending(row.proofStatus);
                   return (
                     <>
+                      {canViewProof ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          loading={proofPreviewLoading}
+                          onClick={() => {
+                            void handleViewProof(row);
+                          }}
+                        >
+                          {t('admin.deposits.action.viewProof')}
+                        </Button>
+                      ) : null}
+                      {canReviewProof ? (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() =>
+                            openAction({
+                              kind: 'approveProof',
+                              id: row.id,
+                              titleKey: 'admin.deposits.dialog.approveProof',
+                              confirmKey: 'admin.deposits.action.approveProof',
+                              summary: [
+                                formatRowSummary(row),
+                                t('admin.deposits.proof.noCreditNotice'),
+                              ].join('\n'),
+                            })
+                          }
+                        >
+                          {t('admin.deposits.action.approveProof')}
+                        </Button>
+                      ) : null}
                       <Button
                         variant="primary"
                         size="sm"
@@ -368,9 +478,35 @@ export function AdminDepositsPage() {
         confirmKey={actionTarget?.confirmKey ?? 'admin.deposits.action.flag'}
         destructive={actionTarget?.destructive}
         loading={actionLoading}
-        summary={actionTarget ? <p className="m-0">{actionTarget.summary}</p> : undefined}
+        summary={actionTarget ? <p className="m-0 whitespace-pre-line">{actionTarget.summary}</p> : undefined}
         onSubmit={handleActionSubmit}
       />
+
+      <Dialog
+        open={proofPreviewOpen}
+        onOpenChange={(open) => {
+          setProofPreviewOpen(open);
+          if (!open) setProofPreviewUrl(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('admin.deposits.dialog.viewProof')}</DialogTitle>
+            <DialogDescription>{t('admin.deposits.proof.previewHelp')}</DialogDescription>
+          </DialogHeader>
+          {proofPreviewLoading ? (
+            <p className="text-foreground-muted m-0 text-sm">{t('admin.deposits.proof.loading')}</p>
+          ) : proofPreviewUrl ? (
+            <img
+              src={proofPreviewUrl}
+              alt={t('admin.deposits.action.viewProof')}
+              className="max-h-[70vh] w-full rounded-md object-contain"
+            />
+          ) : (
+            <p className="text-foreground-muted m-0 text-sm">{t('admin.deposits.proof.missing')}</p>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

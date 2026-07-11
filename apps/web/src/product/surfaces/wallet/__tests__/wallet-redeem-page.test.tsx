@@ -31,6 +31,7 @@ function makeEngine(
         descriptionKey: 'wallet.redeem.rail.krw.desc',
         metaKey: 'wallet.redeem.rail.krw.meta',
         ctaKey: 'wallet.redeem.rail.cta.withdraw',
+        live: true,
         disabled: false,
       },
       {
@@ -41,6 +42,7 @@ function makeEngine(
         descriptionKey: 'wallet.redeem.rail.crypto.desc',
         metaKey: 'wallet.redeem.rail.crypto.meta',
         ctaKey: 'wallet.redeem.rail.cta.withdraw',
+        live: true,
         disabled: false,
       },
       {
@@ -51,6 +53,18 @@ function makeEngine(
         descriptionKey: 'wallet.redeem.rail.giftcard.desc',
         metaKey: 'wallet.redeem.rail.giftcard.meta',
         ctaKey: 'wallet.redeem.rail.cta.deposit',
+        live: true,
+        disabled: false,
+      },
+      {
+        id: 'giftcard_out',
+        kind: 'redeem',
+        href: '/wallet/redeem/giftcard',
+        titleKey: 'wallet.redeem.rail.giftcardOut',
+        descriptionKey: 'wallet.redeem.rail.giftcardOut.desc',
+        metaKey: 'wallet.redeem.rail.giftcardOut.meta',
+        ctaKey: 'wallet.redeem.rail.cta.redeem',
+        live: true,
         disabled: false,
       },
     ],
@@ -73,7 +87,7 @@ beforeEach(() => {
 });
 
 describe('WalletRedeemPage', () => {
-  it('renders three payment method cards linking to canonical money rails', () => {
+  it('renders payment method cards including giftcard reverse rail', () => {
     renderPage();
 
     expect(screen.getByTestId('wallet-redeem-page')).toBeInTheDocument();
@@ -88,6 +102,10 @@ describe('WalletRedeemPage', () => {
     expect(screen.getByTestId('wallet-redeem-rail-giftcard')).toHaveAttribute(
       'href',
       '/wallet/deposit/giftcard',
+    );
+    expect(screen.getByTestId('wallet-redeem-rail-giftcard_out')).toHaveAttribute(
+      'href',
+      '/wallet/redeem/giftcard',
     );
     expect(screen.getByTestId('wallet-redeem-balance')).toBeInTheDocument();
   });

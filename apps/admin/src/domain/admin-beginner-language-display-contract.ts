@@ -108,10 +108,11 @@ export const ADMIN_BEGINNER_P2_ROUTES = [
   '/ops',
   '/mfa/policy',
   '/team',
+  '/support',
 ] as const;
 
-/** Planned routes — nav keys must exist before surface ships (Plan §32.6). */
-export const ADMIN_BEGINNER_PLANNED_ROUTES = ['/support'] as const;
+/** Planned routes — nav keys must exist before surface ships (Plan §32.6). Empty when all desks live. */
+export const ADMIN_BEGINNER_PLANNED_ROUTES = [] as const;
 
 export const ADMIN_BEGINNER_ALL_ROUTES = [
   ...ADMIN_BEGINNER_P2_ROUTES,
@@ -255,7 +256,7 @@ export const ADMIN_BEGINNER_SECTION_29_2_EXTRA_ROWS = [
   {
     desk: '/admin/deposits',
     buttonIntents: ['viewDepositProof', 'markProofMatched'],
-    rpcs: ['ew-e10 proof review RPC'],
+    rpcs: ['rpc_admin_review_krw_deposit_proof'],
     grade: 'R2',
   },
 ] as const;

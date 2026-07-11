@@ -1,8 +1,8 @@
 /**
  * `/settings/api-keys` — trading bot API keys (E8 engine ready · E10 hub unlock).
  *
- * Route is E-Wave: direct URL live — hidden from settings hub IA until E10.
- * P8 wired the surface; E8 ships list/create/revoke RPCs; hub exposure = E10.
+ * P8 wired the surface; E8 ships list/create/revoke RPCs;
+ * `ew-e10-wallet-settings-ui` flips hub + CRUD live via `financialConnectivityLive`.
  */
 
 import type { MessageKey } from '@phonara/i18n';
@@ -17,8 +17,8 @@ export const SETTINGS_API_KEYS_P8_TODO = 'p8-page-settings-api-keys' as const;
 /** E8 WAVE — trading API key CRUD RPCs (merged into ew-e8-financial-wave). */
 export const SETTINGS_API_KEYS_ENGINE_TODO = 'ew-e8-financial-wave' as const;
 
-/** E10 UI unlock — hub nav exposure after `ew-e8-gate-financial` green. */
-export const SETTINGS_API_KEYS_UI_UNLOCK_TODO = 'ew-e10-ui-settings-api-keys' as const;
+/** E10 UI unlock — hub nav + CRUD after `ew-e8-gate-financial` green. */
+export const SETTINGS_API_KEYS_UI_UNLOCK_TODO = 'ew-e10-wallet-settings-ui' as const;
 
 export type SettingsApiKeysEngineBranch = 'list_keys' | 'create_key' | 'revoke_key';
 
@@ -44,13 +44,24 @@ export function resolveSettingsApiKeysRoute(): typeof SETTINGS_API_KEYS_ROUTE {
   return SETTINGS_API_KEYS_ROUTE;
 }
 
-export function assertSettingsApiKeysHiddenFromIa(): void {
-  if (!(PLATFORM_EWAVE_HIDDEN_ROUTES as readonly string[]).includes(SETTINGS_API_KEYS_ROUTE)) {
-    throw new Error('settings-api-keys: route must stay E-Wave hidden from IA');
+/** After E10 unlock the route must leave E-Wave hidden list. */
+export function assertSettingsApiKeysIaExposure(): void {
+  const hidden = (PLATFORM_EWAVE_HIDDEN_ROUTES as readonly string[]).includes(
+    SETTINGS_API_KEYS_ROUTE,
+  );
+  if (LAUNCH_GATES.financialConnectivityLive && hidden) {
+    throw new Error('settings-api-keys: must leave E-Wave hidden after E10 live');
+  }
+  if (!LAUNCH_GATES.financialConnectivityLive && !hidden) {
+    throw new Error('settings-api-keys: must stay E-Wave hidden until E10 live');
   }
 }
 
-/** P8 STUB page route is wired (`live`); hub nav stays hidden until E10 UI unlock. */
+/** @deprecated Use assertSettingsApiKeysIaExposure — kept for test migration. */
+export function assertSettingsApiKeysHiddenFromIa(): void {
+  assertSettingsApiKeysIaExposure();
+}
+
 export function resolveSettingsApiKeysPageExposure(): Extract<
   SettingsApiKeysExposureMode,
   'live' | 'built_hidden'
@@ -67,7 +78,6 @@ export function resolveSettingsApiKeysBranchExposure(
 ): SettingsApiKeysExposureMode {
   const row = SETTINGS_API_KEYS_ENGINE_BRANCHES[branch];
   if (row.engine === 'missing') return 'defer_stub';
-  // Engine ready — CRUD still deferred from user-facing manage until E10 live flag.
   return LAUNCH_GATES.financialConnectivityLive ? 'live' : 'defer_stub';
 }
 

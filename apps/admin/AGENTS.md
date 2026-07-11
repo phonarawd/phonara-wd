@@ -1,10 +1,17 @@
 # apps/admin — Phase R
 
-> **Phase R:** Admin desks live — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `ew-e7-social-wave` (#252) · E6 GATE `#251` `[x]` · E6 WAVE `#250` `[x]` · E5 GATE `#249` `[x]` · E5 WIRE `#248` `[x]` · E4 GATE `#247` `[x]` · E4 WAVE `#246` `[x]` · E3 GATE `#245` `[x]` · E3 WAVE `#244` `[x]` · E2 GATE `#243` `[x]` · E2 WAVE `#242` `[x]` · E1 GATE `#241` `[x]` · E0 `#239` `[x]` · T2 scale `#238` `[x]` · T1 ramp `#237` `[x]` · P13 closeout `#236` `[x]` · Soft Launch `#233` `[x]` · T0-A `#232` `[x]`.
+> **Phase R:** Admin desks live — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `ew-e10-wallet-settings-ui` · E10 Admin KRW proof `[x]` · E10 WAVE `[x]` · E9 Admin support `[x]` · E9 GATE `[x]` · E9 WAVE `[x]` · E8–E0 · T2/T1 · P13 · DA · Soft Launch `[x]`.
 
 ## KEEP (engine glue + product desks)
 
 `hooks/admin/` · `domain/` · `contracts/` · `lib/auth.ts` · `contexts/auth-context.tsx` · `product/surfaces/` · `product/primitives/admin-table.tsx` · `routes/` · `features/ops-push/` · `public/sw.js`
+
+## Admin support desk (§29.5 · E9 UI `ew-e9-page-admin-support`)
+
+- **Route:** `/support` · `AdminSupportPage` · `useAdminSupportDesk`
+- **RPC:** `rpc_admin_list_support_tickets` · `rpc_admin_resolve_support_ticket`
+- **Nav:** owner · support · queues open-ticket 수렴
+- **Canon:** [`ENGINE_GAP_E9_ADMIN_SUPPORT.md`](../../docs/OPERATIONS/ENGINE_GAP_E9_ADMIN_SUPPORT.md)
 
 ## Admin ops Web Push (§32.6 Gap A-4 · P13 INFRA `#231`)
 
