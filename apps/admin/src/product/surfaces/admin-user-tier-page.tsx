@@ -49,7 +49,7 @@ export function AdminUserTierPage({ userId }: { userId: string }) {
         <div className="min-w-0 space-y-2">
           <Link
             to="/users"
-            className="text-primary inline-flex items-center gap-1 text-sm font-medium hover:underline"
+            className="text-accent inline-flex items-center gap-1 text-sm font-medium hover:underline"
           >
             <ArrowLeft className="size-4" aria-hidden />
             {t('admin.userTier.back')}

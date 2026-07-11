@@ -47,7 +47,7 @@ export function AuthEntryLayout({
           <p className="text-accent m-0 text-sm font-semibold tracking-wide uppercase">
             {t(PLATFORM_POSITIONING_KEYS.eyebrow)}
           </p>
-          <h1 className="text-foreground m-0 text-3xl font-semibold tracking-tight [word-break:keep-all]">
+          <h1 className="text-foreground m-0 text-3xl font-semibold tracking-tight break-keep">
             {t(PLATFORM_POSITIONING_KEYS.headline)}
           </h1>
           <p className="text-foreground-muted m-0 text-base leading-relaxed">
@@ -69,7 +69,7 @@ export function AuthEntryLayout({
       <section className="flex w-full flex-col gap-6">
         <header className="flex flex-col items-center gap-1.5 text-center lg:items-start lg:text-left">
           <div className="flex items-center gap-2">
-            <BrandMark size={24} className="text-[#7B6FE8]" testId="auth-brand-mark" />
+            <BrandMark size={24} className="text-accent" testId="auth-brand-mark" />
             <BrandWordmark className="text-foreground text-base" />
           </div>
           <p className="text-accent m-0 text-xs font-semibold tracking-wide uppercase lg:hidden">

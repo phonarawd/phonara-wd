@@ -221,9 +221,9 @@ export function AdminEarnRewardsPage() {
                         type="button"
                         onClick={() => setSelectedUserId(row.id)}
                         className={cn(
-                          'w-full rounded-(--ds-radius-md) border px-4 py-3 text-left text-sm transition-colors',
+                          'w-full rounded-md border px-4 py-3 text-left text-sm transition-colors',
                           active
-                            ? 'border-primary bg-primary/5'
+                            ? 'border-accent bg-accent/5'
                             : 'border-line bg-surface-raised hover:bg-surface',
                         )}
                       >
@@ -257,7 +257,7 @@ export function AdminEarnRewardsPage() {
                 }}
               />
             ) : (
-              <div className="space-y-4 rounded-(--ds-radius-lg) border border-line p-4">
+              <div className="space-y-4 rounded-lg border border-line p-4">
                 <p className="text-foreground-muted m-0 text-sm">
                   {formatAdjustSummary(selectedUser, currency, amount || '0', direction, t)}
                 </p>

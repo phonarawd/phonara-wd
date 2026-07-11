@@ -328,7 +328,8 @@ rg "text-\[\d+px\]|p-\[\d|gap-\[\d|rounded-\[\d|shadow-\[" <phase-r-ui-path>
 - [x] da-w1-gate: `gate:ai-impl` primitives+tokens · `check:design-tokens` advisory (`da-w1-gate-ds-2`)
 - [x] da-w4-gate: `use-prefers-reduced-motion` regression · `motion-presets` instant · CSS 0ms (`da-w4-gate-motion`)
 - [x] da-w6-gate: BrandMark aurora · domain empty · Quad Stream · `check:design-tokens` advisory (`da-w6-gate-brand-elevation`)
-- [ ] da-w7: `check:design-tokens --strict`
+- [x] da-w7: `check:design-tokens --strict` · text-tiny · legacy purge (`da-w7-enforcement-strict-tokens`)
+- [x] da-w7 VISUAL agent impl: Home+Shell+Trade · 4-tier · preview (`da-w7-operator-visual-dae-signoff`) · operator `VISUAL APPROVED: da-w7` 대기
 
 ---
 

@@ -22,7 +22,7 @@ export function TradeDisplayFeedStaleBadge({
     <span
       data-testid={testId}
       className={cn(
-        'bg-warning/15 text-warning inline-flex items-center rounded-(--ds-radius-sm) px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide',
+        'bg-warning/15 text-warning inline-flex items-center rounded-sm px-1.5 py-0.5 text-tiny font-medium uppercase tracking-wide',
         className,
       )}
       title={t('trade.displayFeed.staleDescription')}

@@ -88,7 +88,7 @@ export function FiatHintSecondaryLine({
       {fiatHint.stale ? (
         <span
           data-fiat-hint-stale
-          className="rounded-(--ds-radius-full) bg-warning/15 px-1.5 py-0.5 text-[10px] font-medium text-warning"
+          className="rounded-full bg-warning/15 px-1.5 py-0.5 text-tiny font-medium text-warning"
         >
           {t(FIAT_HINT_I18N_KEYS.staleBadge)}
         </span>

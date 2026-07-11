@@ -269,7 +269,7 @@ export const PlinkoStage = forwardRef<CasinoStageHandle, PlinkoStageProps>(
               </span>
             </div>
             <div
-              className="text-foreground-muted flex max-w-full gap-1 overflow-x-auto text-[10px] tabular-nums"
+              className="text-foreground-muted flex max-w-full gap-1 overflow-x-auto text-tiny tabular-nums"
               data-testid="casino-plinko-bucket-row"
             >
               {table.map((m, i) => (

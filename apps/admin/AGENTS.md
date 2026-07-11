@@ -1,6 +1,6 @@
 # apps/admin — Phase R
 
-> **Phase R:** Admin desks live — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `p13-soft-launch-bundle` (#233) · T0-A `#232` `[x]` · ops Web Push `#231` `[x]` · team desk `#230` `[x]` · Admin canonical docs `#229` `[x]` · W8 GATE `#228` `[x]`.
+> **Phase R:** Admin desks live — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `da-w7-enforcement-strict-tokens` (#234) · Soft Launch `#233` `[x]` · T0-A `#232` `[x]` · ops Web Push `#231` `[x]` · team desk `#230` `[x]` · Admin canonical docs `#229` `[x]` · W8 GATE `#228` `[x]`.
 
 ## KEEP (engine glue + product desks)
 
@@ -26,14 +26,21 @@
 - **RBAC:** [`ADMIN_TEAM_RBAC_CANON.md`](../../docs/SSOT/ADMIN_TEAM_RBAC_CANON.md)
 - **유저↔Admin:** [`PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md`](../../docs/PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md)
 - **코드:** `domain/admin-beginner-language-display-contract.ts`
-- **다음:** `p13-soft-launch-bundle` (#233) — T0-A `#232` **`[x]`**
+- Soft Launch `#233` **`[x]`** — [`P13_SOFT_LAUNCH_BUNDLE.md`](../../docs/OPERATIONS/P13_SOFT_LAUNCH_BUNDLE.md)
 
 ## T0-A Prod Preflight (P13 OPS `#232`)
 
 - **Canon:** [`P13_T0A_PROD_PREFLIGHT.md`](../../docs/OPERATIONS/P13_T0A_PROD_PREFLIGHT.md)
 - **코드:** `domain/p13-ops-prod-preflight-display-contract.ts`
 - **Spotcheck:** `scripts/p13-ops-prod-preflight-spotcheck.sql`
-- **다음:** `p13-soft-launch-bundle` (#233)
+- Soft Launch `#233` **`[x]`** · **다음** `da-w7-enforcement-strict-tokens` (#234)
+
+## Soft Launch Bundle (P13 BUNDLE `#233`)
+
+- **Canon:** [`P13_SOFT_LAUNCH_BUNDLE.md`](../../docs/OPERATIONS/P13_SOFT_LAUNCH_BUNDLE.md)
+- **Web contract:** `apps/web/src/domain/p13-soft-launch-display-contract.ts`
+- **Admin spot-check:** `domain/__tests__/p13-soft-launch-admin-spotcheck.test.ts`
+- **다음:** `da-w7-enforcement-strict-tokens` (#234)
 
 ## AdminTable (§29.6)
 

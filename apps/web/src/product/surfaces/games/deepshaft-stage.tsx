@@ -170,7 +170,7 @@ export const DeepshaftStage = forwardRef<CasinoStageHandle, DeepshaftStageProps>
                 <div
                   key={depth}
                   className={cn(
-                    'border-line/40 flex min-h-0 flex-1 items-center justify-center border-t text-[10px] tabular-nums',
+                    'border-line/40 flex min-h-0 flex-1 items-center justify-center border-t text-tiny tabular-nums',
                     reached && !isCave && 'bg-accent/25 text-accent',
                     isCave && 'bg-danger/40 text-danger',
                     !reached && 'text-foreground-muted',

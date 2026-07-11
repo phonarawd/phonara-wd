@@ -218,4 +218,4 @@ bun run gate:ai-impl -- --test apps/admin/src/domain/__tests__/p13-ops-prod-pref
 ---
 
 **Implemented:** display-contract · spotcheck · 본 canon · live audit 표 · §3.1 MFA/실입금 **DEFER**  
-**다음:** `p13-soft-launch-bundle` — UI/QA (MFA·실입금 DEFER와 독립)
+**다음:** `p13-closeout-bundle` — DA W7 VISUAL `#235` agent impl **`[x]`** · Soft Launch `#233` · W7 `#234` **`[x]`**

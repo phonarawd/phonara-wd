@@ -35,6 +35,8 @@
   --ds-font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 
   /* Fluid type scale — 4-tier viewport (§3.0 · §25.1) */
+  /* dense micro labels (trade book · badges) — was ad-hoc text-[10px] escape hatch */
+  --ds-text-tiny: 0.625rem;
   --ds-text-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
   --ds-text-sm: clamp(0.8125rem, 0.78rem + 0.17vw, 0.875rem);
   --ds-text-base: clamp(0.875rem, 0.83rem + 0.25vw, 1rem);

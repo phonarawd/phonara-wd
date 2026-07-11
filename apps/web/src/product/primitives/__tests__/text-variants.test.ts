@@ -31,5 +31,9 @@ describe('textVariants (§34.6)', () => {
     if (variant === 'display' || variant === 'hero' || variant === 'headline') {
       expect(classes).toContain('font-display');
     }
+    if (variant === 'tiny') {
+      expect(classes).toContain('text-tiny');
+      expect(classes).not.toContain('text-xs');
+    }
   });
 });

@@ -60,7 +60,7 @@ Copy tone: [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md) · Earn FOMO 허용 �
 ## 3. Brand Memory Rules (§34.4)
 
 1. **Aurora ≤1 / route** — `check:design-tokens` (da-w7 strict).
-2. **Money** = 항상 `MoneyDisplay` (또는 domain wrapper) + `tabular-nums` + mono — ad-hoc `text-[10px]` trade escape hatch는 da-w\*에서 흡수.
+2. **Money** = 항상 `MoneyDisplay` (또는 domain wrapper) + `tabular-nums` + mono — `text-tiny` utility (구 `text-[10px]` escape hatch · da-w7 **`[x]`**).
 3. **Accent mint** (`--ds-accent`) = **primary CTA only** — section당 filled primary **1개**.
 4. **Quad Stream only** — 외부 브랜드 gradient·로고·unique identity clone **금지**.
 5. **DESIGN_CHARTER Phase 4 defer 해제** — geometric recall / brand memory는 DA W6+에서 구현 가능 ([`DESIGN_CHARTER.md`](../PRODUCT/DESIGN_CHARTER.md)).
@@ -163,7 +163,8 @@ Interaction 표: [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md) §Interaction Gram
 | **W8** | `da-w8-signature-surfaces-bundle` **`[x]`**                                    | home greeting·day-flow · wallet living balance · trade heat · casino float · sports kickoff · VIP XP fill **`[x]`** |
 | **W8** | `da-w8-sound-design-spec-defer` **`[x]`**                                      | §34.27 mission·wallet·trade·vip 4톤 **DOC** · 구현=E-Wave · casino §23.8 제외 **`[x]`** |
 | **W8** | `da-w8-gate-signature-experience` **`[x]`**                                    | §34.2 Emotion Map spot-check · da-w8 bundle GATE · VISUAL: da-w8-signature advisory **`[x]`** |
-| W7     | `da-w7-enforcement-strict-tokens`                                             | `check:design-tokens --strict`                                              |
+| **W7** | `da-w7-enforcement-strict-tokens` **`[x]`**                                   | `check:design-tokens --strict` · text-tiny · legacy purge **`[x]`**         |
+| **W7** | `da-w7-operator-visual-dae-signoff` agent impl **`[x]`**                        | Home+Shell+Trade · 390/768/1024/2560 · preview · axe 0 · operator `VISUAL APPROVED: da-w7` 대기 |
 
 ---
 

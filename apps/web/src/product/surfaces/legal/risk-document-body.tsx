@@ -36,7 +36,7 @@ export function RiskDocumentBody() {
         <p className="mt-3 mb-0">
           <Link
             to={LEGAL_RESPONSIBLE_GAMING_ROUTE}
-            className="text-primary underline-offset-4 hover:underline"
+            className="text-accent underline-offset-4 hover:underline"
             data-testid="risk-rg-policy-link"
           >
             {t('legal.nav.rg')}

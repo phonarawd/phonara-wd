@@ -40,12 +40,14 @@
 | `check:ai-reference`                                                     | green                                                                                                                                                                      |
 | `gate:ai-impl` P9 WORLD gate (`p9-gate-trade-world-class`)               | vitest world-class **6/6** · layout-dedup **9/9** · action-path **6/6** · parity **29/29** · trade surfaces **122/122** · §13.1.1 · §32.7 H1–H4                            |
 | `gate:ai-impl` Fiat core gate (`p4-gate-fiat-reference-world-class`)     | vitest fiat bundle **113/113** · gate contract **6/6** · ComplaintRisk core 3/3 live · preflight grep · §13.1.4 · P10 page unblock                                         |
+| `gate:ai-impl` DA W7 GATE (`da-w7-enforcement-strict-tokens`)            | vitest **19/19** · `check:design-tokens --strict` green · text-tiny · P3 legacy purge · §34.28 · engine **0** |
+| `gate:ai-impl` DA W7 VISUAL (`da-w7-operator-visual-dae-signoff`)         | vitest **22/22** · Home+Shell+Trade · 4-tier · preview · axe 0 · dead control 0 · §20.12 · engine **0** |
 | `gate:ai-impl` DA W6 GATE (`da-w6-gate-brand-elevation`)                 | vitest **23/23** · BrandMark aurora · domain empty · Quad Stream · `check:design-tokens` advisory (91 notes) · VISUAL advisory · §34.18–34.20 · engine **0** |
 | `gate:ai-impl` DA W6 Brand (`da-w6-brand-elevation-bundle`)              | vitest **55/55** · BrandMark aurora · domain empty · QuadStreamLoading · router pending · §34.18–34.20 · engine **0**                                                                          |
 | `gate:ai-impl` P4 VISUAL (`p4-operator-visual-signoff`)                | vitest surface **13/13** · contract **6/6** · §22.2 Wallet · §25.12.6 · 390/768/1024 · axe critical 0 · dead control 0 · preview https://preview.phonara-web.pages.dev |
 | `gate:ai-impl` P9 VISUAL (`p9-operator-visual-signoff`)                  | vitest trade+staking **168/168** · `p9-trade-visual-signoff` **29/29** · contract **5/5** · §13.1.1 dual-currency · dead control 0 · G7 cross-margin canary                |
 | `typecheck`                                                              | green                                                                                                                                                                      |
-| `check:design-tokens`                                                    | green (advisory) · token SOT · surface-hover bridge · legacy diff · motion refs                                                                                            |
+| `check:design-tokens`                                                    | green (**strict** da-w7) · token SOT · text-tiny · legacy bridge 0 · spacing-ratchet advisory                                                                 |
 | `check:i18n`                                                             | green                                                                                                                                                                      |
 | `check:pwa`                                                              | green (maskable flat · §25.9)                                                                                                                                              |
 | `gate:ai-impl` P9 audit remediation A2 (`p9-trade-audit-remediation-a2`) | vitest spot-desk **10/10** · futures-desk **8/8** · `useTradeDeskViewport` · lg+/<lg chart mount 1× · `trade-layout-dedup-contract` A2                                     |
@@ -82,7 +84,7 @@
 
 ## Next (유일한 구현 큐)
 
-**Phase R UI Rebuild** — [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) · **Cursor 8GB perf `phase0-gate` `[x]` DONE** 2026-07-10 · **PIR `[x]` DONE** · **전역 NEXT** `p11-page-wallet-redeem` (#220) · P11 Earn side `#219` `[x]` · P4 VISUAL `#218` agent impl `[x]` · W6 GATE `#217` `[x]` · W6 BUNDLE `#216` `[x]` · P10 VISUAL `#215` agent impl `[x]` · P10 GATE `#214` `[x]` · first-bet education `#213` `[x]` · Fairness `#212` `[x]` · Batch D `#211` `[x]` · Batch C `#210` `[x]` · Batch B `#209` `[x]` · Batch A `#208` `[x]` · AdminTable GATE `#207` `[x]` · AdminTable `#206` `[x]` · Fiat#11 `#205` `[x]` · CasinoR#1 `#204` `[x]` · Casino lobby `#203` `[x]` · §34 → P11 · preflight: [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
+**Phase R UI Rebuild** — [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) · **Cursor 8GB perf `phase0-gate` `[x]` DONE** 2026-07-10 · **PIR `[x]` DONE** · **전역 NEXT** `p13-closeout-bundle` (#236) · DA W7 VISUAL `#235` agent impl `[x]` · W7 strict `#234` `[x]` · Soft Launch `#233` `[x]` · preflight: [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
 
 **Trade 결함 0 수렴 (형제 큐)** — Plan `트레이딩_결함_0_수렴` · Phase A–C **`[x]` impl** 2026-07-08 · **NEXT** Phase D `phase-d-fills-pagination` (D1) → `phase-d-depth-chart` (D2) · preflight: [`ENGINE_UI_FULL_AUDIT_2026-07-08.md`](audit/ENGINE_UI_FULL_AUDIT_2026-07-08.md)
 
@@ -324,9 +326,9 @@
 | `p13-prep-admin-team-desk`              | `[x]` DONE      | 2026-07-11 | `/admin/team` · AdminTable · owner-only · settings link · `rpc_admin_set_role_grant` · `gate:ai-impl` **22/22**                  |
 | `p13-admin-ops-push`                    | `[x]` DONE      | 2026-07-11 | settings phone-alert CTA · SW · `push_subscriptions` · `ops-notify` web_push → `/queues` · `gate:ai-impl` **8/8** · migration **0** |
 | `p13-ops-prod-preflight`                | `[x]` DONE      | 2026-07-11 | T0-A checklist · live audit · `gate:ai-impl` **7/7** · migration **0**                                                          |
-| `p13-soft-launch-bundle`                | `[ ]` NEXT      | —          | YAML #233 pending                                                                                                               |
-| `da-w7-enforcement-strict-tokens`       | `[ ]` NEXT      | —          | YAML #234 pending                                                                                                               |
-| `da-w7-operator-visual-dae-signoff`     | `[ ]` NEXT      | —          | YAML #235 pending                                                                                                               |
+| `p13-soft-launch-bundle`                | `[x]` DONE      | 2026-07-11 | Soft Launch QA · CB-01~06 · viewport/axe · admin spot-check · `gate:ai-impl` **22/22** · migration **0**                         |
+| `da-w7-enforcement-strict-tokens`       | `[x]` DONE      | 2026-07-11 | `check:design-tokens --strict` · text-tiny · legacy purge · `gate:ai-impl` **19/19**                                             |
+| `da-w7-operator-visual-dae-signoff`     | `[x]` agent impl | 2026-07-11 | Home+Shell+Trade · 390/768/1024/2560 · preview · axe 0 · `gate:ai-impl` **22/22** · operator `VISUAL APPROVED: da-w7` 대기 |
 | `p13-closeout-bundle`                   | `[ ]` NEXT      | —          | YAML #236 pending                                                                                                               |
 | `launch-ramp-t1-feature-gates`          | `[ ]` NEXT      | —          | YAML #237 pending                                                                                                               |
 | `launch-scale-t2-triggers`              | `[ ]` NEXT      | —          | YAML #238 pending                                                                                                               |

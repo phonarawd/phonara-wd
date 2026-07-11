@@ -27,7 +27,7 @@ function RootErrorPage({ reset }: ErrorComponentProps) {
   return (
     <div className="grid min-h-[50dvh] place-items-center gap-3 py-8 text-center">
       <h1 className="text-foreground m-0 text-xl font-semibold">{t('common.error.title')}</h1>
-      <p className="text-muted-foreground m-0 text-sm">{t('common.error.generic')}</p>
+      <p className="text-foreground-muted m-0 text-sm">{t('common.error.generic')}</p>
       <button
         type="button"
         onClick={() => reset()}
@@ -45,13 +45,13 @@ function NotFoundPage() {
   return (
     <div className="grid min-h-[50dvh] place-items-center gap-3 py-8 text-center">
       <p
-        className="text-muted-foreground m-0 text-4xl font-semibold tabular-nums"
+        className="text-foreground-muted m-0 text-4xl font-semibold tabular-nums"
         aria-hidden="true"
       >
         404
       </p>
       <h1 className="text-foreground m-0 text-xl font-semibold">{t('seo.notFound.title')}</h1>
-      <p className="text-muted-foreground m-0 text-sm">{t('seo.notFound.body')}</p>
+      <p className="text-foreground-muted m-0 text-sm">{t('seo.notFound.body')}</p>
       <Link to="/" className="text-accent text-sm font-medium underline-offset-4 hover:underline">
         {t('seo.notFound.cta')}
       </Link>

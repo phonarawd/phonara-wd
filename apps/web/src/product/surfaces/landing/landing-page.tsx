@@ -167,7 +167,7 @@ export function LandingPage() {
     >
       <header className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2.5">
-          <BrandMark size={24} className="text-[#7B6FE8]" testId="landing-header-brand-mark" />
+          <BrandMark size={24} className="text-accent" testId="landing-header-brand-mark" />
 
           <BrandWordmark className="text-foreground text-lg" testId="landing-header-wordmark" />
         </div>

@@ -96,9 +96,9 @@
 - [x] `admin-beginner-language-display-contract` test green (`p13-prep-admin-canonical-docs`)
 - [x] SSOT 3종 + display contract **동일 PR** (50차 merge)
 - [x] §12.14 ↔ §29.2 planned desks (`/admin/team` · `/support` · `/earn/activity`) pin
-- [ ] `rg` 금지어 admin product surfaces 0 (soft-launch spot-check)
+- [x] `rg` 금지어 admin product surfaces 0 (soft-launch spot-check) — `p13-soft-launch-admin-spotcheck` 2026-07-11
 - [ ] 모든 P2+ desk에 `admin.help.*` 3줄 (desk UI wire)
-- [ ] `p13-soft-launch-bundle` operator 초등어 spot-check
+- [x] `p13-soft-launch-bundle` operator 초등어 spot-check — **`[x]`** 2026-07-11
 
 ---
 
@@ -107,5 +107,5 @@
 - [`ADMIN_TEAM_RBAC_CANON.md`](ADMIN_TEAM_RBAC_CANON.md) — 역할별 메뉴
 - [`PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md`](../PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md) — 유저 화면 ↔ Admin 데스크
 - Plan §29.1–29.5 · §12.14 · §32.6
-- 다음: `p13-soft-launch-bundle` (#233) · T0-A `#232` **`[x]`** · ops Web Push `#231` **`[x]`** · team desk `#230` **`[x]`**
+- Soft Launch: [`P13_SOFT_LAUNCH_BUNDLE.md`](../OPERATIONS/P13_SOFT_LAUNCH_BUNDLE.md) · W7 strict `#234` **`[x]`** · DA W7 VISUAL `#235` agent impl **`[x]`** · **다음** `p13-closeout-bundle` (#236)
 
