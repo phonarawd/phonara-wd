@@ -107,5 +107,5 @@
 - [`ADMIN_TEAM_RBAC_CANON.md`](ADMIN_TEAM_RBAC_CANON.md) — 역할별 메뉴
 - [`PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md`](../PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md) — 유저 화면 ↔ Admin 데스크
 - Plan §29.1–29.5 · §12.14 · §32.6
-- Soft Launch: [`P13_SOFT_LAUNCH_BUNDLE.md`](../OPERATIONS/P13_SOFT_LAUNCH_BUNDLE.md) · W7 strict `#234` **`[x]`** · DA W7 VISUAL `#235` agent impl **`[x]`** · **다음** `p13-closeout-bundle` (#236)
+- Soft Launch: [`P13_SOFT_LAUNCH_BUNDLE.md`](../OPERATIONS/P13_SOFT_LAUNCH_BUNDLE.md) · Closeout: [`P13_LAUNCH_CLOSEOUT_BUNDLE.md`](../OPERATIONS/P13_LAUNCH_CLOSEOUT_BUNDLE.md) · W7 `#234`/`#235` **`[x]`** · P13 closeout `#236` **`[x]` DONE** · **다음** `launch-ramp-t1-feature-gates` (#237)
 

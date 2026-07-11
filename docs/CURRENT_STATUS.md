@@ -84,7 +84,7 @@
 
 ## Next (유일한 구현 큐)
 
-**Phase R UI Rebuild** — [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) · **Cursor 8GB perf `phase0-gate` `[x]` DONE** 2026-07-10 · **PIR `[x]` DONE** · **전역 NEXT** `p13-closeout-bundle` (#236) · DA W7 VISUAL `#235` agent impl `[x]` · W7 strict `#234` `[x]` · Soft Launch `#233` `[x]` · preflight: [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
+**Phase R UI Rebuild** — [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) · **Cursor 8GB perf `phase0-gate` `[x]` DONE** 2026-07-10 · **PIR `[x]` DONE** · **전역 NEXT** `launch-ramp-t1-feature-gates` (#237) · P13 closeout `#236` `[x]` DONE · DA W7 VISUAL `#235` agent impl `[x]` · W7 strict `#234` `[x]` · Soft Launch `#233` `[x]` · preflight: [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
 
 **Trade 결함 0 수렴 (형제 큐)** — Plan `트레이딩_결함_0_수렴` · Phase A–C **`[x]` impl** 2026-07-08 · **NEXT** Phase D `phase-d-fills-pagination` (D1) → `phase-d-depth-chart` (D2) · preflight: [`ENGINE_UI_FULL_AUDIT_2026-07-08.md`](audit/ENGINE_UI_FULL_AUDIT_2026-07-08.md)
 
@@ -329,8 +329,8 @@
 | `p13-soft-launch-bundle`                | `[x]` DONE      | 2026-07-11 | Soft Launch QA · CB-01~06 · viewport/axe · admin spot-check · `gate:ai-impl` **22/22** · migration **0**                         |
 | `da-w7-enforcement-strict-tokens`       | `[x]` DONE      | 2026-07-11 | `check:design-tokens --strict` · text-tiny · legacy purge · `gate:ai-impl` **19/19**                                             |
 | `da-w7-operator-visual-dae-signoff`     | `[x]` agent impl | 2026-07-11 | Home+Shell+Trade · 390/768/1024/2560 · preview · axe 0 · `gate:ai-impl` **22/22** · operator `VISUAL APPROVED: da-w7` 대기 |
-| `p13-closeout-bundle`                   | `[ ]` NEXT      | —          | YAML #236 pending                                                                                                               |
-| `launch-ramp-t1-feature-gates`          | `[ ]` NEXT      | —          | YAML #237 pending                                                                                                               |
+| `p13-closeout-bundle`                   | `[x]` DONE      | 2026-07-11 | legacy purge · docs sync · CI gate pin · `gate:ai-impl` **16/16** · `check:design-tokens --strict` · migration **0** · [`P13_LAUNCH_CLOSEOUT_BUNDLE.md`](OPERATIONS/P13_LAUNCH_CLOSEOUT_BUNDLE.md) |
+| `launch-ramp-t1-feature-gates`          | `[ ]` NEXT      | —          | YAML #237 · 공식 GO 이후 T1 ramp                                                                                                |
 | `launch-scale-t2-triggers`              | `[ ]` NEXT      | —          | YAML #238 pending                                                                                                               |
 | `ew-e0-adr-approval`                    | `[ ]` NEXT      | —          | YAML #239 pending                                                                                                               |
 | `ew-e1-decay-wave`                      | `[ ]` NEXT      | —          | YAML #240 pending                                                                                                               |
