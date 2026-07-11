@@ -176,4 +176,4 @@ bun run check:pwa
 ---
 
 **Implemented:** display-contract · QA vitest · admin spot-check · 본 canon  
-**다음:** `launch-ramp-t1-feature-gates` — P13 closeout `#236` **`[x]` DONE** · Soft Launch · W7 **`[x]`**
+**다음:** `ew-e1-decay-wave` (#240) — E0 `#239` **`[x]`** · T2 `#238` **`[x]`** · T1 `#237` **`[x]`** · Soft Launch · W7 · closeout **`[x]`**

@@ -69,6 +69,18 @@ vi.mock('@/features/casino/use-casino-fiat-hint', () => ({
   }),
 }));
 
+vi.mock('@/features/casino/use-live-crash', () => ({
+  useLiveCrashCurrent: () => ({ data: { round: null }, isLoading: false }),
+  useLiveCrashPlaceBet: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useLiveCrashCashout: () => ({ mutateAsync: vi.fn(), isPending: false }),
+}));
+
+vi.mock('@/features/casino/use-progressive-round', () => ({
+  useProgressiveStart: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useProgressiveStep: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useProgressiveCashout: () => ({ mutateAsync: vi.fn(), isPending: false }),
+}));
+
 vi.mock('@/product/primitives/lib/use-prefers-reduced-motion', () => ({
   usePrefersReducedMotion: () => true,
 }));
@@ -107,8 +119,22 @@ describe('Casino games batch B stages (p10-games-batch-b)', () => {
     expect(screen.getByTestId('casino-mines-grid')).toBeInTheDocument();
     expect(screen.getByTestId('casino-mines-cell-0')).toHaveClass('min-h-12');
     expect(screen.getByTestId('casino-selection-mineCount')).toBeInTheDocument();
-    // §23.2.1 — no live mid-round cash-out control
+    // Default oneshot — progressive cash-out hidden until live session
     expect(screen.queryByTestId('casino-mines-live-cashout')).not.toBeInTheDocument();
+    expect(screen.getByTestId('casino-play-mode')).toBeInTheDocument();
+  });
+
+  it('mines liveMode shows mid-round cash-out when session active', () => {
+    wrap(
+      <MinesStage
+        mineCount={3}
+        revealedCells={[0]}
+        liveMode
+        liveSessionActive
+        onLiveCashout={() => undefined}
+      />,
+    );
+    expect(screen.getByTestId('casino-mines-live-cashout')).toBeInTheDocument();
   });
 
   it('shell mounts hilo stage with HI/LO thumbs 48px+', () => {

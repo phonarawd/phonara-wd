@@ -70,6 +70,18 @@ vi.mock('@/features/casino/use-casino-fiat-hint', () => ({
   }),
 }));
 
+vi.mock('@/features/casino/use-live-crash', () => ({
+  useLiveCrashCurrent: () => ({ data: { round: null }, isLoading: false }),
+  useLiveCrashPlaceBet: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useLiveCrashCashout: () => ({ mutateAsync: vi.fn(), isPending: false }),
+}));
+
+vi.mock('@/features/casino/use-progressive-round', () => ({
+  useProgressiveStart: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useProgressiveStep: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useProgressiveCashout: () => ({ mutateAsync: vi.fn(), isPending: false }),
+}));
+
 vi.mock('@/product/primitives/lib/use-prefers-reduced-motion', () => ({
   usePrefersReducedMotion: () => true,
 }));
@@ -107,8 +119,23 @@ describe('Casino games batch A stages (p10-games-batch-a)', () => {
     expect(screen.queryByTestId('casino-game-stage-placeholder')).not.toBeInTheDocument();
     expect(screen.getByTestId('casino-game-selection-fields')).toBeInTheDocument();
     expect(screen.getByTestId('casino-selection-autoCashout')).toBeInTheDocument();
-    // §23.2.1 — no live mid-round cash-out control
+    expect(screen.getByTestId('casino-play-mode')).toBeInTheDocument();
+    // Default oneshot — live cash-out hidden until live mode + flying
     expect(screen.queryByTestId('casino-crash-live-cashout')).not.toBeInTheDocument();
+  });
+
+  it('crash liveMode shows mid-flight cash-out control', () => {
+    wrap(
+      <CrashStage
+        autoCashout="2.00"
+        liveMode
+        liveRoundStatus="flying"
+        liveMultiplier="1.42"
+        onLiveCashout={() => undefined}
+      />,
+    );
+    expect(screen.getByTestId('casino-crash-live-cashout')).toBeInTheDocument();
+    expect(screen.getByTestId('casino-crash-stage')).toHaveAttribute('data-live-mode', 'true');
   });
 
   it('routes limbo and dice stages', () => {
@@ -125,9 +152,10 @@ describe('Casino games batch A stages (p10-games-batch-a)', () => {
     expect(screen.getByTestId('casino-dice-win-chance')).toBeInTheDocument();
   });
 
-  it('keeps batch-d games on stage placeholder', () => {
+  it('routes batch-d roulette stage (not placeholder)', () => {
     wrap(<CasinoGameStage gameCode="roulette" selection={{}} />);
-    expect(screen.getByTestId('casino-game-stage-placeholder')).toBeInTheDocument();
+    expect(screen.getByTestId('casino-roulette-stage')).toBeInTheDocument();
+    expect(screen.queryByTestId('casino-game-stage-placeholder')).not.toBeInTheDocument();
     expect(screen.queryByTestId('casino-crash-stage')).not.toBeInTheDocument();
   });
 

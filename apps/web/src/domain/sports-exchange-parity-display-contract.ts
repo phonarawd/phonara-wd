@@ -128,11 +128,11 @@ export const SPORTS_PARITY_MATRIX: readonly SportsParityRow[] = [
     module: 'Partial cash-out',
     category: 'settlement',
     majors: true,
-    engine: 'gap',
-    engineRpc: null,
-    phonara: 'no',
-    tier: 'B',
-    ownerTodo: EW_E22_SPORTS_PARITY_WAVE_TODO,
+    engine: 'exists',
+    engineRpc: 'rpc_partial_cashout_sports_bet',
+    phonara: 'yes',
+    tier: 'DONE',
+    ownerTodo: null,
   },
   {
     id: 'bet-builder-correlated',
@@ -150,11 +150,11 @@ export const SPORTS_PARITY_MATRIX: readonly SportsParityRow[] = [
     module: 'Odds change accept policy (any/worse)',
     category: 'bet_type',
     majors: true,
-    engine: 'partial',
-    engineRpc: SPORTS_PLACE_BET_RPC,
-    phonara: 'partial',
-    tier: 'A',
-    ownerTodo: P10_SPORTS_SLIP_ADVANCED_TODO,
+    engine: 'exists',
+    engineRpc: `${SPORTS_PLACE_BET_RPC} · p_odds_acceptance`,
+    phonara: 'yes',
+    tier: 'DONE',
+    ownerTodo: null,
   },
   {
     id: 'market-type-registry',
@@ -183,19 +183,19 @@ export const SPORTS_PARITY_MATRIX: readonly SportsParityRow[] = [
     module: 'Correct score market',
     category: 'market',
     majors: true,
-    engine: 'gap',
-    engineRpc: null,
-    phonara: 'no',
-    tier: 'B',
-    ownerTodo: EW_E22_SPORTS_PARITY_WAVE_TODO,
+    engine: 'exists',
+    engineRpc: 'sports_market_type_registry.correct_score',
+    phonara: 'yes',
+    tier: 'DONE',
+    ownerTodo: null,
   },
   {
     id: 'sport-catalog',
     module: 'Full sport catalog table',
     category: 'market',
     majors: true,
-    engine: 'partial',
-    engineRpc: null,
+    engine: 'exists',
+    engineRpc: 'rpc_list_sports_catalog',
     phonara: 'partial',
     tier: 'B',
     ownerTodo: EW_E22_SPORTS_PARITY_WAVE_TODO,
@@ -257,7 +257,7 @@ export const SPORTS_PARITY_MATRIX: readonly SportsParityRow[] = [
   },
 ] as const;
 
-/** Engine registry market types exposed as selectable board rows (Sports#1). */
+/** Engine registry market types exposed as selectable board rows (Sports#1 + E22 correct_score). */
 export const SPORTS_BOARD_SELECTABLE_MARKET_TYPES = [
   'match_1x2',
   'totals',
@@ -269,6 +269,7 @@ export const SPORTS_BOARD_SELECTABLE_MARKET_TYPES = [
   'both_teams_score',
   'prop_over_under',
   'prop_yes_no',
+  'correct_score',
 ] as const;
 
 export type SportsBoardSelectableMarketType = (typeof SPORTS_BOARD_SELECTABLE_MARKET_TYPES)[number];
@@ -504,6 +505,7 @@ export function assertSportsParityContractSync(): void {
     'btts',
     'prop_over_under',
     'prop_yes_no',
+    'correct_score',
   ] as const) {
     if (!SPORTS_BOARD_SELECTABLE_MARKET_TYPES.includes(required)) {
       throw new Error(`sports-parity: board missing selectable market ${required}`);

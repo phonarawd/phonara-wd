@@ -1,9 +1,11 @@
 import type { MessageKey } from '@phonara/i18n';
 
 export type MissionExposure = 'live' | 'hidden';
+export type MissionCatalogFamily = 'viral' | 'earn_limit';
 
 export type AdminEarnLimitRow = {
   key: string;
+  catalogKey: string;
   labelKey: MessageKey;
   value: string;
   description: string | null;
@@ -11,6 +13,7 @@ export type AdminEarnLimitRow = {
 
 export type AdminViralMissionRow = {
   id: string;
+  catalogKey: string;
   labelKey: MessageKey;
   rewardPhon: string;
   quota: string;
@@ -18,6 +21,33 @@ export type AdminViralMissionRow = {
   extraValue: string | null;
   extraLabelKey: MessageKey | null;
   exposure: MissionExposure;
+  enabled: boolean;
+};
+
+export type AdminMissionCatalogUpsertInput = {
+  catalogKey: string;
+  reason: string;
+  value?: string;
+  quotaValue?: string;
+  extraValue?: string;
+  exposure?: MissionExposure;
+  enabled?: boolean;
+};
+
+type CatalogEngineRow = {
+  catalog_key: string;
+  family: string;
+  mission_code: string | null;
+  config_key: string;
+  quota_config_key: string | null;
+  extra_config_key: string | null;
+  exposure: string;
+  enabled: boolean;
+  title_i18n_key: string;
+  value: string | null;
+  quota_value: string | null;
+  extra_value: string | null;
+  description: string | null;
 };
 
 const EARN_LIMIT_DEFINITIONS = [
@@ -89,6 +119,14 @@ function readConfigValue(config: Record<string, string>, key: string, fallback =
   return value;
 }
 
+function asExposure(value: string | null | undefined): MissionExposure {
+  return value === 'live' ? 'live' : 'hidden';
+}
+
+function asMessageKey(value: string): MessageKey {
+  return value as MessageKey;
+}
+
 /** Maps `app_config` earn-limit keys into admin desk rows (display-only · no client recompute). */
 export function parseEarnLimits(
   config: Record<string, string>,
@@ -96,6 +134,7 @@ export function parseEarnLimits(
 ): AdminEarnLimitRow[] {
   return EARN_LIMIT_DEFINITIONS.map((def) => ({
     key: def.key,
+    catalogKey: `earn:${def.key}`,
     labelKey: def.labelKey,
     value: readConfigValue(config, def.key),
     description: descriptions[def.key] ?? null,
@@ -106,6 +145,7 @@ export function parseEarnLimits(
 export function parseViralMissions(config: Record<string, string>): AdminViralMissionRow[] {
   return VIRAL_MISSION_DEFINITIONS.map((def) => ({
     id: def.id,
+    catalogKey: `viral:${def.id}`,
     labelKey: def.labelKey,
     rewardPhon: readConfigValue(config, def.rewardKey),
     quota: readConfigValue(config, def.quotaKey),
@@ -113,7 +153,81 @@ export function parseViralMissions(config: Record<string, string>): AdminViralMi
     extraValue: 'extraKey' in def && def.extraKey ? readConfigValue(config, def.extraKey) : null,
     extraLabelKey: 'extraLabelKey' in def ? (def.extraLabelKey ?? null) : null,
     exposure: def.exposure,
+    enabled: true,
   }));
+}
+
+function quotaPeriodForMission(missionCode: string | null): MessageKey {
+  switch (missionCode) {
+    case 'share_story_template':
+      return 'admin.missions.quota.perWeek';
+    case 'affiliate_content_post':
+      return 'admin.missions.quota.perMonth';
+    default:
+      return 'admin.missions.quota.perDay';
+  }
+}
+
+/** Maps `rpc_admin_list_mission_catalog` JSON rows into viral + earn desk rows (E2). */
+export function parseMissionCatalogRows(raw: unknown): {
+  earnLimits: AdminEarnLimitRow[];
+  viralMissions: AdminViralMissionRow[];
+} {
+  if (!Array.isArray(raw)) {
+    return { earnLimits: [], viralMissions: [] };
+  }
+
+  const rows = raw.map((item) => item as CatalogEngineRow);
+  const earnLimits: AdminEarnLimitRow[] = [];
+  const viralMissions: AdminViralMissionRow[] = [];
+
+  for (const row of rows) {
+    if (row.family === 'earn_limit') {
+      earnLimits.push({
+        key: row.config_key,
+        catalogKey: row.catalog_key,
+        labelKey: asMessageKey(row.title_i18n_key),
+        value: row.value ?? '—',
+        description: row.description,
+      });
+      continue;
+    }
+
+    if (row.family === 'viral') {
+      viralMissions.push({
+        id: row.mission_code ?? row.catalog_key,
+        catalogKey: row.catalog_key,
+        labelKey: asMessageKey(row.title_i18n_key),
+        rewardPhon: row.value ?? '—',
+        quota: row.quota_value ?? '—',
+        quotaPeriodKey: quotaPeriodForMission(row.mission_code),
+        extraValue: row.extra_value,
+        extraLabelKey: row.extra_config_key ? 'admin.missions.col.minStreakDays' : null,
+        exposure: asExposure(row.exposure),
+        enabled: Boolean(row.enabled),
+      });
+    }
+  }
+
+  earnLimits.sort((a, b) => a.catalogKey.localeCompare(b.catalogKey));
+  viralMissions.sort((a, b) => a.catalogKey.localeCompare(b.catalogKey));
+  return { earnLimits, viralMissions };
+}
+
+/** Builds upsert payload for `rpc_admin_upsert_mission_catalog` (no client money math). */
+export function buildMissionCatalogUpsertPayload(
+  input: AdminMissionCatalogUpsertInput,
+): Record<string, unknown> {
+  const payload: Record<string, unknown> = {
+    catalog_key: input.catalogKey,
+    reason: input.reason,
+  };
+  if (input.value !== undefined) payload['value'] = input.value;
+  if (input.quotaValue !== undefined) payload['quota_value'] = input.quotaValue;
+  if (input.extraValue !== undefined) payload['extra_value'] = input.extraValue;
+  if (input.exposure !== undefined) payload['exposure'] = input.exposure;
+  if (input.enabled !== undefined) payload['enabled'] = input.enabled;
+  return payload;
 }
 
 export const ADMIN_MISSIONS_EARN_LIMIT_KEYS = EARN_LIMIT_DEFINITIONS.map((row) => row.key);

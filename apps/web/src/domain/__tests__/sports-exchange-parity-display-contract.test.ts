@@ -33,8 +33,11 @@ describe('sports-exchange-parity-display-contract §22.2.5', () => {
     expect(findSportsParityRow('bet-single')?.tier).toBe('DONE');
     expect(findSportsParityRow('bet-combo')?.tier).toBe('DONE');
     expect(findSportsParityRow('bet-sgp')?.ownerTodo).toBe(P10_SPORTS_SLIP_ADVANCED_TODO);
-    expect(findSportsParityRow('cashout-partial')?.tier).toBe('B');
-    expect(findSportsParityRow('correct-score')?.tier).toBe('B');
+    expect(findSportsParityRow('cashout-partial')?.tier).toBe('DONE');
+    expect(findSportsParityRow('cashout-partial')?.phonara).toBe('yes');
+    expect(findSportsParityRow('correct-score')?.tier).toBe('DONE');
+    expect(findSportsParityRow('correct-score')?.phonara).toBe('yes');
+    expect(findSportsParityRow('odds-accept-policy')?.phonara).toBe('yes');
     expect(findSportsParityRow('market-type-registry')?.tier).toBe('DONE');
     expect(findSportsParityRow('fixture-multi-market-board')?.tier).toBe('DONE');
     expect(findSportsParityRow('fixture-multi-market-board')?.engineRpc).toBe(
@@ -59,10 +62,11 @@ describe('sports-exchange-parity-display-contract §22.2.5', () => {
         'btts',
         'prop_over_under',
         'prop_yes_no',
+        'correct_score',
       ]),
     );
     expect(isSportsBoardSelectableMarketType('totals')).toBe(true);
-    expect(isSportsBoardSelectableMarketType('correct_score')).toBe(false);
+    expect(isSportsBoardSelectableMarketType('correct_score')).toBe(true);
     expect(SPORTS_BOARD_MARKETS_HOOK).toBe('useGetFixtureMarkets');
     expect(SPORTS_BOARD_PANEL_OWNER).toBe('sports-fixture-markets-panel.tsx');
   });

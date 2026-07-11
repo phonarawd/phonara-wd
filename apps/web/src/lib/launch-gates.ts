@@ -13,5 +13,80 @@ export const LAUNCH_GATES = {
   notificationsCenter: false,
   tierGuide: false,
   /** E1 — tier auto-decay engine + tier_decay_warning pref exposure on `/settings/notifications`. */
-  tierDecayEngine: false,
+  tierDecayEngine: true,
+  /** E2 — mission catalog engine (list/upsert RPC). */
+  missionCatalogEngine: true,
+  /** E2 GATE — `/admin/earn/missions` write UI unlock (`ew-e2-gate-missions`). */
+  missionCatalogWrite: true,
+  /** E3 — viral leaderboard + CMS targeting/schedule + viral analytics engine. */
+  viralCmsEngine: true,
+  /**
+   * E3 GATE — `/referral/leaderboard` engine unlock (`ew-e3-gate-cms-promotions`).
+   * E5 (`ew-e5-gap-surfaces-wire`) wires rank list UI to `rpc_get_affiliate_rank_leaderboard`.
+   */
+  referralLeaderboardLive: true,
+  /**
+   * E3 GATE — `/admin/promotions` · `/admin/cms` targeting/schedule path unlocked.
+   * Full desk UI = E6 (`ew-e6-admin-desks-wave`).
+   */
+  adminCmsPromotions: true,
+  /** E3 GATE — `/announcements` full CMS notice list (targeting-aware RPC). */
+  announcementsFull: true,
+  /** E4 — Option B tier summary + Prime Elite + caps engine. */
+  tierOptionBEngine: true,
+  /**
+   * E4 GATE — trade/sports fee discount % display truth.
+   * WAVE kept false (badge-only); GATE unlocks after remote verify.
+   */
+  tierFeeDisplayTruth: true,
+  /**
+   * E4 GATE — `/admin/tiers` · user tier write UI unlock.
+   * WAVE shipped RPC + hook; GATE unlocks controls.
+   */
+  adminTierWrite: true,
+  /**
+   * E4 GATE — `/sports/vip` surface unlock (eligibility + engine ready).
+   * E5 (`ew-e5-gap-surfaces-wire`) opens shared-fixture browse for Platinum+.
+   */
+  sportsVipSurface: true,
+  /**
+   * E4 GATE — `/tier/elite` Prime Elite surface unlock (engine ready).
+   * Full elite page route may follow; Option B summary RPC is live.
+   */
+  tierEliteSurface: true,
+  /** E7 — co-mission + whale threshold engine (RPCs live). */
+  socialCoMissionEngine: true,
+  /**
+   * E7 GATE — social missions UI unlock (`ew-e7-gate-engine-wave`).
+   * WAVE kept false; GATE unlocks after remote verify.
+   */
+  socialMissionsLive: true,
+  /** E21 — hedge position mode + reduce-only engine (RPCs live). */
+  tradeHedgeReduceOnlyEngine: true,
+  /**
+   * E21 UI — hedge · reduce-only · Tier-B display live unlock.
+   * WAVE/GATE kept false; `ew-e21-ui-trade-engine-unlocks` flips after remote verify.
+   */
+  tradeParityLive: true,
+  /** E22 — partial cashout · odds acceptance · correct_score · catalog engine. */
+  sportsParityEngine: true,
+  /**
+   * E22 UI — partial cashout · odds policy · correct score live unlock.
+   * GATE unlocked built_hidden path; `ew-e22-ui-sports-parity-unlocks` flips live.
+   */
+  sportsParityLive: true,
+  /** E23 — progressive rounds · live crash · PF seed engine. */
+  casinoLiveEngine: true,
+  /**
+   * E23 UI — live crash stage · progressive mines/hilo/blackjack · fairness seed controls.
+   * `ew-e23-ui-casino-live-unlocks` flips after GATE remote verify.
+   */
+  casinoLiveLive: true,
+  /** E8 — P2P transfer · trading API keys · giftcard redeem reverse engine. */
+  financialConnectivityEngine: true,
+  /**
+   * E8/E10 UI — `/wallet/transfer` · API keys hub · redeem reverse wire.
+   * WAVE keeps false; GATE remote + `ew-e10-wallet-settings-ui` unlock.
+   */
+  financialConnectivityLive: false,
 } as const;

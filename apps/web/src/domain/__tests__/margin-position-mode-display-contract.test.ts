@@ -4,6 +4,7 @@ import {
   CROSS_MARGIN_DISABLED_REASON_KEY,
   CROSS_MARGIN_LAUNCH_FLAG,
   FUTURES_SET_MARGIN_MODE_RPC,
+  FUTURES_SET_POSITION_MODE_RPC,
   OKX_MARGIN_POSITION_ENGINE_BRANCHES,
   OKX_MARGIN_POSITION_PANEL_PLACEMENT,
   OKX_MARGIN_POSITION_PARITY_ACHIEVED,
@@ -25,12 +26,14 @@ import {
 } from '../margin-position-mode-display-contract';
 
 describe('margin-position-mode-display-contract', () => {
-  it('documents OKX parity gap — hedge missing, not 100% (plan §13.1 · A14 Q13)', () => {
-    expect(OKX_MARGIN_POSITION_PARITY_ACHIEVED).toBe(false);
-    expect(SCHEMA_POSITION_MODE_FIELD_COUNT).toBe(0);
-    expect(SCHEMA_HEDGE_FIELD_COUNT).toBe(0);
-    expect(OKX_MARGIN_POSITION_ENGINE_BRANCHES.position_mode_hedge.engine).toBe('missing');
-    expect(OKX_MARGIN_POSITION_ENGINE_BRANCHES.position_mode_hedge.rpc).toBeNull();
+  it('pins E21 hedge engine exists · UI live after tradeParityLive · OKX flag true', () => {
+    expect(OKX_MARGIN_POSITION_PARITY_ACHIEVED).toBe(true);
+    expect(SCHEMA_POSITION_MODE_FIELD_COUNT).toBe(1);
+    expect(SCHEMA_HEDGE_FIELD_COUNT).toBe(1);
+    expect(OKX_MARGIN_POSITION_ENGINE_BRANCHES.position_mode_hedge.engine).toBe('exists');
+    expect(OKX_MARGIN_POSITION_ENGINE_BRANCHES.position_mode_hedge.rpc).toBe(
+      FUTURES_SET_POSITION_MODE_RPC,
+    );
   });
 
   it('confirms isolated margin EXISTS and cross is PARTIAL behind launch flag', () => {
@@ -52,7 +55,7 @@ describe('margin-position-mode-display-contract', () => {
       'MarginModeSegment',
     );
     expect(OKX_MARGIN_POSITION_PANEL_PLACEMENT.map((row) => row.component)).toContain(
-      'PositionModeFixedLabel',
+      'PositionModeSegment',
     );
   });
 
@@ -64,12 +67,15 @@ describe('margin-position-mode-display-contract', () => {
     expect(resolveOkxBranchExposure('margin_isolated', false)).toBe('live');
   });
 
-  it('hides hedge toggle and shows honest one-way fixed label only', () => {
-    expect(shouldHideHedgePositionModeToggle()).toBe(true);
-    expect(shouldShowOneWayPositionModeLabel()).toBe(true);
+  it('shows hedge toggle when tradeParityLive · hides one-way fixed label', () => {
+    expect(shouldHideHedgePositionModeToggle()).toBe(false);
+    expect(shouldHideHedgePositionModeToggle(false)).toBe(true);
+    expect(shouldShowOneWayPositionModeLabel()).toBe(false);
     expect(getEffectivePositionMode()).toBe('one_way');
-    expect(resolveOkxBranchExposure('position_mode_hedge')).toBe('built_hidden');
-    expect(OKX_MARGIN_POSITION_UI_WIRE_STATUS.position_mode_hedge_toggle).toBe('built_hidden');
+    expect(getEffectivePositionMode('hedge')).toBe('hedge');
+    expect(resolveOkxBranchExposure('position_mode_hedge')).toBe('live');
+    expect(resolveOkxBranchExposure('position_mode_hedge', false, false)).toBe('built_hidden');
+    expect(OKX_MARGIN_POSITION_UI_WIRE_STATUS.position_mode_hedge_toggle).toBe('live');
     expect(OKX_MARGIN_POSITION_UI_WIRE_STATUS.position_mode_one_way_label).toBe('live');
   });
 
@@ -84,9 +90,9 @@ describe('margin-position-mode-display-contract', () => {
     expect(OKX_MARGIN_POSITION_UI_WIRE_STATUS.margin_cross_selector).toBe('built_disabled');
   });
 
-  it('proposes engine backlog for hedge mode — no fake UI until RPC lands', () => {
-    expect(OKX_POSITION_MODE_ENGINE_BACKLOG.length).toBeGreaterThanOrEqual(2);
-    expect(OKX_POSITION_MODE_ENGINE_BACKLOG[0]?.item).toContain('position_mode');
+  it('documents OKX netting backlog after E21 UI unlock', () => {
+    expect(OKX_POSITION_MODE_ENGINE_BACKLOG.length).toBeGreaterThanOrEqual(1);
+    expect(OKX_POSITION_MODE_ENGINE_BACKLOG[0]?.item).toContain('netting');
     expect(OKX_POSITION_MODE_ENGINE_BACKLOG[0]?.blockedSurfaces).toContain(
       'position_mode_hedge_toggle',
     );

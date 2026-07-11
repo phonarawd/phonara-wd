@@ -26,8 +26,8 @@ describe('tier-fee-display-contract §25.12.9.1-E #19', () => {
     expect(isEstFeeNumericOwnerTodo('p9-trade-tier-fee-display')).toBe(false);
   });
 
-  it('hides tier fee discount percent until engine gap closes', () => {
-    expect(shouldExposeTierFeeDiscountPercent()).toBe(false);
+  it('hides tier fee discount percent until E4 GATE unlocks launch gate', () => {
+    expect(shouldExposeTierFeeDiscountPercent()).toBe(true);
   });
 
   it('defines badge mount owners without duplicate numeric fee surface', () => {

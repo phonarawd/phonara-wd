@@ -8,6 +8,7 @@ import { TradeTierFeeBadge } from '@/features/trading/order-ticket/trade-tier-fe
 import { LeverageControl } from '@/features/trading/order-ticket/leverage-control';
 import { MarginModeSegment } from '@/features/trading/order-ticket/margin-mode-segment';
 import { PositionModeFixedLabel } from '@/features/trading/order-ticket/position-mode-fixed-label';
+import { PositionModeSegment } from '@/features/trading/order-ticket/position-mode-segment';
 import { TradeHelpTip } from '@/features/trading/trade-beginner-help/trade-help-tip';
 import { TradeHouseCounterpartyAckButton } from '@/features/trading/trade-house-counterparty-ack-button';
 import { computeEstRequiredMargin } from '@/features/trading/order-ticket/compute-position-display-metrics';
@@ -18,6 +19,7 @@ import {
 } from '@/domain/trade-submit-display-contract';
 import { supportsEntryTpSlOnOrderType } from '@/domain/trade-order-states-display-contract';
 import { TRADE_FUTURES_UI_CAPABILITIES } from '@/features/trading/trade-rpc-capabilities';
+import { LAUNCH_GATES } from '@/lib/launch-gates';
 import type { FuturesTimeInForce } from '@/domain/trade-order-states-display-contract';
 import { Button } from '@/product/primitives/button';
 import { Card } from '@/product/primitives/card';
@@ -256,7 +258,17 @@ export function FuturesOrderTicket({
           showBeginnerHelp
         />
 
-        <PositionModeFixedLabel t={t} showBeginnerHelp />
+        {LAUNCH_GATES.tradeParityLive ? (
+          <PositionModeSegment
+            positionMode={wire.positionMode}
+            setPositionMode={wire.setPositionMode}
+            positionModeBusy={wire.positionModeBusy}
+            t={t}
+            showBeginnerHelp
+          />
+        ) : (
+          <PositionModeFixedLabel t={t} showBeginnerHelp />
+        )}
 
         <dl className="m-0 grid gap-2 text-sm" data-testid="futures-order-ticket-metrics">
           <div className="flex items-baseline justify-between gap-2">
@@ -398,6 +410,23 @@ export function FuturesOrderTicket({
                   data-testid="futures-iceberg-qty"
                   aria-label={t('trade.order.icebergQty')}
                 />
+              </label>
+            ) : null}
+            {orderType !== 'market' && TRADE_FUTURES_UI_CAPABILITIES.reduceOnlyOrders ? (
+              <label
+                className="flex items-center gap-2 text-sm"
+                data-testid="futures-reduce-only-toggle"
+              >
+                <input
+                  type="checkbox"
+                  checked={wire.reduceOnly}
+                  onChange={(event) => wire.setReduceOnly(event.target.checked)}
+                  data-testid="futures-reduce-only-checkbox"
+                />
+                <span className="flex items-center gap-1">
+                  {t('trade.order.reduceOnly')}
+                  <TradeHelpTip termId="reduce_only" className="text-xs" />
+                </span>
               </label>
             ) : null}
             {supportsEntryTpSlOnOrderType(orderType) ? (

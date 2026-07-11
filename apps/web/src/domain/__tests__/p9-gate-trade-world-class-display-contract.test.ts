@@ -51,7 +51,7 @@ describe('p9-gate-trade-world-class-display-contract §22.2 · §13.1.1 · §32.
       expect(row).toBeDefined();
       expect(['live', 'disabled', 'disabled+key', 'built_hidden']).toContain(row?.mitigatedBy);
     }
-    expect(findTradeComplaintRisk('hedge-visible')?.mitigatedBy).toBe('built_hidden');
+    expect(findTradeComplaintRisk('hedge-visible')?.mitigatedBy).toBe('live');
     expect(findTradeComplaintRisk('cross-margin-live-claim')?.mitigatedBy).toBe('disabled+key');
     expect(findTradeComplaintRisk('spot-stake-hardcode-usdt')?.mitigatedBy).toBe('live');
   });

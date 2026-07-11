@@ -36,11 +36,14 @@ function collectTsxFiles(dir: string): string[] {
 }
 
 describe('admin-table-dedup-display-contract §29.6 · YAML #207', () => {
-  it('registers GATE todo · prerequisite primitive · 18 desks', () => {
+  it('registers GATE todo · prerequisite primitive · 23 desks', () => {
     expect(P2_GATE_ADMIN_TABLE_DEDUP_TODO).toBe('p2-gate-admin-table-dedup');
     expect(P2_ADMIN_TABLE_PRIMITIVE_TODO).toBe('p2-admin-table-primitive');
     expect(P2_GATE_ADMIN_TABLE_DEDUP_PREREQUISITE_TODOS).toEqual([P2_ADMIN_TABLE_PRIMITIVE_TODO]);
-    expect(ADMIN_TABLE_DESK_SURFACE_PATHS).toHaveLength(18);
+    expect(ADMIN_TABLE_DESK_SURFACE_PATHS).toHaveLength(23);
+    expect(ADMIN_TABLE_DESK_SURFACE_PATHS).toContain(
+      'apps/admin/src/product/surfaces/admin-earn-activity-page.tsx',
+    );
     expect(() => assertP2GateAdminTableDedupSync()).not.toThrow();
   });
 
@@ -79,6 +82,8 @@ describe('admin-table-dedup-display-contract §29.6 · YAML #207', () => {
       // Contract + tests may mention forbidden tokens as string literals.
       if (file.includes(`${join('domain', 'admin-table-dedup')}`)) continue;
       if (file.includes(`${join('domain', '__tests__', 'admin-table-dedup')}`)) continue;
+      if (file.includes(`${join('domain', 'ew-e6-gate-admin-desks')}`)) continue;
+      if (file.includes(`${join('domain', '__tests__', 'ew-e6-gate-admin-desks')}`)) continue;
 
       const src = readFileSync(file, 'utf8');
       if (src.includes(ADMIN_TABLE_NATIVE_OPEN_TAG)) {

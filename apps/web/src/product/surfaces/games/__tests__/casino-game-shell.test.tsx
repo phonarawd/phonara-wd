@@ -67,6 +67,18 @@ vi.mock('@/features/casino/use-casino-fiat-hint', () => ({
   }),
 }));
 
+vi.mock('@/features/casino/use-live-crash', () => ({
+  useLiveCrashCurrent: () => ({ data: { round: null }, isLoading: false }),
+  useLiveCrashPlaceBet: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useLiveCrashCashout: () => ({ mutateAsync: vi.fn(), isPending: false }),
+}));
+
+vi.mock('@/features/casino/use-progressive-round', () => ({
+  useProgressiveStart: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useProgressiveStep: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useProgressiveCashout: () => ({ mutateAsync: vi.fn(), isPending: false }),
+}));
+
 vi.mock('@/product/primitives/lib/use-prefers-reduced-motion', () => ({
   usePrefersReducedMotion: () => false,
 }));

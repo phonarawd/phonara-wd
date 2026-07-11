@@ -25,7 +25,7 @@ import { cn } from '@/product/primitives/lib/cn';
 import { formatCountUpGrouped, useCountUp } from '@/product/primitives/lib/use-count-up';
 import { EarnMissionReward } from '@/product/surfaces/home/earn-mission-reward';
 
-/** Canonical `/tier/me` — VIP tier hero · decay UX until E1 · `tier_keep_status` (P7). */
+/** Canonical `/tier/me` — VIP tier hero · E1 decay engine · `tier_keep_status`. */
 export function TierMePage() {
   const engine = useTierMePageController();
   const {
@@ -171,17 +171,47 @@ export function TierMePage() {
               <p className="text-foreground-muted m-0 text-sm">
                 {t('tier.me.decay.policyWindow', { days: decayPanel.maintenanceWindowDays })}
               </p>
+              {decayPanel.engineLive && decayPanel.daysLeft != null ? (
+                <p
+                  className="text-foreground m-0 text-sm font-medium tabular-nums"
+                  data-testid="tier-me-decay-countdown"
+                >
+                  {t('tier.me.decay.countdown', { days: decayPanel.daysLeft })}
+                </p>
+              ) : null}
+              {decayPanel.engineLive && decayPanel.meetsMaintenance != null ? (
+                <p
+                  className={
+                    decayPanel.meetsMaintenance
+                      ? 'text-success m-0 text-sm'
+                      : 'text-warning m-0 text-sm font-medium'
+                  }
+                  data-testid="tier-me-decay-maintenance"
+                >
+                  {t(
+                    decayPanel.meetsMaintenance
+                      ? 'tier.me.decay.maintained'
+                      : 'tier.me.decay.atRisk',
+                  )}
+                </p>
+              ) : null}
               {decayPanel.lowerTier && decayPanel.lowerTierLabelKey ? (
                 <p className="text-warning m-0 text-sm font-medium">
                   {t('tier.me.decay.banner', {
                     tier: t(`earn.tier.${tierProgress.tier}`),
                     lower: t(decayPanel.lowerTierLabelKey),
-                    days: decayPanel.maintenanceWindowDays,
+                    days:
+                      decayPanel.daysLeft ??
+                      decayPanel.maintenanceWindowDays,
                   })}
                 </p>
               ) : null}
               <p className="text-foreground-muted m-0 text-xs leading-relaxed">
-                {t('tier.me.decay.disclaimer')}
+                {t(
+                  decayPanel.engineLive
+                    ? 'tier.me.decay.disclaimerLive'
+                    : 'tier.me.decay.disclaimer',
+                )}
               </p>
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Link

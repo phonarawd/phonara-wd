@@ -35,6 +35,7 @@ import {
   FUTURES_SET_TRAILING_STOP_RPC,
   FUTURES_CLEAR_TRAILING_STOP_RPC,
   parseMarginModeRpcResult,
+  parsePositionModeRpcResult,
   parseOrderCancelRpcResult,
   parseSyntheticBook,
   parseTradingCandles,
@@ -123,6 +124,7 @@ export type SpotHolding = {
 export type MarginAccount = {
   user_id: string;
   margin_mode: 'isolated' | 'cross';
+  position_mode: 'one_way' | 'hedge';
   cross_collateral_phon: string;
   cross_collateral_usdt: string;
   updated_at: string;
@@ -874,7 +876,9 @@ export function useMarginAccount() {
     queryFn: async () => {
       const { data, error: e } = await supabase
         .from('margin_accounts')
-        .select('user_id, margin_mode, cross_collateral_phon, cross_collateral_usdt, updated_at')
+        .select(
+          'user_id, margin_mode, position_mode, cross_collateral_phon, cross_collateral_usdt, updated_at',
+        )
         .eq('user_id', userId!)
         .maybeSingle();
       if (e) throw e;
@@ -885,6 +889,7 @@ export function useMarginAccount() {
   });
 
   const marginMode: 'isolated' | 'cross' = account?.margin_mode ?? 'isolated';
+  const positionMode: 'one_way' | 'hedge' = account?.position_mode ?? 'one_way';
 
   const setMarginMode = useCallback(
     async (mode: 'isolated' | 'cross') => {
@@ -904,7 +909,35 @@ export function useMarginAccount() {
     [qc, userId],
   );
 
-  return { marginMode, account, loading, busy, error, setMarginMode, refetch };
+  const setPositionMode = useCallback(
+    async (mode: 'one_way' | 'hedge') => {
+      setBusy(true);
+      setError(null);
+      try {
+        const data = await callRpc('rpc_set_position_mode', { p_mode: mode });
+        void qc.invalidateQueries({ queryKey: tradingKeys.marginAccount(userId) });
+        return parsePositionModeRpcResult(data);
+      } catch (err) {
+        setError(translateError(err));
+        return null;
+      } finally {
+        setBusy(false);
+      }
+    },
+    [qc, userId],
+  );
+
+  return {
+    marginMode,
+    positionMode,
+    account,
+    loading,
+    busy,
+    error,
+    setMarginMode,
+    setPositionMode,
+    refetch,
+  };
 }
 
 export function useFundingRate(market: string | null) {
@@ -1208,6 +1241,7 @@ export function useFuturesActions(onChange?: () => void) {
       limitPrice: string;
       timeInForce?: 'gtc' | 'post_only' | 'ioc' | 'fok';
       displayQuantity?: string | null;
+      reduceOnly?: boolean;
     }) => {
       const reqId = openIdRef.current ?? (openIdRef.current = newRequestId());
       setBusy(true);
@@ -1223,6 +1257,7 @@ export function useFuturesActions(onChange?: () => void) {
           p_client_request_id: reqId,
           p_time_in_force: args.timeInForce ?? 'gtc',
           p_display_quantity: args.displayQuantity ?? undefined,
+          p_reduce_only: args.reduceOnly ?? false,
         });
         const result = parseTradingRpcPayload(data);
         setLastResult(result);
@@ -1250,6 +1285,7 @@ export function useFuturesActions(onChange?: () => void) {
       stopPrice: string;
       orderType: 'stop_market' | 'stop_limit';
       limitPrice?: string | null;
+      reduceOnly?: boolean;
     }) => {
       const reqId = openIdRef.current ?? (openIdRef.current = newRequestId());
       setBusy(true);
@@ -1265,6 +1301,7 @@ export function useFuturesActions(onChange?: () => void) {
           p_order_type: args.orderType,
           p_limit_price: args.limitPrice ?? undefined,
           p_client_request_id: reqId,
+          p_reduce_only: args.reduceOnly ?? false,
         });
         const result = parseTradingRpcPayload(data);
         setLastResult(result);

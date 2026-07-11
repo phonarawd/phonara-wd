@@ -9,6 +9,7 @@ import {
   type SportsPageMode,
 } from '@/domain/sports-page-display-contract';
 import {
+  canBrowseSportsVipMarkets,
   SPORTS_RULES_SEO_TITLE_KEY,
   SPORTS_VIP_SEO_TITLE_KEY,
 } from '@/domain/sports-rules-and-vip-display-contract';
@@ -100,7 +101,8 @@ export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
   const showFixture = pageMode === 'fixture';
   const showLive = pageMode === 'live';
   const showListBoard = !showMyBets && !showRules && !showVip && !showFixture;
-  const showSlip = showListBoard || showFixture;
+  const vipBrowseOpen = showVip && canBrowseSportsVipMarkets();
+  const showSlip = showListBoard || showFixture || vipBrowseOpen;
   const showLeagueRail = showListBoard;
 
   const fixtureHome = engine.activeFixture?.home_name ?? t('sports.market.home');
@@ -224,7 +226,18 @@ export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
           <SportsMyBetsPanel bets={engine.myBets} loading={engine.myBetsLoading} t={t} />
         ) : null}
         {showRules ? <SportsRulesPanel t={t} /> : null}
-        {showVip ? <SportsVipStubPanel t={t} /> : null}
+        {showVip ? (
+          <SportsVipStubPanel
+            t={t}
+            fixtures={engine.fixtures}
+            fixturesLoading={engine.fixturesLoading}
+            fixturesErrorKey={engine.fixturesErrorKey}
+            selectedOutcomeIds={engine.selectedOutcomeIds}
+            sportsBlocked={engine.sportsBlocked}
+            onToggleSelection={engine.toggleSelection}
+            onRetryFixtures={engine.refreshFixtures}
+          />
+        ) : null}
       </main>
 
       {showSlip ? (

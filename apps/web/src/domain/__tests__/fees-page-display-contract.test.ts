@@ -8,6 +8,7 @@ import {
   feesCategoryBodyKey,
   feesCategoryTitleKey,
 } from '../fees-page-display-contract';
+import { EARN_VIP_TIER_ORDER } from '../unified-tier-display-contract';
 
 describe('fees-page-display-contract', () => {
   it('binds /fees categories and cashback rows', () => {
@@ -15,7 +16,7 @@ describe('fees-page-display-contract', () => {
     expect(FEES_CATEGORY_IDS).toHaveLength(5);
     expect(feesCategoryTitleKey('spot')).toBe('fees.page.category.spot.title');
     expect(feesCategoryBodyKey('withdraw')).toBe('fees.page.category.withdraw.body');
-    expect(buildFeesCashbackRows()).toHaveLength(5);
+    expect(buildFeesCashbackRows()).toHaveLength(EARN_VIP_TIER_ORDER.length);
     expect(() => assertFeesPageContractSync()).not.toThrow();
   });
 });

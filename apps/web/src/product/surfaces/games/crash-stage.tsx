@@ -15,12 +15,19 @@ import {
 import { useT } from '@/product/i18n';
 import { usePrefersReducedMotion } from '@/product/primitives/lib/use-prefers-reduced-motion';
 import { cn } from '@/product/primitives/lib/cn';
+import { Button } from '@/product/primitives/button';
 import { Card, CardBody } from '@/product/primitives/card';
 import type { CasinoStageHandle, CasinoStagePhase } from '@/product/surfaces/games/casino-stage-types';
 
 export type CrashStageProps = {
   /** Pre-bet autoCashout display (selection) — not a live escape control. */
   autoCashout: string;
+  /** E23 live shared-round mode — mid-flight cash-out when flying. */
+  liveMode?: boolean;
+  liveMultiplier?: string | null;
+  liveRoundStatus?: string | null;
+  liveCashoutBusy?: boolean;
+  onLiveCashout?: () => void;
   className?: string;
 };
 
@@ -34,10 +41,21 @@ function multiplierToY(mult: number, height: number, maxMult: number): number {
 
 /**
  * Crash L1 — SVG curve + single rAF loop (§23.2 · §23.2.1).
- * Replay only: no mid-ascent cash-out button.
+ * One-shot: replay only. E23 liveMode: mid-flight cash-out when flying.
  */
 export const CrashStage = forwardRef<CasinoStageHandle, CrashStageProps>(
-  function CrashStage({ autoCashout, className }, ref) {
+  function CrashStage(
+    {
+      autoCashout,
+      liveMode = false,
+      liveMultiplier,
+      liveRoundStatus,
+      liveCashoutBusy = false,
+      onLiveCashout,
+      className,
+    },
+    ref,
+  ) {
     const t = useT();
     const reducedMotion = usePrefersReducedMotion();
     const [phase, setPhase] = useState<CasinoStagePhase>('idle');
@@ -163,12 +181,19 @@ export const CrashStage = forwardRef<CasinoStageHandle, CrashStageProps>(
           ? 'text-danger'
           : 'text-foreground';
 
+    const showLiveCashout =
+      liveMode && liveRoundStatus === 'flying' && typeof onLiveCashout === 'function';
+    const shownMult =
+      liveMode && liveMultiplier ? liveMultiplier : displayMult;
+
     return (
       <Card
         variant="casino-play"
         className={cn(className)}
         data-testid="casino-crash-stage"
         data-stage-phase={phase}
+        data-live-mode={liveMode ? 'true' : 'false'}
+        data-live-round-status={liveRoundStatus ?? undefined}
         data-cashed-out={outcome?.cashedOut === true ? 'true' : 'false'}
       >
         <CardBody className="relative flex min-h-[240px] flex-col gap-2 p-4 md:min-h-[320px]">
@@ -178,7 +203,7 @@ export const CrashStage = forwardRef<CasinoStageHandle, CrashStageProps>(
               className={cn('text-3xl font-semibold tabular-nums md:text-4xl', settledTone)}
               data-testid="casino-crash-multiplier"
             >
-              {displayMult}×
+              {shownMult}×
             </span>
             <span
               className="text-foreground-muted text-xs tabular-nums"
@@ -187,6 +212,19 @@ export const CrashStage = forwardRef<CasinoStageHandle, CrashStageProps>(
               {t('casino.crash.autoAt', { mult: autoCashout || '—' })}
             </span>
           </div>
+          {showLiveCashout ? (
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              className="self-start"
+              disabled={liveCashoutBusy}
+              onClick={onLiveCashout}
+              data-testid="casino-crash-live-cashout"
+            >
+              {t('casino.live.cashout')}
+            </Button>
+          ) : null}
           <svg
             viewBox="0 0 640 280"
             className="border-line bg-surface-raised h-[180px] w-full rounded-md border md:h-[240px]"

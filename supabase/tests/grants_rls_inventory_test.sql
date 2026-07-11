@@ -27,6 +27,86 @@ BEGIN
   ASSERT has_table_privilege('authenticated', 'public.app_config', 'SELECT'),
     'authenticated must SELECT app_config';
 
+  -- mission_catalog (20260802000001 E2)
+  ASSERT NOT has_table_privilege('anon', 'public.mission_catalog', 'SELECT'),
+    'anon must NOT SELECT mission_catalog';
+  ASSERT has_table_privilege('authenticated', 'public.mission_catalog', 'SELECT'),
+    'authenticated may SELECT mission_catalog (admin RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.mission_catalog', 'INSERT'),
+    'authenticated must NOT INSERT mission_catalog directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.mission_catalog', 'UPDATE'),
+    'authenticated must NOT UPDATE mission_catalog directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.mission_catalog', 'DELETE'),
+    'authenticated must NOT DELETE mission_catalog directly';
+
+  -- co_mission_sessions / claims · whale_mission_claims (20260807000001 E7)
+  ASSERT NOT has_table_privilege('anon', 'public.co_mission_sessions', 'SELECT'),
+    'anon must NOT SELECT co_mission_sessions';
+  ASSERT has_table_privilege('authenticated', 'public.co_mission_sessions', 'SELECT'),
+    'authenticated may SELECT co_mission_sessions (participant RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.co_mission_sessions', 'INSERT'),
+    'authenticated must NOT INSERT co_mission_sessions directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.co_mission_sessions', 'UPDATE'),
+    'authenticated must NOT UPDATE co_mission_sessions directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.co_mission_sessions', 'DELETE'),
+    'authenticated must NOT DELETE co_mission_sessions directly';
+
+  ASSERT NOT has_table_privilege('anon', 'public.co_mission_claims', 'SELECT'),
+    'anon must NOT SELECT co_mission_claims';
+  ASSERT has_table_privilege('authenticated', 'public.co_mission_claims', 'SELECT'),
+    'authenticated may SELECT co_mission_claims (own RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.co_mission_claims', 'INSERT'),
+    'authenticated must NOT INSERT co_mission_claims directly';
+
+  ASSERT NOT has_table_privilege('anon', 'public.whale_mission_claims', 'SELECT'),
+    'anon must NOT SELECT whale_mission_claims';
+  ASSERT has_table_privilege('authenticated', 'public.whale_mission_claims', 'SELECT'),
+    'authenticated may SELECT whale_mission_claims (own RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.whale_mission_claims', 'INSERT'),
+    'authenticated must NOT INSERT whale_mission_claims directly';
+
+  -- p2p_transfers · trading_api_keys · giftcard_redeem_requests (20260811000001 E8)
+  ASSERT NOT has_table_privilege('anon', 'public.p2p_transfers', 'SELECT'),
+    'anon must NOT SELECT p2p_transfers';
+  ASSERT has_table_privilege('authenticated', 'public.p2p_transfers', 'SELECT'),
+    'authenticated may SELECT p2p_transfers (participant RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.p2p_transfers', 'INSERT'),
+    'authenticated must NOT INSERT p2p_transfers directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.p2p_transfers', 'UPDATE'),
+    'authenticated must NOT UPDATE p2p_transfers directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.p2p_transfers', 'DELETE'),
+    'authenticated must NOT DELETE p2p_transfers directly';
+
+  ASSERT NOT has_table_privilege('anon', 'public.trading_api_keys', 'SELECT'),
+    'anon must NOT SELECT trading_api_keys';
+  ASSERT has_table_privilege('authenticated', 'public.trading_api_keys', 'SELECT'),
+    'authenticated may SELECT trading_api_keys (own RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.trading_api_keys', 'INSERT'),
+    'authenticated must NOT INSERT trading_api_keys directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.trading_api_keys', 'UPDATE'),
+    'authenticated must NOT UPDATE trading_api_keys directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.trading_api_keys', 'DELETE'),
+    'authenticated must NOT DELETE trading_api_keys directly';
+
+  ASSERT NOT has_table_privilege('anon', 'public.giftcard_redeem_requests', 'SELECT'),
+    'anon must NOT SELECT giftcard_redeem_requests';
+  ASSERT has_table_privilege('authenticated', 'public.giftcard_redeem_requests', 'SELECT'),
+    'authenticated may SELECT giftcard_redeem_requests (own/admin RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.giftcard_redeem_requests', 'INSERT'),
+    'authenticated must NOT INSERT giftcard_redeem_requests directly';
+
+  -- tier_admin_events (20260804000002 E4)
+  ASSERT NOT has_table_privilege('anon', 'public.tier_admin_events', 'SELECT'),
+    'anon must NOT SELECT tier_admin_events';
+  ASSERT has_table_privilege('authenticated', 'public.tier_admin_events', 'SELECT'),
+    'authenticated may SELECT tier_admin_events (admin RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.tier_admin_events', 'INSERT'),
+    'authenticated must NOT INSERT tier_admin_events directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.tier_admin_events', 'UPDATE'),
+    'authenticated must NOT UPDATE tier_admin_events directly';
+  ASSERT NOT has_table_privilege('authenticated', 'public.tier_admin_events', 'DELETE'),
+    'authenticated must NOT DELETE tier_admin_events directly';
+
   -- profiles / wallets (20260611000055)
   ASSERT NOT has_table_privilege('anon', 'public.profiles', 'SELECT'),
     'anon must NOT SELECT profiles';
@@ -280,16 +360,97 @@ BEGIN
     'authenticated must NOT EXECUTE rpc_ingest_sports_c1';
   ASSERT NOT has_function_privilege('authenticated', 'public.rpc_ingest_sports_c1_batch(jsonb)', 'EXECUTE'),
     'authenticated must NOT EXECUTE rpc_ingest_sports_c1_batch';
-  ASSERT has_function_privilege('authenticated', 'public.rpc_place_sports_bet(jsonb, text, text, text, text, text, text)', 'EXECUTE'),
+  ASSERT has_function_privilege('authenticated', 'public.rpc_place_sports_bet(jsonb, text, text, text, text, text, text, text)', 'EXECUTE'),
     'authenticated must EXECUTE rpc_place_sports_bet';
-  ASSERT has_function_privilege('authenticated', 'public.rpc_place_limit_order(text, text, text, text, text, text, text, text, text)', 'EXECUTE'),
+  ASSERT has_function_privilege('authenticated', 'public.rpc_preview_sports_partial_cashout(uuid, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_preview_sports_partial_cashout';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_partial_cashout_sports_bet(uuid, text, text, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_partial_cashout_sports_bet';
+
+  -- E23 casino live (20260810000001) — progressive · live crash · PF
+  ASSERT NOT has_table_privilege('anon', 'public.user_game_pf_state', 'SELECT'),
+    'anon must NOT SELECT user_game_pf_state';
+  ASSERT NOT has_table_privilege('authenticated', 'public.user_game_pf_state', 'SELECT'),
+    'authenticated must NOT SELECT user_game_pf_state (RPC only)';
+  ASSERT has_table_privilege('service_role', 'public.user_game_pf_state', 'SELECT'),
+    'service_role must SELECT user_game_pf_state';
+  ASSERT NOT has_table_privilege('anon', 'public.game_progressive_sessions', 'SELECT'),
+    'anon must NOT SELECT game_progressive_sessions';
+  ASSERT has_table_privilege('authenticated', 'public.game_progressive_sessions', 'SELECT'),
+    'authenticated may SELECT game_progressive_sessions (own/admin RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.game_progressive_sessions', 'INSERT'),
+    'authenticated must NOT INSERT game_progressive_sessions directly';
+  ASSERT has_table_privilege('anon', 'public.live_crash_rounds', 'SELECT'),
+    'anon may SELECT live_crash_rounds (server_seed column revoked)';
+  ASSERT has_table_privilege('authenticated', 'public.live_crash_rounds', 'SELECT'),
+    'authenticated may SELECT live_crash_rounds';
+  ASSERT NOT has_table_privilege('anon', 'public.live_crash_bets', 'SELECT'),
+    'anon must NOT SELECT live_crash_bets';
+  ASSERT has_table_privilege('authenticated', 'public.live_crash_bets', 'SELECT'),
+    'authenticated may SELECT live_crash_bets (own RLS)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.live_crash_bets', 'INSERT'),
+    'authenticated must NOT INSERT live_crash_bets directly';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_get_game_pf_state()', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_get_game_pf_state';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_set_game_client_seed(text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_set_game_client_seed';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_rotate_game_server_seed(text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_rotate_game_server_seed';
+  ASSERT has_function_privilege(
+    'authenticated',
+    'public.rpc_progressive_start(text, text, text, jsonb, text, text, boolean)',
+    'EXECUTE'
+  ), 'authenticated must EXECUTE rpc_progressive_start';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_progressive_step(uuid, jsonb, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_progressive_step';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_progressive_cashout(uuid, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_progressive_cashout';
+  ASSERT NOT has_function_privilege('authenticated', 'public.rpc_sweep_stale_progressive_sessions()', 'EXECUTE'),
+    'authenticated must NOT EXECUTE rpc_sweep_stale_progressive_sessions';
+  ASSERT has_function_privilege('service_role', 'public.rpc_sweep_stale_progressive_sessions()', 'EXECUTE'),
+    'service_role must EXECUTE rpc_sweep_stale_progressive_sessions';
+  ASSERT has_function_privilege('anon', 'public.rpc_live_crash_get_current()', 'EXECUTE'),
+    'anon must EXECUTE rpc_live_crash_get_current';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_live_crash_get_current()', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_live_crash_get_current';
+  ASSERT has_function_privilege(
+    'authenticated',
+    'public.rpc_live_crash_place_bet(text, text, text, text, text, boolean)',
+    'EXECUTE'
+  ), 'authenticated must EXECUTE rpc_live_crash_place_bet';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_live_crash_cashout(uuid, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_live_crash_cashout';
+  ASSERT NOT has_function_privilege('authenticated', 'public.rpc_live_crash_advance()', 'EXECUTE'),
+    'authenticated must NOT EXECUTE rpc_live_crash_advance';
+  ASSERT has_function_privilege('service_role', 'public.rpc_live_crash_advance()', 'EXECUTE'),
+    'service_role must EXECUTE rpc_live_crash_advance';
+
+  ASSERT has_function_privilege('authenticated', 'public.rpc_list_sports_catalog()', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_list_sports_catalog';
+  ASSERT has_function_privilege('anon', 'public.rpc_list_sports_catalog()', 'EXECUTE'),
+    'anon must EXECUTE rpc_list_sports_catalog';
+  ASSERT has_table_privilege('authenticated', 'public.sports_sport_catalog', 'SELECT'),
+    'authenticated may SELECT sports_sport_catalog';
+  ASSERT NOT has_table_privilege('authenticated', 'public.sports_sport_catalog', 'INSERT'),
+    'authenticated must NOT INSERT sports_sport_catalog';
+  ASSERT NOT has_function_privilege('authenticated', 'public._sports_resolve_place_odds(text, text, sports_odds_acceptance)', 'EXECUTE'),
+    'authenticated must NOT EXECUTE _sports_resolve_place_odds';
+  ASSERT NOT has_function_privilege('authenticated', 'public._sports_settle_correct_score_legs(uuid, integer, integer)', 'EXECUTE'),
+    'authenticated must NOT EXECUTE _sports_settle_correct_score_legs';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_place_limit_order(text, text, text, text, text, text, text, text, text, boolean)', 'EXECUTE'),
     'authenticated must EXECUTE rpc_place_limit_order';
   ASSERT has_function_privilege('authenticated', 'public.rpc_set_trailing_stop(uuid, text, text)', 'EXECUTE'),
     'authenticated must EXECUTE rpc_set_trailing_stop';
   ASSERT has_function_privilege('authenticated', 'public.rpc_clear_trailing_stop(uuid)', 'EXECUTE'),
     'authenticated must EXECUTE rpc_clear_trailing_stop';
-  ASSERT has_function_privilege('authenticated', 'public.rpc_place_stop_order(text, text, text, text, text, text, text, text, text)', 'EXECUTE'),
+  ASSERT has_function_privilege('authenticated', 'public.rpc_place_stop_order(text, text, text, text, text, text, text, text, text, boolean)', 'EXECUTE'),
     'authenticated must EXECUTE rpc_place_stop_order';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_set_position_mode(text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_set_position_mode';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_get_position_mode()', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_get_position_mode';
+  ASSERT NOT has_function_privilege('authenticated', 'public._assert_futures_open_allowed(uuid, text, position_side, boolean)', 'EXECUTE'),
+    'authenticated must NOT EXECUTE _assert_futures_open_allowed';
   ASSERT has_function_privilege('authenticated', 'public.rpc_cancel_order(uuid)', 'EXECUTE'),
     'authenticated must EXECUTE rpc_cancel_order';
   ASSERT NOT has_function_privilege('authenticated', 'public.rpc_run_open_order_fills()', 'EXECUTE'),
@@ -516,7 +677,60 @@ BEGIN
   ASSERT NOT has_function_privilege('authenticated', 'public._pir_sports_bet_already_placed(uuid,text)', 'EXECUTE'),
     'authenticated must NOT EXECUTE _pir_sports_bet_already_placed (PIR E5 internal)';
 
-  RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges match migrations 000045/053–055, affiliate approvals, sportsbook S1–S7, P0 edge contracts, and Trade Desk P3-B entry/cron pins';
+  -- E1 Tier Decay
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_run_tier_decay(integer,timestamp with time zone)', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_run_tier_decay';
+  ASSERT has_function_privilege('service_role', 'public.rpc_run_tier_decay(integer,timestamp with time zone)', 'EXECUTE'),
+    'service_role must EXECUTE rpc_run_tier_decay';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_run_tier_decay(integer,timestamp with time zone)', 'EXECUTE'),
+    'authenticated may EXECUTE rpc_run_tier_decay (admin body guard)';
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_get_tier_decay_status()', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_get_tier_decay_status';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_get_tier_decay_status()', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_get_tier_decay_status';
+  ASSERT NOT has_function_privilege('anon', 'public._tier_decay_apply_one(uuid,timestamp with time zone)', 'EXECUTE'),
+    'anon must NOT EXECUTE _tier_decay_apply_one';
+  ASSERT NOT has_function_privilege('authenticated', 'public._tier_decay_apply_one(uuid,timestamp with time zone)', 'EXECUTE'),
+    'authenticated must NOT EXECUTE _tier_decay_apply_one';
+
+  -- E3 Viral+CMS
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_get_affiliate_rank_leaderboard(integer, text)', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_get_affiliate_rank_leaderboard';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_get_affiliate_rank_leaderboard(integer, text)', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_get_affiliate_rank_leaderboard';
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_admin_get_viral_analytics()', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_admin_get_viral_analytics';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_admin_get_viral_analytics()', 'EXECUTE'),
+    'authenticated may EXECUTE rpc_admin_get_viral_analytics (admin body guard)';
+
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_get_user_tier_summary()', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_get_user_tier_summary';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_get_user_tier_summary()', 'EXECUTE'),
+    'authenticated must EXECUTE rpc_get_user_tier_summary';
+  ASSERT NOT has_function_privilege(
+    'anon',
+    'public.rpc_admin_set_user_earn_vip_tier(uuid, text, text, bigint)',
+    'EXECUTE'
+  ),
+    'anon must NOT EXECUTE rpc_admin_set_user_earn_vip_tier';
+  ASSERT has_function_privilege(
+    'authenticated',
+    'public.rpc_admin_set_user_earn_vip_tier(uuid, text, text, bigint)',
+    'EXECUTE'
+  ),
+    'authenticated may EXECUTE rpc_admin_set_user_earn_vip_tier (admin body guard)';
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_run_cms_publish_scheduled(timestamp with time zone)', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_run_cms_publish_scheduled';
+  ASSERT has_function_privilege('service_role', 'public.rpc_run_cms_publish_scheduled(timestamp with time zone)', 'EXECUTE'),
+    'service_role must EXECUTE rpc_run_cms_publish_scheduled';
+  ASSERT has_function_privilege('authenticated', 'public.rpc_run_cms_publish_scheduled(timestamp with time zone)', 'EXECUTE'),
+    'authenticated may EXECUTE rpc_run_cms_publish_scheduled (admin body guard)';
+  ASSERT NOT has_function_privilege('anon', 'public._cms_mask_display_name(text)', 'EXECUTE'),
+    'anon must NOT EXECUTE _cms_mask_display_name';
+  ASSERT NOT has_function_privilege('authenticated', 'public._cms_mask_display_name(text)', 'EXECUTE'),
+    'authenticated must NOT EXECUTE _cms_mask_display_name';
+
+  RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges + E1 tier decay + E3 viral cms';
 END;
 $$;
 

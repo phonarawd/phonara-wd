@@ -824,6 +824,7 @@ export type Database = {
       }
       cms_content: {
         Row: {
+          audience: string
           body: string | null
           content_key: string
           created_at: string
@@ -835,8 +836,11 @@ export type Database = {
           id: string
           kind: Database["public"]["Enums"]["cms_content_kind"]
           locale: string
+          max_tier: Database["public"]["Enums"]["earn_vip_tier"] | null
+          min_tier: Database["public"]["Enums"]["earn_vip_tier"] | null
           priority: number
           published_at: string | null
+          schedule_publish_at: string | null
           starts_at: string | null
           status: Database["public"]["Enums"]["cms_publish_status"]
           surface: string | null
@@ -845,6 +849,7 @@ export type Database = {
           updated_by: string | null
         }
         Insert: {
+          audience?: string
           body?: string | null
           content_key: string
           created_at?: string
@@ -856,8 +861,11 @@ export type Database = {
           id?: string
           kind: Database["public"]["Enums"]["cms_content_kind"]
           locale?: string
+          max_tier?: Database["public"]["Enums"]["earn_vip_tier"] | null
+          min_tier?: Database["public"]["Enums"]["earn_vip_tier"] | null
           priority?: number
           published_at?: string | null
+          schedule_publish_at?: string | null
           starts_at?: string | null
           status?: Database["public"]["Enums"]["cms_publish_status"]
           surface?: string | null
@@ -866,6 +874,7 @@ export type Database = {
           updated_by?: string | null
         }
         Update: {
+          audience?: string
           body?: string | null
           content_key?: string
           created_at?: string
@@ -877,8 +886,11 @@ export type Database = {
           id?: string
           kind?: Database["public"]["Enums"]["cms_content_kind"]
           locale?: string
+          max_tier?: Database["public"]["Enums"]["earn_vip_tier"] | null
+          min_tier?: Database["public"]["Enums"]["earn_vip_tier"] | null
           priority?: number
           published_at?: string | null
+          schedule_publish_at?: string | null
           starts_at?: string | null
           status?: Database["public"]["Enums"]["cms_publish_status"]
           surface?: string | null
@@ -2128,6 +2140,7 @@ export type Database = {
           cross_collateral_phon: string
           cross_collateral_usdt: string
           margin_mode: Database["public"]["Enums"]["margin_mode"]
+          position_mode: Database["public"]["Enums"]["position_mode"]
           updated_at: string
           user_id: string
         }
@@ -2135,6 +2148,7 @@ export type Database = {
           cross_collateral_phon?: string
           cross_collateral_usdt?: string
           margin_mode?: Database["public"]["Enums"]["margin_mode"]
+          position_mode?: Database["public"]["Enums"]["position_mode"]
           updated_at?: string
           user_id: string
         }
@@ -2142,6 +2156,7 @@ export type Database = {
           cross_collateral_phon?: string
           cross_collateral_usdt?: string
           margin_mode?: Database["public"]["Enums"]["margin_mode"]
+          position_mode?: Database["public"]["Enums"]["position_mode"]
           updated_at?: string
           user_id?: string
         }
@@ -4872,6 +4887,7 @@ export type Database = {
           order_type: Database["public"]["Enums"]["order_type"]
           price: string | null
           quantity: string
+          reduce_only: boolean
           side: Database["public"]["Enums"]["position_side"]
           status: Database["public"]["Enums"]["order_status"]
           stop_price: string | null
@@ -4894,6 +4910,7 @@ export type Database = {
           order_type: Database["public"]["Enums"]["order_type"]
           price?: string | null
           quantity: string
+          reduce_only?: boolean
           side: Database["public"]["Enums"]["position_side"]
           status?: Database["public"]["Enums"]["order_status"]
           stop_price?: string | null
@@ -4916,6 +4933,7 @@ export type Database = {
           order_type?: Database["public"]["Enums"]["order_type"]
           price?: string | null
           quantity?: string
+          reduce_only?: boolean
           side?: Database["public"]["Enums"]["position_side"]
           status?: Database["public"]["Enums"]["order_status"]
           stop_price?: string | null
@@ -7156,6 +7174,7 @@ export type Database = {
         Returns: Json
       }
       rpc_admin_get_ops_dashboard: { Args: never; Returns: Json }
+      rpc_admin_get_viral_analytics: { Args: never; Returns: Json }
       rpc_admin_halt_market: {
         Args: { p_reason: string; p_symbol: string }
         Returns: Json
@@ -7283,6 +7302,15 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_admin_set_user_earn_vip_tier: {
+        Args: {
+          p_reason: string
+          p_tier: string
+          p_user_id: string
+          p_xp?: number
+        }
+        Returns: Json
+      }
       rpc_admin_set_sports_risk_tier: {
         Args: {
           p_live_delay_ms?: number
@@ -7333,6 +7361,10 @@ export type Database = {
         Args: { p_reason: string; p_withdrawal_id: string }
         Returns: Json
       }
+      rpc_accept_co_mission: {
+        Args: { p_session_id: string }
+        Returns: Json
+      }
       rpc_cancel_game_bet: { Args: { p_bet_id: string }; Returns: Json }
       rpc_cancel_order: { Args: { p_order_id: string }; Returns: Json }
       rpc_cancel_spot_order: { Args: { p_order_id: string }; Returns: Json }
@@ -7360,6 +7392,10 @@ export type Database = {
         Args: { p_client_request_id?: string; p_mission: string }
         Returns: Json
       }
+      rpc_claim_whale_mission: {
+        Args: { p_client_request_id?: string; p_mission: string }
+        Returns: Json
+      }
       rpc_claim_welcome_bonus: {
         Args: { p_idempotency_key?: string }
         Returns: Json
@@ -7374,6 +7410,10 @@ export type Database = {
       }
       rpc_close_futures_position: {
         Args: { p_position_id: string }
+        Returns: Json
+      }
+      rpc_complete_co_mission: {
+        Args: { p_session_id: string }
         Returns: Json
       }
       rpc_complete_mission: { Args: { p_mission: string }; Returns: Json }
@@ -7430,6 +7470,7 @@ export type Database = {
         Returns: Json
       }
       rpc_get_compliance_status: { Args: never; Returns: Json }
+      rpc_get_co_mission_status: { Args: never; Returns: Json[] }
       rpc_get_crypto_deposit_address: {
         Args: { p_asset?: string; p_chain?: string }
         Returns: Json
@@ -7437,6 +7478,12 @@ export type Database = {
       rpc_get_dr_health_summary: { Args: never; Returns: Json }
       rpc_get_earn_activity_feed: { Args: { p_limit?: number }; Returns: Json }
       rpc_get_earn_hub_status: { Args: never; Returns: Json }
+      rpc_get_affiliate_rank_leaderboard: {
+        Args: { p_limit?: number; p_window?: string }
+        Returns: Json
+      }
+      rpc_get_tier_decay_status: { Args: never; Returns: Json }
+      rpc_get_user_tier_summary: { Args: never; Returns: Json }
       rpc_get_fixture_markets: { Args: { p_fixture_id: string }; Returns: Json }
       rpc_get_golden_earth_status: { Args: never; Returns: Json }
       rpc_get_live_fixture_state: {
@@ -7460,11 +7507,16 @@ export type Database = {
         Returns: Json
       }
       rpc_get_viral_mission_status: { Args: never; Returns: Json }
+      rpc_get_whale_mission_status: { Args: never; Returns: Json[] }
       rpc_golden_earth_tap: {
         Args: { p_client_request_id?: string }
         Returns: Json
       }
       rpc_ingest_sports_c1: { Args: { p_message: Json }; Returns: Json }
+      rpc_invite_co_mission: {
+        Args: { p_mission: string; p_partner_id: string }
+        Returns: Json
+      }
       rpc_ingest_sports_c1_batch: { Args: { p_messages: Json }; Returns: Json }
       rpc_ingest_sports_fixture_status: {
         Args: {
@@ -7563,6 +7615,7 @@ export type Database = {
           p_margin_amount: string
           p_margin_currency: string
           p_market: string
+          p_reduce_only?: boolean
           p_side: string
           p_time_in_force?: string
         }
@@ -7625,6 +7678,7 @@ export type Database = {
           p_margin_currency: string
           p_market: string
           p_order_type: string
+          p_reduce_only?: boolean
           p_side: string
           p_stop_price: string
         }
@@ -7752,6 +7806,10 @@ export type Database = {
       }
       rpc_run_affiliate_settlements: {
         Args: { p_batch_limit?: number; p_settlement_date?: string }
+        Returns: Json
+      }
+      rpc_run_cms_publish_scheduled: {
+        Args: { p_now?: string }
         Returns: Json
       }
       rpc_run_custody_reconciliation: { Args: never; Returns: Json }
@@ -7913,6 +7971,8 @@ export type Database = {
         Returns: Json
       }
       rpc_set_margin_mode: { Args: { p_mode: string }; Returns: Json }
+      rpc_set_position_mode: { Args: { p_mode: string }; Returns: Json }
+      rpc_get_position_mode: { Args: Record<string, never>; Returns: Json }
       rpc_set_market_limits: {
         Args: {
           p_market: string
@@ -8162,7 +8222,7 @@ export type Database = {
         | "unmatched"
         | "disputed"
         | "admin_rejected"
-      earn_vip_tier: "bronze" | "silver" | "gold" | "platinum" | "diamond"
+      earn_vip_tier: "bronze" | "silver" | "gold" | "platinum" | "diamond" | "prime_elite"
       game_code:
         | "crash"
         | "limbo"
@@ -8190,6 +8250,7 @@ export type Database = {
         | "id_verified"
       ledger_direction: "credit" | "debit" | "lock" | "unlock" | "reverse"
       margin_mode: "isolated" | "cross"
+      position_mode: "one_way" | "hedge"
       mission_code:
         | "complete_profile"
         | "first_trade"
@@ -8437,7 +8498,7 @@ export const Constants = {
         "disputed",
         "admin_rejected",
       ],
-      earn_vip_tier: ["bronze", "silver", "gold", "platinum", "diamond"],
+      earn_vip_tier: ["bronze", "silver", "gold", "platinum", "diamond", "prime_elite"],
       game_code: [
         "crash",
         "limbo",
@@ -8468,6 +8529,7 @@ export const Constants = {
       ],
       ledger_direction: ["credit", "debit", "lock", "unlock", "reverse"],
       margin_mode: ["isolated", "cross"],
+      position_mode: ["one_way", "hedge"],
       mission_code: [
         "complete_profile",
         "first_trade",

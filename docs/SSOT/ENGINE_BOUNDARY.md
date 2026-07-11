@@ -1,6 +1,7 @@
 # Engine Boundary — Phase R 엔진 보호 영역
 
 > **상태:** Engine Apex **`[x] DONE` (2026-07-03)** — [`ENGINE_APEX_CLOSEOUT.md`](../ENGINE_APEX_CLOSEOUT.md)  
+> **Track B E0:** [`ENGINE_GAP_ADR.md`](../PRODUCT/ADR/ENGINE_GAP_ADR.md) **`[x]` Accepted** 2026-07-11 — `engine-p0-no-migration` 해제는 **Track B `ew-e*`만** · Wave ADR 없이 migration = RED STOP  
 > **Phase R intent:** v5 Demolition 이후 pre-demolition UI wiring 경로는 not active  
 > **Generated UI wiring docs:** v5 Demolition Batch 11에서 삭제됨. Phase R에서 새 manifest model 재정의.
 

@@ -1,6 +1,10 @@
 import { useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import {
+  ADMIN_SET_EARN_VIP_TIER_RPC,
+  ADMIN_TIER_WRITE_UI_UNLOCKED,
+} from '@/domain/admin-tier-option-b-display-contract';
 import {
   ADMIN_EARN_VIP_TIERS,
   type AdminEarnVipTier,
@@ -14,6 +18,7 @@ const TIER_LABEL_KEYS: Record<AdminEarnVipTier, MessageKey> = {
   gold: 'admin.tiers.tier.gold',
   platinum: 'admin.tiers.tier.platinum',
   diamond: 'admin.tiers.tier.diamond',
+  prime_elite: 'admin.tiers.tier.prime_elite',
 };
 
 export type AdminUserTierSnapshot = {
@@ -26,14 +31,22 @@ export type AdminUserTierSnapshot = {
   updatedAt: string | null;
 };
 
+export type AdminSetEarnVipTierInput = {
+  tier: AdminEarnVipTier;
+  reason: string;
+  xp?: number | null;
+};
+
 function normalizeTier(raw: string | null | undefined): AdminEarnVipTier | null {
   if (!raw) return null;
   const normalized = raw.toLowerCase() as AdminEarnVipTier;
   return ADMIN_EARN_VIP_TIERS.includes(normalized) ? normalized : null;
 }
 
-/** Single-member earn VIP read — `user_earn_vip` row + profile summary (§12.14 · read-only). */
+/** Single-member earn VIP read + Option B write path (E4 · UI unlock = GATE). */
 export function useAdminUserTierDesk(userId: string) {
+  const queryClient = useQueryClient();
+
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['admin-user-tier', userId],
     queryFn: async (): Promise<AdminUserTierSnapshot> => {
@@ -84,14 +97,47 @@ export function useAdminUserTierDesk(userId: string) {
     enabled: userId.length > 0,
   });
 
+  const setTierMutation = useMutation({
+    mutationFn: async (input: AdminSetEarnVipTierInput) => {
+      const { error } = await (
+        supabase as {
+          rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
+        }
+      ).rpc(ADMIN_SET_EARN_VIP_TIER_RPC, {
+        p_user_id: userId,
+        p_tier: input.tier,
+        p_reason: input.reason,
+        p_xp: input.xp ?? null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin-user-tier', userId] });
+    },
+  });
+
   const refresh = useCallback(async () => {
     await refetch();
   }, [refetch]);
+
+  const setUserTier = useCallback(
+    async (input: AdminSetEarnVipTierInput) => {
+      if (!ADMIN_TIER_WRITE_UI_UNLOCKED) {
+        throw new Error('ADMIN_TIER_WRITE_UI_LOCKED');
+      }
+      await setTierMutation.mutateAsync(input);
+    },
+    [setTierMutation],
+  );
 
   return {
     snapshot: data,
     isLoading,
     isError,
     refresh,
+    isSaving: setTierMutation.isPending,
+    writeUiUnlocked: ADMIN_TIER_WRITE_UI_UNLOCKED,
+    writePathReady: true as const,
+    setUserTier,
   };
 }

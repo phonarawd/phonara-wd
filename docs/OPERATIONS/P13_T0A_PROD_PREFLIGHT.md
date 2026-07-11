@@ -218,4 +218,4 @@ bun run gate:ai-impl -- --test apps/admin/src/domain/__tests__/p13-ops-prod-pref
 ---
 
 **Implemented:** display-contract · spotcheck · 본 canon · live audit 표 · §3.1 MFA/실입금 **DEFER**  
-**다음:** `launch-ramp-t1-feature-gates` — P13 closeout `#236` **`[x]` DONE** · Soft Launch `#233` · W7 `#234` **`[x]`**
+**다음:** `ew-e1-decay-wave` (#240) — E0 `#239` **`[x]`** · T2 `#238` **`[x]`** · T1 `#237` **`[x]`** · Soft Launch · W7 · closeout **`[x]`**

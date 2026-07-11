@@ -42,6 +42,7 @@ export const STAKING_TIER_APY_BONUS_KEYS: Record<EarnVipTier, MessageKey> = {
   gold: 'staking.tierApyBonus.gold',
   platinum: 'staking.tierApyBonus.platinum',
   diamond: 'staking.tierApyBonus.diamond',
+  prime_elite: 'staking.tierApyBonus.prime_elite',
 };
 
 export type StakingPoolCardView = {

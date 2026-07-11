@@ -62,8 +62,11 @@ describe('admin-beginner-language-display-contract (§29.5 · YAML #229)', () =>
   });
 
   it('lists planned admin routes for §32.6', () => {
-    expect(ADMIN_BEGINNER_PLANNED_ROUTES).toEqual(['/support', '/earn/activity']);
+    expect(ADMIN_BEGINNER_PLANNED_ROUTES).toEqual(['/support']);
     expect(ADMIN_BEGINNER_P2_ROUTES).toContain('/team');
+    expect(ADMIN_BEGINNER_P2_ROUTES).toContain('/earn/activity');
+    expect(ADMIN_BEGINNER_P2_ROUTES).toContain('/cms');
+    expect(ADMIN_BEGINNER_P2_ROUTES).toContain('/casino');
   });
 
   it('defines five team roles with label keys and ko names', () => {

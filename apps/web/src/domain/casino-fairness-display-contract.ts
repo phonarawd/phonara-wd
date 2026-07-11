@@ -1,12 +1,15 @@
 /**
  * P10 Casino fairness — `/casino/fairness` PF browser verifier (§23.2.1 · YAML #212).
- * ENGINE:exists — `@phonara/game-engine` verifyRound · nonce always 1 · no seed rotation (E23).
+ * ENGINE:exists — `@phonara/game-engine` verifyRound · one-shot nonce=1.
+ * E23 UI unlock (`casinoLiveLive`) exposes account PF seed controls alongside
+ * one-shot verifier (nonce=1 path remains for `p_use_account_pf=false`).
  */
 
 import type { GameCode } from '@phonara/game-engine';
 import { GAME_CODES } from '@phonara/game-engine';
 import type { MessageKey } from '@phonara/i18n';
 
+import { LAUNCH_GATES } from '../lib/launch-gates';
 import { P10_GAMES_BATCH_D_TODO } from './casino-games-batch-d-display-contract';
 import {
   CASINO_FAIRNESS_ROUTE,
@@ -25,14 +28,16 @@ export const P10_PAGE_CASINO_FAIRNESS_PREREQUISITE_TODOS = [
   P10_GAMES_BATCH_D_TODO,
 ] as const;
 
-/** Engine PF nonce — always 1 until E23 seed controls. */
+/** One-shot verifier nonce — always 1 when not using account PF. */
 export const CASINO_FAIRNESS_NONCE = 1 as const;
 
-/** §23.2.1 — seed rotation UI must stay hidden until E23. */
-export const CASINO_FAIRNESS_SEED_ROTATION_UI_EXPOSED = false as const;
+/** §23.2.1 / E23 — seed rotation UI when `casinoLiveLive`. */
+export const CASINO_FAIRNESS_SEED_ROTATION_UI_EXPOSED = LAUNCH_GATES.casinoLiveLive;
 
-/** Client seed is a per-bet parameter — no persist/rotation RPC. */
-export const CASINO_FAIRNESS_CLIENT_SEED_MODE = 'per_bet' as const;
+/** Client seed: account persist when live; one-shot still accepts per-bet. */
+export const CASINO_FAIRNESS_CLIENT_SEED_MODE = LAUNCH_GATES.casinoLiveLive
+  ? ('account_or_per_bet' as const)
+  : ('per_bet' as const);
 
 export const CASINO_FAIRNESS_ROUTE_OWNER = 'casino.fairness.tsx' as const;
 export const CASINO_FAIRNESS_SURFACE_OWNER = 'casino-fairness-page.tsx' as const;
@@ -60,6 +65,23 @@ export const CASINO_FAIRNESS_LIMITS_NONCE_KEY =
   'casino.fairness.limits.nonce' as const satisfies MessageKey;
 export const CASINO_FAIRNESS_LIMITS_ROTATION_KEY =
   'casino.fairness.limits.rotation' as const satisfies MessageKey;
+
+/** E23 live honesty keys — account PF + rotation available. */
+export const CASINO_FAIRNESS_LIMITS_CLIENT_SEED_LIVE_KEY =
+  'casino.fairness.limits.clientSeed.live' as const satisfies MessageKey;
+export const CASINO_FAIRNESS_LIMITS_NONCE_LIVE_KEY =
+  'casino.fairness.limits.nonce.live' as const satisfies MessageKey;
+export const CASINO_FAIRNESS_LIMITS_ROTATION_LIVE_KEY =
+  'casino.fairness.limits.rotation.live' as const satisfies MessageKey;
+
+export const CASINO_FAIRNESS_SEED_CONTROLS_TITLE_KEY =
+  'casino.fairness.seedControls.title' as const satisfies MessageKey;
+export const CASINO_FAIRNESS_SEED_SAVE_KEY =
+  'casino.fairness.seedControls.saveClient' as const satisfies MessageKey;
+export const CASINO_FAIRNESS_SEED_ROTATE_KEY =
+  'casino.fairness.seedControls.rotate' as const satisfies MessageKey;
+export const CASINO_FAIRNESS_SEED_NEXT_NONCE_KEY =
+  'casino.fairness.seedControls.nextNonce' as const satisfies MessageKey;
 
 export const CASINO_FAIRNESS_VERIFY_CTA_KEY =
   'casino.fairness.verify.run' as const satisfies MessageKey;
@@ -95,11 +117,14 @@ export const CASINO_FAIRNESS_MISSING_FIELDS_KEY =
 
 export const CASINO_FAIRNESS_GAME_CODES = GAME_CODES;
 
-export const CASINO_FAIRNESS_FORBIDDEN_UI = [
-  'seed_rotation_controls',
-  'client_seed_persist_settings',
-  'nonce_increment_controls',
-] as const;
+/** Pre-E23 forbidden markers — empty when live unlock exposes controls. */
+export const CASINO_FAIRNESS_FORBIDDEN_UI = LAUNCH_GATES.casinoLiveLive
+  ? ([] as const)
+  : ([
+      'seed_rotation_controls',
+      'client_seed_persist_settings',
+      'nonce_increment_controls',
+    ] as const);
 
 export function isCasinoFairnessGameCode(value: string): value is GameCode {
   return (CASINO_FAIRNESS_GAME_CODES as readonly string[]).includes(value);
@@ -124,23 +149,27 @@ export function assertCasinoFairnessDisplayContractSync(): void {
     throw new Error('casino-fairness: lobby route drift');
   }
   if (CASINO_FAIRNESS_NONCE !== 1) {
-    throw new Error('casino-fairness: nonce must stay 1 until E23');
+    throw new Error('casino-fairness: one-shot verifier nonce pin must stay 1');
   }
-  if (CASINO_FAIRNESS_SEED_ROTATION_UI_EXPOSED) {
-    throw new Error('casino-fairness: seed rotation UI must stay hidden until E23');
-  }
-  if (CASINO_FAIRNESS_CLIENT_SEED_MODE !== 'per_bet') {
-    throw new Error('casino-fairness: client seed must stay per-bet until E23');
+  if (LAUNCH_GATES.casinoLiveLive) {
+    if (!CASINO_FAIRNESS_SEED_ROTATION_UI_EXPOSED) {
+      throw new Error('casino-fairness: seed rotation UI must expose when casinoLiveLive');
+    }
+    if (CASINO_FAIRNESS_CLIENT_SEED_MODE !== 'account_or_per_bet') {
+      throw new Error('casino-fairness: client seed mode must be account_or_per_bet when live');
+    }
+  } else {
+    if (CASINO_FAIRNESS_SEED_ROTATION_UI_EXPOSED) {
+      throw new Error('casino-fairness: seed rotation UI must stay hidden until E23 UI');
+    }
+    if (CASINO_FAIRNESS_CLIENT_SEED_MODE !== 'per_bet') {
+      throw new Error('casino-fairness: client seed must stay per-bet until E23 UI');
+    }
   }
   if (CASINO_FAIRNESS_GAME_CODES.length !== 12) {
     throw new Error('casino-fairness: expected 12 game codes');
   }
   if (!resolveCasinoFairnessPfCtaEnabled()) {
     throw new Error('casino-fairness: PF CTA must be enabled when fairness is live');
-  }
-  for (const forbidden of CASINO_FAIRNESS_FORBIDDEN_UI) {
-    if (!forbidden.includes('seed') && !forbidden.includes('nonce')) {
-      throw new Error(`casino-fairness: unexpected forbidden marker ${forbidden}`);
-    }
   }
 }

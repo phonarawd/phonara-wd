@@ -9,6 +9,7 @@ import { P10_SPORTS_LAYOUT_DEDUP_TODO } from '../sports-exchange-parity-display-
 import {
   assertSportsRulesAndVipDisplayContractSync,
   canBrowseSportsVipMarkets,
+  isSportsVipEligibleTier,
   P10_SPORTS_RULES_AND_VIP_PREREQUISITE_TODOS,
   P10_SPORTS_RULES_AND_VIP_TODO,
   resolveSportsRulesPageExposure,
@@ -37,13 +38,16 @@ describe('sports-rules-and-vip-display-contract Sports#4', () => {
     expect(SPORTS_RULES_AND_VIP_ROUTE_OWNERS).toEqual(['sports.rules.tsx', 'sports.vip.tsx']);
   });
 
-  it('keeps rules live (i18n) and VIP markets as defer stub until E4/E5', () => {
+  it('keeps rules live and VIP markets browse open after E5', () => {
     expect(SPORTS_RULES_ENGINE_STATUS).toBe('ui_only');
-    expect(SPORTS_VIP_MARKETS_ENGINE_STATUS).toBe('gap');
+    expect(SPORTS_VIP_MARKETS_ENGINE_STATUS).toBe('exists');
     expect(resolveSportsRulesPageExposure()).toBe('live');
-    expect(resolveSportsVipPageExposure()).toBe('defer_stub');
-    expect(canBrowseSportsVipMarkets()).toBe(false);
+    expect(resolveSportsVipPageExposure()).toBe('live');
+    expect(canBrowseSportsVipMarkets()).toBe(true);
     expect(SPORTS_VIP_MIN_TIER).toBe('platinum');
+    expect(isSportsVipEligibleTier('gold')).toBe(false);
+    expect(isSportsVipEligibleTier('platinum')).toBe(true);
+    expect(isSportsVipEligibleTier('prime_elite')).toBe(true);
     expect(resolveSportsVipMinTierLabelKey()).toBe('sports.vip.eligibility.tier');
     expect(SPORTS_VIP_ENGINE_TODO).toBe('ew-e4-gate-tier-option-b');
     expect(SPORTS_VIP_UI_UNLOCK_TODO).toBe('ew-e5-gap-surfaces-wire');

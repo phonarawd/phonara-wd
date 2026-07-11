@@ -6,6 +6,7 @@ import {
   sportsStakeFromBalancePercent,
 } from '@/features/sports/sports-slip-display';
 import { useSportsFiatHint } from '@/features/sports/use-sports-fiat-hint';
+import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { Button } from '@/product/primitives/button';
 import { ConfirmDialog } from '@/product/primitives/confirm-dialog';
 import { Input } from '@/product/primitives/input';
@@ -31,7 +32,16 @@ type SportsBetSlipPanelProps = {
   onConfirmPlaceBet: () => Promise<void>;
   t: (key: MessageKey, params?: Record<string, string | number>) => string;
   className?: string;
+  sportsParityLive?: boolean;
 };
+
+function oddsAcceptanceLabelKey(
+  policy: SportsBetSlipState['oddsAcceptance'],
+): MessageKey {
+  if (policy === 'accept_any') return 'sports.slip.odds_acceptance.accept_any';
+  if (policy === 'accept_better') return 'sports.slip.odds_acceptance.accept_better';
+  return 'sports.slip.odds_acceptance.strict';
+}
 
 export function SportsBetSlipPanel({
   slip,
@@ -47,6 +57,7 @@ export function SportsBetSlipPanel({
   onConfirmPlaceBet,
   t,
   className,
+  sportsParityLive = LAUNCH_GATES.sportsParityLive,
 }: SportsBetSlipPanelProps) {
   const { showDisclaimer } = useSportsFiatHint();
   const avail = slip.stakeCurrency === 'PHON' ? phonAvail : usdtAvail;
@@ -116,6 +127,41 @@ export function SportsBetSlipPanel({
             ariaLabel="common.spendCurrency"
             disabled={sportsBlocked}
           />
+
+          {sportsParityLive ? (
+            <div
+              className="flex flex-col gap-2"
+              data-testid="sports-odds-acceptance-selector"
+              role="group"
+              aria-label={t('sports.slip.odds_acceptance.label')}
+            >
+              <span className="text-foreground-muted text-xs">
+                {t('sports.slip.odds_acceptance.label')}
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {slip.oddsAcceptancePolicies.map((policy) => {
+                  const active = slip.oddsAcceptance === policy;
+                  return (
+                    <Button
+                      key={policy}
+                      type="button"
+                      size="sm"
+                      variant={active ? 'primary' : 'outline'}
+                      data-testid={`sports-odds-acceptance-${policy}`}
+                      aria-pressed={active}
+                      disabled={sportsBlocked}
+                      onClick={() => slip.setOddsAcceptance(policy)}
+                    >
+                      {t(oddsAcceptanceLabelKey(policy))}
+                    </Button>
+                  );
+                })}
+              </div>
+              <p className="text-foreground-muted m-0 text-xs">
+                {t('sports.slip.odds_acceptance.hint')}
+              </p>
+            </div>
+          ) : null}
 
           <div
             className="border-line grid gap-2 rounded-(--ds-radius-md) border px-2 py-2"

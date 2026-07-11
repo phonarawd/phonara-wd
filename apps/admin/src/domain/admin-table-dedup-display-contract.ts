@@ -20,7 +20,8 @@ export const ADMIN_TABLE_PRIMITIVE_PATH =
 
 /**
  * Desk list surfaces that must import + render AdminTable.
- * Matches §29.2/§29.5 live desks with tabular exception queues (18).
+ * Matches §29.2/§29.5 live desks with tabular exception queues (23).
+ * E6 (#251) adds promotions · cms · tier-benefits · casino · earn/activity.
  */
 export const ADMIN_TABLE_DESK_SURFACE_PATHS = [
   'apps/admin/src/product/surfaces/admin-home-page.tsx',
@@ -32,9 +33,14 @@ export const ADMIN_TABLE_DESK_SURFACE_PATHS = [
   'apps/admin/src/product/surfaces/admin-earn-referrals-page.tsx',
   'apps/admin/src/product/surfaces/admin-earn-missions-page.tsx',
   'apps/admin/src/product/surfaces/admin-earn-rewards-page.tsx',
+  'apps/admin/src/product/surfaces/admin-earn-activity-page.tsx',
   'apps/admin/src/product/surfaces/admin-viral-stats-page.tsx',
   'apps/admin/src/product/surfaces/admin-users-page.tsx',
   'apps/admin/src/product/surfaces/admin-tiers-page.tsx',
+  'apps/admin/src/product/surfaces/admin-tier-benefits-page.tsx',
+  'apps/admin/src/product/surfaces/admin-promotions-page.tsx',
+  'apps/admin/src/product/surfaces/admin-cms-page.tsx',
+  'apps/admin/src/product/surfaces/admin-casino-page.tsx',
   'apps/admin/src/product/surfaces/admin-risk-page.tsx',
   'apps/admin/src/product/surfaces/admin-staking-page.tsx',
   'apps/admin/src/product/surfaces/admin-audit-page.tsx',
@@ -76,9 +82,9 @@ export function assertP2GateAdminTableDedupSync(): void {
     throw new Error('p2-gate-admin-table-dedup: missing prerequisite p2-admin-table-primitive');
   }
 
-  if (ADMIN_TABLE_DESK_SURFACE_PATHS.length !== 18) {
+  if (ADMIN_TABLE_DESK_SURFACE_PATHS.length !== 23) {
     throw new Error(
-      `p2-gate-admin-table-dedup: expected 18 desk surfaces, got ${ADMIN_TABLE_DESK_SURFACE_PATHS.length}`,
+      `p2-gate-admin-table-dedup: expected 23 desk surfaces, got ${ADMIN_TABLE_DESK_SURFACE_PATHS.length}`,
     );
   }
 

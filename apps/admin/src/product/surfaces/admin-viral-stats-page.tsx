@@ -25,7 +25,7 @@ function MetricCard({ label, value }: { label: string; value: string }) {
   );
 }
 
-/** Admin viral stats desk (`/viral-stats`) — referral counts · partial aggregates (§29.2 R0). */
+/** Admin viral stats desk (`/viral-stats`) — E3 `rpc_admin_get_viral_analytics` full aggregates. */
 export function AdminViralStatsPage() {
   const t = useT();
   const goTo = useAdminRouteNavigate();

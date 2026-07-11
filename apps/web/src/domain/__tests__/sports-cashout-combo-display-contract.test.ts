@@ -133,7 +133,8 @@ describe('sports-cashout-combo-display-contract', () => {
   it('freezes UI wire: combo/system/cashout built-hidden · place built-disabled · policy badges defer_stub', () => {
     expect(SPORTS_CASHOUT_UI_WIRE_STATUS.slip_combo_tab).toBe('built_hidden');
     expect(SPORTS_CASHOUT_UI_WIRE_STATUS.slip_system_tab).toBe('built_hidden');
-    expect(SPORTS_CASHOUT_UI_WIRE_STATUS.my_bets_cashout_card).toBe('built_hidden');
+    expect(SPORTS_CASHOUT_UI_WIRE_STATUS.my_bets_cashout_card).toBe('live');
+    expect(SPORTS_CASHOUT_UI_WIRE_STATUS.cashout_live_refresh).toBe('live');
     expect(SPORTS_CASHOUT_UI_WIRE_STATUS.slip_place_cta).toBe('built_disabled');
     expect(SPORTS_CASHOUT_UI_WIRE_STATUS.slip_policy_badges).toBe('defer_stub');
   });

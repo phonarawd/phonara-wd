@@ -306,8 +306,9 @@ export const SPORTS_CASHOUT_UI_WIRE_STATUS: Readonly<
   slip_sgp_tab: 'built_hidden',
   slip_system_tab: 'built_hidden',
   slip_place_cta: 'built_disabled',
-  my_bets_cashout_card: 'built_hidden',
-  cashout_live_refresh: 'built_hidden',
+  /** Wired in E22 same-PR (`SportsCashoutCard`); exposure follows `sportsCashout` gate. */
+  my_bets_cashout_card: 'live',
+  cashout_live_refresh: 'live',
   slip_policy_badges: 'defer_stub',
 };
 

@@ -1,11 +1,14 @@
 /**
- * `/tier/me` — personal VIP tier · XP progress · decay UX (presentation until E1).
- * ENGINE:exists — `rpc_get_earn_hub_status` · `tier_keep_status` repeatable mission.
+ * `/tier/me` — personal VIP tier · XP progress · E1 decay status.
+ * ENGINE:exists — `rpc_get_earn_hub_status` · `rpc_get_tier_decay_status` · `tier_keep_status`.
  */
 
 import type { MessageKey } from '@phonara/i18n';
 
 import { REFERRAL_HUB_ROUTE } from './referral-hub-display-contract';
+import {
+  TIER_DECAY_STATUS_RPC as TIER_DECAY_STATUS_RPC_CANON,
+} from './tier-decay-display-contract';
 import {
   EARN_HUB_STATUS_RPC,
   EARN_VIP_TIER_ORDER,
@@ -20,8 +23,10 @@ export const TIER_ME_ROUTE = '/tier/me' as const;
 export const TIER_ME_HISTORY_ROUTE = '/tier/me/history' as const;
 export const TIER_KEEP_STATUS_UI_ID = 'tier-keepStatus' as const;
 export const TIER_KEEP_STATUS_RPC = 'tier_keep_status' as const;
+/** Live decay countdown/status — E1 GATE unlock. */
+export const TIER_DECAY_STATUS_RPC = TIER_DECAY_STATUS_RPC_CANON;
 
-/** Closed-beta policy — presentation until E1 `app_config` enforcement. */
+/** Closed-beta policy — enforced by E1 `app_config` + `rpc_get_tier_decay_status`. */
 export const TIER_DECAY_MAINTENANCE_WINDOW_DAYS = 45 as const;
 export const TIER_DECAY_DIAMOND_GRACE_DAYS = 60 as const;
 
@@ -53,6 +58,17 @@ export type TierBenefitsPreviewRow = {
   current: boolean;
 };
 
+export type TierDecayStatusSnapshot = {
+  tier: EarnVipTier;
+  eligible: boolean;
+  graceDays: number;
+  daysLeft: number;
+  meetsMaintenance: boolean;
+  lowerTier: EarnVipTier | null;
+  lastQualifyingAt: string | null;
+  lastDecayAt: string | null;
+};
+
 export type TierDecayPanelView = {
   eligible: boolean;
   maintenanceWindowDays: number;
@@ -60,6 +76,10 @@ export type TierDecayPanelView = {
   lowerTier: EarnVipTier | null;
   lowerTierLabelKey: MessageKey | null;
   impactRows: TierBenefitsPreviewRow[];
+  /** Live from `rpc_get_tier_decay_status` after E1 GATE. */
+  engineLive: boolean;
+  daysLeft: number | null;
+  meetsMaintenance: boolean | null;
 };
 
 export type TierProgressView = {
@@ -110,9 +130,12 @@ export function parseEarnHubLimitsToday(
 }
 
 export function resolveNextEarnVipTier(tier: EarnVipTier): EarnVipTier | null {
+  if (tier === 'diamond' || tier === 'prime_elite') return null;
   const index = EARN_VIP_TIER_ORDER.indexOf(tier);
-  if (index < 0 || index >= EARN_VIP_TIER_ORDER.length - 1) return null;
-  return EARN_VIP_TIER_ORDER[index + 1] ?? null;
+  if (index < 0) return null;
+  const next = EARN_VIP_TIER_ORDER[index + 1];
+  if (!next || next === 'prime_elite') return null;
+  return next;
 }
 
 export function resolvePreviousEarnVipTier(tier: EarnVipTier): EarnVipTier | null {
@@ -124,8 +147,9 @@ export function resolvePreviousEarnVipTier(tier: EarnVipTier): EarnVipTier | nul
 export function resolveTierFloorXp(tier: EarnVipTier): number {
   if (tier === 'bronze') return 0;
   const previous = resolvePreviousEarnVipTier(tier);
-  if (!previous) return 0;
-  return EARN_VIP_XP_NEXT_TIER[previous as Exclude<EarnVipTier, 'diamond'>];
+  if (!previous || previous === 'prime_elite') return 0;
+  if (previous === 'diamond') return EARN_VIP_XP_NEXT_TIER.platinum;
+  return EARN_VIP_XP_NEXT_TIER[previous as Exclude<EarnVipTier, 'diamond' | 'prime_elite'>];
 }
 
 export function computeTierXpProgressPercent(snapshot: EarnHubTierSnapshot): number {
@@ -181,22 +205,61 @@ export function buildTierBenefitsPreviewRow(
   };
 }
 
-export function buildTierDecayPanelView(tier: EarnVipTier): TierDecayPanelView {
-  const eligible = isDecayPanelEligible(tier);
-  const lowerTier = eligible ? resolvePreviousEarnVipTier(tier) : null;
+export function parseTierDecayStatusSnapshot(
+  payload: Record<string, unknown> | null | undefined,
+): TierDecayStatusSnapshot | null {
+  if (!payload) return null;
+  const tier = normalizeEarnVipTier(typeof payload['tier'] === 'string' ? payload['tier'] : null);
+  const graceDays = Number(payload['grace_days'] ?? resolveDecayMaintenanceWindowDays(tier));
+  const daysLeftRaw = Number(payload['days_left'] ?? 0);
+  const lowerRaw = payload['lower_tier'];
+  const lowerTier =
+    typeof lowerRaw === 'string' && lowerRaw.trim()
+      ? normalizeEarnVipTier(lowerRaw)
+      : null;
+  const lastQualifyingAt =
+    typeof payload['last_qualifying_at'] === 'string' ? payload['last_qualifying_at'] : null;
+  const lastDecayAt =
+    typeof payload['last_decay_at'] === 'string' ? payload['last_decay_at'] : null;
+
+  return {
+    tier,
+    eligible: payload['eligible'] === true || isDecayPanelEligible(tier),
+    graceDays: Number.isFinite(graceDays) ? graceDays : resolveDecayMaintenanceWindowDays(tier),
+    daysLeft: Number.isFinite(daysLeftRaw) ? Math.max(0, Math.floor(daysLeftRaw)) : 0,
+    meetsMaintenance: payload['meets_maintenance'] === true,
+    lowerTier: lowerTier && lowerTier !== tier ? lowerTier : resolvePreviousEarnVipTier(tier),
+    lastQualifyingAt,
+    lastDecayAt,
+  };
+}
+
+export function buildTierDecayPanelView(
+  tier: EarnVipTier,
+  status: TierDecayStatusSnapshot | null = null,
+): TierDecayPanelView {
+  const effectiveTier = status?.tier ?? tier;
+  const eligible = status?.eligible ?? isDecayPanelEligible(effectiveTier);
+  const lowerTier =
+    status?.lowerTier ?? (eligible ? resolvePreviousEarnVipTier(effectiveTier) : null);
+  const maintenanceWindowDays =
+    status?.graceDays ?? resolveDecayMaintenanceWindowDays(effectiveTier);
 
   return {
     eligible,
-    maintenanceWindowDays: resolveDecayMaintenanceWindowDays(tier),
-    maintenanceConditionKey: resolveTierMaintenanceConditionKey(tier),
+    maintenanceWindowDays,
+    maintenanceConditionKey: resolveTierMaintenanceConditionKey(effectiveTier),
     lowerTier,
     lowerTierLabelKey: lowerTier ? (`earn.tier.${lowerTier}` as MessageKey) : null,
     impactRows: eligible
       ? [
-          buildTierBenefitsPreviewRow(tier, tier),
-          ...(lowerTier ? [buildTierBenefitsPreviewRow(lowerTier, tier)] : []),
+          buildTierBenefitsPreviewRow(effectiveTier, effectiveTier),
+          ...(lowerTier ? [buildTierBenefitsPreviewRow(lowerTier, effectiveTier)] : []),
         ]
       : [],
+    engineLive: Boolean(status),
+    daysLeft: status ? status.daysLeft : null,
+    meetsMaintenance: status ? status.meetsMaintenance : null,
   };
 }
 
@@ -214,6 +277,10 @@ export function resolveTierDecayReferralRoute(): string {
 
 export function tierMeUsesEngineRpc(): string {
   return EARN_HUB_STATUS_RPC;
+}
+
+export function tierMeUsesDecayStatusRpc(): string {
+  return TIER_DECAY_STATUS_RPC;
 }
 
 /** Benefits mini-table — current tier always; includes lower tier when decay applies. */

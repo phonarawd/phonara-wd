@@ -29,6 +29,10 @@ export type BlackjackStageProps = {
   actions: BlackjackAction[];
   onActionsChange?: (next: BlackjackAction[]) => void;
   selectionDisabled?: boolean;
+  /** E23 progressive — live hit/stand/double RPC. */
+  liveMode?: boolean;
+  liveSessionActive?: boolean;
+  onLiveMove?: (move: BlackjackMove) => void;
   className?: string;
 };
 
@@ -42,11 +46,19 @@ const MOVE_LABEL_KEYS: Record<BlackjackMove, string> = {
 
 /**
  * Blackjack L1 — felt table · dealer slot always visible · action queue (§23.2 · §23.8).
- * Hand payout = RPC totalMultiplier only — no invented card ranks · no live hit/stand RPC.
+ * One-shot: pre-commit action queue. E23 liveMode: hit/stand/double RPC round-trips.
  */
 export const BlackjackStage = forwardRef<CasinoStageHandle, BlackjackStageProps>(
   function BlackjackStage(
-    { actions: actionsProp, onActionsChange, selectionDisabled, className },
+    {
+      actions: actionsProp,
+      onActionsChange,
+      selectionDisabled,
+      liveMode = false,
+      liveSessionActive = false,
+      onLiveMove,
+      className,
+    },
     ref,
   ) {
     const t = useT();
@@ -130,6 +142,11 @@ export const BlackjackStage = forwardRef<CasinoStageHandle, BlackjackStageProps>
     );
 
     const appendMove = (move: BlackjackMove) => {
+      if (liveMode && liveSessionActive && onLiveMove) {
+        if (selectionDisabled || phase === 'replaying') return;
+        onLiveMove(move);
+        return;
+      }
       if (locked) return;
       if (actions.length >= 12) return;
       onActionsChange?.([...actions, { seat: 0, move }]);
@@ -154,6 +171,7 @@ export const BlackjackStage = forwardRef<CasinoStageHandle, BlackjackStageProps>
         className={cn(className)}
         data-testid="casino-blackjack-stage"
         data-stage-phase={phase}
+        data-live-mode={liveMode ? 'true' : 'false'}
         data-won={outcome ? (won ? 'true' : 'false') : undefined}
         data-action-count={actions.length}
       >
@@ -229,8 +247,16 @@ export const BlackjackStage = forwardRef<CasinoStageHandle, BlackjackStageProps>
                 key={move}
                 type="button"
                 className="border-line bg-surface-raised text-foreground min-h-12 rounded-md border px-3 text-sm font-semibold"
-                data-testid={`casino-blackjack-action-${move}`}
-                disabled={locked || actions.length >= 12}
+                data-testid={
+                  liveMode && liveSessionActive && move === 'hit'
+                    ? 'casino-blackjack-live-hit'
+                    : `casino-blackjack-action-${move}`
+                }
+                disabled={
+                  liveMode && liveSessionActive
+                    ? selectionDisabled || phase === 'replaying' || move === 'split' || move === 'insurance'
+                    : locked || actions.length >= 12
+                }
                 onClick={() => appendMove(move)}
               >
                 {t(MOVE_LABEL_KEYS[move] as 'casino.action.hit')}

@@ -194,6 +194,8 @@ export function usePlaceSportsBet() {
       betKind?: SportsBetKind;
       deviceHash?: string;
       ipHash?: string;
+      /** E22 — strict | accept_any | accept_better (NULL → server default). */
+      oddsAcceptance?: 'strict' | 'accept_any' | 'accept_better';
     }) => {
       if (!session?.user) throw new Error('UNAUTHENTICATED');
       const betKind =
@@ -212,6 +214,7 @@ export function usePlaceSportsBet() {
         p_bet_kind: betKind,
         p_device_hash: input.deviceHash ?? null,
         p_ip_hash: input.ipHash ?? null,
+        p_odds_acceptance: input.oddsAcceptance ?? null,
       });
     },
     onSuccess: async () => {
@@ -370,3 +373,62 @@ export function useCashoutSportsBet() {
     },
   });
 }
+
+export function usePartialCashoutSportsBet() {
+  const { session } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: {
+      betId: string;
+      stakePortion: string;
+      cashoutAmount: string;
+      idempotencyKey: string;
+    }) => {
+      if (!session?.user) throw new Error('UNAUTHENTICATED');
+      return sportsRpc<{
+        bet_id: string;
+        status: string;
+        cashout_amount: string;
+        remaining_stake: string;
+        partial: boolean;
+      }>('rpc_partial_cashout_sports_bet', {
+        p_bet_id: input.betId,
+        p_stake_portion: input.stakePortion,
+        p_cashout_amount: input.cashoutAmount,
+        p_idempotency_key: input.idempotencyKey,
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['sports'] });
+      await queryClient.invalidateQueries({ queryKey: ['wallet'] });
+    },
+  });
+}
+
+export function usePreviewSportsPartialCashout(
+  betId: string | undefined,
+  stakePortion: string | undefined,
+) {
+  const { session } = useAuth();
+
+  return useQuery({
+    queryKey: ['sports', 'partial-cashout-preview', betId, stakePortion],
+    enabled: Boolean(session?.user && betId && stakePortion),
+    queryFn: async () => {
+      return sportsRpc<{
+        bet_id: string;
+        stake_portion: string;
+        cashout_amount: string;
+        currency: string;
+        remaining_stake: string;
+        potential_payout: string;
+      }>('rpc_preview_sports_partial_cashout', {
+        p_bet_id: betId,
+        p_stake_portion: stakePortion,
+      });
+    },
+    staleTime: 5_000,
+  });
+}
+

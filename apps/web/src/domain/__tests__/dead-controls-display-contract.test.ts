@@ -7,7 +7,6 @@ import {
   SPORTS_VIP_ENGINE_TODO,
   SPORTS_VIP_UI_UNLOCK_TODO,
   TIER_KEEP_STATUS_ENGINE_TODO,
-  TIER_KEEP_STATUS_UNAVAILABLE_REASON_KEY,
   assertPqaDeadControlRegistry,
   formatRewardTicketCount,
   isTierKeepStatusClaimEngineLive,
@@ -45,16 +44,14 @@ describe('dead-controls-display-contract (PQA F3)', () => {
     expect(roundHook?.engineTodo).toBe('p10-casino-replay-and-infra');
   });
 
-  it('blocks tier-keepStatus claim until E1 engine ships', () => {
+  it('enables tier-keepStatus claim after E1 engine ships', () => {
     expect(isTierKeepStatusMission('tier-keepStatus')).toBe(true);
-    expect(isTierKeepStatusClaimEngineLive()).toBe(false);
-    expect(resolveTierKeepStatusUnavailableReason('tier-keepStatus')).toBe(
-      TIER_KEEP_STATUS_UNAVAILABLE_REASON_KEY,
-    );
+    expect(isTierKeepStatusClaimEngineLive()).toBe(true);
+    expect(resolveTierKeepStatusUnavailableReason('tier-keepStatus')).toBeNull();
     expect(resolveTierKeepStatusUnavailableReason('viral-shareLink')).toBeNull();
-    expect(resolveMissionUnavailableReason({ authenticated: true, uiId: 'tier-keepStatus' })).toBe(
-      TIER_KEEP_STATUS_UNAVAILABLE_REASON_KEY,
-    );
+    expect(
+      resolveMissionUnavailableReason({ authenticated: true, uiId: 'tier-keepStatus' }),
+    ).toBeNull();
   });
 
   it('wires defer reason keys to engine todo ids', () => {
@@ -64,11 +61,11 @@ describe('dead-controls-display-contract (PQA F3)', () => {
       'settings.apiKeys.create.disabledHint',
     );
     expect(resolveRewardTicketsIssuanceNoteKey()).toBe('earn.home.tickets.issuanceNote');
-    expect(TIER_KEEP_STATUS_ENGINE_TODO).toBe('ew-e1-engine-decay-rpc');
+    expect(TIER_KEEP_STATUS_ENGINE_TODO).toBe('ew-e1-decay-wave');
     expect(CASINO_HUB_DEFER_TODO).toBe('p10-casino-replay-and-infra');
     expect(SPORTS_VIP_ENGINE_TODO).toBe('ew-e4-gate-tier-option-b');
     expect(SPORTS_VIP_UI_UNLOCK_TODO).toBe('ew-e5-gap-surfaces-wire');
-    expect(SETTINGS_API_KEYS_ENGINE_TODO).toBe('ew-e8-engine-api-keys');
+    expect(SETTINGS_API_KEYS_ENGINE_TODO).toBe('ew-e8-financial-wave');
     expect(REWARD_TICKETS_ISSUANCE_STATUS).toBe('read_only_no_grant_rpc');
   });
 

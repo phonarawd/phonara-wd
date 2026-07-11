@@ -57,14 +57,17 @@ function makeEngine(overrides: Partial<TierMePageControllerView> = {}): TierMePa
       lowerTier: 'bronze',
       lowerTierLabelKey: 'earn.tier.bronze',
       impactRows: [],
+      engineLive: true,
+      daysLeft: 18,
+      meetsMaintenance: false,
     },
     keepMission: {
-      state: 'in_progress',
+      state: 'reward_pending',
       rewardLabel: '+4,000P',
-      progressLabel: '0 / 1',
-      canClaim: false,
-      claimBlocked: true,
-      unavailableReasonKey: 'earn.mission.unavailable.tierKeepStatus',
+      progressLabel: '1 / 1',
+      canClaim: true,
+      claimBlocked: false,
+      unavailableReasonKey: null,
     },
     qualifiedReferrals: 1,
     totalInvited: 3,
@@ -115,16 +118,18 @@ describe('TierMePage', () => {
     expect(screen.getByTestId('tier-me-progress-card')).toHaveAttribute('data-signature', 'xp-fill');
     expect(screen.getByTestId('tier-me-xp')).toHaveAttribute('data-count-up', 'true');
     expect(screen.getByTestId('tier-me-decay-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('tier-me-decay-countdown')).toBeInTheDocument();
+    expect(screen.getByTestId('tier-me-decay-maintenance')).toBeInTheDocument();
     expect(screen.getByTestId('tier-me-limits')).toBeInTheDocument();
     expect(screen.getByTestId('tier-me-keep-mission')).toBeInTheDocument();
     expect(screen.getByTestId('tier-me-history-link')).toHaveAttribute('href', '/tier/me/history');
   });
 
-  it('shows tier keep mission unavailable reason without dead claim CTA', () => {
+  it('shows tier keep mission claim CTA when E1 engine is live', () => {
     renderPage();
     expect(screen.getByTestId('tier-me-keep-mission')).toBeInTheDocument();
-    expect(screen.getByText('earn.mission.unavailable.tierKeepStatus')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'common.cta.claim' })).not.toBeInTheDocument();
+    expect(screen.queryByText('earn.mission.unavailable.tierKeepStatus')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'common.cta.claim' })).toBeInTheDocument();
   });
 
   it('hides decay panel for bronze floor tier', () => {
@@ -145,6 +150,9 @@ describe('TierMePage', () => {
           lowerTier: null,
           lowerTierLabelKey: null,
           impactRows: [],
+          engineLive: true,
+          daysLeft: 45,
+          meetsMaintenance: true,
         },
         keepMission: null,
       }),

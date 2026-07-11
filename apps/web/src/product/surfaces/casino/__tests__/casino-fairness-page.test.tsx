@@ -22,12 +22,32 @@ vi.mock('@tanstack/react-router', () => ({
   ),
 }));
 
+vi.mock('@/features/casino/use-game-pf-state', () => ({
+  useGamePfState: () => ({
+    data: {
+      client_seed: 'account-client',
+      next_nonce: 3,
+      server_seed_hash: 'hash-demo',
+      previous_server_seed: null,
+    },
+    isLoading: false,
+  }),
+  useSetGameClientSeed: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  }),
+  useRotateGameServerSeed: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  }),
+}));
+
 beforeEach(() => {
   window.localStorage.setItem('phonara.locale', 'ko');
 });
 
 describe('CasinoFairnessPage (p10-page-casino-fairness)', () => {
-  it('renders verifier with §23.2.1 PF limits and no seed rotation UI', () => {
+  it('renders verifier with E23 seed controls when casinoLiveLive', () => {
     render(
       <I18nProvider>
         <CasinoFairnessPage />
@@ -37,16 +57,17 @@ describe('CasinoFairnessPage (p10-page-casino-fairness)', () => {
     const page = screen.getByTestId('casino-fairness-page');
     expect(page).toHaveAttribute('data-owner-todo', 'p10-page-casino-fairness');
     expect(page).toHaveAttribute('data-fairness-exposure', 'live');
-    expect(page).toHaveAttribute('data-client-seed-mode', 'per_bet');
-    expect(page).toHaveAttribute('data-seed-rotation-ui', 'false');
+    expect(page).toHaveAttribute('data-client-seed-mode', 'account_or_per_bet');
+    expect(page).toHaveAttribute('data-seed-rotation-ui', 'true');
     expect(page).toHaveAttribute('data-nonce', '1');
 
     expect(screen.getByTestId('casino-fairness-verifier')).toBeInTheDocument();
     expect(screen.getByTestId('casino-fairness-limits')).toBeInTheDocument();
+    expect(screen.getByTestId('casino-fairness-seed-controls')).toBeInTheDocument();
+    expect(screen.getByTestId('casino-fairness-seed-rotate')).toBeInTheDocument();
     expect(screen.getByTestId('casino-fairness-nonce')).toBeDisabled();
     expect(screen.getByTestId('casino-fairness-nonce')).toHaveValue('1');
-    expect(screen.queryByTestId('casino-fairness-seed-rotate')).not.toBeInTheDocument();
-    expect(screen.getByText(/시드 로테이션 UI는 아직 없습니다/)).toBeInTheDocument();
+    expect(screen.getByText(/계정 클라이언트 시드를 저장할 수 있습니다/)).toBeInTheDocument();
   });
 
   it('runs verifyRound and shows hash match for a known seed', async () => {

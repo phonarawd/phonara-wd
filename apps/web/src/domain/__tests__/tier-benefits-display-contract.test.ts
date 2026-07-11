@@ -8,7 +8,6 @@ import {
   listTierBenefitsNarrativeMessageKeys,
   listVisibleTierBenefitColumns,
   shouldExposeTierBenefitGap,
-  TIER_BENEFIT_GAP_FEATURES,
   TIER_BENEFITS_NARRATIVE_STEPS,
   TIER_BENEFITS_ROUTE,
   tierBenefitsUsesEngineRpc,
@@ -41,10 +40,12 @@ describe('tier-benefits-display-contract', () => {
     expect(columns.every((column) => column.engine === 'exists')).toBe(true);
   });
 
-  it('keeps gap benefits hidden', () => {
-    for (const feature of TIER_BENEFIT_GAP_FEATURES) {
-      expect(shouldExposeTierBenefitGap(feature)).toBe(false);
-    }
+  it('exposes fee % + prime elite after E4 GATE; keeps other gaps hidden', () => {
+    expect(shouldExposeTierBenefitGap('trade_fee_discount')).toBe(true);
+    expect(shouldExposeTierBenefitGap('sports_fee_discount')).toBe(true);
+    expect(shouldExposeTierBenefitGap('prime_elite_tier')).toBe(true);
+    expect(shouldExposeTierBenefitGap('referral_tier_multiplier')).toBe(false);
+    expect(shouldExposeTierBenefitGap('minigames_tier_bonus')).toBe(false);
   });
 
   it('builds decay policy rows for every tier', () => {

@@ -25,6 +25,10 @@ import {
   isCasinoBatchDGame,
   P10_GAMES_BATCH_D_TODO,
 } from '@/domain/casino-games-batch-d-display-contract';
+import {
+  isEwE23UiLivePlayGame,
+} from '@/domain/ew-e23-ui-casino-live-unlocks-display-contract';
+import { EW_E23_PROGRESSIVE_GAMES } from '@/domain/ew-e23-casino-live-display-contract';
 import { CASINO_E2E_TESTIDS } from '@/features/casino/casino-e2e-testids';
 import { GAME_BY_CODE } from '@/features/casino/game-config';
 import { randomHex } from '@/features/casino/helpers';
@@ -39,6 +43,20 @@ import {
 } from '@/features/casino/use-auto-bet-queue';
 import { useCasinoFiatHint } from '@/features/casino/use-casino-fiat-hint';
 import { useCasinoRoundPipeline } from '@/features/casino/use-casino-round';
+import {
+  useLiveCrashCashout,
+  useLiveCrashCurrent,
+  useLiveCrashPlaceBet,
+} from '@/features/casino/use-live-crash';
+import {
+  useProgressiveCashout,
+  useProgressiveStart,
+  useProgressiveStep,
+  type ProgressiveGame,
+  type ProgressiveSessionPublic,
+} from '@/features/casino/use-progressive-round';
+import { LAUNCH_GATES } from '@/lib/launch-gates';
+import { translateError } from '@/lib/translate-error';
 import { useAuth } from '@/contexts/auth-context';
 import { useWallet } from '@/hooks/use-wallet';
 import { useT } from '@/product/i18n';
@@ -52,6 +70,7 @@ import {
   SpendCurrencySelector,
   type SpendCurrency,
 } from '@/product/primitives/spend-currency-selector';
+import { productToast } from '@/product/primitives/toast-zone';
 import { AutoBetPanel } from '@/product/surfaces/games/auto-bet-panel';
 import { BetModeTabs, type CasinoBetMode } from '@/product/surfaces/games/bet-mode-tabs';
 import { CasinoGameStage } from '@/product/surfaces/games/casino-game-stage';
@@ -63,6 +82,20 @@ import { WinTierOverlay } from '@/product/surfaces/games/win-tier-overlay';
 import { playCasinoWinCue } from '@/product/surfaces/games/casino-sound';
 import type { CasinoStageHandle } from '@/product/surfaces/games/casino-stage-types';
 import { P10_CASINO_FIAT_HINT_SESSION_LOCK_TODO } from '@/domain/fiat-reference-display-contract';
+import type { BlackjackMove, HiLoGuess } from '@phonara/game-engine';
+import type { MessageKey } from '@phonara/i18n';
+
+type CasinoPlayMode = 'oneshot' | 'live';
+
+function isProgressiveGame(code: string): code is ProgressiveGame {
+  return (EW_E23_PROGRESSIVE_GAMES as readonly string[]).includes(code);
+}
+
+function asLiveRevealed(publicState: Record<string, unknown>): number[] {
+  const raw = publicState['revealedCells'];
+  if (!Array.isArray(raw)) return [];
+  return raw.filter((n): n is number => typeof n === 'number' && Number.isInteger(n));
+}
 
 function profitDeltaFromBet(stake: string, payout: string, won: boolean): string {
   try {
@@ -123,6 +156,22 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     baseStake: config.defaultStake,
   }));
 
+  const casinoLiveLive = LAUNCH_GATES.casinoLiveLive;
+  const livePlaySupported = casinoLiveLive && isEwE23UiLivePlayGame(gameCode);
+  const [playMode, setPlayMode] = useState<CasinoPlayMode>('oneshot');
+  const liveMode = livePlaySupported && playMode === 'live';
+  const [progressiveSession, setProgressiveSession] =
+    useState<ProgressiveSessionPublic | null>(null);
+  const [liveCrashBetId, setLiveCrashBetId] = useState<string | null>(null);
+  const [liveErrorKey, setLiveErrorKey] = useState<MessageKey | null>(null);
+
+  const progressiveStart = useProgressiveStart();
+  const progressiveStep = useProgressiveStep();
+  const progressiveCashout = useProgressiveCashout();
+  const liveCrashCurrent = useLiveCrashCurrent(liveMode && gameCode === 'crash');
+  const liveCrashPlace = useLiveCrashPlaceBet();
+  const liveCrashCashout = useLiveCrashCashout();
+
   const stageRef = useRef<CasinoStageHandle | null>(null);
   const lastPlayedBetIdRef = useRef<string | null>(null);
   const autoQueue = useAutoBetQueue(stake);
@@ -162,6 +211,10 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     setLastStake(next.defaultStake);
     lastPlayedBetIdRef.current = null;
     stageRef.current?.reset();
+    setPlayMode('oneshot');
+    setProgressiveSession(null);
+    setLiveCrashBetId(null);
+    setLiveErrorKey(null);
     unlockSession();
     // Reset when navigating between game codes only.
   }, [gameCode]);
@@ -202,6 +255,180 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     }
     // bet state updates via pipeline; effect below presents when bet lands
   }, [lockSession, pipeline, unlockSession]);
+
+  const applyProgressiveResult = useCallback(
+    (session: ProgressiveSessionPublic) => {
+      setProgressiveSession(session.status === 'active' ? session : null);
+      if (session.status === 'active') return;
+      const payout = session.payout ?? '0';
+      const status =
+        session.status === 'cashed_out' || Number(payout) > 0 ? 'won' : 'lost';
+      presentSettle(payout, status, session.stake);
+      void stageRef.current?.playOutcome(session.public_state ?? {});
+      unlockSession();
+    },
+    [presentSettle, unlockSession],
+  );
+
+  const handleLiveStart = useCallback(async () => {
+    setLiveErrorKey(null);
+    lockSession();
+    try {
+      if (gameCode === 'crash') {
+        const placed = await liveCrashPlace.mutateAsync({
+          currency,
+          stake: activeStake,
+          autoCashout: String(selection['autoCashout'] ?? '2'),
+          clientSeed,
+          idempotencyKey: crypto.randomUUID(),
+        });
+        setLiveCrashBetId(placed.bet_id);
+        if (placed.status !== 'pending') {
+          presentSettle(placed.payout ?? '0', placed.status, activeStake);
+          unlockSession();
+        }
+        return;
+      }
+      if (!isProgressiveGame(gameCode)) {
+        unlockSession();
+        return;
+      }
+      const init =
+        gameCode === 'mines'
+          ? { mineCount: Number(selection['mineCount'] ?? 3) }
+          : gameCode === 'hilo'
+            ? {
+                startCard:
+                  typeof selection['startCard'] === 'number'
+                    ? selection['startCard']
+                    : null,
+              }
+            : {};
+      const started = await progressiveStart.mutateAsync({
+        game: gameCode,
+        currency,
+        stake: activeStake,
+        init,
+        clientSeed,
+        idempotencyKey: crypto.randomUUID(),
+      });
+      setProgressiveSession(started);
+      if (started.status !== 'active') {
+        applyProgressiveResult(started);
+      }
+    } catch (error) {
+      setLiveErrorKey(translateError(error) as MessageKey);
+      unlockSession();
+    }
+  }, [
+    activeStake,
+    applyProgressiveResult,
+    clientSeed,
+    currency,
+    gameCode,
+    liveCrashPlace,
+    lockSession,
+    presentSettle,
+    progressiveStart,
+    selection,
+    unlockSession,
+  ]);
+
+  const handleLiveCashout = useCallback(() => {
+    void (async () => {
+      try {
+        if (gameCode === 'crash' && liveCrashBetId) {
+          const result = await liveCrashCashout.mutateAsync({
+            betId: liveCrashBetId,
+            idempotencyKey: crypto.randomUUID(),
+          });
+          presentSettle(result.payout ?? '0', result.status, activeStake);
+          setLiveCrashBetId(null);
+          unlockSession();
+          return;
+        }
+        if (progressiveSession?.session_id) {
+          const result = await progressiveCashout.mutateAsync({
+            sessionId: progressiveSession.session_id,
+            idempotencyKey: crypto.randomUUID(),
+          });
+          applyProgressiveResult(result);
+        }
+      } catch (error) {
+        setLiveErrorKey(translateError(error) as MessageKey);
+        productToast.show({ zone: 'strict', key: translateError(error) });
+      }
+    })();
+  }, [
+    activeStake,
+    applyProgressiveResult,
+    gameCode,
+    liveCrashBetId,
+    liveCrashCashout,
+    presentSettle,
+    progressiveCashout,
+    progressiveSession,
+    unlockSession,
+  ]);
+
+  const handleLiveRevealCell = useCallback(
+    (cell: number) => {
+      if (!progressiveSession?.session_id) return;
+      void (async () => {
+        try {
+          const result = await progressiveStep.mutateAsync({
+            sessionId: progressiveSession.session_id,
+            action: { cell },
+            idempotencyKey: crypto.randomUUID(),
+          });
+          const revealed = asLiveRevealed(result.public_state);
+          setSelection((prev) => ({ ...prev, revealedCells: revealed }));
+          applyProgressiveResult(result);
+        } catch (error) {
+          setLiveErrorKey(translateError(error) as MessageKey);
+        }
+      })();
+    },
+    [applyProgressiveResult, progressiveSession, progressiveStep],
+  );
+
+  const handleLiveGuess = useCallback(
+    (guess: HiLoGuess) => {
+      if (!progressiveSession?.session_id) return;
+      void (async () => {
+        try {
+          const result = await progressiveStep.mutateAsync({
+            sessionId: progressiveSession.session_id,
+            action: { guess },
+            idempotencyKey: crypto.randomUUID(),
+          });
+          applyProgressiveResult(result);
+        } catch (error) {
+          setLiveErrorKey(translateError(error) as MessageKey);
+        }
+      })();
+    },
+    [applyProgressiveResult, progressiveSession, progressiveStep],
+  );
+
+  const handleLiveMove = useCallback(
+    (move: BlackjackMove) => {
+      if (!progressiveSession?.session_id) return;
+      void (async () => {
+        try {
+          const result = await progressiveStep.mutateAsync({
+            sessionId: progressiveSession.session_id,
+            action: { move },
+            idempotencyKey: crypto.randomUUID(),
+          });
+          applyProgressiveResult(result);
+        } catch (error) {
+          setLiveErrorKey(translateError(error) as MessageKey);
+        }
+      })();
+    },
+    [applyProgressiveResult, progressiveSession, progressiveStep],
+  );
 
   useEffect(() => {
     if (!pipeline.bet) return;
@@ -269,6 +496,8 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
       data-casino-fiat-session-locked={sessionLocked ? 'true' : 'false'}
       data-game-code={gameCode}
       data-stake-currency-exposure={CASINO_STAKE_CURRENCY_EXPOSURE}
+      data-play-mode={liveMode ? 'live' : 'oneshot'}
+      data-casino-live-unlocked={casinoLiveLive ? 'true' : 'false'}
     >
       <MoneyDisplayWithFiatHintSlot disclaimerSlot={showDisclaimer ? <FiatHintDisclaimer /> : null}>
         <header className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
@@ -308,7 +537,32 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
               gameCode={gameCode}
               selection={selection}
               onSelectionChange={setSelection}
-              selectionDisabled={lockStake || pipeline.busy}
+              selectionDisabled={
+                lockStake ||
+                pipeline.busy ||
+                progressiveStart.isPending ||
+                progressiveStep.isPending ||
+                liveCrashPlace.isPending
+              }
+              liveControls={
+                liveMode
+                  ? {
+                      liveMode: true,
+                      liveSessionActive:
+                        Boolean(progressiveSession) ||
+                        (gameCode === 'crash' && Boolean(liveCrashBetId)),
+                      liveCashoutBusy:
+                        progressiveCashout.isPending || liveCrashCashout.isPending,
+                      liveMultiplier:
+                        liveCrashCurrent.data?.round?.current_multiplier ?? null,
+                      liveRoundStatus: liveCrashCurrent.data?.round?.status ?? null,
+                      onLiveCashout: handleLiveCashout,
+                      onLiveRevealCell: handleLiveRevealCell,
+                      onLiveGuess: handleLiveGuess,
+                      onLiveMove: handleLiveMove,
+                    }
+                  : undefined
+              }
             />
             {overlayOpen ? (
               <WinTierOverlay
@@ -336,10 +590,40 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
           </div>
 
           <aside className="border-line bg-surface flex flex-col gap-4 rounded-md border p-4">
+            {livePlaySupported ? (
+              <div
+                className="flex gap-2"
+                role="group"
+                aria-label={t('casino.playMode.live')}
+                data-testid="casino-play-mode"
+              >
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={playMode === 'oneshot' ? 'primary' : 'secondary'}
+                  data-testid="casino-play-mode-oneshot"
+                  disabled={Boolean(progressiveSession) || Boolean(liveCrashBetId)}
+                  onClick={() => setPlayMode('oneshot')}
+                >
+                  {t('casino.playMode.oneshot')}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={playMode === 'live' ? 'primary' : 'secondary'}
+                  data-testid="casino-play-mode-live"
+                  disabled={pipeline.busy || autoQueue.isActive}
+                  onClick={() => setPlayMode('live')}
+                >
+                  {t('casino.playMode.live')}
+                </Button>
+              </div>
+            ) : null}
+
             <SpendCurrencySelector
               value={currency}
               onChange={setCurrency}
-              disabled={lockStake || pipeline.busy}
+              disabled={lockStake || pipeline.busy || Boolean(progressiveSession)}
               testId="casino-stake-currency"
               currencyTestIdPrefix="casino-stake-currency"
               showHelpTip
@@ -387,10 +671,40 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
             <BetModeTabs
               mode={betMode}
               onChange={setBetMode}
-              disabled={lockStake || pipeline.busy}
+              disabled={lockStake || pipeline.busy || liveMode}
             />
 
-            {betMode === 'manual' ? (
+            {liveMode ? (
+              <div className="flex flex-col gap-2">
+                {gameCode === 'crash' && liveCrashCurrent.data?.round ? (
+                  <p
+                    className="text-foreground-muted m-0 text-xs tabular-nums"
+                    data-testid="casino-live-crash-status"
+                  >
+                    {t('casino.live.roundStatus')}: {liveCrashCurrent.data.round.status}
+                    {liveCrashCurrent.data.round.current_multiplier
+                      ? ` · ${liveCrashCurrent.data.round.current_multiplier}×`
+                      : ''}
+                  </p>
+                ) : null}
+                <Button
+                  type="button"
+                  variant="bet"
+                  disabled={
+                    progressiveStart.isPending ||
+                    liveCrashPlace.isPending ||
+                    Boolean(progressiveSession) ||
+                    (gameCode === 'crash' && Boolean(liveCrashBetId))
+                  }
+                  data-testid="casino-live-place-bet"
+                  onClick={() => void handleLiveStart()}
+                >
+                  {gameCode === 'crash'
+                    ? t('casino.live.placeBet')
+                    : t('casino.progressive.start')}
+                </Button>
+              </div>
+            ) : betMode === 'manual' ? (
               <div className="flex flex-col gap-2">
                 <Button
                   type="button"
@@ -430,13 +744,13 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
               />
             )}
 
-            {pipeline.errorKey ? (
+            {pipeline.errorKey || liveErrorKey ? (
               <p
                 className="text-danger m-0 text-sm"
                 data-testid={CASINO_E2E_TESTIDS.error}
                 role="alert"
               >
-                {t(pipeline.errorKey)}
+                {t((pipeline.errorKey ?? liveErrorKey)!)}
               </p>
             ) : null}
 

@@ -22,12 +22,16 @@ describe('useSettingsNotificationsController', () => {
     window.localStorage.setItem('phonara.locale', 'ko');
   });
 
-  it('groups visible notification prefs without tierDecayWarning before E1', () => {
+  it('groups visible notification prefs including tierDecayWarning after E1', () => {
     const { result } = renderHook(() => useSettingsNotificationsController());
 
     expect(result.current.prefsByGroup.money).toEqual(['deposit', 'priceAlert']);
-    expect(result.current.prefsByGroup.growth).toEqual(['mission', 'referral', 'tierUpgrade']);
-    expect(result.current.prefsByGroup.growth).not.toContain('tierDecayWarning');
+    expect(result.current.prefsByGroup.growth).toEqual([
+      'mission',
+      'referral',
+      'tierUpgrade',
+      'tierDecayWarning',
+    ]);
     expect(result.current.prefsByGroup.marketing).toEqual(['marketing']);
   });
 

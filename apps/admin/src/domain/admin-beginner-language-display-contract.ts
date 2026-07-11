@@ -95,8 +95,13 @@ export const ADMIN_BEGINNER_P2_ROUTES = [
   '/earn/referrals',
   '/earn/missions',
   '/earn/rewards',
+  '/earn/activity',
   '/viral-stats',
   '/tiers',
+  '/tier-benefits',
+  '/promotions',
+  '/cms',
+  '/casino',
   '/staking',
   '/audit',
   '/settings',
@@ -106,7 +111,7 @@ export const ADMIN_BEGINNER_P2_ROUTES = [
 ] as const;
 
 /** Planned routes — nav keys must exist before surface ships (Plan §32.6). */
-export const ADMIN_BEGINNER_PLANNED_ROUTES = ['/support', '/earn/activity'] as const;
+export const ADMIN_BEGINNER_PLANNED_ROUTES = ['/support'] as const;
 
 export const ADMIN_BEGINNER_ALL_ROUTES = [
   ...ADMIN_BEGINNER_P2_ROUTES,
@@ -132,6 +137,10 @@ export const ADMIN_BEGINNER_NAV_LABEL_KEYS: Readonly<Record<string, string>> = {
   '/earn/activity': 'admin.nav.earnActivity',
   '/viral-stats': 'admin.nav.viralStats',
   '/tiers': 'admin.nav.tiers',
+  '/tier-benefits': 'admin.nav.tierBenefits',
+  '/promotions': 'admin.nav.promotions',
+  '/cms': 'admin.nav.cms',
+  '/casino': 'admin.nav.casino',
   '/staking': 'admin.nav.staking',
   '/audit': 'admin.nav.audit',
   '/settings': 'admin.nav.settings',
@@ -171,17 +180,23 @@ export const ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST: Readonly<
     '/users',
     '/risk',
     '/earn',
+    '/earn/activity',
     '/tiers',
+    '/tier-benefits',
+    '/promotions',
+    '/cms',
+    '/casino',
+    '/staking',
     '/audit',
     '/settings',
     '/ops',
     '/team',
     '/support',
   ],
-  finance: ['/', '/queues', '/deposits', '/withdrawals', '/audit', '/ops'],
-  risk: ['/', '/queues', '/sports', '/users', '/risk', '/tiers', '/ops'],
-  support: ['/', '/queues', '/users', '/support'],
-  viewer: ['/', '/ops'],
+  finance: ['/', '/queues', '/deposits', '/withdrawals', '/audit', '/ops', '/earn/activity'],
+  risk: ['/', '/queues', '/sports', '/users', '/risk', '/tiers', '/tier-benefits', '/casino', '/ops'],
+  support: ['/', '/queues', '/users', '/support', '/cms'],
+  viewer: ['/', '/ops', '/earn/activity'],
 };
 
 /** Help tip keys — every desk needs admin.help.{desk} (3 sentences max). */
@@ -202,6 +217,10 @@ export const ADMIN_BEGINNER_HELP_KEYS = [
   'admin.help.team',
   'admin.help.support',
   'admin.help.earnActivity',
+  'admin.help.cms',
+  'admin.help.promotions',
+  'admin.help.casino',
+  'admin.help.tierBenefits',
 ] as const;
 
 /**
@@ -263,6 +282,10 @@ export const ADMIN_SECTION_12_14_CANONICAL_ROUTES = [
   '/admin/earn/referrals',
   '/admin/viral-stats',
   '/admin/earn/activity',
+  '/admin/promotions',
+  '/admin/cms',
+  '/admin/casino',
+  '/admin/tier-benefits',
   '/admin/support',
   '/admin/team',
   '/admin/staking',

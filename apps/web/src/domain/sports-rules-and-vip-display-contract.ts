@@ -1,7 +1,7 @@
 /**
- * P10 Sports rules + VIP stub — `/sports/rules` · `/sports/vip` (§20.13.3 Sports#4).
- * Rules = i18n/CMS ui_only · VIP markets = ENGINE:gap until E4 Option B · E5 wire.
- * Existing routes/surface only — parallel page 0 · no client money math.
+ * P10 Sports rules + VIP — `/sports/rules` · `/sports/vip` (§20.13.3 Sports#4).
+ * Rules = i18n/CMS ui_only · VIP markets = E4 Option B caps + E5 browse wire.
+ * Existing routes/surface only — parallel page 0 · no client money math · no VIP-only odds RPC.
  */
 
 import type { MessageKey } from '@phonara/i18n';
@@ -12,8 +12,13 @@ import {
   SPORTS_VIP_ROUTE,
   SPORTS_VIP_UI_UNLOCK_TODO,
 } from './dead-controls-display-contract';
+import { LAUNCH_GATES } from '../lib/launch-gates';
 import { SPORTS_RULES_ROUTE, SPORTS_VIP_ROUTE_HUB } from './sports-hub-pages-display-contract';
 import { P10_SPORTS_LAYOUT_DEDUP_TODO } from './sports-exchange-parity-display-contract';
+import {
+  earnVipTierMeetsOrExceeds,
+  type EarnVipTier,
+} from './unified-tier-display-contract';
 
 export const P10_SPORTS_RULES_AND_VIP_TODO = 'p10-sports-rules-and-vip-stub' as const;
 
@@ -22,7 +27,7 @@ export const P10_SPORTS_RULES_AND_VIP_PREREQUISITE_TODOS = [P10_SPORTS_LAYOUT_DE
 /** Canonical rules route — hub-registered · no parallel `/betting/rules` page. */
 export const SPORTS_RULES_SURFACE_ROUTE = SPORTS_RULES_ROUTE;
 
-/** Canonical VIP stub route — same path as dead-controls registry. */
+/** Canonical VIP route — same path as dead-controls registry. */
 export const SPORTS_VIP_STUB_ROUTE = SPORTS_VIP_ROUTE_HUB;
 
 export const SPORTS_RULES_ROUTE_OWNER = 'sports.rules.tsx' as const;
@@ -43,14 +48,16 @@ export const SPORTS_RULES_AND_VIP_SURFACE_OWNERS = [
 export type SportsRulesVipEngineStatus = 'ui_only' | 'gap' | 'exists';
 export type SportsRulesVipExposureMode = 'live' | 'defer_stub' | 'built_hidden';
 
-/** Min Earn VIP tier for VIP room copy — display-only until E4 enforces caps. */
-export const SPORTS_VIP_MIN_TIER = 'platinum' as const;
+/** Min Earn VIP tier for VIP room browse — display gate; stake caps are server Option B. */
+export const SPORTS_VIP_MIN_TIER = 'platinum' as const satisfies EarnVipTier;
 
 export const SPORTS_RULES_ENGINE_STATUS = 'ui_only' as const satisfies SportsRulesVipEngineStatus;
-export const SPORTS_VIP_MARKETS_ENGINE_STATUS = 'gap' as const satisfies SportsRulesVipEngineStatus;
+/** E4 GATE green — Option B caps/eligibility exist · E5 browse wire. */
+export const SPORTS_VIP_MARKETS_ENGINE_STATUS = 'exists' as const satisfies SportsRulesVipEngineStatus;
 
 export const SPORTS_RULES_PAGE_EXPOSURE = 'live' as const satisfies SportsRulesVipExposureMode;
-export const SPORTS_VIP_PAGE_EXPOSURE = 'defer_stub' as const satisfies SportsRulesVipExposureMode;
+/** E5 — VIP room browses shared fixtures (no dedicated VIP markets RPC). */
+export const SPORTS_VIP_PAGE_EXPOSURE = 'live' as const satisfies SportsRulesVipExposureMode;
 
 export const SPORTS_RULES_SEO_TITLE_KEY = 'seo.sports.rules.title' as const satisfies MessageKey;
 export const SPORTS_VIP_SEO_TITLE_KEY = 'seo.sports.vip.title' as const satisfies MessageKey;
@@ -116,6 +123,12 @@ export const SPORTS_VIP_ELIGIBILITY_TIER_KEY =
 export const SPORTS_VIP_DEFER_TITLE_KEY = 'sports.vip.defer.title' as const satisfies MessageKey;
 export const SPORTS_VIP_STUB_REASON_KEY = SPORTS_VIP_DEFER_REASON_KEY;
 
+export const SPORTS_VIP_INELIGIBLE_TITLE_KEY =
+  'sports.vip.ineligible.title' as const satisfies MessageKey;
+export const SPORTS_VIP_INELIGIBLE_BODY_KEY =
+  'sports.vip.ineligible.body' as const satisfies MessageKey;
+export const SPORTS_VIP_BOARD_TITLE_KEY = 'sports.vip.board.title' as const satisfies MessageKey;
+
 export const SPORTS_VIP_ENGINE_GATE_TODO = SPORTS_VIP_ENGINE_TODO;
 export const SPORTS_VIP_LIVE_UNLOCK_TODO = SPORTS_VIP_UI_UNLOCK_TODO;
 
@@ -137,9 +150,14 @@ export function resolveSportsVipPageExposure(): typeof SPORTS_VIP_PAGE_EXPOSURE 
   return SPORTS_VIP_PAGE_EXPOSURE;
 }
 
-/** VIP markets stay stub until E4 engine + E5 wire — never fake live odds. */
+/** E5 — browse shared sports fixtures when Option B surface gate is on. Never fake odds. */
 export function canBrowseSportsVipMarkets(): boolean {
-  return false;
+  return LAUNCH_GATES.sportsVipSurface === true;
+}
+
+/** Platinum+ eligibility for VIP room board — display-only; stake caps are server. */
+export function isSportsVipEligibleTier(tier: string | null | undefined): boolean {
+  return earnVipTierMeetsOrExceeds(tier, SPORTS_VIP_MIN_TIER);
 }
 
 export function resolveSportsVipMinTierLabelKey(): typeof SPORTS_VIP_ELIGIBILITY_TIER_KEY {
@@ -160,13 +178,16 @@ export function assertSportsRulesAndVipDisplayContractSync(): void {
     throw new Error('sports-rules-vip: vip route drift');
   }
   if (SPORTS_VIP_MIN_TIER !== 'platinum') {
-    throw new Error('sports-rules-vip: min tier must stay platinum until E4');
+    throw new Error('sports-rules-vip: min tier must stay platinum');
   }
   if (SPORTS_RULES_SECTIONS.length !== 5) {
     throw new Error('sports-rules-vip: expected 5 rules sections');
   }
-  if (canBrowseSportsVipMarkets()) {
-    throw new Error('sports-rules-vip: VIP markets must stay closed until E5');
+  if (!canBrowseSportsVipMarkets()) {
+    throw new Error('sports-rules-vip: VIP markets browse must be open after E5');
+  }
+  if (SPORTS_VIP_PAGE_EXPOSURE !== 'live') {
+    throw new Error('sports-rules-vip: VIP page exposure must be live after E5');
   }
   if (SPORTS_VIP_LIVE_UNLOCK_TODO !== 'ew-e5-gap-surfaces-wire') {
     throw new Error('sports-rules-vip: UI unlock todo must be ew-e5-gap-surfaces-wire');

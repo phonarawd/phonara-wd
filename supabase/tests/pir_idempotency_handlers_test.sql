@@ -85,7 +85,7 @@ BEGIN
     'public.rpc_place_game_bet(uuid,text,text,jsonb,text,text,jsonb)'::regprocedure
   );
   v_sports := pg_get_functiondef(
-    'public.rpc_place_sports_bet(jsonb,text,text,text,text,text,text)'::regprocedure
+    'public.rpc_place_sports_bet(jsonb,text,text,text,text,text,text,text)'::regprocedure
   );
 
   ASSERT position('EXCEPTION WHEN unique_violation THEN' IN v_place) > 0,

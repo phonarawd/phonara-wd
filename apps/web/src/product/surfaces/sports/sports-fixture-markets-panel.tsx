@@ -35,6 +35,7 @@ function selectionLabelKey(selection: string): MessageKey {
   if (selection === 'under') return 'sports.market.under';
   if (selection === 'yes') return 'sports.market.yes';
   if (selection === 'no') return 'sports.market.no';
+  if (selection === 'score') return 'sports.market.score';
   return 'sports.market.line';
 }
 
@@ -44,6 +45,7 @@ function marketTitleKey(marketType: string): MessageKey {
   if (marketType === 'asian_handicap') return 'sports.market.asian_handicap';
   if (marketType === 'spread' || marketType === 'handicap') return 'sports.market.spread';
   if (marketType === 'btts' || marketType === 'both_teams_score') return 'sports.market.btts';
+  if (marketType === 'correct_score') return 'sports.market.correct_score';
   if (marketType === 'prop_over_under' || marketType === 'prop_yes_no') {
     return 'sports.market.props';
   }

@@ -107,5 +107,5 @@
 - [`ADMIN_TEAM_RBAC_CANON.md`](ADMIN_TEAM_RBAC_CANON.md) — 역할별 메뉴
 - [`PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md`](../PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md) — 유저 화면 ↔ Admin 데스크
 - Plan §29.1–29.5 · §12.14 · §32.6
-- Soft Launch: [`P13_SOFT_LAUNCH_BUNDLE.md`](../OPERATIONS/P13_SOFT_LAUNCH_BUNDLE.md) · Closeout: [`P13_LAUNCH_CLOSEOUT_BUNDLE.md`](../OPERATIONS/P13_LAUNCH_CLOSEOUT_BUNDLE.md) · W7 `#234`/`#235` **`[x]`** · P13 closeout `#236` **`[x]` DONE** · **다음** `launch-ramp-t1-feature-gates` (#237)
+- Soft Launch: [`P13_SOFT_LAUNCH_BUNDLE.md`](../OPERATIONS/P13_SOFT_LAUNCH_BUNDLE.md) · Closeout: [`P13_LAUNCH_CLOSEOUT_BUNDLE.md`](../OPERATIONS/P13_LAUNCH_CLOSEOUT_BUNDLE.md) · T1 ramp: [`P13_T1_LIVE_RAMP_FEATURE_GATES.md`](../OPERATIONS/P13_T1_LIVE_RAMP_FEATURE_GATES.md) · T2 scale: [`P13_T2_SCALE_TRIGGERS.md`](../OPERATIONS/P13_T2_SCALE_TRIGGERS.md) · E0: [`ENGINE_GAP_E0_APPROVAL.md`](../OPERATIONS/ENGINE_GAP_E0_APPROVAL.md) · W7 `#234`/`#235` **`[x]`** · P13 closeout `#236` **`[x]`** · T1 `#237` **`[x]`** · T2 `#238` **`[x]`** · E0 `#239` **`[x]` DONE** · **다음** `ew-e1-decay-wave` (#240)
 

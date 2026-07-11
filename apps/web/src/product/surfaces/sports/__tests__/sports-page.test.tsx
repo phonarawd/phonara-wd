@@ -8,6 +8,7 @@ import { I18nProvider } from '@/product/i18n';
 import { SportsPage } from '@/product/surfaces/sports/sports-page';
 
 const useSportsPageControllerMock = vi.hoisted(() => vi.fn());
+const useQueryMock = vi.hoisted(() => vi.fn());
 const useSportsFiatHintMock = vi.hoisted(() =>
   vi.fn(() => ({
     targetFiat: 'OFF' as const,
@@ -27,6 +28,25 @@ const useSportsFiatHintMock = vi.hoisted(() =>
 vi.mock('@/features/sports/use-sports-page-controller', () => ({
   useSportsPageController: useSportsPageControllerMock,
 }));
+
+vi.mock('@/features/sports/use-sports-betting', () => ({
+  usePreviewSportsCashout: () => ({ data: undefined, isLoading: false, isFetching: false }),
+  useCashoutSportsBet: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  usePreviewSportsPartialCashout: () => ({
+    data: undefined,
+    isLoading: false,
+    isFetching: false,
+  }),
+  usePartialCashoutSportsBet: () => ({ mutateAsync: vi.fn(), isPending: false }),
+}));
+
+vi.mock('@tanstack/react-query', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@tanstack/react-query')>();
+  return {
+    ...actual,
+    useQuery: (...args: unknown[]) => useQueryMock(...args),
+  };
+});
 
 vi.mock('@/features/sports/use-sports-fiat-hint', () => ({
   useSportsFiatHint: useSportsFiatHintMock,
@@ -76,6 +96,9 @@ function makeSlipState(overrides: Partial<ReturnType<SportsPageControllerView['s
     setStake: vi.fn(),
     stakeCurrency: 'USDT' as const,
     setStakeCurrency: vi.fn(),
+    oddsAcceptance: 'accept_better' as const,
+    setOddsAcceptance: vi.fn(),
+    oddsAcceptancePolicies: ['strict', 'accept_any', 'accept_better'] as const,
     toggleSelection: vi.fn(),
     removeSelection: vi.fn(),
     clearSlip: vi.fn(),
@@ -133,6 +156,12 @@ function makeEngine(overrides: Partial<SportsPageControllerView> = {}): SportsPa
 describe('SportsPage', () => {
   beforeEach(() => {
     useSportsPageControllerMock.mockReset();
+    useQueryMock.mockReturnValue({
+      data: 'platinum',
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    });
   });
 
   it('renders sportsbook board and slip rail', () => {
@@ -212,7 +241,7 @@ describe('SportsPage', () => {
     );
   });
 
-  it('renders vip stub with eligibility strip and defer empty-state', () => {
+  it('renders vip room with eligibility strip and shared fixture board', () => {
     useSportsPageControllerMock.mockReturnValue(
       makeEngine({
         mode: 'vip',
@@ -227,10 +256,33 @@ describe('SportsPage', () => {
 
     expect(screen.getByTestId('sports-vip-stub')).toBeInTheDocument();
     expect(screen.getByTestId('sports-vip-eligibility-strip')).toBeInTheDocument();
-    expect(screen.getByTestId('sports-vip-defer')).toBeInTheDocument();
-    expect(screen.getByText('sports.vip.defer.title')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-vip-board')).toBeInTheDocument();
+    expect(screen.queryByTestId('sports-vip-defer')).not.toBeInTheDocument();
     expect(screen.getByText('sports.vip.eligibility.title')).toBeInTheDocument();
-    expect(screen.queryByTestId('sports-bet-slip-panel')).not.toBeInTheDocument();
+    expect(screen.getByTestId('sports-bet-slip-panel')).toBeInTheDocument();
+  });
+
+  it('renders vip ineligible empty when tier is below platinum', () => {
+    useQueryMock.mockReturnValue({
+      data: 'gold',
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+    useSportsPageControllerMock.mockReturnValue(
+      makeEngine({
+        mode: 'vip',
+      }),
+    );
+
+    render(
+      <I18nProvider>
+        <SportsPage mode="vip" />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('sports-vip-ineligible')).toBeInTheDocument();
+    expect(screen.queryByTestId('sports-vip-board')).not.toBeInTheDocument();
   });
 
   it('renders rules sections without slip rail', () => {

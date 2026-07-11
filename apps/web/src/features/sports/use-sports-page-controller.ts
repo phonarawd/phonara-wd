@@ -181,6 +181,7 @@ export function useSportsPageController(
         currency: slip.stakeCurrency,
         idempotencyKey: crypto.randomUUID(),
         betKind: slip.selections.length > 1 ? 'combo' : 'single',
+        oddsAcceptance: slip.oddsAcceptance,
       });
       setConfirmOpen(false);
       slip.clearSlip();

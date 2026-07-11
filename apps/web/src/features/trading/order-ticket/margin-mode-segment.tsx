@@ -25,7 +25,7 @@ export type MarginModeSegmentProps = {
   className?: string;
 };
 
-/** Account-level isolated/cross selector — hedge dual-side toggle stays built_hidden (E21). */
+/** Account-level isolated/cross selector — hedge dual-side lives in PositionModeSegment (E21 UI). */
 export function MarginModeSegment({
   marginMode,
   setMarginMode,

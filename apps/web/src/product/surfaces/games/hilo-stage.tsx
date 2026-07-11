@@ -17,6 +17,7 @@ import {
 import { useT } from '@/product/i18n';
 import { usePrefersReducedMotion } from '@/product/primitives/lib/use-prefers-reduced-motion';
 import { cn } from '@/product/primitives/lib/cn';
+import { Button } from '@/product/primitives/button';
 import { Card, CardBody } from '@/product/primitives/card';
 import type { CasinoStageHandle, CasinoStagePhase } from '@/product/surfaces/games/casino-stage-types';
 
@@ -25,6 +26,12 @@ export type HiloStageProps = {
   guesses: HiLoGuess[];
   onGuessesChange?: (next: HiLoGuess[]) => void;
   selectionDisabled?: boolean;
+  /** E23 progressive — per-card guess RPC. */
+  liveMode?: boolean;
+  liveSessionActive?: boolean;
+  liveCashoutBusy?: boolean;
+  onLiveGuess?: (guess: HiLoGuess) => void;
+  onLiveCashout?: () => void;
   className?: string;
 };
 
@@ -37,11 +44,22 @@ function asGuesses(raw: unknown): HiLoGuess[] {
 
 /**
  * Hi-Lo L1 — card hero + HI/LO/SKIP thumbs + streak chip (§23.2 · §23.8).
- * Guesses are pre-bet queue only; card flips replay RPC result — no live per-card betting.
+ * One-shot: pre-bet guess queue. E23 liveMode: per-card progressive guess.
  */
 export const HiloStage = forwardRef<CasinoStageHandle, HiloStageProps>(
   function HiloStage(
-    { startCard, guesses: guessesProp, onGuessesChange, selectionDisabled, className },
+    {
+      startCard,
+      guesses: guessesProp,
+      onGuessesChange,
+      selectionDisabled,
+      liveMode = false,
+      liveSessionActive = false,
+      liveCashoutBusy = false,
+      onLiveGuess,
+      onLiveCashout,
+      className,
+    },
     ref,
   ) {
     const t = useT();
@@ -128,6 +146,11 @@ export const HiloStage = forwardRef<CasinoStageHandle, HiloStageProps>(
     );
 
     const appendGuess = (guess: HiLoGuess) => {
+      if (liveMode && liveSessionActive && onLiveGuess) {
+        if (selectionDisabled || phase === 'replaying') return;
+        onLiveGuess(guess);
+        return;
+      }
       if (selectionDisabled || phase === 'replaying' || !onGuessesChange) return;
       if (guesses.length >= HILO_MAX_GUESSES) return;
       onGuessesChange([...guesses, guess]);
@@ -163,6 +186,7 @@ export const HiloStage = forwardRef<CasinoStageHandle, HiloStageProps>(
         className={cn(className)}
         data-testid="casino-hilo-stage"
         data-stage-phase={phase}
+        data-live-mode={liveMode ? 'true' : 'false'}
         data-won={outcome ? (won ? 'true' : 'false') : undefined}
         data-guess-count={guesses.length}
       >
@@ -268,6 +292,19 @@ export const HiloStage = forwardRef<CasinoStageHandle, HiloStageProps>(
           ) : (
             <p className="text-foreground-muted m-0 text-sm">{t('games.hilo.guessPrompt')}</p>
           )}
+
+          {liveMode && liveSessionActive && onLiveCashout ? (
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              disabled={liveCashoutBusy || guesses.length === 0}
+              onClick={onLiveCashout}
+              data-testid="casino-hilo-live-cashout"
+            >
+              {t('casino.progressive.cashout')}
+            </Button>
+          ) : null}
         </CardBody>
       </Card>
     );

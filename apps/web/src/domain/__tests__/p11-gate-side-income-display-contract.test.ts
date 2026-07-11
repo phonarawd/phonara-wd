@@ -82,11 +82,11 @@ describe('p11-gate-side-income-display-contract §12.19.6 · YAML #221', () => {
     expect(walletVisible.map((item) => item.to)).toContain('/wallet/redeem');
   });
 
-  it('keeps referral leaderboard as deferred STUB companion', () => {
+  it('keeps referral leaderboard as companion route (GATE-unlocked · E5 wire pending)', () => {
     expect([...P11_GATE_SIDE_INCOME_STUB_ROUTES]).toEqual(['/referral/leaderboard']);
     expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/referral/leaderboard')).toBe(true);
     expect(assertRegisteredFullPath('/referral/leaderboard')).toBe('/referral/leaderboard');
-    expect(shouldDeferReferralLeaderboard()).toBe(true);
+    expect(shouldDeferReferralLeaderboard()).toBe(false);
   });
 
   it('requires GATE artifacts and owner test paths on disk', () => {

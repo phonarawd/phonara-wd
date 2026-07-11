@@ -246,10 +246,10 @@ export const REPEATABLE_MISSION_MATRIX: Readonly<MissionMatrixRow[]> = [
     uiId: TIER_KEEP_STATUS_UI_ID,
     rpc: 'tier_keep_status',
     lane: 'tier',
-    engine: 'partial',
+    engine: 'exists',
     exposure: 'live',
     abuseGate:
-      'E1 decay engine — _repeatable_progress 0 fixed · claim disabled until ew-e1-engine-decay-rpc',
+      'E1 ew-e1-decay-wave — maintenance progress · monthly window claim · idempotent client_request_id',
   },
 ];
 

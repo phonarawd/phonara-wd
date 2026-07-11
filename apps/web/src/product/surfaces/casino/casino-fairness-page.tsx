@@ -1,8 +1,3 @@
-import { useEffect } from 'react';
-import { Link } from '@tanstack/react-router';
-import { ShieldCheck } from 'lucide-react';
-import type { GameCode } from '@phonara/game-engine';
-
 import {
   CASINO_FAIRNESS_CLIENT_SEED_LABEL_KEY,
   CASINO_FAIRNESS_CLIENT_SEED_MODE,
@@ -13,8 +8,11 @@ import {
   CASINO_FAIRNESS_HERO_TITLE_KEY,
   CASINO_FAIRNESS_INVALID_JSON_KEY,
   CASINO_FAIRNESS_LIMITS_CLIENT_SEED_KEY,
+  CASINO_FAIRNESS_LIMITS_CLIENT_SEED_LIVE_KEY,
   CASINO_FAIRNESS_LIMITS_NONCE_KEY,
+  CASINO_FAIRNESS_LIMITS_NONCE_LIVE_KEY,
   CASINO_FAIRNESS_LIMITS_ROTATION_KEY,
+  CASINO_FAIRNESS_LIMITS_ROTATION_LIVE_KEY,
   CASINO_FAIRNESS_LIMITS_TITLE_KEY,
   CASINO_FAIRNESS_MISSING_FIELDS_KEY,
   CASINO_FAIRNESS_NONCE_LABEL_KEY,
@@ -23,7 +21,11 @@ import {
   CASINO_FAIRNESS_RESULT_OUTCOME_MATCH_KEY,
   CASINO_FAIRNESS_RESULT_OUTCOME_MISMATCH_KEY,
   CASINO_FAIRNESS_RESULT_OUTCOME_SKIPPED_KEY,
+  CASINO_FAIRNESS_SEED_CONTROLS_TITLE_KEY,
+  CASINO_FAIRNESS_SEED_NEXT_NONCE_KEY,
+  CASINO_FAIRNESS_SEED_ROTATE_KEY,
   CASINO_FAIRNESS_SEED_ROTATION_UI_EXPOSED,
+  CASINO_FAIRNESS_SEED_SAVE_KEY,
   CASINO_FAIRNESS_SELECTION_LABEL_KEY,
   CASINO_FAIRNESS_SEO_TITLE_KEY,
   CASINO_FAIRNESS_SERVER_HASH_LABEL_KEY,
@@ -35,6 +37,12 @@ import { CASINO_LOBBY_ROUTE } from '@/domain/casino-lobby-display-contract';
 import { CASINO_E2E_TESTIDS } from '@/features/casino/casino-e2e-testids';
 import { GAME_BY_CODE } from '@/features/casino/game-config';
 import { useCasinoFairnessVerifier } from '@/features/casino/use-casino-fairness-verifier';
+import {
+  useGamePfState,
+  useRotateGameServerSeed,
+  useSetGameClientSeed,
+} from '@/features/casino/use-game-pf-state';
+import { translateError } from '@/lib/translate-error';
 import { useT } from '@/product/i18n';
 import { Button } from '@/product/primitives/button';
 import { Card, CardBody, CardHeader, CardTitle } from '@/product/primitives/card';
@@ -46,7 +54,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/product/primitives/select';
+import { productToast } from '@/product/primitives/toast-zone';
 import type { MessageKey } from '@phonara/i18n';
+import { useEffect, useState } from 'react';
+import { Link } from '@tanstack/react-router';
+import { ShieldCheck } from 'lucide-react';
+import type { GameCode } from '@phonara/game-engine';
 
 function gameLabelKey(code: GameCode): MessageKey {
   return GAME_BY_CODE[code].labelKey;
@@ -73,9 +86,53 @@ export function CasinoFairnessPage() {
     runVerify,
   } = verifier;
 
+  const seedControlsEnabled = CASINO_FAIRNESS_SEED_ROTATION_UI_EXPOSED;
+  const pfState = useGamePfState(seedControlsEnabled);
+  const setClientSeedMutation = useSetGameClientSeed();
+  const rotateSeedMutation = useRotateGameServerSeed();
+  const [accountClientSeed, setAccountClientSeed] = useState('');
+
   useEffect(() => {
     document.title = t(CASINO_FAIRNESS_SEO_TITLE_KEY);
   }, [t]);
+
+  useEffect(() => {
+    if (pfState.data?.client_seed) {
+      setAccountClientSeed(pfState.data.client_seed);
+    }
+  }, [pfState.data?.client_seed]);
+
+  const limitsClientKey = seedControlsEnabled
+    ? CASINO_FAIRNESS_LIMITS_CLIENT_SEED_LIVE_KEY
+    : CASINO_FAIRNESS_LIMITS_CLIENT_SEED_KEY;
+  const limitsNonceKey = seedControlsEnabled
+    ? CASINO_FAIRNESS_LIMITS_NONCE_LIVE_KEY
+    : CASINO_FAIRNESS_LIMITS_NONCE_KEY;
+  const limitsRotationKey = seedControlsEnabled
+    ? CASINO_FAIRNESS_LIMITS_ROTATION_LIVE_KEY
+    : CASINO_FAIRNESS_LIMITS_ROTATION_KEY;
+
+  const onSaveClientSeed = () => {
+    void (async () => {
+      try {
+        await setClientSeedMutation.mutateAsync(accountClientSeed);
+        productToast.show({ zone: 'strict', key: 'common.save' });
+      } catch (error) {
+        productToast.show({ zone: 'strict', key: translateError(error) });
+      }
+    })();
+  };
+
+  const onRotateSeed = () => {
+    void (async () => {
+      try {
+        await rotateSeedMutation.mutateAsync(accountClientSeed || null);
+        productToast.show({ zone: 'strict', key: CASINO_FAIRNESS_SEED_ROTATE_KEY });
+      } catch (error) {
+        productToast.show({ zone: 'strict', key: translateError(error) });
+      }
+    })();
+  };
 
   return (
     <section
@@ -140,16 +197,78 @@ export function CasinoFairnessPage() {
         </CardHeader>
         <CardBody className="flex flex-col gap-2 pt-0">
           <p className="text-foreground-muted m-0 text-sm leading-relaxed">
-            {t(CASINO_FAIRNESS_LIMITS_CLIENT_SEED_KEY)}
+            {t(limitsClientKey)}
           </p>
           <p className="text-foreground-muted m-0 text-sm leading-relaxed">
-            {t(CASINO_FAIRNESS_LIMITS_NONCE_KEY)}
+            {t(limitsNonceKey)}
           </p>
           <p className="text-foreground-muted m-0 text-sm leading-relaxed">
-            {t(CASINO_FAIRNESS_LIMITS_ROTATION_KEY)}
+            {t(limitsRotationKey)}
           </p>
         </CardBody>
       </Card>
+
+      {seedControlsEnabled ? (
+        <Card data-testid="casino-fairness-seed-controls">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">{t(CASINO_FAIRNESS_SEED_CONTROLS_TITLE_KEY)}</CardTitle>
+          </CardHeader>
+          <CardBody className="flex flex-col gap-4 pt-0">
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="casino-fairness-account-client-seed"
+                className="text-foreground text-sm font-medium"
+              >
+                {t(CASINO_FAIRNESS_CLIENT_SEED_LABEL_KEY)}
+              </label>
+              <Input
+                id="casino-fairness-account-client-seed"
+                value={accountClientSeed}
+                onChange={(event) => setAccountClientSeed(event.target.value)}
+                autoComplete="off"
+                spellCheck={false}
+                className="font-mono text-sm"
+                data-testid="casino-fairness-account-client-seed"
+              />
+            </div>
+            <p
+              className="text-foreground-muted m-0 text-sm tabular-nums"
+              data-testid="casino-fairness-next-nonce"
+            >
+              {t(CASINO_FAIRNESS_SEED_NEXT_NONCE_KEY)}:{' '}
+              {pfState.data?.next_nonce ?? '—'}
+            </p>
+            <p
+              className="text-foreground-muted m-0 truncate font-mono text-xs"
+              data-testid="casino-fairness-account-server-hash"
+            >
+              {pfState.data?.server_seed_hash ?? '—'}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                loading={setClientSeedMutation.isPending}
+                onClick={onSaveClientSeed}
+                data-testid="casino-fairness-seed-save"
+              >
+                {t(CASINO_FAIRNESS_SEED_SAVE_KEY)}
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
+                loading={rotateSeedMutation.isPending}
+                onClick={onRotateSeed}
+                data-testid="casino-fairness-seed-rotate"
+              >
+                {t(CASINO_FAIRNESS_SEED_ROTATE_KEY)}
+              </Button>
+            </div>
+          </CardBody>
+        </Card>
+      ) : null}
 
       <Card data-testid={CASINO_E2E_TESTIDS.fairnessVerifier}>
         <CardHeader className="pb-2">

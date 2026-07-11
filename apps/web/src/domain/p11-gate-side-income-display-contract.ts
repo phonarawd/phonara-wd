@@ -146,8 +146,11 @@ export function assertP11GateSideIncomeSync(): void {
     throw new Error('p11-gate-side-income: leaderboard STUB route drift');
   }
 
-  if (!shouldDeferReferralLeaderboard()) {
-    throw new Error('p11-gate-side-income: leaderboard must stay deferred STUB until engine');
+  // E3 GATE unlocks engine path — defer stub lifts. Rank list live wire = E5.
+  if (shouldDeferReferralLeaderboard()) {
+    throw new Error(
+      'p11-gate-side-income: leaderboard must be GATE-unlocked (referralLeaderboardLive)',
+    );
   }
 
   if (!P11_EARN_SIDE_SURFACES_ROUTES.includes('/referral/leaderboard')) {

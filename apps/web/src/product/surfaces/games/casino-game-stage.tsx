@@ -23,11 +23,24 @@ import { PlinkoStage } from '@/product/surfaces/games/plinko-stage';
 import { RouletteStage } from '@/product/surfaces/games/roulette-stage';
 import type { CasinoStageHandle } from '@/product/surfaces/games/casino-stage-types';
 
+export type CasinoGameStageLiveControls = {
+  liveMode: boolean;
+  liveSessionActive?: boolean;
+  liveCashoutBusy?: boolean;
+  liveMultiplier?: string | null;
+  liveRoundStatus?: string | null;
+  onLiveCashout?: () => void;
+  onLiveRevealCell?: (cell: number) => void;
+  onLiveGuess?: (guess: HiLoGuess) => void;
+  onLiveMove?: (move: BlackjackMove) => void;
+};
+
 export type CasinoGameStageProps = {
   gameCode: GameCode;
   selection: Record<string, unknown>;
   onSelectionChange?: (next: Record<string, unknown>) => void;
   selectionDisabled?: boolean;
+  liveControls?: CasinoGameStageLiveControls;
 };
 
 function asNumberArray(value: unknown): number[] {
@@ -69,15 +82,21 @@ function asBlackjackActions(value: unknown): Array<{ seat: number; move: Blackja
  */
 export const CasinoGameStage = forwardRef<CasinoStageHandle, CasinoGameStageProps>(
   function CasinoGameStage(
-    { gameCode, selection, onSelectionChange, selectionDisabled },
+    { gameCode, selection, onSelectionChange, selectionDisabled, liveControls },
     ref,
   ) {
+    const live = liveControls?.liveMode === true;
     if (isCasinoBatchAGame(gameCode)) {
       if (gameCode === 'crash') {
         return (
           <CrashStage
             ref={ref}
             autoCashout={String(selection['autoCashout'] ?? '')}
+            liveMode={live}
+            liveMultiplier={liveControls?.liveMultiplier}
+            liveRoundStatus={liveControls?.liveRoundStatus}
+            liveCashoutBusy={liveControls?.liveCashoutBusy}
+            onLiveCashout={liveControls?.onLiveCashout}
           />
         );
       }
@@ -102,6 +121,11 @@ export const CasinoGameStage = forwardRef<CasinoStageHandle, CasinoGameStageProp
             mineCount={Number.isFinite(mineCount) ? mineCount : 3}
             revealedCells={asNumberArray(selection['revealedCells'])}
             selectionDisabled={selectionDisabled}
+            liveMode={live}
+            liveSessionActive={liveControls?.liveSessionActive}
+            liveCashoutBusy={liveControls?.liveCashoutBusy}
+            onLiveRevealCell={liveControls?.onLiveRevealCell}
+            onLiveCashout={liveControls?.onLiveCashout}
             onRevealedCellsChange={
               onSelectionChange
                 ? (next) => onSelectionChange({ ...selection, revealedCells: next })
@@ -119,6 +143,11 @@ export const CasinoGameStage = forwardRef<CasinoStageHandle, CasinoGameStageProp
           startCard={startCard}
           guesses={asHiloGuesses(selection['guesses'])}
           selectionDisabled={selectionDisabled}
+          liveMode={live}
+          liveSessionActive={liveControls?.liveSessionActive}
+          liveCashoutBusy={liveControls?.liveCashoutBusy}
+          onLiveGuess={liveControls?.onLiveGuess}
+          onLiveCashout={liveControls?.onLiveCashout}
           onGuessesChange={
             onSelectionChange
               ? (next) => onSelectionChange({ ...selection, guesses: next })
@@ -187,6 +216,9 @@ export const CasinoGameStage = forwardRef<CasinoStageHandle, CasinoGameStageProp
             ref={ref}
             actions={asBlackjackActions(selection['actions'])}
             selectionDisabled={selectionDisabled}
+            liveMode={live}
+            liveSessionActive={liveControls?.liveSessionActive}
+            onLiveMove={liveControls?.onLiveMove}
             onActionsChange={
               onSelectionChange
                 ? (next) => onSelectionChange({ ...selection, actions: next })

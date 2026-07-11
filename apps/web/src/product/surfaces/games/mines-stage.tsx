@@ -19,6 +19,7 @@ import {
 import { useT } from '@/product/i18n';
 import { usePrefersReducedMotion } from '@/product/primitives/lib/use-prefers-reduced-motion';
 import { cn } from '@/product/primitives/lib/cn';
+import { Button } from '@/product/primitives/button';
 import { Card, CardBody } from '@/product/primitives/card';
 import { HelpTip } from '@/product/primitives/help-tip';
 import type { CasinoStageHandle, CasinoStagePhase } from '@/product/surfaces/games/casino-stage-types';
@@ -28,6 +29,12 @@ export type MinesStageProps = {
   revealedCells: number[];
   onRevealedCellsChange?: (next: number[]) => void;
   selectionDisabled?: boolean;
+  /** E23 progressive — tile reveal + mid cash-out via RPC. */
+  liveMode?: boolean;
+  liveSessionActive?: boolean;
+  liveCashoutBusy?: boolean;
+  onLiveRevealCell?: (cell: number) => void;
+  onLiveCashout?: () => void;
   className?: string;
 };
 
@@ -48,11 +55,22 @@ function normalizeCells(cells: number[]): number[] {
 
 /**
  * Mines L1 — 5×5 tile grid + multiplier ladder (§23.2 · §23.8).
- * Pre-bet tile pick only; cascade reveal is RPC replay — no mid-round cash-out.
+ * One-shot: pre-bet picks + cascade replay. E23 liveMode: progressive step/cashout.
  */
 export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(
   function MinesStage(
-    { mineCount, revealedCells, onRevealedCellsChange, selectionDisabled, className },
+    {
+      mineCount,
+      revealedCells,
+      onRevealedCellsChange,
+      selectionDisabled,
+      liveMode = false,
+      liveSessionActive = false,
+      liveCashoutBusy = false,
+      onLiveRevealCell,
+      onLiveCashout,
+      className,
+    },
     ref,
   ) {
     const t = useT();
@@ -153,6 +171,11 @@ export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(
     );
 
     const toggleCell = (index: number) => {
+      if (liveMode && liveSessionActive && onLiveRevealCell) {
+        if (selectionDisabled || phase === 'replaying') return;
+        onLiveRevealCell(index);
+        return;
+      }
       if (selectionDisabled || phase === 'replaying' || !onRevealedCellsChange) return;
       const set = new Set(picked);
       if (set.has(index)) {
@@ -197,6 +220,7 @@ export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(
         className={cn(className)}
         data-testid="casino-mines-stage"
         data-stage-phase={phase}
+        data-live-mode={liveMode ? 'true' : 'false'}
         data-hit-mine={outcome ? (outcome.hitMine ? 'true' : 'false') : undefined}
         data-won={won === null ? undefined : won ? 'true' : 'false'}
       >
@@ -277,7 +301,19 @@ export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(
             })}
           </div>
 
-          {/* §23.2.1 — no live mid-round cash-out control */}
+          {liveMode && liveSessionActive && onLiveCashout ? (
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              className="self-center"
+              disabled={liveCashoutBusy || picked.length === 0}
+              onClick={onLiveCashout}
+              data-testid="casino-mines-live-cashout"
+            >
+              {t('casino.progressive.cashout')}
+            </Button>
+          ) : null}
         </CardBody>
       </Card>
     );

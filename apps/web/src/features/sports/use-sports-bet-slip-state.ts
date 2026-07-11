@@ -8,6 +8,11 @@ import { isPositive, money } from '@phonara/money';
 
 import { resolveSportsDebitBucketDisplayKey } from '@/domain/sports-debit-bucket-display';
 import type { SportsStakeCurrency } from '@/domain/sports-page-display-contract';
+import {
+  EW_E22_ODDS_ACCEPTANCE_POLICIES,
+  type EwE22OddsAcceptancePolicy,
+} from '@/domain/ew-e22-sports-parity-display-contract';
+import { EW_E22_UI_DEFAULT_ODDS_ACCEPTANCE } from '@/domain/ew-e22-ui-sports-parity-unlocks-display-contract';
 
 export type SportsSlipSelection = {
   readonly outcomeId: string;
@@ -19,10 +24,15 @@ export type SportsSlipSelection = {
   readonly marketType: string;
 };
 
+export type SportsOddsAcceptancePolicy = EwE22OddsAcceptancePolicy;
+
 export function useSportsBetSlipState(phonBonusAvailable: string | null | undefined) {
   const [selections, setSelections] = useState<SportsSlipSelection[]>([]);
   const [stake, setStake] = useState('');
   const [stakeCurrency, setStakeCurrency] = useState<SportsStakeCurrency>('USDT');
+  const [oddsAcceptance, setOddsAcceptance] = useState<SportsOddsAcceptancePolicy>(
+    EW_E22_UI_DEFAULT_ODDS_ACCEPTANCE,
+  );
 
   const toggleSelection = useCallback((leg: SportsSlipSelection) => {
     setSelections((prev) => {
@@ -102,6 +112,9 @@ export function useSportsBetSlipState(phonBonusAvailable: string | null | undefi
     setStake,
     stakeCurrency,
     setStakeCurrency,
+    oddsAcceptance,
+    setOddsAcceptance,
+    oddsAcceptancePolicies: EW_E22_ODDS_ACCEPTANCE_POLICIES,
     toggleSelection,
     removeSelection,
     clearSlip,

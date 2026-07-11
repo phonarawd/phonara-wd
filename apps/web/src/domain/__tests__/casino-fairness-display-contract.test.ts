@@ -28,12 +28,16 @@ describe('casino-fairness-display-contract (p10-page-casino-fairness)', () => {
     expect(resolveCasinoFairnessPfCtaEnabled()).toBe(true);
   });
 
-  it('locks §23.2.1 PF limits — nonce=1 · per-bet client seed · no rotation UI', () => {
+  it('locks §23.2.1 PF limits — one-shot nonce=1 · E23 account PF when live', () => {
     expect(CASINO_FAIRNESS_NONCE).toBe(1);
-    expect(CASINO_FAIRNESS_CLIENT_SEED_MODE).toBe('per_bet');
-    expect(CASINO_FAIRNESS_SEED_ROTATION_UI_EXPOSED).toBe(false);
-    expect(CASINO_FAIRNESS_FORBIDDEN_UI).toContain('seed_rotation_controls');
-    expect(CASINO_FAIRNESS_FORBIDDEN_UI).toContain('nonce_increment_controls');
+    if (CASINO_FAIRNESS_SEED_ROTATION_UI_EXPOSED) {
+      expect(CASINO_FAIRNESS_CLIENT_SEED_MODE).toBe('account_or_per_bet');
+      expect(CASINO_FAIRNESS_FORBIDDEN_UI).toHaveLength(0);
+    } else {
+      expect(CASINO_FAIRNESS_CLIENT_SEED_MODE).toBe('per_bet');
+      expect(CASINO_FAIRNESS_FORBIDDEN_UI).toContain('seed_rotation_controls');
+      expect(CASINO_FAIRNESS_FORBIDDEN_UI).toContain('nonce_increment_controls');
+    }
   });
 
   it('covers all 12 engine game codes for the verifier', () => {

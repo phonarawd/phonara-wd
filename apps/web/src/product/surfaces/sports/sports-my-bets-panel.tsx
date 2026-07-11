@@ -2,6 +2,8 @@ import { MoneyDisplay } from '@/product/primitives/money-display';
 import { Skeleton } from '@/product/primitives/skeleton';
 import type { MessageKey } from '@phonara/i18n';
 
+import { SportsCashoutCard } from './sports-cashout-card';
+
 type SportsBetRow = {
   bet_id?: string;
   status?: string;
@@ -88,6 +90,15 @@ export function SportsMyBetsPanel({
                   className="inline text-xs"
                 />
               </p>
+            ) : null}
+            {row.bet_id ? (
+              <SportsCashoutCard
+                betId={row.bet_id}
+                betStatus={row.status}
+                stake={row.stake}
+                currency={currency}
+                t={t}
+              />
             ) : null}
           </article>
         );

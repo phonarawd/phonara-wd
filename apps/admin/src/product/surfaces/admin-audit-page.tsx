@@ -70,6 +70,7 @@ export function AdminAuditPage() {
     auditFilters,
     setAuditFilters,
     refreshAuditFeed,
+    exportAuditCsv,
     auditDomains,
     isLoading,
     isError,
@@ -139,16 +140,15 @@ export function AdminAuditPage() {
           </p>
           <p className="text-foreground-muted m-0 text-sm">{t('admin.audit.description')}</p>
         </div>
-        <Button
-          variant="outline"
-          size="md"
-          loading={isFetching}
-          onClick={refreshAuditFeed}
-          className="shrink-0"
-        >
-          <RefreshCw className={cn('size-4', isFetching && 'animate-spin')} aria-hidden />
-          {t('admin.audit.feed.refresh')}
-        </Button>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <Button variant="outline" size="md" onClick={exportAuditCsv}>
+            {t('admin.audit.feed.exportCsv')}
+          </Button>
+          <Button variant="outline" size="md" loading={isFetching} onClick={refreshAuditFeed}>
+            <RefreshCw className={cn('size-4', isFetching && 'animate-spin')} aria-hidden />
+            {t('admin.audit.feed.refresh')}
+          </Button>
+        </div>
       </section>
 
       <HowItWorks

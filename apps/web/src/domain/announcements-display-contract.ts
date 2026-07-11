@@ -1,15 +1,18 @@
 /**
  * `/announcements` — CMS notice list (P12 · `rpc_list_cms_content` kind=notice).
  * Display RPC rows only — no client CMS invent.
+ * E3 GATE (`announcementsFull`) = targeting-aware list path unlocked.
  */
 
 import type { MessageKey } from '@phonara/i18n';
 
-import { CMS_LIST_RPC } from './cms-banners-display-contract';
+import { LAUNCH_GATES } from '../lib/launch-gates';
+import { CMS_LIST_RPC, CMS_TARGETING_COLUMNS } from './cms-banners-display-contract';
 
 export const ANNOUNCEMENTS_ROUTE = '/announcements' as const;
 export const ANNOUNCEMENTS_LIST_RPC = CMS_LIST_RPC;
 export const ANNOUNCEMENTS_KIND = 'notice' as const;
+export const ANNOUNCEMENTS_FULL_UNLOCK_TODO = 'ew-e3-gate-cms-promotions' as const;
 
 export const ANNOUNCEMENTS_SEO_TITLE_KEY =
   'announcements.page.head.title' as const satisfies MessageKey;
@@ -27,6 +30,10 @@ export type CmsNoticeRpcRow = {
   starts_at: string | null;
   ends_at: string | null;
   status: string;
+  /** E3 targeting — optional until admin publishes audience/tier filters. */
+  audience?: string | null;
+  min_tier?: string | null;
+  max_tier?: string | null;
 };
 
 export type AnnouncementDisplayRow = {
@@ -47,6 +54,10 @@ export function mapRpcNoticeRow(row: CmsNoticeRpcRow): AnnouncementDisplayRow {
   };
 }
 
+export function isAnnouncementsFullUnlocked(): boolean {
+  return LAUNCH_GATES.announcementsFull === true;
+}
+
 export function assertAnnouncementsContractSync(): void {
   if (ANNOUNCEMENTS_ROUTE !== '/announcements') {
     throw new Error('announcements: route drift');
@@ -56,5 +67,14 @@ export function assertAnnouncementsContractSync(): void {
   }
   if (ANNOUNCEMENTS_LIST_RPC !== 'rpc_list_cms_content') {
     throw new Error('announcements: RPC drift');
+  }
+  if (ANNOUNCEMENTS_FULL_UNLOCK_TODO !== 'ew-e3-gate-cms-promotions') {
+    throw new Error('announcements: full unlock todo drift');
+  }
+  if (!isAnnouncementsFullUnlocked()) {
+    throw new Error('announcements: E3 GATE full unlock required');
+  }
+  if (CMS_TARGETING_COLUMNS.length !== 4) {
+    throw new Error('announcements: CMS targeting columns required for full unlock');
   }
 }

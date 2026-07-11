@@ -1,7 +1,14 @@
 import type { MessageKey } from '@phonara/i18n';
 
 /** Earn VIP ladder — matches `earn_vip_tier` enum order (display-only). */
-export const ADMIN_EARN_VIP_TIERS = ['bronze', 'silver', 'gold', 'platinum', 'diamond'] as const;
+export const ADMIN_EARN_VIP_TIERS = [
+  'bronze',
+  'silver',
+  'gold',
+  'platinum',
+  'diamond',
+  'prime_elite',
+] as const;
 
 export type AdminEarnVipTier = (typeof ADMIN_EARN_VIP_TIERS)[number];
 
@@ -44,6 +51,7 @@ const TIER_LABEL_KEYS: Record<AdminEarnVipTier, MessageKey> = {
   gold: 'admin.tiers.tier.gold',
   platinum: 'admin.tiers.tier.platinum',
   diamond: 'admin.tiers.tier.diamond',
+  prime_elite: 'admin.tiers.tier.prime_elite',
 };
 
 /** Engine `_earn_limit_*` snapshot — display-only (§29.2 R0 · no client recompute). */
@@ -91,6 +99,14 @@ const EARN_MISSION_LIMITS: Record<
     dailyQuiz: '3',
     referralMultiplier: '2.0',
   },
+  prime_elite: {
+    attendance: '1',
+    roulette: '5',
+    referralPayout: '50',
+    viralShare: '12',
+    dailyQuiz: '5',
+    referralMultiplier: '3.0',
+  },
 };
 
 const DECAY_POLICY_ROWS: ReadonlyArray<{
@@ -122,6 +138,11 @@ const DECAY_POLICY_ROWS: ReadonlyArray<{
     tier: 'diamond',
     keepConditionKey: 'admin.tiers.decay.keep.diamond',
     downgradeTargetKey: 'admin.tiers.decay.target.platinum',
+  },
+  {
+    tier: 'prime_elite',
+    keepConditionKey: 'admin.tiers.decay.keep.prime_elite',
+    downgradeTargetKey: 'admin.tiers.decay.target.diamond',
   },
 ];
 

@@ -12,7 +12,7 @@ import type { Tier } from '@phonara/shared-types';
 export const EARN_HUB_STATUS_RPC = 'rpc_get_earn_hub_status' as const;
 export const GOLDEN_EARTH_STATUS_RPC = 'rpc_get_golden_earth_status' as const;
 
-/** Proposed for Option B only — operator decision required (§18.1 · engine freeze). */
+/** Option B engine RPC — shipped in E4 `ew-e4-tier-option-b-wave`. */
 export const PROPOSED_UNIFIED_TIER_SUMMARY_RPC = 'rpc_get_user_tier_summary' as const;
 
 export const EARN_VIP_TABLE = 'user_earn_vip' as const;
@@ -37,9 +37,19 @@ export const EARN_VIP_TIER_ORDER = [
   'gold',
   'platinum',
   'diamond',
+  'prime_elite',
 ] as const satisfies readonly Tier[];
 
 export type EarnVipTier = (typeof EARN_VIP_TIER_ORDER)[number];
+
+/** XP auto-ladder — Prime Elite is invite/admin only (never XP-promoted). */
+export const EARN_VIP_AUTO_LADDER = [
+  'bronze',
+  'silver',
+  'gold',
+  'platinum',
+  'diamond',
+] as const satisfies readonly EarnVipTier[];
 
 /** KYC compliance lane — not a VIP badge; gates withdrawal/KYC only. */
 export const KYC_TIER_ORDER = [
@@ -57,7 +67,9 @@ export const AFFILIATE_TIER_ORDER = ['standard', 'silver', 'gold', 'platinum', '
 export type AffiliateTierCode = (typeof AFFILIATE_TIER_ORDER)[number];
 
 /** Client-only PHON balance heuristic — forbidden as VIP display source in net-new UI. */
-export const PHON_HEURISTIC_THRESHOLDS: Readonly<Record<Exclude<Tier, 'bronze'>, string>> = {
+export const PHON_HEURISTIC_THRESHOLDS: Readonly<
+  Record<Exclude<Tier, 'bronze' | 'prime_elite'>, string>
+> = {
   silver: '1000',
   gold: '10000',
   platinum: '50000',
@@ -65,7 +77,9 @@ export const PHON_HEURISTIC_THRESHOLDS: Readonly<Record<Exclude<Tier, 'bronze'>,
 };
 
 /** Engine XP thresholds for next Earn VIP tier (`rpc_get_earn_hub_status`). */
-export const EARN_VIP_XP_NEXT_TIER: Readonly<Record<Exclude<Tier, 'diamond'>, number>> = {
+export const EARN_VIP_XP_NEXT_TIER: Readonly<
+  Record<Exclude<Tier, 'diamond' | 'prime_elite'>, number>
+> = {
   bronze: 5000,
   silver: 25000,
   gold: 100000,
@@ -114,7 +128,7 @@ export const TIER_SOURCE_REGISTRY: Readonly<
   earn_vip_engine: {
     engine: 'exists',
     storage: `${EARN_VIP_TABLE}.tier · earn_vip_tier enum`,
-    rpc: EARN_HUB_STATUS_RPC,
+    rpc: `${EARN_HUB_STATUS_RPC} · ${PROPOSED_UNIFIED_TIER_SUMMARY_RPC}`,
     vipBadgeEligible: true,
     moneyPath: false,
   },
@@ -183,18 +197,18 @@ export const TIER_GATING_BY_DOMAIN: Readonly<
   },
   sports_bet_policy: {
     tierSource: 'earn_vip_engine',
-    engine: 'missing',
-    enforcedIn: '— (E20 Option B · ties §E15 tier_bet_policy)',
+    engine: 'exists',
+    enforcedIn: '_assert_sports_stake_limits · _earn_vip_stake_mult (E4)',
   },
   trade_leverage_cap: {
     tierSource: 'earn_vip_engine',
-    engine: 'missing',
-    enforcedIn: '— (E20 Option B engine backlog)',
+    engine: 'exists',
+    enforcedIn: '_earn_vip_trade_leverage_cap · _earn_vip_assert_leverage (E4)',
   },
   casino_stake_cap: {
     tierSource: 'earn_vip_engine',
-    engine: 'missing',
-    enforcedIn: '— (E20 Option B engine backlog)',
+    engine: 'exists',
+    enforcedIn: '_assert_game_stake_limits · _earn_vip_stake_mult (E4)',
   },
 };
 
@@ -338,6 +352,17 @@ export function normalizeEarnVipTier(value: string | null | undefined): EarnVipT
   const lower = value?.toLowerCase();
   if (isEarnVipTier(lower)) return lower;
   return 'bronze';
+}
+
+/** Ladder compare — true when `tier` is at or above `min` on Earn VIP order. */
+export function earnVipTierMeetsOrExceeds(
+  tier: string | null | undefined,
+  min: EarnVipTier,
+): boolean {
+  const normalized = normalizeEarnVipTier(tier);
+  const tierIndex = EARN_VIP_TIER_ORDER.indexOf(normalized);
+  const minIndex = EARN_VIP_TIER_ORDER.indexOf(min);
+  return tierIndex >= 0 && minIndex >= 0 && tierIndex >= minIndex;
 }
 
 /** Option A resolver — prefer engine tier; never compute from PHON balance. */

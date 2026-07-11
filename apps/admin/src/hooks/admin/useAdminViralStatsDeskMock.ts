@@ -56,7 +56,7 @@ export interface UseAdminViralStatsDesk {
   missionClaims: AdminViralMissionClaimAggregate[];
   commissionAggregates: AdminViralCommissionAggregate[];
   partialFlags: AdminViralStatsPartialFlags;
-  shareEventsAvailable: false;
+  shareEventsAvailable: boolean;
   isLoading: boolean;
   isError: boolean;
   refresh: () => Promise<void>;

@@ -111,4 +111,4 @@ bun run ci:watch
 ---
 
 **Implemented:** display-contract · vitest · docs sync · 본 canon  
-**다음:** `launch-ramp-t1-feature-gates` (#237) — 공식 GO 이후 T1 ramp
+**다음:** `ew-e1-decay-wave` (#240) — E0 `#239` **`[x]` DONE** · T2 scale `#238` **`[x]` DONE** · T1 `#237` **`[x]`**

@@ -77,11 +77,11 @@ describe('trade-order-states-display-contract', () => {
     expect(FUTURES_ORDER_DEPENDENCY_CHAINS.cancel[0]).toBe(FUTURES_CANCEL_ORDER_RPC);
   });
 
-  it('exposes spot limit/stop live and keeps hedge hidden (T1 · E21 hedge)', () => {
-    expect(shouldHideHedgePositionMode()).toBe(true);
+  it('exposes spot limit/stop live and hedge live after E21 UI', () => {
+    expect(shouldHideHedgePositionMode()).toBe(false);
     expect(isSpotLimitStopSupported()).toBe(true);
-    expect(resolveTradeOrderBranchExposure('hedge_position_mode')).toBe('built_hidden');
-    expect(TRADE_ORDER_UI_WIRE_STATUS.hedge_mode_toggle).toBe('built_hidden');
+    expect(resolveTradeOrderBranchExposure('hedge_position_mode')).toBe('live');
+    expect(TRADE_ORDER_UI_WIRE_STATUS.hedge_mode_toggle).toBe('live');
     expect(TRADE_ORDER_UI_WIRE_STATUS.spot_limit_tab).toBe('live');
   });
 
@@ -99,15 +99,16 @@ describe('trade-order-states-display-contract', () => {
     expect(TRADE_ORDER_ENGINE_BRANCHES.futures_cancel_order.rpc).toBe(FUTURES_CANCEL_ORDER_RPC);
     expect(TRADE_ORDER_ENGINE_BRANCHES.futures_close_position.engine).toBe('exists');
     expect(TRADE_ORDER_ENGINE_BRANCHES.futures_partial_close.engine).toBe('exists');
-    expect(TRADE_ORDER_ENGINE_BRANCHES.hedge_position_mode.engine).toBe('missing');
+    expect(TRADE_ORDER_ENGINE_BRANCHES.hedge_position_mode.engine).toBe('exists');
+    expect(TRADE_ORDER_ENGINE_BRANCHES.hedge_position_mode.rpc).toBe('rpc_set_position_mode');
     expect(TRADE_ORDER_ENGINE_BRANCHES.futures_cross_margin.engine).toBe('partial');
   });
 
-  it('gates reduce-only disabled and post-open TP/SL edit live (RPC wired)', () => {
-    expect(TRADE_FUTURES_PANEL_CAPABILITIES.reduceOnlyOrders).toBe(false);
+  it('gates reduce-only and post-open TP/SL edit live (E21 UI + EXISTS RPC)', () => {
+    expect(TRADE_FUTURES_PANEL_CAPABILITIES.reduceOnlyOrders).toBe(true);
     expect(TRADE_FUTURES_PANEL_CAPABILITIES.positionTpSlEdit).toBe(true);
     expect(TRADE_FUTURES_PANEL_CAPABILITIES.entryTpSlOnOpenOrders).toBe(false);
-    expect(TRADE_ORDER_UI_WIRE_STATUS.reduce_only_toggle).toBe('built_disabled');
+    expect(TRADE_ORDER_UI_WIRE_STATUS.reduce_only_toggle).toBe('live');
     expect(TRADE_ORDER_UI_WIRE_STATUS.position_tpsl_edit).toBe('live');
     expect(TRADE_ORDER_UI_WIRE_STATUS.futures_entry_tpsl_limit_stop).toBe('built_disabled');
   });

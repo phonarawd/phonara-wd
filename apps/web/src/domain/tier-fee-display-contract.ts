@@ -39,8 +39,8 @@ export function resolveTradeTierFeeBadgeLabelKey(tier: EarnVipTier): `earn.tier.
 }
 
 export function assertTierFeeDisplayContractSync(): void {
-  if (shouldExposeTierFeeDiscountPercent()) {
-    throw new Error('tier-fee: trade_fee_discount percent must stay hidden until engine');
+  if (!shouldExposeTierFeeDiscountPercent()) {
+    throw new Error('tier-fee: trade_fee_discount percent must be unlocked after E4 GATE');
   }
   if (!isEstFeeNumericOwnerTodo(P9_TRADE_ORDER_TICKET_DENSITY_TODO)) {
     throw new Error('tier-fee: est fee numeric owner must be order-ticket-density');
