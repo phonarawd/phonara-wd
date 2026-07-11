@@ -144,21 +144,23 @@ describe('p13-soft-launch-display-contract · YAML #233 Soft Launch BUNDLE', () 
   it('canon pins Soft Launch sections · CB · viewer · engine 0', () => {
     const canon = readFileSync(resolve(REPO_ROOT, P13_SOFT_LAUNCH_CANON_PATH), 'utf8');
     expect(canon).toContain('p13-soft-launch-bundle');
-    expect(p13ContainsAll(canon, [
-      'p13-ops-prod-preflight',
-      'da-w7-enforcement-strict-tokens',
-      'CB-01',
-      'CB-06',
-      '390',
-      '768',
-      '1024',
-      'axe',
-      'viewer',
-      '처리 대기함',
-      '코드 diff 0',
-      'KRW',
-      'USDT',
-    ])).toBe(true);
+    expect(
+      p13ContainsAll(canon, [
+        'p13-ops-prod-preflight',
+        'da-w7-enforcement-strict-tokens',
+        'CB-01',
+        'CB-06',
+        '390',
+        '768',
+        '1024',
+        'axe',
+        'viewer',
+        '처리 대기함',
+        '코드 diff 0',
+        'KRW',
+        'USDT',
+      ]),
+    ).toBe(true);
 
     const matrix = readFileSync(resolve(REPO_ROOT, P13_SOFT_LAUNCH_CB_MATRIX_PATH), 'utf8');
     for (const id of P13_SOFT_LAUNCH_CB_SCENARIO_IDS) {

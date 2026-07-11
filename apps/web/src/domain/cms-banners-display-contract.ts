@@ -19,12 +19,7 @@ export const CMS_TARGETING_COLUMNS = [
   'schedule_publish_at',
 ] as const;
 
-export const CMS_AUDIENCE_VALUES = [
-  'all',
-  'authenticated',
-  'referrer',
-  'new_user',
-] as const;
+export const CMS_AUDIENCE_VALUES = ['all', 'authenticated', 'referrer', 'new_user'] as const;
 
 export const CMS_BANNER_KIND = 'banner' as const;
 

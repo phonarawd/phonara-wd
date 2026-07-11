@@ -51,10 +51,7 @@ export const EW_E5_GATE_GAP_SURFACES_TEST_PATHS = [
   'apps/web/src/domain/__tests__/dead-controls-display-contract.test.ts',
 ] as const;
 
-const LIVE_DEAD_CONTROL_IDS = [
-  'referral-leaderboard-stub',
-  'sports-vip-coming-soon',
-] as const;
+const LIVE_DEAD_CONTROL_IDS = ['referral-leaderboard-stub', 'sports-vip-coming-soon'] as const;
 
 export function areGapSurfaceDeadControlsLive(): boolean {
   return LIVE_DEAD_CONTROL_IDS.every((id) => {
@@ -68,9 +65,7 @@ export function isTierMeDecayFullyUnlocked(): boolean {
 }
 
 export function isReferralLeaderboardFullyUnlocked(): boolean {
-  return (
-    isReferralLeaderboardWireLive() && REFERRAL_LEADERBOARD_ROUTE === '/referral/leaderboard'
-  );
+  return isReferralLeaderboardWireLive() && REFERRAL_LEADERBOARD_ROUTE === '/referral/leaderboard';
 }
 
 export function isSportsVipFullyUnlocked(): boolean {

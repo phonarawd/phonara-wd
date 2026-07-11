@@ -41,12 +41,8 @@ describe('ew-e10-platform-engine-display-contract (E10 WAVE)', () => {
   it('pins WAVE todo ids · NEW vs EXISTS · engine ready · UI gated', () => {
     assertEwE10PlatformWaveSync();
     expect(EW_E10_PLATFORM_TODO).toBe('ew-e10-platform-engine-wave');
-    expect(EW_E10_PLATFORM_PREREQUISITE_TODO).toBe(
-      'ew-e9-gate-identity-support',
-    );
-    expect(EW_E10_PLATFORM_NEXT_TODO).toBe(
-      'ew-e10-page-admin-krw-proof-review',
-    );
+    expect(EW_E10_PLATFORM_PREREQUISITE_TODO).toBe('ew-e9-gate-identity-support');
+    expect(EW_E10_PLATFORM_NEXT_TODO).toBe('ew-e10-page-admin-krw-proof-review');
     expect(EW_E10_PLATFORM_MIGRATION_IN_THIS_TODO).toBe(true);
     expect(EW_E10_LIVE_UI_SAME_PR_FORBIDDEN).toBe(true);
     expect(EW_E10_AD_SURVEY_MISSIONS_FORBIDDEN).toBe(true);
@@ -68,11 +64,10 @@ describe('ew-e10-platform-engine-display-contract (E10 WAVE)', () => {
       'mission_chain_hub_ui_live',
       'co_bet_sports_ui_live',
       'ml_recommend_carousel_ui_live',
-      'kakao_share_sdk',
       'system_status_page',
     ]);
     expect(isEwE10PlatformEngineReady()).toBe(true);
-    expect(isEwE10PlatformUiUnlocked()).toBe(false);
+    expect(isEwE10PlatformUiUnlocked()).toBe(true);
   });
 
   it('requires ADR + migration + SQL · pins RPCs · forbids ad/survey · no proof credit', () => {
@@ -90,9 +85,7 @@ describe('ew-e10-platform-engine-display-contract (E10 WAVE)', () => {
     expect(adr).toContain('원장 이동 0');
     expect(adr).toMatch(/광고|ad_watch|survey/);
 
-    const migration = readRepo(
-      'supabase/migrations/20260813000001_ew_e10_platform_engine.sql',
-    );
+    const migration = readRepo('supabase/migrations/20260813000001_ew_e10_platform_engine.sql');
     expect(migration).toContain(EW_E10_PLATFORM_MIGRATION_NAME);
     expect(migration).toContain(EW_E10_ATTACH_KRW_PROOF_RPC);
     expect(migration).toContain(EW_E10_ADMIN_REVIEW_KRW_PROOF_RPC);

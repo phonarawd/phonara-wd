@@ -114,14 +114,8 @@ export function AdminEarnMissionsPage() {
       kind: 'exposure',
       catalogKey: row.catalogKey,
       exposure: next,
-      titleKey:
-        next === 'hidden'
-          ? 'admin.missions.dialog.hide'
-          : 'admin.missions.dialog.show',
-      confirmKey:
-        next === 'hidden'
-          ? 'admin.missions.action.hide'
-          : 'admin.missions.action.show',
+      titleKey: next === 'hidden' ? 'admin.missions.dialog.hide' : 'admin.missions.dialog.show',
+      confirmKey: next === 'hidden' ? 'admin.missions.action.hide' : 'admin.missions.action.show',
       summaryKey: 'admin.missions.dialog.summary.exposure',
       summaryValues: {
         mission: t(row.labelKey),
@@ -433,7 +427,9 @@ export function AdminEarnMissionsPage() {
           {editDraft.kind === 'viral' ? (
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="flex flex-col gap-1.5 text-sm">
-                <span className="text-foreground font-medium">{t('admin.missions.col.reward')}</span>
+                <span className="text-foreground font-medium">
+                  {t('admin.missions.col.reward')}
+                </span>
                 <Input
                   value={editDraft.rewardPhon}
                   onChange={(event) =>

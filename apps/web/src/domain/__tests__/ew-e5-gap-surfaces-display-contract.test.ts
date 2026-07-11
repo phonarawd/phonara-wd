@@ -48,7 +48,9 @@ describe('ew-e5-gap-surfaces-display-contract (E5 WIRE)', () => {
 
     const vip = PQA_DEAD_CONTROL_DEFER_REGISTRY.find((row) => row.id === 'sports-vip-coming-soon');
     expect(vip?.mitigatedBy).toBe('live');
-    const lb = PQA_DEAD_CONTROL_DEFER_REGISTRY.find((row) => row.id === 'referral-leaderboard-stub');
+    const lb = PQA_DEAD_CONTROL_DEFER_REGISTRY.find(
+      (row) => row.id === 'referral-leaderboard-stub',
+    );
     expect(lb?.mitigatedBy).toBe('live');
   });
 
@@ -61,15 +63,11 @@ describe('ew-e5-gap-surfaces-display-contract (E5 WIRE)', () => {
       expect(existsSync(resolve(REPO_ROOT, rel)), rel).toBe(true);
     }
 
-    const page = readRepo(
-      'apps/web/src/product/surfaces/referral/referral-leaderboard-page.tsx',
-    );
+    const page = readRepo('apps/web/src/product/surfaces/referral/referral-leaderboard-page.tsx');
     expect(page).toContain('useReferralLeaderboardController');
     expect(page).toContain('referral-leaderboard-list');
 
-    const vipPanel = readRepo(
-      'apps/web/src/product/surfaces/sports/sports-vip-stub-panel.tsx',
-    );
+    const vipPanel = readRepo('apps/web/src/product/surfaces/sports/sports-vip-stub-panel.tsx');
     expect(vipPanel).toContain('SportsFixtureBoard');
     expect(vipPanel).toContain('canBrowseSportsVipMarkets');
 

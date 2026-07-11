@@ -40,8 +40,10 @@ export function readOpsNtfyConfigFromEnv(env: Pick<typeof Deno.env, 'get'>): Ops
   let clickUrl: string | undefined;
   if (adminPublicUrl) {
     try {
-      clickUrl = new URL('/queues', adminPublicUrl.endsWith('/') ? adminPublicUrl : `${adminPublicUrl}/`)
-        .href;
+      clickUrl = new URL(
+        '/queues',
+        adminPublicUrl.endsWith('/') ? adminPublicUrl : `${adminPublicUrl}/`,
+      ).href;
     } catch {
       clickUrl = undefined;
     }

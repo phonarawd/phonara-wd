@@ -10,9 +10,7 @@ const usePreviewMock = vi.hoisted(() => vi.fn());
 const useCashoutMock = vi.hoisted(() => vi.fn());
 const usePartialPreviewMock = vi.hoisted(() => vi.fn());
 const usePartialCashoutMock = vi.hoisted(() => vi.fn());
-const useAuthMock = vi.hoisted(() =>
-  vi.fn(() => ({ session: { user: { id: 'u1' } } })),
-);
+const useAuthMock = vi.hoisted(() => vi.fn(() => ({ session: { user: { id: 'u1' } } })));
 
 vi.mock('@/features/sports/use-sports-betting', () => ({
   usePreviewSportsCashout: (...args: unknown[]) => usePreviewMock(...args),
@@ -33,11 +31,7 @@ function wrap(node: ReactNode) {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
-  return createElement(
-    QueryClientProvider,
-    { client },
-    createElement(I18nProvider, null, node),
-  );
+  return createElement(QueryClientProvider, { client }, createElement(I18nProvider, null, node));
 }
 
 describe('SportsCashoutCard (E22 full + partial cashout UI)', () => {

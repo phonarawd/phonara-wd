@@ -154,25 +154,14 @@ describe('Casino games batch B stages (p10-games-batch-b)', () => {
     expect(screen.getByTestId('casino-mines-stage')).toBeInTheDocument();
     unmount();
 
-    wrap(
-      <CasinoGameStage
-        gameCode="hilo"
-        selection={{ startCard: 7, guesses: ['higher'] }}
-      />,
-    );
+    wrap(<CasinoGameStage gameCode="hilo" selection={{ startCard: 7, guesses: ['higher'] }} />);
     expect(screen.getByTestId('casino-hilo-stage')).toBeInTheDocument();
     expect(screen.getByTestId('casino-hilo-card-hero').textContent).toBe('7');
   });
 
   it('mines cascade settles from RPC only', async () => {
     const handle = createRef<CasinoStageHandle>();
-    wrap(
-      <MinesStage
-        ref={handle}
-        mineCount={3}
-        revealedCells={[0, 1, 2]}
-      />,
-    );
+    wrap(<MinesStage ref={handle} mineCount={3} revealedCells={[0, 1, 2]} />);
     await act(async () => {
       await handle.current?.playOutcome({
         minePositions: [6, 8, 10],

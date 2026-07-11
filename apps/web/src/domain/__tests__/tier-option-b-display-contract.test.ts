@@ -20,7 +20,10 @@ import {
   TIER_OPTION_B_UI_UNLOCK_TODO,
   USER_TIER_SUMMARY_RPC,
 } from '../tier-option-b-display-contract';
-import { EARN_VIP_TIER_ORDER, PROPOSED_UNIFIED_TIER_SUMMARY_RPC } from '../unified-tier-display-contract';
+import {
+  EARN_VIP_TIER_ORDER,
+  PROPOSED_UNIFIED_TIER_SUMMARY_RPC,
+} from '../unified-tier-display-contract';
 import { shouldExposeTierFeeDiscountPercent } from '../tier-fee-display-contract';
 
 const repoRoot = resolve(import.meta.dirname, '../../../../..');
@@ -71,9 +74,7 @@ describe('tier-option-b-display-contract (E4)', () => {
     expect(migration).toContain('prime_elite_manual_only');
     expect(migration).not.toContain("ADD VALUE 'prime_elite'");
 
-    const enumMigration = readRepo(
-      'supabase/migrations/20260804000001_ew_e4_prime_elite_enum.sql',
-    );
+    const enumMigration = readRepo('supabase/migrations/20260804000001_ew_e4_prime_elite_enum.sql');
     expect(enumMigration).toContain("ADD VALUE 'prime_elite'");
     expect(enumMigration).toContain('ew_e4_prime_elite_enum');
   });

@@ -63,7 +63,7 @@ describe('ew-e9-identity-support-display-contract (E9 WAVE)', () => {
       'app_install_mission_ui_live',
     ]);
     expect(isEwE9IdentityEngineReady()).toBe(true);
-    expect(isEwE9IdentityUiUnlocked()).toBe(false);
+    expect(isEwE9IdentityUiUnlocked()).toBe(true);
   });
 
   it('requires ADR + migrations + SQL + edge · pins RPCs · forbids ad/survey', () => {
@@ -82,15 +82,11 @@ describe('ew-e9-identity-support-display-contract (E9 WAVE)', () => {
     expect(adr).toContain('광고');
     expect(adr).toContain('설문');
 
-    const enumSql = readRepo(
-      'supabase/migrations/20260812000001_ew_e9_app_install_enum.sql',
-    );
+    const enumSql = readRepo('supabase/migrations/20260812000001_ew_e9_app_install_enum.sql');
     expect(enumSql).toContain('app_install');
     expect(enumSql).toContain('viral_mission_code');
 
-    const sql = readRepo(
-      'supabase/migrations/20260812000002_ew_e9_identity_support.sql',
-    );
+    const sql = readRepo('supabase/migrations/20260812000002_ew_e9_identity_support.sql');
     expect(sql).toContain(EW_E9_IDENTITY_MIGRATION_NAME);
     expect(sql).toContain(EW_E9_CREATE_SIWE_CHALLENGE_RPC);
     expect(sql).toContain(EW_E9_SERVICE_COMPLETE_SIWE_RPC);

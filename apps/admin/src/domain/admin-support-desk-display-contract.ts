@@ -11,10 +11,8 @@ import {
 import type { AdminRbacRole } from './admin-rbac';
 
 export const EW_E9_PAGE_ADMIN_SUPPORT_TODO = 'ew-e9-page-admin-support' as const;
-export const EW_E9_PAGE_ADMIN_SUPPORT_PREREQUISITE_TODO =
-  'ew-e9-gate-identity-support' as const;
-export const EW_E9_PAGE_ADMIN_SUPPORT_NEXT_TODO =
-  'ew-e10-platform-engine-wave' as const;
+export const EW_E9_PAGE_ADMIN_SUPPORT_PREREQUISITE_TODO = 'ew-e9-gate-identity-support' as const;
+export const EW_E9_PAGE_ADMIN_SUPPORT_NEXT_TODO = 'ew-e10-platform-engine-wave' as const;
 
 export const ADMIN_SUPPORT_DESK_ROUTE = '/support' as const;
 export const ADMIN_SUPPORT_DESK_FULL_PATH = '/admin/support' as const;
@@ -25,12 +23,7 @@ export const ADMIN_SUPPORT_DESK_RPCS = [
   'rpc_get_support_ticket',
 ] as const;
 
-export const ADMIN_SUPPORT_TICKET_STATUSES = [
-  'open',
-  'in_progress',
-  'resolved',
-  'closed',
-] as const;
+export const ADMIN_SUPPORT_TICKET_STATUSES = ['open', 'in_progress', 'resolved', 'closed'] as const;
 
 export type AdminSupportTicketStatus = (typeof ADMIN_SUPPORT_TICKET_STATUSES)[number];
 
@@ -48,13 +41,11 @@ export const ADMIN_SUPPORT_TICKET_CATEGORIES = [
   'other',
 ] as const;
 
-export type AdminSupportTicketCategory =
-  (typeof ADMIN_SUPPORT_TICKET_CATEGORIES)[number];
+export type AdminSupportTicketCategory = (typeof ADMIN_SUPPORT_TICKET_CATEGORIES)[number];
 
 export const ADMIN_SUPPORT_TICKET_PRIORITIES = ['low', 'normal', 'high'] as const;
 
-export type AdminSupportTicketPriority =
-  (typeof ADMIN_SUPPORT_TICKET_PRIORITIES)[number];
+export type AdminSupportTicketPriority = (typeof ADMIN_SUPPORT_TICKET_PRIORITIES)[number];
 
 /** Open tickets feed `/admin/queues` exception summary (Plan §12.14 · help step3). */
 export const ADMIN_SUPPORT_QUEUES_CONVERGENCE = true as const;
@@ -62,8 +53,7 @@ export const ADMIN_SUPPORT_QUEUES_CONVERGENCE = true as const;
 export const ADMIN_SUPPORT_DESK_SURFACE_PATH =
   'apps/admin/src/product/surfaces/admin-support-page.tsx' as const;
 
-export const ADMIN_SUPPORT_DESK_ROUTE_PATH =
-  'apps/admin/src/routes/support.tsx' as const;
+export const ADMIN_SUPPORT_DESK_ROUTE_PATH = 'apps/admin/src/routes/support.tsx' as const;
 
 export const ADMIN_SUPPORT_DESK_HOOK_PATH =
   'apps/admin/src/hooks/admin/useAdminSupportDesk.ts' as const;
@@ -87,15 +77,14 @@ export const EW_E9_ADMIN_SUPPORT_TEST_PATHS = [
 export function canAccessAdminSupportDesk(role: AdminRbacRole): boolean {
   if (role === 'owner' || role === 'support') return true;
   if (role === 'operator') return false;
-  const allow = ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST[
-    role === 'finance' || role === 'risk' || role === 'viewer' ? role : 'viewer'
-  ];
+  const allow =
+    ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST[
+      role === 'finance' || role === 'risk' || role === 'viewer' ? role : 'viewer'
+    ];
   return allow.includes(ADMIN_SUPPORT_DESK_ROUTE);
 }
 
-export function isAdminSupportOpenStatus(
-  status: string,
-): status is AdminSupportOpenStatus {
+export function isAdminSupportOpenStatus(status: string): status is AdminSupportOpenStatus {
   return (ADMIN_SUPPORT_OPEN_STATUSES as readonly string[]).includes(status);
 }
 

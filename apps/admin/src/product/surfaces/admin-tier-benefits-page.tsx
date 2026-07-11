@@ -15,7 +15,9 @@ export function AdminTierBenefitsPage() {
     <div className="flex flex-col gap-6">
       <section className="flex items-start justify-between gap-3">
         <div className="space-y-2">
-          <h2 className="text-foreground m-0 text-2xl font-semibold">{t('admin.nav.tierBenefits')}</h2>
+          <h2 className="text-foreground m-0 text-2xl font-semibold">
+            {t('admin.nav.tierBenefits')}
+          </h2>
           <p className="text-foreground-muted m-0 text-sm">{t('admin.missions.description')}</p>
         </div>
         <Button size="md" variant="outline" onClick={() => void refresh()}>
@@ -42,10 +44,26 @@ export function AdminTierBenefitsPage() {
         <>
           <AdminTable
             columns={[
-              { id: 'tier', header: t('admin.missions.col.setting'), cell: ({ row }) => t(row.labelKey) },
-              { id: 'attendance', header: t('admin.missions.col.value'), cell: ({ row }) => row.attendance },
-              { id: 'roulette', header: t('admin.missions.col.reward'), cell: ({ row }) => row.roulette },
-              { id: 'referral', header: t('admin.viralStats.col.claims'), cell: ({ row }) => row.referralPayout },
+              {
+                id: 'tier',
+                header: t('admin.missions.col.setting'),
+                cell: ({ row }) => t(row.labelKey),
+              },
+              {
+                id: 'attendance',
+                header: t('admin.missions.col.value'),
+                cell: ({ row }) => row.attendance,
+              },
+              {
+                id: 'roulette',
+                header: t('admin.missions.col.reward'),
+                cell: ({ row }) => row.roulette,
+              },
+              {
+                id: 'referral',
+                header: t('admin.viralStats.col.claims'),
+                cell: ({ row }) => row.referralPayout,
+              },
             ]}
             rows={earnMissionLimits}
             getRowId={(row) => row.tier}
@@ -62,9 +80,21 @@ export function AdminTierBenefitsPage() {
           />
           <AdminTable
             columns={[
-              { id: 'tier', header: t('admin.missions.col.setting'), cell: ({ row }) => t(row.labelKey) },
-              { id: 'cap', header: t('admin.missions.col.value'), cell: ({ row }) => row.dailyTapCap },
-              { id: 'reward', header: t('admin.missions.col.reward'), cell: ({ row }) => row.phonPerTap },
+              {
+                id: 'tier',
+                header: t('admin.missions.col.setting'),
+                cell: ({ row }) => t(row.labelKey),
+              },
+              {
+                id: 'cap',
+                header: t('admin.missions.col.value'),
+                cell: ({ row }) => row.dailyTapCap,
+              },
+              {
+                id: 'reward',
+                header: t('admin.missions.col.reward'),
+                cell: ({ row }) => row.phonPerTap,
+              },
             ]}
             rows={goldenEarthLimits}
             getRowId={(row) => row.tier}

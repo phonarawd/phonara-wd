@@ -8,9 +8,9 @@ import {
 } from '../system-status-display-contract';
 
 describe('system-status-display-contract', () => {
-  it('defers /status until E10 and backs to support', () => {
+  it('keeps /status live after E10 and backs to support', () => {
     expect(SYSTEM_STATUS_ROUTE).toBe('/status');
-    expect(shouldDeferSystemStatus()).toBe(true);
+    expect(shouldDeferSystemStatus()).toBe(false);
     expect(resolveSystemStatusBackRoute()).toBe('/support');
     expect(() => assertSystemStatusContractSync()).not.toThrow();
   });

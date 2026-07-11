@@ -152,7 +152,10 @@ describe('useTierMePageController', () => {
 
     await result.current.claimKeepMission();
 
-    expect(claimMission).toHaveBeenCalledWith('tier_keep_status', expect.stringContaining('tier-me:'));
+    expect(claimMission).toHaveBeenCalledWith(
+      'tier_keep_status',
+      expect.stringContaining('tier-me:'),
+    );
   });
 
   it('redirects guests to login', async () => {

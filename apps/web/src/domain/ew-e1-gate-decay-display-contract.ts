@@ -17,7 +17,10 @@ import {
   TIER_DECAY_WARNING_EVENT,
   assertTierDecayWaveSync,
 } from './tier-decay-display-contract';
-import { TIER_ME_ROUTE, TIER_DECAY_STATUS_RPC as TIER_ME_DECAY_STATUS_RPC } from './tier-me-display-contract';
+import {
+  TIER_ME_ROUTE,
+  TIER_DECAY_STATUS_RPC as TIER_ME_DECAY_STATUS_RPC,
+} from './tier-me-display-contract';
 import { isTierKeepStatusClaimEngineLive } from './dead-controls-display-contract';
 
 export const EW_E1_GATE_DECAY_TODO = 'ew-e1-gate-decay' as const;

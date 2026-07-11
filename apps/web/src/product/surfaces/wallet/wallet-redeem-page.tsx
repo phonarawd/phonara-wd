@@ -60,7 +60,9 @@ export function WalletRedeemPage() {
           <h1 className="text-foreground m-0 text-2xl font-semibold md:text-3xl">
             {t('wallet.subnav.redeem')}
           </h1>
-          <p className="text-foreground-muted m-0 text-sm">{t(WALLET_REDEEM_SEO_DESCRIPTION_KEY)}</p>
+          <p className="text-foreground-muted m-0 text-sm">
+            {t(WALLET_REDEEM_SEO_DESCRIPTION_KEY)}
+          </p>
         </div>
       </header>
 

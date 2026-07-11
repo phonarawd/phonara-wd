@@ -52,32 +52,32 @@
 
 ## 3. §29.1 용어 사전 (화면 단어 = 이 표만)
 
-| 왕초보 정본 (ko) | 내부 개념 | 금지 혼용어 |
-| ---------------- | --------- | ----------- |
-| 입금 확인 | deposit match/approve | 충전 · 머니인 · 매칭 |
-| 출금 보내기 | withdrawal approve+send | 환전 · 머니아웃 |
-| 반려 (사유 필수) | reject | 거절 · 거부 · 취소 혼용 |
-| 보류 | hold/halt | 정지·중단 혼용 |
-| 이상 거래 | flag | 플래그 |
-| 처리 대기 | pending queue item | 펜딩 · 큐 |
-| 확인 중 | reviewing | 리뷰 · 검토중 혼용 |
-| 완료 | settled/done | 승인됨 혼용 |
-| 실패 | failed | 에러 |
-| 미정산 경기 | unsettled fixture | 언세틀 |
-| 경기 정산하기 | manual settle | 세틀 |
-| 마켓 중지 | suspend market | 서스펜드 |
-| 베팅 무효 처리 | void | 보이드 |
-| 수동 지급·차감 | manual wallet adjust | 어드저스트 |
-| 추천 정산 승인 | affiliate commission approve | 커미션 |
-| 감사 기록 | audit log | 로그 |
-| 기능 켜기/끄기 | feature enable | 토글 |
-| 점검 모드 | system mode | 메인터넌스 |
-| 이용 정지/해제 | user activity set | 밴 · 블락 |
-| 자기제한 해제 | self-exclusion release | RG 해제 |
-| 위험 표시 해제 | clear risk flag | — |
-| 상품권 수수료 시세 | giftcard fee market | 피마켓 |
-| 사유 | reason (≥4자) | 메모 혼용 |
-| 오늘 할 일 | ops dashboard summary | 대시보드 |
+| 왕초보 정본 (ko)   | 내부 개념                    | 금지 혼용어             |
+| ------------------ | ---------------------------- | ----------------------- |
+| 입금 확인          | deposit match/approve        | 충전 · 머니인 · 매칭    |
+| 출금 보내기        | withdrawal approve+send      | 환전 · 머니아웃         |
+| 반려 (사유 필수)   | reject                       | 거절 · 거부 · 취소 혼용 |
+| 보류               | hold/halt                    | 정지·중단 혼용          |
+| 이상 거래          | flag                         | 플래그                  |
+| 처리 대기          | pending queue item           | 펜딩 · 큐               |
+| 확인 중            | reviewing                    | 리뷰 · 검토중 혼용      |
+| 완료               | settled/done                 | 승인됨 혼용             |
+| 실패               | failed                       | 에러                    |
+| 미정산 경기        | unsettled fixture            | 언세틀                  |
+| 경기 정산하기      | manual settle                | 세틀                    |
+| 마켓 중지          | suspend market               | 서스펜드                |
+| 베팅 무효 처리     | void                         | 보이드                  |
+| 수동 지급·차감     | manual wallet adjust         | 어드저스트              |
+| 추천 정산 승인     | affiliate commission approve | 커미션                  |
+| 감사 기록          | audit log                    | 로그                    |
+| 기능 켜기/끄기     | feature enable               | 토글                    |
+| 점검 모드          | system mode                  | 메인터넌스              |
+| 이용 정지/해제     | user activity set            | 밴 · 블락               |
+| 자기제한 해제      | self-exclusion release       | RG 해제                 |
+| 위험 표시 해제     | clear risk flag              | —                       |
+| 상품권 수수료 시세 | giftcard fee market          | 피마켓                  |
+| 사유               | reason (≥4자)                | 메모 혼용               |
+| 오늘 할 일         | ops dashboard summary        | 대시보드                |
 
 **상태 6종 (StatusBadge · 유저앱과 동일):** 대기중 · 확인중 · 완료 · 실패 · 반려 · 보류
 
@@ -108,4 +108,3 @@
 - [`PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md`](../PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md) — 유저 화면 ↔ Admin 데스크
 - Plan §29.1–29.5 · §12.14 · §32.6
 - Soft Launch: [`P13_SOFT_LAUNCH_BUNDLE.md`](../OPERATIONS/P13_SOFT_LAUNCH_BUNDLE.md) · Closeout: [`P13_LAUNCH_CLOSEOUT_BUNDLE.md`](../OPERATIONS/P13_LAUNCH_CLOSEOUT_BUNDLE.md) · T1 ramp: [`P13_T1_LIVE_RAMP_FEATURE_GATES.md`](../OPERATIONS/P13_T1_LIVE_RAMP_FEATURE_GATES.md) · T2 scale: [`P13_T2_SCALE_TRIGGERS.md`](../OPERATIONS/P13_T2_SCALE_TRIGGERS.md) · E0: [`ENGINE_GAP_E0_APPROVAL.md`](../OPERATIONS/ENGINE_GAP_E0_APPROVAL.md) · W7 `#234`/`#235` **`[x]`** · P13 closeout `#236` **`[x]`** · T1 `#237` **`[x]`** · T2 `#238` **`[x]`** · E0 `#239` **`[x]` DONE** · **다음** `ew-e1-decay-wave` (#240)
-

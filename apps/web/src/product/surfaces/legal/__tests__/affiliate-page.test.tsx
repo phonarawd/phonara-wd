@@ -37,9 +37,7 @@ describe('AffiliatePage', () => {
     renderAffiliatePage();
 
     expect(screen.getByTestId('legal-affiliate-page')).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', { level: 1, name: '추천·제휴 약관' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: '추천·제휴 약관' })).toBeInTheDocument();
     expect(screen.getByText(/시행일: 2026-06-11/)).toBeInTheDocument();
     expect(screen.getByTestId('legal-body-affiliate')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '프로그램 개요' })).toBeInTheDocument();

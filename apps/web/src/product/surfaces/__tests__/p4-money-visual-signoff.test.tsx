@@ -371,10 +371,7 @@ describe('p4-money visual sign-off §20.12 · §22.2 Wallet · §25.12.6', () =>
     await expectAxeCriticalZero(container);
 
     expect(screen.getByTestId('withdraw-hub-page')).toBeInTheDocument();
-    expect(screen.getByTestId('withdraw-rail-krw')).toHaveAttribute(
-      'href',
-      '/wallet/withdraw/krw',
-    );
+    expect(screen.getByTestId('withdraw-rail-krw')).toHaveAttribute('href', '/wallet/withdraw/krw');
     expect(screen.getByTestId('withdraw-rail-crypto')).toHaveAttribute(
       'href',
       '/wallet/withdraw/crypto',

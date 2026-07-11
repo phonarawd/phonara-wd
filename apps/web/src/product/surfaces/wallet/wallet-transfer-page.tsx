@@ -140,7 +140,11 @@ export function WalletTransferPage() {
               />
             </label>
             {engine.submitErrorKey ? (
-              <p className="text-danger m-0 text-sm" role="alert" data-testid="wallet-transfer-error">
+              <p
+                className="text-danger m-0 text-sm"
+                role="alert"
+                data-testid="wallet-transfer-error"
+              >
                 {t(engine.submitErrorKey)}
               </p>
             ) : null}

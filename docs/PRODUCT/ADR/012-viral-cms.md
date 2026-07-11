@@ -19,42 +19,42 @@ E0 Accepted · E2 GATE 후 Track B E3 = 본 ADR + 동일 PR 엔진 (51차 WAVE m
 
 ### 1. Affiliate rank leaderboard (non-waivable)
 
-| 항목 | 값 |
-| ---- | --- |
-| RPC | `rpc_get_affiliate_rank_leaderboard(p_limit, p_window)` |
-| 점수 | `referrals` 행 중 `state IN ('qualified','paid')` **건수** (referrer 기준) |
-| 창 | `all_time` · `30d` · `7d` (`qualified_at` 기준; NULL이면 `created_at`) |
-| 상한 | `p_limit` 1–100 (기본 50) |
-| 표시명 | username/display_name **마스킹** (`ab***`) — PII 최소 |
-| self | 로그인 시 본인 rank · count 포함 (없으면 `null`) |
-| Money | **원장 이동 0** — read-only aggregate |
-| 가짜 랭킹 | **금지** — RPC 없으면 UI defer stub 유지 |
+| 항목      | 값                                                                         |
+| --------- | -------------------------------------------------------------------------- |
+| RPC       | `rpc_get_affiliate_rank_leaderboard(p_limit, p_window)`                    |
+| 점수      | `referrals` 행 중 `state IN ('qualified','paid')` **건수** (referrer 기준) |
+| 창        | `all_time` · `30d` · `7d` (`qualified_at` 기준; NULL이면 `created_at`)     |
+| 상한      | `p_limit` 1–100 (기본 50)                                                  |
+| 표시명    | username/display_name **마스킹** (`ab***`) — PII 최소                      |
+| self      | 로그인 시 본인 rank · count 포함 (없으면 `null`)                           |
+| Money     | **원장 이동 0** — read-only aggregate                                      |
+| 가짜 랭킹 | **금지** — RPC 없으면 UI defer stub 유지                                   |
 
 ### 2. CMS / promotions schema 확장
 
-| 컬럼 | 역할 |
-| ---- | ---- |
-| `audience` | `all` · `authenticated` · `referrer` · `new_user` (기본 `all`) |
-| `min_tier` / `max_tier` | `earn_vip_tier` nullable — 등급 게이트 |
-| `schedule_publish_at` | `status=scheduled`일 때 자동 publish 시각 |
+| 컬럼                    | 역할                                                           |
+| ----------------------- | -------------------------------------------------------------- |
+| `audience`              | `all` · `authenticated` · `referrer` · `new_user` (기본 `all`) |
+| `min_tier` / `max_tier` | `earn_vip_tier` nullable — 등급 게이트                         |
+| `schedule_publish_at`   | `status=scheduled`일 때 자동 publish 시각                      |
 
-| 객체 | 역할 |
-| ---- | ---- |
-| `rpc_list_cms_content` | targeting 필드 노출 · 기존 published 창 유지 (INVOKER) |
-| `rpc_admin_upsert_cms_content` | targeting + schedule write · reason audit payload |
-| `rpc_admin_list_cms_content` | targeting 필드 포함 |
-| `rpc_run_cms_publish_scheduled` | due scheduled → published (service/admin) |
-| pg_cron `phonara_cms_publish_scheduled` | 매 15분 UTC (idempotent) |
+| 객체                                    | 역할                                                   |
+| --------------------------------------- | ------------------------------------------------------ |
+| `rpc_list_cms_content`                  | targeting 필드 노출 · 기존 published 창 유지 (INVOKER) |
+| `rpc_admin_upsert_cms_content`          | targeting + schedule write · reason audit payload      |
+| `rpc_admin_list_cms_content`            | targeting 필드 포함                                    |
+| `rpc_run_cms_publish_scheduled`         | due scheduled → published (service/admin)              |
+| pg_cron `phonara_cms_publish_scheduled` | 매 15분 UTC (idempotent)                               |
 
 **영구 제외:** 광고·설문 미션 (E0) — CMS promo kind는 마케팅 카피만 · mission catalog와 분리.
 
 ### 3. Viral analytics (admin)
 
-| 객체 | 역할 |
-| ---- | ---- |
+| 객체                            | 역할                                                                                                                     |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `rpc_admin_get_viral_analytics` | referrals by state · affiliate link counts · viral mission claim totals · commission rollup · leaderboard preview Top 10 |
-| Admin desk | `/viral-stats` hook → 본 RPC (샘플 truncation **제거**) |
-| Share events | **gap** 유지 (E9) — `shareEventsAvailable=false` |
+| Admin desk                      | `/viral-stats` hook → 본 RPC (샘플 truncation **제거**)                                                                  |
+| Share events                    | **gap** 유지 (E9) — `shareEventsAvailable=false`                                                                         |
 
 ### 4. Money / security
 
@@ -66,11 +66,11 @@ E0 Accepted · E2 GATE 후 Track B E3 = 본 ADR + 동일 PR 엔진 (51차 WAVE m
 
 ### 5. UI unlock (WAVE vs GATE vs E5)
 
-| 단계 | 내용 |
-| ---- | ---- |
-| **본 WAVE** | ADR + migration + leaderboard RPC + CMS targeting/schedule + viral analytics RPC + admin viral-stats hook |
-| **GATE** `ew-e3-gate-cms-promotions` | `test:sql` · `stack:push-remote` · advisor 0 · launch gate unlock |
-| **E5** `ew-e5-gap-surfaces-wire` | `/referral/leaderboard` stub → live wire |
+| 단계                                 | 내용                                                                                                      |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| **본 WAVE**                          | ADR + migration + leaderboard RPC + CMS targeting/schedule + viral analytics RPC + admin viral-stats hook |
+| **GATE** `ew-e3-gate-cms-promotions` | `test:sql` · `stack:push-remote` · advisor 0 · launch gate unlock                                         |
+| **E5** `ew-e5-gap-surfaces-wire`     | `/referral/leaderboard` stub → live wire                                                                  |
 
 WAVE에서 `LAUNCH_GATES.viralCmsEngine = true` · `referralLeaderboardLive = false` (GATE 전 defer).
 
@@ -83,12 +83,12 @@ WAVE에서 `LAUNCH_GATES.viralCmsEngine = true` · `referralLeaderboardLive = fa
 
 ## Verification
 
-| Gate | 기대 |
-| ---- | ---- |
-| SQL | `ew_e3_viral_cms_test.sql` — rank order · window · CMS targeting upsert · schedule publish · analytics authz |
-| Grants | leaderboard anon deny · analytics admin only · publish scheduled service/admin |
-| Vitest | `viral-cms-display-contract` · affiliate leaderboard branch exists · defer until gate |
-| Remote | GATE: `stack:push-remote` · advisor 0 ERROR |
+| Gate   | 기대                                                                                                         |
+| ------ | ------------------------------------------------------------------------------------------------------------ |
+| SQL    | `ew_e3_viral_cms_test.sql` — rank order · window · CMS targeting upsert · schedule publish · analytics authz |
+| Grants | leaderboard anon deny · analytics admin only · publish scheduled service/admin                               |
+| Vitest | `viral-cms-display-contract` · affiliate leaderboard branch exists · defer until gate                        |
+| Remote | GATE: `stack:push-remote` · advisor 0 ERROR                                                                  |
 
 ## Operator sign-off
 

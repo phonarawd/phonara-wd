@@ -36,9 +36,7 @@ describe('settings-api-keys-display-contract', () => {
 
     expect(shouldExposeSettingsApiKeysInHubNav()).toBe(true);
 
-    expect(resolveSettingsHubNavItems().map((row) => row.route)).toContain(
-      SETTINGS_API_KEYS_ROUTE,
-    );
+    expect(resolveSettingsHubNavItems().map((row) => row.route)).toContain(SETTINGS_API_KEYS_ROUTE);
   });
 
   it('documents E8 engine ready and E10 live manage', () => {

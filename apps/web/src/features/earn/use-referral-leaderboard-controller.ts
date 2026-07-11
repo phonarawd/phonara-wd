@@ -67,9 +67,7 @@ export function useReferralLeaderboardController(): ReferralLeaderboardControlle
     enabled: live && !deferred && Boolean(userId),
   });
 
-  const errorKey = query.error
-    ? translateError(query.error, REFERRAL_LEADERBOARD_ERROR_KEY)
-    : null;
+  const errorKey = query.error ? translateError(query.error, REFERRAL_LEADERBOARD_ERROR_KEY) : null;
 
   return {
     t,

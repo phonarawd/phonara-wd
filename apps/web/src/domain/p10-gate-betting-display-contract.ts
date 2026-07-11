@@ -8,9 +8,7 @@
 
 import { GAME_CODES } from '@phonara/game-engine';
 
-import {
-  CASINO_FAIRNESS_ROUTE,
-} from './casino-fairness-display-contract';
+import { CASINO_FAIRNESS_ROUTE } from './casino-fairness-display-contract';
 import {
   assertCasinoFiatHintSessionLockDisplayContractSync,
   CASINO_FIAT_HINT_WIRE_SURFACE,
@@ -105,9 +103,7 @@ export const P10_GATE_BETTING_COMPLAINT_MITIGATIONS = [
  * §31.4 sports abuse defense — UI wires display/exception only; engine enforces.
  * Gate asserts ComplaintRisk row exists (not engine reimplementation).
  */
-export const P10_GATE_BETTING_SECTION_31_4_SPORTS_RISK_IDS = [
-  'sports-stake-cap-surprise',
-] as const;
+export const P10_GATE_BETTING_SECTION_31_4_SPORTS_RISK_IDS = ['sports-stake-cap-surprise'] as const;
 
 /** Casino E2E authority — G13 · operator gate run or GitHub CI e2e job. */
 export const P10_GATE_BETTING_CASINO_E2E_AUTHORITY = 'operator-or-ci' as const;
@@ -181,7 +177,9 @@ export function assertP10GateBettingSync(): void {
   }
 
   if (CASINO_GAME_SLUGS.length !== 12) {
-    throw new Error(`p10-gate-betting: expected 12 CASINO_GAME_SLUGS, got ${CASINO_GAME_SLUGS.length}`);
+    throw new Error(
+      `p10-gate-betting: expected 12 CASINO_GAME_SLUGS, got ${CASINO_GAME_SLUGS.length}`,
+    );
   }
 
   for (const code of GAME_CODES) {
@@ -244,9 +242,7 @@ export function assertP10GateBettingSync(): void {
   }
 
   for (const row of SPORTS_USER_COMPLAINT_RISKS) {
-    if (
-      !(P10_GATE_BETTING_COMPLAINT_MITIGATIONS as readonly string[]).includes(row.mitigatedBy)
-    ) {
+    if (!(P10_GATE_BETTING_COMPLAINT_MITIGATIONS as readonly string[]).includes(row.mitigatedBy)) {
       throw new Error(`p10-gate-betting: sports ComplaintRisk ${row.id} unmitigated`);
     }
   }

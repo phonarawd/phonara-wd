@@ -38,6 +38,7 @@ describe('home-missions-display-contract', () => {
   it('defers stub missions from hub rows', () => {
     expect(shouldRenderHomeMissionRow('viral-invite1')).toBe(false);
     expect(shouldRenderHomeMissionRow('viral-shareLink')).toBe(true);
+    expect(shouldRenderHomeMissionRow('growth-appInstall')).toBe(true);
   });
 
   it('filters missions by hub tab lane', () => {

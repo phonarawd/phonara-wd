@@ -107,9 +107,7 @@ export function assertEwE3GateCmsPromotionsSync(): void {
     throw new Error('E3 GATE viral analytics RPC drift');
   }
   if (!isViralCmsSurfacesFullyUnlocked()) {
-    throw new Error(
-      'E3 GATE unlock not live — leaderboard · admin CMS/promotions · announcements',
-    );
+    throw new Error('E3 GATE unlock not live — leaderboard · admin CMS/promotions · announcements');
   }
   if (EW_E3_GATE_CMS_PROMOTIONS_UNLOCK_ROUTES.length !== 4) {
     throw new Error('E3 GATE must unlock 4 routes');

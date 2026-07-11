@@ -9,22 +9,22 @@
 
 ## 범위 (§29.2 · §29.5)
 
-| 항목 | 내용 |
-| ---- | ---- |
-| Desk | `/admin/deposits` (기존 surface 확장 · parallel route **0**) |
-| Surface | `AdminDepositsPage` · `AdminTable` only |
-| Hook | `useAdminWalletDesk` — proof map · review · signed URL |
-| RPC | `rpc_admin_review_krw_deposit_proof` (AAL2 · reason · **원장 이동 0**) |
-| Storage | bucket `krw-deposit-proofs` · admin select policy |
-| 버튼 | **입금 증빙 사진 보기** · **증빙 맞음 표시** (R2) |
-| 돈 | 증빙 승인 ≠ 입금 확인 — credit는 `rpc_admin_match_krw_deposit`만 |
+| 항목    | 내용                                                                   |
+| ------- | ---------------------------------------------------------------------- |
+| Desk    | `/admin/deposits` (기존 surface 확장 · parallel route **0**)           |
+| Surface | `AdminDepositsPage` · `AdminTable` only                                |
+| Hook    | `useAdminWalletDesk` — proof map · review · signed URL                 |
+| RPC     | `rpc_admin_review_krw_deposit_proof` (AAL2 · reason · **원장 이동 0**) |
+| Storage | bucket `krw-deposit-proofs` · admin select policy                      |
+| 버튼    | **입금 증빙 사진 보기** · **증빙 맞음 표시** (R2)                      |
+| 돈      | 증빙 승인 ≠ 입금 확인 — credit는 `rpc_admin_match_krw_deposit`만       |
 
 ## 증거
 
-| Gate | 결과 |
-| ---- | ---- |
+| Gate                           | 결과                                                        |
+| ------------------------------ | ----------------------------------------------------------- |
 | `gate:ai-impl` admin-krw-proof | vitest display + deposits page · typecheck · i18n · release |
-| Engine | E10 WAVE remigration **0** — proof RPC EXISTS |
+| Engine                         | E10 WAVE remigration **0** — proof RPC EXISTS               |
 
 ## 다음
 

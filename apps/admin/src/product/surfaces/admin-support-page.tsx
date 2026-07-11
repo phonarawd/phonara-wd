@@ -5,10 +5,7 @@ import { RefreshCw } from 'lucide-react';
 import type { MessageKey } from '@phonara/i18n';
 
 import { canAccessAdminSupportDesk } from '@/domain/admin-support-desk-display-contract';
-import {
-  useAdminSupportDesk,
-  type AdminSupportTicketRow,
-} from '@/hooks/admin/useAdminSupportDesk';
+import { useAdminSupportDesk, type AdminSupportTicketRow } from '@/hooks/admin/useAdminSupportDesk';
 import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
@@ -142,7 +139,10 @@ export function AdminSupportPage() {
           <p className="text-foreground-muted m-0 text-sm leading-relaxed">{summaryLine}</p>
           <p className="text-foreground-muted m-0 text-sm">{t('admin.support.subtitle')}</p>
           {highPriorityOpenCount > 0 ? (
-            <p className="text-foreground m-0 text-sm font-medium" data-testid="admin-support-urgent">
+            <p
+              className="text-foreground m-0 text-sm font-medium"
+              data-testid="admin-support-urgent"
+            >
               {t('admin.support.summary.urgent', { count: String(highPriorityOpenCount) })}
             </p>
           ) : null}
@@ -221,20 +221,13 @@ export function AdminSupportPage() {
                 }
                 data-testid="admin-support-status-filter"
               >
-                {(
-                  [
-                    'open_queue',
-                    'all',
-                    'open',
-                    'in_progress',
-                    'resolved',
-                    'closed',
-                  ] as const
-                ).map((value) => (
-                  <option key={value} value={value}>
-                    {t(statusFilterLabelKey(value))}
-                  </option>
-                ))}
+                {(['open_queue', 'all', 'open', 'in_progress', 'resolved', 'closed'] as const).map(
+                  (value) => (
+                    <option key={value} value={value}>
+                      {t(statusFilterLabelKey(value))}
+                    </option>
+                  ),
+                )}
               </select>
             </div>
             <div>
@@ -261,9 +254,7 @@ export function AdminSupportPage() {
             <Button
               variant="ghost"
               size="md"
-              onClick={() =>
-                setFilters({ search: '', status: 'open_queue', priority: 'all' })
-              }
+              onClick={() => setFilters({ search: '', status: 'open_queue', priority: 'all' })}
             >
               {t('admin.support.filter.reset')}
             </Button>
@@ -286,9 +277,7 @@ export function AdminSupportPage() {
               {
                 id: 'member',
                 header: t('admin.support.col.member'),
-                cell: ({ row }) => (
-                  <span className="tabular-nums">{row.userId.slice(0, 8)}…</span>
-                ),
+                cell: ({ row }) => <span className="tabular-nums">{row.userId.slice(0, 8)}…</span>,
               },
               {
                 id: 'priority',

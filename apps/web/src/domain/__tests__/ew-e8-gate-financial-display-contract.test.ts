@@ -59,17 +59,11 @@ describe('ew-e8-gate-financial-display-contract (E8 GATE)', () => {
     expect(LAUNCH_GATES.financialConnectivityLive).toBe(true);
     expect(EW_E8_GATE_UI_UNLOCK_WIRE_STATUS.wallet_transfer_hub).toBe('live');
     expect(EW_E8_GATE_UI_UNLOCK_WIRE_STATUS.settings_api_keys_hub).toBe('live');
-    expect(EW_E8_GATE_UI_UNLOCK_WIRE_STATUS.giftcard_redeem_reverse_ui).toBe(
-      'live',
-    );
+    expect(EW_E8_GATE_UI_UNLOCK_WIRE_STATUS.giftcard_redeem_reverse_ui).toBe('live');
     expect(EW_E8_TRANSFER_TO_USER_RPC).toBe('rpc_transfer_to_user');
     expect(EW_E8_CREATE_API_KEY_RPC).toBe('rpc_create_trading_api_key');
-    expect(EW_E8_CREATE_GIFTCARD_REDEEM_RPC).toBe(
-      'rpc_create_giftcard_redeem_request',
-    );
-    expect(EW_E8_EXISTS_GIFTCARD_DEPOSIT_RPC).toBe(
-      'rpc_create_giftcard_deposit_request',
-    );
+    expect(EW_E8_CREATE_GIFTCARD_REDEEM_RPC).toBe('rpc_create_giftcard_redeem_request');
+    expect(EW_E8_EXISTS_GIFTCARD_DEPOSIT_RPC).toBe('rpc_create_giftcard_deposit_request');
   });
 
   it('requires GATE artifacts · SQL Σ=0 · remote/advisor docs', () => {

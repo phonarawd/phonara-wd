@@ -18,37 +18,37 @@ E0 Accepted · E6 GATE 후 Track B E7 = 본 ADR + 동일 PR 엔진 (51차 WAVE m
 
 ### 1. Co-mission 정본 (non-waivable)
 
-| 항목 | 값 |
-| ---- | --- |
-| Enum | `co_mission_code` — Closed Beta seed: `co_share_referral` |
-| Pair | affiliate edge만 (`affiliate_relationships` parent↔child 양방향) |
-| Session | `co_mission_sessions` — pending → active → completed |
-| Window | UTC `day:YYYY-MM-DD` (viral share와 동일 day bucket) |
-| Eligibility | 양쪽 모두 해당 day에 `viral_mission_claims.share_referral_link` 존재 |
-| Reward | `app_config.co_share_referral_reward_phon` — **각자** PHON (ledger Σ=0) |
-| Reason | `co_mission_reward` ∈ `_is_reward_issuance_reason` |
-| 영구 제외 | **광고·설문** · co-bet(E10) · mission chain(E10) |
+| 항목        | 값                                                                      |
+| ----------- | ----------------------------------------------------------------------- |
+| Enum        | `co_mission_code` — Closed Beta seed: `co_share_referral`               |
+| Pair        | affiliate edge만 (`affiliate_relationships` parent↔child 양방향)        |
+| Session     | `co_mission_sessions` — pending → active → completed                    |
+| Window      | UTC `day:YYYY-MM-DD` (viral share와 동일 day bucket)                    |
+| Eligibility | 양쪽 모두 해당 day에 `viral_mission_claims.share_referral_link` 존재    |
+| Reward      | `app_config.co_share_referral_reward_phon` — **각자** PHON (ledger Σ=0) |
+| Reason      | `co_mission_reward` ∈ `_is_reward_issuance_reason`                      |
+| 영구 제외   | **광고·설문** · co-bet(E10) · mission chain(E10)                        |
 
 **RPCs**
 
-| RPC | 역할 |
-| --- | ---- |
-| `rpc_invite_co_mission` | initiator → partner invite (pending) |
-| `rpc_accept_co_mission` | partner accept → active |
-| `rpc_complete_co_mission` | 본인 ready · 양쪽 ready+eligible 시 양쪽 grant |
-| `rpc_get_co_mission_status` | 본인 세션 목록 |
+| RPC                         | 역할                                           |
+| --------------------------- | ---------------------------------------------- |
+| `rpc_invite_co_mission`     | initiator → partner invite (pending)           |
+| `rpc_accept_co_mission`     | partner accept → active                        |
+| `rpc_complete_co_mission`   | 본인 ready · 양쪽 ready+eligible 시 양쪽 grant |
+| `rpc_get_co_mission_status` | 본인 세션 목록                                 |
 
 ### 2. Whale mission 정본 (non-waivable)
 
-| 항목 | 값 |
-| ---- | --- |
-| Enum | `whale_mission_code` — Closed Beta: `whale_deposit_1m` |
-| Threshold | `app_config.whale_deposit_1m_threshold_phon` = `1000000.000000` |
-| Deposit 합 | lifetime `wallet_ledger` PHON credit · `reason_code = krw_deposit_credit` |
-| Crypto USDT | Closed Beta **제외** (USDT≠PHON · 별도 ADR) |
-| Claim | one-shot · `whale_mission_claims` UNIQUE (user_id, mission) |
-| Reward | `app_config.whale_deposit_1m_reward_phon` |
-| Reason | `whale_mission_reward` ∈ `_is_reward_issuance_reason` |
+| 항목        | 값                                                                        |
+| ----------- | ------------------------------------------------------------------------- |
+| Enum        | `whale_mission_code` — Closed Beta: `whale_deposit_1m`                    |
+| Threshold   | `app_config.whale_deposit_1m_threshold_phon` = `1000000.000000`           |
+| Deposit 합  | lifetime `wallet_ledger` PHON credit · `reason_code = krw_deposit_credit` |
+| Crypto USDT | Closed Beta **제외** (USDT≠PHON · 별도 ADR)                               |
+| Claim       | one-shot · `whale_mission_claims` UNIQUE (user_id, mission)               |
+| Reward      | `app_config.whale_deposit_1m_reward_phon`                                 |
+| Reason      | `whale_mission_reward` ∈ `_is_reward_issuance_reason`                     |
 
 **RPCs:** `rpc_claim_whale_mission` · `rpc_get_whale_mission_status`
 
@@ -62,10 +62,10 @@ E0 Accepted · E6 GATE 후 Track B E7 = 본 ADR + 동일 PR 엔진 (51차 WAVE m
 
 ### 4. UI unlock (WAVE vs GATE)
 
-| 단계 | 내용 |
-| ---- | ---- |
-| **본 WAVE** | ADR + migration + RPCs + SQL test + display contract · `LAUNCH_GATES.socialCoMissionEngine=true` |
-| **GATE** `ew-e7-gate-engine-wave` | `test:sql` · `stack:push-remote` · advisor 0 · **social missions UI** unlock |
+| 단계                              | 내용                                                                                             |
+| --------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **본 WAVE**                       | ADR + migration + RPCs + SQL test + display contract · `LAUNCH_GATES.socialCoMissionEngine=true` |
+| **GATE** `ew-e7-gate-engine-wave` | `test:sql` · `stack:push-remote` · advisor 0 · **social missions UI** unlock                     |
 
 ## Consequences
 
@@ -75,12 +75,12 @@ E0 Accepted · E6 GATE 후 Track B E7 = 본 ADR + 동일 PR 엔진 (51차 WAVE m
 
 ## Verification
 
-| Gate | 기대 |
-| ---- | ---- |
-| SQL | `ew_e7_social_co_mission_test.sql` — invite/accept/complete · affiliate deny · whale threshold · conservation |
-| Grants | anon deny · authenticated EXECUTE on client RPCs only |
-| Vitest | `social-co-mission-display-contract` |
-| Remote | GATE: `stack:push-remote` · advisor 0 ERROR |
+| Gate   | 기대                                                                                                          |
+| ------ | ------------------------------------------------------------------------------------------------------------- |
+| SQL    | `ew_e7_social_co_mission_test.sql` — invite/accept/complete · affiliate deny · whale threshold · conservation |
+| Grants | anon deny · authenticated EXECUTE on client RPCs only                                                         |
+| Vitest | `social-co-mission-display-contract`                                                                          |
+| Remote | GATE: `stack:push-remote` · advisor 0 ERROR                                                                   |
 
 ## Operator sign-off
 

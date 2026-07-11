@@ -113,7 +113,10 @@ export function assertEwE21GateTradeEngineParitySync(): void {
   if (EW_E21_TRADE_PARITY_NEXT_TODO !== 'ew-e21-gate-trade-engine-parity') {
     throw new Error('E21 WAVE next must unlock ew-e21-gate-trade-engine-parity');
   }
-  if (EW_E21_GATE_TRADE_ENGINE_PARITY_REMOTE_MIGRATION_NAME !== 'ew_e21_trade_parity_hedge_reduce_only') {
+  if (
+    EW_E21_GATE_TRADE_ENGINE_PARITY_REMOTE_MIGRATION_NAME !==
+    'ew_e21_trade_parity_hedge_reduce_only'
+  ) {
     throw new Error('E21 GATE remote migration name drift');
   }
   if (EW_E21_NEW_ENGINE_FEATURES.length !== 2) {

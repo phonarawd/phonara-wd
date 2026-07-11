@@ -17,17 +17,8 @@ import { cn } from '@/product/primitives/lib/cn';
 /** Canonical `/earn/play` — apptech free roulette (≠ casino `/games/roulette`). */
 export function EarnPlayPage() {
   const engine = useEarnPlayPageController();
-  const {
-    t,
-    loading,
-    error,
-    quota,
-    lastSpin,
-    spinBlocked,
-    spinning,
-    quotaLabel,
-    spinRoulette,
-  } = engine;
+  const { t, loading, error, quota, lastSpin, spinBlocked, spinning, quotaLabel, spinRoulette } =
+    engine;
 
   useEffect(() => {
     document.title = t(EARN_PLAY_SEO_TITLE_KEY);
@@ -97,7 +88,10 @@ export function EarnPlayPage() {
             </div>
           </div>
 
-          <p className="text-foreground m-0 text-sm font-medium tabular-nums" data-testid="earn-play-quota">
+          <p
+            className="text-foreground m-0 text-sm font-medium tabular-nums"
+            data-testid="earn-play-quota"
+          >
             {quotaLabel}
           </p>
 
@@ -129,7 +123,9 @@ export function EarnPlayPage() {
         </CardBody>
       </Card>
 
-      <p className="text-foreground-muted m-0 text-xs leading-relaxed">{t('earn.play.casinoNotice')}</p>
+      <p className="text-foreground-muted m-0 text-xs leading-relaxed">
+        {t('earn.play.casinoNotice')}
+      </p>
     </div>
   );
 }

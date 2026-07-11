@@ -27,7 +27,10 @@ describe('SupportHubPage', () => {
     );
     expect(screen.getByTestId('support-hub-faq-link')).toHaveAttribute('href', '/support/faq');
     expect(screen.getByTestId('support-hub-feedback-link')).toHaveAttribute('href', '/feedback');
-    expect(screen.getByTestId('support-hub-ticket-link')).toHaveAttribute('href', '/support/ticket');
-    expect(screen.getByTestId('support-hub-ticket-link')).toHaveAttribute('data-deferred', 'true');
+    expect(screen.getByTestId('support-hub-ticket-link')).toHaveAttribute(
+      'href',
+      '/support/ticket',
+    );
+    expect(screen.getByTestId('support-hub-ticket-link')).toHaveAttribute('data-deferred', 'false');
   });
 });

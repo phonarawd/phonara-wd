@@ -93,7 +93,9 @@ export function useEarnPlayPageController(): EarnPlayPageControllerView {
           zone: 'warm',
           key: 'events.roulette.result.win',
           values: {
-            amount: formatPhonRewardDisplay(result.phonAwarded).replace(/^\+/, '').replace(/P$/, ''),
+            amount: formatPhonRewardDisplay(result.phonAwarded)
+              .replace(/^\+/, '')
+              .replace(/P$/, ''),
           },
         });
       }
@@ -115,7 +117,8 @@ export function useEarnPlayPageController(): EarnPlayPageControllerView {
   }, [quota, t]);
 
   const loading = authLoading || (Boolean(userId) && snapshotLoading);
-  const error = actionError ?? (snapshotError ? translateError(snapshotError, 'error.UNKNOWN') : null);
+  const error =
+    actionError ?? (snapshotError ? translateError(snapshotError, 'error.UNKNOWN') : null);
 
   return {
     t,

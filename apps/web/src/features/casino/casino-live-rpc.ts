@@ -4,10 +4,7 @@
  */
 import { supabase } from '../../lib/supabase';
 
-export async function casinoLiveRpc<T>(
-  fn: string,
-  args: Record<string, unknown> = {},
-): Promise<T> {
+export async function casinoLiveRpc<T>(fn: string, args: Record<string, unknown> = {}): Promise<T> {
   const { data, error } = await supabase.rpc(fn as never, args as never);
   if (error) throw error;
   return data as T;

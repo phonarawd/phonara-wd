@@ -29,8 +29,7 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const rawUrl =
-    (event.notification.data && event.notification.data.url) || '/queues';
+  const rawUrl = (event.notification.data && event.notification.data.url) || '/queues';
   const targetUrl = new URL(String(rawUrl), self.location.origin);
 
   event.waitUntil(

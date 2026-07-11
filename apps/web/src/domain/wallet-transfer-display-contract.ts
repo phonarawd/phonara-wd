@@ -30,10 +30,7 @@ export function resolveWalletTransferHubExposure(): WalletTransferExposureMode {
 }
 
 export function shouldExposeWalletTransferInSubnav(): boolean {
-  return (
-    LAUNCH_GATES.financialConnectivityEngine &&
-    LAUNCH_GATES.financialConnectivityLive
-  );
+  return LAUNCH_GATES.financialConnectivityEngine && LAUNCH_GATES.financialConnectivityLive;
 }
 
 export function canSubmitP2pTransfer(): boolean {

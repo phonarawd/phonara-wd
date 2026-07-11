@@ -33,7 +33,10 @@ export function FeesPage() {
       title={t(FEES_SEO_TITLE_KEY)}
       lead={t(FEES_SEO_DESCRIPTION_KEY)}
     >
-      <p className="text-foreground-muted m-0 text-sm leading-relaxed" data-testid="fees-page-notice">
+      <p
+        className="text-foreground-muted m-0 text-sm leading-relaxed"
+        data-testid="fees-page-notice"
+      >
         {t('fees.page.settlementNotice')}
       </p>
 
@@ -75,8 +78,14 @@ export function FeesPage() {
             </thead>
             <tbody>
               {cashbackRows.map((row) => (
-                <tr key={row.tier} className="border-border border-t" data-testid={`fees-cashback-${row.tier}`}>
-                  <td className="text-foreground px-4 py-3 font-medium">{t(`earn.tier.${row.tier}`)}</td>
+                <tr
+                  key={row.tier}
+                  className="border-border border-t"
+                  data-testid={`fees-cashback-${row.tier}`}
+                >
+                  <td className="text-foreground px-4 py-3 font-medium">
+                    {t(`earn.tier.${row.tier}`)}
+                  </td>
                   <td className="text-foreground px-4 py-3 tabular-nums">{t(row.cashbackKey)}</td>
                 </tr>
               ))}

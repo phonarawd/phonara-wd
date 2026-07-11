@@ -9,22 +9,22 @@
 
 ## 범위
 
-| 항목 | 내용 |
-| ---- | ---- |
-| ADR | co-mission affiliate pair · whale KRW→PHON threshold · 광고·설문 영구 제외 |
-| Migration | `20260807000001_ew_e7_social_co_mission.sql` |
-| Co RPCs | `rpc_invite_co_mission` · `rpc_accept_co_mission` · `rpc_complete_co_mission` · `rpc_get_co_mission_status` |
-| Whale RPCs | `rpc_claim_whale_mission` · `rpc_get_whale_mission_status` |
-| Seed | `co_share_referral` · `whale_deposit_1m` |
-| Launch | `LAUNCH_GATES.socialCoMissionEngine=true` · UI live = GATE |
+| 항목       | 내용                                                                                                        |
+| ---------- | ----------------------------------------------------------------------------------------------------------- |
+| ADR        | co-mission affiliate pair · whale KRW→PHON threshold · 광고·설문 영구 제외                                  |
+| Migration  | `20260807000001_ew_e7_social_co_mission.sql`                                                                |
+| Co RPCs    | `rpc_invite_co_mission` · `rpc_accept_co_mission` · `rpc_complete_co_mission` · `rpc_get_co_mission_status` |
+| Whale RPCs | `rpc_claim_whale_mission` · `rpc_get_whale_mission_status`                                                  |
+| Seed       | `co_share_referral` · `whale_deposit_1m`                                                                    |
+| Launch     | `LAUNCH_GATES.socialCoMissionEngine=true` · UI live = GATE                                                  |
 
 ## 증거
 
-| Gate | 결과 |
-| ---- | ---- |
-| `gate:ai-impl` social-co-mission | vitest **2/2** · typecheck · lint · i18n · release |
-| SQL | `ew_e7_social_co_mission_test.sql` E7-0..E7-4 · **CI sql authoritative** (G13) |
-| Remote | GATE `#253` `[x]`: `stack:push-remote` · advisor 0 |
+| Gate                             | 결과                                                                           |
+| -------------------------------- | ------------------------------------------------------------------------------ |
+| `gate:ai-impl` social-co-mission | vitest **2/2** · typecheck · lint · i18n · release                             |
+| SQL                              | `ew_e7_social_co_mission_test.sql` E7-0..E7-4 · **CI sql authoritative** (G13) |
+| Remote                           | GATE `#253` `[x]`: `stack:push-remote` · advisor 0                             |
 
 ## 다음
 

@@ -8,32 +8,32 @@
 
 ## 범위
 
-| 항목 | 내용 |
-| ---- | ---- |
-| SQL | `ew_e3_viral_cms_test.sql` E3-0..E3-4 · leaderboard/CMS/analytics only (Σ=0 영향 0) · **CI sql authoritative** (G13) |
-| Remote | `stack:push-remote` · migration name `ew_e3_viral_cms` |
-| Advisor | security advisor **0 ERROR** |
-| Unlock | `/referral/leaderboard` · `/admin/promotions` · `/admin/cms` · `/announcements` full |
+| 항목    | 내용                                                                                                                 |
+| ------- | -------------------------------------------------------------------------------------------------------------------- |
+| SQL     | `ew_e3_viral_cms_test.sql` E3-0..E3-4 · leaderboard/CMS/analytics only (Σ=0 영향 0) · **CI sql authoritative** (G13) |
+| Remote  | `stack:push-remote` · migration name `ew_e3_viral_cms`                                                               |
+| Advisor | security advisor **0 ERROR**                                                                                         |
+| Unlock  | `/referral/leaderboard` · `/admin/promotions` · `/admin/cms` · `/announcements` full                                 |
 
 ## Unlock 상세
 
-| Surface | Launch gate | 비고 |
-| ------- | ----------- | ---- |
-| `/referral/leaderboard` | `referralLeaderboardLive` | 엔진 경로 unlock · rank list live wire = E5 |
-| `/admin/promotions` · `/admin/cms` | `adminCmsPromotions` | targeting/schedule 소비 가능 · full desk UI = E6 |
-| `/announcements` | `announcementsFull` | CMS notice list targeting-aware full |
+| Surface                            | Launch gate               | 비고                                             |
+| ---------------------------------- | ------------------------- | ------------------------------------------------ |
+| `/referral/leaderboard`            | `referralLeaderboardLive` | 엔진 경로 unlock · rank list live wire = E5      |
+| `/admin/promotions` · `/admin/cms` | `adminCmsPromotions`      | targeting/schedule 소비 가능 · full desk UI = E6 |
+| `/announcements`                   | `announcementsFull`       | CMS notice list targeting-aware full             |
 
 ## 증거
 
-| Gate | 결과 |
-| ---- | ---- |
-| vitest E3 GATE + unlock contracts | **29/29** |
-| typecheck | green |
-| check:i18n | green |
-| Remote migration | `ew_e3_viral_cms` (tail `20260711140913`) |
-| Advisor | **0 ERROR** (`stack:push-remote`) |
-| Unlock | `isViralCmsSurfacesFullyUnlocked() = true` |
-| SQL | `ew_e3_viral_cms_test.sql` E3-0..E3-4 · **CI sql authoritative** (G13 · local heavy deny) |
+| Gate                              | 결과                                                                                      |
+| --------------------------------- | ----------------------------------------------------------------------------------------- |
+| vitest E3 GATE + unlock contracts | **29/29**                                                                                 |
+| typecheck                         | green                                                                                     |
+| check:i18n                        | green                                                                                     |
+| Remote migration                  | `ew_e3_viral_cms` (tail `20260711140913`)                                                 |
+| Advisor                           | **0 ERROR** (`stack:push-remote`)                                                         |
+| Unlock                            | `isViralCmsSurfacesFullyUnlocked() = true`                                                |
+| SQL                               | `ew_e3_viral_cms_test.sql` E3-0..E3-4 · **CI sql authoritative** (G13 · local heavy deny) |
 
 ## 다음
 

@@ -25,10 +25,7 @@ type BetFirstVisitEducationSheetProps = {
 };
 
 /** First-visit sports+casino risk education — bet slip · RG · provably-fair (§32.5 · ui_only). */
-export function BetFirstVisitEducationSheet({
-  open,
-  onDismiss,
-}: BetFirstVisitEducationSheetProps) {
+export function BetFirstVisitEducationSheet({ open, onDismiss }: BetFirstVisitEducationSheetProps) {
   const t = useT();
 
   return (

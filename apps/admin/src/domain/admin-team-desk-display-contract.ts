@@ -32,8 +32,7 @@ export const ADMIN_TEAM_DESK_SURFACE_PATH =
 
 export const ADMIN_TEAM_DESK_ROUTE_PATH = 'apps/admin/src/routes/team.tsx' as const;
 
-export const ADMIN_TEAM_DESK_HOOK_PATH =
-  'apps/admin/src/hooks/admin/useAdminTeamDesk.ts' as const;
+export const ADMIN_TEAM_DESK_HOOK_PATH = 'apps/admin/src/hooks/admin/useAdminTeamDesk.ts' as const;
 
 export const P13_ADMIN_TEAM_DESK_ARTIFACT_PATHS = [
   ADMIN_TEAM_DESK_SURFACE_PATH,
@@ -69,9 +68,7 @@ export function isAdminNavRouteAllowed(role: AdminRbacRole, routePath: string): 
   const allow = ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST[teamRole];
   const normalized =
     routePath.length > 1 && routePath.endsWith('/') ? routePath.slice(0, -1) : routePath;
-  return allow.some(
-    (entry) => normalized === entry || normalized.startsWith(`${entry}/`),
-  );
+  return allow.some((entry) => normalized === entry || normalized.startsWith(`${entry}/`));
 }
 
 export function assertP13AdminTeamDeskSync(): void {

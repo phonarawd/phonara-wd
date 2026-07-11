@@ -62,10 +62,7 @@ export function AnnouncementsPage() {
       ) : null}
 
       {!noticesQuery.isLoading && rows.length > 0 ? (
-        <ul
-          className="m-0 flex list-none flex-col gap-3 p-0"
-          data-testid="announcements-list"
-        >
+        <ul className="m-0 flex list-none flex-col gap-3 p-0" data-testid="announcements-list">
           {rows.map((row) => (
             <li key={row.id}>
               <Card data-testid={`announcement-row-${row.id}`}>

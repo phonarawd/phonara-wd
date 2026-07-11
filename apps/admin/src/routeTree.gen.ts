@@ -8,314 +8,314 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as WithdrawalsRouteImport } from './routes/withdrawals'
-import { Route as ViralStatsRouteImport } from './routes/viral-stats'
-import { Route as UsersRouteImport } from './routes/users'
-import { Route as TiersRouteImport } from './routes/tiers'
-import { Route as TierBenefitsRouteImport } from './routes/tier-benefits'
-import { Route as TeamRouteImport } from './routes/team'
-import { Route as SupportRouteImport } from './routes/support'
-import { Route as StakingRouteImport } from './routes/staking'
-import { Route as SportsRouteImport } from './routes/sports'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as RiskRouteImport } from './routes/risk'
-import { Route as RewardsRouteImport } from './routes/rewards'
-import { Route as QueuesRouteImport } from './routes/queues'
-import { Route as PromotionsRouteImport } from './routes/promotions'
-import { Route as OpsRouteImport } from './routes/ops'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as EarnRouteImport } from './routes/earn'
-import { Route as DepositsRouteImport } from './routes/deposits'
-import { Route as ConfigRouteImport } from './routes/config'
-import { Route as CmsRouteImport } from './routes/cms'
-import { Route as CasinoRouteImport } from './routes/casino'
-import { Route as AuditLogsRouteImport } from './routes/audit-logs'
-import { Route as AuditRouteImport } from './routes/audit'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as EarnIndexRouteImport } from './routes/earn/index'
-import { Route as MfaPolicyRouteImport } from './routes/mfa/policy'
-import { Route as MfaEnrollRouteImport } from './routes/mfa/enroll'
-import { Route as MfaChallengeRouteImport } from './routes/mfa/challenge'
-import { Route as EarnRewardsRouteImport } from './routes/earn/rewards'
-import { Route as EarnReferralsRouteImport } from './routes/earn/referrals'
-import { Route as EarnMissionsRouteImport } from './routes/earn/missions'
-import { Route as EarnActivityRouteImport } from './routes/earn/activity'
-import { Route as UsersUserIdTierRouteImport } from './routes/users/$userId/tier'
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as WithdrawalsRouteImport } from './routes/withdrawals';
+import { Route as ViralStatsRouteImport } from './routes/viral-stats';
+import { Route as UsersRouteImport } from './routes/users';
+import { Route as TiersRouteImport } from './routes/tiers';
+import { Route as TierBenefitsRouteImport } from './routes/tier-benefits';
+import { Route as TeamRouteImport } from './routes/team';
+import { Route as SupportRouteImport } from './routes/support';
+import { Route as StakingRouteImport } from './routes/staking';
+import { Route as SportsRouteImport } from './routes/sports';
+import { Route as SettingsRouteImport } from './routes/settings';
+import { Route as RiskRouteImport } from './routes/risk';
+import { Route as RewardsRouteImport } from './routes/rewards';
+import { Route as QueuesRouteImport } from './routes/queues';
+import { Route as PromotionsRouteImport } from './routes/promotions';
+import { Route as OpsRouteImport } from './routes/ops';
+import { Route as LoginRouteImport } from './routes/login';
+import { Route as EarnRouteImport } from './routes/earn';
+import { Route as DepositsRouteImport } from './routes/deposits';
+import { Route as ConfigRouteImport } from './routes/config';
+import { Route as CmsRouteImport } from './routes/cms';
+import { Route as CasinoRouteImport } from './routes/casino';
+import { Route as AuditLogsRouteImport } from './routes/audit-logs';
+import { Route as AuditRouteImport } from './routes/audit';
+import { Route as IndexRouteImport } from './routes/index';
+import { Route as EarnIndexRouteImport } from './routes/earn/index';
+import { Route as MfaPolicyRouteImport } from './routes/mfa/policy';
+import { Route as MfaEnrollRouteImport } from './routes/mfa/enroll';
+import { Route as MfaChallengeRouteImport } from './routes/mfa/challenge';
+import { Route as EarnRewardsRouteImport } from './routes/earn/rewards';
+import { Route as EarnReferralsRouteImport } from './routes/earn/referrals';
+import { Route as EarnMissionsRouteImport } from './routes/earn/missions';
+import { Route as EarnActivityRouteImport } from './routes/earn/activity';
+import { Route as UsersUserIdTierRouteImport } from './routes/users/$userId/tier';
 
 const WithdrawalsRoute = WithdrawalsRouteImport.update({
   id: '/withdrawals',
   path: '/withdrawals',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ViralStatsRoute = ViralStatsRouteImport.update({
   id: '/viral-stats',
   path: '/viral-stats',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const UsersRoute = UsersRouteImport.update({
   id: '/users',
   path: '/users',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const TiersRoute = TiersRouteImport.update({
   id: '/tiers',
   path: '/tiers',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const TierBenefitsRoute = TierBenefitsRouteImport.update({
   id: '/tier-benefits',
   path: '/tier-benefits',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const TeamRoute = TeamRouteImport.update({
   id: '/team',
   path: '/team',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const StakingRoute = StakingRouteImport.update({
   id: '/staking',
   path: '/staking',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const SportsRoute = SportsRouteImport.update({
   id: '/sports',
   path: '/sports',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const RiskRoute = RiskRouteImport.update({
   id: '/risk',
   path: '/risk',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const RewardsRoute = RewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const QueuesRoute = QueuesRouteImport.update({
   id: '/queues',
   path: '/queues',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const PromotionsRoute = PromotionsRouteImport.update({
   id: '/promotions',
   path: '/promotions',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const OpsRoute = OpsRouteImport.update({
   id: '/ops',
   path: '/ops',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const EarnRoute = EarnRouteImport.update({
   id: '/earn',
   path: '/earn',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const DepositsRoute = DepositsRouteImport.update({
   id: '/deposits',
   path: '/deposits',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ConfigRoute = ConfigRouteImport.update({
   id: '/config',
   path: '/config',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const CmsRoute = CmsRouteImport.update({
   id: '/cms',
   path: '/cms',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const CasinoRoute = CasinoRouteImport.update({
   id: '/casino',
   path: '/casino',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuditLogsRoute = AuditLogsRouteImport.update({
   id: '/audit-logs',
   path: '/audit-logs',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuditRoute = AuditRouteImport.update({
   id: '/audit',
   path: '/audit',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const EarnIndexRoute = EarnIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => EarnRoute,
-} as any)
+} as any);
 const MfaPolicyRoute = MfaPolicyRouteImport.update({
   id: '/mfa/policy',
   path: '/mfa/policy',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const MfaEnrollRoute = MfaEnrollRouteImport.update({
   id: '/mfa/enroll',
   path: '/mfa/enroll',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const MfaChallengeRoute = MfaChallengeRouteImport.update({
   id: '/mfa/challenge',
   path: '/mfa/challenge',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const EarnRewardsRoute = EarnRewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
   getParentRoute: () => EarnRoute,
-} as any)
+} as any);
 const EarnReferralsRoute = EarnReferralsRouteImport.update({
   id: '/referrals',
   path: '/referrals',
   getParentRoute: () => EarnRoute,
-} as any)
+} as any);
 const EarnMissionsRoute = EarnMissionsRouteImport.update({
   id: '/missions',
   path: '/missions',
   getParentRoute: () => EarnRoute,
-} as any)
+} as any);
 const EarnActivityRoute = EarnActivityRouteImport.update({
   id: '/activity',
   path: '/activity',
   getParentRoute: () => EarnRoute,
-} as any)
+} as any);
 const UsersUserIdTierRoute = UsersUserIdTierRouteImport.update({
   id: '/$userId/tier',
   path: '/$userId/tier',
   getParentRoute: () => UsersRoute,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/audit': typeof AuditRoute
-  '/audit-logs': typeof AuditLogsRoute
-  '/casino': typeof CasinoRoute
-  '/cms': typeof CmsRoute
-  '/config': typeof ConfigRoute
-  '/deposits': typeof DepositsRoute
-  '/earn': typeof EarnRouteWithChildren
-  '/login': typeof LoginRoute
-  '/ops': typeof OpsRoute
-  '/promotions': typeof PromotionsRoute
-  '/queues': typeof QueuesRoute
-  '/rewards': typeof RewardsRoute
-  '/risk': typeof RiskRoute
-  '/settings': typeof SettingsRoute
-  '/sports': typeof SportsRoute
-  '/staking': typeof StakingRoute
-  '/support': typeof SupportRoute
-  '/team': typeof TeamRoute
-  '/tier-benefits': typeof TierBenefitsRoute
-  '/tiers': typeof TiersRoute
-  '/users': typeof UsersRouteWithChildren
-  '/viral-stats': typeof ViralStatsRoute
-  '/withdrawals': typeof WithdrawalsRoute
-  '/earn/activity': typeof EarnActivityRoute
-  '/earn/missions': typeof EarnMissionsRoute
-  '/earn/referrals': typeof EarnReferralsRoute
-  '/earn/rewards': typeof EarnRewardsRoute
-  '/mfa/challenge': typeof MfaChallengeRoute
-  '/mfa/enroll': typeof MfaEnrollRoute
-  '/mfa/policy': typeof MfaPolicyRoute
-  '/earn/': typeof EarnIndexRoute
-  '/users/$userId/tier': typeof UsersUserIdTierRoute
+  '/': typeof IndexRoute;
+  '/audit': typeof AuditRoute;
+  '/audit-logs': typeof AuditLogsRoute;
+  '/casino': typeof CasinoRoute;
+  '/cms': typeof CmsRoute;
+  '/config': typeof ConfigRoute;
+  '/deposits': typeof DepositsRoute;
+  '/earn': typeof EarnRouteWithChildren;
+  '/login': typeof LoginRoute;
+  '/ops': typeof OpsRoute;
+  '/promotions': typeof PromotionsRoute;
+  '/queues': typeof QueuesRoute;
+  '/rewards': typeof RewardsRoute;
+  '/risk': typeof RiskRoute;
+  '/settings': typeof SettingsRoute;
+  '/sports': typeof SportsRoute;
+  '/staking': typeof StakingRoute;
+  '/support': typeof SupportRoute;
+  '/team': typeof TeamRoute;
+  '/tier-benefits': typeof TierBenefitsRoute;
+  '/tiers': typeof TiersRoute;
+  '/users': typeof UsersRouteWithChildren;
+  '/viral-stats': typeof ViralStatsRoute;
+  '/withdrawals': typeof WithdrawalsRoute;
+  '/earn/activity': typeof EarnActivityRoute;
+  '/earn/missions': typeof EarnMissionsRoute;
+  '/earn/referrals': typeof EarnReferralsRoute;
+  '/earn/rewards': typeof EarnRewardsRoute;
+  '/mfa/challenge': typeof MfaChallengeRoute;
+  '/mfa/enroll': typeof MfaEnrollRoute;
+  '/mfa/policy': typeof MfaPolicyRoute;
+  '/earn/': typeof EarnIndexRoute;
+  '/users/$userId/tier': typeof UsersUserIdTierRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/audit': typeof AuditRoute
-  '/audit-logs': typeof AuditLogsRoute
-  '/casino': typeof CasinoRoute
-  '/cms': typeof CmsRoute
-  '/config': typeof ConfigRoute
-  '/deposits': typeof DepositsRoute
-  '/login': typeof LoginRoute
-  '/ops': typeof OpsRoute
-  '/promotions': typeof PromotionsRoute
-  '/queues': typeof QueuesRoute
-  '/rewards': typeof RewardsRoute
-  '/risk': typeof RiskRoute
-  '/settings': typeof SettingsRoute
-  '/sports': typeof SportsRoute
-  '/staking': typeof StakingRoute
-  '/support': typeof SupportRoute
-  '/team': typeof TeamRoute
-  '/tier-benefits': typeof TierBenefitsRoute
-  '/tiers': typeof TiersRoute
-  '/users': typeof UsersRouteWithChildren
-  '/viral-stats': typeof ViralStatsRoute
-  '/withdrawals': typeof WithdrawalsRoute
-  '/earn/activity': typeof EarnActivityRoute
-  '/earn/missions': typeof EarnMissionsRoute
-  '/earn/referrals': typeof EarnReferralsRoute
-  '/earn/rewards': typeof EarnRewardsRoute
-  '/mfa/challenge': typeof MfaChallengeRoute
-  '/mfa/enroll': typeof MfaEnrollRoute
-  '/mfa/policy': typeof MfaPolicyRoute
-  '/earn': typeof EarnIndexRoute
-  '/users/$userId/tier': typeof UsersUserIdTierRoute
+  '/': typeof IndexRoute;
+  '/audit': typeof AuditRoute;
+  '/audit-logs': typeof AuditLogsRoute;
+  '/casino': typeof CasinoRoute;
+  '/cms': typeof CmsRoute;
+  '/config': typeof ConfigRoute;
+  '/deposits': typeof DepositsRoute;
+  '/login': typeof LoginRoute;
+  '/ops': typeof OpsRoute;
+  '/promotions': typeof PromotionsRoute;
+  '/queues': typeof QueuesRoute;
+  '/rewards': typeof RewardsRoute;
+  '/risk': typeof RiskRoute;
+  '/settings': typeof SettingsRoute;
+  '/sports': typeof SportsRoute;
+  '/staking': typeof StakingRoute;
+  '/support': typeof SupportRoute;
+  '/team': typeof TeamRoute;
+  '/tier-benefits': typeof TierBenefitsRoute;
+  '/tiers': typeof TiersRoute;
+  '/users': typeof UsersRouteWithChildren;
+  '/viral-stats': typeof ViralStatsRoute;
+  '/withdrawals': typeof WithdrawalsRoute;
+  '/earn/activity': typeof EarnActivityRoute;
+  '/earn/missions': typeof EarnMissionsRoute;
+  '/earn/referrals': typeof EarnReferralsRoute;
+  '/earn/rewards': typeof EarnRewardsRoute;
+  '/mfa/challenge': typeof MfaChallengeRoute;
+  '/mfa/enroll': typeof MfaEnrollRoute;
+  '/mfa/policy': typeof MfaPolicyRoute;
+  '/earn': typeof EarnIndexRoute;
+  '/users/$userId/tier': typeof UsersUserIdTierRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/audit': typeof AuditRoute
-  '/audit-logs': typeof AuditLogsRoute
-  '/casino': typeof CasinoRoute
-  '/cms': typeof CmsRoute
-  '/config': typeof ConfigRoute
-  '/deposits': typeof DepositsRoute
-  '/earn': typeof EarnRouteWithChildren
-  '/login': typeof LoginRoute
-  '/ops': typeof OpsRoute
-  '/promotions': typeof PromotionsRoute
-  '/queues': typeof QueuesRoute
-  '/rewards': typeof RewardsRoute
-  '/risk': typeof RiskRoute
-  '/settings': typeof SettingsRoute
-  '/sports': typeof SportsRoute
-  '/staking': typeof StakingRoute
-  '/support': typeof SupportRoute
-  '/team': typeof TeamRoute
-  '/tier-benefits': typeof TierBenefitsRoute
-  '/tiers': typeof TiersRoute
-  '/users': typeof UsersRouteWithChildren
-  '/viral-stats': typeof ViralStatsRoute
-  '/withdrawals': typeof WithdrawalsRoute
-  '/earn/activity': typeof EarnActivityRoute
-  '/earn/missions': typeof EarnMissionsRoute
-  '/earn/referrals': typeof EarnReferralsRoute
-  '/earn/rewards': typeof EarnRewardsRoute
-  '/mfa/challenge': typeof MfaChallengeRoute
-  '/mfa/enroll': typeof MfaEnrollRoute
-  '/mfa/policy': typeof MfaPolicyRoute
-  '/earn/': typeof EarnIndexRoute
-  '/users/$userId/tier': typeof UsersUserIdTierRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexRoute;
+  '/audit': typeof AuditRoute;
+  '/audit-logs': typeof AuditLogsRoute;
+  '/casino': typeof CasinoRoute;
+  '/cms': typeof CmsRoute;
+  '/config': typeof ConfigRoute;
+  '/deposits': typeof DepositsRoute;
+  '/earn': typeof EarnRouteWithChildren;
+  '/login': typeof LoginRoute;
+  '/ops': typeof OpsRoute;
+  '/promotions': typeof PromotionsRoute;
+  '/queues': typeof QueuesRoute;
+  '/rewards': typeof RewardsRoute;
+  '/risk': typeof RiskRoute;
+  '/settings': typeof SettingsRoute;
+  '/sports': typeof SportsRoute;
+  '/staking': typeof StakingRoute;
+  '/support': typeof SupportRoute;
+  '/team': typeof TeamRoute;
+  '/tier-benefits': typeof TierBenefitsRoute;
+  '/tiers': typeof TiersRoute;
+  '/users': typeof UsersRouteWithChildren;
+  '/viral-stats': typeof ViralStatsRoute;
+  '/withdrawals': typeof WithdrawalsRoute;
+  '/earn/activity': typeof EarnActivityRoute;
+  '/earn/missions': typeof EarnMissionsRoute;
+  '/earn/referrals': typeof EarnReferralsRoute;
+  '/earn/rewards': typeof EarnRewardsRoute;
+  '/mfa/challenge': typeof MfaChallengeRoute;
+  '/mfa/enroll': typeof MfaEnrollRoute;
+  '/mfa/policy': typeof MfaPolicyRoute;
+  '/earn/': typeof EarnIndexRoute;
+  '/users/$userId/tier': typeof UsersUserIdTierRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
     | '/'
     | '/audit'
@@ -349,8 +349,8 @@ export interface FileRouteTypes {
     | '/mfa/enroll'
     | '/mfa/policy'
     | '/earn/'
-    | '/users/$userId/tier'
-  fileRoutesByTo: FileRoutesByTo
+    | '/users/$userId/tier';
+  fileRoutesByTo: FileRoutesByTo;
   to:
     | '/'
     | '/audit'
@@ -383,7 +383,7 @@ export interface FileRouteTypes {
     | '/mfa/enroll'
     | '/mfa/policy'
     | '/earn'
-    | '/users/$userId/tier'
+    | '/users/$userId/tier';
   id:
     | '__root__'
     | '/'
@@ -418,281 +418,281 @@ export interface FileRouteTypes {
     | '/mfa/enroll'
     | '/mfa/policy'
     | '/earn/'
-    | '/users/$userId/tier'
-  fileRoutesById: FileRoutesById
+    | '/users/$userId/tier';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AuditRoute: typeof AuditRoute
-  AuditLogsRoute: typeof AuditLogsRoute
-  CasinoRoute: typeof CasinoRoute
-  CmsRoute: typeof CmsRoute
-  ConfigRoute: typeof ConfigRoute
-  DepositsRoute: typeof DepositsRoute
-  EarnRoute: typeof EarnRouteWithChildren
-  LoginRoute: typeof LoginRoute
-  OpsRoute: typeof OpsRoute
-  PromotionsRoute: typeof PromotionsRoute
-  QueuesRoute: typeof QueuesRoute
-  RewardsRoute: typeof RewardsRoute
-  RiskRoute: typeof RiskRoute
-  SettingsRoute: typeof SettingsRoute
-  SportsRoute: typeof SportsRoute
-  StakingRoute: typeof StakingRoute
-  SupportRoute: typeof SupportRoute
-  TeamRoute: typeof TeamRoute
-  TierBenefitsRoute: typeof TierBenefitsRoute
-  TiersRoute: typeof TiersRoute
-  UsersRoute: typeof UsersRouteWithChildren
-  ViralStatsRoute: typeof ViralStatsRoute
-  WithdrawalsRoute: typeof WithdrawalsRoute
-  MfaChallengeRoute: typeof MfaChallengeRoute
-  MfaEnrollRoute: typeof MfaEnrollRoute
-  MfaPolicyRoute: typeof MfaPolicyRoute
+  IndexRoute: typeof IndexRoute;
+  AuditRoute: typeof AuditRoute;
+  AuditLogsRoute: typeof AuditLogsRoute;
+  CasinoRoute: typeof CasinoRoute;
+  CmsRoute: typeof CmsRoute;
+  ConfigRoute: typeof ConfigRoute;
+  DepositsRoute: typeof DepositsRoute;
+  EarnRoute: typeof EarnRouteWithChildren;
+  LoginRoute: typeof LoginRoute;
+  OpsRoute: typeof OpsRoute;
+  PromotionsRoute: typeof PromotionsRoute;
+  QueuesRoute: typeof QueuesRoute;
+  RewardsRoute: typeof RewardsRoute;
+  RiskRoute: typeof RiskRoute;
+  SettingsRoute: typeof SettingsRoute;
+  SportsRoute: typeof SportsRoute;
+  StakingRoute: typeof StakingRoute;
+  SupportRoute: typeof SupportRoute;
+  TeamRoute: typeof TeamRoute;
+  TierBenefitsRoute: typeof TierBenefitsRoute;
+  TiersRoute: typeof TiersRoute;
+  UsersRoute: typeof UsersRouteWithChildren;
+  ViralStatsRoute: typeof ViralStatsRoute;
+  WithdrawalsRoute: typeof WithdrawalsRoute;
+  MfaChallengeRoute: typeof MfaChallengeRoute;
+  MfaEnrollRoute: typeof MfaEnrollRoute;
+  MfaPolicyRoute: typeof MfaPolicyRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/withdrawals': {
-      id: '/withdrawals'
-      path: '/withdrawals'
-      fullPath: '/withdrawals'
-      preLoaderRoute: typeof WithdrawalsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/withdrawals';
+      path: '/withdrawals';
+      fullPath: '/withdrawals';
+      preLoaderRoute: typeof WithdrawalsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/viral-stats': {
-      id: '/viral-stats'
-      path: '/viral-stats'
-      fullPath: '/viral-stats'
-      preLoaderRoute: typeof ViralStatsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/viral-stats';
+      path: '/viral-stats';
+      fullPath: '/viral-stats';
+      preLoaderRoute: typeof ViralStatsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/users': {
-      id: '/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof UsersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/users';
+      path: '/users';
+      fullPath: '/users';
+      preLoaderRoute: typeof UsersRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/tiers': {
-      id: '/tiers'
-      path: '/tiers'
-      fullPath: '/tiers'
-      preLoaderRoute: typeof TiersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/tiers';
+      path: '/tiers';
+      fullPath: '/tiers';
+      preLoaderRoute: typeof TiersRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/tier-benefits': {
-      id: '/tier-benefits'
-      path: '/tier-benefits'
-      fullPath: '/tier-benefits'
-      preLoaderRoute: typeof TierBenefitsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/tier-benefits';
+      path: '/tier-benefits';
+      fullPath: '/tier-benefits';
+      preLoaderRoute: typeof TierBenefitsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/team': {
-      id: '/team'
-      path: '/team'
-      fullPath: '/team'
-      preLoaderRoute: typeof TeamRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/team';
+      path: '/team';
+      fullPath: '/team';
+      preLoaderRoute: typeof TeamRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/support': {
-      id: '/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/support';
+      path: '/support';
+      fullPath: '/support';
+      preLoaderRoute: typeof SupportRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/staking': {
-      id: '/staking'
-      path: '/staking'
-      fullPath: '/staking'
-      preLoaderRoute: typeof StakingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/staking';
+      path: '/staking';
+      fullPath: '/staking';
+      preLoaderRoute: typeof StakingRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/sports': {
-      id: '/sports'
-      path: '/sports'
-      fullPath: '/sports'
-      preLoaderRoute: typeof SportsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/sports';
+      path: '/sports';
+      fullPath: '/sports';
+      preLoaderRoute: typeof SportsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/settings';
+      path: '/settings';
+      fullPath: '/settings';
+      preLoaderRoute: typeof SettingsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/risk': {
-      id: '/risk'
-      path: '/risk'
-      fullPath: '/risk'
-      preLoaderRoute: typeof RiskRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/risk';
+      path: '/risk';
+      fullPath: '/risk';
+      preLoaderRoute: typeof RiskRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/rewards': {
-      id: '/rewards'
-      path: '/rewards'
-      fullPath: '/rewards'
-      preLoaderRoute: typeof RewardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/rewards';
+      path: '/rewards';
+      fullPath: '/rewards';
+      preLoaderRoute: typeof RewardsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/queues': {
-      id: '/queues'
-      path: '/queues'
-      fullPath: '/queues'
-      preLoaderRoute: typeof QueuesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/queues';
+      path: '/queues';
+      fullPath: '/queues';
+      preLoaderRoute: typeof QueuesRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/promotions': {
-      id: '/promotions'
-      path: '/promotions'
-      fullPath: '/promotions'
-      preLoaderRoute: typeof PromotionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/promotions';
+      path: '/promotions';
+      fullPath: '/promotions';
+      preLoaderRoute: typeof PromotionsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/ops': {
-      id: '/ops'
-      path: '/ops'
-      fullPath: '/ops'
-      preLoaderRoute: typeof OpsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/ops';
+      path: '/ops';
+      fullPath: '/ops';
+      preLoaderRoute: typeof OpsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof LoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/earn': {
-      id: '/earn'
-      path: '/earn'
-      fullPath: '/earn'
-      preLoaderRoute: typeof EarnRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/earn';
+      path: '/earn';
+      fullPath: '/earn';
+      preLoaderRoute: typeof EarnRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/deposits': {
-      id: '/deposits'
-      path: '/deposits'
-      fullPath: '/deposits'
-      preLoaderRoute: typeof DepositsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/deposits';
+      path: '/deposits';
+      fullPath: '/deposits';
+      preLoaderRoute: typeof DepositsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/config': {
-      id: '/config'
-      path: '/config'
-      fullPath: '/config'
-      preLoaderRoute: typeof ConfigRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/config';
+      path: '/config';
+      fullPath: '/config';
+      preLoaderRoute: typeof ConfigRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/cms': {
-      id: '/cms'
-      path: '/cms'
-      fullPath: '/cms'
-      preLoaderRoute: typeof CmsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/cms';
+      path: '/cms';
+      fullPath: '/cms';
+      preLoaderRoute: typeof CmsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/casino': {
-      id: '/casino'
-      path: '/casino'
-      fullPath: '/casino'
-      preLoaderRoute: typeof CasinoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/casino';
+      path: '/casino';
+      fullPath: '/casino';
+      preLoaderRoute: typeof CasinoRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/audit-logs': {
-      id: '/audit-logs'
-      path: '/audit-logs'
-      fullPath: '/audit-logs'
-      preLoaderRoute: typeof AuditLogsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/audit-logs';
+      path: '/audit-logs';
+      fullPath: '/audit-logs';
+      preLoaderRoute: typeof AuditLogsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/audit': {
-      id: '/audit'
-      path: '/audit'
-      fullPath: '/audit'
-      preLoaderRoute: typeof AuditRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/audit';
+      path: '/audit';
+      fullPath: '/audit';
+      preLoaderRoute: typeof AuditRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/earn/': {
-      id: '/earn/'
-      path: '/'
-      fullPath: '/earn/'
-      preLoaderRoute: typeof EarnIndexRouteImport
-      parentRoute: typeof EarnRoute
-    }
+      id: '/earn/';
+      path: '/';
+      fullPath: '/earn/';
+      preLoaderRoute: typeof EarnIndexRouteImport;
+      parentRoute: typeof EarnRoute;
+    };
     '/mfa/policy': {
-      id: '/mfa/policy'
-      path: '/mfa/policy'
-      fullPath: '/mfa/policy'
-      preLoaderRoute: typeof MfaPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/mfa/policy';
+      path: '/mfa/policy';
+      fullPath: '/mfa/policy';
+      preLoaderRoute: typeof MfaPolicyRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/mfa/enroll': {
-      id: '/mfa/enroll'
-      path: '/mfa/enroll'
-      fullPath: '/mfa/enroll'
-      preLoaderRoute: typeof MfaEnrollRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/mfa/enroll';
+      path: '/mfa/enroll';
+      fullPath: '/mfa/enroll';
+      preLoaderRoute: typeof MfaEnrollRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/mfa/challenge': {
-      id: '/mfa/challenge'
-      path: '/mfa/challenge'
-      fullPath: '/mfa/challenge'
-      preLoaderRoute: typeof MfaChallengeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/mfa/challenge';
+      path: '/mfa/challenge';
+      fullPath: '/mfa/challenge';
+      preLoaderRoute: typeof MfaChallengeRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/earn/rewards': {
-      id: '/earn/rewards'
-      path: '/rewards'
-      fullPath: '/earn/rewards'
-      preLoaderRoute: typeof EarnRewardsRouteImport
-      parentRoute: typeof EarnRoute
-    }
+      id: '/earn/rewards';
+      path: '/rewards';
+      fullPath: '/earn/rewards';
+      preLoaderRoute: typeof EarnRewardsRouteImport;
+      parentRoute: typeof EarnRoute;
+    };
     '/earn/referrals': {
-      id: '/earn/referrals'
-      path: '/referrals'
-      fullPath: '/earn/referrals'
-      preLoaderRoute: typeof EarnReferralsRouteImport
-      parentRoute: typeof EarnRoute
-    }
+      id: '/earn/referrals';
+      path: '/referrals';
+      fullPath: '/earn/referrals';
+      preLoaderRoute: typeof EarnReferralsRouteImport;
+      parentRoute: typeof EarnRoute;
+    };
     '/earn/missions': {
-      id: '/earn/missions'
-      path: '/missions'
-      fullPath: '/earn/missions'
-      preLoaderRoute: typeof EarnMissionsRouteImport
-      parentRoute: typeof EarnRoute
-    }
+      id: '/earn/missions';
+      path: '/missions';
+      fullPath: '/earn/missions';
+      preLoaderRoute: typeof EarnMissionsRouteImport;
+      parentRoute: typeof EarnRoute;
+    };
     '/earn/activity': {
-      id: '/earn/activity'
-      path: '/activity'
-      fullPath: '/earn/activity'
-      preLoaderRoute: typeof EarnActivityRouteImport
-      parentRoute: typeof EarnRoute
-    }
+      id: '/earn/activity';
+      path: '/activity';
+      fullPath: '/earn/activity';
+      preLoaderRoute: typeof EarnActivityRouteImport;
+      parentRoute: typeof EarnRoute;
+    };
     '/users/$userId/tier': {
-      id: '/users/$userId/tier'
-      path: '/$userId/tier'
-      fullPath: '/users/$userId/tier'
-      preLoaderRoute: typeof UsersUserIdTierRouteImport
-      parentRoute: typeof UsersRoute
-    }
+      id: '/users/$userId/tier';
+      path: '/$userId/tier';
+      fullPath: '/users/$userId/tier';
+      preLoaderRoute: typeof UsersUserIdTierRouteImport;
+      parentRoute: typeof UsersRoute;
+    };
   }
 }
 
 interface EarnRouteChildren {
-  EarnActivityRoute: typeof EarnActivityRoute
-  EarnMissionsRoute: typeof EarnMissionsRoute
-  EarnReferralsRoute: typeof EarnReferralsRoute
-  EarnRewardsRoute: typeof EarnRewardsRoute
-  EarnIndexRoute: typeof EarnIndexRoute
+  EarnActivityRoute: typeof EarnActivityRoute;
+  EarnMissionsRoute: typeof EarnMissionsRoute;
+  EarnReferralsRoute: typeof EarnReferralsRoute;
+  EarnRewardsRoute: typeof EarnRewardsRoute;
+  EarnIndexRoute: typeof EarnIndexRoute;
 }
 
 const EarnRouteChildren: EarnRouteChildren = {
@@ -701,19 +701,19 @@ const EarnRouteChildren: EarnRouteChildren = {
   EarnReferralsRoute: EarnReferralsRoute,
   EarnRewardsRoute: EarnRewardsRoute,
   EarnIndexRoute: EarnIndexRoute,
-}
+};
 
-const EarnRouteWithChildren = EarnRoute._addFileChildren(EarnRouteChildren)
+const EarnRouteWithChildren = EarnRoute._addFileChildren(EarnRouteChildren);
 
 interface UsersRouteChildren {
-  UsersUserIdTierRoute: typeof UsersUserIdTierRoute
+  UsersUserIdTierRoute: typeof UsersUserIdTierRoute;
 }
 
 const UsersRouteChildren: UsersRouteChildren = {
   UsersUserIdTierRoute: UsersUserIdTierRoute,
-}
+};
 
-const UsersRouteWithChildren = UsersRoute._addFileChildren(UsersRouteChildren)
+const UsersRouteWithChildren = UsersRoute._addFileChildren(UsersRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -743,7 +743,7 @@ const rootRouteChildren: RootRouteChildren = {
   MfaChallengeRoute: MfaChallengeRoute,
   MfaEnrollRoute: MfaEnrollRoute,
   MfaPolicyRoute: MfaPolicyRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

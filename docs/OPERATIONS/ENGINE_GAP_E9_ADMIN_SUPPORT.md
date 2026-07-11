@@ -8,21 +8,21 @@
 
 ## 범위 (§29.5 · §12.14)
 
-| 항목 | 내용 |
-| ---- | ---- |
-| Route | `/admin/support` (`apps/admin` → `/support`) |
-| Surface | `AdminSupportPage` · `AdminTable` only |
-| Hook | `useAdminSupportDesk` |
-| RPCs | `rpc_admin_list_support_tickets` · `rpc_admin_resolve_support_ticket` · `rpc_get_support_ticket` |
-| RBAC | owner · support (viewer/finance **deny**) |
-| Queues 수렴 | open/in_progress 건수 → `/admin/queues` exception summary · CTA 양방향 |
+| 항목        | 내용                                                                                             |
+| ----------- | ------------------------------------------------------------------------------------------------ |
+| Route       | `/admin/support` (`apps/admin` → `/support`)                                                     |
+| Surface     | `AdminSupportPage` · `AdminTable` only                                                           |
+| Hook        | `useAdminSupportDesk`                                                                            |
+| RPCs        | `rpc_admin_list_support_tickets` · `rpc_admin_resolve_support_ticket` · `rpc_get_support_ticket` |
+| RBAC        | owner · support (viewer/finance **deny**)                                                        |
+| Queues 수렴 | open/in_progress 건수 → `/admin/queues` exception summary · CTA 양방향                           |
 
 ## 증거
 
-| Gate | 결과 |
-| ---- | ---- |
+| Gate                         | 결과                                               |
+| ---------------------------- | -------------------------------------------------- |
 | `gate:ai-impl` admin-support | vitest display + page · typecheck · i18n · release |
-| Engine | E9 WAVE/GATE — remigration **0** |
+| Engine                       | E9 WAVE/GATE — remigration **0**                   |
 
 ## 다음
 

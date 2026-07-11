@@ -38,12 +38,7 @@ import { AdminQueueActionDialog } from '@/product/surfaces/admin-queue-action-di
 
 type MethodTab = 'all' | DepositMethod;
 
-type DepositActionKind =
-  | 'matchKrw'
-  | 'matchCrypto'
-  | 'approveGiftcard'
-  | 'flag'
-  | 'approveProof';
+type DepositActionKind = 'matchKrw' | 'matchCrypto' | 'approveGiftcard' | 'flag' | 'approveProof';
 
 interface DepositActionTarget {
   kind: DepositActionKind;
@@ -478,7 +473,11 @@ export function AdminDepositsPage() {
         confirmKey={actionTarget?.confirmKey ?? 'admin.deposits.action.flag'}
         destructive={actionTarget?.destructive}
         loading={actionLoading}
-        summary={actionTarget ? <p className="m-0 whitespace-pre-line">{actionTarget.summary}</p> : undefined}
+        summary={
+          actionTarget ? (
+            <p className="m-0 whitespace-pre-line">{actionTarget.summary}</p>
+          ) : undefined
+        }
         onSubmit={handleActionSubmit}
       />
 

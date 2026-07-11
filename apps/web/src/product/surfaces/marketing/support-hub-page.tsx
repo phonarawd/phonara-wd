@@ -44,7 +44,9 @@ export function SupportHubPage() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-foreground m-0 font-medium">{t('support.email.label')}</p>
-              <p className="text-foreground-muted m-0 text-sm tabular-nums">{SUPPORT_CONTACT_EMAIL}</p>
+              <p className="text-foreground-muted m-0 text-sm tabular-nums">
+                {SUPPORT_CONTACT_EMAIL}
+              </p>
               <p className="text-foreground-muted m-0 mt-1 text-sm">
                 {t('support.hours.label')}: {t('support.hours.value')}
               </p>
@@ -100,7 +102,9 @@ export function SupportHubPage() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-foreground m-0 font-medium">{t('support.hub.ticketCta')}</p>
-              <p className="text-foreground-muted m-0 text-sm">{t('support.hub.ticketDeferred')}</p>
+              <p className="text-foreground-muted m-0 text-sm">
+                {ticketDeferred ? t('support.hub.ticketDeferred') : t('support.hub.ticketLive')}
+              </p>
             </div>
             <ChevronRight className="text-foreground-muted size-5 shrink-0" aria-hidden />
           </Link>

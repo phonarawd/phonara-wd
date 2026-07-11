@@ -100,7 +100,10 @@ export function useAdminRewardsDesk(): UseAdminRewardsDesk {
     queryFn: async () => {
       const { data, error } = await (
         supabase as {
-          rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
+          rpc: (
+            fn: string,
+            args: Record<string, unknown>,
+          ) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
         }
       ).rpc('rpc_admin_list_users', { p_search: null, p_limit: 200 });
       if (error) throw error;
@@ -151,7 +154,10 @@ export function useAdminRewardsDesk(): UseAdminRewardsDesk {
       try {
         const { error } = await (
           supabase as {
-            rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
+            rpc: (
+              fn: string,
+              args: Record<string, unknown>,
+            ) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
           }
         ).rpc('rpc_admin_manual_wallet_adjust', {
           p_user_id: userId,

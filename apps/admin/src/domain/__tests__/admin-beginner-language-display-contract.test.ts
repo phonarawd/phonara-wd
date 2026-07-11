@@ -37,9 +37,7 @@ const ko = messages.ko as Record<string, string>;
 describe('admin-beginner-language-display-contract (§29.5 · YAML #229)', () => {
   it('registers DOC todo · prerequisite W8 GATE · next team desk', () => {
     expect(P13_PREP_ADMIN_CANONICAL_DOCS_TODO).toBe('p13-prep-admin-canonical-docs');
-    expect(P13_PREP_ADMIN_CANONICAL_DOCS_PREREQUISITE_TODO).toBe(
-      'da-w8-gate-signature-experience',
-    );
+    expect(P13_PREP_ADMIN_CANONICAL_DOCS_PREREQUISITE_TODO).toBe('da-w8-gate-signature-experience');
     expect(P13_PREP_ADMIN_CANONICAL_DOCS_PREREQUISITE_TODOS).toEqual([
       P13_PREP_ADMIN_CANONICAL_DOCS_PREREQUISITE_TODO,
     ]);

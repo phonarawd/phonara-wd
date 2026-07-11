@@ -37,9 +37,7 @@ describe('CookiesPage', () => {
     renderCookiesPage();
 
     expect(screen.getByTestId('legal-cookies-page')).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', { level: 1, name: '쿠키·픽셀 고지' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: '쿠키·픽셀 고지' })).toBeInTheDocument();
     expect(screen.getByText(/시행일: 2026-06-11/)).toBeInTheDocument();
     expect(screen.getByTestId('legal-body-cookies')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '개요' })).toBeInTheDocument();

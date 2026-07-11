@@ -5,7 +5,7 @@
 
 import type { MessageKey } from '@phonara/i18n';
 
-import { PLATFORM_EWAVE_HIDDEN_ROUTES } from './platform-narrative-display-contract';
+import { isSystemStatusLive } from './system-status-display-contract';
 
 export const TRUST_HUB_ROUTE = '/security' as const;
 
@@ -16,13 +16,7 @@ export const TRUST_HUB_KEY_PREFIX = 'trust.hub' as const;
 export const PLATFORM_TRUST_KEY_PREFIX = 'platform.trust' as const;
 
 /** Trust narrative blocks — factual · no unverifiable safety claims. */
-export const TRUST_HUB_BLOCK_IDS = [
-  'money',
-  'fairness',
-  'rg',
-  'kyc',
-  'status',
-] as const;
+export const TRUST_HUB_BLOCK_IDS = ['money', 'fairness', 'rg', 'kyc', 'status'] as const;
 
 export type TrustHubBlockId = (typeof TRUST_HUB_BLOCK_IDS)[number];
 
@@ -78,9 +72,9 @@ export const TRUST_HUB_BLOCKS: readonly TrustHubBlock[] = [
     id: 'status',
     titleKey: 'trust.hub.block.status.title',
     bodyKey: 'trust.hub.block.status.body',
-    href: null,
-    linkKey: null,
-    deferred: true,
+    href: TRUST_HUB_STATUS_ROUTE,
+    linkKey: 'trust.hub.block.status.link',
+    deferred: false,
   },
 ] as const;
 
@@ -111,7 +105,7 @@ export function listTrustHubMessageKeys(): readonly MessageKey[] {
 }
 
 export function isTrustHubStatusDeferred(): boolean {
-  return (PLATFORM_EWAVE_HIDDEN_ROUTES as readonly string[]).includes(TRUST_HUB_STATUS_ROUTE);
+  return !isSystemStatusLive();
 }
 
 export function assertTrustHubContractSync(): void {
@@ -121,11 +115,11 @@ export function assertTrustHubContractSync(): void {
   if (TRUST_HUB_BLOCKS.length !== 5) {
     throw new Error('trust-hub: block count drift');
   }
-  if (!isTrustHubStatusDeferred()) {
-    throw new Error('trust-hub: /status must stay deferred until E10');
+  if (!isSystemStatusLive()) {
+    throw new Error('trust-hub: /status must be live after E10 unlock');
   }
   const statusBlock = TRUST_HUB_BLOCKS.find((b) => b.id === 'status');
-  if (!statusBlock?.deferred || statusBlock.href != null) {
-    throw new Error('trust-hub: status block must be deferred with no live href');
+  if (statusBlock?.deferred || statusBlock?.href !== TRUST_HUB_STATUS_ROUTE) {
+    throw new Error('trust-hub: status block must link to /status after E10 unlock');
   }
 }

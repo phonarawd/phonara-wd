@@ -98,19 +98,29 @@ export const LAUNCH_GATES = {
   siweLoginLive: false,
   /**
    * E9/E10 UI — `/support/ticket` live unlock.
-   * WAVE keeps false; `ew-e9-page-admin-support` / E10 trust UI unlock.
+   * `ew-e10-trust-support-ui` flips after E9 engine + admin desk.
    */
-  supportTicketsLive: false,
+  supportTicketsLive: true,
   /**
    * E9/E10 UI — `/tier/leaderboard` live unlock.
-   * WAVE keeps false; E10 trust-support UI unlock.
+   * `ew-e10-trust-support-ui` flips after E9 engine remote verify.
    */
-  tierLeaderboardLive: false,
+  tierLeaderboardLive: true,
+  /**
+   * E10 UI — public `/status` surface live unlock.
+   * `ew-e10-trust-support-ui` flips presentation status page.
+   */
+  systemStatusLive: true,
   /**
    * E9/E10 UI — app-install mission hub tab live unlock.
-   * WAVE keeps false; E10 growth UI unlock.
+   * `ew-e10-growth-ui` flips growth tab app-install mission live.
    */
-  appInstallMissionLive: false,
+  appInstallMissionLive: true,
+  /**
+   * E10 UI — Kakao Talk share augment on `/referral/invite`.
+   * Web Share API remains canonical; SDK is progressive enhancement.
+   */
+  kakaoShareSdkLive: true,
   /** E10 — KRW proof · mission chains · co-bet · recommend engine. */
   platformEngine: true,
   /**

@@ -6,10 +6,7 @@
 
 import type { MessageKey } from '@phonara/i18n';
 
-import {
-  EARN_VIP_TIER_ORDER,
-  type EarnVipTier,
-} from './unified-tier-display-contract';
+import { EARN_VIP_TIER_ORDER, type EarnVipTier } from './unified-tier-display-contract';
 
 export const FEES_PAGE_ROUTE = '/fees' as const;
 

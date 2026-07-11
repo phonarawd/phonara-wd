@@ -9,13 +9,13 @@
 
 ## 승인 범위
 
-| 항목 | 판정 |
-| ---- | ---- |
-| E1–E10 gap index | **Accepted** |
-| RED STOP 강제 (`engine-p0-no-migration` 해제 조건) | **Accepted** |
-| 광고·설문 미션 **영구 제외** | **Accepted** |
-| Trade Desk defer 005–008 | E0와 **독립** (별도 Accepted 필요) |
-| 본 todo migration | **0** (ADR only) |
+| 항목                                               | 판정                               |
+| -------------------------------------------------- | ---------------------------------- |
+| E1–E10 gap index                                   | **Accepted**                       |
+| RED STOP 강제 (`engine-p0-no-migration` 해제 조건) | **Accepted**                       |
+| 광고·설문 미션 **영구 제외**                       | **Accepted**                       |
+| Trade Desk defer 005–008                           | E0와 **독립** (별도 Accepted 필요) |
+| 본 todo migration                                  | **0** (ADR only)                   |
 
 ## 선행 게이트
 
@@ -26,11 +26,11 @@ bun run check:plan-yaml -- <phase_r_super-app_8bdf2c10.plan.md>
 
 ## 증거
 
-| Gate | 결과 |
-| ---- | ---- |
-| `check:plan-yaml` | green |
+| Gate                                                                                           | 결과           |
+| ---------------------------------------------------------------------------------------------- | -------------- |
+| `check:plan-yaml`                                                                              | green          |
 | `gate:ai-impl -- --test apps/web/src/domain/__tests__/engine-gap-adr-display-contract.test.ts` | vitest **5/5** |
-| migration / `packages/*-engine` | **0** |
+| migration / `packages/*-engine`                                                                | **0**          |
 
 ## Operator attestation
 

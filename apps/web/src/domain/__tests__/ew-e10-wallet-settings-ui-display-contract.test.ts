@@ -22,9 +22,7 @@ const REPO_ROOT = resolve(import.meta.dirname, '../../../../..');
 describe('ew-e10-wallet-settings-ui-display-contract', () => {
   it('pins todo · prerequisite · next · live unlock', () => {
     expect(EW_E10_WALLET_SETTINGS_UI_TODO).toBe('ew-e10-wallet-settings-ui');
-    expect(EW_E10_WALLET_SETTINGS_UI_PREREQUISITE_TODO).toBe(
-      'ew-e10-platform-engine-wave',
-    );
+    expect(EW_E10_WALLET_SETTINGS_UI_PREREQUISITE_TODO).toBe('ew-e10-platform-engine-wave');
     expect(EW_E10_WALLET_SETTINGS_UI_NEXT_TODO).toBe('ew-e10-trust-support-ui');
     expect(LAUNCH_GATES.financialConnectivityLive).toBe(true);
     expect(isEwE10WalletSettingsUiUnlocked()).toBe(true);

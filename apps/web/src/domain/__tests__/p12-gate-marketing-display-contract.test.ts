@@ -34,9 +34,7 @@ function assertRegisteredFullPath(path: RegisteredFullPath): RegisteredFullPath 
 }
 
 function exactRedirectTo(from: string): string | undefined {
-  const rule = ROUTE_REDIRECT_RULES.find(
-    (entry) => entry.kind === 'exact' && entry.from === from,
-  );
+  const rule = ROUTE_REDIRECT_RULES.find((entry) => entry.kind === 'exact' && entry.from === from);
   if (!rule || rule.kind !== 'exact') return undefined;
   if (rule.search) {
     const qs = new URLSearchParams(rule.search).toString();

@@ -17,26 +17,26 @@ E0 Accepted 후 Track B 첫 migration = 본 ADR + 동일 PR 엔진 구현 (51차
 
 ### 1. 정책 (Closed Beta · non-waivable)
 
-| 항목 | 값 |
-| ---- | --- |
-| 기본 grace | **45일** (`app_config.tier_decay_grace_days`) |
-| Diamond grace | **60일** (`tier_decay_grace_days_diamond`) |
-| 하락 폭 | **최대 1단계 / sweep** |
-| Floor | `bronze` — 하락 **없음** |
-| Prime Elite | enum 미존재 → **E4** (본 Wave 범위 밖 · 수동 only) |
-| 경고 | grace 잔여 **30·15·7·3일** → `notification_outbox` `tier_decay_warning` |
-| 복구 | 유지 조건 충족 시 `last_qualifying_at` 갱신 → grace 리셋 (즉시 하락 방지) |
-| XP clamp | 하락 시 XP를 **새 티어 next-threshold − 1**로 cap (즉시 재승급 방지) |
+| 항목          | 값                                                                        |
+| ------------- | ------------------------------------------------------------------------- |
+| 기본 grace    | **45일** (`app_config.tier_decay_grace_days`)                             |
+| Diamond grace | **60일** (`tier_decay_grace_days_diamond`)                                |
+| 하락 폭       | **최대 1단계 / sweep**                                                    |
+| Floor         | `bronze` — 하락 **없음**                                                  |
+| Prime Elite   | enum 미존재 → **E4** (본 Wave 범위 밖 · 수동 only)                        |
+| 경고          | grace 잔여 **30·15·7·3일** → `notification_outbox` `tier_decay_warning`   |
+| 복구          | 유지 조건 충족 시 `last_qualifying_at` 갱신 → grace 리셋 (즉시 하락 방지) |
+| XP clamp      | 하락 시 XP를 **새 티어 next-threshold − 1**로 cap (즉시 재승급 방지)      |
 
 ### 2. 등급별 유지 조건 (OR · `app_config`)
 
-| 등급 | KRW 입금 합(창) | USDT 거래량 합(창) | 미달 시 |
-| ---- | --------------- | ------------------ | ------- |
-| bronze | — | — | floor |
-| silver | ≥ 100_000 | ≥ 1_000 | → bronze |
-| gold | ≥ 500_000 | ≥ 5_000 | → silver |
-| platinum | ≥ 2_000_000 | ≥ 20_000 | → gold |
-| diamond | ≥ 5_000_000 | ≥ 50_000 | → platinum |
+| 등급     | KRW 입금 합(창) | USDT 거래량 합(창) | 미달 시    |
+| -------- | --------------- | ------------------ | ---------- |
+| bronze   | —               | —                  | floor      |
+| silver   | ≥ 100_000       | ≥ 1_000            | → bronze   |
+| gold     | ≥ 500_000       | ≥ 5_000            | → silver   |
+| platinum | ≥ 2_000_000     | ≥ 20_000           | → gold     |
+| diamond  | ≥ 5_000_000     | ≥ 50_000           | → platinum |
 
 측정 창 = `[now − grace_days, now]`.  
 입금 = `krw_deposit_requests.amount_krw` (credited) + `crypto_deposit_requests.amount` USDT (credited, KRW 환산은 crypto를 volume 쪽에만 가산).  
@@ -44,16 +44,16 @@ E0 Accepted 후 Track B 첫 migration = 본 ADR + 동일 PR 엔진 구현 (51차
 
 ### 3. Engine surface
 
-| 객체 | 역할 |
-| ---- | ---- |
-| `user_earn_vip.last_qualifying_at` · `last_decay_at` · `decay_warnings_sent` | grace·경고 상태 |
-| `tier_decay_events` | append-only 하락 이력 |
-| `_tier_decay_meets_maintenance` | 유지 조건 판정 |
-| `_tier_decay_apply_one` | 1-tier drop + XP clamp + event + outbox |
-| `rpc_run_tier_decay` | cron/service sweep (경고 + 하락) |
-| `rpc_get_tier_decay_status` | authenticated read (`/tier/me`) |
-| `_repeatable_progress(tier_keep_status)` | 유지 충족 시 progress=1 |
-| pg_cron `phonara_tier_decay_daily` | 매일 03:15 UTC |
+| 객체                                                                         | 역할                                    |
+| ---------------------------------------------------------------------------- | --------------------------------------- |
+| `user_earn_vip.last_qualifying_at` · `last_decay_at` · `decay_warnings_sent` | grace·경고 상태                         |
+| `tier_decay_events`                                                          | append-only 하락 이력                   |
+| `_tier_decay_meets_maintenance`                                              | 유지 조건 판정                          |
+| `_tier_decay_apply_one`                                                      | 1-tier drop + XP clamp + event + outbox |
+| `rpc_run_tier_decay`                                                         | cron/service sweep (경고 + 하락)        |
+| `rpc_get_tier_decay_status`                                                  | authenticated read (`/tier/me`)         |
+| `_repeatable_progress(tier_keep_status)`                                     | 유지 충족 시 progress=1                 |
+| pg_cron `phonara_tier_decay_daily`                                           | 매일 03:15 UTC                          |
 
 ### 4. Money / security
 
@@ -77,12 +77,12 @@ E0 Accepted 후 Track B 첫 migration = 본 ADR + 동일 PR 엔진 구현 (51차
 
 ## Verification
 
-| Gate | 기대 |
-| ---- | ---- |
-| SQL | `ew_e1_tier_decay_test.sql` — floor · 1-tier · grace · warning · keep progress |
-| Grants | `rpc_run_tier_decay` auth deny · service grant |
-| Vitest | `tier-decay-display-contract` · dead-controls live · tier-me claim path |
-| Remote | `stack:push-remote` · advisor 0 ERROR |
+| Gate   | 기대                                                                           |
+| ------ | ------------------------------------------------------------------------------ |
+| SQL    | `ew_e1_tier_decay_test.sql` — floor · 1-tier · grace · warning · keep progress |
+| Grants | `rpc_run_tier_decay` auth deny · service grant                                 |
+| Vitest | `tier-decay-display-contract` · dead-controls live · tier-me claim path        |
+| Remote | `stack:push-remote` · advisor 0 ERROR                                          |
 
 ## Operator sign-off
 

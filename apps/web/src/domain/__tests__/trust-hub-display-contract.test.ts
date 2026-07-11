@@ -11,10 +11,10 @@ import {
 } from '../trust-hub-display-contract';
 
 describe('trust-hub-display-contract', () => {
-  it('binds /security trust blocks with deferred status', () => {
+  it('binds /security trust blocks with live status link', () => {
     expect(TRUST_HUB_ROUTE).toBe('/security');
     expect(TRUST_HUB_BLOCKS).toHaveLength(5);
-    expect(isTrustHubStatusDeferred()).toBe(true);
+    expect(isTrustHubStatusDeferred()).toBe(false);
     expect(() => assertTrustHubContractSync()).not.toThrow();
   });
 

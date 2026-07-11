@@ -110,12 +110,7 @@ export function assertP11GateSideIncomeSync(): void {
     throw new Error('p11-gate-side-income: §12.19.6 must list exactly 4 GATE routes');
   }
 
-  const expected = [
-    '/wallet/redeem',
-    '/earn/cashback',
-    '/earn/play',
-    '/events',
-  ] as const;
+  const expected = ['/wallet/redeem', '/earn/cashback', '/earn/play', '/events'] as const;
   for (const route of expected) {
     if (!(P11_GATE_SIDE_INCOME_MANIFEST_ROUTES as readonly string[]).includes(route)) {
       throw new Error(`p11-gate-side-income: missing GATE manifest route ${route}`);

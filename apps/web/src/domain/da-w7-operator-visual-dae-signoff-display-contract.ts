@@ -11,8 +11,7 @@ import { DA_W7_ENFORCEMENT_STRICT_TOKENS_TODO } from './da-w7-enforcement-strict
 import { EARN_HOME_CANONICAL_ROUTE } from './earn-home-display-contract';
 
 /** Plan todo id — Digital Aurora Elevation operator visual sign-off. */
-export const DA_W7_OPERATOR_VISUAL_DAE_SIGNOFF_TODO =
-  'da-w7-operator-visual-dae-signoff' as const;
+export const DA_W7_OPERATOR_VISUAL_DAE_SIGNOFF_TODO = 'da-w7-operator-visual-dae-signoff' as const;
 
 /** Immediate prerequisite — W7 strict tokens GATE must be closed. */
 export const DA_W7_VISUAL_PREREQUISITE_TODO = DA_W7_ENFORCEMENT_STRICT_TOKENS_TODO;

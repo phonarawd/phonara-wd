@@ -1,7 +1,8 @@
 /**
  * P12 Community+support hub bundle — owner contract for gate:ai-impl (#223).
- * Routes: `/announcements` · `/status` STUB · `/support/ticket` STUB · `/support` · `/support/faq` · `/feedback`.
+ * Routes: `/announcements` · `/status` · `/support/ticket` · `/support` · `/support/faq` · `/feedback`.
  * Authority: Plan §12.12 · §12.16 · §32.5 · prerequisite:p12-trust-marketing-hub.
+ * E10 `ew-e10-trust-support-ui` upgraded `/status` + `/support/ticket` from STUB to live.
  */
 
 export const P12_COMMUNITY_SUPPORT_HUB_TODO = 'p12-community-support-hub' as const;
@@ -18,15 +19,17 @@ export const P12_COMMUNITY_SUPPORT_HUB_ROUTES = [
   '/feedback',
 ] as const;
 
-/** Live IA routes — STUBs stay out of footer/nav until engine unlock. */
+/** Live IA routes after E10 trust-support unlock. */
 export const P12_COMMUNITY_SUPPORT_HUB_LIVE_ROUTES = [
   '/announcements',
+  '/status',
   '/support',
   '/support/faq',
+  '/support/ticket',
   '/feedback',
 ] as const;
 
-export const P12_COMMUNITY_SUPPORT_HUB_STUB_ROUTES = ['/status', '/support/ticket'] as const;
+export const P12_COMMUNITY_SUPPORT_HUB_STUB_ROUTES = [] as const;
 
 export const P12_COMMUNITY_SUPPORT_HUB_TEST_PATHS = [
   'apps/web/src/domain/__tests__/p12-community-support-hub-display-contract.test.ts',
@@ -37,8 +40,8 @@ export const P12_COMMUNITY_SUPPORT_HUB_TEST_PATHS = [
   'apps/web/src/product/surfaces/marketing/__tests__/announcements-page.test.tsx',
   'apps/web/src/product/surfaces/marketing/__tests__/support-hub-page.test.tsx',
   'apps/web/src/product/surfaces/marketing/__tests__/support-faq-page.test.tsx',
-  'apps/web/src/product/surfaces/marketing/__tests__/support-ticket-stub-page.test.tsx',
-  'apps/web/src/product/surfaces/marketing/__tests__/system-status-stub-page.test.tsx',
+  'apps/web/src/product/surfaces/marketing/__tests__/support-ticket-page.test.tsx',
+  'apps/web/src/product/surfaces/marketing/__tests__/system-status-page.test.tsx',
   'apps/web/src/product/surfaces/marketing/__tests__/feedback-page.test.tsx',
   'apps/web/src/product/shell/__tests__/shell-route-matchers.test.ts',
 ] as const;
@@ -52,8 +55,8 @@ export const P12_COMMUNITY_SUPPORT_HUB_ARTIFACT_PATHS = [
   'product/surfaces/marketing/announcements-page.tsx',
   'product/surfaces/marketing/support-hub-page.tsx',
   'product/surfaces/marketing/support-faq-page.tsx',
-  'product/surfaces/marketing/support-ticket-stub-page.tsx',
-  'product/surfaces/marketing/system-status-stub-page.tsx',
+  'product/surfaces/marketing/support-ticket-page.tsx',
+  'product/surfaces/marketing/system-status-page.tsx',
   'product/surfaces/marketing/feedback-page.tsx',
   'routes/announcements.tsx',
   'routes/status.tsx',
@@ -91,8 +94,8 @@ export function assertP12CommunitySupportHubSync(): void {
     }
   }
 
-  if (P12_COMMUNITY_SUPPORT_HUB_STUB_ROUTES.length !== 2) {
-    throw new Error('p12-community-support-hub: stub routes drift');
+  if (P12_COMMUNITY_SUPPORT_HUB_STUB_ROUTES.length !== 0) {
+    throw new Error('p12-community-support-hub: stub routes must be empty after E10 unlock');
   }
 
   if (P12_COMMUNITY_SUPPORT_HUB_TEST_PATHS.length < 8) {

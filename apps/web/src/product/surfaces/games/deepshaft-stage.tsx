@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import type { DeepshaftRiskTier } from '@phonara/game-engine';
 
 import {
@@ -21,7 +15,10 @@ import { usePrefersReducedMotion } from '@/product/primitives/lib/use-prefers-re
 import { cn } from '@/product/primitives/lib/cn';
 import { Card, CardBody } from '@/product/primitives/card';
 import { HelpTip } from '@/product/primitives/help-tip';
-import type { CasinoStageHandle, CasinoStagePhase } from '@/product/surfaces/games/casino-stage-types';
+import type {
+  CasinoStageHandle,
+  CasinoStagePhase,
+} from '@/product/surfaces/games/casino-stage-types';
 
 export type DeepshaftStageProps = {
   riskTier: DeepshaftRiskTier | string;
@@ -130,7 +127,9 @@ export const DeepshaftStage = forwardRef<CasinoStageHandle, DeepshaftStageProps>
     const won = outcome?.won === true;
     const meterPct = Math.min(
       100,
-      Math.round((Math.max(visibleDepth, outcome?.reachedDepth ?? 0) / CASINO_DEEPSHAFT_MAX_DEPTH) * 100),
+      Math.round(
+        (Math.max(visibleDepth, outcome?.reachedDepth ?? 0) / CASINO_DEEPSHAFT_MAX_DEPTH) * 100,
+      ),
     );
 
     return (
@@ -161,10 +160,13 @@ export const DeepshaftStage = forwardRef<CasinoStageHandle, DeepshaftStageProps>
             {Array.from({ length: CASINO_DEEPSHAFT_MAX_DEPTH }, (_, i) => {
               const depth = i + 1;
               const level = outcome?.levels.find((l) => l.depth === depth);
-              const reached = visibleDepth >= depth || (outcome !== null && outcome.reachedDepth >= depth);
+              const reached =
+                visibleDepth >= depth || (outcome !== null && outcome.reachedDepth >= depth);
               const isCave =
                 level?.outcome === 'cavein' ||
-                (outcome?.caveIn === true && depth === outcome.reachedDepth + 1 && visibleDepth >= depth);
+                (outcome?.caveIn === true &&
+                  depth === outcome.reachedDepth + 1 &&
+                  visibleDepth >= depth);
               const isTarget = depth === targetDepth;
               return (
                 <div
@@ -211,10 +213,7 @@ export const DeepshaftStage = forwardRef<CasinoStageHandle, DeepshaftStageProps>
           {outcome ? (
             <div className="flex flex-col items-center gap-1">
               <p
-                className={cn(
-                  'm-0 text-lg font-semibold',
-                  won ? 'text-success' : 'text-danger',
-                )}
+                className={cn('m-0 text-lg font-semibold', won ? 'text-success' : 'text-danger')}
                 data-testid="casino-deepshaft-status"
               >
                 {outcome.caveIn

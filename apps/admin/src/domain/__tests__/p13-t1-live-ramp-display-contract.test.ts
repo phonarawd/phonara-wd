@@ -128,10 +128,7 @@ describe('p13-t1-live-ramp-display-contract · YAML #237 T1', () => {
     expect(canon).toContain('/admin/queues');
     expect(canon).toContain('코드 diff 0');
 
-    const spotcheck = readFileSync(
-      resolve(REPO_ROOT, P13_T1_LIVE_RAMP_SPOTCHECK_PATH),
-      'utf8',
-    );
+    const spotcheck = readFileSync(resolve(REPO_ROOT, P13_T1_LIVE_RAMP_SPOTCHECK_PATH), 'utf8');
     expect(spotcheck).toContain('feature_spot_enabled');
     expect(spotcheck).toContain('feature_cross_margin_enabled');
     expect(spotcheck).toContain('200000');

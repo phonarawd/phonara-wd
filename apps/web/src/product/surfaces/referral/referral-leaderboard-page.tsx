@@ -155,7 +155,9 @@ export function ReferralLeaderboardPage() {
           {self ? (
             <Card data-testid="referral-leaderboard-self">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">{t(REFERRAL_LEADERBOARD_SELF_TITLE_KEY)}</CardTitle>
+                <CardTitle className="text-base">
+                  {t(REFERRAL_LEADERBOARD_SELF_TITLE_KEY)}
+                </CardTitle>
               </CardHeader>
               <CardBody className="pt-0">
                 <div className="flex items-center justify-between gap-3 text-sm">

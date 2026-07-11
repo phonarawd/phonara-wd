@@ -9,12 +9,10 @@
 import { LAUNCH_GATES } from '../lib/launch-gates';
 
 export const EW_E8_FINANCIAL_TODO = 'ew-e8-financial-wave' as const;
-export const EW_E8_FINANCIAL_PREREQUISITE_TODO =
-  'ew-e23-ui-casino-live-unlocks' as const;
+export const EW_E8_FINANCIAL_PREREQUISITE_TODO = 'ew-e23-ui-casino-live-unlocks' as const;
 export const EW_E8_FINANCIAL_NEXT_TODO = 'ew-e8-gate-financial' as const;
 
-export const EW_E8_FINANCIAL_ADR_PATH =
-  'docs/PRODUCT/ADR/018-financial-connectivity.md' as const;
+export const EW_E8_FINANCIAL_ADR_PATH = 'docs/PRODUCT/ADR/018-financial-connectivity.md' as const;
 export const EW_E8_FINANCIAL_MIGRATION_NAME = 'ew_e8_financial' as const;
 
 export const EW_E8_TRANSFER_TO_USER_RPC = 'rpc_transfer_to_user' as const;
@@ -24,18 +22,13 @@ export const EW_E8_LIST_API_KEYS_RPC = 'rpc_list_trading_api_keys' as const;
 export const EW_E8_CREATE_API_KEY_RPC = 'rpc_create_trading_api_key' as const;
 export const EW_E8_REVOKE_API_KEY_RPC = 'rpc_revoke_trading_api_key' as const;
 
-export const EW_E8_PREVIEW_GIFTCARD_REDEEM_RPC =
-  'rpc_preview_giftcard_redeem' as const;
-export const EW_E8_CREATE_GIFTCARD_REDEEM_RPC =
-  'rpc_create_giftcard_redeem_request' as const;
-export const EW_E8_ADMIN_FULFILL_GIFTCARD_REDEEM_RPC =
-  'rpc_admin_fulfill_giftcard_redeem' as const;
-export const EW_E8_ADMIN_REJECT_GIFTCARD_REDEEM_RPC =
-  'rpc_admin_reject_giftcard_redeem' as const;
+export const EW_E8_PREVIEW_GIFTCARD_REDEEM_RPC = 'rpc_preview_giftcard_redeem' as const;
+export const EW_E8_CREATE_GIFTCARD_REDEEM_RPC = 'rpc_create_giftcard_redeem_request' as const;
+export const EW_E8_ADMIN_FULFILL_GIFTCARD_REDEEM_RPC = 'rpc_admin_fulfill_giftcard_redeem' as const;
+export const EW_E8_ADMIN_REJECT_GIFTCARD_REDEEM_RPC = 'rpc_admin_reject_giftcard_redeem' as const;
 
 /** EXISTS giftcard deposit — do not remigrate semantics. */
-export const EW_E8_EXISTS_GIFTCARD_DEPOSIT_RPC =
-  'rpc_create_giftcard_deposit_request' as const;
+export const EW_E8_EXISTS_GIFTCARD_DEPOSIT_RPC = 'rpc_create_giftcard_deposit_request' as const;
 
 export const EW_E8_NEW_ENGINE_FEATURES = [
   'p2p_transfer',
@@ -43,10 +36,7 @@ export const EW_E8_NEW_ENGINE_FEATURES = [
   'giftcard_redeem_reverse',
 ] as const;
 
-export const EW_E8_EXISTS_FEATURES = [
-  'giftcard_deposit',
-  'withdraw_rails',
-] as const;
+export const EW_E8_EXISTS_FEATURES = ['giftcard_deposit', 'withdraw_rails'] as const;
 
 /** Hub /wallet/transfer live deferred to GATE/E10. */
 export const EW_E8_DEFERRED_FEATURES = [

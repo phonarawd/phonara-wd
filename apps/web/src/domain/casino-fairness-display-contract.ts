@@ -52,8 +52,7 @@ export const CASINO_FAIRNESS_VERIFY_SOURCE = '@phonara/game-engine verifyRound' 
 
 export const CASINO_FAIRNESS_SEO_TITLE_KEY =
   'seo.gamesFairness.title' as const satisfies MessageKey;
-export const CASINO_FAIRNESS_HERO_TITLE_KEY =
-  'casino.fairness.title' as const satisfies MessageKey;
+export const CASINO_FAIRNESS_HERO_TITLE_KEY = 'casino.fairness.title' as const satisfies MessageKey;
 export const CASINO_FAIRNESS_HERO_DESC_KEY =
   'casino.fairness.description' as const satisfies MessageKey;
 
@@ -85,8 +84,7 @@ export const CASINO_FAIRNESS_SEED_NEXT_NONCE_KEY =
 
 export const CASINO_FAIRNESS_VERIFY_CTA_KEY =
   'casino.fairness.verify.run' as const satisfies MessageKey;
-export const CASINO_FAIRNESS_GAME_LABEL_KEY =
-  'casino.confirm.game' as const satisfies MessageKey;
+export const CASINO_FAIRNESS_GAME_LABEL_KEY = 'casino.confirm.game' as const satisfies MessageKey;
 export const CASINO_FAIRNESS_SELECTION_LABEL_KEY =
   'casino.fairness.verify.selection' as const satisfies MessageKey;
 export const CASINO_FAIRNESS_EXPECTED_LABEL_KEY =

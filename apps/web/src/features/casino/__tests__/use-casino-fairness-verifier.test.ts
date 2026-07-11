@@ -1,11 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import {
-  floatStream,
-  hashServerSeed,
-  recomputeResult,
-  verifyRound,
-} from '@phonara/game-engine';
+import { floatStream, hashServerSeed, recomputeResult, verifyRound } from '@phonara/game-engine';
 
 import { CASINO_FAIRNESS_NONCE } from '@/domain/casino-fairness-display-contract';
 import { useCasinoFairnessVerifier } from '@/features/casino/use-casino-fairness-verifier';

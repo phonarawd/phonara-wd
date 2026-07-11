@@ -40,14 +40,14 @@
 | `check:ai-reference`                                                     | green                                                                                                                                                                      |
 | `gate:ai-impl` P9 WORLD gate (`p9-gate-trade-world-class`)               | vitest world-class **6/6** · layout-dedup **9/9** · action-path **6/6** · parity **29/29** · trade surfaces **122/122** · §13.1.1 · §32.7 H1–H4                            |
 | `gate:ai-impl` Fiat core gate (`p4-gate-fiat-reference-world-class`)     | vitest fiat bundle **113/113** · gate contract **6/6** · ComplaintRisk core 3/3 live · preflight grep · §13.1.4 · P10 page unblock                                         |
-| `gate:ai-impl` DA W7 GATE (`da-w7-enforcement-strict-tokens`)            | vitest **19/19** · `check:design-tokens --strict` green · text-tiny · P3 legacy purge · §34.28 · engine **0** |
-| `gate:ai-impl` DA W7 VISUAL (`da-w7-operator-visual-dae-signoff`)         | vitest **22/22** · Home+Shell+Trade · 4-tier · preview · axe 0 · dead control 0 · §20.12 · engine **0** |
-| `gate:ai-impl` DA W6 GATE (`da-w6-gate-brand-elevation`)                 | vitest **23/23** · BrandMark aurora · domain empty · Quad Stream · `check:design-tokens` advisory (91 notes) · VISUAL advisory · §34.18–34.20 · engine **0** |
-| `gate:ai-impl` DA W6 Brand (`da-w6-brand-elevation-bundle`)              | vitest **55/55** · BrandMark aurora · domain empty · QuadStreamLoading · router pending · §34.18–34.20 · engine **0**                                                                          |
-| `gate:ai-impl` P4 VISUAL (`p4-operator-visual-signoff`)                | vitest surface **13/13** · contract **6/6** · §22.2 Wallet · §25.12.6 · 390/768/1024 · axe critical 0 · dead control 0 · preview https://preview.phonara-web.pages.dev |
+| `gate:ai-impl` DA W7 GATE (`da-w7-enforcement-strict-tokens`)            | vitest **19/19** · `check:design-tokens --strict` green · text-tiny · P3 legacy purge · §34.28 · engine **0**                                                              |
+| `gate:ai-impl` DA W7 VISUAL (`da-w7-operator-visual-dae-signoff`)        | vitest **22/22** · Home+Shell+Trade · 4-tier · preview · axe 0 · dead control 0 · §20.12 · engine **0**                                                                    |
+| `gate:ai-impl` DA W6 GATE (`da-w6-gate-brand-elevation`)                 | vitest **23/23** · BrandMark aurora · domain empty · Quad Stream · `check:design-tokens` advisory (91 notes) · VISUAL advisory · §34.18–34.20 · engine **0**               |
+| `gate:ai-impl` DA W6 Brand (`da-w6-brand-elevation-bundle`)              | vitest **55/55** · BrandMark aurora · domain empty · QuadStreamLoading · router pending · §34.18–34.20 · engine **0**                                                      |
+| `gate:ai-impl` P4 VISUAL (`p4-operator-visual-signoff`)                  | vitest surface **13/13** · contract **6/6** · §22.2 Wallet · §25.12.6 · 390/768/1024 · axe critical 0 · dead control 0 · preview https://preview.phonara-web.pages.dev     |
 | `gate:ai-impl` P9 VISUAL (`p9-operator-visual-signoff`)                  | vitest trade+staking **168/168** · `p9-trade-visual-signoff` **29/29** · contract **5/5** · §13.1.1 dual-currency · dead control 0 · G7 cross-margin canary                |
 | `typecheck`                                                              | green                                                                                                                                                                      |
-| `check:design-tokens`                                                    | green (**strict** da-w7) · token SOT · text-tiny · legacy bridge 0 · spacing-ratchet advisory                                                                 |
+| `check:design-tokens`                                                    | green (**strict** da-w7) · token SOT · text-tiny · legacy bridge 0 · spacing-ratchet advisory                                                                              |
 | `check:i18n`                                                             | green                                                                                                                                                                      |
 | `check:pwa`                                                              | green (maskable flat · §25.9)                                                                                                                                              |
 | `gate:ai-impl` P9 audit remediation A2 (`p9-trade-audit-remediation-a2`) | vitest spot-desk **10/10** · futures-desk **8/8** · `useTradeDeskViewport` · lg+/<lg chart mount 1× · `trade-layout-dedup-contract` A2                                     |
@@ -88,291 +88,291 @@
 
 **Trade 결함 0 수렴 (형제 큐)** — Plan `트레이딩_결함_0_수렴` · Phase A–C **`[x]` impl** 2026-07-08 · **NEXT** Phase D `phase-d-fills-pagination` (D1) → `phase-d-depth-chart` (D2) · preflight: [`ENGINE_UI_FULL_AUDIT_2026-07-08.md`](audit/ENGINE_UI_FULL_AUDIT_2026-07-08.md)
 
-## §AI Todo Sync (Phase R · YAML 정본 미러 · completed **206**/280 · pending **67** · cancelled **7** · 48차)
+## §AI Todo Sync (Phase R · YAML 정본 미러 · completed **273**/280 · pending **0** · cancelled **7** · 48차)
 
 > **정본:** Cursor Plan `phase_r_super-app_8bdf2c10` frontmatter · **280 ids** · `bun run check:plan-doc-sync` green 필수 · 기존 surface gate 증거 행은 유지 · 신규 id만 placeholder
 
-| id                                      | 상태            | 완료일     | 증거                                                                                                                            |
-| --------------------------------------- | --------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `engine-p0-apex-closed`                 | `[x]` DONE      | —          | YAML #1 completed · surface/gate evidence pending doc sync                                                                      |
-| `engine-p0-no-migration`                | `[x]` DONE      | —          | YAML #2 completed · surface/gate evidence pending doc sync                                                                      |
-| `engine-p0-no-rpc`                      | `[x]` DONE      | —          | YAML #3 completed · surface/gate evidence pending doc sync                                                                      |
-| `p1-active-work-ssot-sync`              | `[x]` DONE      | —          | YAML #4 completed · surface/gate evidence pending doc sync                                                                      |
-| `p1-foundation-tokens`                  | `[x]` DONE      | —          | YAML #5 completed · surface/gate evidence pending doc sync                                                                      |
-| `p1-foundation-primitives`              | `[x]` DONE      | —          | YAML #6 completed · surface/gate evidence pending doc sync                                                                      |
-| `p1-foundation-router`                  | `[x]` DONE      | —          | YAML #7 completed · surface/gate evidence pending doc sync                                                                      |
-| `p1-foundation-redirects`               | `[x]` DONE      | —          | YAML #8 completed · surface/gate evidence pending doc sync                                                                      |
-| `p1-ssot-ia-canon-sync`                 | `[x]` DONE      | —          | YAML #9 completed · surface/gate evidence pending doc sync                                                                      |
-| `p1-foundation-brand`                   | `[x]` DONE      | —          | YAML #10 completed · surface/gate evidence pending doc sync                                                                     |
-| `p1-foundation-pwa`                     | `[x]` DONE      | —          | YAML #11 completed · surface/gate evidence pending doc sync                                                                     |
-| `p1-foundation-i18n`                    | `[x]` DONE      | —          | YAML #12 completed · surface/gate evidence pending doc sync                                                                     |
-| `p1-foundation-responsive`              | `[x]` DONE      | —          | YAML #13 completed · surface/gate evidence pending doc sync                                                                     |
-| `p1-foundation-ux-grammar`              | `[x]` DONE      | —          | YAML #14 completed · surface/gate evidence pending doc sync                                                                     |
-| `p1-gate-foundation`                    | `[x]` DONE      | —          | YAML #15 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-home`                    | `[x]` DONE      | —          | YAML #16 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-queues`                  | `[x]` DONE      | —          | YAML #17 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-deposits`                | `[x]` DONE      | —          | YAML #18 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-withdrawals`             | `[x]` DONE      | —          | YAML #19 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-ops`                     | `[x]` DONE      | —          | YAML #20 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-earn-referrals`          | `[x]` DONE      | —          | YAML #21 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-earn-missions`           | `[x]` DONE      | —          | YAML #22 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-tiers`                   | `[x]` DONE      | —          | YAML #23 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-users`                   | `[x]` DONE      | —          | YAML #24 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-risk`                    | `[x]` DONE      | —          | YAML #25 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-sports`                  | `[x]` DONE      | —          | YAML #26 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-audit`                   | `[x]` DONE      | —          | YAML #27 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-settings`                | `[x]` DONE      | —          | YAML #28 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-staking`                 | `[x]` DONE      | —          | YAML #29 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-earn-desk`               | `[x]` DONE      | —          | YAML #30 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-earn-rewards`            | `[x]` DONE      | —          | YAML #31 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-viral-stats`             | `[x]` DONE      | —          | YAML #32 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-gate-admin`                         | `[x]` DONE      | —          | YAML #33 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-closeout-admin-nav`                 | `[x]` DONE      | —          | YAML #34 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-closeout-sports-resume`             | `[x]` DONE      | —          | YAML #35 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-closeout-migration-gate`            | `[x]` DONE      | —          | YAML #36 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-closeout-router-navigate`           | `[x]` DONE      | —          | YAML #37 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-closeout-doc-sync`                  | `[x]` DONE      | —          | YAML #38 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-page-admin-user-tier`               | `[x]` DONE      | —          | YAML #39 completed · surface/gate evidence pending doc sync                                                                     |
-| `p2-closeout-gate-rerun`                | `[x]` DONE      | —          | YAML #40 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-login`                         | `[x]` DONE      | —          | YAML #41 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-admin-login`                   | `[x]` DONE      | —          | YAML #42 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-admin-mfa-enroll`              | `[x]` DONE      | —          | YAML #43 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-admin-mfa-challenge`           | `[x]` DONE      | —          | YAML #44 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-admin-mfa-policy`              | `[x]` DONE      | —          | YAML #45 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-gate-admin-auth`                    | `[x]` DONE      | —          | YAML #46 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-signup`                        | `[x]` DONE      | —          | YAML #47 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-reset-password`                | `[x]` DONE      | —          | YAML #48 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-auth-callback`                 | `[x]` DONE      | —          | YAML #49 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-verify-email`                  | `[x]` DONE      | —          | YAML #50 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-legal-terms`                   | `[x]` DONE      | —          | YAML #51 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-legal-privacy`                 | `[x]` DONE      | —          | YAML #52 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-legal-rg`                      | `[x]` DONE      | —          | YAML #53 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-legal-risk`                    | `[x]` DONE      | —          | YAML #54 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-page-landing`                       | `[x]` DONE      | —          | YAML #55 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-ads-attribution`                    | `[x]` DONE      | —          | YAML #56 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-gate-auth`                          | `[x]` DONE      | —          | YAML #57 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-preflight-design-sot-motion`        | `[x]` DONE      | —          | YAML #58 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-preflight-design-sot-locale-type`   | `[x]` DONE      | —          | YAML #59 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-preflight-design-sot-token-gate`    | `[x]` DONE      | —          | YAML #60 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-preflight-design-sot-brand-flat`    | `[x]` DONE      | —          | YAML #61 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-preflight-design-sot-gate`          | `[x]` DONE      | —          | YAML #62 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-page-wallet`                        | `[x]` DONE      | —          | YAML #63 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-page-wallet-deposit`                | `[x]` DONE      | —          | YAML #64 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-page-wallet-deposit-krw`            | `[x]` DONE      | —          | YAML #65 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-page-wallet-deposit-crypto`         | `[x]` DONE      | —          | YAML #66 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-page-wallet-deposit-giftcard`       | `[x]` DONE      | —          | YAML #67 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-page-wallet-withdraw`               | `[x]` DONE      | —          | YAML #68 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-page-wallet-withdraw-krw`           | `[x]` DONE      | —          | YAML #69 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-page-wallet-withdraw-crypto`        | `[x]` DONE      | —          | YAML #70 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-page-ledger`                        | `[x]` DONE      | —          | YAML #71 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-page-rewards-history`               | `[x]` DONE      | —          | YAML #72 completed · surface/gate evidence pending doc sync                                                                     |
-| `p4-gate-money`                         | `[x]` DONE      | —          | YAML #73 completed · surface/gate evidence pending doc sync                                                                     |
-| `p5-page-settings-security`             | `[x]` DONE      | —          | YAML #74 completed · surface/gate evidence pending doc sync                                                                     |
-| `p5-page-settings-bank-accounts`        | `[x]` DONE      | —          | YAML #75 completed · surface/gate evidence pending doc sync                                                                     |
-| `p5-page-account-kyc`                   | `[x]` DONE      | —          | YAML #76 completed · surface/gate evidence pending doc sync                                                                     |
-| `p5-page-account-responsible-gaming`    | `[x]` DONE      | —          | YAML #77 completed · surface/gate evidence pending doc sync                                                                     |
-| `p5-gate-security`                      | `[x]` DONE      | —          | YAML #78 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-refresh-auth-landing-design-sot`    | `[x]` DONE      | —          | YAML #79 completed · surface/gate evidence pending doc sync                                                                     |
-| `p6-shell-appshell`                     | `[x]` DONE      | —          | YAML #80 completed · surface/gate evidence pending doc sync                                                                     |
-| `p6-page-install`                       | `[x]` DONE      | —          | YAML #81 completed · surface/gate evidence pending doc sync                                                                     |
-| `p6-page-onboarding`                    | `[x]` DONE      | —          | YAML #82 completed · surface/gate evidence pending doc sync                                                                     |
-| `p6-page-onboarding-missions`           | `[x]` DONE      | —          | YAML #83 completed · surface/gate evidence pending doc sync                                                                     |
-| `p6-page-offline`                       | `[x]` DONE      | —          | YAML #84 completed · surface/gate evidence pending doc sync                                                                     |
-| `p6-page-home-stub`                     | `[x]` DONE      | —          | YAML #85 completed · surface/gate evidence pending doc sync                                                                     |
-| `p6-gate-shell`                         | `[x]` DONE      | —          | YAML #86 completed · surface/gate evidence pending doc sync                                                                     |
-| `p6-doc-platform-canon-sync`            | `[x]` DONE      | —          | YAML #87 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-refresh-auth-landing-appshell`      | `[x]` DONE      | —          | YAML #88 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-platform-narrative-i18n`            | `[x]` DONE      | —          | YAML #89 completed · surface/gate evidence pending doc sync                                                                     |
-| `p3-operator-visual-signoff`            | `[x]` DONE      | —          | YAML #90 completed · surface/gate evidence pending doc sync                                                                     |
-| `p6-operator-visual-signoff`            | `[x]` DONE      | —          | YAML #91 completed · surface/gate evidence pending doc sync                                                                     |
-| `p7-page-referral`                      | `[x]` DONE      | —          | YAML #92 completed · surface/gate evidence pending doc sync                                                                     |
-| `p7-page-referral-invite`               | `[x]` DONE      | —          | YAML #93 completed · surface/gate evidence pending doc sync                                                                     |
-| `p7-page-home-missions`                 | `[x]` DONE      | —          | YAML #94 completed · surface/gate evidence pending doc sync                                                                     |
-| `p7-page-home-attendance`               | `[x]` DONE      | —          | YAML #95 completed · surface/gate evidence pending doc sync                                                                     |
-| `p7-page-home-missions-invite`          | `[x]` DONE      | —          | YAML #96 completed · surface/gate evidence pending doc sync                                                                     |
-| `p7-page-home-missions-referral`        | `[x]` DONE      | —          | YAML #97 completed · surface/gate evidence pending doc sync                                                                     |
-| `p7-page-tier-me`                       | `[x]` DONE      | —          | YAML #98 completed · surface/gate evidence pending doc sync                                                                     |
-| `p7-page-tier-benefits`                 | `[x]` DONE      | —          | YAML #99 completed · surface/gate evidence pending doc sync                                                                     |
-| `p7-tier-benefits-narrative`            | `[x]` DONE      | —          | YAML #100 completed · surface/gate evidence pending doc sync                                                                    |
-| `p7-page-share-earnings`                | `[x]` DONE      | —          | YAML #101 completed · surface/gate evidence pending doc sync                                                                    |
-| `p7-gate-growth`                        | `[x]` DONE      | —          | YAML #102 completed · surface/gate evidence pending doc sync                                                                    |
-| `p8-page-home`                          | `[x]` DONE      | —          | YAML #103 completed · surface/gate evidence pending doc sync                                                                    |
-| `p8-page-notifications`                 | `[x]` DONE      | —          | YAML #104 completed · surface/gate evidence pending doc sync                                                                    |
-| `p8-page-settings`                      | `[x]` DONE      | —          | YAML #105 completed · surface/gate evidence pending doc sync                                                                    |
-| `p8-page-settings-notifications`        | `[x]` DONE      | —          | YAML #106 completed · surface/gate evidence pending doc sync                                                                    |
-| `p8-page-settings-referral`             | `[x]` DONE      | —          | YAML #107 completed · surface/gate evidence pending doc sync                                                                    |
-| `p8-page-account-profile`               | `[x]` DONE      | —          | YAML #108 completed · surface/gate evidence pending doc sync                                                                    |
-| `p8-page-account`                       | `[x]` DONE      | —          | YAML #109 completed · surface/gate evidence pending doc sync                                                                    |
-| `p8-page-settings-account`              | `[x]` DONE      | —          | YAML #110 completed · surface/gate evidence pending doc sync                                                                    |
-| `p8-page-settings-preferences`          | `[x]` DONE      | —          | YAML #111 completed · surface/gate evidence pending doc sync                                                                    |
-| `p8-page-settings-api-keys`             | `[x]` DONE      | —          | YAML #112 completed · surface/gate evidence pending doc sync                                                                    |
-| `p8-gate-core`                          | `[x]` DONE      | —          | YAML #113 completed · surface/gate evidence pending doc sync                                                                    |
-| `p8-operator-visual-signoff`            | `[x]` DONE      | —          | YAML #114 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-page-trade`                         | `[x]` DONE      | —          | YAML #115 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-page-trade-futures`                 | `[x]` DONE      | —          | YAML #116 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-page-trade-positions`               | `[x]` DONE      | —          | YAML #117 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-page-trade-orders`                  | `[x]` DONE      | —          | YAML #118 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-page-staking`                       | `[x]` DONE      | —          | YAML #119 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-page-staking-positions`             | `[x]` DONE      | —          | YAML #120 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-first-trade-education`              | `[x]` DONE      | —          | YAML #121 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-gate-trade`                         | `[x]` DONE      | —          | YAML #122 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-world-preflight`                    | `[x]` DONE      | —          | YAML #123 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-parity-matrix-sync`           | `[x]` DONE      | —          | YAML #124 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-spot-pair-wire`               | `[x]` DONE      | —          | YAML #125 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-ticker-header-wire`           | `[x]` DONE      | —          | YAML #126 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-chart-pro-lwc`                | `[x]` DONE      | —          | YAML #127 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-chart-overlays-lwc`           | `[x]` DONE      | —          | YAML #128 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-fills-history-wire`           | `[x]` DONE      | —          | YAML #129 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-terminal-bottom-dock`         | `[x]` DONE      | —          | YAML #130 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-recent-trades-rail`           | `[x]` DONE      | —          | YAML #131 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-orderbook-parity`             | `[x]` DONE      | —          | YAML #132 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-futures-partial-close-ui`     | `[x]` DONE      | —          | YAML #133 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-futures-margin-adjust-ui`     | `[x]` DONE      | —          | YAML #134 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-futures-unrealized-pnl`       | `[x]` DONE      | —          | YAML #135 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-leverage-slider-ux`           | `[x]` DONE      | —          | YAML #136 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-order-ticket-density`         | `[x]` DONE      | —          | YAML #137 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-beginner-help-layer`          | `[x]` DONE      | —          | YAML #138 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-position-mode-label`          | `[x]` DONE      | —          | YAML #139 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-cross-margin-canary`          | `[x]` DONE      | —          | YAML #140 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-funding-history-display`      | `[x]` DONE      | —          | YAML #141 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-tier-fee-display`             | `[x]` DONE      | —          | YAML #142 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-oracle-circuit-banner`        | `[x]` DONE      | —          | YAML #143 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-ultra-layout`                 | `[x]` DONE      | —          | YAML #144 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-mobile-history-tab`           | `[x]` DONE      | —          | YAML #145 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-mobile-futures-book-tab`      | `[x]` DONE      | —          | YAML #146 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-settings-prefs-wire`          | `[x]` DONE      | —          | YAML #147 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-layout-dedup-gate`            | `[x]` DONE      | —          | YAML #148 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-i18n-surface-audit`           | `[x]` DONE      | —          | YAML #149 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-audit-remediation-a1`         | `[x]` DONE      | —          | YAML #150 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-audit-remediation-a2`         | `[x]` DONE      | —          | YAML #151 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-operator-visual-signoff`            | `[x]` DONE      | —          | YAML #152 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-gate-trade-world-class`             | `[x]` DONE      | —          | YAML #153 completed · surface/gate evidence pending doc sync                                                                    |
-| `launch-engine-e1-liquidation-notify`   | `[x]` DONE      | —          | YAML #154 completed · surface/gate evidence pending doc sync                                                                    |
-| `launch-engine-e2-admin-halt-market`    | `[x]` DONE      | —          | YAML #155 completed · surface/gate evidence pending doc sync                                                                    |
-| `launch-engine-e3-ops-telegram-webhook` | `[x]` DONE      | —          | YAML #156 completed · surface/gate evidence pending doc sync                                                                    |
-| `launch-engine-e4-concurrent-race-test` | `[x]` DONE      | —          | YAML #157 completed · surface/gate evidence pending doc sync                                                                    |
-| `p4-fiat-reference-preflight`           | `[x]` DONE      | —          | YAML #158 completed · surface/gate evidence pending doc sync                                                                    |
-| `p4-fiat-currency-precision-ssot`       | `[x]` DONE      | —          | YAML #159 completed · surface/gate evidence pending doc sync                                                                    |
-| `p4-fiat-reference-rates-hook`          | `[x]` DONE      | —          | YAML #160 completed · surface/gate evidence pending doc sync                                                                    |
-| `p4-fiat-hint-display-contract`         | `[x]` DONE      | —          | YAML #161 completed · surface/gate evidence pending doc sync                                                                    |
-| `p4-fiat-money-display-hint`            | `[x]` DONE      | —          | YAML #162 completed · surface/gate evidence pending doc sync                                                                    |
-| `p4-page-wallet-fiat-hint`              | `[x]` DONE      | —          | YAML #163 completed · surface/gate evidence pending doc sync                                                                    |
-| `p9-trade-fiat-hint-wire`               | `[x]` DONE      | —          | YAML #164 completed · surface/gate evidence pending doc sync                                                                    |
-| `p7-earn-fiat-hint-co-primary`          | `[x]` DONE      | —          | YAML #165 completed · surface/gate evidence pending doc sync                                                                    |
-| `p5-page-settings-fiat-reference`       | `[x]` DONE      | —          | YAML #166 completed · surface/gate evidence pending doc sync                                                                    |
-| `p4-gate-fiat-reference-world-class`    | `[x]` DONE      | —          | YAML #167 completed · surface/gate evidence pending doc sync                                                                    |
-| `p10-page-sports`                       | `[x]` DONE      | —          | YAML #168 completed · surface/gate evidence pending doc sync                                                                    |
-| `pqa-audit-a-db-guards`                 | `[x]` DONE      | —          | YAML #169 completed · surface/gate evidence pending doc sync                                                                    |
-| `pqa-audit-b-rpc-contract`              | `[x]` DONE      | —          | YAML #170 completed · surface/gate evidence pending doc sync                                                                    |
-| `pqa-audit-c-surface-controls`          | `[x]` DONE      | —          | YAML #171 completed · surface/gate evidence pending doc sync                                                                    |
-| `pqa-audit-d-config-state`              | `[x]` DONE      | —          | YAML #172 completed · surface/gate evidence pending doc sync                                                                    |
-| `pqa-audit-report`                      | `[x]` DONE      | —          | YAML #173 completed · surface/gate evidence pending doc sync                                                                    |
-| `pqa-fix-error-mapping`                 | `[x]` DONE      | —          | YAML #174 completed · surface/gate evidence pending doc sync                                                                    |
-| `pqa-fix-client-gate-prechecks`         | `[x]` DONE      | —          | YAML #175 completed · surface/gate evidence pending doc sync                                                                    |
-| `pqa-fix-dead-controls`                 | `[x]` DONE      | —          | YAML #176 completed · surface/gate evidence pending doc sync                                                                    |
-| `pqa-fix-types-regen`                   | `[x]` DONE      | —          | YAML #177 completed · surface/gate evidence pending doc sync                                                                    |
-| `launch-engine-e5-realtime-publication` | `[x]` DONE      | —          | YAML #178 completed · surface/gate evidence pending doc sync                                                                    |
-| `pqa-gate-platform-audit`               | `[x]` DONE      | —          | YAML #179 completed · surface/gate evidence pending doc sync                                                                    |
-| `r0-forensic-ssot-honesty-bundle`       | `[x]` DONE      | —          | YAML #180 completed · surface/gate evidence pending doc sync                                                                    |
-| `r0-sports-launch-gate-wire`            | `[x]` DONE      | —          | YAML #181 completed · surface/gate evidence pending doc sync                                                                    |
-| `r0-admin-rbac-ops-wire`                | `[x]` DONE      | —          | YAML #182 completed · surface/gate evidence pending doc sync                                                                    |
-| `r0-staking-domain-sot-sync`            | `[x]` DONE      | —          | YAML #183 completed · surface/gate evidence pending doc sync                                                                    |
-| `r0-gate-forensic-remediation`          | `[x]` DONE      | —          | YAML #184 completed · surface/gate evidence pending doc sync                                                                    |
-| `da-w0-foundation-ssot-bundle`          | `[x]` DONE      | —          | YAML #185 completed · surface/gate evidence pending doc sync                                                                    |
-| `da-w1-ds-foundation-bundle`            | `[x]` DONE      | —          | YAML #186 completed · surface/gate evidence pending doc sync                                                                    |
-| `da-w1-gate-ds-2`                       | `[x]` DONE      | —          | YAML #187 completed · surface/gate evidence pending doc sync                                                                    |
-| `da-w2-shell-elevation-infra`           | `[x]` DONE      | —          | YAML #188 completed · surface/gate evidence pending doc sync                                                                    |
-| `da-w2-gate-shell-elevation`            | `[x]` DONE      | —          | YAML #189 completed · surface/gate evidence pending doc sync                                                                    |
-| `da-w3-ia-progressive-bundle`           | `[x]` DONE      | —          | YAML #190 completed · surface/gate evidence pending doc sync                                                                    |
-| `da-w3-gate-ia-progressive`             | `[x]` DONE      | —          | YAML #191 completed · surface/gate evidence pending doc sync                                                                    |
-| `da-w4-motion-system-bundle`            | `[x]` DONE      | —          | YAML #192 completed · surface/gate evidence pending doc sync                                                                    |
-| `da-w4-gate-motion`                     | `[x]` DONE      | —          | YAML #193 completed · surface/gate evidence pending doc sync                                                                    |
-| `da-w5-cards-domain-variants`           | `[x]` DONE      | —          | YAML #194 completed · surface/gate evidence pending doc sync                                                                    |
-| `da-w5-gate-domain-cards`               | `[x]` DONE      | —          | YAML #195 completed · surface/gate evidence pending doc sync                                                                    |
-| `p10-sports-fiat-hint-wire`             | `[x]` DONE      | —          | YAML #196 completed · surface/gate evidence pending doc sync                                                                    |
-| `p10-sports-hub-pages`                  | `[x]` DONE      | —          | YAML #197 completed · surface/gate evidence pending doc sync                                                                    |
-| `p10-sports-parity-contract-and-board`  | `[x]` DONE      | —          | YAML #198 completed · surface/gate evidence pending doc sync                                                                    |
-| `p10-sports-live-surface-wire`          | `[x]` DONE      | —          | YAML #199 completed · surface/gate evidence pending doc sync                                                                    |
-| `p10-sports-slip-advanced-wire`         | `[x]` DONE      | —          | YAML #200 completed · surface/gate evidence pending doc sync                                                                    |
-| `p10-sports-layout-dedup-gate`          | `[x]` DONE      | —          | YAML #201 completed · surface/gate evidence pending doc sync                                                                    |
-| `p10-sports-rules-and-vip-stub`         | `[x]` DONE      | —          | YAML #202 completed · surface/gate evidence pending doc sync                                                                    |
-| `p10-page-casino`                       | `[x]` DONE      | —          | YAML #203 completed · surface/gate evidence pending doc sync                                                                    |
-| `p10-casino-replay-and-infra`           | `[x]` DONE      | —          | YAML #204 completed · surface/gate evidence pending doc sync                                                                    |
-| `p10-casino-fiat-hint-session-lock`     | `[x]` DONE      | 2026-07-11 | `CasinoFiatRateSession` · spin drift 0 · `gate:ai-impl` **22/22**                                                               |
-| `p2-admin-table-primitive`              | `[x]` DONE      | 2026-07-11 | `admin-table.tsx` · @tanstack/react-table · 18 desk · vitest **46/46** · native table 0 · LoadingTable 0 · `gate:ai-impl` L0~L4 |
-| `p2-gate-admin-table-dedup`             | `[x]` DONE      | 2026-07-11 | §29.6 · native table 0 · LoadingTable 0 · dedup contract · `gate:ai-impl` **8/8**                                               |
-| `p10-games-batch-a`                     | `[x]` DONE      | 2026-07-11 | crash·limbo·dice L1 · WinTier · `gate:ai-impl` **13/13**                                                                        |
-| `p10-games-batch-b`                     | `[x]` DONE      | 2026-07-11 | mines·hilo L1 · grid a11y · touch 48px+ · `gate:ai-impl` **9/9**                                                                |
-| `p10-games-batch-c`                     | `[x]` DONE      | 2026-07-11 | Pixi v8 plinko·mint_reels·gold_rush·momentum · §23.8 sound · `gate:ai-impl` **10/10**                                           |
-| `p10-games-batch-d`                     | `[x]` DONE      | 2026-07-11 | roulette·blackjack·deepshaft table L1 · WinTier · `gate:ai-impl` **9/9**                                                        |
-| `p10-page-casino-fairness`              | `[x]` DONE      | 2026-07-11 | `/casino/fairness` verifyRound · §23.2.1 PF limits · lobby CTA · `gate:ai-impl` **23/23**                                        |
-| `p10-first-bet-education`               | `[x]` DONE      | 2026-07-11 | sports+casino sheet · slip·RG·PF · localStorage · 독립 route 0 · `gate:ai-impl` **15/15**                                       |
-| `p10-gate-betting`                      | `[x]` DONE      | 2026-07-11 | Sports+Casino 12 · subnav dead link 0 · H5/Fiat#12 live · first-bet · `gate:ai-impl` **42/42** · casino E2E CI                   |
-| `p10-operator-visual-signoff`           | `[x]` agent impl | 2026-07-11 | contract **6/6** · surface **13/13** · preview https://preview.phonara-web.pages.dev · **operator `VISUAL APPROVED` 대기** (Plan YAML) |
-| `da-w6-brand-elevation-bundle`          | `[x]` DONE      | 2026-07-11 | BrandMark aurora · domain empty · QuadStreamLoading · `gate:ai-impl` **55/55**                                                      |
-| `da-w6-gate-brand-elevation`            | `[x]` DONE      | 2026-07-11 | BrandMark aurora GATE · `check:design-tokens` advisory · VISUAL advisory · `gate:ai-impl` **23/23**                                  |
-| `p4-operator-visual-signoff`            | `[x]` agent impl | 2026-07-11 | contract **6/6** · surface **13/13** · preview https://preview.phonara-web.pages.dev · **operator `VISUAL APPROVED` 대기** (Plan YAML) |
-| `p11-earn-side-surfaces`                | `[x]` DONE      | 2026-07-11 | `/events` · `/earn/play` · `/earn/cashback` · `/referral/leaderboard` STUB · `gate:ai-impl` vitest **45/45** · P11 subnav register |
-| `p11-page-wallet-redeem`                | `[x]` DONE      | 2026-07-11 | `/wallet/redeem` · `gate:ai-impl` **21/21**                                                                                      |
-| `p11-gate-side-income`                  | `[x]` DONE      | 2026-07-11 | §12.19.6 Side GATE · `gate:ai-impl` **39/39**                                                                                   |
-| `p12-trust-marketing-hub`               | `[x]` DONE      | 2026-07-11 | `/tier` · `/features*` · `/fees` · `/security` · MarketingShell · `gate:ai-impl` **36/36**                                       |
-| `p12-community-support-hub`             | `[x]` DONE      | 2026-07-11 | `/announcements` · `/support*` · `/feedback` · `gate:ai-impl` **40/40**                                                          |
-| `p12-legal-pages`                       | `[x]` DONE      | 2026-07-11 | `/legal/affiliate` · `/legal/cookies` · redirects · `gate:ai-impl` **40/40**                                                     |
-| `p12-gate-marketing`                    | `[x]` DONE      | 2026-07-11 | §32.5 FAQ·feedback·affiliate·cookies + marketing · `gate:ai-impl` **59/59**                                                     |
-| `da-w8-signature-surfaces-bundle`       | `[x]` DONE      | 2026-07-11 | §34.21–34.26 home·wallet·trade·casino·sports·vip · `gate:ai-impl` **36/36**                                                     |
-| `da-w8-sound-design-spec-defer`         | `[x]` DONE      | 2026-07-11 | §34.27 mission·wallet·trade·vip 4톤 DOC · `SOUND_DESIGN_CANON` · `gate:ai-impl` **5/5** · 구현=E-Wave                            |
-| `da-w8-gate-signature-experience`       | `[x]` DONE      | 2026-07-11 | §34.2 Emotion Map spot-check · da-w8 bundle · VISUAL advisory · `gate:ai-impl` **49/49**                                         |
-| `p13-prep-admin-canonical-docs`         | `[x]` DONE      | 2026-07-11 | §29.1·§29.5 · ADMIN_BEGINNER_LANGUAGE_CANON · correspondence · RBAC · §12.14 · `gate:ai-impl` **12/12**                          |
-| `p13-prep-admin-team-desk`              | `[x]` DONE      | 2026-07-11 | `/admin/team` · AdminTable · owner-only · settings link · `rpc_admin_set_role_grant` · `gate:ai-impl` **22/22**                  |
-| `p13-admin-ops-push`                    | `[x]` DONE      | 2026-07-11 | settings phone-alert CTA · SW · `push_subscriptions` · `ops-notify` web_push → `/queues` · `gate:ai-impl` **8/8** · migration **0** |
-| `p13-ops-prod-preflight`                | `[x]` DONE      | 2026-07-11 | T0-A checklist · live audit · `gate:ai-impl` **7/7** · migration **0**                                                          |
-| `p13-soft-launch-bundle`                | `[x]` DONE      | 2026-07-11 | Soft Launch QA · CB-01~06 · viewport/axe · admin spot-check · `gate:ai-impl` **22/22** · migration **0**                         |
-| `da-w7-enforcement-strict-tokens`       | `[x]` DONE      | 2026-07-11 | `check:design-tokens --strict` · text-tiny · legacy purge · `gate:ai-impl` **19/19**                                             |
-| `da-w7-operator-visual-dae-signoff`     | `[x]` agent impl | 2026-07-11 | Home+Shell+Trade · 390/768/1024/2560 · preview · axe 0 · `gate:ai-impl` **22/22** · operator `VISUAL APPROVED: da-w7` 대기 |
-| `p13-closeout-bundle`                   | `[x]` DONE      | 2026-07-11 | legacy purge · docs sync · CI gate pin · `gate:ai-impl` **16/16** · `check:design-tokens --strict` · migration **0** · [`P13_LAUNCH_CLOSEOUT_BUNDLE.md`](OPERATIONS/P13_LAUNCH_CLOSEOUT_BUNDLE.md) |
-| `launch-ramp-t1-feature-gates`          | `[x]` DONE      | 2026-07-11 | weekly rails · OI 40% · daily loop · `gate:ai-impl` · migration **0** · [`P13_T1_LIVE_RAMP_FEATURE_GATES.md`](OPERATIONS/P13_T1_LIVE_RAMP_FEATURE_GATES.md) |
-| `launch-scale-t2-triggers`              | `[x]` DONE      | 2026-07-11 | DAU 500~2K/2K~10K/10K+ · notional · read replica · hedge · `gate:ai-impl` **6/6** · migration **0** · [`P13_T2_SCALE_TRIGGERS.md`](OPERATIONS/P13_T2_SCALE_TRIGGERS.md) |
-| `ew-e0-adr-approval`                    | `[x]` DONE      | 2026-07-11 | ENGINE_GAP_ADR Accepted · RED STOP · 광고·설문 영구 제외 · `check:plan-yaml` · `gate:ai-impl` **5/5** · migration **0** · [`ENGINE_GAP_E0_APPROVAL.md`](OPERATIONS/ENGINE_GAP_E0_APPROVAL.md) |
-| `ew-e1-decay-wave`                      | `[x]` DONE      | 2026-07-11 | ADR-010 · decay RPC/cron · 45d/60d · max 1-tier · `tier_keep_status` live · `gate:ai-impl` **22/22** · [`ENGINE_GAP_E1_TIER_DECAY.md`](OPERATIONS/ENGINE_GAP_E1_TIER_DECAY.md) |
-| `ew-e1-gate-decay`                      | `[x]` DONE      | 2026-07-11 | `/tier/me` full unlock · `rpc_get_tier_decay_status` · `stack:push-remote` · advisor **0** · vitest **32/32** · [`ENGINE_GAP_E1_GATE_DECAY.md`](OPERATIONS/ENGINE_GAP_E1_GATE_DECAY.md) |
-| `ew-e2-missions-wave`                   | `[x]` DONE      | 2026-07-11 | ADR-011 · mission_catalog CRUD · admin write path · `gate:ai-impl` **8/8** · [`ENGINE_GAP_E2_MISSIONS.md`](OPERATIONS/ENGINE_GAP_E2_MISSIONS.md) |
-| `ew-e2-gate-missions`                   | `[x]` DONE      | 2026-07-11 | write UI unlock · `stack:push-remote` `ew_e2_mission_catalog` · advisor **0** · vitest **7/7** · [`ENGINE_GAP_E2_GATE_MISSIONS.md`](OPERATIONS/ENGINE_GAP_E2_GATE_MISSIONS.md) |
-| `ew-e3-viral-cms-wave`                  | `[x]` DONE      | 2026-07-11 | ADR-012 · leaderboard RPC · CMS targeting/schedule · viral analytics · [`ENGINE_GAP_E3_VIRAL_CMS.md`](OPERATIONS/ENGINE_GAP_E3_VIRAL_CMS.md) |
-| `ew-e3-gate-cms-promotions`             | `[x]` DONE      | 2026-07-11 | unlock leaderboard · admin CMS/promotions · announcements · remote `ew_e3_viral_cms` · advisor 0 · vitest **29/29** · [`ENGINE_GAP_E3_GATE_CMS_PROMOTIONS.md`](OPERATIONS/ENGINE_GAP_E3_GATE_CMS_PROMOTIONS.md) |
-| `ew-e4-tier-option-b-wave`              | `[x]` DONE      | 2026-07-11 | ADR-013 · `rpc_get_user_tier_summary` · Prime Elite · caps · admin write · `gate:ai-impl` 17/17 · SQL `ew_e4_tier_option_b_test` · GATE `#247` `[x]` |
-| `ew-e4-gate-tier-option-b`              | `[x]` DONE      | 2026-07-11 | unlock fee % · admin write · `/sports/vip` · `/tier/elite` · remote `ew_e4_prime_elite_enum`+`ew_e4_tier_option_b` · advisor 0 · vitest **22/22** · [`ENGINE_GAP_E4_GATE_TIER_OPTION_B.md`](OPERATIONS/ENGINE_GAP_E4_GATE_TIER_OPTION_B.md) |
-| `ew-e5-gap-surfaces-wire`               | `[x]` DONE      | 2026-07-11 | STUB→live wire · decay · leaderboard · VIP · `gate:ai-impl` **27/27** · [`ENGINE_GAP_E5_GAP_SURFACES.md`](OPERATIONS/ENGINE_GAP_E5_GAP_SURFACES.md) |
-| `ew-e5-gate-gap-surfaces`               | `[x]` DONE      | 2026-07-11 | STUB→live GATE unlock · `gate:ai-impl` **17/17** · [`ENGINE_GAP_E5_GATE_GAP_SURFACES.md`](OPERATIONS/ENGINE_GAP_E5_GATE_GAP_SURFACES.md) |
-| `ew-e6-admin-desks-wave`                | `[x]` DONE      | 2026-07-12 | promotions · cms · tier-benefits · casino · staking · earn/activity · audit CSV · `gate:ai-impl` **22/22** · [`ENGINE_GAP_E6_ADMIN_DESKS.md`](OPERATIONS/ENGINE_GAP_E6_ADMIN_DESKS.md) |
-| `ew-e6-gate-admin-desks`                | `[x]` DONE      | 2026-07-12 | desk routes · read-only · audit CSV · §29.5 · AdminTable 23 · `gate:ai-impl` **25/25** · [`ENGINE_GAP_E6_GATE_ADMIN_DESKS.md`](OPERATIONS/ENGINE_GAP_E6_GATE_ADMIN_DESKS.md) |
-| `ew-e7-social-wave`                     | `[x]` DONE      | 2026-07-12 | ADR-014 · co-mission · whale · migration `ew_e7_social_co_mission` · [`ENGINE_GAP_E7_SOCIAL.md`](OPERATIONS/ENGINE_GAP_E7_SOCIAL.md) |
-| `ew-e7-gate-engine-wave`                | `[x]` DONE      | 2026-07-12 | `socialMissionsLive` · `/home/missions` social · `test:engine` · `stack:push-remote` · advisor 0 · [`ENGINE_GAP_E7_GATE_ENGINE_WAVE.md`](OPERATIONS/ENGINE_GAP_E7_GATE_ENGINE_WAVE.md) |
-| `ew-e21-trade-parity-wave`              | `[x]` DONE      | 2026-07-12 | ADR-015 · hedge/reduce-only migration · EXISTS pin · `gate:ai-impl` **21/21** · YAML #254                                      |
-| `ew-e21-gate-trade-engine-parity`       | `[x]` DONE      | 2026-07-12 | `stack:push-remote` · advisor **0** · spot/TP/SL EXISTS honesty · vitest **5/5** · YAML #255 · [`ENGINE_GAP_E21_GATE_TRADE_ENGINE_PARITY.md`](OPERATIONS/ENGINE_GAP_E21_GATE_TRADE_ENGINE_PARITY.md) |
-| `ew-e21-ui-trade-engine-unlocks`        | `[x]` DONE      | 2026-07-12 | hedge/reduce-only live · `tradeParityLive` · YAML #256                                                                          |
-| `ew-e22-sports-parity-wave`             | `[x]` DONE      | 2026-07-12 | ADR-016 · partial cashout · odds · catalog · YAML #257 · [`ENGINE_GAP_E22_SPORTS_PARITY.md`](OPERATIONS/ENGINE_GAP_E22_SPORTS_PARITY.md) |
-| `ew-e22-gate-sports-parity`             | `[x]` DONE      | 2026-07-12 | `stack:push-remote` · advisor **0** · Σ=0 SQL · unlock path · YAML #258 · [`ENGINE_GAP_E22_GATE_SPORTS_PARITY.md`](OPERATIONS/ENGINE_GAP_E22_GATE_SPORTS_PARITY.md) |
-| `ew-e22-ui-sports-parity-unlocks`       | `[x]` DONE      | 2026-07-12 | partial cashout header · odds accept_better · correct_score · `sportsParityLive` · [`ENGINE_GAP_E22_UI_SPORTS_PARITY_UNLOCKS.md`](OPERATIONS/ENGINE_GAP_E22_UI_SPORTS_PARITY_UNLOCKS.md) |
-| `ew-e23-casino-live-wave`               | `[x]` DONE      | 2026-07-12 | ADR-017 · progressive · live crash · PF · YAML #260 · [`ENGINE_GAP_E23_CASINO_LIVE.md`](OPERATIONS/ENGINE_GAP_E23_CASINO_LIVE.md) |
-| `ew-e23-gate-casino-live`               | `[x]` DONE      | 2026-07-12 | `stack:push-remote` · advisor **0** · Σ=0 SQL · casino_parity E23 GROWTH · unlock path · YAML #261 · [`ENGINE_GAP_E23_GATE_CASINO_LIVE.md`](OPERATIONS/ENGINE_GAP_E23_GATE_CASINO_LIVE.md) |
-| `ew-e23-ui-casino-live-unlocks`         | `[x]` DONE      | 2026-07-12 | `casinoLiveLive` · progressive/live/PF · YAML #262                                                                              |
-| `ew-e8-financial-wave`                  | `[x]` DONE      | 2026-07-12 | ADR-018 · P2P · API keys · giftcard redeem · YAML #263 · [`ENGINE_GAP_E8_FINANCIAL.md`](OPERATIONS/ENGINE_GAP_E8_FINANCIAL.md) |
-| `ew-e8-gate-financial`                  | `[x]` DONE      | 2026-07-12 | `stack:push-remote` · advisor **0** · Σ=0 SQL (CI) · YAML #264 · [`ENGINE_GAP_E8_GATE_FINANCIAL.md`](OPERATIONS/ENGINE_GAP_E8_GATE_FINANCIAL.md) |
-| `ew-e9-identity-wave`                   | `[x]` DONE      | 2026-07-12 | ADR-019 · SIWE · tickets · analytics · app-install · tier LB · YAML #265 · [`ENGINE_GAP_E9_IDENTITY_SUPPORT.md`](OPERATIONS/ENGINE_GAP_E9_IDENTITY_SUPPORT.md) |
-| `ew-e9-gate-identity-support`           | `[x]` DONE      | 2026-07-12 | `stack:push-remote` · advisor **0** · SQL E9-0..E9-5 (CI) · YAML #266 · [`ENGINE_GAP_E9_GATE_IDENTITY_SUPPORT.md`](OPERATIONS/ENGINE_GAP_E9_GATE_IDENTITY_SUPPORT.md) |
-| `ew-e9-page-admin-support`              | `[x]` DONE      | 2026-07-12 | `/admin/support` · list/resolve · YAML #267 · [`ENGINE_GAP_E9_ADMIN_SUPPORT.md`](OPERATIONS/ENGINE_GAP_E9_ADMIN_SUPPORT.md) |
-| `ew-e10-platform-engine-wave`           | `[x]` DONE      | 2026-07-12 | ADR-020 · KRW proof · chains · co-bet · recommend · YAML #268 · [`ENGINE_GAP_E10_PLATFORM.md`](OPERATIONS/ENGINE_GAP_E10_PLATFORM.md) |
-| `ew-e10-page-admin-krw-proof-review`    | `[x]` DONE      | 2026-07-12 | deposits 증빙 행 · review RPC · YAML #269 · [`ENGINE_GAP_E10_ADMIN_KRW_PROOF.md`](OPERATIONS/ENGINE_GAP_E10_ADMIN_KRW_PROOF.md) |
-| `ew-e10-wallet-settings-ui`             | `[x]` DONE      | 2026-07-12 | `/wallet/transfer` · API keys hub · redeem reverse · `financialConnectivityLive` · YAML #270 · [`ENGINE_GAP_E10_WALLET_SETTINGS_UI.md`](OPERATIONS/ENGINE_GAP_E10_WALLET_SETTINGS_UI.md) |
-| `ew-e10-trust-support-ui`               | `[ ]` NEXT      | —          | YAML #271 pending                                                                                                               |
-| `ew-e10-growth-ui`                      | `[ ]` NEXT      | —          | YAML #272 pending                                                                                                               |
-| `ew-e10-gate-platform-world-class`      | `[ ]` NEXT      | —          | YAML #273 pending                                                                                                               |
-| `p2-defer-admin-tier-benefits`          | `[x]` cancelled | —          | YAML cancelled · DEFER — 구현 금지                                                                                              |
-| `p2-defer-admin-promotions`             | `[x]` cancelled | —          | YAML cancelled · DEFER — 구현 금지                                                                                              |
-| `p2-defer-admin-cms`                    | `[x]` cancelled | —          | YAML cancelled · DEFER — 구현 금지                                                                                              |
-| `p2-defer-admin-casino`                 | `[x]` cancelled | —          | YAML cancelled · DEFER — 구현 금지                                                                                              |
-| `p2-defer-admin-staking`                | `[x]` cancelled | —          | YAML cancelled · DEFER — 구현 금지                                                                                              |
-| `p2-defer-admin-vip`                    | `[x]` cancelled | —          | YAML cancelled · DEFER — 구현 금지                                                                                              |
-| `p2-defer-admin-support`                | `[x]` cancelled | —          | YAML cancelled · DEFER — 구현 금지                                                                                              |
+| id | 상태 | 완료일 | 증거 |
+|----|------|--------|------|
+| `engine-p0-apex-closed` | `[x]` DONE | — | YAML #1 completed · surface/gate evidence pending doc sync |
+| `engine-p0-no-migration` | `[x]` DONE | — | YAML #2 completed · surface/gate evidence pending doc sync |
+| `engine-p0-no-rpc` | `[x]` DONE | — | YAML #3 completed · surface/gate evidence pending doc sync |
+| `p1-active-work-ssot-sync` | `[x]` DONE | — | YAML #4 completed · surface/gate evidence pending doc sync |
+| `p1-foundation-tokens` | `[x]` DONE | — | YAML #5 completed · surface/gate evidence pending doc sync |
+| `p1-foundation-primitives` | `[x]` DONE | — | YAML #6 completed · surface/gate evidence pending doc sync |
+| `p1-foundation-router` | `[x]` DONE | — | YAML #7 completed · surface/gate evidence pending doc sync |
+| `p1-foundation-redirects` | `[x]` DONE | — | YAML #8 completed · surface/gate evidence pending doc sync |
+| `p1-ssot-ia-canon-sync` | `[x]` DONE | — | YAML #9 completed · surface/gate evidence pending doc sync |
+| `p1-foundation-brand` | `[x]` DONE | — | YAML #10 completed · surface/gate evidence pending doc sync |
+| `p1-foundation-pwa` | `[x]` DONE | — | YAML #11 completed · surface/gate evidence pending doc sync |
+| `p1-foundation-i18n` | `[x]` DONE | — | YAML #12 completed · surface/gate evidence pending doc sync |
+| `p1-foundation-responsive` | `[x]` DONE | — | YAML #13 completed · surface/gate evidence pending doc sync |
+| `p1-foundation-ux-grammar` | `[x]` DONE | — | YAML #14 completed · surface/gate evidence pending doc sync |
+| `p1-gate-foundation` | `[x]` DONE | — | YAML #15 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-home` | `[x]` DONE | — | YAML #16 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-queues` | `[x]` DONE | — | YAML #17 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-deposits` | `[x]` DONE | — | YAML #18 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-withdrawals` | `[x]` DONE | — | YAML #19 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-ops` | `[x]` DONE | — | YAML #20 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-earn-referrals` | `[x]` DONE | — | YAML #21 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-earn-missions` | `[x]` DONE | — | YAML #22 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-tiers` | `[x]` DONE | — | YAML #23 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-users` | `[x]` DONE | — | YAML #24 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-risk` | `[x]` DONE | — | YAML #25 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-sports` | `[x]` DONE | — | YAML #26 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-audit` | `[x]` DONE | — | YAML #27 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-settings` | `[x]` DONE | — | YAML #28 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-staking` | `[x]` DONE | — | YAML #29 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-earn-desk` | `[x]` DONE | — | YAML #30 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-earn-rewards` | `[x]` DONE | — | YAML #31 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-viral-stats` | `[x]` DONE | — | YAML #32 completed · surface/gate evidence pending doc sync |
+| `p2-gate-admin` | `[x]` DONE | — | YAML #33 completed · surface/gate evidence pending doc sync |
+| `p2-closeout-admin-nav` | `[x]` DONE | — | YAML #34 completed · surface/gate evidence pending doc sync |
+| `p2-closeout-sports-resume` | `[x]` DONE | — | YAML #35 completed · surface/gate evidence pending doc sync |
+| `p2-closeout-migration-gate` | `[x]` DONE | — | YAML #36 completed · surface/gate evidence pending doc sync |
+| `p2-closeout-router-navigate` | `[x]` DONE | — | YAML #37 completed · surface/gate evidence pending doc sync |
+| `p2-closeout-doc-sync` | `[x]` DONE | — | YAML #38 completed · surface/gate evidence pending doc sync |
+| `p2-page-admin-user-tier` | `[x]` DONE | — | YAML #39 completed · surface/gate evidence pending doc sync |
+| `p2-closeout-gate-rerun` | `[x]` DONE | — | YAML #40 completed · surface/gate evidence pending doc sync |
+| `p3-page-login` | `[x]` DONE | — | YAML #41 completed · surface/gate evidence pending doc sync |
+| `p3-page-admin-login` | `[x]` DONE | — | YAML #42 completed · surface/gate evidence pending doc sync |
+| `p3-page-admin-mfa-enroll` | `[x]` DONE | — | YAML #43 completed · surface/gate evidence pending doc sync |
+| `p3-page-admin-mfa-challenge` | `[x]` DONE | — | YAML #44 completed · surface/gate evidence pending doc sync |
+| `p3-page-admin-mfa-policy` | `[x]` DONE | — | YAML #45 completed · surface/gate evidence pending doc sync |
+| `p3-gate-admin-auth` | `[x]` DONE | — | YAML #46 completed · surface/gate evidence pending doc sync |
+| `p3-page-signup` | `[x]` DONE | — | YAML #47 completed · surface/gate evidence pending doc sync |
+| `p3-page-reset-password` | `[x]` DONE | — | YAML #48 completed · surface/gate evidence pending doc sync |
+| `p3-page-auth-callback` | `[x]` DONE | — | YAML #49 completed · surface/gate evidence pending doc sync |
+| `p3-page-verify-email` | `[x]` DONE | — | YAML #50 completed · surface/gate evidence pending doc sync |
+| `p3-page-legal-terms` | `[x]` DONE | — | YAML #51 completed · surface/gate evidence pending doc sync |
+| `p3-page-legal-privacy` | `[x]` DONE | — | YAML #52 completed · surface/gate evidence pending doc sync |
+| `p3-page-legal-rg` | `[x]` DONE | — | YAML #53 completed · surface/gate evidence pending doc sync |
+| `p3-page-legal-risk` | `[x]` DONE | — | YAML #54 completed · surface/gate evidence pending doc sync |
+| `p3-page-landing` | `[x]` DONE | — | YAML #55 completed · surface/gate evidence pending doc sync |
+| `p3-ads-attribution` | `[x]` DONE | — | YAML #56 completed · surface/gate evidence pending doc sync |
+| `p3-gate-auth` | `[x]` DONE | — | YAML #57 completed · surface/gate evidence pending doc sync |
+| `p4-preflight-design-sot-motion` | `[x]` DONE | — | YAML #58 completed · surface/gate evidence pending doc sync |
+| `p4-preflight-design-sot-locale-type` | `[x]` DONE | — | YAML #59 completed · surface/gate evidence pending doc sync |
+| `p4-preflight-design-sot-token-gate` | `[x]` DONE | — | YAML #60 completed · surface/gate evidence pending doc sync |
+| `p4-preflight-design-sot-brand-flat` | `[x]` DONE | — | YAML #61 completed · surface/gate evidence pending doc sync |
+| `p4-preflight-design-sot-gate` | `[x]` DONE | — | YAML #62 completed · surface/gate evidence pending doc sync |
+| `p4-page-wallet` | `[x]` DONE | — | YAML #63 completed · surface/gate evidence pending doc sync |
+| `p4-page-wallet-deposit` | `[x]` DONE | — | YAML #64 completed · surface/gate evidence pending doc sync |
+| `p4-page-wallet-deposit-krw` | `[x]` DONE | — | YAML #65 completed · surface/gate evidence pending doc sync |
+| `p4-page-wallet-deposit-crypto` | `[x]` DONE | — | YAML #66 completed · surface/gate evidence pending doc sync |
+| `p4-page-wallet-deposit-giftcard` | `[x]` DONE | — | YAML #67 completed · surface/gate evidence pending doc sync |
+| `p4-page-wallet-withdraw` | `[x]` DONE | — | YAML #68 completed · surface/gate evidence pending doc sync |
+| `p4-page-wallet-withdraw-krw` | `[x]` DONE | — | YAML #69 completed · surface/gate evidence pending doc sync |
+| `p4-page-wallet-withdraw-crypto` | `[x]` DONE | — | YAML #70 completed · surface/gate evidence pending doc sync |
+| `p4-page-ledger` | `[x]` DONE | — | YAML #71 completed · surface/gate evidence pending doc sync |
+| `p4-page-rewards-history` | `[x]` DONE | — | YAML #72 completed · surface/gate evidence pending doc sync |
+| `p4-gate-money` | `[x]` DONE | — | YAML #73 completed · surface/gate evidence pending doc sync |
+| `p5-page-settings-security` | `[x]` DONE | — | YAML #74 completed · surface/gate evidence pending doc sync |
+| `p5-page-settings-bank-accounts` | `[x]` DONE | — | YAML #75 completed · surface/gate evidence pending doc sync |
+| `p5-page-account-kyc` | `[x]` DONE | — | YAML #76 completed · surface/gate evidence pending doc sync |
+| `p5-page-account-responsible-gaming` | `[x]` DONE | — | YAML #77 completed · surface/gate evidence pending doc sync |
+| `p5-gate-security` | `[x]` DONE | — | YAML #78 completed · surface/gate evidence pending doc sync |
+| `p3-refresh-auth-landing-design-sot` | `[x]` DONE | — | YAML #79 completed · surface/gate evidence pending doc sync |
+| `p6-shell-appshell` | `[x]` DONE | — | YAML #80 completed · surface/gate evidence pending doc sync |
+| `p6-page-install` | `[x]` DONE | — | YAML #81 completed · surface/gate evidence pending doc sync |
+| `p6-page-onboarding` | `[x]` DONE | — | YAML #82 completed · surface/gate evidence pending doc sync |
+| `p6-page-onboarding-missions` | `[x]` DONE | — | YAML #83 completed · surface/gate evidence pending doc sync |
+| `p6-page-offline` | `[x]` DONE | — | YAML #84 completed · surface/gate evidence pending doc sync |
+| `p6-page-home-stub` | `[x]` DONE | — | YAML #85 completed · surface/gate evidence pending doc sync |
+| `p6-gate-shell` | `[x]` DONE | — | YAML #86 completed · surface/gate evidence pending doc sync |
+| `p6-doc-platform-canon-sync` | `[x]` DONE | — | YAML #87 completed · surface/gate evidence pending doc sync |
+| `p3-refresh-auth-landing-appshell` | `[x]` DONE | — | YAML #88 completed · surface/gate evidence pending doc sync |
+| `p3-platform-narrative-i18n` | `[x]` DONE | — | YAML #89 completed · surface/gate evidence pending doc sync |
+| `p3-operator-visual-signoff` | `[x]` DONE | — | YAML #90 completed · surface/gate evidence pending doc sync |
+| `p6-operator-visual-signoff` | `[x]` DONE | — | YAML #91 completed · surface/gate evidence pending doc sync |
+| `p7-page-referral` | `[x]` DONE | — | YAML #92 completed · surface/gate evidence pending doc sync |
+| `p7-page-referral-invite` | `[x]` DONE | — | YAML #93 completed · surface/gate evidence pending doc sync |
+| `p7-page-home-missions` | `[x]` DONE | — | YAML #94 completed · surface/gate evidence pending doc sync |
+| `p7-page-home-attendance` | `[x]` DONE | — | YAML #95 completed · surface/gate evidence pending doc sync |
+| `p7-page-home-missions-invite` | `[x]` DONE | — | YAML #96 completed · surface/gate evidence pending doc sync |
+| `p7-page-home-missions-referral` | `[x]` DONE | — | YAML #97 completed · surface/gate evidence pending doc sync |
+| `p7-page-tier-me` | `[x]` DONE | — | YAML #98 completed · surface/gate evidence pending doc sync |
+| `p7-page-tier-benefits` | `[x]` DONE | — | YAML #99 completed · surface/gate evidence pending doc sync |
+| `p7-tier-benefits-narrative` | `[x]` DONE | — | YAML #100 completed · surface/gate evidence pending doc sync |
+| `p7-page-share-earnings` | `[x]` DONE | — | YAML #101 completed · surface/gate evidence pending doc sync |
+| `p7-gate-growth` | `[x]` DONE | — | YAML #102 completed · surface/gate evidence pending doc sync |
+| `p8-page-home` | `[x]` DONE | — | YAML #103 completed · surface/gate evidence pending doc sync |
+| `p8-page-notifications` | `[x]` DONE | — | YAML #104 completed · surface/gate evidence pending doc sync |
+| `p8-page-settings` | `[x]` DONE | — | YAML #105 completed · surface/gate evidence pending doc sync |
+| `p8-page-settings-notifications` | `[x]` DONE | — | YAML #106 completed · surface/gate evidence pending doc sync |
+| `p8-page-settings-referral` | `[x]` DONE | — | YAML #107 completed · surface/gate evidence pending doc sync |
+| `p8-page-account-profile` | `[x]` DONE | — | YAML #108 completed · surface/gate evidence pending doc sync |
+| `p8-page-account` | `[x]` DONE | — | YAML #109 completed · surface/gate evidence pending doc sync |
+| `p8-page-settings-account` | `[x]` DONE | — | YAML #110 completed · surface/gate evidence pending doc sync |
+| `p8-page-settings-preferences` | `[x]` DONE | — | YAML #111 completed · surface/gate evidence pending doc sync |
+| `p8-page-settings-api-keys` | `[x]` DONE | — | YAML #112 completed · surface/gate evidence pending doc sync |
+| `p8-gate-core` | `[x]` DONE | — | YAML #113 completed · surface/gate evidence pending doc sync |
+| `p8-operator-visual-signoff` | `[x]` DONE | — | YAML #114 completed · surface/gate evidence pending doc sync |
+| `p9-page-trade` | `[x]` DONE | — | YAML #115 completed · surface/gate evidence pending doc sync |
+| `p9-page-trade-futures` | `[x]` DONE | — | YAML #116 completed · surface/gate evidence pending doc sync |
+| `p9-page-trade-positions` | `[x]` DONE | — | YAML #117 completed · surface/gate evidence pending doc sync |
+| `p9-page-trade-orders` | `[x]` DONE | — | YAML #118 completed · surface/gate evidence pending doc sync |
+| `p9-page-staking` | `[x]` DONE | — | YAML #119 completed · surface/gate evidence pending doc sync |
+| `p9-page-staking-positions` | `[x]` DONE | — | YAML #120 completed · surface/gate evidence pending doc sync |
+| `p9-first-trade-education` | `[x]` DONE | — | YAML #121 completed · surface/gate evidence pending doc sync |
+| `p9-gate-trade` | `[x]` DONE | — | YAML #122 completed · surface/gate evidence pending doc sync |
+| `p9-world-preflight` | `[x]` DONE | — | YAML #123 completed · surface/gate evidence pending doc sync |
+| `p9-trade-parity-matrix-sync` | `[x]` DONE | — | YAML #124 completed · surface/gate evidence pending doc sync |
+| `p9-trade-spot-pair-wire` | `[x]` DONE | — | YAML #125 completed · surface/gate evidence pending doc sync |
+| `p9-trade-ticker-header-wire` | `[x]` DONE | — | YAML #126 completed · surface/gate evidence pending doc sync |
+| `p9-trade-chart-pro-lwc` | `[x]` DONE | — | YAML #127 completed · surface/gate evidence pending doc sync |
+| `p9-trade-chart-overlays-lwc` | `[x]` DONE | — | YAML #128 completed · surface/gate evidence pending doc sync |
+| `p9-trade-fills-history-wire` | `[x]` DONE | — | YAML #129 completed · surface/gate evidence pending doc sync |
+| `p9-trade-terminal-bottom-dock` | `[x]` DONE | — | YAML #130 completed · surface/gate evidence pending doc sync |
+| `p9-trade-recent-trades-rail` | `[x]` DONE | — | YAML #131 completed · surface/gate evidence pending doc sync |
+| `p9-trade-orderbook-parity` | `[x]` DONE | — | YAML #132 completed · surface/gate evidence pending doc sync |
+| `p9-trade-futures-partial-close-ui` | `[x]` DONE | — | YAML #133 completed · surface/gate evidence pending doc sync |
+| `p9-trade-futures-margin-adjust-ui` | `[x]` DONE | — | YAML #134 completed · surface/gate evidence pending doc sync |
+| `p9-trade-futures-unrealized-pnl` | `[x]` DONE | — | YAML #135 completed · surface/gate evidence pending doc sync |
+| `p9-trade-leverage-slider-ux` | `[x]` DONE | — | YAML #136 completed · surface/gate evidence pending doc sync |
+| `p9-trade-order-ticket-density` | `[x]` DONE | — | YAML #137 completed · surface/gate evidence pending doc sync |
+| `p9-trade-beginner-help-layer` | `[x]` DONE | — | YAML #138 completed · surface/gate evidence pending doc sync |
+| `p9-trade-position-mode-label` | `[x]` DONE | — | YAML #139 completed · surface/gate evidence pending doc sync |
+| `p9-trade-cross-margin-canary` | `[x]` DONE | — | YAML #140 completed · surface/gate evidence pending doc sync |
+| `p9-trade-funding-history-display` | `[x]` DONE | — | YAML #141 completed · surface/gate evidence pending doc sync |
+| `p9-trade-tier-fee-display` | `[x]` DONE | — | YAML #142 completed · surface/gate evidence pending doc sync |
+| `p9-trade-oracle-circuit-banner` | `[x]` DONE | — | YAML #143 completed · surface/gate evidence pending doc sync |
+| `p9-trade-ultra-layout` | `[x]` DONE | — | YAML #144 completed · surface/gate evidence pending doc sync |
+| `p9-trade-mobile-history-tab` | `[x]` DONE | — | YAML #145 completed · surface/gate evidence pending doc sync |
+| `p9-trade-mobile-futures-book-tab` | `[x]` DONE | — | YAML #146 completed · surface/gate evidence pending doc sync |
+| `p9-trade-settings-prefs-wire` | `[x]` DONE | — | YAML #147 completed · surface/gate evidence pending doc sync |
+| `p9-trade-layout-dedup-gate` | `[x]` DONE | — | YAML #148 completed · surface/gate evidence pending doc sync |
+| `p9-trade-i18n-surface-audit` | `[x]` DONE | — | YAML #149 completed · surface/gate evidence pending doc sync |
+| `p9-trade-audit-remediation-a1` | `[x]` DONE | — | YAML #150 completed · surface/gate evidence pending doc sync |
+| `p9-trade-audit-remediation-a2` | `[x]` DONE | — | YAML #151 completed · surface/gate evidence pending doc sync |
+| `p9-operator-visual-signoff` | `[x]` DONE | — | YAML #152 completed · surface/gate evidence pending doc sync |
+| `p9-gate-trade-world-class` | `[x]` DONE | — | YAML #153 completed · surface/gate evidence pending doc sync |
+| `launch-engine-e1-liquidation-notify` | `[x]` DONE | — | YAML #154 completed · surface/gate evidence pending doc sync |
+| `launch-engine-e2-admin-halt-market` | `[x]` DONE | — | YAML #155 completed · surface/gate evidence pending doc sync |
+| `launch-engine-e3-ops-telegram-webhook` | `[x]` DONE       | —          | YAML #156 completed · surface/gate evidence pending doc sync                                                                                                                                                                                |
+| `launch-engine-e4-concurrent-race-test` | `[x]` DONE       | —          | YAML #157 completed · surface/gate evidence pending doc sync                                                                                                                                                                                |
+| `p4-fiat-reference-preflight` | `[x]` DONE | — | YAML #158 completed · surface/gate evidence pending doc sync |
+| `p4-fiat-currency-precision-ssot` | `[x]` DONE | — | YAML #159 completed · surface/gate evidence pending doc sync |
+| `p4-fiat-reference-rates-hook` | `[x]` DONE | — | YAML #160 completed · surface/gate evidence pending doc sync |
+| `p4-fiat-hint-display-contract` | `[x]` DONE | — | YAML #161 completed · surface/gate evidence pending doc sync |
+| `p4-fiat-money-display-hint` | `[x]` DONE | — | YAML #162 completed · surface/gate evidence pending doc sync |
+| `p4-page-wallet-fiat-hint` | `[x]` DONE | — | YAML #163 completed · surface/gate evidence pending doc sync |
+| `p9-trade-fiat-hint-wire` | `[x]` DONE | — | YAML #164 completed · surface/gate evidence pending doc sync |
+| `p7-earn-fiat-hint-co-primary` | `[x]` DONE | — | YAML #165 completed · surface/gate evidence pending doc sync |
+| `p5-page-settings-fiat-reference` | `[x]` DONE | — | YAML #166 completed · surface/gate evidence pending doc sync |
+| `p4-gate-fiat-reference-world-class` | `[x]` DONE | — | YAML #167 completed · surface/gate evidence pending doc sync |
+| `p10-page-sports` | `[x]` DONE | — | YAML #168 completed · surface/gate evidence pending doc sync |
+| `pqa-audit-a-db-guards` | `[x]` DONE | — | YAML #169 completed · surface/gate evidence pending doc sync |
+| `pqa-audit-b-rpc-contract` | `[x]` DONE | — | YAML #170 completed · surface/gate evidence pending doc sync |
+| `pqa-audit-c-surface-controls` | `[x]` DONE | — | YAML #171 completed · surface/gate evidence pending doc sync |
+| `pqa-audit-d-config-state` | `[x]` DONE | — | YAML #172 completed · surface/gate evidence pending doc sync |
+| `pqa-audit-report` | `[x]` DONE | — | YAML #173 completed · surface/gate evidence pending doc sync |
+| `pqa-fix-error-mapping` | `[x]` DONE | — | YAML #174 completed · surface/gate evidence pending doc sync |
+| `pqa-fix-client-gate-prechecks` | `[x]` DONE | — | YAML #175 completed · surface/gate evidence pending doc sync |
+| `pqa-fix-dead-controls` | `[x]` DONE | — | YAML #176 completed · surface/gate evidence pending doc sync |
+| `pqa-fix-types-regen` | `[x]` DONE | — | YAML #177 completed · surface/gate evidence pending doc sync |
+| `launch-engine-e5-realtime-publication` | `[x]` DONE       | —          | YAML #178 completed · surface/gate evidence pending doc sync                                                                                                                                                                                |
+| `pqa-gate-platform-audit` | `[x]` DONE | — | YAML #179 completed · surface/gate evidence pending doc sync |
+| `r0-forensic-ssot-honesty-bundle` | `[x]` DONE | — | YAML #180 completed · surface/gate evidence pending doc sync |
+| `r0-sports-launch-gate-wire` | `[x]` DONE | — | YAML #181 completed · surface/gate evidence pending doc sync |
+| `r0-admin-rbac-ops-wire` | `[x]` DONE | — | YAML #182 completed · surface/gate evidence pending doc sync |
+| `r0-staking-domain-sot-sync` | `[x]` DONE | — | YAML #183 completed · surface/gate evidence pending doc sync |
+| `r0-gate-forensic-remediation` | `[x]` DONE | — | YAML #184 completed · surface/gate evidence pending doc sync |
+| `da-w0-foundation-ssot-bundle` | `[x]` DONE | — | YAML #185 completed · surface/gate evidence pending doc sync |
+| `da-w1-ds-foundation-bundle` | `[x]` DONE | — | YAML #186 completed · surface/gate evidence pending doc sync |
+| `da-w1-gate-ds-2` | `[x]` DONE | — | YAML #187 completed · surface/gate evidence pending doc sync |
+| `da-w2-shell-elevation-infra` | `[x]` DONE | — | YAML #188 completed · surface/gate evidence pending doc sync |
+| `da-w2-gate-shell-elevation` | `[x]` DONE | — | YAML #189 completed · surface/gate evidence pending doc sync |
+| `da-w3-ia-progressive-bundle` | `[x]` DONE | — | YAML #190 completed · surface/gate evidence pending doc sync |
+| `da-w3-gate-ia-progressive` | `[x]` DONE | — | YAML #191 completed · surface/gate evidence pending doc sync |
+| `da-w4-motion-system-bundle` | `[x]` DONE | — | YAML #192 completed · surface/gate evidence pending doc sync |
+| `da-w4-gate-motion` | `[x]` DONE | — | YAML #193 completed · surface/gate evidence pending doc sync |
+| `da-w5-cards-domain-variants` | `[x]` DONE | — | YAML #194 completed · surface/gate evidence pending doc sync |
+| `da-w5-gate-domain-cards` | `[x]` DONE | — | YAML #195 completed · surface/gate evidence pending doc sync |
+| `p10-sports-fiat-hint-wire` | `[x]` DONE | — | YAML #196 completed · surface/gate evidence pending doc sync |
+| `p10-sports-hub-pages` | `[x]` DONE | — | YAML #197 completed · surface/gate evidence pending doc sync |
+| `p10-sports-parity-contract-and-board` | `[x]` DONE | — | YAML #198 completed · surface/gate evidence pending doc sync |
+| `p10-sports-live-surface-wire` | `[x]` DONE | — | YAML #199 completed · surface/gate evidence pending doc sync |
+| `p10-sports-slip-advanced-wire` | `[x]` DONE | — | YAML #200 completed · surface/gate evidence pending doc sync |
+| `p10-sports-layout-dedup-gate` | `[x]` DONE | — | YAML #201 completed · surface/gate evidence pending doc sync |
+| `p10-sports-rules-and-vip-stub` | `[x]` DONE | — | YAML #202 completed · surface/gate evidence pending doc sync |
+| `p10-page-casino` | `[x]` DONE | — | YAML #203 completed · surface/gate evidence pending doc sync |
+| `p10-casino-replay-and-infra` | `[x]` DONE | — | YAML #204 completed · surface/gate evidence pending doc sync |
+| `p10-casino-fiat-hint-session-lock` | `[x]` DONE | — | YAML #205 completed · surface/gate evidence pending doc sync |
+| `p2-admin-table-primitive` | `[x]` DONE | — | YAML #206 completed · surface/gate evidence pending doc sync |
+| `p2-gate-admin-table-dedup` | `[x]` DONE | — | YAML #207 completed · surface/gate evidence pending doc sync |
+| `p10-games-batch-a` | `[x]` DONE | — | YAML #208 completed · surface/gate evidence pending doc sync |
+| `p10-games-batch-b` | `[x]` DONE | — | YAML #209 completed · surface/gate evidence pending doc sync |
+| `p10-games-batch-c` | `[x]` DONE | — | YAML #210 completed · surface/gate evidence pending doc sync |
+| `p10-games-batch-d` | `[x]` DONE | — | YAML #211 completed · surface/gate evidence pending doc sync |
+| `p10-page-casino-fairness` | `[x]` DONE | — | YAML #212 completed · surface/gate evidence pending doc sync |
+| `p10-first-bet-education` | `[x]` DONE | — | YAML #213 completed · surface/gate evidence pending doc sync |
+| `p10-gate-betting` | `[x]` DONE | — | YAML #214 completed · surface/gate evidence pending doc sync |
+| `p10-operator-visual-signoff` | `[x]` DONE | — | YAML #215 completed · surface/gate evidence pending doc sync |
+| `da-w6-brand-elevation-bundle` | `[x]` DONE | — | YAML #216 completed · surface/gate evidence pending doc sync |
+| `da-w6-gate-brand-elevation` | `[x]` DONE | — | YAML #217 completed · surface/gate evidence pending doc sync |
+| `p4-operator-visual-signoff` | `[x]` DONE | — | YAML #218 completed · surface/gate evidence pending doc sync |
+| `p11-earn-side-surfaces` | `[x]` DONE | — | YAML #219 completed · surface/gate evidence pending doc sync |
+| `p11-page-wallet-redeem` | `[x]` DONE | — | YAML #220 completed · surface/gate evidence pending doc sync |
+| `p11-gate-side-income` | `[x]` DONE | — | YAML #221 completed · surface/gate evidence pending doc sync |
+| `p12-trust-marketing-hub` | `[x]` DONE | — | YAML #222 completed · surface/gate evidence pending doc sync |
+| `p12-community-support-hub` | `[x]` DONE | — | YAML #223 completed · surface/gate evidence pending doc sync |
+| `p12-legal-pages` | `[x]` DONE | — | YAML #224 completed · surface/gate evidence pending doc sync |
+| `p12-gate-marketing` | `[x]` DONE | — | YAML #225 completed · surface/gate evidence pending doc sync |
+| `da-w8-signature-surfaces-bundle` | `[x]` DONE | — | YAML #226 completed · surface/gate evidence pending doc sync |
+| `da-w8-sound-design-spec-defer` | `[x]` DONE | — | YAML #227 completed · surface/gate evidence pending doc sync |
+| `da-w8-gate-signature-experience` | `[x]` DONE | — | YAML #228 completed · surface/gate evidence pending doc sync |
+| `p13-prep-admin-canonical-docs` | `[x]` DONE | — | YAML #229 completed · surface/gate evidence pending doc sync |
+| `p13-prep-admin-team-desk` | `[x]` DONE | — | YAML #230 completed · surface/gate evidence pending doc sync |
+| `p13-admin-ops-push` | `[x]` DONE | — | YAML #231 completed · surface/gate evidence pending doc sync |
+| `p13-ops-prod-preflight` | `[x]` DONE | — | YAML #232 completed · surface/gate evidence pending doc sync |
+| `p13-soft-launch-bundle` | `[x]` DONE | — | YAML #233 completed · surface/gate evidence pending doc sync |
+| `da-w7-enforcement-strict-tokens` | `[x]` DONE | — | YAML #234 completed · surface/gate evidence pending doc sync |
+| `da-w7-operator-visual-dae-signoff` | `[x]` DONE | — | YAML #235 completed · surface/gate evidence pending doc sync |
+| `p13-closeout-bundle` | `[x]` DONE | — | YAML #236 completed · surface/gate evidence pending doc sync |
+| `launch-ramp-t1-feature-gates` | `[x]` DONE | — | YAML #237 completed · surface/gate evidence pending doc sync |
+| `launch-scale-t2-triggers` | `[x]` DONE | — | YAML #238 completed · surface/gate evidence pending doc sync |
+| `ew-e0-adr-approval` | `[x]` DONE | — | YAML #239 completed · surface/gate evidence pending doc sync |
+| `ew-e1-decay-wave` | `[x]` DONE | — | YAML #240 completed · surface/gate evidence pending doc sync |
+| `ew-e1-gate-decay` | `[x]` DONE | — | YAML #241 completed · surface/gate evidence pending doc sync |
+| `ew-e2-missions-wave` | `[x]` DONE | — | YAML #242 completed · surface/gate evidence pending doc sync |
+| `ew-e2-gate-missions` | `[x]` DONE | — | YAML #243 completed · surface/gate evidence pending doc sync |
+| `ew-e3-viral-cms-wave` | `[x]` DONE | — | YAML #244 completed · surface/gate evidence pending doc sync |
+| `ew-e3-gate-cms-promotions` | `[x]` DONE | — | YAML #245 completed · surface/gate evidence pending doc sync |
+| `ew-e4-tier-option-b-wave` | `[x]` DONE | — | YAML #246 completed · surface/gate evidence pending doc sync |
+| `ew-e4-gate-tier-option-b` | `[x]` DONE | — | YAML #247 completed · surface/gate evidence pending doc sync |
+| `ew-e5-gap-surfaces-wire` | `[x]` DONE | — | YAML #248 completed · surface/gate evidence pending doc sync |
+| `ew-e5-gate-gap-surfaces` | `[x]` DONE | — | YAML #249 completed · surface/gate evidence pending doc sync |
+| `ew-e6-admin-desks-wave` | `[x]` DONE | — | YAML #250 completed · surface/gate evidence pending doc sync |
+| `ew-e6-gate-admin-desks` | `[x]` DONE | — | YAML #251 completed · surface/gate evidence pending doc sync |
+| `ew-e7-social-wave` | `[x]` DONE | — | YAML #252 completed · surface/gate evidence pending doc sync |
+| `ew-e7-gate-engine-wave` | `[x]` DONE | — | YAML #253 completed · surface/gate evidence pending doc sync |
+| `ew-e21-trade-parity-wave` | `[x]` DONE | — | YAML #254 completed · surface/gate evidence pending doc sync |
+| `ew-e21-gate-trade-engine-parity` | `[x]` DONE | — | YAML #255 completed · surface/gate evidence pending doc sync |
+| `ew-e21-ui-trade-engine-unlocks` | `[x]` DONE | — | YAML #256 completed · surface/gate evidence pending doc sync |
+| `ew-e22-sports-parity-wave` | `[x]` DONE | — | YAML #257 completed · surface/gate evidence pending doc sync |
+| `ew-e22-gate-sports-parity` | `[x]` DONE | — | YAML #258 completed · surface/gate evidence pending doc sync |
+| `ew-e22-ui-sports-parity-unlocks` | `[x]` DONE | — | YAML #259 completed · surface/gate evidence pending doc sync |
+| `ew-e23-casino-live-wave` | `[x]` DONE | — | YAML #260 completed · surface/gate evidence pending doc sync |
+| `ew-e23-gate-casino-live` | `[x]` DONE | — | YAML #261 completed · surface/gate evidence pending doc sync |
+| `ew-e23-ui-casino-live-unlocks` | `[x]` DONE | — | YAML #262 completed · surface/gate evidence pending doc sync |
+| `ew-e8-financial-wave` | `[x]` DONE | — | YAML #263 completed · surface/gate evidence pending doc sync |
+| `ew-e8-gate-financial` | `[x]` DONE | — | YAML #264 completed · surface/gate evidence pending doc sync |
+| `ew-e9-identity-wave` | `[x]` DONE | — | YAML #265 completed · surface/gate evidence pending doc sync |
+| `ew-e9-gate-identity-support` | `[x]` DONE | — | YAML #266 completed · surface/gate evidence pending doc sync |
+| `ew-e9-page-admin-support` | `[x]` DONE | — | YAML #267 completed · surface/gate evidence pending doc sync |
+| `ew-e10-platform-engine-wave` | `[x]` DONE | — | YAML #268 completed · surface/gate evidence pending doc sync |
+| `ew-e10-page-admin-krw-proof-review` | `[x]` DONE | — | YAML #269 completed · surface/gate evidence pending doc sync |
+| `ew-e10-wallet-settings-ui` | `[x]` DONE | — | YAML #270 completed · surface/gate evidence pending doc sync |
+| `ew-e10-trust-support-ui` | `[x]` DONE | — | YAML #271 completed · surface/gate evidence pending doc sync |
+| `ew-e10-growth-ui` | `[x]` DONE | — | YAML #272 completed · surface/gate evidence pending doc sync |
+| `ew-e10-gate-platform-world-class` | `[x]` DONE | — | YAML #273 completed · surface/gate evidence pending doc sync |
+| `p2-defer-admin-tier-benefits` | `[x]` cancelled | — | YAML cancelled · DEFER — 구현 금지 |
+| `p2-defer-admin-promotions` | `[x]` cancelled | — | YAML cancelled · DEFER — 구현 금지 |
+| `p2-defer-admin-cms` | `[x]` cancelled | — | YAML cancelled · DEFER — 구현 금지 |
+| `p2-defer-admin-casino` | `[x]` cancelled | — | YAML cancelled · DEFER — 구현 금지 |
+| `p2-defer-admin-staking` | `[x]` cancelled | — | YAML cancelled · DEFER — 구현 금지 |
+| `p2-defer-admin-vip` | `[x]` cancelled | — | YAML cancelled · DEFER — 구현 금지 |
+| `p2-defer-admin-support` | `[x]` cancelled | — | YAML cancelled · DEFER — 구현 금지 |
 
-§AI Todo Sync · YAML canonical **209/280 completed** · **NEXT:** `p10-games-batch-c` (#210) · **preflight:** [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
+§AI Todo Sync · YAML canonical **273/280 completed** · **NEXT:** `null` (#null) · **preflight:** [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)

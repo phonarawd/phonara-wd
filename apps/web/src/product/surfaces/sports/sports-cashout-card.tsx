@@ -54,7 +54,8 @@ export function SportsCashoutCard({
   const visible = shouldShowSportsCashoutCard(status, sportsCashoutGate);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [partialConfirmOpen, setPartialConfirmOpen] = useState(false);
-  const [portionPercent, setPortionPercent] = useState<(typeof EW_E22_PARTIAL_CASHOUT_PERCENT_PRESETS)[number]>(50);
+  const [portionPercent, setPortionPercent] =
+    useState<(typeof EW_E22_PARTIAL_CASHOUT_PERCENT_PRESETS)[number]>(50);
 
   const stakePortion =
     sportsParityLive && stake

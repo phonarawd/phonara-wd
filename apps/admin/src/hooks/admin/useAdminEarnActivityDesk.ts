@@ -2,10 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { getOpsDashboardRaw } from '@/domain/ops';
-import {
-  parseOpsDashboard,
-  type OpsDashboardQueueRow,
-} from '@/product/bridge/parse-ops-dashboard';
+import { parseOpsDashboard, type OpsDashboardQueueRow } from '@/product/bridge/parse-ops-dashboard';
 import { callRpc } from '../../lib/rpc';
 
 type ViralAnalyticsRpc = {

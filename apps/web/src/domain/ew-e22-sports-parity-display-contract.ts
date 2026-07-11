@@ -27,11 +27,7 @@ export const EW_E22_LIST_SPORTS_CATALOG_RPC = 'rpc_list_sports_catalog' as const
 export const EW_E22_EXISTS_PREVIEW_CASHOUT_RPC = 'rpc_preview_sports_cashout' as const;
 export const EW_E22_EXISTS_CASHOUT_BET_RPC = 'rpc_cashout_sports_bet' as const;
 
-export const EW_E22_ODDS_ACCEPTANCE_POLICIES = [
-  'strict',
-  'accept_any',
-  'accept_better',
-] as const;
+export const EW_E22_ODDS_ACCEPTANCE_POLICIES = ['strict', 'accept_any', 'accept_better'] as const;
 
 export type EwE22OddsAcceptancePolicy = (typeof EW_E22_ODDS_ACCEPTANCE_POLICIES)[number];
 

@@ -195,7 +195,17 @@ export const ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST: Readonly<
     '/support',
   ],
   finance: ['/', '/queues', '/deposits', '/withdrawals', '/audit', '/ops', '/earn/activity'],
-  risk: ['/', '/queues', '/sports', '/users', '/risk', '/tiers', '/tier-benefits', '/casino', '/ops'],
+  risk: [
+    '/',
+    '/queues',
+    '/sports',
+    '/users',
+    '/risk',
+    '/tiers',
+    '/tier-benefits',
+    '/casino',
+    '/ops',
+  ],
   support: ['/', '/queues', '/users', '/support', '/cms'],
   viewer: ['/', '/ops', '/earn/activity'],
 };
@@ -345,7 +355,9 @@ export function assertP13AdminCanonicalDocsSync(): void {
       P13_PREP_ADMIN_CANONICAL_DOCS_PREREQUISITE_TODO,
     )
   ) {
-    throw new Error('p13-prep-admin-canonical-docs: missing prerequisite da-w8-gate-signature-experience');
+    throw new Error(
+      'p13-prep-admin-canonical-docs: missing prerequisite da-w8-gate-signature-experience',
+    );
   }
 
   for (const route of ADMIN_BEGINNER_ALL_ROUTES) {

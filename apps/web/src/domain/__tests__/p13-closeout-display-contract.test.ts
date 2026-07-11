@@ -46,11 +46,7 @@ describe('p13-closeout-display-contract · YAML #236 Launch Closeout BUNDLE', ()
       'p13-closeout-docs',
       'p13-closeout-ci',
     ]);
-    expect(P13_CLOSEOUT_CHECKLIST_SECTIONS).toEqual([
-      'legacy_class_purge',
-      'docs_sync',
-      'ci_gate',
-    ]);
+    expect(P13_CLOSEOUT_CHECKLIST_SECTIONS).toEqual(['legacy_class_purge', 'docs_sync', 'ci_gate']);
   });
 
   it('pins VISUAL six + companion contracts on disk', () => {
@@ -69,18 +65,8 @@ describe('p13-closeout-display-contract · YAML #236 Launch Closeout BUNDLE', ()
   });
 
   it('pins required CI jobs · money E2E domains · local gate commands', () => {
-    expect(P13_CLOSEOUT_REQUIRED_CI_JOBS).toEqual([
-      'quality',
-      'sql',
-      'e2e',
-      'advisors',
-    ]);
-    expect(P13_CLOSEOUT_MONEY_E2E_DOMAINS).toEqual([
-      'wallet',
-      'trade',
-      'bet',
-      'casino',
-    ]);
+    expect(P13_CLOSEOUT_REQUIRED_CI_JOBS).toEqual(['quality', 'sql', 'e2e', 'advisors']);
+    expect(P13_CLOSEOUT_MONEY_E2E_DOMAINS).toEqual(['wallet', 'trade', 'bet', 'casino']);
     expect(P13_CLOSEOUT_LOCAL_GATE_COMMANDS).toContain('gate:ai-impl');
     expect(P13_CLOSEOUT_LOCAL_GATE_COMMANDS).toContain('check:design-tokens --strict');
 

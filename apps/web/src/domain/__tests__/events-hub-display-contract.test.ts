@@ -49,8 +49,8 @@ describe('events-hub-display-contract', () => {
       is_global_jackpot: false,
     });
     expect(tap?.phonAwarded).toBe('0.500000');
-    expect(resolveEventsTapBlocked({ authenticated: true, systemHalted: false, remaining: 0 })).toBe(
-      true,
-    );
+    expect(
+      resolveEventsTapBlocked({ authenticated: true, systemHalted: false, remaining: 0 }),
+    ).toBe(true);
   });
 });

@@ -6,9 +6,7 @@
 import type { MessageKey } from '@phonara/i18n';
 
 import { REFERRAL_HUB_ROUTE } from './referral-hub-display-contract';
-import {
-  TIER_DECAY_STATUS_RPC as TIER_DECAY_STATUS_RPC_CANON,
-} from './tier-decay-display-contract';
+import { TIER_DECAY_STATUS_RPC as TIER_DECAY_STATUS_RPC_CANON } from './tier-decay-display-contract';
 import {
   EARN_HUB_STATUS_RPC,
   EARN_VIP_TIER_ORDER,
@@ -214,9 +212,7 @@ export function parseTierDecayStatusSnapshot(
   const daysLeftRaw = Number(payload['days_left'] ?? 0);
   const lowerRaw = payload['lower_tier'];
   const lowerTier =
-    typeof lowerRaw === 'string' && lowerRaw.trim()
-      ? normalizeEarnVipTier(lowerRaw)
-      : null;
+    typeof lowerRaw === 'string' && lowerRaw.trim() ? normalizeEarnVipTier(lowerRaw) : null;
   const lastQualifyingAt =
     typeof payload['last_qualifying_at'] === 'string' ? payload['last_qualifying_at'] : null;
   const lastDecayAt =

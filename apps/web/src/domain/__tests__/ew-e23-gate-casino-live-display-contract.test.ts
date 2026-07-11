@@ -39,17 +39,11 @@ describe('ew-e23-gate-casino-live-display-contract (E23 GATE)', () => {
   it('pins GATE todo · WAVE prerequisite · next UI unlock', () => {
     expect(EW_E23_GATE_CASINO_LIVE_TODO).toBe('ew-e23-gate-casino-live');
     expect(EW_E23_GATE_CASINO_LIVE_PREREQUISITE_TODO).toBe(EW_E23_CASINO_LIVE_TODO);
-    expect(EW_E23_GATE_CASINO_LIVE_NEXT_TODO).toBe(
-      'ew-e23-ui-casino-live-unlocks',
-    );
+    expect(EW_E23_GATE_CASINO_LIVE_NEXT_TODO).toBe('ew-e23-ui-casino-live-unlocks');
     expect(EW_E23_CASINO_LIVE_NEXT_TODO).toBe('ew-e23-gate-casino-live');
-    expect(EW_E23_GATE_CASINO_LIVE_REMOTE_MIGRATION_NAME).toBe(
-      'ew_e23_casino_live',
-    );
+    expect(EW_E23_GATE_CASINO_LIVE_REMOTE_MIGRATION_NAME).toBe('ew_e23_casino_live');
     expect(EW_E23_GATE_CASINO_LIVE_REMOTE_TAIL).toContain('ew_e23_casino_live');
-    expect(EW_E23_GATE_CASINO_LIVE_SQL_TEST).toContain(
-      'ew_e23_casino_live_test',
-    );
+    expect(EW_E23_GATE_CASINO_LIVE_SQL_TEST).toContain('ew_e23_casino_live_test');
     expect(EW_E23_GATE_CASINO_PARITY_SQL_TEST).toContain('casino_parity_test');
     expect(() => assertEwE23GateCasinoLiveSync()).not.toThrow();
   });
@@ -67,9 +61,7 @@ describe('ew-e23-gate-casino-live-display-contract (E23 GATE)', () => {
     expect(['live', 'built_hidden']).toContain(
       EW_E23_GATE_UI_UNLOCK_WIRE_STATUS.progressive_rounds_stage,
     );
-    expect(['live', 'built_hidden']).toContain(
-      EW_E23_GATE_UI_UNLOCK_WIRE_STATUS.live_crash_stage,
-    );
+    expect(['live', 'built_hidden']).toContain(EW_E23_GATE_UI_UNLOCK_WIRE_STATUS.live_crash_stage);
     expect(['live', 'built_hidden']).toContain(
       EW_E23_GATE_UI_UNLOCK_WIRE_STATUS.fairness_seed_controls,
     );

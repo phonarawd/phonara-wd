@@ -70,8 +70,7 @@ vi.mock('@/hooks/admin/useAdminTeamDesk', () => ({
     auditEvents: [],
     refresh: vi.fn(async () => undefined),
     setRoleGrant,
-    canRevoke: (row: { role: string; enabled: boolean }) =>
-      row.enabled && row.role !== 'owner',
+    canRevoke: (row: { role: string; enabled: boolean }) => row.enabled && row.role !== 'owner',
     canChangeRole: (row: { role: string }) => row.role !== 'owner',
   }),
 }));
@@ -109,9 +108,7 @@ describe('AdminTeamPage', () => {
       </I18nProvider>,
     );
 
-    fireEvent.click(
-      screen.getByTestId('admin-team-revoke-11111111-1111-4111-8111-111111111111'),
-    );
+    fireEvent.click(screen.getByTestId('admin-team-revoke-11111111-1111-4111-8111-111111111111'));
 
     const dialog = screen.getByRole('dialog');
     expect(dialog).toBeInTheDocument();

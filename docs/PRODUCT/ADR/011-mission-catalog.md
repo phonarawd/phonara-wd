@@ -18,26 +18,26 @@ E0 Accepted 후 Track B E2 = 본 ADR + 동일 PR 엔진 (51차 WAVE merge).
 
 ### 1. Catalog 정본 (non-waivable)
 
-| 항목 | 값 |
-| ---- | --- |
-| 테이블 | `mission_catalog` — viral + earn_limit 행만 |
-| 보상/쿼터 | 기존 `app_config` 키에 **동기화 write** (claim 경로 불변) |
-| 노출 | `exposure` ∈ `{live, hidden}` · catalog 정본 |
-| 활성 | `enabled` boolean · false면 claim 거부 |
-| CRUD | Create=allowlist seed만 · Read=list RPC · Update=upsert RPC · Delete=soft (`enabled=false`) |
-| 영구 제외 | **광고·설문** catalog_key/mission_code **거부** (E0 RED STOP) |
+| 항목      | 값                                                                                          |
+| --------- | ------------------------------------------------------------------------------------------- |
+| 테이블    | `mission_catalog` — viral + earn_limit 행만                                                 |
+| 보상/쿼터 | 기존 `app_config` 키에 **동기화 write** (claim 경로 불변)                                   |
+| 노출      | `exposure` ∈ `{live, hidden}` · catalog 정본                                                |
+| 활성      | `enabled` boolean · false면 claim 거부                                                      |
+| CRUD      | Create=allowlist seed만 · Read=list RPC · Update=upsert RPC · Delete=soft (`enabled=false`) |
+| 영구 제외 | **광고·설문** catalog_key/mission_code **거부** (E0 RED STOP)                               |
 
 ### 2. Allowlist (Closed Beta)
 
 **Viral** (`family=viral` · `viral_mission_code`):
 
-| catalog_key | reward key | quota key | extra |
-| ----------- | ---------- | --------- | ----- |
-| `viral:share_referral_link` | `viral_share_referral_link_reward_phon` | `…_max_per_day` | — |
-| `viral:share_story_template` | … | `…_max_per_week` | — |
-| `viral:invite_friend_signup` | … | `…_max_per_day` | — |
-| `viral:affiliate_content_post` | … | `…_max_per_month` | — |
-| `viral:viral_streak_share` | … | `…_max_per_day` | `viral_streak_share_min_days` |
+| catalog_key                    | reward key                              | quota key         | extra                         |
+| ------------------------------ | --------------------------------------- | ----------------- | ----------------------------- |
+| `viral:share_referral_link`    | `viral_share_referral_link_reward_phon` | `…_max_per_day`   | —                             |
+| `viral:share_story_template`   | …                                       | `…_max_per_week`  | —                             |
+| `viral:invite_friend_signup`   | …                                       | `…_max_per_day`   | —                             |
+| `viral:affiliate_content_post` | …                                       | `…_max_per_month` | —                             |
+| `viral:viral_streak_share`     | …                                       | `…_max_per_day`   | `viral_streak_share_min_days` |
 
 **Earn limits** (`family=earn_limit`):
 
@@ -47,13 +47,13 @@ E0 Accepted 후 Track B E2 = 본 ADR + 동일 PR 엔진 (51차 WAVE merge).
 
 ### 3. Engine surface
 
-| 객체 | 역할 |
-| ---- | ---- |
-| `mission_catalog` | 메타 · exposure · enabled · sort |
-| `rpc_admin_list_mission_catalog` | admin AAL2 list (+ app_config values) |
-| `rpc_admin_upsert_mission_catalog` | admin AAL2 update + reason + audit |
-| `_assert_mission_catalog_claimable` | viral claim 전 exposure/enabled 검사 |
-| `rpc_claim_viral_mission` / `rpc_get_viral_mission_status` | hidden/disabled 반영 |
+| 객체                                                       | 역할                                  |
+| ---------------------------------------------------------- | ------------------------------------- |
+| `mission_catalog`                                          | 메타 · exposure · enabled · sort      |
+| `rpc_admin_list_mission_catalog`                           | admin AAL2 list (+ app_config values) |
+| `rpc_admin_upsert_mission_catalog`                         | admin AAL2 update + reason + audit    |
+| `_assert_mission_catalog_claimable`                        | viral claim 전 exposure/enabled 검사  |
+| `rpc_claim_viral_mission` / `rpc_get_viral_mission_status` | hidden/disabled 반영                  |
 
 ### 4. Money / security
 
@@ -66,9 +66,9 @@ E0 Accepted 후 Track B E2 = 본 ADR + 동일 PR 엔진 (51차 WAVE merge).
 
 ### 5. UI unlock (WAVE vs GATE)
 
-| 단계 | 내용 |
-| ---- | ---- |
-| **본 WAVE** | ADR + migration + list/upsert RPC + admin hook write path |
+| 단계                           | 내용                                                                         |
+| ------------------------------ | ---------------------------------------------------------------------------- |
+| **본 WAVE**                    | ADR + migration + list/upsert RPC + admin hook write path                    |
 | **GATE** `ew-e2-gate-missions` | `test:sql` · `stack:push-remote` · advisor 0 · **write UI** unlock **`[x]`** |
 
 ## Consequences
@@ -80,12 +80,12 @@ E0 Accepted 후 Track B E2 = 본 ADR + 동일 PR 엔진 (51차 WAVE merge).
 
 ## Verification
 
-| Gate | 기대 |
-| ---- | ---- |
-| SQL | `ew_e2_mission_catalog_test.sql` — list · upsert · deny ad/survey · claim block when hidden |
-| Grants | admin RPC auth deny · authenticated grant |
-| Vitest | `mission-catalog-display-contract` · admin missions desk wire |
-| Remote | GATE: `stack:push-remote` · advisor 0 ERROR |
+| Gate   | 기대                                                                                        |
+| ------ | ------------------------------------------------------------------------------------------- |
+| SQL    | `ew_e2_mission_catalog_test.sql` — list · upsert · deny ad/survey · claim block when hidden |
+| Grants | admin RPC auth deny · authenticated grant                                                   |
+| Vitest | `mission-catalog-display-contract` · admin missions desk wire                               |
+| Remote | GATE: `stack:push-remote` · advisor 0 ERROR                                                 |
 
 ## Operator sign-off
 

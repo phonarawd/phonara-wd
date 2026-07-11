@@ -57,9 +57,7 @@ describe('mission-catalog-display-contract (E2)', () => {
     expect(adr).toContain('광고');
     expect(adr).toContain('설문');
 
-    const migration = readRepo(
-      'supabase/migrations/20260802000001_ew_e2_mission_catalog.sql',
-    );
+    const migration = readRepo('supabase/migrations/20260802000001_ew_e2_mission_catalog.sql');
     expect(migration).toContain(MISSION_CATALOG_MIGRATION_NAME);
     expect(migration).toContain(MISSION_CATALOG_LIST_RPC);
     expect(migration).toContain(MISSION_CATALOG_UPSERT_RPC);

@@ -10,12 +10,14 @@ import { P10_CASINO_REPLAY_AND_INFRA_TODO } from './casino-outcome-replay-contra
 
 export const P10_GAMES_BATCH_A_TODO = 'p10-games-batch-a' as const;
 
-export const P10_GAMES_BATCH_A_PREREQUISITE_TODOS = [
-  P10_CASINO_REPLAY_AND_INFRA_TODO,
-] as const;
+export const P10_GAMES_BATCH_A_PREREQUISITE_TODOS = [P10_CASINO_REPLAY_AND_INFRA_TODO] as const;
 
 /** Batch A game codes — instant-loop React stages (§23.5). */
-export const CASINO_BATCH_A_GAME_CODES = ['crash', 'limbo', 'dice'] as const satisfies readonly GameCode[];
+export const CASINO_BATCH_A_GAME_CODES = [
+  'crash',
+  'limbo',
+  'dice',
+] as const satisfies readonly GameCode[];
 
 export type CasinoBatchAGameCode = (typeof CASINO_BATCH_A_GAME_CODES)[number];
 

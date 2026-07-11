@@ -13,8 +13,9 @@ import {
 import { supabase } from '../lib/supabase';
 
 type LooseRpcResult = PromiseLike<{ data: unknown; error: { message: string } | null }>;
-type RpcCall = (name: string, args: Record<string, unknown>) => LooseRpcResult;
-const rpc = supabase.rpc.bind(supabase) as RpcCall;
+function rpc(name: string, args: Record<string, unknown>): LooseRpcResult {
+  return supabase.rpc(name as never, args as never) as LooseRpcResult;
+}
 
 /** @deprecated Prefer `CmsBannerDisplayRow` from cms-banners-display-contract. */
 export type CmsBanner = CmsBannerDisplayRow;

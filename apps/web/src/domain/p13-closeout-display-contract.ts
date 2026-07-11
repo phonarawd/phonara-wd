@@ -12,8 +12,7 @@
 export const P13_CLOSEOUT_BUNDLE_TODO = 'p13-closeout-bundle' as const;
 
 /** Prerequisite — DA W7 VISUAL agent impl must be closed before official GO. */
-export const P13_CLOSEOUT_PREREQUISITE_TODO =
-  'da-w7-operator-visual-dae-signoff' as const;
+export const P13_CLOSEOUT_PREREQUISITE_TODO = 'da-w7-operator-visual-dae-signoff' as const;
 
 /** Next Track A todo after official GO (§20.14.3 Wave 6 ramp). */
 export const P13_CLOSEOUT_NEXT_TODO = 'launch-ramp-t1-feature-gates' as const;
@@ -41,8 +40,7 @@ export const P13_CLOSEOUT_CHECKLIST_SECTIONS = [
   'ci_gate',
 ] as const;
 
-export type P13CloseoutChecklistSection =
-  (typeof P13_CLOSEOUT_CHECKLIST_SECTIONS)[number];
+export type P13CloseoutChecklistSection = (typeof P13_CLOSEOUT_CHECKLIST_SECTIONS)[number];
 
 /**
  * §20.14.4 VISUAL six — Part operator visual sign-offs assumed agent-green
@@ -71,20 +69,10 @@ export const P13_CLOSEOUT_VISUAL_CONTRACT_PATHS = [
  * Required GitHub CI jobs for official GO (§20.14.4 · CI_GATE_AUTHORITY).
  * Local agent must not run check:full / test:e2e / test:sql (G13).
  */
-export const P13_CLOSEOUT_REQUIRED_CI_JOBS = [
-  'quality',
-  'sql',
-  'e2e',
-  'advisors',
-] as const;
+export const P13_CLOSEOUT_REQUIRED_CI_JOBS = ['quality', 'sql', 'e2e', 'advisors'] as const;
 
 /** Money E2E domains that CI e2e job must keep green (Sigma=0 paths). */
-export const P13_CLOSEOUT_MONEY_E2E_DOMAINS = [
-  'wallet',
-  'trade',
-  'bet',
-  'casino',
-] as const;
+export const P13_CLOSEOUT_MONEY_E2E_DOMAINS = ['wallet', 'trade', 'bet', 'casino'] as const;
 
 /** Local lightweight gates that agent runs before claiming Implemented. */
 export const P13_CLOSEOUT_LOCAL_GATE_COMMANDS = [
@@ -126,11 +114,9 @@ export const P13_CLOSEOUT_DOC_SYNC_PATHS = [
   'docs/OPERATIONS/P13_LAUNCH_CLOSEOUT_BUNDLE.md',
 ] as const;
 
-export const P13_CLOSEOUT_CANON_PATH =
-  'docs/OPERATIONS/P13_LAUNCH_CLOSEOUT_BUNDLE.md' as const;
+export const P13_CLOSEOUT_CANON_PATH = 'docs/OPERATIONS/P13_LAUNCH_CLOSEOUT_BUNDLE.md' as const;
 
-export const P13_CLOSEOUT_CI_AUTHORITY_PATH =
-  'docs/SSOT/CI_GATE_AUTHORITY.md' as const;
+export const P13_CLOSEOUT_CI_AUTHORITY_PATH = 'docs/SSOT/CI_GATE_AUTHORITY.md' as const;
 
 export const P13_CLOSEOUT_ARTIFACT_PATHS = [
   P13_CLOSEOUT_CANON_PATH,

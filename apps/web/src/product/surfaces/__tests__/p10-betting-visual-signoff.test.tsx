@@ -275,7 +275,9 @@ describe('p10-betting visual sign-off §20.12 · §22.2 Sports+Casino · §34.17
 
     expect(screen.getByTestId('sports-left-rail')).toBeInTheDocument();
     expect(screen.getByTestId('sports-slip-rail')).toBeInTheDocument();
-    expect(screen.getByTestId('sports-fixture-board').querySelector('[data-card-variant="sports-odds"]')).toBeTruthy();
+    expect(
+      screen.getByTestId('sports-fixture-board').querySelector('[data-card-variant="sports-odds"]'),
+    ).toBeTruthy();
     expect(screen.getByTestId('sports-stake-currency-usdt')).toBeInTheDocument();
     expect(screen.getByTestId('sports-stake-currency-phon')).toBeInTheDocument();
     expect(screen.getByTestId('sports-slip-place-bet')).toBeInTheDocument();
@@ -286,7 +288,10 @@ describe('p10-betting visual sign-off §20.12 · §22.2 Sports+Casino · §34.17
 
     await expectAxeCriticalZero(container);
 
-    expect(screen.getByTestId('casino-lobby-pf-verify')).toHaveAttribute('href', '/casino/fairness');
+    expect(screen.getByTestId('casino-lobby-pf-verify')).toHaveAttribute(
+      'href',
+      '/casino/fairness',
+    );
     expect(screen.getByTestId('casino-lobby-play-crash')).toHaveAttribute('href', '/games/crash');
     expect(screen.getByTestId('casino-lobby-chip-originals')).toBeInTheDocument();
     const balance = screen.getByTestId('casino-lobby-balance');

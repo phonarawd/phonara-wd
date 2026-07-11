@@ -117,9 +117,7 @@ export function GiftcardRedeemPage() {
               <select
                 className="border-line bg-surface text-foreground rounded-md border px-3 py-2 text-sm"
                 value={engine.kind ?? ''}
-                onChange={(e) =>
-                  engine.setKind(e.target.value as NonNullable<typeof engine.kind>)
-                }
+                onChange={(e) => engine.setKind(e.target.value as NonNullable<typeof engine.kind>)}
                 data-testid="giftcard-redeem-kind"
               >
                 <option value="">{t('wallet.redeemGiftcard.kindPlaceholder')}</option>
@@ -154,9 +152,7 @@ export function GiftcardRedeemPage() {
               onClick={engine.loadPreview}
               data-testid="giftcard-redeem-preview"
             >
-              {engine.previewLoading
-                ? t('common.processing')
-                : t('wallet.redeemGiftcard.preview')}
+              {engine.previewLoading ? t('common.processing') : t('wallet.redeemGiftcard.preview')}
             </Button>
             {engine.preview ? (
               <div

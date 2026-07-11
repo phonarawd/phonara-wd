@@ -80,11 +80,7 @@ export function isSportsVipMarketsWireLive(): boolean {
 }
 
 export function isEwE5GapSurfacesFullyWired(): boolean {
-  return (
-    isTierMeDecayWireLive() &&
-    isReferralLeaderboardWireLive() &&
-    isSportsVipMarketsWireLive()
-  );
+  return isTierMeDecayWireLive() && isReferralLeaderboardWireLive() && isSportsVipMarketsWireLive();
 }
 
 export function assertEwE5GapSurfacesWireSync(): void {
@@ -101,8 +97,6 @@ export function assertEwE5GapSurfacesWireSync(): void {
     throw new Error('E5 WIRE must cover 3 routes');
   }
   if (!isEwE5GapSurfacesFullyWired()) {
-    throw new Error(
-      'E5 WIRE incomplete — /tier/me decay · /referral/leaderboard · /sports/vip',
-    );
+    throw new Error('E5 WIRE incomplete — /tier/me decay · /referral/leaderboard · /sports/vip');
   }
 }

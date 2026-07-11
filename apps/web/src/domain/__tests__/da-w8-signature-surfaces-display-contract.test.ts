@@ -72,7 +72,10 @@ describe('da-w8-signature-surfaces-display-contract §34.21–34.26 · YAML #226
   it('formats kickoff countdown display-only clocks', () => {
     expect(formatKickoffCountdownClock(65)).toBe('01:05');
     expect(formatKickoffCountdownClock(3661)).toBe('1:01:01');
-    const future = resolveKickoffCountdown('2099-01-01T00:00:00.000Z', Date.parse('2098-12-31T23:00:00.000Z'));
+    const future = resolveKickoffCountdown(
+      '2099-01-01T00:00:00.000Z',
+      Date.parse('2098-12-31T23:00:00.000Z'),
+    );
     expect(future.kind).toBe('countdown');
     if (future.kind === 'countdown') {
       expect(future.totalSeconds).toBe(3600);

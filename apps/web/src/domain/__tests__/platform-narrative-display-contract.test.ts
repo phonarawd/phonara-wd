@@ -21,7 +21,9 @@ describe('platform-narrative-display-contract §3.5', () => {
   it('lists E-Wave routes as hidden until engine gates', () => {
     expect(PLATFORM_EWAVE_HIDDEN_ROUTES).not.toContain('/wallet/transfer');
     expect(PLATFORM_EWAVE_HIDDEN_ROUTES).not.toContain('/settings/api-keys');
-    expect(PLATFORM_EWAVE_HIDDEN_ROUTES).toContain('/status');
+    expect(PLATFORM_EWAVE_HIDDEN_ROUTES).not.toContain('/status');
+    expect(PLATFORM_EWAVE_HIDDEN_ROUTES).not.toContain('/support/ticket');
+    expect(PLATFORM_EWAVE_HIDDEN_ROUTES).not.toContain('/tier/leaderboard');
   });
 
   it('exports narrative i18n key prefixes for platform canon', () => {

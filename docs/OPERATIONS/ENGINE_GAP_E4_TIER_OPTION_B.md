@@ -9,23 +9,23 @@
 
 ## 범위
 
-| 항목 | 내용 |
-| ---- | ---- |
-| ADR | Option B fee/cap 매트릭스 · Prime Elite 수동 only · admin write |
+| 항목      | 내용                                                                                   |
+| --------- | -------------------------------------------------------------------------------------- |
+| ADR       | Option B fee/cap 매트릭스 · Prime Elite 수동 only · admin write                        |
 | Migration | `20260804000001_ew_e4_prime_elite_enum.sql` + `20260804000002_ew_e4_tier_option_b.sql` |
-| RPC | `rpc_get_user_tier_summary` · `rpc_admin_set_user_earn_vip_tier` |
-| Enum | `earn_vip_tier` += `prime_elite` |
-| Caps | casino/sports stake mult · trade leverage · withdraw daily · fee rate helper |
-| Decay | prime_elite auto-decay **skip** |
-| Admin | `/tiers` · user tier write path (UI unlock = GATE) |
+| RPC       | `rpc_get_user_tier_summary` · `rpc_admin_set_user_earn_vip_tier`                       |
+| Enum      | `earn_vip_tier` += `prime_elite`                                                       |
+| Caps      | casino/sports stake mult · trade leverage · withdraw daily · fee rate helper           |
+| Decay     | prime_elite auto-decay **skip**                                                        |
+| Admin     | `/tiers` · user tier write path (UI unlock = GATE)                                     |
 
 ## 증거
 
-| Gate | 결과 |
-| ---- | ---- |
-| `gate:ai-impl` tier-option-b + related | **17/17** (WAVE pin) · related cashback/fees green |
-| SQL | `ew_e4_tier_option_b_test.sql` E4-0..E4-4 · **CI sql authoritative** (G13) |
-| Remote | GATE: `stack:push-remote` · advisor 0 |
+| Gate                                   | 결과                                                                       |
+| -------------------------------------- | -------------------------------------------------------------------------- |
+| `gate:ai-impl` tier-option-b + related | **17/17** (WAVE pin) · related cashback/fees green                         |
+| SQL                                    | `ew_e4_tier_option_b_test.sql` E4-0..E4-4 · **CI sql authoritative** (G13) |
+| Remote                                 | GATE: `stack:push-remote` · advisor 0                                      |
 
 ## 다음
 

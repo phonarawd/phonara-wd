@@ -26,12 +26,7 @@ describe('casino-games-batch-c-display-contract (p10-games-batch-c)', () => {
     expect(P10_GAMES_BATCH_C_PREREQUISITE_TODOS).toContain('p10-casino-replay-and-infra');
     expect(P10_GAMES_BATCH_C_PREREQUISITE_TODOS).toContain('p10-games-batch-a');
     expect(P10_GAMES_BATCH_C_PREREQUISITE_TODOS).toContain('p10-games-batch-b');
-    expect(CASINO_BATCH_C_GAME_CODES).toEqual([
-      'plinko',
-      'mint_reels',
-      'gold_rush',
-      'momentum',
-    ]);
+    expect(CASINO_BATCH_C_GAME_CODES).toEqual(['plinko', 'mint_reels', 'gold_rush', 'momentum']);
     expect(isCasinoBatchCGame('plinko')).toBe(true);
     expect(isCasinoBatchCGame('mines')).toBe(false);
     expect(CASINO_BATCH_C_L1_SPECS.plinko.render).toBe('pixi_v8_webgl');
@@ -41,9 +36,7 @@ describe('casino-games-batch-c-display-contract (p10-games-batch-c)', () => {
   });
 
   it('parses RPC outcomes without inventing settlement fields', () => {
-    expect(
-      parsePlinkoOutcome({ path: [1, 0, 1], bucket: 2, bucketMultiplier: '3.0' }),
-    ).toEqual({
+    expect(parsePlinkoOutcome({ path: [1, 0, 1], bucket: 2, bucketMultiplier: '3.0' })).toEqual({
       path: [1, 0, 1],
       bucket: 2,
       bucketMultiplier: '3.0',

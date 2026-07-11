@@ -112,7 +112,10 @@ function mapPromoRow(row: CmsEngineRow): AdminCmsPromoRow {
 async function listEngineRows(): Promise<CmsEngineRow[]> {
   const { data, error } = await (
     supabase as {
-      rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
+      rpc: (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
     }
   ).rpc('rpc_admin_list_cms_content', {});
   if (error) throw error;
@@ -139,7 +142,10 @@ async function upsertEngineRow(
 ): Promise<boolean> {
   const { error } = await (
     supabase as {
-      rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
+      rpc: (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
     }
   ).rpc('rpc_admin_upsert_cms_content', {
     p_payload: {

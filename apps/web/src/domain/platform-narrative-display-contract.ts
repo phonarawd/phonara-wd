@@ -52,15 +52,10 @@ export const PLATFORM_PILLAR_ROUTES: Readonly<Record<PlatformPillarId, string>> 
 
 /**
  * E-Wave STUB routes — hidden from IA until engine/UI unlock (§22.5).
- * `/wallet/transfer` · `/settings/api-keys` unlocked by `ew-e10-wallet-settings-ui`.
+ * `/wallet/transfer` · `/settings/api-keys` = `ew-e10-wallet-settings-ui`.
+ * `/support/ticket` · `/status` · `/tier/leaderboard` = `ew-e10-trust-support-ui`.
  */
-export const PLATFORM_EWAVE_HIDDEN_ROUTES = [
-  '/support/ticket',
-  '/support/chat',
-  '/tier/leaderboard',
-  '/status',
-  '/points/shop',
-] as const;
+export const PLATFORM_EWAVE_HIDDEN_ROUTES = ['/support/chat', '/points/shop'] as const;
 
 /** i18n key prefixes wired by platform canon (`p6-doc-platform-canon-sync` · `p3-platform-narrative-i18n`). */
 export const PLATFORM_NARRATIVE_KEY_PREFIXES = [

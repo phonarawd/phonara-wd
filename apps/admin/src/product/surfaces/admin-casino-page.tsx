@@ -44,10 +44,26 @@ export function AdminCasinoPage() {
         <TabsContent value="catalog">
           <AdminTable
             columns={[
-              { id: 'game', header: t('admin.casino.catalog.col.game'), cell: ({ row }) => t(row.labelKey as never) },
-              { id: 'status', header: t('admin.casino.catalog.col.status'), cell: ({ row }) => row.status },
-              { id: 'rtp', header: t('admin.casino.catalog.col.rtpConfigured'), cell: ({ row }) => row.rtpConfigured },
-              { id: 'bets', header: t('admin.casino.catalog.col.bets24h'), cell: ({ row }) => row.bets24h },
+              {
+                id: 'game',
+                header: t('admin.casino.catalog.col.game'),
+                cell: ({ row }) => t(row.labelKey as never),
+              },
+              {
+                id: 'status',
+                header: t('admin.casino.catalog.col.status'),
+                cell: ({ row }) => row.status,
+              },
+              {
+                id: 'rtp',
+                header: t('admin.casino.catalog.col.rtpConfigured'),
+                cell: ({ row }) => row.rtpConfigured,
+              },
+              {
+                id: 'bets',
+                header: t('admin.casino.catalog.col.bets24h'),
+                cell: ({ row }) => row.bets24h,
+              },
             ]}
             rows={filteredCatalog}
             getRowId={(row) => row.id}
@@ -81,10 +97,26 @@ export function AdminCasinoPage() {
         <TabsContent value="rtp">
           <AdminTable
             columns={[
-              { id: 'game', header: t('admin.casino.rtp.col.game'), cell: ({ row }) => t(row.labelKey as never) },
-              { id: 'status', header: t('admin.casino.rtp.col.status'), cell: ({ row }) => row.status },
-              { id: 'drift', header: t('admin.casino.rtp.col.drift'), cell: ({ row }) => row.driftPct },
-              { id: 'sample', header: t('admin.casino.rtp.col.sample'), cell: ({ row }) => row.sampleSize },
+              {
+                id: 'game',
+                header: t('admin.casino.rtp.col.game'),
+                cell: ({ row }) => t(row.labelKey as never),
+              },
+              {
+                id: 'status',
+                header: t('admin.casino.rtp.col.status'),
+                cell: ({ row }) => row.status,
+              },
+              {
+                id: 'drift',
+                header: t('admin.casino.rtp.col.drift'),
+                cell: ({ row }) => row.driftPct,
+              },
+              {
+                id: 'sample',
+                header: t('admin.casino.rtp.col.sample'),
+                cell: ({ row }) => row.sampleSize,
+              },
             ]}
             rows={filteredRtpReviews}
             getRowId={(row) => row.id}
@@ -108,7 +140,11 @@ export function AdminCasinoPage() {
                     : resolveRtpReview(row.id, 'RTP review resolved')
                 }
               >
-                {t(row.status === 'open' ? 'admin.casino.rtp.action.ack' : 'admin.casino.rtp.action.resolve')}
+                {t(
+                  row.status === 'open'
+                    ? 'admin.casino.rtp.action.ack'
+                    : 'admin.casino.rtp.action.resolve',
+                )}
               </Button>
             )}
           />

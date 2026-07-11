@@ -12,7 +12,7 @@
 > **후행:** E22 UI unlock **`[x]` DONE** 2026-07-12  
 > **후행:** E22 GATE **`[x]` DONE** 2026-07-12 · remote `ew_e22_sports_parity` · advisor **0** · unlock path built_hidden  
 > **후행:** E22 WAVE **`[x]` DONE** 2026-07-12 · ADR-016 · partial cashout · odds · catalog  
-> **후행:** E21 GATE `#255` **`[x]`** 2026-07-12 · WAVE `#254` **`[x]`** · ADR-015 · hedge/reduce-only remote apply 
+> **후행:** E21 GATE `#255` **`[x]`** 2026-07-12 · WAVE `#254` **`[x]`** · ADR-015 · hedge/reduce-only remote apply
 > **코드 계약:** [`engine-gap-adr-display-contract.ts`](../../../apps/web/src/domain/engine-gap-adr-display-contract.ts)  
 > **Track A canon (engine 0):** [`GLOBAL_EXPANSION.md`](../../SSOT/GLOBAL_EXPANSION.md) · [`ONBOARDING_JOURNEY_CANON.md`](../../SSOT/ONBOARDING_JOURNEY_CANON.md) · [`PLATFORM_NARRATIVE_CANON.md`](../../SSOT/PLATFORM_NARRATIVE_CANON.md)
 
@@ -30,60 +30,60 @@
 
 ## 영구 제외 (non-waivable · operator 재확정 2026-07-11)
 
-| 항목 | 사유 |
-| ---- | ---- |
-| **광고 시청 미션** | fraud · ad SDK · operator 정책 |
-| **설문 미션** | third-party panel · fraud |
-| Temporal workflows | ADR-001 · `/admin/ops` only |
-| Polymarket 예측시장 | sportsbook scope 밖 |
+| 항목                | 사유                           |
+| ------------------- | ------------------------------ |
+| **광고 시청 미션**  | fraud · ad SDK · operator 정책 |
+| **설문 미션**       | third-party panel · fraud      |
+| Temporal workflows  | ADR-001 · `/admin/ops` only    |
+| Polymarket 예측시장 | sportsbook scope 밖            |
 
 > **FAIL:** 광고·설문 미션 UI/RPC/catalog 노출 · 「E-Wave에 포함」 주장 · built_hidden로 우회 노출.
 
 ## E1–E7 (기존 플랜 정본)
 
-| Wave | Scope | Unlock |
-| ---- | ----- | ------ |
-| E1 | Tier Decay | `/tier/me` full |
-| E2 | Mission Admin CRUD | `/admin/earn/missions` write |
-| E3 | Viral leaderboard · CMS | `/referral/leaderboard` · promotions |
-| E4 | Option B tier · VIP markets | `/sports/vip` · `/tier/elite` |
-| E5 | STUB→live wire | gap surfaces |
-| E6 | Admin desks | deferred admin pages |
-| E7 | co-mission · whale missions | social missions |
+| Wave | Scope                       | Unlock                               |
+| ---- | --------------------------- | ------------------------------------ |
+| E1   | Tier Decay                  | `/tier/me` full                      |
+| E2   | Mission Admin CRUD          | `/admin/earn/missions` write         |
+| E3   | Viral leaderboard · CMS     | `/referral/leaderboard` · promotions |
+| E4   | Option B tier · VIP markets | `/sports/vip` · `/tier/elite`        |
+| E5   | STUB→live wire              | gap surfaces                         |
+| E6   | Admin desks                 | deferred admin pages                 |
+| E7   | co-mission · whale missions | social missions                      |
 
 ## E8 — Financial connectivity (31차)
 
-| Gap | ADR todo | Engine todo | UI unlock |
-| --- | -------- | ----------- | --------- |
-| P2P `/wallet/transfer` | `ew-e8-financial-wave` | same wave | `ew-e10-wallet-settings-ui` |
-| Trading API keys | same | same | same |
-| Points→giftcard reverse | same | same | `/points/shop` |
+| Gap                     | ADR todo               | Engine todo | UI unlock                   |
+| ----------------------- | ---------------------- | ----------- | --------------------------- |
+| P2P `/wallet/transfer`  | `ew-e8-financial-wave` | same wave   | `ew-e10-wallet-settings-ui` |
+| Trading API keys        | same                   | same        | same                        |
+| Points→giftcard reverse | same                   | same        | `/points/shop`              |
 
 **Gates:** `test:sql` Σ=0 · `stack:push-remote` · advisor 0 · `ew-e8-gate-financial`
 
 ## E9 — Identity · Support · Growth intelligence (31차)
 
-| Gap | Engine | UI |
-| --- | ------ | -- |
-| SIWE wallet login | `ew-e9-identity-wave` | login surface |
-| Support tickets | same | `/support/ticket` |
-| Product analytics events | same | `/admin/viral-stats` full |
-| App-install attribution mission | same | missions hub tab |
-| Tier leaderboard RPC | same | `/tier/leaderboard` |
+| Gap                             | Engine                | UI                        |
+| ------------------------------- | --------------------- | ------------------------- |
+| SIWE wallet login               | `ew-e9-identity-wave` | login surface             |
+| Support tickets                 | same                  | `/support/ticket`         |
+| Product analytics events        | same                  | `/admin/viral-stats` full |
+| App-install attribution mission | same                  | missions hub tab          |
+| Tier leaderboard RPC            | same                  | `/tier/leaderboard`       |
 
 **Gates:** `ew-e9-gate-identity-support`
 
 ## E10 — Trust · Native · Advanced missions (31차)
 
-| Gap | Engine | UI |
-| --- | ------ | -- |
-| KRW deposit proof upload | `ew-e10-platform-engine-wave` | `/wallet/deposit/krw` |
-| Mission chain server-side | same | `/home/missions` |
-| co-bet (optional) | same | sports social |
-| ML recommendations (optional) | same | earn hub |
-| Kakao share SDK | `ew-e10-growth-ui` | `/referral/invite` augment |
-| System status | `ew-e10-trust-support-ui` | `/status` |
-| Live chat (third-party) | config only | `/support/chat` |
+| Gap                           | Engine                        | UI                         |
+| ----------------------------- | ----------------------------- | -------------------------- |
+| KRW deposit proof upload      | `ew-e10-platform-engine-wave` | `/wallet/deposit/krw`      |
+| Mission chain server-side     | same                          | `/home/missions`           |
+| co-bet (optional)             | same                          | sports social              |
+| ML recommendations (optional) | same                          | earn hub                   |
+| Kakao share SDK               | `ew-e10-growth-ui`            | `/referral/invite` augment |
+| System status                 | `ew-e10-trust-support-ui`     | `/status`                  |
+| Live chat (third-party)       | config only                   | `/support/chat`            |
 
 **Final gate:** `ew-e10-gate-platform-world-class` = **Platform World-Class DONE**
 
@@ -92,12 +92,12 @@
 > Trade Desk Zero-Defect §10 — [`ENGINE_BOUNDARY.md`](../../SSOT/ENGINE_BOUNDARY.md) §Engine Wave defer 와 상호 링크.  
 > **E0 Accepted ≠** 아래 4 slice Accepted.
 
-| Slice | ADR | Unlock gate |
-| ----- | --- | ----------- |
-| Synthetic → Real CLOB | [005-engine-wave-clob-defer.md](005-engine-wave-clob-defer.md) | P4-D + settlement model |
-| Tier APY ↔ accrual (E4) | [006-engine-wave-tier-accrual-defer.md](006-engine-wave-tier-accrual-defer.md) | P4-D + claimable RPC |
-| Accounting Invariant full | [007-engine-wave-accounting-invariant-defer.md](007-engine-wave-accounting-invariant-defer.md) | P4-D + journal leg SQL |
-| DB TX Race deep audit | [008-engine-wave-db-tx-race-defer.md](008-engine-wave-db-tx-race-defer.md) | P4-D + multi-session harness |
+| Slice                     | ADR                                                                                            | Unlock gate                  |
+| ------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------- |
+| Synthetic → Real CLOB     | [005-engine-wave-clob-defer.md](005-engine-wave-clob-defer.md)                                 | P4-D + settlement model      |
+| Tier APY ↔ accrual (E4)   | [006-engine-wave-tier-accrual-defer.md](006-engine-wave-tier-accrual-defer.md)                 | P4-D + claimable RPC         |
+| Accounting Invariant full | [007-engine-wave-accounting-invariant-defer.md](007-engine-wave-accounting-invariant-defer.md) | P4-D + journal leg SQL       |
+| DB TX Race deep audit     | [008-engine-wave-db-tx-race-defer.md](008-engine-wave-db-tx-race-defer.md)                     | P4-D + multi-session harness |
 
 **Launch RC:** 위 4 slice **defer stub** — migration 착수 금지 until Accepted.
 
@@ -112,13 +112,13 @@ E0 Accepted (본 ADR)
   → [E·GATE] → UI unlock
 ```
 
-| 금지 | FAIL = |
-| ---- | ------ |
-| E0 전 migration | `engine-p0-no-migration` 위반 |
-| Wave ADR 없이 E1+ migration | RED STOP |
-| Track A에서 engine 기능 추가 | Track 경계 위반 |
-| 광고·설문 미션 | 영구 제외 위반 |
-| UI만 green으로 engine DONE 주장 | `[E·GATE]` 미완료 |
+| 금지                            | FAIL =                        |
+| ------------------------------- | ----------------------------- |
+| E0 전 migration                 | `engine-p0-no-migration` 위반 |
+| Wave ADR 없이 E1+ migration     | RED STOP                      |
+| Track A에서 engine 기능 추가    | Track 경계 위반               |
+| 광고·설문 미션                  | 영구 제외 위반                |
+| UI만 green으로 engine DONE 주장 | `[E·GATE]` 미완료             |
 
 ## Conservation & security (all waves)
 
@@ -152,3 +152,4 @@ E0 Accepted (본 ADR)
 - [x] E9 Identity+Support WAVE `ew-e9-identity-wave` — [`019-identity-support-analytics.md`](019-identity-support-analytics.md) · SIWE · tickets · analytics · app-install · tier LB · 후행 GATE `ew-e9-gate-identity-support`
 - [x] E9 Identity+Support GATE `ew-e9-gate-identity-support` — `stack:push-remote` · advisor 0 · SQL E9-0..E9-5 (CI) · 후행 `ew-e9-page-admin-support`
 - [x] E10 Platform Engine WAVE `ew-e10-platform-engine-wave` — [`020-platform-engine.md`](020-platform-engine.md) · KRW proof · mission chains · co-bet · recommend · 후행 Admin/UI/GATE
+- [x] E10 Platform World-Class GATE `ew-e10-gate-platform-world-class` — `test:engine` 285/285 · `stack:push-remote` tail `20260711225356_ew_e10_platform_engine` · advisor 0 · §12.18 gap 0 (ad/survey skip) · §32 completeness · **Platform World-Class E8–E10 DONE**

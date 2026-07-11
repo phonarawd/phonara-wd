@@ -358,12 +358,12 @@ bun run stack:verify-worldno1-edge
 
 > **정본:** [`docs/OPERATIONS/P13_T1_LIVE_RAMP_FEATURE_GATES.md`](../docs/OPERATIONS/P13_T1_LIVE_RAMP_FEATURE_GATES.md) · todo `#237`
 
-| 시각 (KST) | 할 일 |
-| ---------- | ----- |
-| **09:00** | `/admin/ops` alerts · `/admin/queues` · `/admin/deposits` · `/admin/withdrawals` |
-| **12:00** | Telegram critical pager only |
-| **18:00** | insurance · OI utilization · ledger drift (`scripts/p13-t1-live-ramp-spotcheck.sql`) |
-| **22:00** | Telegram critical pager only |
+| 시각 (KST) | 할 일                                                                                |
+| ---------- | ------------------------------------------------------------------------------------ |
+| **09:00**  | `/admin/ops` alerts · `/admin/queues` · `/admin/deposits` · `/admin/withdrawals`     |
+| **12:00**  | Telegram critical pager only                                                         |
+| **18:00**  | insurance · OI utilization · ledger drift (`scripts/p13-t1-live-ramp-spotcheck.sql`) |
+| **22:00**  | Telegram critical pager only                                                         |
 
 주간(월요일): spot · futures · casino · sports rails ON · cross/funding/withdrawal OFF · OI **40%** (majors `200000` · PHON `40000`) · lev **5**.
 
@@ -377,11 +377,11 @@ bun run stack:verify-worldno1-edge
 
 > **정본:** [`docs/OPERATIONS/P13_T2_SCALE_TRIGGERS.md`](../docs/OPERATIONS/P13_T2_SCALE_TRIGGERS.md) · todo `#238`
 
-| Band | DAU | Per-user notional | OI | Infra | Hedge |
-| ---- | --- | ----------------- | -- | ----- | ----- |
-| **S1** `500~2K` | 500–1_999 | KRW 100만 / USDT 200 | 50% | primary only | B-book 유지 |
-| **S2** `2K~10K` | 2_000–9_999 | KRW 200만 / USDT 500 | 60% | **read replica** | ADR kickoff |
-| **S3** `10K+` | ≥10_000 | KRW 500만 / USDT 2_000 | 80% | replica HA | GO/NO-GO |
+| Band            | DAU         | Per-user notional      | OI  | Infra            | Hedge       |
+| --------------- | ----------- | ---------------------- | --- | ---------------- | ----------- |
+| **S1** `500~2K` | 500–1_999   | KRW 100만 / USDT 200   | 50% | primary only     | B-book 유지 |
+| **S2** `2K~10K` | 2_000–9_999 | KRW 200만 / USDT 500   | 60% | **read replica** | ADR kickoff |
+| **S3** `10K+`   | ≥10_000     | KRW 500만 / USDT 2_000 | 80% | replica HA       | GO/NO-GO    |
 
 월요일: T1 rails 리뷰 → `scripts/p13-t2-scale-triggers-spotcheck.sql`로 band 분류 → 표에 맞는 cap/replica/hedge만 operator 적용 (자동 적용 금지).
 

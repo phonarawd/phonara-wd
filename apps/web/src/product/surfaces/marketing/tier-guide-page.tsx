@@ -132,7 +132,9 @@ export function TierGuidePage() {
             <li key={id}>
               <Card>
                 <CardBody className="flex flex-col gap-1">
-                  <p className="text-foreground m-0 font-medium">{t(tierGuideFaqQuestionKey(id))}</p>
+                  <p className="text-foreground m-0 font-medium">
+                    {t(tierGuideFaqQuestionKey(id))}
+                  </p>
                   <p className="text-foreground-muted m-0 text-sm leading-relaxed">
                     {t(tierGuideFaqAnswerKey(id))}
                   </p>

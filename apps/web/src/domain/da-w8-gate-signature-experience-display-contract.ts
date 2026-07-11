@@ -38,8 +38,7 @@ export const DA_W8_GATE_EMOTION_MAP_TARGETS = {
   vip: 'upgrade-celebration-restrained',
 } as const satisfies Record<DaW8SignatureSurface, string>;
 
-export type DaW8GateEmotionTarget =
-  (typeof DA_W8_GATE_EMOTION_MAP_TARGETS)[DaW8SignatureSurface];
+export type DaW8GateEmotionTarget = (typeof DA_W8_GATE_EMOTION_MAP_TARGETS)[DaW8SignatureSurface];
 
 /**
  * §34.2 Emotion Map — forbidden emotions (spot-check must prove absence in signature wire).
@@ -73,11 +72,7 @@ export type DaW8GateSignatureScanCue = keyof typeof DA_W8_GATE_SIGNATURE_SCAN_CU
 export const DA_W8_GATE_SIGNATURE_DISTINGUISH_MARKERS = {
   home: ["data-signature='greeting-day-flow'", 'earn-home-greeting', 'earn-home-signature-flow'],
   wallet: ["data-signature='living-balance'", 'wallet-balance-hero'],
-  trade: [
-    "data-signature='market-heat-volume-pulse'",
-    'data-market-heat',
-    'data-volume-pulse',
-  ],
+  trade: ["data-signature='market-heat-volume-pulse'", 'data-market-heat', 'data-volume-pulse'],
   casino: [
     "data-signature='tile-float-glow'",
     "data-card-variant='casino-play'",
@@ -149,9 +144,7 @@ export const DA_W8_GATE_SIGNATURE_VISUAL_ADVISORY_CHECKLIST = [
 ] as const;
 
 /** Map signature surface → Emotion Map target. */
-export function daW8GateEmotionTarget(
-  surface: DaW8SignatureSurface,
-): DaW8GateEmotionTarget {
+export function daW8GateEmotionTarget(surface: DaW8SignatureSurface): DaW8GateEmotionTarget {
   return DA_W8_GATE_EMOTION_MAP_TARGETS[surface];
 }
 
@@ -164,9 +157,7 @@ export function daW8GateSignatureMoment(
 
 /** Non-waivable sync for DA W8 GATE closeout. */
 export function assertDaW8GateSignatureExperienceSync(): void {
-  if (
-    !DA_W8_GATE_SIGNATURE_EXPERIENCE_PREREQUISITE_TODOS.includes(DA_W8_SOUND_DESIGN_SPEC_TODO)
-  ) {
+  if (!DA_W8_GATE_SIGNATURE_EXPERIENCE_PREREQUISITE_TODOS.includes(DA_W8_SOUND_DESIGN_SPEC_TODO)) {
     throw new Error(
       'da-w8-gate-signature-experience: missing prerequisite da-w8-sound-design-spec-defer',
     );
@@ -196,9 +187,7 @@ export function assertDaW8GateSignatureExperienceSync(): void {
       );
     }
     if (DA_W8_GATE_SIGNATURE_SCAN_CUES[surface] !== DA_W8_SIGNATURE_MOMENTS[surface]) {
-      throw new Error(
-        `da-w8-gate-signature-experience: scan cue/moment mismatch for ${surface}`,
-      );
+      throw new Error(`da-w8-gate-signature-experience: scan cue/moment mismatch for ${surface}`);
     }
   }
 

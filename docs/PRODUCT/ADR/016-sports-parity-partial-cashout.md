@@ -17,36 +17,36 @@ P10 Sports WORLD는 Tier-A(엔진 exists)를 UI wire로 닫는 구간이다.
 
 ### 1. 52차 rescope (non-waivable)
 
-| 기능 | 판정 | 본 WAVE |
-| ---- | ---- | ------- |
-| Partial cashout | **신규** | `rpc_preview_sports_partial_cashout` · `rpc_partial_cashout_sports_bet` |
-| Odds acceptance | **신규** | `sports_odds_acceptance` + `p_odds_acceptance` on place |
-| Correct score | **신규** | registry + settle handler + `score` selection |
-| Sport catalog | **신규** | `sports_sport_catalog` + `rpc_list_sports_catalog` |
-| Full cashout | **EXISTS** | `rpc_preview_sports_cashout` / `rpc_cashout_sports_bet` — migration **0** · UI = `p10-sports-slip-advanced-wire` **동일 PR** |
-| Bet builder (상관배당) | **defer** | SGP=단순 곱 유지 · 상관 엔진은 post-E22 backlog |
-| 외부 배당 vendor | **ADR pin** | C1 ingest 구조만 · in-repo feed worker 0 · 유료 vendor = T2 후 |
+| 기능                   | 판정        | 본 WAVE                                                                                                                      |
+| ---------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Partial cashout        | **신규**    | `rpc_preview_sports_partial_cashout` · `rpc_partial_cashout_sports_bet`                                                      |
+| Odds acceptance        | **신규**    | `sports_odds_acceptance` + `p_odds_acceptance` on place                                                                      |
+| Correct score          | **신규**    | registry + settle handler + `score` selection                                                                                |
+| Sport catalog          | **신규**    | `sports_sport_catalog` + `rpc_list_sports_catalog`                                                                           |
+| Full cashout           | **EXISTS**  | `rpc_preview_sports_cashout` / `rpc_cashout_sports_bet` — migration **0** · UI = `p10-sports-slip-advanced-wire` **동일 PR** |
+| Bet builder (상관배당) | **defer**   | SGP=단순 곱 유지 · 상관 엔진은 post-E22 backlog                                                                              |
+| 외부 배당 vendor       | **ADR pin** | C1 ingest 구조만 · in-repo feed worker 0 · 유료 vendor = T2 후                                                               |
 
 ### 2. Odds acceptance 정본
 
-| 값 | 의미 |
-| -- | ---- |
-| `strict` (default) | 기존 — latest ≠ client → `odds_changed` |
-| `accept_any` | latest로 reprice 후 진행 |
-| `accept_better` | latest ≥ client 이면 latest 채택 · 하락이면 `odds_changed` |
+| 값                 | 의미                                                       |
+| ------------------ | ---------------------------------------------------------- |
+| `strict` (default) | 기존 — latest ≠ client → `odds_changed`                    |
+| `accept_any`       | latest로 reprice 후 진행                                   |
+| `accept_better`    | latest ≥ client 이면 latest 채택 · 하락이면 `odds_changed` |
 
 Place: `rpc_place_sports_bet(..., p_odds_acceptance TEXT DEFAULT NULL)` — NULL → `app_config.sports_odds_acceptance_default`.
 
 ### 3. Partial cashout 정본
 
-| 항목 | 값 |
-| ---- | --- |
-| Preview | `rpc_preview_sports_partial_cashout(p_bet_id, p_stake_portion)` |
+| 항목    | 값                                                                                               |
+| ------- | ------------------------------------------------------------------------------------------------ |
+| Preview | `rpc_preview_sports_partial_cashout(p_bet_id, p_stake_portion)`                                  |
 | Execute | `rpc_partial_cashout_sports_bet(p_bet_id, p_stake_portion, p_cashout_amount, p_idempotency_key)` |
-| Portion | `0 < portion < stake` — 전액은 EXISTS full RPC만 |
-| Offer | `trunc(full_offer * portion / stake, 6)` · exact match |
-| Money | unlock/debit portion · credit offer · house delta · **Σ=0** |
-| Bet | stake↓ · potential_payout↓ · `status` 유지 `pending` · legs 유지 |
+| Portion | `0 < portion < stake` — 전액은 EXISTS full RPC만                                                 |
+| Offer   | `trunc(full_offer * portion / stake, 6)` · exact match                                           |
+| Money   | unlock/debit portion · credit offer · house delta · **Σ=0**                                      |
+| Bet     | stake↓ · potential_payout↓ · `status` 유지 `pending` · legs 유지                                 |
 
 ### 4. Market catalog
 
@@ -59,10 +59,10 @@ Place: `rpc_place_sports_bet(..., p_odds_acceptance TEXT DEFAULT NULL)` — NULL
 
 ### 6. UI (동일 PR)
 
-| Surface | Owner |
-| ------- | ----- |
-| My-bets **전액** cashout card | EXISTS RPC → `p10-sports-slip-advanced-wire` honesty · `LAUNCH_GATES.sportsCashout` |
-| Partial / odds policy / correct score UI | GATE/UI todos (`ew-e22-gate` · `ew-e22-ui`) — WAVE는 engine + full cashout wire |
+| Surface                                  | Owner                                                                               |
+| ---------------------------------------- | ----------------------------------------------------------------------------------- |
+| My-bets **전액** cashout card            | EXISTS RPC → `p10-sports-slip-advanced-wire` honesty · `LAUNCH_GATES.sportsCashout` |
+| Partial / odds policy / correct score UI | GATE/UI todos (`ew-e22-gate` · `ew-e22-ui`) — WAVE는 engine + full cashout wire     |
 
 WAVE: `LAUNCH_GATES.sportsParityEngine=true` · partial UI = **live** after `ew-e22-ui-sports-parity-unlocks` (`sportsParityLive=true`).
 
@@ -74,11 +74,11 @@ WAVE: `LAUNCH_GATES.sportsParityEngine=true` · partial UI = **live** after `ew-
 
 ## Verification
 
-| Gate | 기대 |
-| ---- | ---- |
-| SQL | `ew_e22_sports_parity_test.sql` E22-0..E22-4 · CI sql authoritative |
-| Vitest | `ew-e22-sports-parity-display-contract` · sports cashout UI |
-| Remote | GATE **`[x]`**: `stack:push-remote` · advisor 0 |
+| Gate   | 기대                                                                |
+| ------ | ------------------------------------------------------------------- |
+| SQL    | `ew_e22_sports_parity_test.sql` E22-0..E22-4 · CI sql authoritative |
+| Vitest | `ew-e22-sports-parity-display-contract` · sports cashout UI         |
+| Remote | GATE **`[x]`**: `stack:push-remote` · advisor 0                     |
 
 ## Operator sign-off
 

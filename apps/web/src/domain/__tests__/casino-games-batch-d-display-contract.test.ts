@@ -71,16 +71,19 @@ describe('casino-games-batch-d-display-contract (p10-games-batch-d)', () => {
   });
 
   it('normalizes selection helpers for table games', () => {
-    expect(
-      normalizeRouletteLegs([{ type: 'red', value: null, stakeWeight: 5 }]),
-    ).toEqual([{ type: 'red', value: null, stakeWeight: 5 }]);
+    expect(normalizeRouletteLegs([{ type: 'red', value: null, stakeWeight: 5 }])).toEqual([
+      { type: 'red', value: null, stakeWeight: 5 },
+    ]);
     expect(normalizeRouletteLegs([{ type: 'straight', value: null, stakeWeight: 1 }])).toEqual([]);
-    expect(normalizeBlackjackActions([{ seat: 0, move: 'hit' }, { seat: 0, move: 'stand' }])).toEqual(
-      [
+    expect(
+      normalizeBlackjackActions([
         { seat: 0, move: 'hit' },
         { seat: 0, move: 'stand' },
-      ],
-    );
+      ]),
+    ).toEqual([
+      { seat: 0, move: 'hit' },
+      { seat: 0, move: 'stand' },
+    ]);
     expect(normalizeBlackjackActions([{ seat: 0, move: 'fold' }])).toEqual([]);
     expect(normalizeDeepshaftRiskTier('deep')).toBe('deep');
     expect(normalizeDeepshaftRiskTier('x')).toBe('standard');

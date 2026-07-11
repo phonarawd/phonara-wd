@@ -404,11 +404,7 @@ export function useAdminWalletDeskMock(): UseAdminWalletDesk {
   );
 
   const reviewKrwDepositProof = useCallback(
-    async (
-      id: string,
-      decision: 'approved' | 'rejected',
-      reason: string,
-    ): Promise<boolean> => {
+    async (id: string, decision: 'approved' | 'rejected', reason: string): Promise<boolean> => {
       if (!validReason(reason)) return false;
       const row = d.allRows.find((r) => r.id === id);
       if (!row || row.method !== 'krw' || row.proofStatus !== 'pending') return false;

@@ -39,8 +39,8 @@ describe('earn-play-display-contract', () => {
       seedHash: 'abc',
     });
 
-    expect(
-      resolveEarnPlaySpinBlocked({ authenticated: true, remaining: 0, spinning: false }),
-    ).toBe(true);
+    expect(resolveEarnPlaySpinBlocked({ authenticated: true, remaining: 0, spinning: false })).toBe(
+      true,
+    );
   });
 });

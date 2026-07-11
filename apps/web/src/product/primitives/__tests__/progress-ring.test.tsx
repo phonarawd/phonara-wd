@@ -10,9 +10,7 @@ describe('ProgressRing (§34.26 fillOnMount)', () => {
   });
 
   it('marks fill-on-mount when enabled', () => {
-    const { container } = render(
-      <ProgressRing value={55} fillOnMount aria-label="xp fill 55" />,
-    );
+    const { container } = render(<ProgressRing value={55} fillOnMount aria-label="xp fill 55" />);
     const svg = container.querySelector('svg');
     expect(svg).toHaveAttribute('data-fill-on-mount', 'true');
   });

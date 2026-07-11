@@ -9,21 +9,21 @@
 
 ## 범위 (52차 rescope)
 
-| 항목 | 내용 |
-| ---- | ---- |
-| ADR | hedge dual-side · reduce-only · EXISTS pin (TP/SL · spot · trailing) |
-| Migration | `20260808000001_ew_e21_trade_parity_hedge_reduce_only.sql` (**신규만**) |
-| NEW RPCs | `rpc_set_position_mode` · `rpc_get_position_mode` · place `p_reduce_only` · fill reduce path |
-| EXISTS (migration 0) | `rpc_update_futures_position_sltp` · `rpc_place_spot_*` · `rpc_set_trailing_stop` |
-| Launch | `LAUNCH_GATES.tradeHedgeReduceOnlyEngine=true` · `tradeParityLive=false` |
+| 항목                 | 내용                                                                                         |
+| -------------------- | -------------------------------------------------------------------------------------------- |
+| ADR                  | hedge dual-side · reduce-only · EXISTS pin (TP/SL · spot · trailing)                         |
+| Migration            | `20260808000001_ew_e21_trade_parity_hedge_reduce_only.sql` (**신규만**)                      |
+| NEW RPCs             | `rpc_set_position_mode` · `rpc_get_position_mode` · place `p_reduce_only` · fill reduce path |
+| EXISTS (migration 0) | `rpc_update_futures_position_sltp` · `rpc_place_spot_*` · `rpc_set_trailing_stop`            |
+| Launch               | `LAUNCH_GATES.tradeHedgeReduceOnlyEngine=true` · `tradeParityLive=false`                     |
 
 ## 증거
 
-| Gate | 결과 |
-| ---- | ---- |
-| `gate:ai-impl` ew-e21-trade-parity | vitest display-contract · typecheck · lint · i18n · release |
-| SQL | `ew_e21_hedge_reduce_only_test.sql` E21-0..E21-4 · **CI sql authoritative** (G13) |
-| Remote | GATE `#255` **`[x]`**: `stack:push-remote` · advisor **0** · tail `20260711160355` |
+| Gate                               | 결과                                                                               |
+| ---------------------------------- | ---------------------------------------------------------------------------------- |
+| `gate:ai-impl` ew-e21-trade-parity | vitest display-contract · typecheck · lint · i18n · release                        |
+| SQL                                | `ew_e21_hedge_reduce_only_test.sql` E21-0..E21-4 · **CI sql authoritative** (G13)  |
+| Remote                             | GATE `#255` **`[x]`**: `stack:push-remote` · advisor **0** · tail `20260711160355` |
 
 ## 다음
 

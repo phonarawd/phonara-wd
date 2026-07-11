@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 
 import {
   mintReelsSpinMs,
@@ -15,7 +9,10 @@ import { useT } from '@/product/i18n';
 import { usePrefersReducedMotion } from '@/product/primitives/lib/use-prefers-reduced-motion';
 import { cn } from '@/product/primitives/lib/cn';
 import { Card, CardBody } from '@/product/primitives/card';
-import type { CasinoStageHandle, CasinoStagePhase } from '@/product/surfaces/games/casino-stage-types';
+import type {
+  CasinoStageHandle,
+  CasinoStagePhase,
+} from '@/product/surfaces/games/casino-stage-types';
 import { usePixiStage, type PixiModule } from '@/product/surfaces/games/use-pixi-stage';
 
 export type MintReelsStageProps = {
@@ -239,7 +236,10 @@ export const MintReelsStage = forwardRef<CasinoStageHandle, MintReelsStageProps>
                 {outcome ? `${outcome.totalMultiplier.toFixed(2)}×` : '—'}
               </span>
             </div>
-            <span className="text-foreground-muted text-xs tabular-nums" data-testid="casino-mint-reels-lines">
+            <span
+              className="text-foreground-muted text-xs tabular-nums"
+              data-testid="casino-mint-reels-lines"
+            >
               {lines}
             </span>
           </div>

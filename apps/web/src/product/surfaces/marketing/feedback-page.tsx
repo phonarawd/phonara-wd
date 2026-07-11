@@ -45,11 +45,17 @@ export function FeedbackPage({ type = 'general' }: FeedbackPageProps) {
         <CardBody className="flex flex-col gap-3">
           <div className="flex items-start gap-3">
             <div className="bg-accent/15 text-accent flex size-10 items-center justify-center rounded-full">
-              {isBug ? <Bug className="size-5" aria-hidden /> : <Mail className="size-5" aria-hidden />}
+              {isBug ? (
+                <Bug className="size-5" aria-hidden />
+              ) : (
+                <Mail className="size-5" aria-hidden />
+              )}
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-foreground m-0 font-medium">{t('support.email.label')}</p>
-              <p className="text-foreground-muted m-0 text-sm tabular-nums">{SUPPORT_CONTACT_EMAIL}</p>
+              <p className="text-foreground-muted m-0 text-sm tabular-nums">
+                {SUPPORT_CONTACT_EMAIL}
+              </p>
             </div>
           </div>
           <a

@@ -90,8 +90,7 @@ vi.mock('@/hooks/admin/useAdminSupportDesk', () => ({
     refresh: vi.fn(async () => undefined),
     loadTicketDetail: vi.fn(async () => null),
     resolveTicket,
-    canResolve: (row: { status: string }) =>
-      row.status === 'open' || row.status === 'in_progress',
+    canResolve: (row: { status: string }) => row.status === 'open' || row.status === 'in_progress',
   }),
 }));
 

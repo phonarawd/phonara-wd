@@ -25,9 +25,7 @@ import {
   isCasinoBatchDGame,
   P10_GAMES_BATCH_D_TODO,
 } from '@/domain/casino-games-batch-d-display-contract';
-import {
-  isEwE23UiLivePlayGame,
-} from '@/domain/ew-e23-ui-casino-live-unlocks-display-contract';
+import { isEwE23UiLivePlayGame } from '@/domain/ew-e23-ui-casino-live-unlocks-display-contract';
 import { EW_E23_PROGRESSIVE_GAMES } from '@/domain/ew-e23-casino-live-display-contract';
 import { CASINO_E2E_TESTIDS } from '@/features/casino/casino-e2e-testids';
 import { GAME_BY_CODE } from '@/features/casino/game-config';
@@ -160,8 +158,9 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
   const livePlaySupported = casinoLiveLive && isEwE23UiLivePlayGame(gameCode);
   const [playMode, setPlayMode] = useState<CasinoPlayMode>('oneshot');
   const liveMode = livePlaySupported && playMode === 'live';
-  const [progressiveSession, setProgressiveSession] =
-    useState<ProgressiveSessionPublic | null>(null);
+  const [progressiveSession, setProgressiveSession] = useState<ProgressiveSessionPublic | null>(
+    null,
+  );
   const [liveCrashBetId, setLiveCrashBetId] = useState<string | null>(null);
   const [liveErrorKey, setLiveErrorKey] = useState<MessageKey | null>(null);
 
@@ -261,8 +260,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
       setProgressiveSession(session.status === 'active' ? session : null);
       if (session.status === 'active') return;
       const payout = session.payout ?? '0';
-      const status =
-        session.status === 'cashed_out' || Number(payout) > 0 ? 'won' : 'lost';
+      const status = session.status === 'cashed_out' || Number(payout) > 0 ? 'won' : 'lost';
       presentSettle(payout, status, session.stake);
       void stageRef.current?.playOutcome(session.public_state ?? {});
       unlockSession();
@@ -299,9 +297,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
           : gameCode === 'hilo'
             ? {
                 startCard:
-                  typeof selection['startCard'] === 'number'
-                    ? selection['startCard']
-                    : null,
+                  typeof selection['startCard'] === 'number' ? selection['startCard'] : null,
               }
             : {};
       const started = await progressiveStart.mutateAsync({
@@ -551,10 +547,8 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
                       liveSessionActive:
                         Boolean(progressiveSession) ||
                         (gameCode === 'crash' && Boolean(liveCrashBetId)),
-                      liveCashoutBusy:
-                        progressiveCashout.isPending || liveCrashCashout.isPending,
-                      liveMultiplier:
-                        liveCrashCurrent.data?.round?.current_multiplier ?? null,
+                      liveCashoutBusy: progressiveCashout.isPending || liveCrashCashout.isPending,
+                      liveMultiplier: liveCrashCurrent.data?.round?.current_multiplier ?? null,
                       liveRoundStatus: liveCrashCurrent.data?.round?.status ?? null,
                       onLiveCashout: handleLiveCashout,
                       onLiveRevealCell: handleLiveRevealCell,
@@ -699,9 +693,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
                   data-testid="casino-live-place-bet"
                   onClick={() => void handleLiveStart()}
                 >
-                  {gameCode === 'crash'
-                    ? t('casino.live.placeBet')
-                    : t('casino.progressive.start')}
+                  {gameCode === 'crash' ? t('casino.live.placeBet') : t('casino.progressive.start')}
                 </Button>
               </div>
             ) : betMode === 'manual' ? (

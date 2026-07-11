@@ -26,21 +26,17 @@ import {
 
 export const EW_E23_GATE_CASINO_LIVE_TODO = 'ew-e23-gate-casino-live' as const;
 export const EW_E23_GATE_CASINO_LIVE_PREREQUISITE_TODO = EW_E23_CASINO_LIVE_TODO;
-export const EW_E23_GATE_CASINO_LIVE_NEXT_TODO =
-  'ew-e23-ui-casino-live-unlocks' as const;
+export const EW_E23_GATE_CASINO_LIVE_NEXT_TODO = 'ew-e23-ui-casino-live-unlocks' as const;
 
-export const EW_E23_GATE_CASINO_LIVE_REMOTE_MIGRATION_NAME =
-  EW_E23_CASINO_LIVE_MIGRATION_NAME;
+export const EW_E23_GATE_CASINO_LIVE_REMOTE_MIGRATION_NAME = EW_E23_CASINO_LIVE_MIGRATION_NAME;
 
 export const EW_E23_GATE_CASINO_LIVE_SQL_TEST =
   'supabase/tests/ew_e23_casino_live_test.sql' as const;
 
-export const EW_E23_GATE_CASINO_PARITY_SQL_TEST =
-  'supabase/tests/casino_parity_test.sql' as const;
+export const EW_E23_GATE_CASINO_PARITY_SQL_TEST = 'supabase/tests/casino_parity_test.sql' as const;
 
 /** Filled after `stack:push-remote` — remote version timestamp ≠ local prefix OK. */
-export const EW_E23_GATE_CASINO_LIVE_REMOTE_TAIL =
-  '20260711183649_ew_e23_casino_live' as const;
+export const EW_E23_GATE_CASINO_LIVE_REMOTE_TAIL = '20260711183649_ew_e23_casino_live' as const;
 
 /**
  * Live UI wire — GATE authorized paths; UI unlock flips to `live`.
@@ -60,8 +56,7 @@ export function resolveEwE23GateUiUnlockWireStatus(): {
 }
 
 /** Snapshot for display contracts / tests — live after `ew-e23-ui-casino-live-unlocks`. */
-export const EW_E23_GATE_UI_UNLOCK_WIRE_STATUS =
-  resolveEwE23GateUiUnlockWireStatus();
+export const EW_E23_GATE_UI_UNLOCK_WIRE_STATUS = resolveEwE23GateUiUnlockWireStatus();
 
 export type EwE23GateUiUnlockWireKey = keyof typeof EW_E23_GATE_UI_UNLOCK_WIRE_STATUS;
 
@@ -92,9 +87,7 @@ export function isProgressiveRoundsUiPathUnlocked(): boolean {
   return (
     EW_E23_PROGRESSIVE_START_RPC === 'rpc_progressive_start' &&
     EW_E23_PROGRESSIVE_GAMES.length === 3 &&
-    isEwE23UiPathAuthorized(
-      EW_E23_GATE_UI_UNLOCK_WIRE_STATUS.progressive_rounds_stage,
-    ) &&
+    isEwE23UiPathAuthorized(EW_E23_GATE_UI_UNLOCK_WIRE_STATUS.progressive_rounds_stage) &&
     LAUNCH_GATES.casinoLiveEngine === true
   );
 }
@@ -112,12 +105,8 @@ export function isLiveCrashUiPathUnlocked(): boolean {
 export function isFairnessSeedControlsUiPathUnlocked(): boolean {
   return (
     EW_E23_ROTATE_SERVER_SEED_RPC === 'rpc_rotate_game_server_seed' &&
-    (EW_E23_NEW_ENGINE_FEATURES as readonly string[]).includes(
-      'pf_seed_controls',
-    ) &&
-    isEwE23UiPathAuthorized(
-      EW_E23_GATE_UI_UNLOCK_WIRE_STATUS.fairness_seed_controls,
-    ) &&
+    (EW_E23_NEW_ENGINE_FEATURES as readonly string[]).includes('pf_seed_controls') &&
+    isEwE23UiPathAuthorized(EW_E23_GATE_UI_UNLOCK_WIRE_STATUS.fairness_seed_controls) &&
     LAUNCH_GATES.casinoLiveEngine === true
   );
 }

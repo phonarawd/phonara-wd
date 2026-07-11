@@ -137,9 +137,7 @@ function NavGroupItem({ group }: { group: NavGroup }) {
           to={group.to}
           className={cn(
             'block rounded-md px-3 py-2 text-sm font-semibold transition-colors',
-            groupActive
-              ? 'bg-accent/10 text-accent'
-              : 'text-foreground hover:bg-surface-elevated',
+            groupActive ? 'bg-accent/10 text-accent' : 'text-foreground hover:bg-surface-elevated',
           )}
           aria-current={groupActive ? 'page' : undefined}
         >

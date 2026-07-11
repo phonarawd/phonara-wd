@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 
 import {
   goldRushMeterFill,
@@ -16,7 +10,10 @@ import { useT } from '@/product/i18n';
 import { usePrefersReducedMotion } from '@/product/primitives/lib/use-prefers-reduced-motion';
 import { cn } from '@/product/primitives/lib/cn';
 import { Card, CardBody } from '@/product/primitives/card';
-import type { CasinoStageHandle, CasinoStagePhase } from '@/product/surfaces/games/casino-stage-types';
+import type {
+  CasinoStageHandle,
+  CasinoStagePhase,
+} from '@/product/surfaces/games/casino-stage-types';
 import { usePixiStage, type PixiModule } from '@/product/surfaces/games/use-pixi-stage';
 
 export type GoldRushStageProps = {
@@ -153,12 +150,7 @@ export const GoldRushStage = forwardRef<CasinoStageHandle, GoldRushStageProps>(
           const scene = sceneRef.current;
           const host = hostRef.current;
           if (scene && host) {
-            scene.paint(
-              host.clientWidth || 320,
-              host.clientHeight || 240,
-              fill,
-              fill >= 0.55,
-            );
+            scene.paint(host.clientWidth || 320, host.clientHeight || 240, fill, fill >= 0.55);
           }
           if (tNorm >= 1) {
             settle(parsed, target);

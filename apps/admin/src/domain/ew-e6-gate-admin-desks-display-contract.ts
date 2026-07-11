@@ -45,12 +45,7 @@ export const EW_E6_GATE_READ_ONLY_DESK_ROUTES = [
 ] as const;
 
 /** Write desks — confirm + reason dialogs allowed. */
-export const EW_E6_GATE_WRITE_DESK_ROUTES = [
-  '/promotions',
-  '/cms',
-  '/casino',
-  '/staking',
-] as const;
+export const EW_E6_GATE_WRITE_DESK_ROUTES = ['/promotions', '/cms', '/casino', '/staking'] as const;
 
 /** Surface files that must import + render AdminTable (§29.6). */
 export const EW_E6_GATE_ADMIN_TABLE_SURFACE_PATHS = [

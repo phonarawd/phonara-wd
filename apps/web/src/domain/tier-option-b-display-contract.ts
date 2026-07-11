@@ -28,7 +28,12 @@ export const PRIME_ELITE_TIER = 'prime_elite' as const;
 
 export const TIER_OPTION_B_ADMIN_ROUTES = ['/admin/tiers', '/admin/users/$userId/tier'] as const;
 
-export const TIER_OPTION_B_USER_ROUTES = ['/tier/me', '/tier/elite', '/sports/vip', '/fees'] as const;
+export const TIER_OPTION_B_USER_ROUTES = [
+  '/tier/me',
+  '/tier/elite',
+  '/sports/vip',
+  '/fees',
+] as const;
 
 export const TIER_OPTION_B_ARTIFACT_PATHS = [
   TIER_OPTION_B_ADR_PATH,

@@ -51,15 +51,8 @@ describe('ew-e22-sports-parity-display-contract (E22 WAVE)', () => {
       'sport_catalog',
     ]);
     expect([...EW_E22_EXISTS_FEATURES]).toEqual(['full_cashout']);
-    expect([...EW_E22_DEFERRED_FEATURES]).toEqual([
-      'bet_builder_correlated',
-      'vendor_feed_worker',
-    ]);
-    expect([...EW_E22_ODDS_ACCEPTANCE_POLICIES]).toEqual([
-      'strict',
-      'accept_any',
-      'accept_better',
-    ]);
+    expect([...EW_E22_DEFERRED_FEATURES]).toEqual(['bet_builder_correlated', 'vendor_feed_worker']);
+    expect([...EW_E22_ODDS_ACCEPTANCE_POLICIES]).toEqual(['strict', 'accept_any', 'accept_better']);
     expect(isEwE22SportsParityEngineReady()).toBe(true);
     expect(isEwE22FullCashoutUiWired()).toBe(true);
     expect(typeof isEwE22SportsParityLiveUnlocked()).toBe('boolean');
@@ -79,9 +72,7 @@ describe('ew-e22-sports-parity-display-contract (E22 WAVE)', () => {
     expect(adr).toContain('migration **0**');
     expect(adr).toContain('Bet builder');
 
-    const migration = readRepo(
-      'supabase/migrations/20260809000001_ew_e22_sports_parity.sql',
-    );
+    const migration = readRepo('supabase/migrations/20260809000001_ew_e22_sports_parity.sql');
     expect(migration).toContain(EW_E22_SPORTS_PARITY_MIGRATION_NAME);
     expect(migration).toContain(EW_E22_PARTIAL_CASHOUT_RPC);
     expect(migration).toContain(EW_E22_PARTIAL_PREVIEW_RPC);

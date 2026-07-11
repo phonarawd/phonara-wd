@@ -68,10 +68,10 @@
 
 ## 6. 팀 운영 (33차)
 
-| operator 일        | Admin route            | Phase                    |
-| ------------------ | ---------------------- | ------------------------ |
-| 직원 권한 주기     | `/admin/team`          | P13                      |
-| 직원 로그인 보안   | `/mfa/policy`          | P3                       |
+| operator 일        | Admin route                              | Phase                                            |
+| ------------------ | ---------------------------------------- | ------------------------------------------------ |
+| 직원 권한 주기     | `/admin/team`                            | P13                                              |
+| 직원 로그인 보안   | `/mfa/policy`                            | P3                                               |
 | 알림 받기 (휴대폰) | Web Push → 처리 대기함 (`/admin/queues`) | P13 `p13-admin-ops-push` · `/admin/settings` CTA |
 
 ---
@@ -81,38 +81,38 @@
 Plan §12.14 표의 Admin canonical route는 본 매트릭스·초등어 메뉴와 **1:1**.  
 코드 pin: `ADMIN_SECTION_12_14_CANONICAL_ROUTES`.
 
-| §12.14 route | 초등어 (§29.5) | §29.2 / 비고 |
-| ------------ | -------------- | ------------ |
-| `/admin` | 오늘 할 일 | P2 live |
-| `/admin/queues` | 처리 대기함 | P2 live |
-| `/admin/deposits` | 입금 확인 | P2 · E10 증빙 행 |
-| `/admin/withdrawals` | 출금 보내기 | P2 live |
-| `/admin/sports` | 스포츠 정산 | P2 live |
-| `/admin/users` | 회원 | P2 live |
-| `/admin/risk` | 이상 거래 | P2 live |
-| `/admin/earn/*` | 부업·추천 | P2 · activity=E6 |
-| `/admin/tiers` | 등급 현황 | P2 live |
-| `/admin/staking` | 맡기기(스테이킹) | P2 read |
-| `/admin/audit` | 처리 기록 | P2 · CSV=E6 |
-| `/admin/settings` | 설정 | P2 live |
-| `/admin/ops` | 시스템 상태 | P2 live |
-| `/admin/team` | 직원 권한 | **P13** `p13-prep-admin-team-desk` **`[x]`** |
-| `/admin/support` | 회원 문의 | **E9** `ew-e9-page-admin-support` **`[x]`** |
-| `/admin/earn/activity` | 회원 활동 보기 | **E6** |
+| §12.14 route           | 초등어 (§29.5)   | §29.2 / 비고                                 |
+| ---------------------- | ---------------- | -------------------------------------------- |
+| `/admin`               | 오늘 할 일       | P2 live                                      |
+| `/admin/queues`        | 처리 대기함      | P2 live                                      |
+| `/admin/deposits`      | 입금 확인        | P2 · E10 증빙 행                             |
+| `/admin/withdrawals`   | 출금 보내기      | P2 live                                      |
+| `/admin/sports`        | 스포츠 정산      | P2 live                                      |
+| `/admin/users`         | 회원             | P2 live                                      |
+| `/admin/risk`          | 이상 거래        | P2 live                                      |
+| `/admin/earn/*`        | 부업·추천        | P2 · activity=E6                             |
+| `/admin/tiers`         | 등급 현황        | P2 live                                      |
+| `/admin/staking`       | 맡기기(스테이킹) | P2 read                                      |
+| `/admin/audit`         | 처리 기록        | P2 · CSV=E6                                  |
+| `/admin/settings`      | 설정             | P2 live                                      |
+| `/admin/ops`           | 시스템 상태      | P2 live                                      |
+| `/admin/team`          | 직원 권한        | **P13** `p13-prep-admin-team-desk` **`[x]`** |
+| `/admin/support`       | 회원 문의        | **E9** `ew-e9-page-admin-support` **`[x]`**  |
+| `/admin/earn/activity` | 회원 활동 보기   | **E6**                                       |
 
 ---
 
 ## 8. 갭 추적 (Plan YAML)
 
-| Admin route                                          | 상태    | todo                                 |
-| ---------------------------------------------------- | ------- | ------------------------------------ |
-| `/admin/team`                                        | wired   | `p13-prep-admin-team-desk` **`[x]`** |
-| ops Web Push (settings CTA → `/queues`)              | wired   | `p13-admin-ops-push` **`[x]`**       |
-| `/admin/support`                                     | wired   | `ew-e9-page-admin-support` **`[x]`** |
-| `/admin/earn/activity`                               | planned | `ew-e6-page-admin-earn-activity`     |
-| `/admin/audit` CSV                                   | planned | `ew-e6-page-admin-audit-export`      |
+| Admin route                                          | 상태    | todo                                           |
+| ---------------------------------------------------- | ------- | ---------------------------------------------- |
+| `/admin/team`                                        | wired   | `p13-prep-admin-team-desk` **`[x]`**           |
+| ops Web Push (settings CTA → `/queues`)              | wired   | `p13-admin-ops-push` **`[x]`**                 |
+| `/admin/support`                                     | wired   | `ew-e9-page-admin-support` **`[x]`**           |
+| `/admin/earn/activity`                               | planned | `ew-e6-page-admin-earn-activity`               |
+| `/admin/audit` CSV                                   | planned | `ew-e6-page-admin-audit-export`                |
 | deposits 증빙                                        | wired   | `ew-e10-page-admin-krw-proof-review` **`[x]`** |
-| `/admin/promotions` · `/admin/cms` · `/admin/casino` | E-Wave  | `ew-e6-*`                            |
+| `/admin/promotions` · `/admin/cms` · `/admin/casino` | E-Wave  | `ew-e6-*`                                      |
 
 ---
 

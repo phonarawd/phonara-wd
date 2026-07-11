@@ -9,9 +9,7 @@ export const DA_W6_BRAND_ELEVATION_BUNDLE_TODO = 'da-w6-brand-elevation-bundle' 
 export const P10_OPERATOR_VISUAL_SIGNOFF_TODO = 'p10-operator-visual-signoff' as const;
 
 /** Prerequisite VISUAL must be agent-impl closed before this BUNDLE. */
-export const DA_W6_BRAND_ELEVATION_PREREQUISITE_TODOS = [
-  P10_OPERATOR_VISUAL_SIGNOFF_TODO,
-] as const;
+export const DA_W6_BRAND_ELEVATION_PREREQUISITE_TODOS = [P10_OPERATOR_VISUAL_SIGNOFF_TODO] as const;
 
 /** §34.18 BrandMark aurora — geometric recall + Quad Stream glow. */
 export const DA_W6_BRAND_MARK_AURORA_VARIANT = 'aurora' as const;
@@ -82,7 +80,9 @@ export const DA_W6_BRAND_ELEVATION_TEST_PATHS = [
 /** Non-waivable sync for DA W6 BUNDLE closeout. */
 export function assertDaW6BrandElevationSync(): void {
   if (!DA_W6_BRAND_ELEVATION_PREREQUISITE_TODOS.includes(P10_OPERATOR_VISUAL_SIGNOFF_TODO)) {
-    throw new Error('da-w6-brand-elevation-bundle: missing prerequisite p10-operator-visual-signoff');
+    throw new Error(
+      'da-w6-brand-elevation-bundle: missing prerequisite p10-operator-visual-signoff',
+    );
   }
 
   if (DA_W6_DOMAIN_EMPTY_DOMAINS.length !== 4) {

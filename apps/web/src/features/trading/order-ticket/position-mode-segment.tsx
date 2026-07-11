@@ -30,10 +30,7 @@ export function PositionModeSegment({
   }
 
   return (
-    <div
-      data-testid="hedge-position-mode-toggle"
-      className={className ?? 'flex flex-col gap-2'}
-    >
+    <div data-testid="hedge-position-mode-toggle" className={className ?? 'flex flex-col gap-2'}>
       <span className="text-foreground-muted flex items-center gap-1 text-xs">
         {t('trade.order.positionMode')}
         {showBeginnerHelp ? <TradeHelpTip termId="position_mode" className="text-xs" /> : null}

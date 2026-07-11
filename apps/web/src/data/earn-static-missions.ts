@@ -60,6 +60,14 @@ export const EARN_STATIC_MISSIONS: MissionItem[] = [
     status: 'todo',
     lane: 'growth',
   },
+  {
+    id: 'growth-appInstall',
+    titleKey: 'mission.growth.appInstall',
+    rewardLabel: '+50P',
+    progressLabel: '0 / 1',
+    status: 'todo',
+    lane: 'growth',
+  },
   // C ??viral (1 baseline + 4 preview = 5)
   {
     id: 'viral-invite1',

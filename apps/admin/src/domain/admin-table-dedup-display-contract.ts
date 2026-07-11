@@ -50,8 +50,7 @@ export const ADMIN_TABLE_DESK_SURFACE_PATHS = [
 ] as const;
 
 /** Import marker every desk list surface must contain. */
-export const ADMIN_TABLE_IMPORT_MARKER =
-  "from '@/product/primitives/admin-table'" as const;
+export const ADMIN_TABLE_IMPORT_MARKER = "from '@/product/primitives/admin-table'" as const;
 
 /** Forbidden local loading-table identifier (§29.6). */
 export const ADMIN_TABLE_FORBIDDEN_LOADING_TABLE = 'LoadingTable' as const;

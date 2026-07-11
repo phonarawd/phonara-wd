@@ -151,20 +151,20 @@ Interaction 표: [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md) §Interaction Gram
 
 ## 9. Wave ownership (구현은 후속 todo)
 
-| Wave   | Todo                                                                          | Scope                                                                       |
-| ------ | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| **W0** | `da-w0-foundation-ssot-bundle`                                                | 본 문서 · ADR-009 · UNIFIED/DESIGN sync (**DOC**)                           |
-| **W1** | `da-w1-ds-foundation-bundle` · `da-w1-gate-ds-2`                              | Text · elevation.css · Card CVA · spacing ratchet · GATE **`[x]`**          |
-| **W2** | `da-w2-shell-elevation-infra` · `da-w2-gate-shell-elevation`                  | Aurora · floating BottomNav · 12-col · Earn rails · GATE **`[x]`**          |
-| **W3** | `da-w3-ia-progressive-bundle` · `da-w3-gate-ia-progressive`                   | `/home` Fold1–5 · wallet-hero · trade ticket · GATE above-fold ≤3 **`[x]`** |
-| **W4** | `da-w4-motion-system-bundle` · `da-w4-gate-motion`                            | `useCountUp` · reduced-motion instant · motion-presets GATE **`[x]`**       |
-| **W5** | `da-w5-cards-domain-variants` **`[x]`** · `da-w5-gate-domain-cards` **`[x]`** | Domain card personalities CVA **`[x]`** · 0.2s scan GATE **`[x]`**          |
-| **W6** | `da-w6-brand-elevation-bundle` **`[x]`** · `da-w6-gate-brand-elevation` **`[x]`** | BrandMark aurora · domain empty · Quad Stream loading **`[x]`** · GATE **`[x]`** |
-| **W8** | `da-w8-signature-surfaces-bundle` **`[x]`**                                    | home greeting·day-flow · wallet living balance · trade heat · casino float · sports kickoff · VIP XP fill **`[x]`** |
-| **W8** | `da-w8-sound-design-spec-defer` **`[x]`**                                      | §34.27 mission·wallet·trade·vip 4톤 **DOC** · 구현=E-Wave · casino §23.8 제외 **`[x]`** |
-| **W8** | `da-w8-gate-signature-experience` **`[x]`**                                    | §34.2 Emotion Map spot-check · da-w8 bundle GATE · VISUAL: da-w8-signature advisory **`[x]`** |
-| **W7** | `da-w7-enforcement-strict-tokens` **`[x]`**                                   | `check:design-tokens --strict` · text-tiny · legacy purge **`[x]`**         |
-| **W7** | `da-w7-operator-visual-dae-signoff` agent impl **`[x]`**                        | Home+Shell+Trade · 390/768/1024/2560 · preview · axe 0 · operator `VISUAL APPROVED: da-w7` 대기 |
+| Wave   | Todo                                                                              | Scope                                                                                                               |
+| ------ | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **W0** | `da-w0-foundation-ssot-bundle`                                                    | 본 문서 · ADR-009 · UNIFIED/DESIGN sync (**DOC**)                                                                   |
+| **W1** | `da-w1-ds-foundation-bundle` · `da-w1-gate-ds-2`                                  | Text · elevation.css · Card CVA · spacing ratchet · GATE **`[x]`**                                                  |
+| **W2** | `da-w2-shell-elevation-infra` · `da-w2-gate-shell-elevation`                      | Aurora · floating BottomNav · 12-col · Earn rails · GATE **`[x]`**                                                  |
+| **W3** | `da-w3-ia-progressive-bundle` · `da-w3-gate-ia-progressive`                       | `/home` Fold1–5 · wallet-hero · trade ticket · GATE above-fold ≤3 **`[x]`**                                         |
+| **W4** | `da-w4-motion-system-bundle` · `da-w4-gate-motion`                                | `useCountUp` · reduced-motion instant · motion-presets GATE **`[x]`**                                               |
+| **W5** | `da-w5-cards-domain-variants` **`[x]`** · `da-w5-gate-domain-cards` **`[x]`**     | Domain card personalities CVA **`[x]`** · 0.2s scan GATE **`[x]`**                                                  |
+| **W6** | `da-w6-brand-elevation-bundle` **`[x]`** · `da-w6-gate-brand-elevation` **`[x]`** | BrandMark aurora · domain empty · Quad Stream loading **`[x]`** · GATE **`[x]`**                                    |
+| **W8** | `da-w8-signature-surfaces-bundle` **`[x]`**                                       | home greeting·day-flow · wallet living balance · trade heat · casino float · sports kickoff · VIP XP fill **`[x]`** |
+| **W8** | `da-w8-sound-design-spec-defer` **`[x]`**                                         | §34.27 mission·wallet·trade·vip 4톤 **DOC** · 구현=E-Wave · casino §23.8 제외 **`[x]`**                             |
+| **W8** | `da-w8-gate-signature-experience` **`[x]`**                                       | §34.2 Emotion Map spot-check · da-w8 bundle GATE · VISUAL: da-w8-signature advisory **`[x]`**                       |
+| **W7** | `da-w7-enforcement-strict-tokens` **`[x]`**                                       | `check:design-tokens --strict` · text-tiny · legacy purge **`[x]`**                                                 |
+| **W7** | `da-w7-operator-visual-dae-signoff` agent impl **`[x]`**                          | Home+Shell+Trade · 390/768/1024/2560 · preview · axe 0 · operator `VISUAL APPROVED: da-w7` 대기                     |
 
 ---
 
@@ -189,4 +189,4 @@ Interaction 표: [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md) §Interaction Gram
 | Domain UX           | `*_UX_CANON.md` · [`SURFACE_BLUEPRINTS.md`](SURFACE_BLUEPRINTS.md)                  |
 | Copy                | [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md)                                      |
 | ADR                 | [`009-digital-aurora-brand-dna.md`](../PRODUCT/ADR/009-digital-aurora-brand-dna.md) |
-| Sound (§34.27 DOC)  | [`SOUND_DESIGN_CANON.md`](SOUND_DESIGN_CANON.md) · E-Wave wire                     |
+| Sound (§34.27 DOC)  | [`SOUND_DESIGN_CANON.md`](SOUND_DESIGN_CANON.md) · E-Wave wire                      |

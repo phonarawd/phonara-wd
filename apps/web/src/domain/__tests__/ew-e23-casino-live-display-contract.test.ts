@@ -37,9 +37,7 @@ describe('ew-e23-casino-live-display-contract (E23 WAVE)', () => {
   it('pins WAVE todo ids · NEW vs EXISTS · engine ready · UI gated', () => {
     assertEwE23CasinoLiveWaveSync();
     expect(EW_E23_CASINO_LIVE_TODO).toBe('ew-e23-casino-live-wave');
-    expect(EW_E23_CASINO_LIVE_PREREQUISITE_TODO).toBe(
-      'ew-e22-ui-sports-parity-unlocks',
-    );
+    expect(EW_E23_CASINO_LIVE_PREREQUISITE_TODO).toBe('ew-e22-ui-sports-parity-unlocks');
     expect(EW_E23_CASINO_LIVE_NEXT_TODO).toBe('ew-e23-gate-casino-live');
     expect(EW_E23_CASINO_LIVE_MIGRATION_IN_THIS_TODO).toBe(true);
     expect(EW_E23_ONE_SHOT_SEMANTICS_PRESERVED).toBe(true);
@@ -52,11 +50,7 @@ describe('ew-e23-casino-live-display-contract (E23 WAVE)', () => {
     ]);
     expect([...EW_E23_EXISTS_FEATURES]).toEqual(['one_shot_atomic_settle']);
     expect([...EW_E23_DEFERRED_FEATURES]).toEqual(['server_autobet']);
-    expect([...EW_E23_PROGRESSIVE_GAMES]).toEqual([
-      'mines',
-      'hilo',
-      'blackjack',
-    ]);
+    expect([...EW_E23_PROGRESSIVE_GAMES]).toEqual(['mines', 'hilo', 'blackjack']);
     expect(isEwE23CasinoLiveEngineReady()).toBe(true);
     // UI unlock owns casinoLiveLive — WAVE sync no longer forbids true.
     expect(typeof isEwE23CasinoLiveUiUnlocked()).toBe('boolean');
@@ -76,9 +70,7 @@ describe('ew-e23-casino-live-display-contract (E23 WAVE)', () => {
     expect(adr).toContain('autobet');
     expect(adr).toContain('Σ=0');
 
-    const sql = readRepo(
-      'supabase/migrations/20260810000001_ew_e23_casino_live.sql',
-    );
+    const sql = readRepo('supabase/migrations/20260810000001_ew_e23_casino_live.sql');
     expect(sql).toContain(EW_E23_CASINO_LIVE_MIGRATION_NAME);
     expect(sql).toContain('p_use_account_pf');
     expect(sql).toContain('rpc_progressive_start');

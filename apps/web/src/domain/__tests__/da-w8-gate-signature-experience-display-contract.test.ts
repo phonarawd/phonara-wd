@@ -69,9 +69,7 @@ describe('da-w8-gate-signature-experience-display-contract §34.2·§34.21–34.
     expect(DA_W8_GATE_EMOTION_MAP_FORBIDDEN.wallet).toContain('fake_urgency_on_withdraw');
     expect(DA_W8_GATE_EMOTION_MAP_FORBIDDEN.trade).toContain('casino_style_flash');
     expect(DA_W8_GATE_EMOTION_MAP_FORBIDDEN.sports).toContain('guaranteed_win');
-    expect(DA_W8_GATE_EMOTION_MAP_FORBIDDEN.casino).toContain(
-      'infinite_decorative_on_bet_submit',
-    );
+    expect(DA_W8_GATE_EMOTION_MAP_FORBIDDEN.casino).toContain('infinite_decorative_on_bet_submit');
   });
 
   it('lists VISUAL: da-w8-signature advisory checklist', () => {

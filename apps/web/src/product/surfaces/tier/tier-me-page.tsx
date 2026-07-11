@@ -200,9 +200,7 @@ export function TierMePage() {
                   {t('tier.me.decay.banner', {
                     tier: t(`earn.tier.${tierProgress.tier}`),
                     lower: t(decayPanel.lowerTierLabelKey),
-                    days:
-                      decayPanel.daysLeft ??
-                      decayPanel.maintenanceWindowDays,
+                    days: decayPanel.daysLeft ?? decayPanel.maintenanceWindowDays,
                   })}
                 </p>
               ) : null}

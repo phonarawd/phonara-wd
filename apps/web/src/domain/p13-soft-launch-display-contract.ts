@@ -35,8 +35,7 @@ export const P13_SOFT_LAUNCH_CHECKLIST_SECTIONS = [
   'code_diff_zero',
 ] as const;
 
-export type P13SoftLaunchChecklistSection =
-  (typeof P13_SOFT_LAUNCH_CHECKLIST_SECTIONS)[number];
+export type P13SoftLaunchChecklistSection = (typeof P13_SOFT_LAUNCH_CHECKLIST_SECTIONS)[number];
 
 /** Locales required for Soft Launch QA (check:i18n · English mode no Korean). */
 export const P13_SOFT_LAUNCH_LOCALES = ['ko', 'en'] as const;
@@ -159,11 +158,9 @@ export const P13_SOFT_LAUNCH_PRIOR_VISUAL_TODOS = [
   'p10-operator-visual-signoff',
 ] as const;
 
-export const P13_SOFT_LAUNCH_CANON_PATH =
-  'docs/OPERATIONS/P13_SOFT_LAUNCH_BUNDLE.md' as const;
+export const P13_SOFT_LAUNCH_CANON_PATH = 'docs/OPERATIONS/P13_SOFT_LAUNCH_BUNDLE.md' as const;
 
-export const P13_SOFT_LAUNCH_CB_MATRIX_PATH =
-  'docs/ENGINE_CLOSED_BETA_SCENARIO_MATRIX.md' as const;
+export const P13_SOFT_LAUNCH_CB_MATRIX_PATH = 'docs/ENGINE_CLOSED_BETA_SCENARIO_MATRIX.md' as const;
 
 export const P13_SOFT_LAUNCH_ARTIFACT_PATHS = [
   P13_SOFT_LAUNCH_CANON_PATH,

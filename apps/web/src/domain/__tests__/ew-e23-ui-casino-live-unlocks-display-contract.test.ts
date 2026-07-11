@@ -35,12 +35,7 @@ describe('ew-e23-ui-casino-live-unlocks-display-contract (E23 UI)', () => {
     expect(EW_E23_UI_CASINO_LIVE_UNLOCKS_TODO).toBe('ew-e23-ui-casino-live-unlocks');
     expect(EW_E23_UI_CASINO_LIVE_UNLOCKS_PREREQUISITE_TODO).toBe('ew-e23-gate-casino-live');
     expect(EW_E23_UI_CASINO_LIVE_UNLOCKS_NEXT_TODO).toBe('ew-e8-financial-wave');
-    expect([...EW_E23_UI_LIVE_PLAY_GAMES]).toEqual([
-      'crash',
-      'mines',
-      'hilo',
-      'blackjack',
-    ]);
+    expect([...EW_E23_UI_LIVE_PLAY_GAMES]).toEqual(['crash', 'mines', 'hilo', 'blackjack']);
     expect(isEwE23UiLivePlayGame('crash')).toBe(true);
     expect(isEwE23UiLivePlayGame('dice')).toBe(false);
     expect(() => assertEwE23UiCasinoLiveUnlocksSync()).not.toThrow();

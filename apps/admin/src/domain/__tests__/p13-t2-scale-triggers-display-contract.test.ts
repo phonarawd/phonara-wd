@@ -108,10 +108,7 @@ describe('p13-t2-scale-triggers-display-contract · YAML #238 T2', () => {
     expect(canon).toContain('B-book');
     expect(canon).toContain('코드 diff 0');
 
-    const spotcheck = readFileSync(
-      resolve(REPO_ROOT, P13_T2_SCALE_SPOTCHECK_PATH),
-      'utf8',
-    );
+    const spotcheck = readFileSync(resolve(REPO_ROOT, P13_T2_SCALE_SPOTCHECK_PATH), 'utf8');
     expect(spotcheck).toContain('DAU');
     expect(spotcheck).toContain('max_open_interest');
     expect(spotcheck).toContain('ROLLBACK');

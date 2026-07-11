@@ -87,7 +87,10 @@ export function useAdminUsersDesk() {
     queryFn: async () => {
       const { data, error } = await (
         supabase as {
-          rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
+          rpc: (
+            fn: string,
+            args: Record<string, unknown>,
+          ) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
         }
       ).rpc('rpc_admin_list_users', { p_search: null, p_limit: 200 });
       if (error) throw error;
@@ -157,7 +160,10 @@ export function useAdminUsersDesk() {
       }
       const { error } = await (
         supabase as {
-          rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
+          rpc: (
+            fn: string,
+            args: Record<string, unknown>,
+          ) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
         }
       ).rpc('rpc_admin_set_user_activity', { p_user_id: id, p_action: action, p_reason: reason });
       if (error) throw error;
@@ -173,7 +179,10 @@ export function useAdminUsersDesk() {
       }
       const { error } = await (
         supabase as {
-          rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
+          rpc: (
+            fn: string,
+            args: Record<string, unknown>,
+          ) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
         }
       ).rpc('rpc_admin_manual_wallet_adjust', {
         p_user_id: id,
@@ -196,7 +205,10 @@ export function useAdminUsersDesk() {
       }
       const { error } = await (
         supabase as {
-          rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
+          rpc: (
+            fn: string,
+            args: Record<string, unknown>,
+          ) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
         }
       ).rpc('rpc_admin_release_self_exclusion', { p_exclusion_id: exclusionId, p_reason: reason });
       if (error) throw error;

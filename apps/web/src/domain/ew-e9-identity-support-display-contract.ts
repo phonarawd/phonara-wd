@@ -15,33 +15,22 @@ export const EW_E9_IDENTITY_NEXT_TODO = 'ew-e9-gate-identity-support' as const;
 export const EW_E9_IDENTITY_ADR_PATH =
   'docs/PRODUCT/ADR/019-identity-support-analytics.md' as const;
 export const EW_E9_IDENTITY_MIGRATION_NAME = 'ew_e9_identity_support' as const;
-export const EW_E9_APP_INSTALL_ENUM_MIGRATION_NAME =
-  'ew_e9_app_install_enum' as const;
+export const EW_E9_APP_INSTALL_ENUM_MIGRATION_NAME = 'ew_e9_app_install_enum' as const;
 
-export const EW_E9_CREATE_SIWE_CHALLENGE_RPC =
-  'rpc_create_siwe_challenge' as const;
-export const EW_E9_SERVICE_COMPLETE_SIWE_RPC =
-  'rpc_service_complete_siwe_login' as const;
-export const EW_E9_LIST_WALLET_IDENTITIES_RPC =
-  'rpc_list_wallet_identities' as const;
+export const EW_E9_CREATE_SIWE_CHALLENGE_RPC = 'rpc_create_siwe_challenge' as const;
+export const EW_E9_SERVICE_COMPLETE_SIWE_RPC = 'rpc_service_complete_siwe_login' as const;
+export const EW_E9_LIST_WALLET_IDENTITIES_RPC = 'rpc_list_wallet_identities' as const;
 
-export const EW_E9_CREATE_SUPPORT_TICKET_RPC =
-  'rpc_create_support_ticket' as const;
-export const EW_E9_LIST_SUPPORT_TICKETS_RPC =
-  'rpc_list_support_tickets' as const;
+export const EW_E9_CREATE_SUPPORT_TICKET_RPC = 'rpc_create_support_ticket' as const;
+export const EW_E9_LIST_SUPPORT_TICKETS_RPC = 'rpc_list_support_tickets' as const;
 export const EW_E9_GET_SUPPORT_TICKET_RPC = 'rpc_get_support_ticket' as const;
-export const EW_E9_ADMIN_LIST_SUPPORT_TICKETS_RPC =
-  'rpc_admin_list_support_tickets' as const;
-export const EW_E9_ADMIN_RESOLVE_SUPPORT_TICKET_RPC =
-  'rpc_admin_resolve_support_ticket' as const;
+export const EW_E9_ADMIN_LIST_SUPPORT_TICKETS_RPC = 'rpc_admin_list_support_tickets' as const;
+export const EW_E9_ADMIN_RESOLVE_SUPPORT_TICKET_RPC = 'rpc_admin_resolve_support_ticket' as const;
 
-export const EW_E9_RECORD_ANALYTICS_RPC =
-  'rpc_record_product_analytics_event' as const;
-export const EW_E9_ADMIN_PRODUCT_ANALYTICS_RPC =
-  'rpc_admin_get_product_analytics' as const;
+export const EW_E9_RECORD_ANALYTICS_RPC = 'rpc_record_product_analytics_event' as const;
+export const EW_E9_ADMIN_PRODUCT_ANALYTICS_RPC = 'rpc_admin_get_product_analytics' as const;
 
-export const EW_E9_RECORD_APP_INSTALL_RPC =
-  'rpc_record_app_install_attribution' as const;
+export const EW_E9_RECORD_APP_INSTALL_RPC = 'rpc_record_app_install_attribution' as const;
 export const EW_E9_TIER_LEADERBOARD_RPC = 'rpc_get_tier_leaderboard' as const;
 
 export const EW_E9_SIWE_EDGE_FUNCTION = 'siwe-auth' as const;
@@ -130,16 +119,9 @@ export function assertEwE9IdentityWaveSync(): void {
   if (!isEwE9IdentityEngineReady()) {
     throw new Error('E9 engine RPCs / launch gate not ready');
   }
+  // Hub live flags (`supportTicketsLive` · `tierLeaderboardLive` · `appInstallMissionLive`)
+  // owned by E10 UI todos — WAVE readiness does not require them false after UI unlock.
   if (LAUNCH_GATES.siweLoginLive !== false) {
     throw new Error('E9 WAVE must keep siweLoginLive=false');
-  }
-  if (LAUNCH_GATES.supportTicketsLive !== false) {
-    throw new Error('E9 WAVE must keep supportTicketsLive=false');
-  }
-  if (LAUNCH_GATES.tierLeaderboardLive !== false) {
-    throw new Error('E9 WAVE must keep tierLeaderboardLive=false');
-  }
-  if (LAUNCH_GATES.appInstallMissionLive !== false) {
-    throw new Error('E9 WAVE must keep appInstallMissionLive=false');
   }
 }

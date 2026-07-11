@@ -8,23 +8,23 @@
 
 ## 범위
 
-| 항목 | 내용 |
-| ---- | ---- |
-| SQL | `ew_e1_tier_decay_test.sql` E1-0..E1-4 · VIP 메타만 (Σ=0 영향 0) · **CI sql authoritative** (G13) |
-| Remote | `stack:push-remote` · migration name `ew_e1_tier_decay` already applied |
-| Advisor | security advisor **0 ERROR** |
-| Unlock | `/tier/me` full — `rpc_get_tier_decay_status` · countdown · maintenance · `tierDecayEngine` · keep claim live |
+| 항목    | 내용                                                                                                          |
+| ------- | ------------------------------------------------------------------------------------------------------------- |
+| SQL     | `ew_e1_tier_decay_test.sql` E1-0..E1-4 · VIP 메타만 (Σ=0 영향 0) · **CI sql authoritative** (G13)             |
+| Remote  | `stack:push-remote` · migration name `ew_e1_tier_decay` already applied                                       |
+| Advisor | security advisor **0 ERROR**                                                                                  |
+| Unlock  | `/tier/me` full — `rpc_get_tier_decay_status` · countdown · maintenance · `tierDecayEngine` · keep claim live |
 
 ## 증거
 
-| Gate | 결과 |
-| ---- | ---- |
-| vitest E1 GATE + tier-me + settings unlock | **32/32** |
-| typecheck | green |
-| check:i18n | green |
-| Remote migration | `ew_e1_tier_decay` (tail `20260711132456`) |
-| Advisor | **0 ERROR** (`stack:push-remote`) |
-| Unlock | `isTierMeDecayFullUnlocked() = true` |
+| Gate                                       | 결과                                       |
+| ------------------------------------------ | ------------------------------------------ |
+| vitest E1 GATE + tier-me + settings unlock | **32/32**                                  |
+| typecheck                                  | green                                      |
+| check:i18n                                 | green                                      |
+| Remote migration                           | `ew_e1_tier_decay` (tail `20260711132456`) |
+| Advisor                                    | **0 ERROR** (`stack:push-remote`)          |
+| Unlock                                     | `isTierMeDecayFullUnlocked() = true`       |
 
 ## 다음
 

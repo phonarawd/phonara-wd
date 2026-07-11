@@ -30,8 +30,7 @@ export const EW_E9_GATE_IDENTITY_TODO = 'ew-e9-gate-identity-support' as const;
 export const EW_E9_GATE_IDENTITY_PREREQUISITE_TODO = EW_E9_IDENTITY_TODO;
 export const EW_E9_GATE_IDENTITY_NEXT_TODO = 'ew-e9-page-admin-support' as const;
 
-export const EW_E9_GATE_IDENTITY_REMOTE_MIGRATION_NAME =
-  EW_E9_IDENTITY_MIGRATION_NAME;
+export const EW_E9_GATE_IDENTITY_REMOTE_MIGRATION_NAME = EW_E9_IDENTITY_MIGRATION_NAME;
 export const EW_E9_GATE_APP_INSTALL_ENUM_REMOTE_MIGRATION_NAME =
   EW_E9_APP_INSTALL_ENUM_MIGRATION_NAME;
 
@@ -41,8 +40,7 @@ export const EW_E9_GATE_IDENTITY_SQL_TEST =
 /** Filled after `stack:push-remote` — remote version timestamp ≠ local prefix OK. */
 export const EW_E9_GATE_APP_INSTALL_ENUM_REMOTE_TAIL =
   '20260711194352_ew_e9_app_install_enum' as const;
-export const EW_E9_GATE_IDENTITY_REMOTE_TAIL =
-  '20260711194354_ew_e9_identity_support' as const;
+export const EW_E9_GATE_IDENTITY_REMOTE_TAIL = '20260711194354_ew_e9_identity_support' as const;
 
 /**
  * Hub / login / ticket / LB IA — GATE keeps built_hidden; Admin/E10 flips live.
@@ -56,20 +54,13 @@ export function resolveEwE9GateUiUnlockWireStatus(): {
 } {
   return {
     siwe_login_surface: LAUNCH_GATES.siweLoginLive ? 'live' : 'built_hidden',
-    support_ticket_hub: LAUNCH_GATES.supportTicketsLive
-      ? 'live'
-      : 'built_hidden',
-    tier_leaderboard_hub: LAUNCH_GATES.tierLeaderboardLive
-      ? 'live'
-      : 'built_hidden',
-    app_install_mission_tab: LAUNCH_GATES.appInstallMissionLive
-      ? 'live'
-      : 'built_hidden',
+    support_ticket_hub: LAUNCH_GATES.supportTicketsLive ? 'live' : 'built_hidden',
+    tier_leaderboard_hub: LAUNCH_GATES.tierLeaderboardLive ? 'live' : 'built_hidden',
+    app_install_mission_tab: LAUNCH_GATES.appInstallMissionLive ? 'live' : 'built_hidden',
   };
 }
 
-export const EW_E9_GATE_UI_UNLOCK_WIRE_STATUS =
-  resolveEwE9GateUiUnlockWireStatus();
+export const EW_E9_GATE_UI_UNLOCK_WIRE_STATUS = resolveEwE9GateUiUnlockWireStatus();
 
 export type EwE9GateUiUnlockWireKey = keyof typeof EW_E9_GATE_UI_UNLOCK_WIRE_STATUS;
 
@@ -101,9 +92,7 @@ export function isSiweWalletLoginEnginePathReady(): boolean {
   return (
     EW_E9_CREATE_SIWE_CHALLENGE_RPC === 'rpc_create_siwe_challenge' &&
     EW_E9_SIWE_EDGE_FUNCTION === 'siwe-auth' &&
-    (EW_E9_NEW_ENGINE_FEATURES as readonly string[]).includes(
-      'siwe_wallet_login',
-    ) &&
+    (EW_E9_NEW_ENGINE_FEATURES as readonly string[]).includes('siwe_wallet_login') &&
     isEwE9UiPathAuthorized(EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.siwe_login_surface) &&
     LAUNCH_GATES.identitySupportEngine === true
   );
@@ -113,9 +102,7 @@ export function isSiweWalletLoginEnginePathReady(): boolean {
 export function isSupportTicketsEnginePathReady(): boolean {
   return (
     EW_E9_CREATE_SUPPORT_TICKET_RPC === 'rpc_create_support_ticket' &&
-    (EW_E9_NEW_ENGINE_FEATURES as readonly string[]).includes(
-      'support_tickets',
-    ) &&
+    (EW_E9_NEW_ENGINE_FEATURES as readonly string[]).includes('support_tickets') &&
     isEwE9UiPathAuthorized(EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.support_ticket_hub) &&
     LAUNCH_GATES.identitySupportEngine === true
   );
@@ -125,9 +112,7 @@ export function isSupportTicketsEnginePathReady(): boolean {
 export function isProductAnalyticsEnginePathReady(): boolean {
   return (
     EW_E9_RECORD_ANALYTICS_RPC === 'rpc_record_product_analytics_event' &&
-    (EW_E9_NEW_ENGINE_FEATURES as readonly string[]).includes(
-      'product_analytics_events',
-    ) &&
+    (EW_E9_NEW_ENGINE_FEATURES as readonly string[]).includes('product_analytics_events') &&
     LAUNCH_GATES.identitySupportEngine === true
   );
 }
@@ -136,12 +121,8 @@ export function isProductAnalyticsEnginePathReady(): boolean {
 export function isAppInstallMissionEnginePathReady(): boolean {
   return (
     EW_E9_RECORD_APP_INSTALL_RPC === 'rpc_record_app_install_attribution' &&
-    (EW_E9_NEW_ENGINE_FEATURES as readonly string[]).includes(
-      'app_install_mission',
-    ) &&
-    isEwE9UiPathAuthorized(
-      EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.app_install_mission_tab,
-    ) &&
+    (EW_E9_NEW_ENGINE_FEATURES as readonly string[]).includes('app_install_mission') &&
+    isEwE9UiPathAuthorized(EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.app_install_mission_tab) &&
     LAUNCH_GATES.identitySupportEngine === true
   );
 }
@@ -150,12 +131,8 @@ export function isAppInstallMissionEnginePathReady(): boolean {
 export function isTierLeaderboardEnginePathReady(): boolean {
   return (
     EW_E9_TIER_LEADERBOARD_RPC === 'rpc_get_tier_leaderboard' &&
-    (EW_E9_NEW_ENGINE_FEATURES as readonly string[]).includes(
-      'tier_leaderboard',
-    ) &&
-    isEwE9UiPathAuthorized(
-      EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.tier_leaderboard_hub,
-    ) &&
+    (EW_E9_NEW_ENGINE_FEATURES as readonly string[]).includes('tier_leaderboard') &&
+    isEwE9UiPathAuthorized(EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.tier_leaderboard_hub) &&
     LAUNCH_GATES.identitySupportEngine === true
   );
 }
@@ -178,9 +155,6 @@ export function isEwE9IdentityGateReady(): boolean {
   return (
     LAUNCH_GATES.identitySupportEngine === true &&
     LAUNCH_GATES.siweLoginLive === false &&
-    LAUNCH_GATES.supportTicketsLive === false &&
-    LAUNCH_GATES.tierLeaderboardLive === false &&
-    LAUNCH_GATES.appInstallMissionLive === false &&
     isEwE9IdentityEngineReady() &&
     isExistsIdentityGrowthPinned() &&
     isSiweWalletLoginEnginePathReady() &&
@@ -209,10 +183,7 @@ export function assertEwE9GateIdentitySync(): void {
   if (EW_E9_GATE_IDENTITY_REMOTE_MIGRATION_NAME !== 'ew_e9_identity_support') {
     throw new Error('E9 GATE remote migration name drift');
   }
-  if (
-    EW_E9_GATE_APP_INSTALL_ENUM_REMOTE_MIGRATION_NAME !==
-    'ew_e9_app_install_enum'
-  ) {
+  if (EW_E9_GATE_APP_INSTALL_ENUM_REMOTE_MIGRATION_NAME !== 'ew_e9_app_install_enum') {
     throw new Error('E9 GATE app_install enum migration name drift');
   }
   if (EW_E9_NEW_ENGINE_FEATURES.length !== 5) {

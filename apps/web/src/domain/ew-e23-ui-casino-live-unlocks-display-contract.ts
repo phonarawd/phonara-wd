@@ -32,17 +32,11 @@ import {
 } from './ew-e23-casino-live-display-contract';
 
 export const EW_E23_UI_CASINO_LIVE_UNLOCKS_TODO = 'ew-e23-ui-casino-live-unlocks' as const;
-export const EW_E23_UI_CASINO_LIVE_UNLOCKS_PREREQUISITE_TODO =
-  EW_E23_GATE_CASINO_LIVE_TODO;
+export const EW_E23_UI_CASINO_LIVE_UNLOCKS_PREREQUISITE_TODO = EW_E23_GATE_CASINO_LIVE_TODO;
 export const EW_E23_UI_CASINO_LIVE_UNLOCKS_NEXT_TODO = 'ew-e8-financial-wave' as const;
 
 /** Games that unlock progressive / live mid-round controls. */
-export const EW_E23_UI_LIVE_PLAY_GAMES = [
-  'crash',
-  'mines',
-  'hilo',
-  'blackjack',
-] as const;
+export const EW_E23_UI_LIVE_PLAY_GAMES = ['crash', 'mines', 'hilo', 'blackjack'] as const;
 
 export type EwE23UiLivePlayGame = (typeof EW_E23_UI_LIVE_PLAY_GAMES)[number];
 

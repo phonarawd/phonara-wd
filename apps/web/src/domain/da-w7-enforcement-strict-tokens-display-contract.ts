@@ -77,7 +77,9 @@ export const DA_W7_FORBIDDEN_LEGACY_BRIDGES = [
 /** Non-waivable sync for DA W7 GATE closeout. */
 export function assertDaW7EnforcementStrictTokensSync(): void {
   if (!DA_W7_ENFORCEMENT_PREREQUISITE_TODOS.includes('da-w6-gate-brand-elevation')) {
-    throw new Error('da-w7-enforcement-strict-tokens: missing prerequisite da-w6-gate-brand-elevation');
+    throw new Error(
+      'da-w7-enforcement-strict-tokens: missing prerequisite da-w6-gate-brand-elevation',
+    );
   }
 
   if (DA_W7_ENFORCEMENT_STRICT_TOKENS_TODO !== 'da-w7-enforcement-strict-tokens') {

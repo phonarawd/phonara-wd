@@ -29,6 +29,11 @@ import {
   SYSTEM_STATUS_UI_UNLOCK_TODO,
 } from './system-status-display-contract';
 import { TIER_KEEP_STATUS_RPC, TIER_KEEP_STATUS_UI_ID } from './tier-me-display-contract';
+import {
+  TIER_LEADERBOARD_ENGINE_TODO,
+  TIER_LEADERBOARD_ROUTE,
+  TIER_LEADERBOARD_UI_UNLOCK_TODO,
+} from './tier-leaderboard-display-contract';
 
 export const PQA_FIX_DEAD_CONTROLS_TODO = 'pqa-fix-dead-controls' as const;
 
@@ -124,20 +129,26 @@ export const PQA_DEAD_CONTROL_DEFER_REGISTRY: readonly DeadControlDeferRow[] = [
   {
     id: 'support-ticket-stub',
     route: SUPPORT_TICKET_ROUTE,
-    mitigatedBy: 'defer_stub',
-    disabledReasonKey: SUPPORT_TICKET_DEFER_REASON_KEY,
+    mitigatedBy: 'live',
     engineTodo: SUPPORT_TICKET_ENGINE_TODO,
     uiUnlockTodo: SUPPORT_TICKET_UI_UNLOCK_TODO,
-    note: 'Support tickets E9 engine ready — IA built_hidden · direct URL defer stub until admin/E10 UI unlock',
+    note: 'E10 ew-e10-trust-support-ui — rpc_create_support_ticket · rpc_list_support_tickets live intake',
   },
   {
     id: 'system-status-stub',
     route: SYSTEM_STATUS_ROUTE,
-    mitigatedBy: 'defer_stub',
-    disabledReasonKey: SYSTEM_STATUS_DEFER_REASON_KEY,
+    mitigatedBy: 'live',
     engineTodo: SYSTEM_STATUS_ENGINE_TODO,
     uiUnlockTodo: SYSTEM_STATUS_UI_UNLOCK_TODO,
-    note: 'Public /status ENGINE:gap — IA built_hidden · direct URL defer stub until E10',
+    note: 'E10 ew-e10-trust-support-ui — public /status presentation lanes + announcements CTA',
+  },
+  {
+    id: 'tier-leaderboard-stub',
+    route: TIER_LEADERBOARD_ROUTE,
+    mitigatedBy: 'live',
+    engineTodo: TIER_LEADERBOARD_ENGINE_TODO,
+    uiUnlockTodo: TIER_LEADERBOARD_UI_UNLOCK_TODO,
+    note: 'E10 ew-e10-trust-support-ui — rpc_get_tier_leaderboard live XP rank list (masked names only)',
   },
   {
     id: 'tier-keep-status-claim-blocked',

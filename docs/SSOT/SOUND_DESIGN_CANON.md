@@ -15,11 +15,11 @@
 
 ## 1. 범위 (과하지 묶음 · non-waivable)
 
-| 포함 (4종) | 제외 |
-| ---------- | ---- |
-| **mission** · **wallet** · **trade** · **vip** | Casino win cue (§23.8 이미 존재) |
-| 톤 성격 · 트리거 · 길이 · opt-in · a11y | Sports kickoff SFX · lobby BGM · haptic |
-| E-Wave 구현 체크리스트 | Track A UI wire · 신규 npm audio lib |
+| 포함 (4종)                                     | 제외                                    |
+| ---------------------------------------------- | --------------------------------------- |
+| **mission** · **wallet** · **trade** · **vip** | Casino win cue (§23.8 이미 존재)        |
+| 톤 성격 · 트리거 · 길이 · opt-in · a11y        | Sports kickoff SFX · lobby BGM · haptic |
+| E-Wave 구현 체크리스트                         | Track A UI wire · 신규 npm audio lib    |
 
 **FAIL:** Track A에서 4종 AudioContext wire · casino와 동일 파일에 4종 합치기 · loop BGM · L2 submit 중 decorative SFX.
 
@@ -27,26 +27,26 @@
 
 ## 2. 글로벌 규칙
 
-| 규칙 | 정본 |
-| ---- | ---- |
-| **기본값** | **off** (opt-in) — casino `settings.casino.soundEffects`와 동일 철학 |
-| **prefers-reduced-motion** | reduce → **전부 off** |
-| **AudioContext** | 단일 lazy · 첫 user gesture 후 · E-Wave에서 casino 패턴 재사용 가능 |
-| **길이** | cue ≤ **220ms** · loop **0** · 동시 재생 ≤1 |
-| **볼륨** | gain ≤ **0.05** (whisper) — 거래소/지갑 방해 금지 |
-| **L2 Financial** | withdraw · bet · order **submit 순간** = SFX **금지** (결과 toast/confirm 후만 허용) |
-| **Money** | SFX는 금액·odds·payout을 **재계산하지 않음** — RPC 표시만 |
-| **dep** | Web Audio API only · Howler/Tone.js 등 **ADR 없이 금지** (§34.30) |
+| 규칙                       | 정본                                                                                 |
+| -------------------------- | ------------------------------------------------------------------------------------ |
+| **기본값**                 | **off** (opt-in) — casino `settings.casino.soundEffects`와 동일 철학                 |
+| **prefers-reduced-motion** | reduce → **전부 off**                                                                |
+| **AudioContext**           | 단일 lazy · 첫 user gesture 후 · E-Wave에서 casino 패턴 재사용 가능                  |
+| **길이**                   | cue ≤ **220ms** · loop **0** · 동시 재생 ≤1                                          |
+| **볼륨**                   | gain ≤ **0.05** (whisper) — 거래소/지갑 방해 금지                                    |
+| **L2 Financial**           | withdraw · bet · order **submit 순간** = SFX **금지** (결과 toast/confirm 후만 허용) |
+| **Money**                  | SFX는 금액·odds·payout을 **재계산하지 않음** — RPC 표시만                            |
+| **dep**                    | Web Audio API only · Howler/Tone.js 등 **ADR 없이 금지** (§34.30)                    |
 
 설정 키 (E-Wave 예약 · Track A 미도입):
 
-| Tone | Pref key (예약) |
-| ---- | --------------- |
-| mission | `phonara.settings.sound.mission` |
-| wallet | `phonara.settings.sound.wallet` |
-| trade | `phonara.settings.sound.trade` |
-| vip | `phonara.settings.sound.vip` |
-| master | `phonara.settings.sound.enabled` (마스터 off면 4종 전부 mute) |
+| Tone    | Pref key (예약)                                               |
+| ------- | ------------------------------------------------------------- |
+| mission | `phonara.settings.sound.mission`                              |
+| wallet  | `phonara.settings.sound.wallet`                               |
+| trade   | `phonara.settings.sound.trade`                                |
+| vip     | `phonara.settings.sound.vip`                                  |
+| master  | `phonara.settings.sound.enabled` (마스터 off면 4종 전부 mute) |
 
 ---
 
@@ -54,19 +54,19 @@
 
 Emotion Map ([`PRODUCT_EXPERIENCE_CANON`](PRODUCT_EXPERIENCE_CANON.md) §2) · Toast Zone ([Plan §3.2](../PRODUCT/REBUILD_PLAN_v1.md))과 정렬.
 
-| ID | Surface | 목표 감정 | 음색 (서술) | 허용 트리거 | 금지 |
-| -- | ------- | --------- | ----------- | ----------- | ---- |
-| **mission** | `/home` · `/home/missions*` | 성취·기대(절제) | soft warm sine · 짧은 상승 2음 | mission claim success · attendance check-in | false urgency loop · 매 스크롤 chime |
-| **wallet** | `/wallet*` · ledger confirm | 안정·통제 | soft confirm thud · 저역 1타 | deposit confirmed · withdraw **submitted** (결과) | withdraw **submit 버튼 누름** 순간 · fake urgency pulse |
-| **trade** | `/trade*` | 집중·전문 | crisp tick · exchange click | order **accepted** · fill toast (Zone B) | casino-style flash · every book tick |
-| **vip** | `/tier/me` · tier upgrade | 승급 축하(절제) | soft ascending arpeggio ≤3음 | tier upgrade celebration only | XP tick every point · Decay 허위 완료음 |
+| ID          | Surface                     | 목표 감정       | 음색 (서술)                    | 허용 트리거                                       | 금지                                                    |
+| ----------- | --------------------------- | --------------- | ------------------------------ | ------------------------------------------------- | ------------------------------------------------------- |
+| **mission** | `/home` · `/home/missions*` | 성취·기대(절제) | soft warm sine · 짧은 상승 2음 | mission claim success · attendance check-in       | false urgency loop · 매 스크롤 chime                    |
+| **wallet**  | `/wallet*` · ledger confirm | 안정·통제       | soft confirm thud · 저역 1타   | deposit confirmed · withdraw **submitted** (결과) | withdraw **submit 버튼 누름** 순간 · fake urgency pulse |
+| **trade**   | `/trade*`                   | 집중·전문       | crisp tick · exchange click    | order **accepted** · fill toast (Zone B)          | casino-style flash · every book tick                    |
+| **vip**     | `/tier/me` · tier upgrade   | 승급 축하(절제) | soft ascending arpeggio ≤3음   | tier upgrade celebration only                     | XP tick every point · Decay 허위 완료음                 |
 
 **Zone 정렬:**
 
-| Tone | Toast Zone | 이모지/카피 |
-| ---- | ---------- | ----------- |
-| mission · vip | A warm | SFX ≠ copy — i18n toast 정본 유지 |
-| wallet · trade | B strict | SFX whisper · emoji **0** |
+| Tone           | Toast Zone | 이모지/카피                       |
+| -------------- | ---------- | --------------------------------- |
+| mission · vip  | A warm     | SFX ≠ copy — i18n toast 정본 유지 |
+| wallet · trade | B strict   | SFX whisper · emoji **0**         |
 
 ---
 
@@ -89,12 +89,12 @@ YAML id 후보: E-Wave UI unlock todo (신규 id는 Track B 재정렬 시) — *
 
 ## 5. Casino 경계 (§23.8)
 
-| 항목 | 정본 |
-| ---- | ---- |
-| Win cue | `apps/web/src/product/surfaces/games/casino-sound.ts` |
-| Pref | `SETTINGS_CASINO_SOUND_PREF_KEY` · default off |
-| 범위 | big/mega tier only · oscillator beep |
-| 본 canon | **교차 참조만** — 4종에 casino 합치지 않음 |
+| 항목     | 정본                                                  |
+| -------- | ----------------------------------------------------- |
+| Win cue  | `apps/web/src/product/surfaces/games/casino-sound.ts` |
+| Pref     | `SETTINGS_CASINO_SOUND_PREF_KEY` · default off        |
+| 범위     | big/mega tier only · oscillator beep                  |
+| 본 canon | **교차 참조만** — 4종에 casino 합치지 않음            |
 
 ---
 
@@ -110,10 +110,10 @@ YAML id 후보: E-Wave UI unlock todo (신규 id는 Track B 재정렬 시) — *
 
 ## 교차 참조
 
-| 주제 | 문서 |
-| ---- | ---- |
-| Emotion Map | [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md) §2 |
-| Signature surfaces | `da-w8-signature-surfaces-display-contract.ts` (§34.21–34.26) |
-| Casino sound | Plan §23.8 · `casino-sound.ts` |
-| Motion L2 | PRODUCT_EXPERIENCE_CANON §5 · ADR-009 |
-| Copy / toast | [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md) · Plan §3.2 |
+| 주제               | 문서                                                            |
+| ------------------ | --------------------------------------------------------------- |
+| Emotion Map        | [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md) §2 |
+| Signature surfaces | `da-w8-signature-surfaces-display-contract.ts` (§34.21–34.26)   |
+| Casino sound       | Plan §23.8 · `casino-sound.ts`                                  |
+| Motion L2          | PRODUCT_EXPERIENCE_CANON §5 · ADR-009                           |
+| Copy / toast       | [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md) · Plan §3.2      |

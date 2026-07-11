@@ -63,32 +63,32 @@
 
 ## ADR
 
-| Doc                                                                                                                   |
-| --------------------------------------------------------------------------------------------------------------------- |
-| [`ADR/0002-engine-freeze.md`](ADR/0002-engine-freeze.md) — **Accepted** (Engine Apex closed)                          |
-| [`PRODUCT/ADR/001-pg-less-funding-rails.md`](PRODUCT/ADR/001-pg-less-funding-rails.md)                                |
-| [`PRODUCT/ADR/002-crypto-custody-signing.md`](PRODUCT/ADR/002-crypto-custody-signing.md)                              |
-| [`PRODUCT/ADR/003-landing-timeless-conversion.md`](PRODUCT/ADR/003-landing-timeless-conversion.md) — Landing CVR pass |
-| [`PRODUCT/ADR/009-digital-aurora-brand-dna.md`](PRODUCT/ADR/009-digital-aurora-brand-dna.md) — Digital Aurora DA W0   |
-| [`PRODUCT/ADR/ENGINE_GAP_ADR.md`](PRODUCT/ADR/ENGINE_GAP_ADR.md) — Track B E0–E10 gap index (**Accepted** 2026-07-11 · `#239`) |
-| [`PRODUCT/ADR/010-tier-decay.md`](PRODUCT/ADR/010-tier-decay.md) — E1 Tier Decay (**Accepted** · `#240`) |
-| [`PRODUCT/ADR/011-mission-catalog.md`](PRODUCT/ADR/011-mission-catalog.md) — E2 Mission Catalog CRUD (**Accepted** · `#242`) |
-| [`PRODUCT/ADR/012-viral-cms.md`](PRODUCT/ADR/012-viral-cms.md) — E3 Viral leaderboard + CMS/promotions (**Accepted** · `#244`) |
-| [`PRODUCT/ADR/013-tier-option-b.md`](PRODUCT/ADR/013-tier-option-b.md) — E4 Option B · Prime Elite (**Accepted** · `#246`) |
-| [`PRODUCT/ADR/014-social-co-mission.md`](PRODUCT/ADR/014-social-co-mission.md) — E7 Social co-mission + whale (**Accepted** · `#252`) |
-| [`OPERATIONS/ENGINE_GAP_E0_APPROVAL.md`](OPERATIONS/ENGINE_GAP_E0_APPROVAL.md) — E0 approval record · RED STOP · 광고·설문 영구 제외 |
-| [`OPERATIONS/ENGINE_GAP_E2_MISSIONS.md`](OPERATIONS/ENGINE_GAP_E2_MISSIONS.md) — E2 WAVE closeout · list/upsert RPC · GATE 후행 |
-| [`OPERATIONS/ENGINE_GAP_E3_VIRAL_CMS.md`](OPERATIONS/ENGINE_GAP_E3_VIRAL_CMS.md) — E3 WAVE closeout · leaderboard · CMS targeting |
-| [`OPERATIONS/ENGINE_GAP_E3_GATE_CMS_PROMOTIONS.md`](OPERATIONS/ENGINE_GAP_E3_GATE_CMS_PROMOTIONS.md) — E3 GATE · remote apply · surface unlock |
-| [`OPERATIONS/ENGINE_GAP_E4_TIER_OPTION_B.md`](OPERATIONS/ENGINE_GAP_E4_TIER_OPTION_B.md) — E4 WAVE · Option B · Prime Elite |
-| [`OPERATIONS/ENGINE_GAP_E4_GATE_TIER_OPTION_B.md`](OPERATIONS/ENGINE_GAP_E4_GATE_TIER_OPTION_B.md) — E4 GATE · fee % · VIP/elite unlock · remote apply |
-| [`OPERATIONS/ENGINE_GAP_E5_GAP_SURFACES.md`](OPERATIONS/ENGINE_GAP_E5_GAP_SURFACES.md) — E5 WIRE · decay · leaderboard · sports VIP live |
-| [`OPERATIONS/ENGINE_GAP_E5_GATE_GAP_SURFACES.md`](OPERATIONS/ENGINE_GAP_E5_GATE_GAP_SURFACES.md) — E5 GATE · STUB→live unlock · gate:ai-impl |
-| [`OPERATIONS/ENGINE_GAP_E6_ADMIN_DESKS.md`](OPERATIONS/ENGINE_GAP_E6_ADMIN_DESKS.md) — E6 WAVE · Admin gap desks · audit CSV |
-| [`OPERATIONS/ENGINE_GAP_E6_GATE_ADMIN_DESKS.md`](OPERATIONS/ENGINE_GAP_E6_GATE_ADMIN_DESKS.md) — E6 GATE · §29.5 · AdminTable · gate:ai-impl |
-| [`OPERATIONS/ENGINE_GAP_E7_SOCIAL.md`](OPERATIONS/ENGINE_GAP_E7_SOCIAL.md) — E7 WAVE · co-mission · whale threshold |
+| Doc                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`ADR/0002-engine-freeze.md`](ADR/0002-engine-freeze.md) — **Accepted** (Engine Apex closed)                                                             |
+| [`PRODUCT/ADR/001-pg-less-funding-rails.md`](PRODUCT/ADR/001-pg-less-funding-rails.md)                                                                   |
+| [`PRODUCT/ADR/002-crypto-custody-signing.md`](PRODUCT/ADR/002-crypto-custody-signing.md)                                                                 |
+| [`PRODUCT/ADR/003-landing-timeless-conversion.md`](PRODUCT/ADR/003-landing-timeless-conversion.md) — Landing CVR pass                                    |
+| [`PRODUCT/ADR/009-digital-aurora-brand-dna.md`](PRODUCT/ADR/009-digital-aurora-brand-dna.md) — Digital Aurora DA W0                                      |
+| [`PRODUCT/ADR/ENGINE_GAP_ADR.md`](PRODUCT/ADR/ENGINE_GAP_ADR.md) — Track B E0–E10 gap index (**Accepted** 2026-07-11 · `#239`)                           |
+| [`PRODUCT/ADR/010-tier-decay.md`](PRODUCT/ADR/010-tier-decay.md) — E1 Tier Decay (**Accepted** · `#240`)                                                 |
+| [`PRODUCT/ADR/011-mission-catalog.md`](PRODUCT/ADR/011-mission-catalog.md) — E2 Mission Catalog CRUD (**Accepted** · `#242`)                             |
+| [`PRODUCT/ADR/012-viral-cms.md`](PRODUCT/ADR/012-viral-cms.md) — E3 Viral leaderboard + CMS/promotions (**Accepted** · `#244`)                           |
+| [`PRODUCT/ADR/013-tier-option-b.md`](PRODUCT/ADR/013-tier-option-b.md) — E4 Option B · Prime Elite (**Accepted** · `#246`)                               |
+| [`PRODUCT/ADR/014-social-co-mission.md`](PRODUCT/ADR/014-social-co-mission.md) — E7 Social co-mission + whale (**Accepted** · `#252`)                    |
+| [`OPERATIONS/ENGINE_GAP_E0_APPROVAL.md`](OPERATIONS/ENGINE_GAP_E0_APPROVAL.md) — E0 approval record · RED STOP · 광고·설문 영구 제외                     |
+| [`OPERATIONS/ENGINE_GAP_E2_MISSIONS.md`](OPERATIONS/ENGINE_GAP_E2_MISSIONS.md) — E2 WAVE closeout · list/upsert RPC · GATE 후행                          |
+| [`OPERATIONS/ENGINE_GAP_E3_VIRAL_CMS.md`](OPERATIONS/ENGINE_GAP_E3_VIRAL_CMS.md) — E3 WAVE closeout · leaderboard · CMS targeting                        |
+| [`OPERATIONS/ENGINE_GAP_E3_GATE_CMS_PROMOTIONS.md`](OPERATIONS/ENGINE_GAP_E3_GATE_CMS_PROMOTIONS.md) — E3 GATE · remote apply · surface unlock           |
+| [`OPERATIONS/ENGINE_GAP_E4_TIER_OPTION_B.md`](OPERATIONS/ENGINE_GAP_E4_TIER_OPTION_B.md) — E4 WAVE · Option B · Prime Elite                              |
+| [`OPERATIONS/ENGINE_GAP_E4_GATE_TIER_OPTION_B.md`](OPERATIONS/ENGINE_GAP_E4_GATE_TIER_OPTION_B.md) — E4 GATE · fee % · VIP/elite unlock · remote apply   |
+| [`OPERATIONS/ENGINE_GAP_E5_GAP_SURFACES.md`](OPERATIONS/ENGINE_GAP_E5_GAP_SURFACES.md) — E5 WIRE · decay · leaderboard · sports VIP live                 |
+| [`OPERATIONS/ENGINE_GAP_E5_GATE_GAP_SURFACES.md`](OPERATIONS/ENGINE_GAP_E5_GATE_GAP_SURFACES.md) — E5 GATE · STUB→live unlock · gate:ai-impl             |
+| [`OPERATIONS/ENGINE_GAP_E6_ADMIN_DESKS.md`](OPERATIONS/ENGINE_GAP_E6_ADMIN_DESKS.md) — E6 WAVE · Admin gap desks · audit CSV                             |
+| [`OPERATIONS/ENGINE_GAP_E6_GATE_ADMIN_DESKS.md`](OPERATIONS/ENGINE_GAP_E6_GATE_ADMIN_DESKS.md) — E6 GATE · §29.5 · AdminTable · gate:ai-impl             |
+| [`OPERATIONS/ENGINE_GAP_E7_SOCIAL.md`](OPERATIONS/ENGINE_GAP_E7_SOCIAL.md) — E7 WAVE · co-mission · whale threshold                                      |
 | [`OPERATIONS/ENGINE_GAP_E7_GATE_ENGINE_WAVE.md`](OPERATIONS/ENGINE_GAP_E7_GATE_ENGINE_WAVE.md) — E7 GATE · social unlock · stack:push-remote · advisor 0 |
-| [`ADR/0001-quality-gates.md`](ADR/0001-quality-gates.md) … [`0006`](ADR/0006-wallet-sigma-rule.md)                    |
+| [`ADR/0001-quality-gates.md`](ADR/0001-quality-gates.md) … [`0006`](ADR/0006-wallet-sigma-rule.md)                                                       |
 
 ## Rebuild runbooks (gates · low-spec)
 
@@ -103,15 +103,15 @@
 
 ## UX canon (Phase R · Digital Aurora)
 
-| Doc                                                                    | Role                                                                     |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| [`SSOT/PRODUCT_EXPERIENCE_CANON.md`](SSOT/PRODUCT_EXPERIENCE_CANON.md) | **DA W0** Emotion · Brand Memory · elevation · motion · §35.1 Tech Stack |
-| [`SSOT/SOUND_DESIGN_CANON.md`](SSOT/SOUND_DESIGN_CANON.md)             | **DA W8 DOC** §34.27 mission·wallet·trade·vip 4톤 · 구현=E-Wave · GATE `#228` `[x]` |
-| [`SSOT/UNIFIED_UX_CANON.md`](SSOT/UNIFIED_UX_CANON.md)                 | Interaction Grammar · high-risk confirm                                  |
-| [`SSOT/DESIGN_PRINCIPLES.md`](SSOT/DESIGN_PRINCIPLES.md)               | D0 + §7 Accessibility Elevation                                          |
-| [`SSOT/ADMIN_BEGINNER_LANGUAGE_CANON.md`](SSOT/ADMIN_BEGINNER_LANGUAGE_CANON.md) | **P13 DOC** §29.1·§29.5 초등어 · `#229` `[x]` |
-| [`SSOT/ADMIN_TEAM_RBAC_CANON.md`](SSOT/ADMIN_TEAM_RBAC_CANON.md)       | **P13 DOC** 역할 5종 · `/admin/team` 계약 · `#229` `[x]` |
-| [`PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md`](PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md) | **P13 DOC** 유저↔Admin 1:1 · §12.14 sync · `#229` `[x]` |
+| Doc                                                                                          | Role                                                                                |
+| -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [`SSOT/PRODUCT_EXPERIENCE_CANON.md`](SSOT/PRODUCT_EXPERIENCE_CANON.md)                       | **DA W0** Emotion · Brand Memory · elevation · motion · §35.1 Tech Stack            |
+| [`SSOT/SOUND_DESIGN_CANON.md`](SSOT/SOUND_DESIGN_CANON.md)                                   | **DA W8 DOC** §34.27 mission·wallet·trade·vip 4톤 · 구현=E-Wave · GATE `#228` `[x]` |
+| [`SSOT/UNIFIED_UX_CANON.md`](SSOT/UNIFIED_UX_CANON.md)                                       | Interaction Grammar · high-risk confirm                                             |
+| [`SSOT/DESIGN_PRINCIPLES.md`](SSOT/DESIGN_PRINCIPLES.md)                                     | D0 + §7 Accessibility Elevation                                                     |
+| [`SSOT/ADMIN_BEGINNER_LANGUAGE_CANON.md`](SSOT/ADMIN_BEGINNER_LANGUAGE_CANON.md)             | **P13 DOC** §29.1·§29.5 초등어 · `#229` `[x]`                                       |
+| [`SSOT/ADMIN_TEAM_RBAC_CANON.md`](SSOT/ADMIN_TEAM_RBAC_CANON.md)                             | **P13 DOC** 역할 5종 · `/admin/team` 계약 · `#229` `[x]`                            |
+| [`PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md`](PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md) | **P13 DOC** 유저↔Admin 1:1 · §12.14 sync · `#229` `[x]`                             |
 
 `SSOT/*_UX_CANON.md` · `UX_REFERENCE_CANON.md` · `SURFACE_BLUEPRINTS.md` · `PRODUCT_PRINCIPLES.md` · `COPYWRITING_CANON.md` · `I18N_FIRST.md`
 

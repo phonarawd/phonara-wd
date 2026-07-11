@@ -139,15 +139,11 @@ describe('Casino games batch A stages (p10-games-batch-a)', () => {
   });
 
   it('routes limbo and dice stages', () => {
-    const { unmount } = wrap(
-      <CasinoGameStage gameCode="limbo" selection={{ target: '2.00' }} />,
-    );
+    const { unmount } = wrap(<CasinoGameStage gameCode="limbo" selection={{ target: '2.00' }} />);
     expect(screen.getByTestId('casino-limbo-stage')).toBeInTheDocument();
     unmount();
 
-    wrap(
-      <CasinoGameStage gameCode="dice" selection={{ target: '50.00', direction: 'over' }} />,
-    );
+    wrap(<CasinoGameStage gameCode="dice" selection={{ target: '50.00', direction: 'over' }} />);
     expect(screen.getByTestId('casino-dice-stage')).toBeInTheDocument();
     expect(screen.getByTestId('casino-dice-win-chance')).toBeInTheDocument();
   });

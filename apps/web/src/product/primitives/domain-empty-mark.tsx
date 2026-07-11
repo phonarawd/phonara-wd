@@ -63,15 +63,7 @@ function TradePulseMark() {
 function WalletVaultMark() {
   return (
     <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect
-        x="12"
-        y="16"
-        width="32"
-        height="28"
-        rx="4"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
+      <rect x="12" y="16" width="32" height="28" rx="4" stroke="currentColor" strokeWidth="2" />
       <path d="M20 16v-2a8 8 0 0 1 16 0v2" stroke="currentColor" strokeWidth="2" />
       <circle cx="28" cy="30" r="3.5" fill="currentColor" />
       <path d="M28 33.5V38" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />

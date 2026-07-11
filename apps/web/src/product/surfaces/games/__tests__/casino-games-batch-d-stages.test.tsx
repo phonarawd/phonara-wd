@@ -221,10 +221,7 @@ describe('Casino games batch D stages (p10-games-batch-d)', () => {
       });
     });
     await waitFor(() => {
-      expect(screen.getByTestId('casino-deepshaft-stage')).toHaveAttribute(
-        'data-cave-in',
-        'true',
-      );
+      expect(screen.getByTestId('casino-deepshaft-stage')).toHaveAttribute('data-cave-in', 'true');
     });
     expect(screen.getByTestId('casino-deepshaft-mult').textContent).toContain('0.00');
   });

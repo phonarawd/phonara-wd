@@ -77,10 +77,7 @@ describe('GiftcardRedeemPage', () => {
   it('renders redeem form', () => {
     renderPage();
     expect(screen.getByTestId('giftcard-redeem-page')).toBeInTheDocument();
-    expect(screen.getByTestId('giftcard-redeem-back')).toHaveAttribute(
-      'href',
-      '/wallet/redeem',
-    );
+    expect(screen.getByTestId('giftcard-redeem-back')).toHaveAttribute('href', '/wallet/redeem');
     expect(screen.getByTestId('giftcard-redeem-form-card')).toBeInTheDocument();
   });
 

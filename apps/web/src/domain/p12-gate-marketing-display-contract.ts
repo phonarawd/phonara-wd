@@ -56,7 +56,7 @@ export const P12_GATE_MARKETING_OPERATOR_TRUST_ROUTES = OPERATOR_TRUST_PAGE_ROUT
 /** Existing marketing surfaces from `p12-trust-marketing-hub`. */
 export const P12_GATE_MARKETING_TRUST_HUB_ROUTES = P12_TRUST_MARKETING_HUB_ROUTES;
 
-/** Live community+support routes (STUBs excluded from footer requirement). */
+/** Live community+support routes after E10 trust-support unlock. */
 export const P12_GATE_MARKETING_COMMUNITY_LIVE_ROUTES = P12_COMMUNITY_SUPPORT_HUB_LIVE_ROUTES;
 
 /** Legal pages shipped in `p12-legal-pages`. */
@@ -220,7 +220,7 @@ export function assertP12GateMarketingSync(): void {
     throw new Error('p12-gate-marketing: trust hub routes incomplete');
   }
 
-  if (P12_GATE_MARKETING_COMMUNITY_LIVE_ROUTES.length !== 4) {
+  if (P12_GATE_MARKETING_COMMUNITY_LIVE_ROUTES.length !== 6) {
     throw new Error('p12-gate-marketing: community live routes incomplete');
   }
 

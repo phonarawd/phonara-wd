@@ -208,7 +208,11 @@ export function parseDeepshaftOutcome(
   const reachedDepth = asFiniteNumber(result['reachedDepth']);
   const totalMultiplier = asFiniteNumber(result['totalMultiplier']);
   if (reachedDepth === null || totalMultiplier === null) return null;
-  if (!Number.isInteger(reachedDepth) || reachedDepth < 0 || reachedDepth > CASINO_DEEPSHAFT_MAX_DEPTH) {
+  if (
+    !Number.isInteger(reachedDepth) ||
+    reachedDepth < 0 ||
+    reachedDepth > CASINO_DEEPSHAFT_MAX_DEPTH
+  ) {
     return null;
   }
   if (totalMultiplier < 0) return null;

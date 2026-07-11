@@ -1,9 +1,5 @@
 import { useCallback, useState } from 'react';
-import {
-  verifyRound,
-  type GameCode,
-  type VerifyResult,
-} from '@phonara/game-engine';
+import { verifyRound, type GameCode, type VerifyResult } from '@phonara/game-engine';
 import type { MessageKey } from '@phonara/i18n';
 
 import {
@@ -44,9 +40,7 @@ function defaultSelectionJson(game: GameCode): string {
   return JSON.stringify(GAME_BY_CODE[game].defaultSelection, null, 2);
 }
 
-function parseOptionalJson(
-  raw: string,
-): { ok: true; value: unknown | undefined } | { ok: false } {
+function parseOptionalJson(raw: string): { ok: true; value: unknown | undefined } | { ok: false } {
   const trimmed = raw.trim();
   if (!trimmed) return { ok: true, value: undefined };
   try {

@@ -10,10 +10,7 @@ import {
 } from '@/domain/admin-beginner-language-display-contract';
 import { canAccessAdminTeamDesk } from '@/domain/admin-team-desk-display-contract';
 import type { AdminTeamGrantableRole } from '@/domain/admin-team-desk-display-contract';
-import {
-  useAdminTeamDesk,
-  type AdminTeamGrantRow,
-} from '@/hooks/admin/useAdminTeamDesk';
+import { useAdminTeamDesk, type AdminTeamGrantRow } from '@/hooks/admin/useAdminTeamDesk';
 import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
@@ -39,8 +36,7 @@ type TeamActionTarget = {
   destructive: boolean;
 };
 
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function formatWhen(iso: string, locale: string): string {
   try {
@@ -64,15 +60,10 @@ function roleLabelKey(role: string): MessageKey {
   return 'admin.access.role.operator.label';
 }
 
-function actionSummary(
-  target: TeamActionTarget,
-  t: ReturnType<typeof useT>,
-): string {
+function actionSummary(target: TeamActionTarget, t: ReturnType<typeof useT>): string {
   const email = target.row?.email ?? target.userId;
   const role = t(roleLabelKey(target.role));
-  const next = target.enabled
-    ? t('admin.team.state.enabled')
-    : t('admin.team.state.disabled');
+  const next = target.enabled ? t('admin.team.state.enabled') : t('admin.team.state.disabled');
   return [
     `${t('admin.team.col.email')}: ${email}`,
     `${t('admin.team.col.role')}: ${role}`,
@@ -207,11 +198,7 @@ export function AdminTeamPage() {
       <HowItWorks
         persistenceId="admin-team"
         titleKey="admin.help.team.title"
-        stepKeys={[
-          'admin.help.team.step1',
-          'admin.help.team.step2',
-          'admin.help.team.step3',
-        ]}
+        stepKeys={['admin.help.team.step1', 'admin.help.team.step2', 'admin.help.team.step3']}
       />
 
       {isError ? (
@@ -250,9 +237,7 @@ export function AdminTeamPage() {
                 <select
                   className="border-line bg-surface text-foreground rounded-md border px-3 py-2"
                   value={grantRole}
-                  onChange={(event) =>
-                    setGrantRole(event.target.value as AdminTeamGrantableRole)
-                  }
+                  onChange={(event) => setGrantRole(event.target.value as AdminTeamGrantableRole)}
                   data-testid="admin-team-grant-role"
                 >
                   {grantableRoles.map((key) => (
@@ -349,9 +334,7 @@ export function AdminTeamPage() {
                   <StatusBadge
                     state={enabledStatusState(row.enabled)}
                     label={
-                      row.enabled
-                        ? t('admin.team.state.enabled')
-                        : t('admin.team.state.disabled')
+                      row.enabled ? t('admin.team.state.enabled') : t('admin.team.state.disabled')
                     }
                   />
                 ),

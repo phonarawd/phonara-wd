@@ -13,8 +13,7 @@ export const WALLET_REDEEM_GIFTCARD_ROUTE = '/wallet/redeem/giftcard' as const;
 export const WALLET_REDEEM_LEGACY_REDIRECT_FROM = '/points/shop' as const;
 export const P11_PAGE_WALLET_REDEEM_TODO = 'p11-page-wallet-redeem' as const;
 
-export const WALLET_REDEEM_SEO_TITLE_KEY =
-  'seo.walletRedeem.title' as const satisfies MessageKey;
+export const WALLET_REDEEM_SEO_TITLE_KEY = 'seo.walletRedeem.title' as const satisfies MessageKey;
 export const WALLET_REDEEM_SEO_DESCRIPTION_KEY =
   'seo.walletRedeem.description' as const satisfies MessageKey;
 
@@ -88,10 +87,7 @@ export const WALLET_REDEEM_RAILS: readonly WalletRedeemRailView[] = [
 ] as const;
 
 export function isGiftcardRedeemReverseLive(): boolean {
-  return (
-    LAUNCH_GATES.financialConnectivityEngine &&
-    LAUNCH_GATES.financialConnectivityLive
-  );
+  return LAUNCH_GATES.financialConnectivityEngine && LAUNCH_GATES.financialConnectivityLive;
 }
 
 export function resolveWalletRedeemRails(): readonly WalletRedeemRailView[] {

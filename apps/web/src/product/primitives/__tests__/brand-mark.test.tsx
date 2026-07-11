@@ -23,6 +23,9 @@ describe('BrandMark §34.18 aurora', () => {
 
   it('keeps hero-3d on sculpted SVG path', () => {
     render(<BrandMark variant="hero-3d" testId="mark-hero" />);
-    expect(screen.getByTestId('mark-hero')).toHaveAttribute('data-brand-asset', BRAND_ASSETS.hero3d);
+    expect(screen.getByTestId('mark-hero')).toHaveAttribute(
+      'data-brand-asset',
+      BRAND_ASSETS.hero3d,
+    );
   });
 });

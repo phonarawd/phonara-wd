@@ -54,9 +54,7 @@ describe('tier-decay-display-contract (E1)', () => {
     expect(adr).toContain('최대 1단계');
     expect(adr).toContain(TIER_DECAY_TODO);
 
-    const migration = readRepo(
-      'supabase/migrations/20260801000001_ew_e1_tier_decay.sql',
-    );
+    const migration = readRepo('supabase/migrations/20260801000001_ew_e1_tier_decay.sql');
     expect(migration).toContain(TIER_DECAY_MIGRATION_NAME);
     expect(migration).toContain(TIER_DECAY_RUN_RPC);
     expect(migration).toContain(TIER_DECAY_STATUS_RPC);

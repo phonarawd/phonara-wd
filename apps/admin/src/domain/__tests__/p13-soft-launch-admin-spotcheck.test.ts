@@ -17,12 +17,7 @@ const ko = messages.ko as Record<string, string>;
 const en = messages.en as Record<string, string>;
 
 /** Soft Launch (#233) — exception dry-run desks. */
-const SOFT_LAUNCH_EXCEPTION_ROUTES = [
-  '/queues',
-  '/deposits',
-  '/withdrawals',
-  '/ops',
-] as const;
+const SOFT_LAUNCH_EXCEPTION_ROUTES = ['/queues', '/deposits', '/withdrawals', '/ops'] as const;
 
 /** Soft Launch viewer allow/deny (must match ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST). */
 const SOFT_LAUNCH_VIEWER_ALLOWED = ['/', '/ops'] as const;
@@ -74,12 +69,7 @@ function surfaceBodyWithoutNoise(source: string): string {
 
 describe('p13-soft-launch-admin-spotcheck · §29.5 · viewer negative (#233)', () => {
   it('pins Soft Launch exception desks and viewer allow/deny', () => {
-    expect(SOFT_LAUNCH_EXCEPTION_ROUTES).toEqual([
-      '/queues',
-      '/deposits',
-      '/withdrawals',
-      '/ops',
-    ]);
+    expect(SOFT_LAUNCH_EXCEPTION_ROUTES).toEqual(['/queues', '/deposits', '/withdrawals', '/ops']);
     expect([...ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.viewer]).toEqual([
       ...SOFT_LAUNCH_VIEWER_ALLOWED,
     ]);

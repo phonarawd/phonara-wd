@@ -86,8 +86,5 @@ export function shouldExposeSettingsApiKeysInHubNav(): boolean {
 }
 
 export function canManageTradingApiKeys(): boolean {
-  return (
-    LAUNCH_GATES.financialConnectivityEngine &&
-    LAUNCH_GATES.financialConnectivityLive
-  );
+  return LAUNCH_GATES.financialConnectivityEngine && LAUNCH_GATES.financialConnectivityLive;
 }

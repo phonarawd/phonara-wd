@@ -23,15 +23,11 @@ const REPO_ROOT = resolve(import.meta.dirname, '../../../../..');
 
 describe('admin-krw-proof-review-display-contract (E10 · ew-e10-page-admin-krw-proof-review)', () => {
   it('pins todo · prerequisite WAVE · next wallet settings', () => {
-    expect(EW_E10_PAGE_ADMIN_KRW_PROOF_REVIEW_TODO).toBe(
-      'ew-e10-page-admin-krw-proof-review',
-    );
+    expect(EW_E10_PAGE_ADMIN_KRW_PROOF_REVIEW_TODO).toBe('ew-e10-page-admin-krw-proof-review');
     expect(EW_E10_PAGE_ADMIN_KRW_PROOF_REVIEW_PREREQUISITE_TODO).toBe(
       'ew-e10-platform-engine-wave',
     );
-    expect(EW_E10_PAGE_ADMIN_KRW_PROOF_REVIEW_NEXT_TODO).toBe(
-      'ew-e10-wallet-settings-ui',
-    );
+    expect(EW_E10_PAGE_ADMIN_KRW_PROOF_REVIEW_NEXT_TODO).toBe('ew-e10-wallet-settings-ui');
     expect(() => assertEwE10AdminKrwProofReviewSync()).not.toThrow();
   });
 
@@ -41,10 +37,7 @@ describe('admin-krw-proof-review-display-contract (E10 · ew-e10-page-admin-krw-
     expect(ADMIN_KRW_PROOF_REVIEW_RPC).toBe('rpc_admin_review_krw_deposit_proof');
     expect(ADMIN_KRW_PROOF_STORAGE_BUCKET).toBe('krw-deposit-proofs');
     expect(ADMIN_KRW_PROOF_REVIEW_CREDITS_FORBIDDEN).toBe(true);
-    expect([...ADMIN_KRW_PROOF_BUTTON_INTENTS]).toEqual([
-      'viewDepositProof',
-      'markProofMatched',
-    ]);
+    expect([...ADMIN_KRW_PROOF_BUTTON_INTENTS]).toEqual(['viewDepositProof', 'markProofMatched']);
     expect(isAdminKrwProofPending('pending')).toBe(true);
     expect(isAdminKrwProofPending('approved')).toBe(false);
     expect(isAdminKrwProofViewable('pending', 'u/proof.jpg')).toBe(true);

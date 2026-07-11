@@ -33,11 +33,7 @@ export function useWalletRedeemController(): WalletRedeemControllerView {
   const t = useT();
   const { loading: authLoading } = useAuth();
   const { wallet, loading: walletLoading, error: walletError } = useWallet();
-  const {
-    breakdown,
-    loading: breakdownLoading,
-    error: breakdownError,
-  } = usePhonBalanceBreakdown();
+  const { breakdown, loading: breakdownLoading, error: breakdownError } = usePhonBalanceBreakdown();
   const { data: compliance, isLoading: complianceLoading } = useComplianceStatus();
   const { depositBlocked, withdrawalBlocked, loading: gatesLoading } = usePlatformGates();
 

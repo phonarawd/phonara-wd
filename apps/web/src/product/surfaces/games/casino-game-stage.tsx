@@ -50,9 +50,7 @@ function asNumberArray(value: unknown): number[] {
 
 function asHiloGuesses(value: unknown): HiLoGuess[] {
   if (!Array.isArray(value)) return [];
-  return value.filter(
-    (g): g is HiLoGuess => g === 'higher' || g === 'lower' || g === 'skip',
-  );
+  return value.filter((g): g is HiLoGuess => g === 'higher' || g === 'lower' || g === 'skip');
 }
 
 function asBool(value: unknown): boolean {
@@ -68,7 +66,8 @@ function asBlackjackActions(value: unknown): Array<{ seat: number; move: Blackja
   return value.flatMap((item) => {
     if (!item || typeof item !== 'object') return [];
     const row = item as Record<string, unknown>;
-    const seat = typeof row['seat'] === 'number' && Number.isInteger(row['seat']) ? row['seat'] : null;
+    const seat =
+      typeof row['seat'] === 'number' && Number.isInteger(row['seat']) ? row['seat'] : null;
     const move = row['move'];
     if (seat === null || typeof move !== 'string' || !BJ_MOVES.has(move as BlackjackMove)) {
       return [];
@@ -169,21 +168,11 @@ export const CasinoGameStage = forwardRef<CasinoStageHandle, CasinoGameStageProp
       }
       if (gameCode === 'mint_reels') {
         const lines = Number(selection['lines'] ?? 20);
-        return (
-          <MintReelsStage
-            ref={ref}
-            lines={Number.isFinite(lines) ? lines : 20}
-          />
-        );
+        return <MintReelsStage ref={ref} lines={Number.isFinite(lines) ? lines : 20} />;
       }
       if (gameCode === 'gold_rush') {
         const lines = Number(selection['lines'] ?? 20);
-        return (
-          <GoldRushStage
-            ref={ref}
-            lines={Number.isFinite(lines) ? lines : 20}
-          />
-        );
+        return <GoldRushStage ref={ref} lines={Number.isFinite(lines) ? lines : 20} />;
       }
       const comboBefore = Number(selection['comboBefore'] ?? 0);
       return (

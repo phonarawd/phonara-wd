@@ -62,12 +62,7 @@ function AdvancedStats({
     <div data-testid={dataTestId} className={cn('flex flex-wrap items-end gap-4', className)}>
       <StatCell label={t('trade.high24')} value={display.high24} testId="trade-ticker-high24" />
       <StatCell label={t('trade.low24')} value={display.low24} testId="trade-ticker-low24" />
-      <StatCell
-        label={volumeLabel}
-        value={volumeValue}
-        testId={volumeTestId}
-        volumePulse={pulse}
-      />
+      <StatCell label={volumeLabel} value={volumeValue} testId={volumeTestId} volumePulse={pulse} />
     </div>
   );
 }

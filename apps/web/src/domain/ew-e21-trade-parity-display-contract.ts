@@ -29,11 +29,7 @@ export const EW_E21_EXISTS_SPOT_LIMIT_RPC = 'rpc_place_spot_limit_order' as cons
 export const EW_E21_EXISTS_SPOT_STOP_RPC = 'rpc_place_spot_stop_order' as const;
 
 export const EW_E21_NEW_ENGINE_FEATURES = ['hedge_position_mode', 'reduce_only_orders'] as const;
-export const EW_E21_EXISTS_FEATURES = [
-  'tpsl_amend',
-  'spot_limit_stop',
-  'trailing_stop',
-] as const;
+export const EW_E21_EXISTS_FEATURES = ['tpsl_amend', 'spot_limit_stop', 'trailing_stop'] as const;
 
 export const EW_E21_TRADE_PARITY_ARTIFACT_PATHS = [
   EW_E21_TRADE_PARITY_ADR_PATH,

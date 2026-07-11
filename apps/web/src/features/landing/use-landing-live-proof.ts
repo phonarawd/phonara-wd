@@ -19,8 +19,9 @@ type LandingLiveCmsRow = {
 };
 
 type LooseRpcResult = PromiseLike<{ data: unknown; error: { message: string } | null }>;
-type RpcCall = (name: string, args: Record<string, unknown>) => LooseRpcResult;
-const rpc = supabase.rpc.bind(supabase) as RpcCall;
+function rpc(name: string, args: Record<string, unknown>): LooseRpcResult {
+  return supabase.rpc(name as never, args as never) as LooseRpcResult;
+}
 
 async function fetchLandingLiveProofRows(locale: string): Promise<readonly LandingLiveCmsRow[]> {
   const { data, error } = await rpc(CMS_LIST_RPC, {

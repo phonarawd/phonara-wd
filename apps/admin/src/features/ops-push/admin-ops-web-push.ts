@@ -76,7 +76,9 @@ async function removeAdminPushSubscription(
   if (error) throw error;
 }
 
-export async function resolveAdminOpsPushStatus(userId: string | null): Promise<AdminOpsPushStatus> {
+export async function resolveAdminOpsPushStatus(
+  userId: string | null,
+): Promise<AdminOpsPushStatus> {
   if (!resolveAdminOpsPushSupported()) return 'unsupported';
   if (Notification.permission === 'denied') return 'denied';
   if (!userId) return 'off';

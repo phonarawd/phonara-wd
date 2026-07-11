@@ -55,7 +55,10 @@ export function assertEwE6AdminDesksSync(): void {
   if (EW_E6_ADMIN_DESKS_NEXT_TODO !== 'ew-e6-gate-admin-desks') {
     throw new Error('E6 next must be its GATE');
   }
-  if (EW_E6_ADMIN_DESK_ROUTES.length !== 7 || EW_E6_ADMIN_DESK_ROUTES.some((route) => route.startsWith('/admin'))) {
+  if (
+    EW_E6_ADMIN_DESK_ROUTES.length !== 7 ||
+    EW_E6_ADMIN_DESK_ROUTES.some((route) => route.startsWith('/admin'))
+  ) {
     throw new Error('E6 routes must be seven app-relative routes');
   }
   if (

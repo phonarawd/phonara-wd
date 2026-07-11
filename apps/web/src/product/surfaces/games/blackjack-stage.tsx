@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import type { BlackjackMove } from '@phonara/game-engine';
 
 import {
@@ -21,7 +14,10 @@ import { usePrefersReducedMotion } from '@/product/primitives/lib/use-prefers-re
 import { cn } from '@/product/primitives/lib/cn';
 import { Card, CardBody } from '@/product/primitives/card';
 import { HelpTip } from '@/product/primitives/help-tip';
-import type { CasinoStageHandle, CasinoStagePhase } from '@/product/surfaces/games/casino-stage-types';
+import type {
+  CasinoStageHandle,
+  CasinoStagePhase,
+} from '@/product/surfaces/games/casino-stage-types';
 
 export type BlackjackAction = { seat: number; move: BlackjackMove };
 
@@ -185,10 +181,7 @@ export const BlackjackStage = forwardRef<CasinoStageHandle, BlackjackStageProps>
             className="border-line bg-success/10 flex w-full max-w-md flex-col items-center gap-2 rounded-xl border p-4"
             data-testid="casino-blackjack-felt"
           >
-            <div
-              className="flex flex-col items-center gap-2"
-              data-testid="casino-blackjack-dealer"
-            >
+            <div className="flex flex-col items-center gap-2" data-testid="casino-blackjack-dealer">
               <span className="text-foreground-muted text-xs font-medium">
                 {t('casino.stage.dealer')}
               </span>
@@ -254,7 +247,10 @@ export const BlackjackStage = forwardRef<CasinoStageHandle, BlackjackStageProps>
                 }
                 disabled={
                   liveMode && liveSessionActive
-                    ? selectionDisabled || phase === 'replaying' || move === 'split' || move === 'insurance'
+                    ? selectionDisabled ||
+                      phase === 'replaying' ||
+                      move === 'split' ||
+                      move === 'insurance'
                     : locked || actions.length >= 12
                 }
                 onClick={() => appendMove(move)}

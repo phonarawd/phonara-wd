@@ -297,9 +297,7 @@ export interface TransferToUserInput {
   clientRequestId: string;
 }
 
-export async function transferToUser(
-  input: TransferToUserInput,
-): Promise<TransferToUserResult> {
+export async function transferToUser(input: TransferToUserInput): Promise<TransferToUserResult> {
   const data = await callRpc('rpc_transfer_to_user', {
     p_recipient: input.recipient,
     p_amount: input.amount,
@@ -365,4 +363,3 @@ export async function createGiftcardRedeemRequest(
   });
   return data as unknown as GiftcardRedeemRequestResult;
 }
-

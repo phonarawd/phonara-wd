@@ -48,21 +48,15 @@ describe('ew-e9-gate-identity-support-display-contract (E9 GATE)', () => {
     expect(EW_E9_GATE_IDENTITY_PREREQUISITE_TODO).toBe(EW_E9_IDENTITY_TODO);
     expect(EW_E9_GATE_IDENTITY_NEXT_TODO).toBe('ew-e9-page-admin-support');
     expect(EW_E9_IDENTITY_NEXT_TODO).toBe('ew-e9-gate-identity-support');
-    expect(EW_E9_GATE_IDENTITY_REMOTE_MIGRATION_NAME).toBe(
-      'ew_e9_identity_support',
-    );
-    expect(EW_E9_GATE_APP_INSTALL_ENUM_REMOTE_MIGRATION_NAME).toBe(
-      'ew_e9_app_install_enum',
-    );
+    expect(EW_E9_GATE_IDENTITY_REMOTE_MIGRATION_NAME).toBe('ew_e9_identity_support');
+    expect(EW_E9_GATE_APP_INSTALL_ENUM_REMOTE_MIGRATION_NAME).toBe('ew_e9_app_install_enum');
     expect(EW_E9_GATE_IDENTITY_REMOTE_TAIL).toContain('ew_e9_identity_support');
-    expect(EW_E9_GATE_APP_INSTALL_ENUM_REMOTE_TAIL).toContain(
-      'ew_e9_app_install_enum',
-    );
+    expect(EW_E9_GATE_APP_INSTALL_ENUM_REMOTE_TAIL).toContain('ew_e9_app_install_enum');
     expect(EW_E9_GATE_IDENTITY_SQL_TEST).toContain('ew_e9_identity_support_test');
     expect(() => assertEwE9GateIdentitySync()).not.toThrow();
   });
 
-  it('keeps hubs built_hidden · engine ready · EXISTS growth pinned', () => {
+  it('keeps hubs live where E10 unlocked · engine ready · EXISTS growth pinned', () => {
     expect(isEwE9IdentityGateReady()).toBe(true);
     expect(isEwE9IdentityEngineReady()).toBe(true);
     expect(isSiweWalletLoginEnginePathReady()).toBe(true);
@@ -73,29 +67,18 @@ describe('ew-e9-gate-identity-support-display-contract (E9 GATE)', () => {
     expect(isExistsIdentityGrowthPinned()).toBe(true);
     expect(LAUNCH_GATES.identitySupportEngine).toBe(true);
     expect(LAUNCH_GATES.siweLoginLive).toBe(false);
-    expect(LAUNCH_GATES.supportTicketsLive).toBe(false);
-    expect(LAUNCH_GATES.tierLeaderboardLive).toBe(false);
-    expect(LAUNCH_GATES.appInstallMissionLive).toBe(false);
-    expect(EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.siwe_login_surface).toBe(
-      'built_hidden',
-    );
-    expect(EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.support_ticket_hub).toBe(
-      'built_hidden',
-    );
-    expect(EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.tier_leaderboard_hub).toBe(
-      'built_hidden',
-    );
-    expect(EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.app_install_mission_tab).toBe(
-      'built_hidden',
-    );
+    expect(LAUNCH_GATES.supportTicketsLive).toBe(true);
+    expect(LAUNCH_GATES.tierLeaderboardLive).toBe(true);
+    expect(LAUNCH_GATES.appInstallMissionLive).toBe(true);
+    expect(LAUNCH_GATES.kakaoShareSdkLive).toBe(true);
+    expect(EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.siwe_login_surface).toBe('built_hidden');
+    expect(EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.support_ticket_hub).toBe('live');
+    expect(EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.tier_leaderboard_hub).toBe('live');
+    expect(EW_E9_GATE_UI_UNLOCK_WIRE_STATUS.app_install_mission_tab).toBe('live');
     expect(EW_E9_CREATE_SIWE_CHALLENGE_RPC).toBe('rpc_create_siwe_challenge');
     expect(EW_E9_CREATE_SUPPORT_TICKET_RPC).toBe('rpc_create_support_ticket');
-    expect(EW_E9_RECORD_ANALYTICS_RPC).toBe(
-      'rpc_record_product_analytics_event',
-    );
-    expect(EW_E9_RECORD_APP_INSTALL_RPC).toBe(
-      'rpc_record_app_install_attribution',
-    );
+    expect(EW_E9_RECORD_ANALYTICS_RPC).toBe('rpc_record_product_analytics_event');
+    expect(EW_E9_RECORD_APP_INSTALL_RPC).toBe('rpc_record_app_install_attribution');
     expect(EW_E9_TIER_LEADERBOARD_RPC).toBe('rpc_get_tier_leaderboard');
     expect(EW_E9_SIWE_EDGE_FUNCTION).toBe('siwe-auth');
   });
@@ -118,9 +101,7 @@ describe('ew-e9-gate-identity-support-display-contract (E9 GATE)', () => {
     expect(sqlTest).toContain('rpc_record_app_install_attribution');
     expect(sqlTest).toContain('rpc_get_tier_leaderboard');
 
-    const ops = readRepo(
-      'docs/OPERATIONS/ENGINE_GAP_E9_GATE_IDENTITY_SUPPORT.md',
-    );
+    const ops = readRepo('docs/OPERATIONS/ENGINE_GAP_E9_GATE_IDENTITY_SUPPORT.md');
     expect(ops).toContain(EW_E9_GATE_IDENTITY_TODO);
     expect(ops).toContain('stack:push-remote');
     expect(ops).toContain('advisor');

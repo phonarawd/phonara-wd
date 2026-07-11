@@ -128,10 +128,7 @@ export function EarnCashbackPage() {
               {rows.map((row) => (
                 <tr
                   key={row.tier}
-                  className={cn(
-                    'border-border border-t',
-                    row.current ? 'bg-accent/5' : undefined,
-                  )}
+                  className={cn('border-border border-t', row.current ? 'bg-accent/5' : undefined)}
                   data-testid={`earn-cashback-row-${row.tier}`}
                   data-current={row.current ? 'true' : 'false'}
                 >

@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import type { RouletteBetType } from '@phonara/game-engine';
 
 import {
@@ -26,7 +19,10 @@ import { usePrefersReducedMotion } from '@/product/primitives/lib/use-prefers-re
 import { cn } from '@/product/primitives/lib/cn';
 import { Card, CardBody } from '@/product/primitives/card';
 import { HelpTip } from '@/product/primitives/help-tip';
-import type { CasinoStageHandle, CasinoStagePhase } from '@/product/surfaces/games/casino-stage-types';
+import type {
+  CasinoStageHandle,
+  CasinoStagePhase,
+} from '@/product/surfaces/games/casino-stage-types';
 
 export type RouletteStageProps = {
   bets: CasinoRouletteLeg[];
@@ -209,10 +205,7 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
             ))}
           </div>
 
-          <div
-            className="overflow-x-auto"
-            data-testid="casino-roulette-table"
-          >
+          <div className="overflow-x-auto" data-testid="casino-roulette-table">
             <div className="inline-flex min-w-[320px] flex-col gap-1">
               <button
                 type="button"
@@ -333,9 +326,7 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
             </div>
           ) : (
             <p className="text-foreground-muted m-0 text-center text-sm">
-              {bets.length === 0
-                ? t('games.roulette.emptyBets')
-                : t('casino.game.roulette.idle')}
+              {bets.length === 0 ? t('games.roulette.emptyBets') : t('casino.game.roulette.idle')}
             </p>
           )}
         </CardBody>

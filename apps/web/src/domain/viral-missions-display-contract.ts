@@ -19,6 +19,10 @@ import {
   resolveTierKeepStatusUnavailableReason,
   TIER_KEEP_STATUS_UNAVAILABLE_REASON_KEY,
 } from './dead-controls-display-contract';
+import {
+  APP_INSTALL_MISSION_UI_ID,
+  isAppInstallMissionHubLive,
+} from './app-install-mission-display-contract';
 
 /** Must match `tier-me-display-contract` — local copy breaks tier-me → home-missions → viral cycle. */
 const TIER_KEEP_STATUS_UI_ID = 'tier-keepStatus' as const;
@@ -40,7 +44,8 @@ export type ViralMissionRpc =
   | 'share_story_template'
   | 'invite_friend_signup'
   | 'affiliate_content_post'
-  | 'viral_streak_share';
+  | 'viral_streak_share'
+  | 'app_install';
 
 export type RepeatableMissionRpc =
   | 'weekly_play5'
@@ -91,6 +96,8 @@ export const VIRAL_UI_TO_RPC: Readonly<Record<string, ViralMissionRpc>> = {
   'viral-partnerHubVisit': 'affiliate_content_post',
 
   'viral-inviteWeekly': 'viral_streak_share',
+
+  'growth-appInstall': 'app_install',
 };
 
 export const REPEATABLE_UI_TO_RPC: Readonly<Record<string, RepeatableMissionRpc>> = {
@@ -225,6 +232,20 @@ export const VIRAL_MISSION_MATRIX: Readonly<MissionMatrixRow[]> = [
 
     abuseGate: 'quota:2/week · UI row not mounted until Phase 7 copy',
   },
+
+  {
+    uiId: APP_INSTALL_MISSION_UI_ID,
+
+    rpc: 'app_install',
+
+    lane: 'growth',
+
+    engine: 'exists',
+
+    exposure: 'built_hidden',
+
+    abuseGate: 'lifetime:once · rpc_record_app_install_attribution · E10 growth UI unlock',
+  },
 ];
 
 const REPEATABLE_MISSION_MATRIX_LIVE: Readonly<MissionMatrixRow[]> = Object.entries(
@@ -268,6 +289,10 @@ export function resolveMissionMatrixRow(uiId: string): MissionMatrixRow | null {
 }
 
 export function resolveMissionExposure(uiId: string): MissionExposureMode {
+  if (uiId === APP_INSTALL_MISSION_UI_ID) {
+    return isAppInstallMissionHubLive() ? 'live' : 'built_hidden';
+  }
+
   const row = resolveMissionMatrixRow(uiId);
 
   if (!row) return 'defer_stub';

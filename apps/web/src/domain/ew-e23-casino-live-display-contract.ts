@@ -11,8 +11,7 @@
 import { LAUNCH_GATES } from '../lib/launch-gates';
 
 export const EW_E23_CASINO_LIVE_TODO = 'ew-e23-casino-live-wave' as const;
-export const EW_E23_CASINO_LIVE_PREREQUISITE_TODO =
-  'ew-e22-ui-sports-parity-unlocks' as const;
+export const EW_E23_CASINO_LIVE_PREREQUISITE_TODO = 'ew-e22-ui-sports-parity-unlocks' as const;
 export const EW_E23_CASINO_LIVE_NEXT_TODO = 'ew-e23-gate-casino-live' as const;
 
 export const EW_E23_CASINO_LIVE_ADR_PATH =
@@ -26,8 +25,7 @@ export const EW_E23_ROTATE_SERVER_SEED_RPC = 'rpc_rotate_game_server_seed' as co
 export const EW_E23_PROGRESSIVE_START_RPC = 'rpc_progressive_start' as const;
 export const EW_E23_PROGRESSIVE_STEP_RPC = 'rpc_progressive_step' as const;
 export const EW_E23_PROGRESSIVE_CASHOUT_RPC = 'rpc_progressive_cashout' as const;
-export const EW_E23_PROGRESSIVE_SWEEP_RPC =
-  'rpc_sweep_stale_progressive_sessions' as const;
+export const EW_E23_PROGRESSIVE_SWEEP_RPC = 'rpc_sweep_stale_progressive_sessions' as const;
 
 export const EW_E23_LIVE_CRASH_GET_RPC = 'rpc_live_crash_get_current' as const;
 export const EW_E23_LIVE_CRASH_PLACE_RPC = 'rpc_live_crash_place_bet' as const;

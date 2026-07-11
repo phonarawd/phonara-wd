@@ -38,7 +38,9 @@ export function AdminPromotionsPage() {
     <div className="flex flex-col gap-6">
       <section className="space-y-2">
         <h2 className="text-foreground m-0 text-2xl font-semibold">{t('admin.nav.promotions')}</h2>
-        <p className="text-foreground-muted m-0 text-sm">{t('admin.cms.promos.section.subtitle')}</p>
+        <p className="text-foreground-muted m-0 text-sm">
+          {t('admin.cms.promos.section.subtitle')}
+        </p>
       </section>
       <HowItWorks
         persistenceId="admin-promotions"
@@ -52,7 +54,11 @@ export function AdminPromotionsPage() {
       <AdminTable
         columns={[
           { id: 'promo', header: t('admin.cms.promos.col.promo'), cell: ({ row }) => row.promoKey },
-          { id: 'surface', header: t('admin.cms.promos.col.surface'), cell: ({ row }) => row.surface },
+          {
+            id: 'surface',
+            header: t('admin.cms.promos.col.surface'),
+            cell: ({ row }) => row.surface,
+          },
           {
             id: 'status',
             header: t('admin.cms.promos.col.status'),
@@ -80,7 +86,11 @@ export function AdminPromotionsPage() {
               variant={action === 'end' ? 'outline' : 'primary'}
               onClick={() => setTarget({ row, action })}
             >
-              {t(action === 'end' ? 'admin.cms.promos.action.end' : 'admin.cms.promos.action.activate')}
+              {t(
+                action === 'end'
+                  ? 'admin.cms.promos.action.end'
+                  : 'admin.cms.promos.action.activate',
+              )}
             </Button>
           );
         }}

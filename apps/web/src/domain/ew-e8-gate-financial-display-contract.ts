@@ -27,15 +27,12 @@ export const EW_E8_GATE_FINANCIAL_TODO = 'ew-e8-gate-financial' as const;
 export const EW_E8_GATE_FINANCIAL_PREREQUISITE_TODO = EW_E8_FINANCIAL_TODO;
 export const EW_E8_GATE_FINANCIAL_NEXT_TODO = 'ew-e9-identity-wave' as const;
 
-export const EW_E8_GATE_FINANCIAL_REMOTE_MIGRATION_NAME =
-  EW_E8_FINANCIAL_MIGRATION_NAME;
+export const EW_E8_GATE_FINANCIAL_REMOTE_MIGRATION_NAME = EW_E8_FINANCIAL_MIGRATION_NAME;
 
-export const EW_E8_GATE_FINANCIAL_SQL_TEST =
-  'supabase/tests/ew_e8_financial_test.sql' as const;
+export const EW_E8_GATE_FINANCIAL_SQL_TEST = 'supabase/tests/ew_e8_financial_test.sql' as const;
 
 /** Filled after `stack:push-remote` — remote version timestamp ≠ local prefix OK. */
-export const EW_E8_GATE_FINANCIAL_REMOTE_TAIL =
-  '20260711192506_ew_e8_financial' as const;
+export const EW_E8_GATE_FINANCIAL_REMOTE_TAIL = '20260711192506_ew_e8_financial' as const;
 
 /**
  * Hub / transfer / API keys IA — GATE keeps built_hidden; E10 flips live.
@@ -54,8 +51,7 @@ export function resolveEwE8GateUiUnlockWireStatus(): {
   };
 }
 
-export const EW_E8_GATE_UI_UNLOCK_WIRE_STATUS =
-  resolveEwE8GateUiUnlockWireStatus();
+export const EW_E8_GATE_UI_UNLOCK_WIRE_STATUS = resolveEwE8GateUiUnlockWireStatus();
 
 export type EwE8GateUiUnlockWireKey = keyof typeof EW_E8_GATE_UI_UNLOCK_WIRE_STATUS;
 
@@ -95,9 +91,7 @@ export function isTradingApiKeysEnginePathReady(): boolean {
   return (
     EW_E8_CREATE_API_KEY_RPC === 'rpc_create_trading_api_key' &&
     (EW_E8_NEW_ENGINE_FEATURES as readonly string[]).includes('trading_api_keys') &&
-    isEwE8UiPathAuthorized(
-      EW_E8_GATE_UI_UNLOCK_WIRE_STATUS.settings_api_keys_hub,
-    ) &&
+    isEwE8UiPathAuthorized(EW_E8_GATE_UI_UNLOCK_WIRE_STATUS.settings_api_keys_hub) &&
     LAUNCH_GATES.financialConnectivityEngine === true
   );
 }
@@ -106,12 +100,8 @@ export function isTradingApiKeysEnginePathReady(): boolean {
 export function isGiftcardRedeemReverseEnginePathReady(): boolean {
   return (
     EW_E8_CREATE_GIFTCARD_REDEEM_RPC === 'rpc_create_giftcard_redeem_request' &&
-    (EW_E8_NEW_ENGINE_FEATURES as readonly string[]).includes(
-      'giftcard_redeem_reverse',
-    ) &&
-    isEwE8UiPathAuthorized(
-      EW_E8_GATE_UI_UNLOCK_WIRE_STATUS.giftcard_redeem_reverse_ui,
-    ) &&
+    (EW_E8_NEW_ENGINE_FEATURES as readonly string[]).includes('giftcard_redeem_reverse') &&
+    isEwE8UiPathAuthorized(EW_E8_GATE_UI_UNLOCK_WIRE_STATUS.giftcard_redeem_reverse_ui) &&
     LAUNCH_GATES.financialConnectivityEngine === true
   );
 }

@@ -8,31 +8,31 @@
 
 ## 범위
 
-| 항목 | 내용 |
-| ---- | ---- |
-| Launch | `LAUNCH_GATES.tradeParityLive=true` |
-| Hedge | `PositionModeSegment` · `rpc_set/get_position_mode` · wire `live` |
-| Reduce-only | futures advanced checkbox · `p_reduce_only` on limit/stop place · reduce-only wire `live` |
-| Spot limit/stop | **이미 live** (EXISTS · honesty pin) |
-| Post-open TP/SL | **이미 live** (EXISTS · honesty pin) |
-| Migration | **0** (engine WAVE/GATE만) |
+| 항목            | 내용                                                                                      |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| Launch          | `LAUNCH_GATES.tradeParityLive=true`                                                       |
+| Hedge           | `PositionModeSegment` · `rpc_set/get_position_mode` · wire `live`                         |
+| Reduce-only     | futures advanced checkbox · `p_reduce_only` on limit/stop place · reduce-only wire `live` |
+| Spot limit/stop | **이미 live** (EXISTS · honesty pin)                                                      |
+| Post-open TP/SL | **이미 live** (EXISTS · honesty pin)                                                      |
+| Migration       | **0** (engine WAVE/GATE만)                                                                |
 
 ## Unlock 표
 
-| Surface | 상태 | 비고 |
-| ------- | ---- | ---- |
+| Surface                    | 상태     | 비고                         |
+| -------------------------- | -------- | ---------------------------- |
 | Hedge position mode toggle | **live** | `hedge-position-mode-toggle` |
-| Reduce-only toggle | **live** | limit/stop only |
-| Spot limit/stop tabs | **live** | EXISTS RPC |
-| Post-open TP/SL edit | **live** | EXISTS RPC |
+| Reduce-only toggle         | **live** | limit/stop only              |
+| Spot limit/stop tabs       | **live** | EXISTS RPC                   |
+| Post-open TP/SL edit       | **live** | EXISTS RPC                   |
 
 ## 증거
 
-| Gate | 결과 |
-| ---- | ---- |
-| `gate:ai-impl` trade UI unlock | vitest + typecheck + i18n + release |
-| `isEwE21TradeUiParityUnlocked()` | **true** |
-| Remote migration | GATE `#255` already applied — remigration **0** |
+| Gate                             | 결과                                            |
+| -------------------------------- | ----------------------------------------------- |
+| `gate:ai-impl` trade UI unlock   | vitest + typecheck + i18n + release             |
+| `isEwE21TradeUiParityUnlocked()` | **true**                                        |
+| Remote migration                 | GATE `#255` already applied — remigration **0** |
 
 ## 다음
 

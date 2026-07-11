@@ -36,9 +36,7 @@ describe('ew-e8-financial-display-contract (E8 WAVE)', () => {
   it('pins WAVE todo ids · NEW vs EXISTS · engine ready · UI gated', () => {
     assertEwE8FinancialWaveSync();
     expect(EW_E8_FINANCIAL_TODO).toBe('ew-e8-financial-wave');
-    expect(EW_E8_FINANCIAL_PREREQUISITE_TODO).toBe(
-      'ew-e23-ui-casino-live-unlocks',
-    );
+    expect(EW_E8_FINANCIAL_PREREQUISITE_TODO).toBe('ew-e23-ui-casino-live-unlocks');
     expect(EW_E8_FINANCIAL_NEXT_TODO).toBe('ew-e8-gate-financial');
     expect(EW_E8_FINANCIAL_MIGRATION_IN_THIS_TODO).toBe(true);
     expect(EW_E8_GIFTCARD_DEPOSIT_SEMANTICS_PRESERVED).toBe(true);
@@ -49,10 +47,7 @@ describe('ew-e8-financial-display-contract (E8 WAVE)', () => {
       'trading_api_keys',
       'giftcard_redeem_reverse',
     ]);
-    expect([...EW_E8_EXISTS_FEATURES]).toEqual([
-      'giftcard_deposit',
-      'withdraw_rails',
-    ]);
+    expect([...EW_E8_EXISTS_FEATURES]).toEqual(['giftcard_deposit', 'withdraw_rails']);
     expect([...EW_E8_DEFERRED_FEATURES]).toEqual([
       'wallet_transfer_ui_live',
       'settings_api_keys_hub_live',
@@ -76,9 +71,7 @@ describe('ew-e8-financial-display-contract (E8 WAVE)', () => {
     expect(adr).toContain('LEGAL_BASIS');
     expect(adr).toContain('Σ=0');
 
-    const sql = readRepo(
-      'supabase/migrations/20260811000001_ew_e8_financial.sql',
-    );
+    const sql = readRepo('supabase/migrations/20260811000001_ew_e8_financial.sql');
     expect(sql).toContain(EW_E8_FINANCIAL_MIGRATION_NAME);
     expect(sql).toContain('rpc_transfer_to_user');
     expect(sql).toContain('rpc_create_trading_api_key');
@@ -88,9 +81,7 @@ describe('ew-e8-financial-display-contract (E8 WAVE)', () => {
     expect(sql).toContain('trading_api_keys');
     expect(sql).toContain('giftcard_redeem_requests');
     expect(sql).toContain('REVOKE ALL ON TABLE p2p_transfers');
-    expect(sql).not.toMatch(
-      /CREATE OR REPLACE FUNCTION rpc_create_giftcard_deposit_request/i,
-    );
+    expect(sql).not.toMatch(/CREATE OR REPLACE FUNCTION rpc_create_giftcard_deposit_request/i);
 
     const sqlTest = readRepo('supabase/tests/ew_e8_financial_test.sql');
     expect(sqlTest).toContain('E8-0');

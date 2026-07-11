@@ -53,7 +53,9 @@ describe('ew-e5-gate-gap-surfaces-display-contract (E5 GATE)', () => {
 
     const vip = PQA_DEAD_CONTROL_DEFER_REGISTRY.find((row) => row.id === 'sports-vip-coming-soon');
     expect(vip?.mitigatedBy).toBe('live');
-    const lb = PQA_DEAD_CONTROL_DEFER_REGISTRY.find((row) => row.id === 'referral-leaderboard-stub');
+    const lb = PQA_DEAD_CONTROL_DEFER_REGISTRY.find(
+      (row) => row.id === 'referral-leaderboard-stub',
+    );
     expect(lb?.mitigatedBy).toBe('live');
   });
 

@@ -150,9 +150,7 @@ function mapAudit(row: {
     actorKey: 'admin.primitive.audit.actor.operator',
     actionKey: 'admin.support.audit.resolve',
     subject:
-      typeof payload['ticket_id'] === 'string'
-        ? payload['ticket_id']
-        : (row.entity_id ?? ''),
+      typeof payload['ticket_id'] === 'string' ? payload['ticket_id'] : (row.entity_id ?? ''),
     reason: typeof payload['reason'] === 'string' ? payload['reason'] : undefined,
   };
 }
@@ -177,9 +175,7 @@ export function useAdminSupportDesk(): UseAdminSupportDesk {
         { p_status: null, p_limit: 100 } as never,
       );
       if (error) throw error;
-      return isRecord(data) && Array.isArray(data['tickets'])
-        ? (data['tickets'] as Json[])
-        : [];
+      return isRecord(data) && Array.isArray(data['tickets']) ? (data['tickets'] as Json[]) : [];
     },
     enabled: mfaReady,
   });
@@ -203,10 +199,7 @@ export function useAdminSupportDesk(): UseAdminSupportDesk {
     [openQueueTickets],
   );
 
-  const filteredTickets = useMemo(
-    () => filterTickets(tickets, filters),
-    [tickets, filters],
-  );
+  const filteredTickets = useMemo(() => filterTickets(tickets, filters), [tickets, filters]);
 
   const auditEvents = useMemo(
     () =>
@@ -222,11 +215,7 @@ export function useAdminSupportDesk(): UseAdminSupportDesk {
   }, [qc]);
 
   const resolveMutation = useMutation({
-    mutationFn: async (args: {
-      ticketId: string;
-      reason: string;
-      resolutionNote?: string;
-    }) => {
+    mutationFn: async (args: { ticketId: string; reason: string; resolutionNote?: string }) => {
       const { error } = await supabase.rpc(
         'rpc_admin_resolve_support_ticket' as 'rpc_admin_set_casino_game_status',
         {

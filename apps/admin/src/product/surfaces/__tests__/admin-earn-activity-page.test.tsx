@@ -17,7 +17,11 @@ vi.mock('@/hooks/admin/useAdminEarnActivityDesk', () => ({
 
 describe('AdminEarnActivityPage', () => {
   it('renders activity metrics and refresh control', () => {
-    render(<I18nProvider><AdminEarnActivityPage /></I18nProvider>);
+    render(
+      <I18nProvider>
+        <AdminEarnActivityPage />
+      </I18nProvider>,
+    );
     expect(screen.getByRole('heading', { level: 2 })).toBeTruthy();
     expect(screen.getByRole('button', { name: /새로고침|Refresh/i })).toBeTruthy();
   });

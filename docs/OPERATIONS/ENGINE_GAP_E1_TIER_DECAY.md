@@ -9,22 +9,22 @@
 
 ## 범위
 
-| 항목 | 내용 |
-| ---- | ---- |
-| ADR | 45일 grace · Diamond 60일 · max 1-tier · warn 30/15/7/3 |
-| Migration | `20260801000001_ew_e1_tier_decay.sql` |
-| RPC | `rpc_run_tier_decay` · `rpc_get_tier_decay_status` |
-| Mission | `tier_keep_status` progress live · monthly claim |
-| Notify | `notification_outbox` `tier_decay_warning` |
-| Cron | `phonara_tier_decay_daily` 03:15 UTC |
+| 항목      | 내용                                                    |
+| --------- | ------------------------------------------------------- |
+| ADR       | 45일 grace · Diamond 60일 · max 1-tier · warn 30/15/7/3 |
+| Migration | `20260801000001_ew_e1_tier_decay.sql`                   |
+| RPC       | `rpc_run_tier_decay` · `rpc_get_tier_decay_status`      |
+| Mission   | `tier_keep_status` progress live · monthly claim        |
+| Notify    | `notification_outbox` `tier_decay_warning`              |
+| Cron      | `phonara_tier_decay_daily` 03:15 UTC                    |
 
 ## 증거
 
-| Gate | 결과 |
-| ---- | ---- |
-| `gate:ai-impl` tier-decay + dead-controls + tier-me | vitest (closeout) |
-| SQL | `ew_e1_tier_decay_test.sql` E1-0..E1-4 |
-| Remote | `stack:push-remote` · advisor 0 |
+| Gate                                                | 결과                                   |
+| --------------------------------------------------- | -------------------------------------- |
+| `gate:ai-impl` tier-decay + dead-controls + tier-me | vitest (closeout)                      |
+| SQL                                                 | `ew_e1_tier_decay_test.sql` E1-0..E1-4 |
+| Remote                                              | `stack:push-remote` · advisor 0        |
 
 ## 다음
 

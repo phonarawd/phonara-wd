@@ -5,10 +5,7 @@
  */
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 import { verifyMessage } from 'npm:viem@2.23.2';
-import {
-  createEdgeContext,
-  mapSupabaseError,
-} from '../_shared/edge-observability.ts';
+import { createEdgeContext, mapSupabaseError } from '../_shared/edge-observability.ts';
 
 function env(name: string): string {
   const v = Deno.env.get(name);
@@ -65,11 +62,9 @@ Deno.serve(async (req) => {
       return ctx.jsonErr('siwe_message_mismatch', 400);
     }
 
-    const service = createClient(
-      env('SUPABASE_URL'),
-      env('SUPABASE_SERVICE_ROLE_KEY'),
-      { auth: { persistSession: false } },
-    );
+    const service = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'), {
+      auth: { persistSession: false },
+    });
 
     const { data, error } = await service.rpc('rpc_service_complete_siwe_login', {
       p_challenge_id: challengeId,

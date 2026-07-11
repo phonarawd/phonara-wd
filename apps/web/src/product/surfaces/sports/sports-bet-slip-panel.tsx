@@ -35,9 +35,7 @@ type SportsBetSlipPanelProps = {
   sportsParityLive?: boolean;
 };
 
-function oddsAcceptanceLabelKey(
-  policy: SportsBetSlipState['oddsAcceptance'],
-): MessageKey {
+function oddsAcceptanceLabelKey(policy: SportsBetSlipState['oddsAcceptance']): MessageKey {
   if (policy === 'accept_any') return 'sports.slip.odds_acceptance.accept_any';
   if (policy === 'accept_better') return 'sports.slip.odds_acceptance.accept_better';
   return 'sports.slip.odds_acceptance.strict';

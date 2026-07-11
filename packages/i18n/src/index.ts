@@ -1148,7 +1148,8 @@ export const koMessages = {
   'wallet.redeem.ledgerHint': 'PHON은 단일 지갑 원장에 기록됩니다. 별도 포인트 잔액은 없습니다.',
   'wallet.redeem.railsTitle': '교환·충전 방법',
   'wallet.redeem.rail.krw': 'PHON → 원화',
-  'wallet.redeem.rail.krw.desc': 'PHON을 원화로 출금합니다. 기존 원화 출금 레일을 그대로 사용합니다.',
+  'wallet.redeem.rail.krw.desc':
+    'PHON을 원화로 출금합니다. 기존 원화 출금 레일을 그대로 사용합니다.',
   'wallet.redeem.rail.krw.meta': '1시간 SLA · 운영자 승인 후 송금',
   'wallet.redeem.rail.crypto': 'PHON → USDT',
   'wallet.redeem.rail.crypto.desc':
@@ -2100,7 +2101,8 @@ export const koMessages = {
   'error.GIFTCARD_FACE_ABOVE_MAX': '권면 금액이 최대 한도를 초과했습니다.',
   'error.GIFTCARD_FEE_EXCEEDS_FACE': '수수료가 권면 금액 이상입니다. 금액을 확인해 주세요.',
   'error.P2P_SELF_TRANSFER': '본인에게는 송금할 수 없습니다.',
-  'error.P2P_RECIPIENT_NOT_FOUND': '받는 사람을 찾을 수 없습니다. 사용자명 또는 ID를 확인해 주세요.',
+  'error.P2P_RECIPIENT_NOT_FOUND':
+    '받는 사람을 찾을 수 없습니다. 사용자명 또는 ID를 확인해 주세요.',
   'error.P2P_RECIPIENT_REQUIRED': '받는 사람을 입력해 주세요.',
   'error.P2P_AMOUNT_BELOW_MIN': '송금 금액이 최소 한도보다 작습니다.',
   'error.P2P_DAILY_CAP': '오늘 송금 한도를 모두 사용했습니다. 내일 다시 시도해 주세요.',
@@ -2109,7 +2111,8 @@ export const koMessages = {
   'error.API_KEY_NAME_INVALID': 'API 키 이름을 확인해 주세요.',
   'error.API_KEY_SCOPES_REQUIRED': 'API 키 권한을 하나 이상 선택해 주세요.',
   'error.API_KEY_SCOPE_INVALID': '지원하지 않는 API 키 권한입니다.',
-  'error.API_KEY_LIMIT': '활성 API 키 개수 한도에 도달했습니다. 기존 키를 폐기한 뒤 다시 만들어 주세요.',
+  'error.API_KEY_LIMIT':
+    '활성 API 키 개수 한도에 도달했습니다. 기존 키를 폐기한 뒤 다시 만들어 주세요.',
   'error.API_KEY_NOT_FOUND': 'API 키를 찾을 수 없습니다.',
   'error.API_KEY_REQUIRED': 'API 키를 선택해 주세요.',
   'error.GIFTCARD_REDEEM_NOT_FOUND': '상품권 교환 요청을 찾을 수 없습니다.',
@@ -4277,8 +4280,7 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
     'PHON lives on the single wallet ledger. There is no separate points balance.',
   'wallet.redeem.railsTitle': 'Exchange & top-up methods',
   'wallet.redeem.rail.krw': 'PHON → KRW',
-  'wallet.redeem.rail.krw.desc':
-    'Withdraw PHON as KRW using the existing bank withdrawal rail.',
+  'wallet.redeem.rail.krw.desc': 'Withdraw PHON as KRW using the existing bank withdrawal rail.',
   'wallet.redeem.rail.krw.meta': '1h SLA · transfer after operator approval',
   'wallet.redeem.rail.crypto': 'PHON → USDT',
   'wallet.redeem.rail.crypto.desc':
@@ -4306,7 +4308,8 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'wallet.transfer.memo': 'Memo (optional)',
   'wallet.transfer.submit': 'Review transfer',
   'wallet.transfer.confirm.title': 'Confirm transfer',
-  'wallet.transfer.confirm.body': 'Amounts are confirmed by the server. Self-transfers are blocked.',
+  'wallet.transfer.confirm.body':
+    'Amounts are confirmed by the server. Self-transfers are blocked.',
   'wallet.transfer.confirm.submit': 'Send PHON',
   'wallet.transfer.success.title': 'Transfer complete',
   'wallet.transfer.success.body': 'Recorded on the ledger. Balances follow the server response.',
@@ -4325,7 +4328,8 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'wallet.redeemGiftcard.fee': 'Fee',
   'wallet.redeemGiftcard.submit': 'Review request',
   'wallet.redeemGiftcard.confirm.title': 'Confirm gift card exchange',
-  'wallet.redeemGiftcard.confirm.body': 'PHON is debited now. Operators fulfill the gift card later.',
+  'wallet.redeemGiftcard.confirm.body':
+    'PHON is debited now. Operators fulfill the gift card later.',
   'wallet.redeemGiftcard.confirm.submit': 'Submit request',
   'wallet.redeemGiftcard.success.title': 'Request submitted',
   'wallet.redeemGiftcard.success.body': 'The gift card ships after operator fulfillment.',
@@ -5259,11 +5263,9 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'error.INVALID_LEVERAGE': 'The leverage is invalid.',
   'error.LEVERAGE_TOO_HIGH': 'Exceeds the maximum allowed leverage.',
   'error.CROSS_MARGIN_NOT_AVAILABLE': 'Cross margin is not available yet. Isolated margin only.',
-  'error.OPEN_POSITIONS_BLOCK':
-    'Close open positions before changing position mode.',
+  'error.OPEN_POSITIONS_BLOCK': 'Close open positions before changing position mode.',
   'error.OPEN_ORDERS_BLOCK': 'Cancel open orders before changing position mode.',
-  'error.REDUCE_ONLY_NO_POSITION':
-    'Reduce-only orders need an opposite open position.',
+  'error.REDUCE_ONLY_NO_POSITION': 'Reduce-only orders need an opposite open position.',
   'error.INVALID_POSITION_MODE': 'Unsupported position mode.',
   'error.FUNDING_NOT_ENABLED': 'Funding settlement is not enabled yet.',
   'error.NOT_LIQUIDATABLE': 'Not yet eligible for liquidation.',

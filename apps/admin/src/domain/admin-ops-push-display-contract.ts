@@ -29,8 +29,7 @@ export const ADMIN_OPS_PUSH_EVENT_TYPE = 'ops_alert' as const;
 export const ADMIN_OPS_PUSH_SETTINGS_SURFACE_PATH =
   'apps/admin/src/product/surfaces/admin-settings-page.tsx' as const;
 
-export const ADMIN_OPS_PUSH_HOOK_PATH =
-  'apps/admin/src/hooks/admin/useAdminOpsPush.ts' as const;
+export const ADMIN_OPS_PUSH_HOOK_PATH = 'apps/admin/src/hooks/admin/useAdminOpsPush.ts' as const;
 
 export const ADMIN_OPS_PUSH_FEATURE_PATH =
   'apps/admin/src/features/ops-push/admin-ops-web-push.ts' as const;
@@ -71,13 +70,7 @@ export const ADMIN_OPS_PUSH_I18N_KEYS = [
   'admin.settings.push.queuesHint',
 ] as const;
 
-export type AdminOpsPushStatus =
-  | 'on'
-  | 'off'
-  | 'denied'
-  | 'unsupported'
-  | 'loading'
-  | 'error';
+export type AdminOpsPushStatus = 'on' | 'off' | 'denied' | 'unsupported' | 'loading' | 'error';
 
 /** Build notification payload for SW + WEB_PUSH_DISPATCH_URL (url → /queues). */
 export function buildAdminOpsPushPayload(input: {

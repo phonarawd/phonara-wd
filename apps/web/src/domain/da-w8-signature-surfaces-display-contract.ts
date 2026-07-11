@@ -93,7 +93,9 @@ export function resolveHomeGreetingMessageKey(period: DaW8HomeGreetingPeriod): M
 /** Trade market heat tone — mirrors ticker change24 (display-only). */
 export type DaW8MarketHeatTone = 'up' | 'down' | 'neutral';
 
-export function resolveMarketHeatTone(tone: DaW8MarketHeatTone | null | undefined): DaW8MarketHeatTone {
+export function resolveMarketHeatTone(
+  tone: DaW8MarketHeatTone | null | undefined,
+): DaW8MarketHeatTone {
   if (tone === 'up' || tone === 'down') return tone;
   return 'neutral';
 }
@@ -194,7 +196,9 @@ export function assertDaW8SignatureSurfacesSync(): void {
   }
 
   if (DA_W8_HOME_DAY_FLOW_STEPS.length !== 4) {
-    throw new Error('da-w8-signature-surfaces-bundle: home day flow must be reward→tasks→market→events');
+    throw new Error(
+      'da-w8-signature-surfaces-bundle: home day flow must be reward→tasks→market→events',
+    );
   }
 
   if (DA_W8_HOME_DAY_FLOW.map((s) => s.id).join(',') !== DA_W8_HOME_DAY_FLOW_STEPS.join(',')) {

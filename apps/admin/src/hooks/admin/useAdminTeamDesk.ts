@@ -106,10 +106,7 @@ function mapAudit(row: {
     at: row.created_at,
     actorKey: 'admin.primitive.audit.actor.operator',
     actionKey: enabled ? 'admin.team.audit.grant' : 'admin.team.audit.revoke',
-    subject:
-      typeof payload['role'] === 'string'
-        ? payload['role']
-        : (row.entity_id ?? ''),
+    subject: typeof payload['role'] === 'string' ? payload['role'] : (row.entity_id ?? ''),
     reason: typeof payload['reason'] === 'string' ? payload['reason'] : undefined,
   };
 }

@@ -65,15 +65,9 @@ describe('p13-ops-prod-preflight-display-contract · YAML #232 T0-A', () => {
     expect(P13_T0A_PRICE_EDGE_CRON_JOBS).toContain('phonara_price_feed');
     expect(P13_T0A_TRADE_CRON_JOBS).toContain('trade-funding-accrual');
     expect(P13_T0A_ALL_CRON_JOBS).toHaveLength(14);
-    expect(P13_T0A_PRICE_FEED_VAULT_SECRETS).toEqual([
-      'price_feed_url',
-      'price_feed_invoke_key',
-    ]);
+    expect(P13_T0A_PRICE_FEED_VAULT_SECRETS).toEqual(['price_feed_url', 'price_feed_invoke_key']);
     expect(P13_T0A_PRICE_FEED_EDGE_FUNCTION).toBe('price-feed');
-    expect(P13_T0A_INSURANCE_ACCOUNT_CODES).toEqual([
-      'insurance_fund_phon',
-      'insurance_fund_usdt',
-    ]);
+    expect(P13_T0A_INSURANCE_ACCOUNT_CODES).toEqual(['insurance_fund_phon', 'insurance_fund_usdt']);
     expect(P13_T0A_TREASURY_CURRENCIES).toEqual(['PHON', 'USDT', 'KRW']);
     expect(P13_T0A_INSURANCE_CONTRIBUTE_RPC).toBe('rpc_contribute_insurance_capital');
     expect(P13_T0A_TREASURY_UPDATE_RPC).toBe('rpc_update_treasury_reserve');

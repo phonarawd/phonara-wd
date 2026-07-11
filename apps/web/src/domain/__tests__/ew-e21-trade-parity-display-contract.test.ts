@@ -37,15 +37,8 @@ describe('ew-e21-trade-parity-display-contract (E21 WAVE)', () => {
     expect(EW_E21_TRADE_PARITY_NEXT_TODO).toBe('ew-e21-gate-trade-engine-parity');
     expect(EW_E21_TRADE_PARITY_MIGRATION_IN_THIS_TODO).toBe(true);
     expect(EW_E21_EXISTS_RPC_REMIGRATION_FORBIDDEN).toBe(true);
-    expect([...EW_E21_NEW_ENGINE_FEATURES]).toEqual([
-      'hedge_position_mode',
-      'reduce_only_orders',
-    ]);
-    expect([...EW_E21_EXISTS_FEATURES]).toEqual([
-      'tpsl_amend',
-      'spot_limit_stop',
-      'trailing_stop',
-    ]);
+    expect([...EW_E21_NEW_ENGINE_FEATURES]).toEqual(['hedge_position_mode', 'reduce_only_orders']);
+    expect([...EW_E21_EXISTS_FEATURES]).toEqual(['tpsl_amend', 'spot_limit_stop', 'trailing_stop']);
     expect(isEwE21TradeParityEngineReady()).toBe(true);
     expect(typeof isEwE21TradeParityLiveUnlocked()).toBe('boolean');
   });

@@ -160,11 +160,9 @@ export const P13_T2_WEEKLY_SCALE_REVIEW = {
   ] as const,
 } as const;
 
-export const P13_T2_SCALE_CANON_PATH =
-  'docs/OPERATIONS/P13_T2_SCALE_TRIGGERS.md' as const;
+export const P13_T2_SCALE_CANON_PATH = 'docs/OPERATIONS/P13_T2_SCALE_TRIGGERS.md' as const;
 
-export const P13_T2_SCALE_SPOTCHECK_PATH =
-  'scripts/p13-t2-scale-triggers-spotcheck.sql' as const;
+export const P13_T2_SCALE_SPOTCHECK_PATH = 'scripts/p13-t2-scale-triggers-spotcheck.sql' as const;
 
 export const P13_T2_SCALE_ARTIFACT_PATHS = [
   P13_T2_SCALE_CANON_PATH,

@@ -15,10 +15,7 @@ import {
 import { LAUNCH_GATES } from '../lib/launch-gates';
 import { SPORTS_RULES_ROUTE, SPORTS_VIP_ROUTE_HUB } from './sports-hub-pages-display-contract';
 import { P10_SPORTS_LAYOUT_DEDUP_TODO } from './sports-exchange-parity-display-contract';
-import {
-  earnVipTierMeetsOrExceeds,
-  type EarnVipTier,
-} from './unified-tier-display-contract';
+import { earnVipTierMeetsOrExceeds, type EarnVipTier } from './unified-tier-display-contract';
 
 export const P10_SPORTS_RULES_AND_VIP_TODO = 'p10-sports-rules-and-vip-stub' as const;
 
@@ -53,7 +50,8 @@ export const SPORTS_VIP_MIN_TIER = 'platinum' as const satisfies EarnVipTier;
 
 export const SPORTS_RULES_ENGINE_STATUS = 'ui_only' as const satisfies SportsRulesVipEngineStatus;
 /** E4 GATE green — Option B caps/eligibility exist · E5 browse wire. */
-export const SPORTS_VIP_MARKETS_ENGINE_STATUS = 'exists' as const satisfies SportsRulesVipEngineStatus;
+export const SPORTS_VIP_MARKETS_ENGINE_STATUS =
+  'exists' as const satisfies SportsRulesVipEngineStatus;
 
 export const SPORTS_RULES_PAGE_EXPOSURE = 'live' as const satisfies SportsRulesVipExposureMode;
 /** E5 — VIP room browses shared fixtures (no dedicated VIP markets RPC). */

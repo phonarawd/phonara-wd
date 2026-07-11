@@ -282,10 +282,7 @@ export function LandingPage() {
             const pillar = PLATFORM_PILLAR_CONTENT[pillarId];
 
             return (
-              <li
-                key={pillarId}
-                className="border-line bg-surface rounded-lg border p-4"
-              >
+              <li key={pillarId} className="border-line bg-surface rounded-lg border p-4">
                 <p className="text-foreground m-0 font-semibold">{t(pillar.titleKey)}</p>
 
                 <p className="text-foreground-muted m-0 mt-2 text-sm">{t(pillar.descKey)}</p>

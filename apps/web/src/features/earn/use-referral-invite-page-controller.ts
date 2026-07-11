@@ -29,6 +29,13 @@ import { supabase } from '@/lib/supabase';
 import { translateError } from '@/lib/translate-error';
 import { productToast } from '@/product/primitives/toast-zone';
 import { useT } from '@/product/i18n';
+import {
+  KAKAO_SHARE_FAILED_KEY,
+  KAKAO_SHARE_SUCCESS_KEY,
+} from '@/domain/kakao-share-display-contract';
+import { isKakaoShareAugmentReady } from '@/domain/ew-e10-growth-ui-display-contract';
+import { BRAND_ASSETS } from '@/domain/brand-display-contract';
+import { canUseKakaoShare, shareReferralViaKakao } from '@/lib/kakao-share-sdk';
 
 export const referralInvitePageKeys = {
   snapshot: (userId: string | null) => ['referral-invite-snapshot', userId] as const,
@@ -92,6 +99,9 @@ export type ReferralInvitePageControllerView = {
   copyInviteLink: () => Promise<void>;
   shareInvite: () => Promise<void>;
   claimShareReward: () => Promise<void>;
+  kakaoShareAvailable: boolean;
+  kakaoShareBusy: boolean;
+  shareViaKakao: () => Promise<void>;
 };
 
 export function useReferralInvitePageController(): ReferralInvitePageControllerView {
@@ -104,6 +114,7 @@ export function useReferralInvitePageController(): ReferralInvitePageControllerV
   const { claimViralMission, loading: claimLoading } = useViralMissionClaim();
   const [shareBusy, setShareBusy] = useState(false);
   const [claimBusy, setClaimBusy] = useState(false);
+  const [kakaoShareBusy, setKakaoShareBusy] = useState(false);
   const [actionError, setActionError] = useState<MessageKey | null>(null);
 
   const {
@@ -220,6 +231,39 @@ export function useReferralInvitePageController(): ReferralInvitePageControllerV
     await copyToClipboard(snapshot.inviteUrl, 'referral.toast.linkCopied');
   }, [copyToClipboard, snapshot?.inviteUrl]);
 
+  const shareViaKakao = useCallback(async () => {
+    if (!snapshot?.inviteUrl || !snapshot.referralCode || kakaoShareBusy) return;
+    if (!isKakaoShareAugmentReady() || !canUseKakaoShare()) return;
+    setKakaoShareBusy(true);
+    setActionError(null);
+    try {
+      await shareReferralViaKakao({
+        title: t('referral.share.title'),
+        description: t('referral.shareText', {
+          code: snapshot.referralCode,
+          url: snapshot.inviteUrl,
+        }),
+        inviteUrl: snapshot.inviteUrl,
+        imageUrl: BRAND_ASSETS.raster,
+      });
+      productToast.show({ zone: 'warm', key: KAKAO_SHARE_SUCCESS_KEY });
+      if (shareMission.canClaim) {
+        await claimShareReward();
+      }
+    } catch {
+      setActionError(KAKAO_SHARE_FAILED_KEY);
+    } finally {
+      setKakaoShareBusy(false);
+    }
+  }, [
+    claimShareReward,
+    kakaoShareBusy,
+    shareMission.canClaim,
+    snapshot?.inviteUrl,
+    snapshot?.referralCode,
+    t,
+  ]);
+
   const queryError = snapshotError ? translateError(snapshotError, 'error.UNKNOWN') : null;
 
   if (!authLoading && !session) {
@@ -256,5 +300,8 @@ export function useReferralInvitePageController(): ReferralInvitePageControllerV
     copyInviteLink,
     shareInvite,
     claimShareReward,
+    kakaoShareAvailable: isKakaoShareAugmentReady() && canUseKakaoShare(),
+    kakaoShareBusy,
+    shareViaKakao,
   };
 }

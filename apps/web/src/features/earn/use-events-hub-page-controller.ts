@@ -140,7 +140,8 @@ export function useEventsHubPageController(): EventsHubPageControllerView {
   }, [queryClient, status?.tier, tapBlocked, tapping, userId]);
 
   const loading = authLoading || (Boolean(userId) && snapshotLoading);
-  const error = actionError ?? (snapshotError ? translateError(snapshotError, 'error.UNKNOWN') : null);
+  const error =
+    actionError ?? (snapshotError ? translateError(snapshotError, 'error.UNKNOWN') : null);
 
   return {
     t,

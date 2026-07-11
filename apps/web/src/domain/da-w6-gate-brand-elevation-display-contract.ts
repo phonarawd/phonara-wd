@@ -108,7 +108,9 @@ export function daW6GateDomainEmptySignature(
 /** Non-waivable sync for DA W6 GATE closeout. */
 export function assertDaW6GateBrandElevationSync(): void {
   if (!DA_W6_GATE_BRAND_ELEVATION_PREREQUISITE_TODOS.includes(DA_W6_BRAND_ELEVATION_BUNDLE_TODO)) {
-    throw new Error('da-w6-gate-brand-elevation: missing prerequisite da-w6-brand-elevation-bundle');
+    throw new Error(
+      'da-w6-gate-brand-elevation: missing prerequisite da-w6-brand-elevation-bundle',
+    );
   }
 
   if (DA_W6_BRAND_MARK_AURORA_VARIANT !== 'aurora') {
@@ -116,7 +118,9 @@ export function assertDaW6GateBrandElevationSync(): void {
   }
 
   if (DA_W6_DOMAIN_EMPTY_DOMAINS.length !== 4) {
-    throw new Error('da-w6-gate-brand-elevation: expected 4 domain empty personalities from BUNDLE');
+    throw new Error(
+      'da-w6-gate-brand-elevation: expected 4 domain empty personalities from BUNDLE',
+    );
   }
 
   for (const domain of DA_W6_DOMAIN_EMPTY_DOMAINS) {
@@ -139,7 +143,9 @@ export function assertDaW6GateBrandElevationSync(): void {
   }
 
   if (DA_W6_GATE_BRAND_PRIMARY_OWNER_PATHS.length !== 3) {
-    throw new Error('da-w6-gate-brand-elevation: brand-mark + domain-empty + quad-stream owners required');
+    throw new Error(
+      'da-w6-gate-brand-elevation: brand-mark + domain-empty + quad-stream owners required',
+    );
   }
 
   if (DA_W6_GATE_BRAND_ELEVATION_TEST_PATHS.length < 6) {

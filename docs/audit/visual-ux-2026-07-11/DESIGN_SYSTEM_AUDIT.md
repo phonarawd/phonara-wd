@@ -131,7 +131,7 @@ MarketingShell — Landing 등 비앱 크롬.
 | ID  | 항목                                                  | 조치                      |
 | --- | ----------------------------------------------------- | ------------------------- |
 | D1  | motion deprecated aliases                             | P13 purge                 |
-| D2  | shadcn legacy `--color-primary` bridge                | **purged** da-w7 `#234` |
+| D2  | shadcn legacy `--color-primary` bridge                | **purged** da-w7 `#234`   |
 | D3  | `.shell-content-column` vs `.ds-shell-content-column` | 단일화                    |
 | D4  | Card CVA vs personality CSS                           | 문서화 유지 (의도적 분리) |
 | D5  | Admin web-product-shims                               | Admin DS 정렬             |

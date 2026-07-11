@@ -1,7 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-import { SupportTicketStubPage } from '@/product/surfaces/marketing/support-ticket-stub-page';
+import { getSession } from '@/lib/auth';
+import { SupportTicketPage } from '@/product/surfaces/marketing/support-ticket-page';
 
 export const Route = createFileRoute('/support/ticket')({
-  component: SupportTicketStubPage,
+  beforeLoad: async () => {
+    const session = await getSession();
+    if (!session) {
+      throw redirect({ to: '/login', replace: true });
+    }
+  },
+  component: SupportTicketPage,
 });

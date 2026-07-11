@@ -67,7 +67,11 @@ export function AdminCmsPage() {
             header: t('admin.cms.pages.col.status'),
             cell: ({ row }) => t(STATUS_KEYS[row.status]),
           },
-          { id: 'updated', header: t('admin.cms.pages.col.updatedAt'), cell: ({ row }) => row.updatedAt },
+          {
+            id: 'updated',
+            header: t('admin.cms.pages.col.updatedAt'),
+            cell: ({ row }) => row.updatedAt,
+          },
         ]}
         rows={filteredPages}
         getRowId={(row) => row.id}
@@ -88,11 +92,24 @@ export function AdminCmsPage() {
             onClick={() =>
               setTarget({
                 row,
-                action: row.status === 'published' ? 'archive' : row.status === 'archived' ? 'restore' : 'publish',
+                action:
+                  row.status === 'published'
+                    ? 'archive'
+                    : row.status === 'archived'
+                      ? 'restore'
+                      : 'publish',
               })
             }
           >
-            {t(actionKey[row.status === 'published' ? 'archive' : row.status === 'archived' ? 'restore' : 'publish'])}
+            {t(
+              actionKey[
+                row.status === 'published'
+                  ? 'archive'
+                  : row.status === 'archived'
+                    ? 'restore'
+                    : 'publish'
+              ],
+            )}
           </Button>
         )}
       />

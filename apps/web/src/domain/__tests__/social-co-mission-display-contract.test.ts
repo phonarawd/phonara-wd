@@ -58,9 +58,7 @@ describe('social-co-mission-display-contract (E7)', () => {
     expect(adr).toContain('광고');
     expect(adr).toContain('설문');
 
-    const migration = readRepo(
-      'supabase/migrations/20260807000001_ew_e7_social_co_mission.sql',
-    );
+    const migration = readRepo('supabase/migrations/20260807000001_ew_e7_social_co_mission.sql');
     expect(migration).toContain(SOCIAL_CO_MISSION_MIGRATION_NAME);
     expect(migration).toContain(SOCIAL_CO_MISSION_INVITE_RPC);
     expect(migration).toContain(SOCIAL_CO_MISSION_COMPLETE_RPC);

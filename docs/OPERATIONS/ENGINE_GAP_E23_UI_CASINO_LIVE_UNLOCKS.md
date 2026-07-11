@@ -8,32 +8,32 @@
 
 ## 범위
 
-| 항목 | 내용 |
-| ---- | ---- |
-| Launch | `LAUNCH_GATES.casinoLiveLive=true` |
-| Live crash | stage mid-flight cash-out · `rpc_live_crash_*` |
+| 항목        | 내용                                                           |
+| ----------- | -------------------------------------------------------------- |
+| Launch      | `LAUNCH_GATES.casinoLiveLive=true`                             |
+| Live crash  | stage mid-flight cash-out · `rpc_live_crash_*`                 |
 | Progressive | mines/hilo/blackjack step + mid cash-out · `rpc_progressive_*` |
-| Fairness | seed get/set/rotate UI · account PF honesty copy |
-| Dual mode | one-shot replay 유지 · play-mode toggle → live |
-| Migration | **0** (engine WAVE/GATE만) |
+| Fairness    | seed get/set/rotate UI · account PF honesty copy               |
+| Dual mode   | one-shot replay 유지 · play-mode toggle → live                 |
+| Migration   | **0** (engine WAVE/GATE만)                                     |
 
 ## Unlock 표
 
-| Surface | 상태 | 비고 |
-| ------- | ---- | ---- |
-| Progressive mines/hilo/blackjack | **live** | `casino-play-mode` · stage live controls |
-| Live crash 공유 라운드 | **live** | `casino-crash-live-cashout` |
-| Fairness seed 설정 | **live** | `casino-fairness-seed-controls` |
-| One-shot 12종 place/settle | **live** (EXISTS) | nonce=1 path 유지 |
+| Surface                          | 상태              | 비고                                     |
+| -------------------------------- | ----------------- | ---------------------------------------- |
+| Progressive mines/hilo/blackjack | **live**          | `casino-play-mode` · stage live controls |
+| Live crash 공유 라운드           | **live**          | `casino-crash-live-cashout`              |
+| Fairness seed 설정               | **live**          | `casino-fairness-seed-controls`          |
+| One-shot 12종 place/settle       | **live** (EXISTS) | nonce=1 path 유지                        |
 
 ## 증거
 
-| Gate | 결과 |
-| ---- | ---- |
-| `gate:ai-impl` casino UI unlock | vitest + typecheck + i18n + release |
-| `isEwE23CasinoUiLiveUnlocked()` | **true** |
-| Wire status | progressive/live/PF = **live** |
-| Remote migration | GATE already applied — remigration **0** |
+| Gate                            | 결과                                     |
+| ------------------------------- | ---------------------------------------- |
+| `gate:ai-impl` casino UI unlock | vitest + typecheck + i18n + release      |
+| `isEwE23CasinoUiLiveUnlocked()` | **true**                                 |
+| Wire status                     | progressive/live/PF = **live**           |
+| Remote migration                | GATE already applied — remigration **0** |
 
 ## 다음
 

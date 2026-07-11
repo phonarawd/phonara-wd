@@ -22,12 +22,7 @@ export const AFFILIATE_RANK_LEADERBOARD_RPC = 'rpc_get_affiliate_rank_leaderboar
 export const VIRAL_ANALYTICS_RPC = 'rpc_admin_get_viral_analytics' as const;
 export const CMS_PUBLISH_SCHEDULED_RPC = 'rpc_run_cms_publish_scheduled' as const;
 
-export const CMS_AUDIENCE_VALUES = [
-  'all',
-  'authenticated',
-  'referrer',
-  'new_user',
-] as const;
+export const CMS_AUDIENCE_VALUES = ['all', 'authenticated', 'referrer', 'new_user'] as const;
 
 export const CMS_TARGETING_COLUMNS = [
   'audience',
@@ -38,16 +33,9 @@ export const CMS_TARGETING_COLUMNS = [
 
 export const AFFILIATE_RANK_WINDOWS = ['all_time', '30d', '7d'] as const;
 
-export const VIRAL_CMS_ADMIN_ROUTES = [
-  '/admin/promotions',
-  '/admin/cms',
-  '/viral-stats',
-] as const;
+export const VIRAL_CMS_ADMIN_ROUTES = ['/admin/promotions', '/admin/cms', '/viral-stats'] as const;
 
-export const VIRAL_CMS_USER_ROUTES = [
-  '/referral/leaderboard',
-  '/announcements',
-] as const;
+export const VIRAL_CMS_USER_ROUTES = ['/referral/leaderboard', '/announcements'] as const;
 
 export const VIRAL_CMS_ARTIFACT_PATHS = [
   VIRAL_CMS_ADR_PATH,

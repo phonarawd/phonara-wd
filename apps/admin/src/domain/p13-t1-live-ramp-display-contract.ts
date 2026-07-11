@@ -139,8 +139,7 @@ export const P13_T1_WEEKLY_REVIEW_CADENCE = {
 export const P13_T1_LIVE_RAMP_CANON_PATH =
   'docs/OPERATIONS/P13_T1_LIVE_RAMP_FEATURE_GATES.md' as const;
 
-export const P13_T1_LIVE_RAMP_SPOTCHECK_PATH =
-  'scripts/p13-t1-live-ramp-spotcheck.sql' as const;
+export const P13_T1_LIVE_RAMP_SPOTCHECK_PATH = 'scripts/p13-t1-live-ramp-spotcheck.sql' as const;
 
 export const P13_T1_LIVE_RAMP_ARTIFACT_PATHS = [
   P13_T1_LIVE_RAMP_CANON_PATH,

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { SystemStatusStubPage } from '@/product/surfaces/marketing/system-status-stub-page';
+import { SystemStatusPage } from '@/product/surfaces/marketing/system-status-page';
 
 export const Route = createFileRoute('/status')({
-  component: SystemStatusStubPage,
+  component: SystemStatusPage,
 });

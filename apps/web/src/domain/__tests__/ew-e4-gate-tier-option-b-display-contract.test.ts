@@ -81,9 +81,7 @@ describe('ew-e4-gate-tier-option-b-display-contract (E4 GATE)', () => {
       expect(existsSync(resolve(REPO_ROOT, rel)), rel).toBe(true);
     }
 
-    const adminContract = readRepo(
-      'apps/admin/src/domain/admin-tier-option-b-display-contract.ts',
-    );
+    const adminContract = readRepo('apps/admin/src/domain/admin-tier-option-b-display-contract.ts');
     expect(adminContract).toContain('ADMIN_TIER_WRITE_UI_UNLOCKED = true');
     expect(adminContract).toContain('/users/$userId/tier');
     expect(adminContract).toContain('/tiers');

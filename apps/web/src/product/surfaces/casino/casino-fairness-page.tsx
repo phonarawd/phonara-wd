@@ -174,13 +174,17 @@ export function CasinoFairnessPage() {
             {t('casino.fairness.step1.desc')}
           </p>
           <div>
-            <h3 className="text-foreground m-0 text-sm font-semibold">{t('casino.fairness.step2')}</h3>
+            <h3 className="text-foreground m-0 text-sm font-semibold">
+              {t('casino.fairness.step2')}
+            </h3>
             <p className="text-foreground-muted m-0 mt-1 text-sm leading-relaxed">
               {t('casino.fairness.step2.desc')}
             </p>
           </div>
           <div>
-            <h3 className="text-foreground m-0 text-sm font-semibold">{t('casino.fairness.step3')}</h3>
+            <h3 className="text-foreground m-0 text-sm font-semibold">
+              {t('casino.fairness.step3')}
+            </h3>
             <p className="text-foreground-muted m-0 mt-1 text-sm leading-relaxed">
               {t('casino.fairness.step3.desc')}
             </p>
@@ -196,12 +200,8 @@ export function CasinoFairnessPage() {
           <CardTitle className="text-base">{t(CASINO_FAIRNESS_LIMITS_TITLE_KEY)}</CardTitle>
         </CardHeader>
         <CardBody className="flex flex-col gap-2 pt-0">
-          <p className="text-foreground-muted m-0 text-sm leading-relaxed">
-            {t(limitsClientKey)}
-          </p>
-          <p className="text-foreground-muted m-0 text-sm leading-relaxed">
-            {t(limitsNonceKey)}
-          </p>
+          <p className="text-foreground-muted m-0 text-sm leading-relaxed">{t(limitsClientKey)}</p>
+          <p className="text-foreground-muted m-0 text-sm leading-relaxed">{t(limitsNonceKey)}</p>
           <p className="text-foreground-muted m-0 text-sm leading-relaxed">
             {t(limitsRotationKey)}
           </p>
@@ -211,7 +211,9 @@ export function CasinoFairnessPage() {
       {seedControlsEnabled ? (
         <Card data-testid="casino-fairness-seed-controls">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">{t(CASINO_FAIRNESS_SEED_CONTROLS_TITLE_KEY)}</CardTitle>
+            <CardTitle className="text-base">
+              {t(CASINO_FAIRNESS_SEED_CONTROLS_TITLE_KEY)}
+            </CardTitle>
           </CardHeader>
           <CardBody className="flex flex-col gap-4 pt-0">
             <div className="flex flex-col gap-1.5">
@@ -235,8 +237,7 @@ export function CasinoFairnessPage() {
               className="text-foreground-muted m-0 text-sm tabular-nums"
               data-testid="casino-fairness-next-nonce"
             >
-              {t(CASINO_FAIRNESS_SEED_NEXT_NONCE_KEY)}:{' '}
-              {pfState.data?.next_nonce ?? '—'}
+              {t(CASINO_FAIRNESS_SEED_NEXT_NONCE_KEY)}: {pfState.data?.next_nonce ?? '—'}
             </p>
             <p
               className="text-foreground-muted m-0 truncate font-mono text-xs"

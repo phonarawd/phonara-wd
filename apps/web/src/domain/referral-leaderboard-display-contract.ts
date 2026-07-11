@@ -117,8 +117,7 @@ export function parseAffiliateRankLeaderboard(
   const payload = raw as Record<string, unknown>;
   if (payload['ok'] === false) return null;
 
-  const windowRaw =
-    typeof payload['window'] === 'string' ? payload['window'] : fallbackWindow;
+  const windowRaw = typeof payload['window'] === 'string' ? payload['window'] : fallbackWindow;
   const window = isReferralLeaderboardWindow(windowRaw) ? windowRaw : fallbackWindow;
   const limit =
     typeof payload['limit'] === 'number' && Number.isFinite(payload['limit'])
@@ -133,14 +132,11 @@ export function parseAffiliateRankLeaderboard(
   }
 
   const self = payload['self'] == null ? null : parseEntry(payload['self']);
-  const generatedAt =
-    typeof payload['generated_at'] === 'string' ? payload['generated_at'] : null;
+  const generatedAt = typeof payload['generated_at'] === 'string' ? payload['generated_at'] : null;
 
   return { window, limit, generatedAt, entries, self };
 }
 
-export function resolveReferralLeaderboardWindowKey(
-  window: ReferralLeaderboardWindow,
-): MessageKey {
+export function resolveReferralLeaderboardWindowKey(window: ReferralLeaderboardWindow): MessageKey {
   return REFERRAL_LEADERBOARD_WINDOW_KEYS[window];
 }

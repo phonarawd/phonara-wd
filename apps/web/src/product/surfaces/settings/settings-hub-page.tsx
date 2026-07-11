@@ -1,6 +1,15 @@
 import { useEffect } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Bell, Building2, ChevronRight, Fingerprint, Globe2, KeyRound, Palette, Users } from 'lucide-react';
+import {
+  Bell,
+  Building2,
+  ChevronRight,
+  Fingerprint,
+  Globe2,
+  KeyRound,
+  Palette,
+  Users,
+} from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 import {

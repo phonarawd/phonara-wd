@@ -35,8 +35,7 @@ import {
 import { isGiftcardRedeemReverseLive } from './wallet-redeem-display-contract';
 
 export const EW_E10_WALLET_SETTINGS_UI_TODO = 'ew-e10-wallet-settings-ui' as const;
-export const EW_E10_WALLET_SETTINGS_UI_PREREQUISITE_TODO =
-  'ew-e10-platform-engine-wave' as const;
+export const EW_E10_WALLET_SETTINGS_UI_PREREQUISITE_TODO = 'ew-e10-platform-engine-wave' as const;
 export const EW_E10_WALLET_SETTINGS_UI_NEXT_TODO = 'ew-e10-trust-support-ui' as const;
 
 export const EW_E10_WALLET_SETTINGS_UI_ARTIFACT_PATHS = [

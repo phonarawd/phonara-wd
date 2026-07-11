@@ -1,4 +1,7 @@
-import { LEGAL_AFFILIATE_SECTION_IDS, legalAffiliateSectionKey } from '@/domain/legal-display-contract';
+import {
+  LEGAL_AFFILIATE_SECTION_IDS,
+  legalAffiliateSectionKey,
+} from '@/domain/legal-display-contract';
 import { useT } from '@/product/i18n';
 
 import { LegalSection } from './legal-section';

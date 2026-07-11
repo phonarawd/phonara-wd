@@ -8,30 +8,30 @@
 
 ## 범위
 
-| 항목 | 내용 |
-| ---- | ---- |
-| Launch | `LAUNCH_GATES.sportsParityLive=true` |
+| 항목            | 내용                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------ |
+| Launch          | `LAUNCH_GATES.sportsParityLive=true`                                                             |
 | Partial cashout | My-bets 헤더 25/50/75% · `rpc_preview_sports_partial_cashout` / `rpc_partial_cashout_sports_bet` |
-| Odds policy | Slip `accept_better` 기본 · `strict` / `accept_any` / `accept_better` · `p_odds_acceptance` |
-| Correct score | board selectable · `sports.market.correct_score` |
-| Migration | **0** (engine WAVE/GATE만) |
+| Odds policy     | Slip `accept_better` 기본 · `strict` / `accept_any` / `accept_better` · `p_odds_acceptance`      |
+| Correct score   | board selectable · `sports.market.correct_score`                                                 |
+| Migration       | **0** (engine WAVE/GATE만)                                                                       |
 
 ## Unlock 표
 
-| Surface | 상태 | 비고 |
-| ------- | ---- | ---- |
-| Partial cashout header | **live** | `sports-partial-cashout-header` |
-| Odds acceptance selector | **live** | decline = `accept_better` 거절 |
-| Correct score market | **live** | fixture markets board |
-| Full cashout card | **live** | EXISTS honesty pin |
+| Surface                  | 상태     | 비고                            |
+| ------------------------ | -------- | ------------------------------- |
+| Partial cashout header   | **live** | `sports-partial-cashout-header` |
+| Odds acceptance selector | **live** | decline = `accept_better` 거절  |
+| Correct score market     | **live** | fixture markets board           |
+| Full cashout card        | **live** | EXISTS honesty pin              |
 
 ## 증거
 
-| Gate | 결과 |
-| ---- | ---- |
-| `gate:ai-impl` sports UI unlock | vitest + typecheck + i18n + release |
-| `isEwE22SportsUiParityUnlocked()` | **true** |
-| Remote migration | GATE already applied — remigration **0** |
+| Gate                              | 결과                                     |
+| --------------------------------- | ---------------------------------------- |
+| `gate:ai-impl` sports UI unlock   | vitest + typecheck + i18n + release      |
+| `isEwE22SportsUiParityUnlocked()` | **true**                                 |
+| Remote migration                  | GATE already applied — remigration **0** |
 
 ## 다음
 
