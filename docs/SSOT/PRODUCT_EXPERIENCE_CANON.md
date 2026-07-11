@@ -159,7 +159,8 @@ Interaction 표: [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md) §Interaction Gram
 | **W3** | `da-w3-ia-progressive-bundle` · `da-w3-gate-ia-progressive`                   | `/home` Fold1–5 · wallet-hero · trade ticket · GATE above-fold ≤3 **`[x]`** |
 | **W4** | `da-w4-motion-system-bundle` · `da-w4-gate-motion`                            | `useCountUp` · reduced-motion instant · motion-presets GATE **`[x]`**       |
 | **W5** | `da-w5-cards-domain-variants` **`[x]`** · `da-w5-gate-domain-cards` **`[x]`** | Domain card personalities CVA **`[x]`** · 0.2s scan GATE **`[x]`**          |
-| W6–W8  | `da-w6`…`da-w8`                                                               | brand · signature · enforcement                                             |
+| **W6** | `da-w6-brand-elevation-bundle` **`[x]`** · `da-w6-gate-brand-elevation` **`[x]`** | BrandMark aurora · domain empty · Quad Stream loading **`[x]`** · GATE **`[x]`** |
+| W7–W8  | `da-w7`…`da-w8`                                                               | signature · enforcement                                                     |
 | W7     | `da-w7-enforcement-strict-tokens`                                             | `check:design-tokens --strict`                                              |
 
 ---

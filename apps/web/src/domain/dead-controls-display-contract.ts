@@ -6,10 +6,28 @@ import type { MessageKey } from '@phonara/i18n';
 
 import { CASINO_HUB_ROUTE } from './tournaments-pf-admin-display-contract';
 import {
+  REFERRAL_LEADERBOARD_DEFER_BODY_KEY,
+  REFERRAL_LEADERBOARD_ENGINE_TODO,
+  REFERRAL_LEADERBOARD_ROUTE,
+  REFERRAL_LEADERBOARD_UI_UNLOCK_TODO,
+} from './referral-leaderboard-display-contract';
+import {
   SETTINGS_API_KEYS_ENGINE_TODO,
   SETTINGS_API_KEYS_ROUTE,
   SETTINGS_API_KEYS_UI_UNLOCK_TODO,
 } from './settings-api-keys-display-contract';
+import {
+  SUPPORT_TICKET_DEFER_BODY_KEY,
+  SUPPORT_TICKET_ENGINE_TODO,
+  SUPPORT_TICKET_ROUTE,
+  SUPPORT_TICKET_UI_UNLOCK_TODO,
+} from './support-hub-display-contract';
+import {
+  SYSTEM_STATUS_DEFER_BODY_KEY,
+  SYSTEM_STATUS_ENGINE_TODO,
+  SYSTEM_STATUS_ROUTE,
+  SYSTEM_STATUS_UI_UNLOCK_TODO,
+} from './system-status-display-contract';
 import { TIER_KEEP_STATUS_RPC, TIER_KEEP_STATUS_UI_ID } from './tier-me-display-contract';
 
 export const PQA_FIX_DEAD_CONTROLS_TODO = 'pqa-fix-dead-controls' as const;
@@ -50,6 +68,12 @@ export const CASINO_HUB_DEFER_REASON_KEY = 'casino.hub.defer.body' as const sati
 
 export const SPORTS_VIP_DEFER_REASON_KEY = 'sports.vip.defer.body' as const satisfies MessageKey;
 
+export const REFERRAL_LEADERBOARD_DEFER_REASON_KEY = REFERRAL_LEADERBOARD_DEFER_BODY_KEY;
+
+export const SUPPORT_TICKET_DEFER_REASON_KEY = SUPPORT_TICKET_DEFER_BODY_KEY;
+
+export const SYSTEM_STATUS_DEFER_REASON_KEY = SYSTEM_STATUS_DEFER_BODY_KEY;
+
 export const SETTINGS_API_KEYS_CREATE_DISABLED_REASON_KEY =
   'settings.apiKeys.create.disabledHint' as const satisfies MessageKey;
 
@@ -69,7 +93,7 @@ export const PQA_DEAD_CONTROL_DEFER_REGISTRY: readonly DeadControlDeferRow[] = [
     route: '/games/$gameCode',
     mitigatedBy: 'live',
     engineTodo: CASINO_GAME_SHELL_LIVE_TODO,
-    note: 'CasinoGameShell mounts useCasinoRoundPipeline · L1 stages deferred to p10-games-batch-*',
+    note: 'CasinoGameShell mounts useCasinoRoundPipeline · Batch A/B/C (crash·limbo·dice·mines·hilo·plinko·mint_reels·gold_rush·momentum) L1 live · Batch D deferred to p10-games-batch-d',
   },
   {
     id: 'settings-api-keys-stub',
@@ -88,6 +112,33 @@ export const PQA_DEAD_CONTROL_DEFER_REGISTRY: readonly DeadControlDeferRow[] = [
     engineTodo: SPORTS_VIP_ENGINE_TODO,
     uiUnlockTodo: SPORTS_VIP_UI_UNLOCK_TODO,
     note: 'VIP markets gap until E4 Option B engine green',
+  },
+  {
+    id: 'referral-leaderboard-stub',
+    route: REFERRAL_LEADERBOARD_ROUTE,
+    mitigatedBy: 'defer_stub',
+    disabledReasonKey: REFERRAL_LEADERBOARD_DEFER_REASON_KEY,
+    engineTodo: REFERRAL_LEADERBOARD_ENGINE_TODO,
+    uiUnlockTodo: REFERRAL_LEADERBOARD_UI_UNLOCK_TODO,
+    note: 'affiliate_rank_leaderboard engine missing — P11 stub until E3/E5',
+  },
+  {
+    id: 'support-ticket-stub',
+    route: SUPPORT_TICKET_ROUTE,
+    mitigatedBy: 'defer_stub',
+    disabledReasonKey: SUPPORT_TICKET_DEFER_REASON_KEY,
+    engineTodo: SUPPORT_TICKET_ENGINE_TODO,
+    uiUnlockTodo: SUPPORT_TICKET_UI_UNLOCK_TODO,
+    note: 'Support tickets ENGINE:gap — IA built_hidden · direct URL defer stub until E9',
+  },
+  {
+    id: 'system-status-stub',
+    route: SYSTEM_STATUS_ROUTE,
+    mitigatedBy: 'defer_stub',
+    disabledReasonKey: SYSTEM_STATUS_DEFER_REASON_KEY,
+    engineTodo: SYSTEM_STATUS_ENGINE_TODO,
+    uiUnlockTodo: SYSTEM_STATUS_UI_UNLOCK_TODO,
+    note: 'Public /status ENGINE:gap — IA built_hidden · direct URL defer stub until E10',
   },
   {
     id: 'tier-keep-status-claim-blocked',

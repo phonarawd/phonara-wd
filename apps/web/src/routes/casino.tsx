@@ -1,7 +1,6 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 import { getSession } from '@/lib/auth';
-import { CasinoLobbyPage } from '@/product/surfaces/casino/casino-lobby-page';
 
 export const Route = createFileRoute('/casino')({
   beforeLoad: async () => {
@@ -10,9 +9,9 @@ export const Route = createFileRoute('/casino')({
       throw redirect({ to: '/login', replace: true });
     }
   },
-  component: CasinoRoutePage,
+  component: CasinoRouteLayout,
 });
 
-function CasinoRoutePage() {
-  return <CasinoLobbyPage />;
+function CasinoRouteLayout() {
+  return <Outlet />;
 }

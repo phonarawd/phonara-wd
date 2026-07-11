@@ -1,7 +1,7 @@
 /**
  * P10 Casino lobby — `/casino` Stake-style grid (§23 · YAML #203).
  * ENGINE:exists — game registry (12 codes) · path helper → `/games/$gameCode`.
- * Play surfaces / AutoBet / PF verifier = later todos (CasinoR#1 · batches · fairness).
+ * PF verifier CTA → `/casino/fairness` (`p10-page-casino-fairness`).
  */
 
 import type { GameCode } from '@phonara/game-engine';
@@ -97,7 +97,8 @@ export function filterCasinoLobbyGamesByCategory(
 }
 
 export function resolveCasinoLobbyPfCtaEnabled(): boolean {
-  return false;
+  /** Unlocked by `p10-page-casino-fairness` — live `/casino/fairness` verifier. */
+  return true;
 }
 
 export function assertCasinoLobbyDisplayContractSync(): void {
@@ -124,7 +125,7 @@ export function assertCasinoLobbyDisplayContractSync(): void {
       throw new Error(`casino-lobby: featured path must use /games/ (${code})`);
     }
   }
-  if (resolveCasinoLobbyPfCtaEnabled()) {
-    throw new Error('casino-lobby: PF CTA must stay disabled until fairness todo');
+  if (!resolveCasinoLobbyPfCtaEnabled()) {
+    throw new Error('casino-lobby: PF CTA must be enabled after fairness todo');
   }
 }

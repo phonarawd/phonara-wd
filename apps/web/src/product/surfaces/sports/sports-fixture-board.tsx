@@ -13,6 +13,8 @@ import {
 import { resolveSportsLeagueLabelKey } from '@/domain/sports-page-display-contract';
 import { Button } from '@/product/primitives/button';
 import { Card } from '@/product/primitives/card';
+import { EmptyState } from '@/product/primitives/empty-state';
+import { QuadStreamLoading } from '@/product/primitives/quad-stream-loading';
 import { cn } from '@/product/primitives/lib/cn';
 import type { MessageKey } from '@phonara/i18n';
 
@@ -77,12 +79,11 @@ export function SportsFixtureBoard({
 }: SportsFixtureBoardProps) {
   if (loading) {
     return (
-      <div
-        className={cn('text-foreground-muted p-4 text-sm', className)}
-        data-testid="sports-fixture-loading"
-      >
-        {t('state.loading.title')}
-      </div>
+      <QuadStreamLoading
+        className={cn('py-6', className)}
+        compact
+        testId="sports-fixture-loading"
+      />
     );
   }
 
@@ -90,7 +91,7 @@ export function SportsFixtureBoard({
     return (
       <div
         className={cn(
-          'border-danger/30 bg-surface flex flex-col gap-3 rounded-(--ds-radius-lg) border p-4',
+          'border-danger/30 bg-surface flex flex-col gap-3 rounded-lg border p-4',
           className,
         )}
         data-testid="sports-fixture-error"
@@ -106,12 +107,15 @@ export function SportsFixtureBoard({
 
   if (fixtures.length === 0) {
     return (
-      <div
-        className={cn('text-foreground-muted p-4 text-sm', className)}
-        data-testid="sports-fixture-empty"
-      >
-        {t('sports.empty.league')}
-      </div>
+      <EmptyState
+        className={className}
+        domain="sports"
+        title={t('state.empty.title')}
+        description={t('sports.empty.league')}
+        actionLabel={t('state.empty.action.retry')}
+        onAction={onRetry}
+        testId="sports-fixture-empty"
+      />
     );
   }
 
@@ -160,7 +164,7 @@ export function SportsFixtureBoard({
               <p className="text-foreground-muted m-0 flex flex-wrap items-center gap-1.5 text-xs">
                 {showLiveBadge ? (
                   <span
-                    className="bg-danger/15 text-danger inline-flex rounded-(--ds-radius-sm) px-1.5 py-0.5 text-[0.6rem] font-semibold tracking-wide uppercase"
+                    className="bg-danger/15 text-danger inline-flex rounded-sm px-1.5 py-0.5 text-[0.6rem] font-semibold tracking-wide uppercase"
                     data-testid={`sports-live-row-badge-${fixture.fixture_id}`}
                   >
                     {t(SPORTS_LIVE_BADGE_KEY)}

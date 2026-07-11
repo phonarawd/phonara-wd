@@ -96,8 +96,8 @@ UI는 resolver 출력만 표시 — client-side payout/balance 재계산 **금�
 | 항목                                                  | 상태           | Owner todo                     |
 | ----------------------------------------------------- | -------------- | ------------------------------ |
 | Brand Memory Rules (aurora≤1 · money mono · mint CTA) | **SSOT `[x]`** | `da-w0-foundation-ssot-bundle` |
-| Geometric recall / BrandMark `aurora` variant         | pending impl   | `da-w6-brand-elevation-bundle` |
-| Domain empty states · Quad Stream loading             | pending impl   | `da-w6-*`                      |
+| Geometric recall / BrandMark `aurora` variant         | **`[x]` GATE** | `da-w6-gate-brand-elevation` |
+| Domain empty states · Quad Stream loading             | **`[x]` GATE** | `da-w6-gate-brand-elevation` |
 | LIVE withdrawal momentum strip (L0b)                  | still defer    | operator / later wave          |
 
 Phase 1–2 Landing 마감 기준(유지): flat mark + timeless tokens + CVR module grammar green.  

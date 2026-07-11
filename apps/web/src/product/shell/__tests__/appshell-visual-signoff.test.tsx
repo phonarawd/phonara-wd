@@ -7,6 +7,7 @@ import {
   APPSHELL_VISUAL_HUB_ROUTES,
   APPSHELL_VISUAL_VIEWPORT_WIDTHS,
 } from '@/domain/appshell-visual-signoff-display-contract';
+import { dismissBetFirstVisitEducation } from '@/features/responsible-gaming/bet-first-visit-education';
 import { dismissTradeFirstVisitEducation } from '@/features/trade/trade-first-visit-education';
 import { I18nProvider } from '@/product/i18n';
 
@@ -66,6 +67,7 @@ async function expectAxeCriticalZero(container: HTMLElement) {
 beforeEach(() => {
   mockPathname = '/home';
   dismissTradeFirstVisitEducation();
+  dismissBetFirstVisitEducation();
   vi.stubGlobal(
     'ResizeObserver',
     class {

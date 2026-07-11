@@ -84,7 +84,7 @@
   },
   "typescript": {
     "tsserver": {
-      "maxTsServerMemory": 512,
+      "maxTsServerMemory": 768,
       "useSyntaxServer": "auto",
       "experimental": {
         "enableProjectDiagnostics": false

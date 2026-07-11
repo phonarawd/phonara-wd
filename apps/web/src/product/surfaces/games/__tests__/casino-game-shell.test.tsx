@@ -118,7 +118,7 @@ describe('CasinoGameShell (p10-casino-replay-and-infra)', () => {
     expect(screen.getByTestId('casino-stake-currency-phon')).toBeInTheDocument();
     expect(screen.getByTestId('casino-bet-mode-tabs')).toBeInTheDocument();
     expect(screen.getByTestId('casino-pf-strip')).toBeInTheDocument();
-    expect(screen.getByTestId('casino-game-stage-placeholder')).toBeInTheDocument();
+    expect(screen.getByTestId('casino-crash-stage')).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('casino-bet-mode-auto'));
     expect(screen.getByTestId('casino-auto-bet-panel')).toBeInTheDocument();

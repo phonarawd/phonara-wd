@@ -39,11 +39,11 @@ function SettingsHubNavLink({
   return (
     <Link
       to={item.route}
-      className="border-line hover:bg-surface-raised flex items-center gap-3 rounded-(--ds-radius-md) border px-3 py-3 transition-colors"
+      className="border-line hover:bg-surface-raised flex items-center gap-3 rounded-md border px-3 py-3 transition-colors"
       data-testid={`settings-hub-link-${item.id}`}
     >
       <span
-        className="bg-accent/10 text-accent flex size-9 shrink-0 items-center justify-center rounded-(--ds-radius-md)"
+        className="bg-accent/10 text-accent flex size-9 shrink-0 items-center justify-center rounded-md"
         aria-hidden
       >
         <Icon className="size-4" />
@@ -104,10 +104,12 @@ export function SettingsHubPage() {
     navByGroup,
     notificationPrefs,
     casinoConfirm,
+    casinoSoundEffects,
     tradeOneClick,
     tradeConfirm,
     setNotificationPref,
     setCasinoConfirm,
+    setCasinoSoundEffects,
     setTradeOneClick,
     setTradeConfirm,
   } = engine;
@@ -186,13 +188,20 @@ export function SettingsHubPage() {
           <CardTitle className="text-base">{t('settings.section.casino')}</CardTitle>
           <p className="text-foreground-muted m-0 text-xs">{t('settings.casino.sectionHint')}</p>
         </CardHeader>
-        <CardBody className="pt-0">
+        <CardBody className="flex flex-col gap-1 pt-0">
           <SettingsHubToggleRow
             id="casino-confirm"
             label={t('settings.casino.confirmDialog.label')}
             hint={t('settings.casino.confirmDialog.hint')}
             checked={casinoConfirm}
             onCheckedChange={setCasinoConfirm}
+          />
+          <SettingsHubToggleRow
+            id="casino-sound"
+            label={t('settings.casino.soundEffects.label')}
+            hint={t('settings.casino.soundEffects.hint')}
+            checked={casinoSoundEffects}
+            onCheckedChange={setCasinoSoundEffects}
           />
         </CardBody>
       </Card>

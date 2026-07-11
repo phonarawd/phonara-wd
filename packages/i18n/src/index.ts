@@ -448,6 +448,9 @@ export const koMessages = {
   'platform.pillars.wallet.desc': 'PHON 잔액은 하나의 리워드 지갑에서 확인해요.',
   'platform.pillars.play.title': '3. Play',
   'platform.pillars.play.desc': '거래·스포츠 등 실활동은 준비되면 같은 지갑에서 이어져요.',
+  'platform.trust.ledger': '원장 Σ=0 · 추가만 가능',
+  'platform.trust.pf': 'Provably Fair 검증',
+  'platform.trust.rg': '책임게임 한도',
 
   // ── Landing (first-touch) ───────────────────────────────────────────────────
   'landing.header.login': '로그인',
@@ -484,6 +487,7 @@ export const koMessages = {
     'PHONARA는 TikTok·Meta·Google 태그로 가입 전환을 측정합니다. 동의 시에만 로드되며 금융 정보는 전송하지 않습니다.',
   'ads.consent.accept': '동의하고 계속',
   'ads.consent.decline': '거부',
+  'ads.consent.cookiesLink': '쿠키·픽셀 고지에서 수집·동의 방식 확인',
   'ads.consent.privacyLink': '개인정보처리방침에서 수집 항목 확인',
   'landing.hero.eyebrow': '부업 · 부수입',
   'landing.hero.title': '출석만 해도 쌓이는 PHON, 90초면 첫 보상',
@@ -740,6 +744,8 @@ export const koMessages = {
   'legal.nav.privacy': '개인정보 처리방침',
   'legal.nav.rg': '책임게임',
   'legal.nav.risk': '리스크 안내',
+  'legal.nav.affiliate': '추천·제휴 약관',
+  'legal.nav.cookies': '쿠키·픽셀',
   'legal.risk.pageTitle': '리스크 안내',
   'legal.toc': '목차',
   'legal.effectiveDate': '시행일: {date}',
@@ -821,6 +827,54 @@ export const koMessages = {
   'legal.privacy.s11.title': '마케팅·전환 측정 도구',
   'legal.privacy.s11.body':
     '회사는 랜딩·가입 퍼널에서 서비스 이용 전환을 측정하기 위해 TikTok Pixel, Meta Pixel, Google 태그 등 마케팅·분석 도구를 사용할 수 있습니다. 이러한 도구는 이용자의 동의 후에만 로드되며, 금액·잔액 등 금융 정보는 전송하지 않습니다. 동의는 가입 후 계정에 기록되며, 브라우저 설정 또는 고객지원을 통해 철회할 수 있습니다.',
+
+  'legal.affiliate.pageTitle': '추천·제휴 약관',
+  'legal.affiliate.title': '추천·제휴 약관',
+  'legal.affiliate.intro':
+    'PHONARA 추천·제휴 프로그램의 자격 충족(Qualified) 조건, 보상·커미션 안내, 금지 행위와 변경 고지를 설명합니다. 화면의 금액·배율은 서버가 계산한 표시값이며, 클라이언트에서 재계산하지 않습니다.',
+  'legal.affiliate.referralCta': '추천 허브로 이동',
+  'legal.affiliate.s1.title': '프로그램 개요',
+  'legal.affiliate.s1.body':
+    '회원은 회사가 제공하는 초대 링크·코드를 통해 다른 이용자를 초대할 수 있습니다. 추천 보상과 제휴 커미션은 회사가 정한 자격 조건과 정책을 충족한 경우에만 지급되며, 확정 수익이나 금전적 이익을 보장하지 않습니다.',
+  'legal.affiliate.s2.title': '자격 충족(Qualified) 조건',
+  'legal.affiliate.s2.body':
+    '추천이 자격 충족으로 인정되려면 피초대자가 유효한 계정을 생성하고, 회사가 공지한 활동·본인확인·부정이용 방지 기준을 통과해야 합니다. 자기 추천, 다중 계정, 자동화·허위 가입, 정책 위반이 확인되면 자격 충족으로 인정되지 않으며 이미 표시된 대기 보상도 조정·회수될 수 있습니다.',
+  'legal.affiliate.s3.title': '보상·커미션 안내',
+  'legal.affiliate.s3.body':
+    '보상·커미션의 기준, 한도, 배율, 정산 주기는 서비스 정책과 등급(티어)에 따라 달라질 수 있습니다. 앱에 표시되는 진행률·잔여 한도·배율은 서버 조회 결과이며, 이용자가 임의로 계산한 예상액과 다를 수 있습니다. 최종 지급은 원장에 기록된 확정 내역을 따릅니다.',
+  'legal.affiliate.s4.title': '금지 행위',
+  'legal.affiliate.s4.body':
+    '스팸·허위 광고, 미성년자 대상 유도, 도박·수익 보장 과장, 계정 매매, 자동화 도구를 이용한 초대, 기타 법령·약관·광고 정책을 위반하는 방식으로 추천·제휴를 운영해서는 안 됩니다. 위반 시 보상 회수, 프로그램 제외, 계정 제한이 적용될 수 있습니다.',
+  'legal.affiliate.s5.title': '약관 변경',
+  'legal.affiliate.s5.body':
+    '회사는 관련 법령을 위반하지 않는 범위에서 본 약관을 개정할 수 있으며, 중요한 변경은 적용일 전에 서비스 내 공지합니다. 변경 후에도 프로그램을 계속 이용하면 개정 약관에 동의한 것으로 봅니다.',
+  'legal.affiliate.s6.title': '문의',
+  'legal.affiliate.s6.body':
+    '추천·제휴 자격, 보상 상태, 정산 문의는 고객지원 이메일을 통해 접수할 수 있으며, 회사는 접수된 문의를 신속히 처리하기 위해 노력합니다.',
+
+  'legal.cookies.pageTitle': '쿠키·픽셀 고지',
+  'legal.cookies.title': '쿠키·픽셀 고지',
+  'legal.cookies.intro':
+    'PHONARA는 서비스 제공·로그인 유지·보안과, 동의 후의 광고·전환 측정을 위해 쿠키·로컬 저장소·픽셀을 사용할 수 있습니다. 본 고지는 개인정보 처리방침의 자동 수집·마케팅 도구 조항과 함께 적용됩니다.',
+  'legal.cookies.privacyCta': '개인정보 처리방침 보기',
+  'legal.cookies.s1.title': '개요',
+  'legal.cookies.s1.body':
+    '쿠키와 유사 기술(로컬 저장소 등)은 브라우저에 작은 데이터를 저장해 로그인 상태 유지, 설정 기억, 보안·부정이용 방지, 동의 기록 확인에 사용됩니다. 필수 저장 항목을 거부하면 일부 기능이 제한될 수 있습니다.',
+  'legal.cookies.s2.title': '필수·기능 저장',
+  'legal.cookies.s2.body':
+    '인증 세션, 보안 토큰, 언어·접근성 설정, 동의 배너 결정 결과 등 서비스 운영에 필요한 항목은 동의 여부와 관계없이 사용될 수 있습니다. 이러한 항목은 광고 타기팅 목적이 아닙니다.',
+  'legal.cookies.s3.title': '분석·광고 동의',
+  'legal.cookies.s3.body':
+    '마케팅·분석 목적의 저장과 픽셀 로드는 최초 방문 동의 배너에서 이용자가 동의한 경우에만 활성화됩니다. 거부하면 해당 픽셀은 로드되지 않으며, 동의는 가입 후 계정에 동기화될 수 있습니다.',
+  'legal.cookies.s4.title': '광고·전환 측정 픽셀',
+  'legal.cookies.s4.body':
+    '동의 후 TikTok Pixel, Meta Pixel, Google 태그가 랜딩(`/`)과 가입·로그인 퍼널에서만 lazy 로드될 수 있습니다. 앱 내부(AppShell)에는 픽셀을 주입하지 않으며, 금액·잔액 등 금융 정보는 전송하지 않습니다. 전환 이벤트는 ViewContent·CompleteRegistration/SignUp 등 측정용으로만 사용됩니다.',
+  'legal.cookies.s5.title': '동의 관리',
+  'legal.cookies.s5.body':
+    '브라우저에서 쿠키·사이트 데이터를 삭제하거나 차단할 수 있습니다. 마케팅 동의를 철회하려면 브라우저 저장 데이터를 지우거나 고객지원으로 요청할 수 있습니다. 필수 저장을 모두 차단하면 로그인·보안 기능이 정상 동작하지 않을 수 있습니다.',
+  'legal.cookies.s6.title': '문의',
+  'legal.cookies.s6.body':
+    '쿠키·픽셀·동의 관련 문의는 고객지원 이메일을 통해 접수할 수 있으며, 자세한 개인정보 처리 내용은 개인정보 처리방침을 참고하세요.',
 
   // ── Wallet ───────────────────────────────────────────────────────────────────
   'wallet.title': '내 지갑',
@@ -1079,6 +1133,26 @@ export const koMessages = {
   'wallet.withdraw.hub.tab.methods': '출금 방법',
   'wallet.withdraw.hub.tabsLabel': '출금 허브 탭',
   'wallet.withdraw.history.ledgerHint': '전체 입출금·보상 기록은 원장에서 확인할 수 있습니다.',
+  'seo.walletRedeem.title': 'PHON 상점 — PHONARA',
+  'seo.walletRedeem.description':
+    '모은 PHON을 원화·USDT로 출금하거나 상품권으로 PHON을 충전하세요. 별도 포인트 원장 없이 지갑 레일을 그대로 씁니다.',
+  'wallet.redeem.back': '지갑으로',
+  'wallet.redeem.balanceLabel': '사용 가능 PHON',
+  'wallet.redeem.ledgerHint': 'PHON은 단일 지갑 원장에 기록됩니다. 별도 포인트 잔액은 없습니다.',
+  'wallet.redeem.railsTitle': '교환·충전 방법',
+  'wallet.redeem.rail.krw': 'PHON → 원화',
+  'wallet.redeem.rail.krw.desc': 'PHON을 원화로 출금합니다. 기존 원화 출금 레일을 그대로 사용합니다.',
+  'wallet.redeem.rail.krw.meta': '1시간 SLA · 운영자 승인 후 송금',
+  'wallet.redeem.rail.crypto': 'PHON → USDT',
+  'wallet.redeem.rail.crypto.desc':
+    'USDT 코인 출금 레일로 외부 지갑에 보냅니다. 네트워크·주소를 확인하세요.',
+  'wallet.redeem.rail.crypto.meta': 'TRC20·ERC20 · 최소 출금 ₩50,000',
+  'wallet.redeem.rail.giftcard': '상품권 → PHON',
+  'wallet.redeem.rail.giftcard.desc':
+    '상품권 PIN을 제출하면 수수료를 뺀 금액으로 PHON이 적립됩니다.',
+  'wallet.redeem.rail.giftcard.meta': '운영팀 검토 · 기존 상품권 입금 레일',
+  'wallet.redeem.rail.cta.withdraw': '출금으로 이동',
+  'wallet.redeem.rail.cta.deposit': '충전으로 이동',
   'wallet.crypto.withdraw.guide':
     'USDT를 다른 지갑으로 보낼 때 쓰는 메뉴예요. 신청하면 잠깐 잠금되고, 검토 후 실제 코인이 나갑니다.',
   'wallet.crypto.withdraw.steps':
@@ -1302,6 +1376,22 @@ export const koMessages = {
   'casino.fairness.step3.desc': '공개된 시드와 저장 결과를 브라우저에서 다시 비교합니다.',
   'casino.fairness.formula':
     'server_seed → SHA-256 commitment\nHMAC-SHA256(server_seed, client_seed:nonce:cursor) → floats\nGAME_REGISTRY.resultFromFloats(floats, selection) → stored result',
+  'casino.fairness.limits.title': '현재 엔진 PF 한계',
+  'casino.fairness.limits.clientSeed':
+    '클라이언트 시드는 베팅마다 보내는 파라미터입니다. 계정에 저장·유지하는 RPC는 없습니다.',
+  'casino.fairness.limits.nonce': 'nonce는 항상 1입니다. 라운드마다 증가하지 않습니다.',
+  'casino.fairness.limits.rotation':
+    '시드 로테이션 UI는 아직 없습니다. 서버 시드 변경 컨트롤은 E23 이후에만 노출됩니다.',
+  'casino.fairness.verify.run': '라운드 검증하기',
+  'casino.fairness.verify.selection': '베팅 선택 (JSON, 선택)',
+  'casino.fairness.verify.expected': '저장된 결과 (JSON, 선택)',
+  'casino.fairness.verify.hashMatch': '서버 시드 해시가 일치합니다.',
+  'casino.fairness.verify.hashMismatch': '서버 시드 해시가 일치하지 않습니다.',
+  'casino.fairness.verify.outcomeMatch': '재계산 결과가 저장된 결과와 일치합니다.',
+  'casino.fairness.verify.outcomeMismatch': '재계산 결과가 저장된 결과와 다릅니다.',
+  'casino.fairness.verify.outcomeSkipped': '저장된 결과가 없어 결과 비교는 건너뛰었습니다.',
+  'casino.fairness.verify.invalidJson': '선택 또는 결과 JSON 형식을 확인해 주세요.',
+  'casino.fairness.verify.missingFields': '서버 시드, 해시, 클라이언트 시드를 모두 입력해 주세요.',
 
   // ── Trade ────────────────────────────────────────────────────────────────────
   'trade.title': '트레이딩',
@@ -3230,6 +3320,9 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'platform.pillars.play.title': '3. Play',
   'platform.pillars.play.desc':
     'Trading, sports, and more continue in the same wallet when you are ready.',
+  'platform.trust.ledger': 'Ledger Σ=0 · append-only',
+  'platform.trust.pf': 'Provably fair verification',
+  'platform.trust.rg': 'Responsible-gaming limits',
 
   // ── Landing (first-touch) ───────────────────────────────────────────────────
   'landing.header.login': 'Sign in',
@@ -3268,6 +3361,7 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
     'PHONARA uses TikTok, Meta, and Google tags to measure signup conversion on landing and auth pages. Tags load only after you consent. We do not transmit financial information.',
   'ads.consent.accept': 'Accept and continue',
   'ads.consent.decline': 'Decline',
+  'ads.consent.cookiesLink': 'See cookie and pixel notice for collection and consent',
   'ads.consent.privacyLink': 'See privacy policy for collection details',
   'landing.hero.eyebrow': 'Side income',
   'landing.hero.title': 'Earn PHON daily — first reward in about 90 seconds',
@@ -3522,6 +3616,8 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'legal.nav.privacy': 'Privacy policy',
   'legal.nav.rg': 'Responsible gaming',
   'legal.nav.risk': 'Risk disclosure',
+  'legal.nav.affiliate': 'Referral & affiliate terms',
+  'legal.nav.cookies': 'Cookies & pixels',
   'legal.risk.pageTitle': 'Risk Disclosure',
   'legal.toc': 'Contents',
   'legal.effectiveDate': 'Effective date: {date}',
@@ -3603,6 +3699,54 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'legal.privacy.s11.title': 'Marketing and conversion measurement',
   'legal.privacy.s11.body':
     'We may use marketing and analytics tools such as TikTok Pixel, Meta Pixel, and Google tags on landing and signup flows to measure service conversion. These tools load only after you consent. We do not transmit financial information such as balances or amounts. Consent is recorded on your account after signup and may be withdrawn via browser settings or customer support.',
+
+  'legal.affiliate.pageTitle': 'Referral & affiliate terms',
+  'legal.affiliate.title': 'Referral & Affiliate Terms',
+  'legal.affiliate.intro':
+    'These terms explain qualification (Qualified) requirements, reward and commission guidance, prohibited conduct, and change notices for the PHONARA referral and affiliate program. Amounts and multipliers shown in the app are server-computed display values and are not recalculated on the client.',
+  'legal.affiliate.referralCta': 'Go to referral hub',
+  'legal.affiliate.s1.title': 'Program overview',
+  'legal.affiliate.s1.body':
+    'Members may invite others using company-provided invite links or codes. Referral rewards and affiliate commissions are paid only when company-defined eligibility and policy requirements are met, and do not guarantee fixed profit or monetary gain.',
+  'legal.affiliate.s2.title': 'Qualified eligibility',
+  'legal.affiliate.s2.body':
+    'A referral is Qualified only when the invitee creates a valid account and passes the activity, identity, and anti-abuse criteria published by the Company. Self-referral, multi-accounting, automated or fake signups, and policy violations are not Qualified, and pending rewards already shown may be adjusted or clawed back.',
+  'legal.affiliate.s3.title': 'Rewards and commissions',
+  'legal.affiliate.s3.body':
+    'Reward and commission criteria, caps, multipliers, and settlement cadence may vary by service policy and tier. Progress, remaining caps, and multipliers shown in the app come from server reads and may differ from any user-estimated amounts. Final payouts follow confirmed ledger entries.',
+  'legal.affiliate.s4.title': 'Prohibited conduct',
+  'legal.affiliate.s4.body':
+    'Spam or deceptive ads, targeting minors, gambling or guaranteed-profit exaggeration, account trading, automated invite tools, and any other conduct that violates law, these terms, or advertising policy are prohibited. Violations may result in reward clawback, program exclusion, or account restriction.',
+  'legal.affiliate.s5.title': 'Changes to these terms',
+  'legal.affiliate.s5.body':
+    'The Company may amend these terms within the scope permitted by applicable law and will announce material changes in the service before they take effect. Continued use of the program after a change constitutes acceptance of the amended terms.',
+  'legal.affiliate.s6.title': 'Contact',
+  'legal.affiliate.s6.body':
+    'Questions about referral or affiliate eligibility, reward status, or settlement may be submitted through customer support email, and the Company strives to handle them promptly.',
+
+  'legal.cookies.pageTitle': 'Cookies & pixels notice',
+  'legal.cookies.title': 'Cookies & Pixels Notice',
+  'legal.cookies.intro':
+    'PHONARA may use cookies, local storage, and pixels for service delivery, session continuity, security, and—after consent—ad and conversion measurement. This notice applies together with the automatic collection and marketing-tool sections of the Privacy Policy.',
+  'legal.cookies.privacyCta': 'View privacy policy',
+  'legal.cookies.s1.title': 'Overview',
+  'legal.cookies.s1.body':
+    'Cookies and similar technologies (such as local storage) store small data in the browser to keep you signed in, remember settings, support security and anti-abuse controls, and record consent decisions. Declining essential storage may limit some features.',
+  'legal.cookies.s2.title': 'Essential and functional storage',
+  'legal.cookies.s2.body':
+    'Items required to operate the service—such as auth sessions, security tokens, language or accessibility preferences, and consent-banner decisions—may be used regardless of marketing consent. These items are not used for ad targeting.',
+  'legal.cookies.s3.title': 'Analytics and advertising consent',
+  'legal.cookies.s3.body':
+    'Marketing and analytics storage and pixel loading activate only after you accept the first-visit consent banner. If you decline, those pixels do not load. Consent may be synced to your account after signup.',
+  'legal.cookies.s4.title': 'Ad and conversion pixels',
+  'legal.cookies.s4.body':
+    'After consent, TikTok Pixel, Meta Pixel, and Google tags may lazy-load only on the landing page (`/`) and signup/login funnel. Pixels are not injected inside the in-app AppShell, and financial fields such as balances or amounts are never transmitted. Conversion events such as ViewContent and CompleteRegistration/SignUp are used for measurement only.',
+  'legal.cookies.s5.title': 'Managing consent',
+  'legal.cookies.s5.body':
+    'You can delete or block cookies and site data in your browser. To withdraw marketing consent, clear browser storage or contact support. Blocking all essential storage may prevent login and security features from working correctly.',
+  'legal.cookies.s6.title': 'Contact',
+  'legal.cookies.s6.body':
+    'Questions about cookies, pixels, or consent may be submitted through customer support email. For broader personal-information practices, see the Privacy Policy.',
 
   'wallet.title': 'My wallet',
   'wallet.balance': 'Balance',
@@ -3876,6 +4020,28 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'wallet.withdraw.hub.tabsLabel': 'Withdraw hub tabs',
   'wallet.withdraw.history.ledgerHint':
     'View all deposits, withdrawals, and rewards in the ledger.',
+  'seo.walletRedeem.title': 'PHON shop — PHONARA',
+  'seo.walletRedeem.description':
+    'Withdraw PHON to KRW or USDT, or top up PHON with a gift card. Same wallet rails — no separate points ledger.',
+  'wallet.redeem.back': 'Back to wallet',
+  'wallet.redeem.balanceLabel': 'Available PHON',
+  'wallet.redeem.ledgerHint':
+    'PHON lives on the single wallet ledger. There is no separate points balance.',
+  'wallet.redeem.railsTitle': 'Exchange & top-up methods',
+  'wallet.redeem.rail.krw': 'PHON → KRW',
+  'wallet.redeem.rail.krw.desc':
+    'Withdraw PHON as KRW using the existing bank withdrawal rail.',
+  'wallet.redeem.rail.krw.meta': '1h SLA · transfer after operator approval',
+  'wallet.redeem.rail.crypto': 'PHON → USDT',
+  'wallet.redeem.rail.crypto.desc':
+    'Send via the USDT crypto withdrawal rail. Confirm network and address.',
+  'wallet.redeem.rail.crypto.meta': 'TRC20·ERC20 · minimum ₩50,000',
+  'wallet.redeem.rail.giftcard': 'Gift card → PHON',
+  'wallet.redeem.rail.giftcard.desc':
+    'Submit a gift card PIN. PHON credits after fees and operator review.',
+  'wallet.redeem.rail.giftcard.meta': 'Operator review · existing gift card deposit rail',
+  'wallet.redeem.rail.cta.withdraw': 'Go to withdraw',
+  'wallet.redeem.rail.cta.deposit': 'Go to top-up',
   'wallet.crypto.withdraw.guide':
     'Send USDT to an external wallet. Your balance is locked briefly, then coins leave after review.',
   'wallet.crypto.withdraw.steps':
@@ -4105,6 +4271,23 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'casino.fairness.step3.desc': 'The browser compares the revealed seed and stored result.',
   'casino.fairness.formula':
     'server_seed -> SHA-256 commitment\nHMAC-SHA256(server_seed, client_seed:nonce:cursor) -> floats\nGAME_REGISTRY.resultFromFloats(floats, selection) -> stored result',
+  'casino.fairness.limits.title': 'Current engine PF limits',
+  'casino.fairness.limits.clientSeed':
+    'Client seed is a per-bet parameter. There is no RPC that persists it on your account.',
+  'casino.fairness.limits.nonce': 'Nonce is always 1. It does not increment across rounds.',
+  'casino.fairness.limits.rotation':
+    'Seed rotation UI is not available yet. Server seed change controls ship with E23.',
+  'casino.fairness.verify.run': 'Verify round',
+  'casino.fairness.verify.selection': 'Bet selection (JSON, optional)',
+  'casino.fairness.verify.expected': 'Stored result (JSON, optional)',
+  'casino.fairness.verify.hashMatch': 'Server seed hash matches.',
+  'casino.fairness.verify.hashMismatch': 'Server seed hash does not match.',
+  'casino.fairness.verify.outcomeMatch': 'Recomputed result matches the stored result.',
+  'casino.fairness.verify.outcomeMismatch': 'Recomputed result differs from the stored result.',
+  'casino.fairness.verify.outcomeSkipped': 'No stored result provided — outcome compare skipped.',
+  'casino.fairness.verify.invalidJson': 'Check selection or result JSON formatting.',
+  'casino.fairness.verify.missingFields':
+    'Enter server seed, hash, and client seed before verifying.',
 
   'trade.title': 'Trade',
   'trade.spot': 'Spot',

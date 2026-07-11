@@ -97,6 +97,7 @@ describe('resolveRouteRedirect', () => {
       pathname: '/feedback',
       search: { type: 'bug' },
     });
+    expect(resolveRouteRedirect('/faq')).toEqual({ pathname: '/support/faq' });
     expect(resolveRouteRedirect('/admin/missions')).toEqual({
       pathname: '/admin/earn/missions',
     });
@@ -134,6 +135,8 @@ describe('resolveRouteRedirect', () => {
     expect(resolveRouteRedirect('/responsible-gambling')).toEqual({
       pathname: '/legal/responsible-gaming',
     });
+    expect(resolveRouteRedirect('/referral/terms')).toEqual({ pathname: '/legal/affiliate' });
+    expect(resolveRouteRedirect('/cookies')).toEqual({ pathname: '/legal/cookies' });
   });
 
   it('leaves canonical routes unchanged', () => {

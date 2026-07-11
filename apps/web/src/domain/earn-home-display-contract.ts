@@ -16,6 +16,8 @@ import { EARN_STATIC_MISSIONS } from '@/data/earn-static-missions';
 
 import { HOME_MISSIONS_ROUTE } from './home-missions-display-contract';
 
+import { EARN_PLAY_ROUTE } from './earn-play-display-contract';
+import { EVENTS_HUB_ROUTE } from './events-hub-display-contract';
 import { HOME_ATTENDANCE_ROUTE } from './home-attendance-display-contract';
 
 import { REFERRAL_HUB_ROUTE } from './referral-hub-display-contract';
@@ -166,7 +168,7 @@ export const EARN_HOME_ENTRY_CARDS: readonly EarnHomeEntryCardDefinition[] = [
 
     ctaKey: 'earn.home.entry.events.cta',
 
-    route: HOME_ATTENDANCE_ROUTE,
+    route: EVENTS_HUB_ROUTE,
   },
 
   {
@@ -407,7 +409,7 @@ export function resolveEarnHomeNextAction(params: {
 
       ctaKey: 'earn.home.entry.events.cta',
 
-      route: HOME_ATTENDANCE_ROUTE,
+      route: EARN_PLAY_ROUTE,
     };
   }
 

@@ -1194,6 +1194,23 @@ export const presentationEnMessages = {
   'casino.shell.stage.deferredTitle': 'Game stage coming next',
   'casino.shell.stage.deferredBody':
     'Shared shell, auto-bet, and Provably Fair strip are ready. Per-game stages unlock in the next casino batches.',
+  'casino.help.autoCashoutBeforeBet':
+    'Set your auto cashout before you bet. The round settles in one shot — there is no live escape button during the curve replay.',
+  'casino.help.minesCashoutBeforeBet':
+    'Pick safe tiles and review the cashout multiplier before you bet. The board settles in one shot — tiles only cascade after the result is already fixed.',
+  'casino.help.momentumCashoutBeforeBet':
+    'Choose play or cash out before you bet. The combo settles in one shot — there is no live escape during the meter replay.',
+  'casino.help.blackjackActionsBeforeBet':
+    'Queue hit, stand, double, split, or insurance before you bet. The hand settles in one shot — there is no live hit/stand round-trip.',
+  'casino.help.deepshaftDepthBeforeBet':
+    'Choose risk tier and target depth before you dig. The shaft settles in one shot — there is no live dig or mid-round cash-out.',
+  'casino.help.rouletteBetMapBeforeBet':
+    'Place chips on the table before you spin. The wheel settles in one shot — winning number comes from the RPC result only.',
+  'casino.stage.result': 'Result',
+  'casino.stage.roll': 'Roll',
+  'casino.stage.streak': 'Streak',
+  'casino.stage.dealer': 'Dealer',
+  'casino.stage.player': 'Player',
   'casino.back_to_games': 'Back to games',
   'casino.bet.cashout_at': 'Cashout At',
   'casino.bet.next_round': 'Bet Next Round',
@@ -1305,7 +1322,7 @@ export const presentationEnMessages = {
     'The server seed hash is published before the round. The outcome can never be altered after the fact.',
   'casino.fairness.step.1.title': 'Server seed commit',
   'casino.fairness.step.2.body':
-    'Your client seed plus a nonce determine the result. You may rotate your client seed at any time.',
+    'Your client seed is sent with each bet (per-bet parameter). Nonce is always 1.',
   'casino.fairness.step.2.title': 'Round play',
   'casino.fairness.step.3.body':
     'After settlement the original server seed is revealed. Recompute with the same inputs to confirm.',
@@ -1849,6 +1866,23 @@ export const presentationEnMessages = {
   'earn.routine.step.share': 'Share invite link',
   'earn.routine.step.weekly': 'One weekly mission',
   'earn.routine.title': "Today's side-hustle routine",
+  'earn.play.head.title': 'Side income play',
+  'earn.play.head.desc':
+    'Spin the free daily roulette for PHON. This is separate from casino games.',
+  'earn.play.backToHome': 'Back to home',
+  'earn.play.spinCta': 'Spin free roulette',
+  'earn.play.spinning': 'Spinning…',
+  'earn.play.casinoNotice':
+    'This is the free side-income roulette. Real-money casino roulette lives under /games only.',
+  'earn.cashback.head.title': 'Cashback center',
+  'earn.cashback.head.desc': 'See your tier cashback rate alongside the full benefits table.',
+  'earn.cashback.backToHome': 'Back to home',
+  'earn.cashback.yourRate': 'Your cashback',
+  'earn.cashback.heroBody':
+    'Rates come from the tier guide catalog. Settlement always follows engine RPC only.',
+  'earn.cashback.matrixTitle': 'Cashback by tier',
+  'earn.cashback.currentMark': 'Current',
+  'earn.cashback.benefitsCta': 'View all benefits',
   'earn.cooldown': 'Next reward in {time}',
   'earn.dailyBox.desc': 'One free reward daily',
   'earn.dailyBox.open': 'Open box',
@@ -2838,6 +2872,14 @@ export const presentationEnMessages = {
   'referral.demo.user.minjun': 'Minjun',
   'referral.demo.user.seoyeon': 'Seoyeon',
   'referral.invite.backToHub': 'Back to referral hub',
+  'referral.leaderboard.head.title': 'Referral leaderboard',
+  'referral.leaderboard.head.desc': 'Invite rankings open after the engine ships.',
+  'referral.leaderboard.backToHub': 'Back to referral hub',
+  'referral.leaderboard.defer.title': 'Leaderboard coming soon',
+  'referral.leaderboard.defer.body':
+    'The referral ranking engine is not ready yet. We do not show fake ranks or rewards — check back here when it goes live.',
+  'referral.leaderboard.strip.title': 'Ranking preview',
+  'referral.leaderboard.strip.body': 'Top invite rankings · activates after engine wire',
   'referral.invite.claimShareReward': 'Claim share reward',
   'referral.invite.copyLinkCta': 'Copy invite link',
   'referral.invite.pageTitle': 'Invite friends',
@@ -3271,8 +3313,13 @@ export const presentationEnMessages = {
   'settings.casino.confirmDialog.label': 'Confirm before bet',
   'settings.casino.confirmDialog.hint':
     'Show a confirmation dialog before placing bets (off = one-tap)',
+  'settings.casino.soundEffects.label': 'Win sound effects',
+  'settings.casino.soundEffects.hint':
+    'Short cue on big/mega wins only — off by default · also off with reduced motion',
   'settings.casino.toast.confirmOn': 'Bet confirmation turned on',
   'settings.casino.toast.confirmOff': 'Bet confirmation off — one-tap betting',
+  'settings.casino.toast.soundOn': 'Casino win sounds on',
+  'settings.casino.toast.soundOff': 'Casino win sounds off',
   'settings.trade.toast.confirmOn': 'Order confirmation dialog turned on',
   'share.badge.preview': 'Share preview',
   'share.earnings.backToHome': 'Back to home',
@@ -3417,6 +3464,21 @@ export const presentationEnMessages = {
   'sports.fixture.marketsDeferred': 'More markets unlock in the next sports step.',
   'sports.fixture.marketsUnknown': 'Unsupported market types are hidden until the catalog expands.',
   'sports.fixture.detailFallback': 'Fixture detail',
+  'bet.education.dismiss': 'I understand',
+  'bet.education.fairness.body':
+    'Casino outcomes are provably fair. You can verify a round with the published seed hash before you bet.',
+  'bet.education.fairness.title': 'Provably fair',
+  'bet.education.fairnessLink': 'Open fairness verifier',
+  'bet.education.lead':
+    'Sports and casino bets can result in loss. Review these points before you continue.',
+  'bet.education.rg.body':
+    'Bet only within your means. Limits, break reminders, and self-exclusion are available in Settings.',
+  'bet.education.rg.title': 'Responsible gaming',
+  'bet.education.rgLink': 'View responsible gaming policy',
+  'bet.education.slip.body':
+    'Odds and stake on the bet slip are display values until the server accepts the bet. Potential return follows settlement, not a client estimate.',
+  'bet.education.slip.title': 'Bet slip',
+  'bet.education.title': 'Before you bet',
   'bet.hub.sports.summary.title': 'Sportsbook snapshot',
   'bet.hub.sports.summary.body':
     'Live and upcoming fixtures at a glance. Open the full sportsbook for markets, slip, and bet placement.',
@@ -3655,6 +3717,10 @@ export const presentationEnMessages = {
   'tier.guide.rows.silver.withdraw': '500,000 P',
   'tier.guide.subtitle':
     'From Bronze to Diamond — cashback, withdraw limits, dedicated support, and monthly bonuses at a glance.',
+  'tier.guide.eyebrow': 'VIP tiers',
+  'tier.guide.matrixTitle': 'Tier ladder',
+  'tier.guide.benefitsCta': 'See full benefits',
+  'tier.guide.signupCta': 'Create account',
   'tier.guide.table.bonus': 'Monthly bonus',
   'tier.guide.table.cashback': 'Cashback',
   'tier.guide.table.support': 'Support',
@@ -4383,4 +4449,160 @@ export const presentationEnMessages = {
   'earn.mission.howItWorks.step1': 'Pick a mission from the mission card',
   'earn.mission.howItWorks.step2': 'Complete the task and rewards queue as pending',
   'earn.mission.howItWorks.step3': 'PHON lands in your wallet when it pays out',
+
+  // ── P12 Trust+marketing hub ─────────────────────────────────────────────────
+  'marketing.back.home': 'Back to home',
+  'marketing.back.features': 'Back to features',
+  'features.hub.head.title': 'What you can do on PHONARA',
+  'features.hub.head.desc':
+    'Earn side income, grow your VIP tier, understand fees, and review how we protect balances — then open the product chapters you need.',
+  'features.hub.eyebrow': 'Product guide',
+  'features.hub.card.earn.title': 'Side income',
+  'features.hub.card.earn.body': 'Missions, referrals, and attendance in one Earn loop.',
+  'features.hub.card.vip.title': 'VIP benefits',
+  'features.hub.card.vip.body': 'Higher tiers unlock cashback, limits, and support.',
+  'features.hub.card.tier.title': 'Tier ladder',
+  'features.hub.card.tier.body': 'XP thresholds and perks from Bronze to Diamond.',
+  'features.hub.card.fees.title': 'Fees & cashback',
+  'features.hub.card.fees.body': 'How trading, betting, and withdrawals are charged.',
+  'features.hub.card.security.title': 'Trust center',
+  'features.hub.card.security.body': 'Ledger safety, provably fair, and responsible gaming.',
+  'features.hub.card.trade.title': 'Trade desk',
+  'features.hub.card.trade.body': 'Spot and futures in the same PHON wallet.',
+  'features.earn.head.title': 'Earn side income',
+  'features.earn.head.desc':
+    'Start at zero with missions and referrals. Rewards settle into one PHON wallet — no guaranteed profit claims.',
+  'features.earn.eyebrow': 'Earn intro',
+  'features.earn.point.missions.title': 'Daily and weekly missions',
+  'features.earn.point.missions.body': 'Complete eligible tasks and claim server-backed rewards.',
+  'features.earn.point.referral.title': 'Invite friends',
+  'features.earn.point.referral.body': 'Share your code — commission follows engine eligibility.',
+  'features.earn.point.tier.title': 'Grow your VIP tier',
+  'features.earn.point.tier.body': 'XP from activity raises limits and cashback display rates.',
+  'features.earn.point.wallet.title': 'One reward wallet',
+  'features.earn.point.wallet.body': 'Balances and payouts stay on the append-only ledger.',
+  'features.earn.homeCta': 'Open Earn home',
+  'features.earn.signupCta': 'Create account',
+  'features.vip.head.title': 'VIP benefits',
+  'features.vip.head.desc':
+    'Platinum and Diamond tiers emphasize cashback, withdraw headroom, and dedicated support — values come from the tier catalog, not client math.',
+  'features.vip.eyebrow': 'VIP marketing',
+  'features.vip.point.cashback.title': 'Higher cashback display',
+  'features.vip.point.cashback.body': 'Tier cashback percentages are catalog labels tied to your VIP tier.',
+  'features.vip.point.limits.title': 'Higher activity limits',
+  'features.vip.point.limits.body': 'Earn and withdraw ceilings follow server tier policy.',
+  'features.vip.point.support.title': 'Priority support',
+  'features.vip.point.support.body': 'Higher tiers unlock faster support channels when available.',
+  'features.vip.point.decay.title': 'Keep status honestly',
+  'features.vip.point.decay.body':
+    'Automatic downgrade is not live yet — keep-status missions and eligible copy only until the engine ships.',
+  'features.vip.tierCta': 'View tier guide',
+  'features.vip.signupCta': 'Create account',
+  'fees.page.head.title': 'Fees & side-income structure',
+  'fees.page.head.desc':
+    'Fee categories explain where charges apply. Final amounts always come from server settlement — estimates on tickets are indicative only.',
+  'fees.page.eyebrow': 'Fees',
+  'fees.page.settlementNotice':
+    'Displayed fee and cashback figures are catalog labels. Settlement uses server rates and your live VIP tier.',
+  'fees.page.categoriesTitle': 'Where fees apply',
+  'fees.page.category.spot.title': 'Spot trading',
+  'fees.page.category.spot.body':
+    'Maker and taker fees apply on fills. Ticket estimates are indicative; the ledger records the settled fee.',
+  'fees.page.category.futures.title': 'Futures trading',
+  'fees.page.category.futures.body':
+    'Open and close fees plus funding follow market rules. Liquidation paths are server-enforced.',
+  'fees.page.category.sports.title': 'Sports betting',
+  'fees.page.category.sports.body':
+    'Stake and return use server odds. No client-side payout recomputation.',
+  'fees.page.category.casino.title': 'Casino rounds',
+  'fees.page.category.casino.body':
+    'Bets settle through game RPCs with provably-fair verification available after reveal.',
+  'fees.page.category.withdraw.title': 'Withdrawals',
+  'fees.page.category.withdraw.body':
+    'Network and rail fees depend on the withdrawal path. Tier daily limits appear on the tier guide.',
+  'fees.page.cashbackTitle': 'Tier cashback catalog',
+  'fees.page.tierCta': 'Open tier guide',
+  'trust.hub.head.title': 'Trust & security',
+  'trust.hub.head.desc':
+    'How PHONARA protects balances and play — facts and next actions, not unverifiable safety claims.',
+  'trust.hub.eyebrow': 'Trust center',
+  'trust.hub.lead':
+    'Money moves through an append-only ledger with conservation checks. Games expose provably-fair verification. Responsible-gaming and KYC controls stay visible.',
+  'trust.hub.stripAria': 'Trust highlights',
+  'trust.hub.blocksHeading': 'Trust topics',
+  'trust.hub.deferred': 'Live status page ships with a later engine wave — not exposed as a dead link.',
+  'trust.hub.block.money.title': 'Money safety',
+  'trust.hub.block.money.body':
+    'Wallet and system accounts conserve per currency (Σ=0). Ledger entries are append-only with hash-chain integrity on money paths.',
+  'trust.hub.block.fairness.title': 'Provably fair',
+  'trust.hub.block.fairness.body':
+    'Casino rounds publish seed commitments you can verify after reveal. Open the fairness verifier for the full flow.',
+  'trust.hub.block.fairness.link': 'Open fairness verifier',
+  'trust.hub.block.rg.title': 'Responsible gaming',
+  'trust.hub.block.rg.body':
+    'Deposit, loss, and session limits plus self-exclusion live on your account. Use them before limits become a problem.',
+  'trust.hub.block.rg.link': 'Open responsible-gaming settings',
+  'trust.hub.block.kyc.title': 'Identity & withdrawals',
+  'trust.hub.block.kyc.body':
+    'Higher withdrawal headroom requires verified identity. KYC status is a compliance lane — separate from VIP badges.',
+  'trust.hub.block.kyc.link': 'Open KYC',
+  'trust.hub.block.status.title': 'System status',
+  'trust.hub.block.status.body':
+    'A public status page for incidents and maintenance is planned. Until it is live, rely on in-app banners and support channels.',
+  'announcements.page.head.title': 'Announcements',
+  'announcements.page.head.desc':
+    'Operational notices and service updates. Only CMS-published items appear here.',
+  'announcements.page.eyebrow': 'Community',
+  'announcements.page.empty.title': 'No announcements yet',
+  'announcements.page.empty.body':
+    'When new notices publish, they show up here. For help, open support.',
+  'announcements.page.empty.action': 'Open support',
+  'announcements.page.error': 'Could not load announcements. Try again shortly.',
+  'announcements.page.supportCta': 'Go to support',
+  'support.hub.head.title': 'Support',
+  'support.hub.head.desc':
+    'Email us or continue to FAQ and feedback. One-to-one tickets are not live yet.',
+  'support.hub.eyebrow': 'Help',
+  'support.hub.mailtoCta': 'Send email',
+  'support.hub.mailtoSubject': 'PHONARA support request',
+  'support.hub.faqCta': 'Frequently asked questions',
+  'support.hub.feedbackCta': 'Send feedback',
+  'support.hub.ticketCta': 'Contact ticket',
+  'support.hub.ticketDeferred':
+    'Ticket intake ships with a later engine wave — this link opens the defer stub only.',
+  'support.faq.eyebrow': 'FAQ',
+  'support.faq.hubCta': 'Back to support',
+  'support.faq.feedbackCta': 'Send feedback',
+  'support.ticket.head.title': 'Contact ticket',
+  'support.ticket.head.desc': 'Ticket intake and history open after the support engine ships.',
+  'support.ticket.eyebrow': 'Help',
+  'support.ticket.strip.title': 'Ticket preview',
+  'support.ticket.strip.body': 'One-to-one intake · activates after engine wire',
+  'support.ticket.defer.title': 'Tickets coming soon',
+  'support.ticket.defer.body':
+    'The support-ticket engine is not live yet. Use email, FAQ, or feedback for now.',
+  'support.ticket.backToSupport': 'Back to support',
+  'status.page.head.title': 'System status',
+  'status.page.head.desc':
+    'A public incident and maintenance status page ships with a later engine wave.',
+  'status.page.eyebrow': 'Status',
+  'status.page.strip.title': 'Status preview',
+  'status.page.strip.body': 'Incidents and maintenance · activates after engine wire',
+  'status.page.defer.title': 'Status page coming soon',
+  'status.page.defer.body':
+    'The public status engine is not live yet. Use in-app banners and support for now.',
+  'status.page.backToSupport': 'Back to support',
+  'feedback.page.head.title': 'Send feedback',
+  'feedback.page.head.desc':
+    'Email product feedback. Do not include sensitive account or payment details.',
+  'feedback.page.eyebrow': 'Feedback',
+  'feedback.page.bug.title': 'Report a bug',
+  'feedback.page.bug.desc': 'Include steps to reproduce and what you expected, then send by email.',
+  'feedback.page.mailtoCta': 'Send by email',
+  'feedback.page.mailtoSubject': 'PHONARA feedback',
+  'feedback.page.mailtoSubjectBug': 'PHONARA bug report',
+  'feedback.page.note':
+    'Your mail client opens with a subject line — nothing is auto-saved on the server.',
+  'feedback.page.faqCta': 'View FAQ',
+  'feedback.page.hubCta': 'Back to support',
 } as const;

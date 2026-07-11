@@ -24,6 +24,8 @@ import { Button } from '@/product/primitives/button';
 
 import { Skeleton } from '@/product/primitives/skeleton';
 
+import { DomainEmptyMark } from '@/product/primitives/domain-empty-mark';
+
 import { ConfirmDialog } from '@/product/primitives/confirm-dialog';
 
 import { Input } from '@/product/primitives/input';
@@ -457,7 +459,7 @@ export function FuturesPositionsPanel({
     <section
       data-testid="futures-positions-panel"
       className={cn(
-        'border-line bg-surface rounded-(--ds-radius-lg) border p-4',
+        'border-line bg-surface rounded-lg border p-4',
 
         className,
       )}
@@ -469,7 +471,14 @@ export function FuturesPositionsPanel({
       {loading ? (
         <Skeleton className="mt-3 h-24 w-full" data-testid="futures-positions-panel-loading" />
       ) : positions.length === 0 ? (
-        <p className="text-foreground-muted m-0 mt-3 text-sm">{t(emptyKey)}</p>
+        <div
+          className="mt-3 flex flex-col items-center gap-2 py-4 text-center"
+          data-testid="futures-positions-empty"
+          data-domain="trade"
+        >
+          <DomainEmptyMark domain="trade" />
+          <p className="text-foreground-muted m-0 text-sm">{t(emptyKey)}</p>
+        </div>
       ) : (
         <div
           className={cn(

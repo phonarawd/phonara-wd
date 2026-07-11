@@ -60,7 +60,9 @@ PHONARA 정합: 로컬 = `gate:ai-impl` · heavy = **GitHub CI** · Engine Wave 
 | ---------------------------------------------- | -------------------------------------------------------------------- | ------------------------- |
 | [`W0/ssot-bootstrap.md`](W0/ssot-bootstrap.md) | ACTIVE_WORK_SSOT 형제 큐 · `#205` BLOCKED · ADR-008 §PIR · 본 README | **`[x]` DONE** 2026-07-11 |
 
-**전역 NEXT:** `p2-admin-table-primitive` (#206)  
+**전역 NEXT:** `p10-games-batch-b` (#209)  
+**AdminTable GATE `#207`:** **`[x]` DONE** 2026-07-11 — §29.6 dedup  
+**AdminTable `#206`:** **`[x]` DONE** 2026-07-11  
 **Fiat#11 `#205`:** **`[x]` DONE** 2026-07-11 — Casino fiat hint session-lock
 **Track A `#205`:** **UNBLOCKED** — `pir-closeout-unblock-205` `[x]`
 
@@ -155,6 +157,7 @@ PHONARA 정합: 로컬 = `gate:ai-impl` · heavy = **GitHub CI** · Engine Wave 
 
 ```text
 pir-gate-platform-integrity [x] + pir-closeout-unblock-205 [x]  ← 충족 2026-07-11
-  → phase_r Track A 첫 pending = p2-admin-table-primitive (#206)
   → Fiat#11 `#205` `[x]` DONE 2026-07-11
+  → AdminTable `#206` `[x]` · GATE `#207` `[x]` DONE 2026-07-11
+  → phase_r Track A 첫 pending = p10-games-batch-b (#209)
 ```

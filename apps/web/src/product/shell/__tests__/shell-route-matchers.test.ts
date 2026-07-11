@@ -48,15 +48,38 @@ describe('shell-route-matchers', () => {
     expect(shouldMountAppShell('/onboarding/missions')).toBe(true);
   });
 
-  it('mounts MarketingShell on landing and auth funnel only', () => {
+  it('mounts MarketingShell on landing, auth, and P12 public trust routes', () => {
     expect(shouldMountMarketingShell('/')).toBe(true);
     expect(shouldMountMarketingShell('/login')).toBe(true);
     expect(shouldMountMarketingShell('/signup')).toBe(true);
     expect(shouldMountMarketingShell('/reset-password')).toBe(true);
     expect(shouldMountMarketingShell('/verify-email')).toBe(true);
     expect(shouldMountMarketingShell('/auth/callback')).toBe(true);
+    expect(shouldMountMarketingShell('/tier')).toBe(true);
+    expect(shouldMountMarketingShell('/features')).toBe(true);
+    expect(shouldMountMarketingShell('/features/earn')).toBe(true);
+    expect(shouldMountMarketingShell('/fees')).toBe(true);
+    expect(shouldMountMarketingShell('/security')).toBe(true);
+    expect(shouldMountMarketingShell('/announcements')).toBe(true);
+    expect(shouldMountMarketingShell('/status')).toBe(true);
+    expect(shouldMountMarketingShell('/support')).toBe(true);
+    expect(shouldMountMarketingShell('/support/faq')).toBe(true);
+    expect(shouldMountMarketingShell('/support/ticket')).toBe(true);
+    expect(shouldMountMarketingShell('/feedback')).toBe(true);
     expect(shouldMountMarketingShell('/home')).toBe(false);
     expect(shouldMountMarketingShell('/legal/terms')).toBe(false);
+    expect(shouldMountMarketingShell('/tier/me')).toBe(false);
+  });
+
+  it('keeps exact /tier off Earn AppShell while /tier/me stays Earn', () => {
+    expect(earnSurfaceRouteMatcher('/tier')).toBe(false);
+    expect(earnSurfaceRouteMatcher('/tier/me')).toBe(true);
+    expect(shouldMountAppShell('/tier')).toBe(false);
+    expect(shouldMountAppShell('/tier/me')).toBe(true);
+    expect(shouldMountAppShell('/features')).toBe(false);
+    expect(shouldMountAppShell('/security')).toBe(false);
+    expect(shouldMountAppShell('/support')).toBe(false);
+    expect(shouldMountAppShell('/feedback')).toBe(false);
   });
 
   it('resolves marketing shell variants for landing vs auth', () => {

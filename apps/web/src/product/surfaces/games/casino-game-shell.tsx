@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import type { GameCode } from '@phonara/game-engine';
 import { toDecimal } from '@phonara/money';
@@ -9,6 +9,22 @@ import {
   deriveCasinoWinTier,
   type CasinoWinTier,
 } from '@/domain/casino-outcome-replay-contract';
+import {
+  isCasinoBatchAGame,
+  P10_GAMES_BATCH_A_TODO,
+} from '@/domain/casino-games-batch-a-display-contract';
+import {
+  isCasinoBatchBGame,
+  P10_GAMES_BATCH_B_TODO,
+} from '@/domain/casino-games-batch-b-display-contract';
+import {
+  isCasinoBatchCGame,
+  P10_GAMES_BATCH_C_TODO,
+} from '@/domain/casino-games-batch-c-display-contract';
+import {
+  isCasinoBatchDGame,
+  P10_GAMES_BATCH_D_TODO,
+} from '@/domain/casino-games-batch-d-display-contract';
 import { CASINO_E2E_TESTIDS } from '@/features/casino/casino-e2e-testids';
 import { GAME_BY_CODE } from '@/features/casino/game-config';
 import { randomHex } from '@/features/casino/helpers';
@@ -38,11 +54,14 @@ import {
 } from '@/product/primitives/spend-currency-selector';
 import { AutoBetPanel } from '@/product/surfaces/games/auto-bet-panel';
 import { BetModeTabs, type CasinoBetMode } from '@/product/surfaces/games/bet-mode-tabs';
-import { CasinoGameStagePlaceholder } from '@/product/surfaces/games/casino-game-stage-placeholder';
+import { CasinoGameStage } from '@/product/surfaces/games/casino-game-stage';
 import { CasinoMoneyWithFiatHint } from '@/product/surfaces/games/casino-money-with-fiat-hint';
 import { GameOutcomeLayer } from '@/product/surfaces/games/game-outcome-layer';
+import { GameSelectionFields } from '@/product/surfaces/games/game-selection-fields';
 import { PfStrip } from '@/product/surfaces/games/pf-strip';
 import { WinTierOverlay } from '@/product/surfaces/games/win-tier-overlay';
+import { playCasinoWinCue } from '@/product/surfaces/games/casino-sound';
+import type { CasinoStageHandle } from '@/product/surfaces/games/casino-stage-types';
 import { P10_CASINO_FIAT_HINT_SESSION_LOCK_TODO } from '@/domain/fiat-reference-display-contract';
 
 function profitDeltaFromBet(stake: string, payout: string, won: boolean): string {
@@ -104,6 +123,8 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     baseStake: config.defaultStake,
   }));
 
+  const stageRef = useRef<CasinoStageHandle | null>(null);
+  const lastPlayedBetIdRef = useRef<string | null>(null);
   const autoQueue = useAutoBetQueue(stake);
 
   const onAccumulatedSelectionReset = useCallback(() => {
@@ -139,6 +160,8 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     setWinTier('none');
     setOverlayOpen(false);
     setLastStake(next.defaultStake);
+    lastPlayedBetIdRef.current = null;
+    stageRef.current?.reset();
     unlockSession();
     // Reset when navigating between game codes only.
   }, [gameCode]);
@@ -164,7 +187,10 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     setLastPayout(payout);
     setLastStake(settledStake);
     setLastMultiplier(multiplierFromBet(settledStake, payout));
-    if (tier === 'big' || tier === 'mega') setOverlayOpen(true);
+    if (tier === 'big' || tier === 'mega') {
+      setOverlayOpen(true);
+      playCasinoWinCue(tier);
+    }
   }, []);
 
   const handleManualBet = useCallback(async () => {
@@ -180,6 +206,10 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
   useEffect(() => {
     if (!pipeline.bet) return;
     presentSettle(pipeline.bet.payout, pipeline.bet.status, activeStake);
+    if (lastPlayedBetIdRef.current === pipeline.bet.bet_id) return;
+    lastPlayedBetIdRef.current = pipeline.bet.bet_id;
+    // Replay must not block next bet / auto fire (§23.4 · §23.8).
+    void stageRef.current?.playOutcome(pipeline.bet.result);
   }, [activeStake, pipeline.bet, presentSettle]);
 
   const handleAutoStart = useCallback(() => {
@@ -231,6 +261,10 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
       className="mx-auto flex w-full max-w-5xl flex-col gap-4 py-4 md:py-6"
       data-testid="casino-game-shell"
       data-owner-todo={P10_CASINO_REPLAY_AND_INFRA_TODO}
+      data-batch-a-todo={isCasinoBatchAGame(gameCode) ? P10_GAMES_BATCH_A_TODO : undefined}
+      data-batch-b-todo={isCasinoBatchBGame(gameCode) ? P10_GAMES_BATCH_B_TODO : undefined}
+      data-batch-c-todo={isCasinoBatchCGame(gameCode) ? P10_GAMES_BATCH_C_TODO : undefined}
+      data-batch-d-todo={isCasinoBatchDGame(gameCode) ? P10_GAMES_BATCH_D_TODO : undefined}
       data-fiat-hint-todo={P10_CASINO_FIAT_HINT_SESSION_LOCK_TODO}
       data-casino-fiat-session-locked={sessionLocked ? 'true' : 'false'}
       data-game-code={gameCode}
@@ -269,7 +303,13 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
 
         <div className="relative grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.8fr)]">
           <div className="relative flex flex-col gap-3">
-            <CasinoGameStagePlaceholder gameCode={gameCode} />
+            <CasinoGameStage
+              ref={stageRef}
+              gameCode={gameCode}
+              selection={selection}
+              onSelectionChange={setSelection}
+              selectionDisabled={lockStake || pipeline.busy}
+            />
             {overlayOpen ? (
               <WinTierOverlay
                 tier={winTier}
@@ -336,6 +376,13 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
                 </span>
               ) : null}
             </div>
+
+            <GameSelectionFields
+              config={config}
+              selection={selection}
+              onChange={setSelection}
+              disabled={lockStake || pipeline.busy}
+            />
 
             <BetModeTabs
               mode={betMode}

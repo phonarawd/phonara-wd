@@ -1,4 +1,6 @@
+import type { DaW6DomainEmptyDomain } from '@/domain/da-w6-brand-elevation-display-contract';
 import { Button } from '@/product/primitives/button';
+import { DomainEmptyMark } from '@/product/primitives/domain-empty-mark';
 import { cn } from '@/product/primitives/lib/cn';
 
 export interface EmptyStateProps {
@@ -8,7 +10,10 @@ export interface EmptyStateProps {
   actionLabel: string;
   onAction: () => void;
   icon?: React.ReactNode;
+  /** §34.19 domain personality — Casino chips · Trade pulse · Wallet vault · Sports stadium. */
+  domain?: DaW6DomainEmptyDomain;
   className?: string;
+  testId?: string;
 }
 
 export function EmptyState({
@@ -17,17 +22,23 @@ export function EmptyState({
   actionLabel,
   onAction,
   icon,
+  domain,
   className,
+  testId = 'empty-state',
 }: EmptyStateProps) {
+  const resolvedIcon = icon ?? (domain ? <DomainEmptyMark domain={domain} /> : null);
+
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center gap-4 rounded-(--ds-radius-lg) border border-dashed border-line',
+        'flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-line',
         'bg-surface px-6 py-10 text-center',
         className,
       )}
+      data-testid={testId}
+      data-domain={domain}
     >
-      {icon ? <div className="text-foreground-muted">{icon}</div> : null}
+      {resolvedIcon ? <div className="text-foreground-muted">{resolvedIcon}</div> : null}
       <div className="flex max-w-sm flex-col gap-1.5">
         <h3 className="text-base font-semibold text-foreground">{title}</h3>
         {description ? <p className="text-sm text-foreground-muted">{description}</p> : null}

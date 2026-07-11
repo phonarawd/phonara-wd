@@ -18,6 +18,7 @@ import {
 } from './shell-route-matchers';
 import { TopBar } from './top-bar';
 import { TRADE_SUBNAV } from './trade-subnav';
+import { BetFirstVisitEducationGate } from './bet-first-visit-education-gate';
 import { TradeFirstVisitEducationGate } from './trade-first-visit-education-gate';
 import { TradeRealtimeFeedbackGate } from './trade-realtime-feedback-gate';
 import { WALLET_SUBNAV } from './wallet-subnav';
@@ -108,6 +109,7 @@ export function AppShell({ children }: AppShellProps) {
         <BottomNav className="lg:hidden" />
       </div>
       <TradeFirstVisitEducationGate />
+      <BetFirstVisitEducationGate />
       <TradeRealtimeFeedbackGate />
     </ShellPage>
   );

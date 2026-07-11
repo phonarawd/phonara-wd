@@ -5,9 +5,9 @@
 
 import type { MessageKey } from '@phonara/i18n';
 
+import { EARN_PLAY_ROUTE } from './earn-play-display-contract';
 import { HOME_MISSIONS_ROUTE } from './home-missions-display-contract';
 import { REFERRAL_INVITE_ROUTE } from './referral-hub-display-contract';
-import { HOME_ROUTE } from './unified-tier-display-contract';
 import { formatPhonRewardDisplay } from './viral-missions-display-contract';
 
 export const HOME_ATTENDANCE_ROUTE = '/home/attendance' as const;
@@ -76,7 +76,7 @@ export const ROUTINE_STEP_DEFINITIONS: readonly RoutineStepDefinition[] = [
   {
     id: 'roulette',
     labelKey: 'earn.routine.step.roulette',
-    route: HOME_ROUTE,
+    route: EARN_PLAY_ROUTE,
     durationKey: 'earn.routine.duration.roulette',
   },
   {

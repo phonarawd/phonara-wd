@@ -58,10 +58,12 @@ describe('p7-gate-growth §12.19.6 · §13.5.5 · §3.4.3', () => {
       '/referral',
       '/tier/me',
       '/tier/benefits',
+      '/earn/cashback',
+      '/earn/play',
       '/share/earnings',
       '/staking',
     ]);
-    expect(visible.some((item) => item.to === '/earn/cashback')).toBe(false);
+    expect(visible.some((item) => item.to === '/earn/cashback')).toBe(true);
     expect(visible.some((item) => item.to === '/staking')).toBe(true);
   });
 

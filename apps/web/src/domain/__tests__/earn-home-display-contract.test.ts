@@ -101,9 +101,20 @@ describe('earn-home-display-contract §20.13 #103', () => {
       '/staking',
     ]);
 
-    const visible = filterRegisteredSubnavItems(EARN_SUBNAV);
+    const visible = filterRegisteredSubnavItems(EARN_SUBNAV).map((item) => item.to);
 
-    expect(visible.map((item) => item.to)).toEqual(EARN_HOME_P7_SUBNAV_MANIFEST_ROUTES);
+    for (const route of EARN_HOME_P7_SUBNAV_MANIFEST_ROUTES) {
+      expect(visible).toContain(route);
+    }
+
+    // P11 side-income chips register after p11-earn-side-surfaces
+    expect(visible).toContain('/earn/cashback');
+    expect(visible).toContain('/earn/play');
+  });
+
+  it('routes home events entry card to /events hub', () => {
+    const eventsCard = EARN_HOME_ENTRY_CARDS.find((card) => card.id === 'events');
+    expect(eventsCard?.route).toBe('/events');
   });
 
   it('exposes L2 catalog sum and hub mission preview ids (§28.7)', () => {

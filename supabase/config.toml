@@ -46,6 +46,8 @@ additional_redirect_urls = [
   "https://www.phonara.net",
   "https://phonara-web.pages.dev",
   "https://phonara-web.pages.dev/auth/callback",
+  "https://preview.phonara-web.pages.dev",
+  "https://preview.phonara-web.pages.dev/auth/callback",
 ]
 jwt_expiry = 3600
 enable_signup = true
@@ -105,6 +107,7 @@ rp_origins = [
   "https://phonara.net",
   "https://www.phonara.net",
   "https://phonara-web.pages.dev",
+  "https://preview.phonara-web.pages.dev",
 ]
 
 [storage]

@@ -160,6 +160,14 @@ describe('LandingPage', () => {
       'href',
       '/legal/responsible-gaming',
     );
+    expect(screen.getByTestId('landing-footer-affiliate')).toHaveAttribute(
+      'href',
+      '/legal/affiliate',
+    );
+    expect(screen.getByTestId('landing-footer-cookies')).toHaveAttribute('href', '/legal/cookies');
+    expect(screen.getByTestId('landing-footer-faq')).toHaveAttribute('href', '/support/faq');
+    expect(screen.getByTestId('landing-footer-feedback')).toHaveAttribute('href', '/feedback');
+    expect(screen.getByTestId('landing-footer-support')).toHaveAttribute('href', '/support');
     expect(screen.getByText('만 19세 이상만 가입할 수 있습니다.')).toBeInTheDocument();
   });
 

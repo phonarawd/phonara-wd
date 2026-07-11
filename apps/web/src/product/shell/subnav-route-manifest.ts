@@ -51,6 +51,22 @@ export const P10_SPORTS_HUB_REGISTERED_ROUTES = [
   '/sports/vip',
 ] as const;
 
+/** P10 Casino fairness — `p10-page-casino-fairness` (§12.19.6 · YAML #212). */
+export const P10_CASINO_FAIRNESS_REGISTERED_ROUTES = ['/casino/fairness'] as const;
+
+/**
+ * P11 Earn side-income routes — `p11-earn-side-surfaces` (§12.19.6 · YAML #219).
+ */
+export const P11_SIDE_INCOME_REGISTERED_ROUTES = [
+  '/events',
+  '/earn/play',
+  '/earn/cashback',
+  '/referral/leaderboard',
+] as const;
+
+/** P11 wallet redeem — `p11-page-wallet-redeem` (§12.19.6 · YAML #220). */
+export const P11_WALLET_REDEEM_REGISTERED_ROUTES = ['/wallet/redeem'] as const;
+
 /**
  * §12.19.6 — Routes that may appear in domain subnav chips.
  * Extend only in the Part GATE todo that registers the matching TanStack route.
@@ -68,11 +84,14 @@ export const SHELL_SUBNAV_REGISTERED_ROUTES: ReadonlySet<string> = new Set([
   '/sports',
   ...P10_SPORTS_HUB_REGISTERED_ROUTES,
   '/casino',
+  ...P10_CASINO_FAIRNESS_REGISTERED_ROUTES,
   '/install',
   '/onboarding',
   '/onboarding/missions',
   ...P7_GROWTH_REGISTERED_ROUTES,
   ...P8_CORE_REGISTERED_ROUTES,
+  ...P11_SIDE_INCOME_REGISTERED_ROUTES,
+  ...P11_WALLET_REDEEM_REGISTERED_ROUTES,
 ]);
 
 /** Filter subnav items to registered routes only (§12.19.6). */

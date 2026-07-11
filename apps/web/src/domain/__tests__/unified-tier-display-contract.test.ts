@@ -79,11 +79,11 @@ describe('unified-tier-display-contract', () => {
     expect(liveRows.some((row) => row.hook.includes('TierProgressPanel'))).toBe(true);
   });
 
-  it('flags /tier guide as static mock (must wire engine before Phase 7 DONE)', () => {
-    expect(isTierGuideSurfaceMockOnly()).toBe(true);
+  it('wires /tier guide to earn VIP engine (P12 marketing hub)', () => {
+    expect(isTierGuideSurfaceMockOnly()).toBe(false);
     const tierRow = UNIFIED_TIER_SURFACE_PLACEMENT.find((row) => row.route === '/tier');
-    expect(tierRow?.vipDisplaySource).toBe('static_mock');
-    expect(tierRow?.wireStatus).toBe('missing');
+    expect(tierRow?.vipDisplaySource).toBe('earn_vip_engine');
+    expect(tierRow?.wireStatus).toBe('live');
   });
 
   it('marks platform-wide tier gating domains as engine MISSING (Option B backlog)', () => {

@@ -14,7 +14,7 @@ export const PHONARA_COLD_START_USER_SETTINGS: Record<string, unknown> = {
   'git.autofetch': false,
   'git.autorefresh': false,
   'typescript.disableAutomaticTypeAcquisition': true,
-  'typescript.tsserver.maxTsServerMemory': 512,
+  'typescript.tsserver.maxTsServerMemory': 768,
   'typescript.tsserver.useSeparateSyntaxServer': true,
   'files.watcherExclude': {
     '**/node_modules/**': true,

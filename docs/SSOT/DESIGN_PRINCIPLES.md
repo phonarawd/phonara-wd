@@ -327,6 +327,7 @@ rg "text-\[\d+px\]|p-\[\d|gap-\[\d|rounded-\[\d|shadow-\[" <phase-r-ui-path>
 - [x] da-w1: Text · elevation · Card CVA · spacing ratchet (`da-w1-ds-foundation-bundle`)
 - [x] da-w1-gate: `gate:ai-impl` primitives+tokens · `check:design-tokens` advisory (`da-w1-gate-ds-2`)
 - [x] da-w4-gate: `use-prefers-reduced-motion` regression · `motion-presets` instant · CSS 0ms (`da-w4-gate-motion`)
+- [x] da-w6-gate: BrandMark aurora · domain empty · Quad Stream · `check:design-tokens` advisory (`da-w6-gate-brand-elevation`)
 - [ ] da-w7: `check:design-tokens --strict`
 
 ---

@@ -118,7 +118,7 @@ export const TOURNAMENTS_PF_ADMIN_ENGINE_BRANCHES: Readonly<
   },
   pf_user_client_verify: {
     engine: 'exists',
-    source: '@phonara/game-engine verifyRound · FairnessSheet',
+    source: '@phonara/game-engine verifyRound · CasinoFairnessPage',
     moneyPath: false,
     domain: 'pf_user',
   },
@@ -201,7 +201,7 @@ export const TOURNAMENTS_PF_ADMIN_PLACEMENT: Readonly<TournamentsPfAdminSurfaceP
   {
     route: PF_FAIRNESS_ROUTE_LEGACY,
     role: 'pf_fairness_hub',
-    hook: 'ImportedGamesFairnessPage · loadFairnessHistory',
+    hook: 'CasinoFairnessPage · useCasinoFairnessVerifier',
     canonicalTarget: PF_FAIRNESS_ROUTE_CANONICAL,
   },
   {

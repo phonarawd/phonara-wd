@@ -1,7 +1,7 @@
 # apps/web — Phase R scope
 
-> **Phase R:** Presentation rebuild in progress — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `p2-admin-table-primitive` (#206) · Fiat#11 `#205` `[x]` · CasinoR#1 `#204` `[x]` · Casino lobby `#203` `[x]` · preflight: ACTIVE_WORK_SSOT.
-> **SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../docs/SSOT/ACTIVE_WORK_SSOT.md) · Plan **280 ids** · completed **205** · pending **68** (48차)
+> **Phase R:** Presentation rebuild in progress — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `da-w8-signature-surfaces-bundle` (#226) · P12 GATE `#225` `[x]` · P12 legal pages `#224` `[x]` · P12 community hub `#223` `[x]` · P12 trust hub `#222` `[x]` · P11 GATE `#221` `[x]` · P11 wallet redeem `#220` `[x]` · P11 Earn side `#219` `[x]` · P4 VISUAL `#218` agent impl `[x]` · W6 GATE `#217` `[x]` · W6 BUNDLE `#216` `[x]` · P10 VISUAL `#215` agent impl `[x]` · P10 GATE `#214` `[x]` · first-bet education `#213` `[x]` · Fairness `#212` `[x]` · Batch D `#211` `[x]` · Batch C `#210` `[x]` · Batch B `#209` `[x]` · Batch A `#208` `[x]` · AdminTable GATE `#207` `[x]` · AdminTable `#206` `[x]` · Fiat#11 `#205` `[x]` · CasinoR#1 `#204` `[x]` · Casino lobby `#203` `[x]` · preflight: ACTIVE_WORK_SSOT.
+> **SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../docs/SSOT/ACTIVE_WORK_SSOT.md) · Plan **280 ids** · completed **215** · pending **58** (53차)
 
 ## KEEP (engine glue)
 

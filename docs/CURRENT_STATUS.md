@@ -40,6 +40,9 @@
 | `check:ai-reference`                                                     | green                                                                                                                                                                      |
 | `gate:ai-impl` P9 WORLD gate (`p9-gate-trade-world-class`)               | vitest world-class **6/6** · layout-dedup **9/9** · action-path **6/6** · parity **29/29** · trade surfaces **122/122** · §13.1.1 · §32.7 H1–H4                            |
 | `gate:ai-impl` Fiat core gate (`p4-gate-fiat-reference-world-class`)     | vitest fiat bundle **113/113** · gate contract **6/6** · ComplaintRisk core 3/3 live · preflight grep · §13.1.4 · P10 page unblock                                         |
+| `gate:ai-impl` DA W6 GATE (`da-w6-gate-brand-elevation`)                 | vitest **23/23** · BrandMark aurora · domain empty · Quad Stream · `check:design-tokens` advisory (91 notes) · VISUAL advisory · §34.18–34.20 · engine **0** |
+| `gate:ai-impl` DA W6 Brand (`da-w6-brand-elevation-bundle`)              | vitest **55/55** · BrandMark aurora · domain empty · QuadStreamLoading · router pending · §34.18–34.20 · engine **0**                                                                          |
+| `gate:ai-impl` P4 VISUAL (`p4-operator-visual-signoff`)                | vitest surface **13/13** · contract **6/6** · §22.2 Wallet · §25.12.6 · 390/768/1024 · axe critical 0 · dead control 0 · preview https://preview.phonara-web.pages.dev |
 | `gate:ai-impl` P9 VISUAL (`p9-operator-visual-signoff`)                  | vitest trade+staking **168/168** · `p9-trade-visual-signoff` **29/29** · contract **5/5** · §13.1.1 dual-currency · dead control 0 · G7 cross-margin canary                |
 | `typecheck`                                                              | green                                                                                                                                                                      |
 | `check:design-tokens`                                                    | green (advisory) · token SOT · surface-hover bridge · legacy diff · motion refs                                                                                            |
@@ -79,7 +82,7 @@
 
 ## Next (유일한 구현 큐)
 
-**Phase R UI Rebuild** — [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) · **Cursor 8GB perf `phase0-gate` `[x]` DONE** 2026-07-10 · **PIR `[x]` DONE** · **전역 NEXT** `p2-gate-admin-table-dedup` (#207) · AdminTable `#206` `[x]` · Fiat#11 `#205` `[x]` · CasinoR#1 `#204` `[x]` · Casino lobby `#203` `[x]` · §34 → P10 · preflight: [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
+**Phase R UI Rebuild** — [`PRODUCT/REBUILD_PLAN_v1.md`](PRODUCT/REBUILD_PLAN_v1.md) · **Cursor 8GB perf `phase0-gate` `[x]` DONE** 2026-07-10 · **PIR `[x]` DONE** · **전역 NEXT** `p11-page-wallet-redeem` (#220) · P11 Earn side `#219` `[x]` · P4 VISUAL `#218` agent impl `[x]` · W6 GATE `#217` `[x]` · W6 BUNDLE `#216` `[x]` · P10 VISUAL `#215` agent impl `[x]` · P10 GATE `#214` `[x]` · first-bet education `#213` `[x]` · Fairness `#212` `[x]` · Batch D `#211` `[x]` · Batch C `#210` `[x]` · Batch B `#209` `[x]` · Batch A `#208` `[x]` · AdminTable GATE `#207` `[x]` · AdminTable `#206` `[x]` · Fiat#11 `#205` `[x]` · CasinoR#1 `#204` `[x]` · Casino lobby `#203` `[x]` · §34 → P11 · preflight: [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
 
 **Trade 결함 0 수렴 (형제 큐)** — Plan `트레이딩_결함_0_수렴` · Phase A–C **`[x]` impl** 2026-07-08 · **NEXT** Phase D `phase-d-fills-pagination` (D1) → `phase-d-depth-chart` (D2) · preflight: [`ENGINE_UI_FULL_AUDIT_2026-07-08.md`](audit/ENGINE_UI_FULL_AUDIT_2026-07-08.md)
 
@@ -295,25 +298,25 @@
 | `p10-casino-replay-and-infra`           | `[x]` DONE      | —          | YAML #204 completed · surface/gate evidence pending doc sync                                                                    |
 | `p10-casino-fiat-hint-session-lock`     | `[x]` DONE      | 2026-07-11 | `CasinoFiatRateSession` · spin drift 0 · `gate:ai-impl` **22/22**                                                               |
 | `p2-admin-table-primitive`              | `[x]` DONE      | 2026-07-11 | `admin-table.tsx` · @tanstack/react-table · 18 desk · vitest **46/46** · native table 0 · LoadingTable 0 · `gate:ai-impl` L0~L4 |
-| `p2-gate-admin-table-dedup`             | `[ ]` NEXT      | —          | YAML #207 pending                                                                                                               |
-| `p10-games-batch-a`                     | `[ ]` NEXT      | —          | YAML #208 pending                                                                                                               |
-| `p10-games-batch-b`                     | `[ ]` NEXT      | —          | YAML #209 pending                                                                                                               |
-| `p10-games-batch-c`                     | `[ ]` NEXT      | —          | YAML #210 pending                                                                                                               |
-| `p10-games-batch-d`                     | `[ ]` NEXT      | —          | YAML #211 pending                                                                                                               |
-| `p10-page-casino-fairness`              | `[ ]` NEXT      | —          | YAML #212 pending                                                                                                               |
-| `p10-first-bet-education`               | `[ ]` NEXT      | —          | YAML #213 pending                                                                                                               |
-| `p10-gate-betting`                      | `[ ]` NEXT      | —          | YAML #214 pending                                                                                                               |
-| `p10-operator-visual-signoff`           | `[ ]` NEXT      | —          | YAML #215 pending                                                                                                               |
-| `da-w6-brand-elevation-bundle`          | `[ ]` NEXT      | —          | YAML #216 pending                                                                                                               |
-| `da-w6-gate-brand-elevation`            | `[ ]` NEXT      | —          | YAML #217 pending                                                                                                               |
-| `p4-operator-visual-signoff`            | `[ ]` NEXT      | —          | YAML #218 pending                                                                                                               |
-| `p11-earn-side-surfaces`                | `[ ]` NEXT      | —          | YAML #219 pending                                                                                                               |
-| `p11-page-wallet-redeem`                | `[ ]` NEXT      | —          | YAML #220 pending                                                                                                               |
-| `p11-gate-side-income`                  | `[ ]` NEXT      | —          | YAML #221 pending                                                                                                               |
-| `p12-trust-marketing-hub`               | `[ ]` NEXT      | —          | YAML #222 pending                                                                                                               |
-| `p12-community-support-hub`             | `[ ]` NEXT      | —          | YAML #223 pending                                                                                                               |
-| `p12-legal-pages`                       | `[ ]` NEXT      | —          | YAML #224 pending                                                                                                               |
-| `p12-gate-marketing`                    | `[ ]` NEXT      | —          | YAML #225 pending                                                                                                               |
+| `p2-gate-admin-table-dedup`             | `[x]` DONE      | 2026-07-11 | §29.6 · native table 0 · LoadingTable 0 · dedup contract · `gate:ai-impl` **8/8**                                               |
+| `p10-games-batch-a`                     | `[x]` DONE      | 2026-07-11 | crash·limbo·dice L1 · WinTier · `gate:ai-impl` **13/13**                                                                        |
+| `p10-games-batch-b`                     | `[x]` DONE      | 2026-07-11 | mines·hilo L1 · grid a11y · touch 48px+ · `gate:ai-impl` **9/9**                                                                |
+| `p10-games-batch-c`                     | `[x]` DONE      | 2026-07-11 | Pixi v8 plinko·mint_reels·gold_rush·momentum · §23.8 sound · `gate:ai-impl` **10/10**                                           |
+| `p10-games-batch-d`                     | `[x]` DONE      | 2026-07-11 | roulette·blackjack·deepshaft table L1 · WinTier · `gate:ai-impl` **9/9**                                                        |
+| `p10-page-casino-fairness`              | `[x]` DONE      | 2026-07-11 | `/casino/fairness` verifyRound · §23.2.1 PF limits · lobby CTA · `gate:ai-impl` **23/23**                                        |
+| `p10-first-bet-education`               | `[x]` DONE      | 2026-07-11 | sports+casino sheet · slip·RG·PF · localStorage · 독립 route 0 · `gate:ai-impl` **15/15**                                       |
+| `p10-gate-betting`                      | `[x]` DONE      | 2026-07-11 | Sports+Casino 12 · subnav dead link 0 · H5/Fiat#12 live · first-bet · `gate:ai-impl` **42/42** · casino E2E CI                   |
+| `p10-operator-visual-signoff`           | `[x]` agent impl | 2026-07-11 | contract **6/6** · surface **13/13** · preview https://preview.phonara-web.pages.dev · **operator `VISUAL APPROVED` 대기** (Plan YAML) |
+| `da-w6-brand-elevation-bundle`          | `[x]` DONE      | 2026-07-11 | BrandMark aurora · domain empty · QuadStreamLoading · `gate:ai-impl` **55/55**                                                      |
+| `da-w6-gate-brand-elevation`            | `[x]` DONE      | 2026-07-11 | BrandMark aurora GATE · `check:design-tokens` advisory · VISUAL advisory · `gate:ai-impl` **23/23**                                  |
+| `p4-operator-visual-signoff`            | `[x]` agent impl | 2026-07-11 | contract **6/6** · surface **13/13** · preview https://preview.phonara-web.pages.dev · **operator `VISUAL APPROVED` 대기** (Plan YAML) |
+| `p11-earn-side-surfaces`                | `[x]` DONE      | 2026-07-11 | `/events` · `/earn/play` · `/earn/cashback` · `/referral/leaderboard` STUB · `gate:ai-impl` vitest **45/45** · P11 subnav register |
+| `p11-page-wallet-redeem`                | `[x]` DONE      | 2026-07-11 | `/wallet/redeem` · `gate:ai-impl` **21/21**                                                                                      |
+| `p11-gate-side-income`                  | `[x]` DONE      | 2026-07-11 | §12.19.6 Side GATE · `gate:ai-impl` **39/39**                                                                                   |
+| `p12-trust-marketing-hub`               | `[x]` DONE      | 2026-07-11 | `/tier` · `/features*` · `/fees` · `/security` · MarketingShell · `gate:ai-impl` **36/36**                                       |
+| `p12-community-support-hub`             | `[x]` DONE      | 2026-07-11 | `/announcements` · `/support*` · `/feedback` · `gate:ai-impl` **40/40**                                                          |
+| `p12-legal-pages`                       | `[x]` DONE      | 2026-07-11 | `/legal/affiliate` · `/legal/cookies` · redirects · `gate:ai-impl` **40/40**                                                     |
+| `p12-gate-marketing`                    | `[x]` DONE      | 2026-07-11 | §32.5 FAQ·feedback·affiliate·cookies + marketing · `gate:ai-impl` **59/59**                                                     |
 | `da-w8-signature-surfaces-bundle`       | `[ ]` NEXT      | —          | YAML #226 pending                                                                                                               |
 | `da-w8-sound-design-spec-defer`         | `[ ]` NEXT      | —          | YAML #227 pending                                                                                                               |
 | `da-w8-gate-signature-experience`       | `[ ]` NEXT      | —          | YAML #228 pending                                                                                                               |
@@ -370,4 +373,4 @@
 | `p2-defer-admin-vip`                    | `[x]` cancelled | —          | YAML cancelled · DEFER — 구현 금지                                                                                              |
 | `p2-defer-admin-support`                | `[x]` cancelled | —          | YAML cancelled · DEFER — 구현 금지                                                                                              |
 
-§AI Todo Sync · YAML canonical **206/280 completed** · **NEXT:** `p2-gate-admin-table-dedup` (#207) · **preflight:** [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
+§AI Todo Sync · YAML canonical **209/280 completed** · **NEXT:** `p10-games-batch-c` (#210) · **preflight:** [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)

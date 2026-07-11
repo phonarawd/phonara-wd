@@ -2,6 +2,12 @@ import { loadRepoEnvFiles } from './load-repo-env';
 
 export const DEFAULT_SITE_URL = 'https://phonara.net';
 
+/** Stable Cloudflare Pages preview alias — P10 visual sign-off (§20.12). */
+export const PREVIEW_REDIRECT_URLS = [
+  'https://preview.phonara-web.pages.dev',
+  'https://preview.phonara-web.pages.dev/auth/callback',
+] as const;
+
 /** Must match apps/web authCallbackRedirect() targets. */
 export const PRODUCTION_REDIRECT_URLS = [
   'http://localhost:3000',
@@ -22,7 +28,17 @@ export const PRODUCTION_REDIRECT_URLS = [
   'https://www.phonara.net/auth/callback',
   'https://phonara-web.pages.dev',
   'https://phonara-web.pages.dev/auth/callback',
+  ...PREVIEW_REDIRECT_URLS,
 ];
+
+export const PRODUCTION_WEBAUTHN_RP_ID = 'phonara.net';
+export const PRODUCTION_WEBAUTHN_RP_DISPLAY_NAME = 'PHONARA';
+
+/** Supabase Management API max 5 · each origin must be HTTPS subdomain of rp_id. */
+export const PRODUCTION_WEBAUTHN_RP_ORIGINS = [
+  'https://phonara.net',
+  'https://www.phonara.net',
+] as const;
 
 export function productionSiteUrl(): string {
   loadRepoEnvFiles();
@@ -51,6 +67,10 @@ export function buildProductionAuthPatch(): Record<string, unknown> {
     uri_allow_list: PRODUCTION_REDIRECT_URLS.join(','),
     jwt_exp: 3600,
     refresh_token_rotation_enabled: true,
+    passkey_enabled: true,
+    webauthn_rp_id: PRODUCTION_WEBAUTHN_RP_ID,
+    webauthn_rp_display_name: PRODUCTION_WEBAUTHN_RP_DISPLAY_NAME,
+    webauthn_rp_origins: PRODUCTION_WEBAUTHN_RP_ORIGINS.join(','),
   };
 
   const smtpHost = process.env.SUPABASE_SMTP_HOST?.trim();
@@ -124,6 +144,9 @@ export function verifyAuthSnapshot(snapshot: AuthConfigSnapshot): string[] {
   }
   if (!allowList.includes('https://phonara.net/auth/callback')) {
     issues.push('uri_allow_list missing https://phonara.net/auth/callback');
+  }
+  if (!allowList.includes('https://preview.phonara-web.pages.dev/auth/callback')) {
+    issues.push('uri_allow_list missing https://preview.phonara-web.pages.dev/auth/callback');
   }
   if (!snapshot.smtp_host) issues.push('smtp_host missing (Resend not configured on Supabase)');
   if (!snapshot.smtp_admin_email?.includes('phonara.net')) {

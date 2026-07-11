@@ -1,6 +1,6 @@
 # apps/admin — Phase R
 
-> **Phase R:** Admin desks live — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `p2-gate-admin-table-dedup` (#207) · AdminTable `#206` `[x]` · §29.6.
+> **Phase R:** Admin desks live — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `p10-games-batch-b` (#209) · Batch A `#208` `[x]` · AdminTable GATE `#207` `[x]` · AdminTable `#206` `[x]` · §29.6.
 
 ## KEEP (engine glue + product desks)
 
@@ -10,6 +10,7 @@
 
 - **정본:** `apps/admin/src/product/primitives/admin-table.tsx` · `@tanstack/react-table`
 - Desk 목록 = **AdminTable만** — native `<table>` · 로컬 `LoadingTable` **금지**
+- GATE: `admin-table-dedup-display-contract` · `p2-gate-admin-table-dedup` **`[x]`** 2026-07-11
 - Vite/vitest alias: `@/product/primitives/admin-table` → admin local (web primitives alias보다 우선)
 
 ## High-risk RBAC (R0 · PIR P1)

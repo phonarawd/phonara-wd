@@ -4,7 +4,7 @@ import type { GameCode } from '@phonara/game-engine';
 
 import { findCasinoOutcomeReplayRow } from '@/domain/casino-outcome-replay-contract';
 
-/** Stage slot until p10-games-batch-* — shell + replay contract live; L1 stage deferred. */
+/** Stage slot fallback — Batch A–D live; unknown game codes only. */
 export function CasinoGameStagePlaceholder({ gameCode }: { gameCode: GameCode }) {
   const t = useT();
   const row = findCasinoOutcomeReplayRow(gameCode);

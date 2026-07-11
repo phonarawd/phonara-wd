@@ -8,13 +8,21 @@ const LEGAL_NAV_ITEMS: Readonly<
   Array<{
     id: LegalDocId;
     href: string;
-    labelKey: 'legal.nav.terms' | 'legal.nav.privacy' | 'legal.nav.rg' | 'legal.nav.risk';
+    labelKey:
+      | 'legal.nav.terms'
+      | 'legal.nav.privacy'
+      | 'legal.nav.rg'
+      | 'legal.nav.risk'
+      | 'legal.nav.affiliate'
+      | 'legal.nav.cookies';
   }>
 > = [
   { id: 'terms', href: LEGAL_DOC_ROUTES.terms, labelKey: 'legal.nav.terms' },
   { id: 'privacy', href: LEGAL_DOC_ROUTES.privacy, labelKey: 'legal.nav.privacy' },
   { id: 'rg', href: LEGAL_DOC_ROUTES.rg, labelKey: 'legal.nav.rg' },
   { id: 'risk', href: LEGAL_DOC_ROUTES.risk, labelKey: 'legal.nav.risk' },
+  { id: 'affiliate', href: LEGAL_DOC_ROUTES.affiliate, labelKey: 'legal.nav.affiliate' },
+  { id: 'cookies', href: LEGAL_DOC_ROUTES.cookies, labelKey: 'legal.nav.cookies' },
 ];
 
 export type LegalNavProps = {
@@ -39,7 +47,7 @@ export function LegalNav({ active }: LegalNavProps) {
             key={item.id}
             to={item.href}
             className={cn(
-              'rounded-(--ds-radius-md) border px-3 py-1.5 text-sm font-medium transition-colors',
+              'rounded-md border px-3 py-1.5 text-sm font-medium transition-colors',
               isActive
                 ? 'border-accent bg-accent/10 text-accent'
                 : 'border-line text-foreground-muted hover:text-foreground hover:border-line-strong',

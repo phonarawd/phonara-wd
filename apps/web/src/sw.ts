@@ -24,8 +24,8 @@ const sw = globalThis as unknown as ServiceWorkerGlobalScope & {
   __WB_MANIFEST: PrecacheEntry[];
 };
 
-const PRECACHE = 'phonara-precache-v2';
-const RUNTIME_PAGES = 'phonara-pages-v1';
+const PRECACHE = 'phonara-precache-v3';
+const RUNTIME_PAGES = 'phonara-pages-v2';
 const OFFLINE_URL = '/offline.html';
 const API_PATHS = ['/rest/v1', '/auth/v1', '/realtime/v1', '/storage/v1'];
 

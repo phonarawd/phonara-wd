@@ -81,5 +81,8 @@ export function listPlatformNarrativeMessageKeys(): readonly MessageKey[] {
     PLATFORM_PILLARS_SECTION_TITLE_KEY,
     PLATFORM_PILLARS_SECTION_SUBTITLE_KEY,
     ...pillarKeys,
+    'platform.trust.ledger' as MessageKey,
+    'platform.trust.pf' as MessageKey,
+    'platform.trust.rg' as MessageKey,
   ];
 }

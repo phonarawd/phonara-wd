@@ -9,7 +9,7 @@
 | **Engine Apex**               | `[x] FULLY CLOSED`                           | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어·**PIR Wave E** 예외만)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | **Phase D Demolition**        | `[x] DONE`                                   | 삭제 확장 **금지**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | **Platform Integrity (PIR)**  | **`[x]` DONE** 2026-07-11                    | Plan `platform_integrity_remediation_v1` **전부 `[x]`** · Evidence [`PLATFORM_INTEGRITY_EVIDENCE/`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md) · `#205` **unblocked**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| **Phase R UI Rebuild**        | **IN PROGRESS (§34 DA → P10)**               | **왕초보 큐:** To-do **위→아래** · completed **스킵** · Track A 첫 pending **`p2-gate-admin-table-dedup` (#207)** · AdminTable `#206` **`[x]` DONE** · Fiat#11 `#205` **`[x]` DONE** · CasinoR#1 `#204` **`[x]`** · Casino lobby `#203` **`[x]`** · Sports#4 `#202` **`[x]`** · Sports#3 `#200` **`[x]`** · Sports#2 `#199` **`[x]`** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** · DA W2 GATE `#189` **`[x]`** · DA W2 `#188` **`[x]`** · DA W1 GATE `#187` **`[x]`** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`** |
+| **Phase R UI Rebuild**        | **IN PROGRESS (§34 DA → W8)** | **왕초보 큐:** To-do **위→아래** · completed **스킵** · Track A **`p12-gate-marketing` (#225) `[x]`** · **다음 `da-w8-signature-surfaces-bundle` (#226)** · legal pages `#224` `[x]` · community hub `#223` `[x]` · trust hub `#222` `[x]` · P11 GATE `#221` `[x]` · wallet redeem `#220` `[x]` · Earn side `#219` `[x]` · P4 VISUAL `#218` agent impl `[x]` · W6 GATE `#217` **`[x]`** · W6 BUNDLE `#216` **`[x]`** · P10 VISUAL `#215` agent impl `[x]` · P10 GATE `#214` **`[x]` DONE** · first-bet `#213` **`[x]`** · Fairness `#212` **`[x]`** · Batch D–A · AdminTable · Fiat#11 · CasinoR · Sports · DA W5…W0 · R0 · PQA **`[x]`** |
 | **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | **Cursor 8GB perf (v4.4.5)**  | **`[x]` DONE**                               | `cursor:perf-rollout` diagnosis-first · `high-remediation` dry-run 기본 · evidence JSONL · summary remediation assert · tsserver/argv **옵트인** (`--include-tsserver-tuning`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
@@ -50,15 +50,27 @@
 | `pir-gate-platform-integrity`  | **`[x]` DONE** | **2026-07-11** | `gate:ai-impl` PIR bundle vitest **53/53** · `phase-r-guards --strict` · i18n/release · security-auditor **PASS ERROR 0** · CI quality·sql·e2e·advisors green ([run 29121620586](https://github.com/rlawhdgus10041004-sys/phonara-gb/actions/runs/29121620586)) · Evidence [`GATE/platform-integrity.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/GATE/platform-integrity.md) |
 | **`pir-closeout-unblock-205`** | **`[x]` DONE** | **2026-07-11** | §82 · NEXT = `#205` · Evidence [`GATE/unblock-205.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/GATE/unblock-205.md) · Plan YAML completed                                                                                                                                                                                                                                     |
 
-**현재 NEXT (전역):** **`p2-gate-admin-table-dedup` (#207)** — AdminTable dedup gate  
+**현재 NEXT (전역):** **`da-w8-signature-surfaces-bundle` (#226)** — P12 GATE `#225` **`[x]`** 2026-07-11 · P12 legal pages `#224` **`[x]`** 2026-07-11 · P12 community hub `#223` **`[x]`** 2026-07-11 · trust hub `#222` **`[x]`** 2026-07-11 · P11 GATE `#221` **`[x]`** 2026-07-11 · wallet redeem `#220` **`[x]`** 2026-07-11 · Earn side `#219` **`[x]`** 2026-07-11 · P4 VISUAL `#218` agent impl `[x]` 2026-07-11 · W6 GATE `#217` **`[x]` DONE** · W6 BUNDLE `#216` **`[x]` DONE**
+**Track A `#225` P12 Marketing GATE:** **`[x]` DONE** 2026-07-11 — §32.5 FAQ·feedback·affiliate·cookies + marketing surfaces · footer/redirect/education · `gate:ai-impl` vitest **59/59** · engine **0**  
+**Track A `#221` P11 Side-income GATE:** **`[x]` DONE** 2026-07-11 — §12.19.6 `/wallet/redeem` · `/earn/cashback` · `/earn/play` · `/events` · leaderboard STUB · `gate:ai-impl` vitest **39/39** · engine **0**  
+**Track A `#220` P11 wallet redeem:** **`[x]` DONE** 2026-07-11 — `/wallet/redeem` · Payment Method Card · withdraw/deposit rails · `gate:ai-impl` vitest **21/21** · subnav register · engine **0**  
+**Track A `#219` P11 Earn side surfaces:** **`[x]` DONE** 2026-07-11 — `/events` · `/earn/play` · `/earn/cashback` · `/referral/leaderboard` STUB · `gate:ai-impl` vitest **45/45** · subnav P11 register  
+**Track A `#218` P4 VISUAL:** agent impl `[x]` 2026-07-11 — contract **6/6** · surface **13/13** · axe 0 · dead control 0 · Plan YAML `completed` = operator `VISUAL APPROVED` 후  
+**Track A `#216` DA W6 Brand elevation:** **`[x]` DONE** 2026-07-11 — BrandMark aurora · domain empty · QuadStreamLoading · `gate:ai-impl` **55/55**  
+**Track A `#215` P10 VISUAL:** agent impl `[x]` 2026-07-11 — contract **6/6** · surface **13/13** · axe 0 · dead control 0 · Plan YAML `completed` = operator APPROVED 후  
+**Track A `#214` P10 GATE:** **`[x]` DONE** 2026-07-11 — Sports+Casino 12 · subnav dead link 0 · H5/Fiat#12 · first-bet · `gate:ai-impl` **42/42**  
+**Track A `#213` first-bet education:** **`[x]` DONE** 2026-07-11  
+**Track A `#212` Casino fairness:** **`[x]` DONE** 2026-07-11 — `/casino/fairness` verifyRound · §23.2.1 PF limits · `gate:ai-impl` **23/23**  
+**Track A `#211`–`#208` Games batches:** **`[x]` DONE** 2026-07-11 — Batch D/C/B/A  
+**Track A `#207` AdminTable GATE:** **`[x]` DONE** 2026-07-11 — native `<table>` desk 0 · LoadingTable 0 · `gate:ai-impl` **8/8**  
 **Track A `#206` AdminTable:** **`[x]` DONE** 2026-07-11 — `admin-table.tsx` · 18 desk migration · native `<table>` 0 · LoadingTable 0  
 **Track A `#205` Fiat#11:** **`[x]` DONE** 2026-07-11 — Casino fiat hint session-lock
 
 **재개 조건 (충족):**
 
 ```text
-p2-admin-table-primitive [x]
-  → phase_r Track A 첫 pending = p2-gate-admin-table-dedup (#207)
+p12-gate-marketing [x]
+  → phase_r Track A 다음 = da-w8-signature-surfaces-bundle (#226)
 ```
 
 ## Trade Desk Remediation (Plan `trade_desk_remediation_v3` · execute SSOT)
@@ -119,7 +131,7 @@ p2-admin-table-primitive [x]
 
 **Implemented (Phase E):** `rpc_set_trailing_stop` · `rpc_clear_trailing_stop` · `time_in_force` · `display_quantity` iceberg slices · `rpc_run_stop_orders` trailing peak · `rpc_run_open_order_fills` IOC/FOK expiry
 
-**NEXT:** **`p2-gate-admin-table-dedup` (#207)** · AdminTable `#206` **`[x]` DONE** 2026-07-11 · Fiat#11 `#205` **`[x]` DONE** 2026-07-11 · PIR **`[x]` DONE** · CasinoR#1 `#204` **`[x]`** · Casino lobby `#203` **`[x]`** · Sports#4–0 · Fiat#10 · DA W5…W0 · R0 · PQA §33 **`[x]`**
+**NEXT:** **`da-w8-signature-surfaces-bundle` (#226)** · P12 GATE `#225` **`[x]`** 2026-07-11 · P12 legal pages `#224` **`[x]`** 2026-07-11 · P12 community hub `#223` **`[x]`** 2026-07-11 · P12 trust hub `#222` **`[x]`** 2026-07-11 · P11 GATE `#221` **`[x]`** 2026-07-11 · P11 wallet redeem `#220` **`[x]`** 2026-07-11 · Earn side `#219` **`[x]`** 2026-07-11 · P4 VISUAL `#218` agent impl `[x]` 2026-07-11 · W6 GATE `#217` **`[x]` DONE** 2026-07-11 · W6 BUNDLE `#216` **`[x]` DONE** 2026-07-11 · P10 VISUAL `#215` agent impl `[x]` · P10 GATE `#214` **`[x]` DONE** 2026-07-11 · first-bet education `#213` **`[x]` DONE** 2026-07-11 · Fairness `#212` **`[x]` DONE** 2026-07-11 · Batch D–A `#211`–`#208` **`[x]`** · AdminTable GATE `#207` **`[x]` DONE** 2026-07-11 · AdminTable `#206` **`[x]` DONE** 2026-07-11 · Fiat#11 `#205` **`[x]` DONE** 2026-07-11 · PIR **`[x]` DONE** · CasinoR#1 `#204` **`[x]`** · Casino lobby `#203` **`[x]`** · Sports#4–0 · Fiat#10 · DA W5…W0 · R0 · PQA §33 **`[x]`**
 
 ## 읽을 것 (active)
 
@@ -168,13 +180,13 @@ bun run check:advisors
 
 **P1 Foundation** → **P2 Admin** → P3 Auth → P4 Money → P5 Security → P6 Shell → **P7 Growth** → **P8 Core** → P9–P12 Product → P13 Soft Launch → E0–E7 Engine Wave
 
-**현재 NEXT:** **`p2-gate-admin-table-dedup` (#207)** — AdminTable dedup · AdminTable `#206` **`[x]` DONE** 2026-07-11 · Fiat#11 `#205` **`[x]` DONE** 2026-07-11 · PIR **`[x]` DONE** · CasinoR#1 `#204` **`[x]`** · Casino lobby `#203` **`[x]`** · Sports#4–0 · Fiat#10 · DA · R0 · PQA **`[x]`**
+**현재 NEXT:** **`da-w8-signature-surfaces-bundle` (#226)** · P12 GATE `#225` **`[x]`** 2026-07-11 · P12 legal pages `#224` **`[x]`** 2026-07-11 · P12 community hub `#223` **`[x]`** 2026-07-11 · P12 trust hub `#222` **`[x]`** 2026-07-11 · P11 GATE `#221` **`[x]`** 2026-07-11 · P11 wallet redeem `#220` **`[x]`** 2026-07-11 · Earn side `#219` **`[x]`** 2026-07-11 · P4 VISUAL `#218` agent impl `[x]` 2026-07-11 · W6 GATE `#217` **`[x]` DONE** 2026-07-11 · W6 BUNDLE `#216` **`[x]` DONE** 2026-07-11 · P10 VISUAL `#215` agent impl `[x]` · P10 GATE `#214` **`[x]` DONE** 2026-07-11 · first-bet education `#213` **`[x]` DONE** 2026-07-11 · Fairness `#212` **`[x]` DONE** 2026-07-11 · Batch D–A `#211`–`#208` **`[x]`** · AdminTable GATE `#207` **`[x]` DONE** 2026-07-11 · AdminTable `#206` **`[x]` DONE** 2026-07-11 · Fiat#11 `#205` **`[x]` DONE** 2026-07-11 · PIR **`[x]` DONE** · CasinoR#1 `#204` **`[x]`** · Casino lobby `#203` **`[x]`** · Sports#4–0 · Fiat#10 · DA · R0 · PQA **`[x]`**
 
 **왕초보 작업법 (43차 · 이것만):**
 
 1. Cursor Plan To-do **위에서 아래로** 본다
 2. **`completed`(체크됨)는 건너뛴다**
-3. Track A 첫 pending **1개만** 착수 (지금 = `#207` `p2-gate-admin-table-dedup`)
+3. Track A **`#225` P12 Marketing GATE `[x]`** — 다음 `#226` `da-w8-signature-surfaces-bundle`
 4. PIR 형제 큐는 **`[x]` DONE** — 재착수 금지
 
 **직선 큐 (pending 구간):** Track A `#205` → P10 잔여 → P11 → P12 → P13 → T1/T2 → Engine Wave (잔여 DB TX deep audit)
@@ -305,7 +317,205 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **증거:** `gate:ai-impl` casino fiat session-lock **22/22** (6 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
 
-**마지막 완료:** **`p2-admin-table-primitive` `[x]`** — §29.6 AdminTable · 18 desk · vitest 46/46 · **NEXT `p2-gate-admin-table-dedup` (#207)**
+**마지막 완료:** **`p12-gate-marketing` `[x]`** — P12 Marketing GATE · §32.5 FAQ·feedback·affiliate·cookies + marketing · `gate:ai-impl` **59/59** · **NEXT `da-w8-signature-surfaces-bundle` (#226)**
+
+## P12 Marketing GATE (`p12-gate-marketing` · §3.5 · §28.5 · §32.5 · YAML #225) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p12-legal-pages` (#224) **`[x]`** · **후행:** `da-w8-signature-surfaces-bundle` (#226)
+
+| Todo                       | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
+| -------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p12-gate-marketing`**   | **`[x]` DONE** | **2026-07-11** | §32.5 `/support/faq` · `/feedback` · `/legal/affiliate` · `/legal/cookies` + trust/community hubs · footer FAQ/feedback · referral affiliate CTA · ads cookies · education localStorage · `gate:ai-impl` **59/59** · engine **0** |
+
+**Implemented:** `p12-gate-marketing-display-contract.ts` · assert bundle (trust · community · legal · operator-trust · redirects · footer · education) · vitest **6/6** owner + **59/59** gate bundle
+
+**증거:** `gate:ai-impl` P12 marketing GATE **59/59** (14 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `da-w8-signature-surfaces-bundle` (#226)
+
+## P12 Legal pages (`p12-legal-pages` · §12.15 · §28.5 · §32.5 · YAML #224) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p12-community-support-hub` (#223) **`[x]`** · **후행:** `p12-gate-marketing` (#225) **`[x]`**
+
+| Todo                    | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
+| ----------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p12-legal-pages`**   | **`[x]` DONE** | **2026-07-11** | `/legal/affiliate` · `/legal/cookies` · `/referral/terms`→affiliate · `/cookies`→cookies · footer + referral CTA + ads consent cookies link · `gate:ai-impl` **40/40** · engine **0** |
+
+**Implemented:** `p12-legal-pages-display-contract.ts` · `legal-display-contract` affiliate/cookies · `affiliate-page` · `cookies-page` · LegalNav · redirects · landing footer · ads consent cookies link · referral terms link · i18n `legal.affiliate.*` · `legal.cookies.*`
+
+**증거:** `gate:ai-impl` P12 legal pages **40/40** (7 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `da-w8-signature-surfaces-bundle` (#226) — P12 GATE `#225` **`[x]`**
+
+## P12 Community+support hub (`p12-community-support-hub` · §12.12 · §32.5 · YAML #223) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p12-trust-marketing-hub` (#222) **`[x]`** · **후행:** `p12-legal-pages` (#224) **`[x]`**
+
+| Todo                              | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
+| --------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p12-community-support-hub`**   | **`[x]` DONE** | **2026-07-11** | `/announcements` · `/status` STUB · `/support/ticket` STUB · `/support` · `/support/faq` · `/feedback` · `/faq` redirect · footer FAQ/feedback · `gate:ai-impl` **40/40** · engine **0** |
+
+**Implemented:** `p12-community-support-hub-display-contract.ts` · announcements/support/status/feedback contracts · `product/surfaces/marketing/*` support pages · routes · dead-controls STUB rows · MarketingShell matchers · landing footer FAQ/feedback/support
+
+**증거:** `gate:ai-impl` P12 community+support **40/40** (14 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `da-w8-signature-surfaces-bundle` (#226) — P12 GATE `#225` **`[x]`**
+
+## P12 Trust+marketing hub (`p12-trust-marketing-hub` · §3.5 · §12.0β Public · YAML #222) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p11-gate-side-income` (#221) **`[x]`** · **후행:** `p12-community-support-hub` (#223) **`[x]`**
+
+| Todo                           | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
+| ------------------------------ | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p12-trust-marketing-hub`**  | **`[x]` DONE** | **2026-07-11** | `/tier` · `/features` · `/features/earn` · `/features/vip` · `/fees` · `/security` · trust narrative · MarketingShell · `gate:ai-impl` **36/36** · engine **0** |
+
+**Implemented:** `p12-trust-marketing-hub-display-contract.ts` · `tier-guide` · `features-hub` · `fees-page` · `trust-hub` contracts · `product/surfaces/marketing/*` · routes · `platform.trust.*` · `trust.hub.*` i18n · landing footer links
+
+**증거:** `gate:ai-impl` P12 trust+marketing **36/36** (14 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `da-w8-signature-surfaces-bundle` (#226) — P12 GATE `#225` **`[x]`**
+
+## P11 Side-income GATE (`p11-gate-side-income` · §12.19.6 · YAML #221) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p11-earn-side-surfaces` (#219) **`[x]`** · `p11-page-wallet-redeem` (#220) **`[x]`** · **후행:** `p12-trust-marketing-hub` (#222) **`[x]`**
+
+| Todo                         | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
+| ---------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p11-gate-side-income`**   | **`[x]` DONE** | **2026-07-11** | §12.19.6 `/wallet/redeem` · `/earn/cashback` · `/earn/play` · `/events` · leaderboard STUB defer · earn/wallet subnav dead link 0 · `gate:ai-impl` **39/39** · engine **0** |
+
+**Implemented:** `p11-gate-side-income-display-contract.ts` · assert bundle (earn-side · redeem rails · STUB defer) · vitest **5/5** owner + **39/39** gate bundle
+
+**증거:** `gate:ai-impl` P11 side-income GATE **39/39** (13 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `da-w8-signature-surfaces-bundle` (#226) — P12 GATE `#225` **`[x]`**
+
+## P11 wallet redeem (`p11-page-wallet-redeem` · §12.5 · §13.1 · YAML #220) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p11-earn-side-surfaces` (#219) **`[x]`** · **후행:** `p11-gate-side-income` (#221) **`[x]`**
+
+| Todo                         | 상태           | 완료일         | 증거                                                                                                                                                          |
+| ---------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p11-page-wallet-redeem`** | **`[x]` DONE** | **2026-07-11** | `/wallet/redeem` · PHON shop · Payment Method Card · withdraw/deposit rails · no new RPC · `gate:ai-impl` **21/21** · subnav register · engine **0** |
+
+**Implemented:** `wallet-redeem-display-contract.ts` · `use-wallet-redeem-controller.ts` · `wallet-redeem-page.tsx` · `routes/wallet.redeem.tsx` · `P11_WALLET_REDEEM_REGISTERED_ROUTES` · i18n `wallet.redeem.*`
+
+**증거:** `gate:ai-impl` wallet-redeem **21/21** (3 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `da-w8-signature-surfaces-bundle` (#226) — P12 GATE `#225` **`[x]`**
+
+## P4 VISUAL (`p4-operator-visual-signoff` · §20.12 · §22.2 Wallet · §25.12.6 · YAML #218) — agent impl `[x]` 2026-07-11
+
+> **§20.12:** agent gate green ≠ Plan YAML `completed` — operator preview 육안 **`VISUAL APPROVED: p4-operator-visual-signoff`** 채팅 기록 후 Plan #218 `completed` 가능.
+
+**Implemented (green):**
+
+| 항목 | 증거 |
+| ---- | ---- |
+| Display contract | `p4-money-visual-signoff-display-contract.ts` · §22.2 Wallet checklist · §30.3 · 3-rail · wallet-hero · 3-tier |
+| Automated companions | `p4-money-visual-signoff.test.tsx` **13/13** · contract test **6/6** |
+| §25.12.6 / Toss·Revolut | balance hero · deposit/withdraw CTA · 3-rail hub · KRW auto-convert disclosure |
+| §32.7 / H8 dead control 0 | wallet CTA · deposit rails · withdraw rails · krw submit · rewards→ledger |
+| Bundle gate | `gate:ai-impl` visual signoff **13/13** · `typecheck` · `check:i18n` · `check:release` · `check:design-tokens` advisory · engine **0** |
+
+**operator 육안 체크리스트 (§20.12 · Plan YAML #218 completed 조건):**
+
+1. `bun run deploy:pages:web:preview` foreground 1회 (§30.1) — **`[x]`** 2026-07-11 → https://preview.phonara-web.pages.dev
+2. Preview **390 / 768 / 1024** — `/wallet` · `/wallet/deposit` · `/wallet/withdraw` · `/wallet/deposit/krw` · `/ledger` · `/rewards/history`
+3. **§22.2** 3-rail deposit (KRW·Crypto·Giftcard) · withdraw KRW+crypto · hero balance clarity
+4. **§30.3** KRW deposit auto-convert + rate snapshot + expected PHON
+5. dead control 0 · axe critical 0 (브라우저 DevTools)
+6. 채팅 **`VISUAL APPROVED: p4-operator-visual-signoff`** → Plan YAML `completed` + §82 doc sync
+
+**다음 todo:** `p12-trust-marketing-hub` (#222)
+
+## Digital Aurora W6 GATE (`da-w6-gate-brand-elevation` · §34.18–34.20 · YAML #217) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w6-brand-elevation-bundle` (#216) **`[x]`** · **후행:** `p4-operator-visual-signoff` (#218) **agent impl `[x]`**
+
+| Todo                             | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
+| -------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w6-gate-brand-elevation`** | **`[x]` DONE** | **2026-07-11** | BrandMark aurora · domain empty · Quad Stream · `da-w6-gate-brand-elevation-display-contract` · `gate:ai-impl` **23/23** · `check:design-tokens` advisory (91 notes) · VISUAL advisory · engine **0** |
+
+**Implemented:** GATE display contract · brand scan cues (6 unique) · surface scan board · VISUAL advisory checklist (10)
+
+**operator VISUAL advisory (§34.18–34.20 · full §20.12 = da-w7):**
+
+1. BrandMark `aurora` Quad Stream glow (landing hero)
+2. Domain empty: casino chips · trade pulse · wallet vault · sports stadium
+3. Quad Stream loading (router pending · ledger/sports)
+4. `prefers-reduced-motion` → static glow/axes
+5. `check:design-tokens` advisory green (strict = da-w7)
+
+**다음 todo:** `p12-trust-marketing-hub` (#222) — P4 VISUAL `#218` **agent impl `[x]`**
+
+## Digital Aurora W6 Brand Elevation (`da-w6-brand-elevation-bundle` · §34.18–34.20 · YAML #216) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-operator-visual-signoff` (#215) agent impl `[x]` · operator assign `#216` · **후행:** `da-w6-gate-brand-elevation` (#217) **`[x]`**
+
+| Todo                               | 상태           | 완료일         | 증거                                                                                                                                                          |
+| ---------------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w6-brand-elevation-bundle`** | **`[x]` DONE** | **2026-07-11** | BrandMark `aurora` · DomainEmptyMark (chips/pulse/vault/stadium) · QuadStreamLoading · router pending · `gate:ai-impl` **55/55** · engine **0** |
+
+**Implemented:** `da-w6-brand-elevation-display-contract.ts` · `brand-elevation.css` · `brand-mark` aurora · `domain-empty-mark` · `quad-stream-loading` · EmptyState `domain` · landing AB-b aurora · casino/trade/wallet/sports wires · `defaultPendingComponent`
+
+**증거:** `gate:ai-impl` W6 brand elevation **55/55** (10 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `p12-trust-marketing-hub` (#222) — P4 VISUAL `#218` **agent impl `[x]`**
+
+## P10 VISUAL (`p10-operator-visual-signoff` · §20.12 · §22.2 Sports+Casino · §34.17 · YAML #215) — agent impl `[x]` 2026-07-11
+
+> **§20.12:** agent gate green ≠ Plan YAML `completed` — operator preview 육안 **`VISUAL APPROVED: p10-operator-visual-signoff`** 채팅 기록 후 Plan #215 `completed` 가능.
+
+**Implemented (green):**
+
+| 항목 | 증거 |
+| ---- | ---- |
+| Display contract | `p10-betting-visual-signoff-display-contract.ts` · §22.2 checklist · §34.17 sports-odds/casino-play · 3-tier · dual-currency |
+| Automated companions | `p10-betting-visual-signoff.test.tsx` **13/13** · contract test **6/6** |
+| §13.1.1 spot-check | sports slip USDT/PHON · casino shell stake currency |
+| §32.7 / H8 dead control 0 | slip place · lobby PF/play · shell place/back · bet-mode · fairness verify |
+| Bundle gate | `gate:ai-impl` visual signoff **13/13** · `typecheck` · `check:i18n` · `check:release` · `check:ui-architecture` · `check:phase-r-guards --strict` · `check:design-tokens` advisory · engine **0** |
+
+**operator 육안 체크리스트 (§20.12 · Plan YAML #215 completed 조건):**
+
+1. `bun run deploy:pages:web:preview` foreground 1회 (§30.1) — **`[x]`** 2026-07-11 → https://preview.phonara-web.pages.dev
+2. Preview **390 / 768 / 1024** — `/sports` · `/sports/live` · `/sports/my-bets` · `/casino` · `/casino/fairness` · `/games/crash` (+ sample games)
+3. **§13.1.1** USDT/PHON selector spot-check (sports slip · casino shell)
+4. **§34.17** sports-odds heatmap · casino-play hover glow tiles
+5. dead control 0 · axe critical 0 (브라우저 DevTools)
+6. 채팅 **`VISUAL APPROVED: p10-operator-visual-signoff`** → Plan YAML `completed` + §82 doc sync
+
+**다음 todo:** `p12-trust-marketing-hub` (#222) — P4 VISUAL `#218` **agent impl `[x]`** · W6 GATE `#217` **`[x]`** · W6 BUNDLE `#216` **`[x]`**
+
+## P10 Betting GATE (`p10-gate-betting` · §12.19.6 · §32.7 H5 · Fiat#12 · YAML #214) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-first-bet-education` (#213) **`[x]`** · **후행:** `p10-operator-visual-signoff` (#215) **agent impl `[x]`**
+
+| Todo                   | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
+| ---------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-gate-betting`** | **`[x]` DONE** | **2026-07-11** | Sports hub+fairness manifest · 12 stage files · H5 stake dual live · Fiat#12 hints live · first-bet sheet · §31.4 risk row · casino E2E=`operator-or-ci` · `gate:ai-impl` **42/42** · engine **0** |
+
+**Implemented:** `p10-gate-betting-display-contract.ts` · assert bundle (parity · fiat sports/casino · replay · education) · vitest **6/6** owner + **42/42** gate bundle
+
+## First-bet Education (`p10-first-bet-education` · §32.5 · YAML #213) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-page-casino-fairness` (#212) **`[x]`** · **후행:** `p10-gate-betting` (#214) **`[x]`**
+
+| Todo                          | 상태           | 완료일         | 증거                                                                                                                                                                                          |
+| ----------------------------- | -------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-first-bet-education`** | **`[x]` DONE** | **2026-07-11** | sports+casino sheet · bet slip·RG·provably-fair · `phonara.education.bet.dismissed` · `/legal/responsible-gaming` · `/casino/fairness` · 독립 route 0 · `gate:ai-impl` **15/15** · engine **0** |
+
+**Implemented:** `operator-trust-pages-display-contract` BET_* · `bet-first-visit-education` · `use-bet-first-visit-education` · `BetFirstVisitEducationSheet` · `BetFirstVisitEducationGate` · AppShell mount · `bet.education.*` i18n
+
+## Casino Fairness Verifier (`p10-page-casino-fairness` · §23.2.1 · YAML #212) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-games-batch-d` (#211) **`[x]`** · **후행:** `p10-first-bet-education` (#213) **`[x]`**
+
+| Todo                           | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
+| ------------------------------ | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-page-casino-fairness`** | **`[x]` DONE** | **2026-07-11** | `/casino/fairness` · `verifyRound` UI · nonce=1 · per-bet client seed · seed rotation UI 0 · lobby PF CTA live · subnav registered · `gate:ai-impl` **23/23** · engine **0** |
+
+**Implemented:** `casino-fairness-display-contract` · `use-casino-fairness-verifier` · `casino-fairness-page` · `casino.fairness` route · lobby CTA unlock · `SHELL_SUBNAV_REGISTERED_ROUTES` `/casino/fairness`
 
 ## Sports Hub Pages (`p10-sports-hub-pages` · §20.13.3 Sports#0 · YAML #197) — `[x]` DONE · 재착수 금지
 
@@ -667,7 +877,7 @@ bun run gate:ai-impl -- --test apps/web/src/product/surfaces/trade
 
 ## Fiat Reference 큐 (§20.13.2 · YAML #158–167 · Launch E1–E4 **끝난 뒤** 순차)
 
-**착수:** **`p2-admin-table-primitive` `[x]`** · Fiat#11 **`[x]`** · CasinoR#1 **`[x]`** · Casino lobby **`[x]`** · Sports#4/3/2/1/0 **`[x]`** · Fiat#10 **`[x]`** · PIR **`[x]` DONE** · **전역 NEXT `p2-gate-admin-table-dedup` (#207)** · To-do 순서대로 1개씩
+**착수:** **`p12-gate-marketing` `[x]`** · **`p12-legal-pages` `[x]`** · **`p12-community-support-hub` `[x]`** · **`p12-trust-marketing-hub` `[x]`** · **`p11-gate-side-income` `[x]`** · **`p11-page-wallet-redeem` `[x]`** · **`p11-earn-side-surfaces` `[x]`** · **`p4-operator-visual-signoff` agent impl `[x]`** · **`da-w6-gate-brand-elevation` `[x]`** · **`da-w6-brand-elevation-bundle` `[x]`** · **`p10-operator-visual-signoff` agent impl `[x]`** · **`p10-gate-betting` `[x]`** · **`p10-first-bet-education` `[x]`** · **`p10-page-casino-fairness` `[x]`** · **`p10-games-batch-d` `[x]`** · **`p10-games-batch-c` `[x]`** · **`p10-games-batch-b` `[x]`** · **`p10-games-batch-a` `[x]`** · **`p2-gate-admin-table-dedup` `[x]`** · **`p2-admin-table-primitive` `[x]`** · Fiat#11 **`[x]`** · CasinoR#1 **`[x]`** · Casino lobby **`[x]`** · Sports#4/3/2/1/0 **`[x]`** · Fiat#10 **`[x]`** · PIR **`[x]` DONE** · **전역 NEXT `da-w8-signature-surfaces-bundle` (#226)** · To-do 순서대로 1개씩
 
 ```text
 #158  p4-fiat-reference-preflight          [x]

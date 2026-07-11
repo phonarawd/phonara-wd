@@ -69,7 +69,7 @@ export function WalletPage() {
   if (engine.errorKey) {
     return (
       <div
-        className="border-danger/30 bg-surface flex flex-col items-start gap-3 rounded-(--ds-radius-lg) border p-4"
+        className="border-danger/30 bg-surface flex flex-col items-start gap-3 rounded-lg border p-4"
         data-testid="wallet-error"
         role="alert"
       >
@@ -178,12 +178,14 @@ export function WalletPage() {
             className="col-span-2 md:col-span-1"
             disabled
             title={t('wallet.deposit.gate.paused')}
+            data-testid="wallet-cta-deposit"
           >
             {t('desk.wallet.bottomDeposit')}
           </Button>
         ) : (
           <a
             href="/wallet/deposit"
+            data-testid="wallet-cta-deposit"
             className={cn(
               buttonVariants({ variant: 'primary', size: 'lg' }),
               'col-span-2 md:col-span-1',
@@ -197,6 +199,7 @@ export function WalletPage() {
             variant="secondary"
             size="lg"
             disabled
+            data-testid="wallet-cta-withdraw"
             title={
               engine.withdrawalBlocked
                 ? t('wallet.withdraw.gate.paused')
@@ -208,6 +211,7 @@ export function WalletPage() {
         ) : (
           <a
             href="/wallet/withdraw"
+            data-testid="wallet-cta-withdraw"
             className={buttonVariants({ variant: 'secondary', size: 'lg' })}
           >
             {t('desk.wallet.bottomWithdraw')}
@@ -215,6 +219,7 @@ export function WalletPage() {
         )}
         <a
           href="/ledger"
+          data-testid="wallet-cta-ledger"
           className={cn(
             buttonVariants({ variant: 'outline', size: 'lg' }),
             'col-span-2 md:col-span-1',
@@ -250,7 +255,7 @@ export function WalletPage() {
             {t('wallet.activity.empty')}
           </p>
         ) : (
-          <ul className="border-line divide-line m-0 list-none divide-y rounded-(--ds-radius-md) border p-0">
+          <ul className="border-line divide-line m-0 list-none divide-y rounded-md border p-0">
             {engine.recentActivity.map((row) => (
               <li
                 key={row.id}

@@ -291,9 +291,9 @@ export const UNIFIED_TIER_SURFACE_PLACEMENT: Readonly<TierSurfacePlacement[]> = 
   {
     route: TIER_GUIDE_ROUTE,
     role: 'tier_guide_marketing',
-    hook: 'TierDeskSurface',
-    vipDisplaySource: 'static_mock',
-    wireStatus: 'missing',
+    hook: 'useTierGuidePageController · TierGuidePage',
+    vipDisplaySource: 'earn_vip_engine',
+    wireStatus: 'live',
   },
   {
     route: PARTNER_ROUTE,
@@ -384,10 +384,10 @@ export function shouldKeepKycTierSeparateFromVipBadge(): boolean {
   return UNIFIED_TIER_NET_NEW_RULES.kycSeparateLane;
 }
 
-/** `/tier` hero uses static mock — must not ship as live tier state. */
+/** `/tier` guide is live when wired to earn VIP engine (P12). */
 export function isTierGuideSurfaceMockOnly(): boolean {
   const row = UNIFIED_TIER_SURFACE_PLACEMENT.find((r) => r.route === TIER_GUIDE_ROUTE);
-  return row?.vipDisplaySource === 'static_mock' && row.wireStatus === 'missing';
+  return row?.vipDisplaySource === 'static_mock' || row?.wireStatus === 'missing';
 }
 
 /** Button gated by tier must expose unlock path (plan §18.1 · §16.2). */

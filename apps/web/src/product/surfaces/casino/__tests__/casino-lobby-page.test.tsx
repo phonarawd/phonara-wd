@@ -4,6 +4,23 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { I18nProvider } from '@/product/i18n';
 import { CasinoLobbyPage } from '@/product/surfaces/casino/casino-lobby-page';
 
+vi.mock('@tanstack/react-router', () => ({
+  Link: ({
+    to,
+    children,
+    ...props
+  }: {
+    to: string;
+    children: React.ReactNode;
+    className?: string;
+    'data-testid'?: string;
+  }) => (
+    <a href={to} {...props}>
+      {children}
+    </a>
+  ),
+}));
+
 vi.mock('@/hooks/use-wallet', () => ({
   useWallet: () => ({
     wallet: {
@@ -43,7 +60,10 @@ describe('CasinoLobbyPage (p10-page-casino)', () => {
     expect(within(balance).getByText(/USDT/i)).toBeInTheDocument();
     expect(within(balance).getByText(/PHON/i)).toBeInTheDocument();
 
-    expect(screen.getByTestId('casino-lobby-pf-verify')).toBeDisabled();
+    expect(screen.getByTestId('casino-lobby-pf-verify')).toHaveAttribute(
+      'href',
+      '/casino/fairness',
+    );
     expect(screen.getByTestId('casino-lobby-chip-originals')).toBeInTheDocument();
     expect(screen.getByTestId('casino-lobby-chip-slots')).toBeInTheDocument();
     expect(screen.getByTestId('casino-lobby-chip-table')).toBeInTheDocument();

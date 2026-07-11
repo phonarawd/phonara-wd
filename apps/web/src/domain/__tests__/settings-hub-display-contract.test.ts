@@ -7,10 +7,12 @@ import {
 } from '../notifications-pwa-display-contract';
 import {
   readCasinoConfirmPref,
+  readCasinoSoundEffectsPref,
   resolveNotificationPrefToastKey,
   resolveSettingsHubNavItems,
   SETTINGS_BANK_ACCOUNTS_ROUTE,
   SETTINGS_CASINO_CONFIRM_PREF_KEY,
+  SETTINGS_CASINO_SOUND_PREF_KEY,
   SETTINGS_HUB_NAV_ITEMS,
   SETTINGS_HUB_NOTIFICATION_PREF_KEYS,
   SETTINGS_HUB_ROUTE,
@@ -19,6 +21,7 @@ import {
   SETTINGS_PREFERENCES_ROUTE,
   SETTINGS_SECURITY_ROUTE,
   writeCasinoConfirmPref,
+  writeCasinoSoundEffectsPref,
   writeSettingsHubNotificationPref,
 } from '../settings-hub-display-contract';
 
@@ -68,6 +71,16 @@ describe('settings-hub-display-contract', () => {
     expect(readCasinoConfirmPref()).toBe(true);
     writeCasinoConfirmPref(false);
     expect(readCasinoConfirmPref()).toBe(false);
+  });
+
+  it('reads and writes casino sound effects pref (default off)', () => {
+    window.localStorage.removeItem(SETTINGS_CASINO_SOUND_PREF_KEY);
+    expect(readCasinoSoundEffectsPref()).toBe(false);
+    writeCasinoSoundEffectsPref(true);
+    expect(window.localStorage.getItem(SETTINGS_CASINO_SOUND_PREF_KEY)).toBe('1');
+    expect(readCasinoSoundEffectsPref()).toBe(true);
+    writeCasinoSoundEffectsPref(false);
+    expect(readCasinoSoundEffectsPref()).toBe(false);
   });
 
   it('persists hub notification prefs through shared storage keys', () => {

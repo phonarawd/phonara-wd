@@ -191,7 +191,7 @@ export function LandingPage() {
             {t(PLATFORM_POSITIONING_KEYS.eyebrow)}
           </p>
 
-          <h1 className="text-foreground font-display text-balance m-0 text-3xl font-bold tracking-tight [word-break:keep-all] md:text-4xl">
+          <h1 className="text-foreground font-display text-balance m-0 text-3xl font-bold tracking-tight break-keep md:text-4xl">
             {t(brandLineKey)}
           </h1>
 
@@ -211,7 +211,7 @@ export function LandingPage() {
         </div>
 
         <BrandMark
-          variant={abVariant === 'b' ? 'shape' : 'hero-3d'}
+          variant={abVariant === 'b' ? 'aurora' : 'hero-3d'}
           className="mx-auto w-full max-w-sm"
           testId="landing-hero-brand"
         />
@@ -257,13 +257,13 @@ export function LandingPage() {
         {proof.withdrawalMomentum === 'live' ? (
           <LandingWithdrawalMomentum
             count={withdrawalMomentumCount}
-            className="border-line bg-surface-raised rounded-(--ds-radius-lg) border px-4 py-3"
+            className="border-line bg-surface-raised rounded-lg border px-4 py-3"
           />
         ) : (
-          <LandingSignupMomentum className="border-line bg-surface-raised rounded-(--ds-radius-lg) border px-4 py-3" />
+          <LandingSignupMomentum className="border-line bg-surface-raised rounded-lg border px-4 py-3" />
         )}
 
-        <LiveActivityTicker className="border-line bg-surface rounded-(--ds-radius-lg) border px-4 py-3" />
+        <LiveActivityTicker className="border-line bg-surface rounded-lg border px-4 py-3" />
       </section>
 
       <section className="flex flex-col gap-6" data-testid="landing-how">
@@ -284,7 +284,7 @@ export function LandingPage() {
             return (
               <li
                 key={pillarId}
-                className="border-line bg-surface rounded-(--ds-radius-lg) border p-4"
+                className="border-line bg-surface rounded-lg border p-4"
               >
                 <p className="text-foreground m-0 font-semibold">{t(pillar.titleKey)}</p>
 

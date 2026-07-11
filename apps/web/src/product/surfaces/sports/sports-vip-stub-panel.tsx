@@ -45,12 +45,14 @@ export function SportsVipStubPanel({ t }: { t: SportsT }) {
 
       <div data-testid="sports-vip-defer">
         <EmptyState
+          domain="sports"
           title={t('sports.vip.defer.title')}
           description={t(SPORTS_VIP_DEFER_REASON_KEY)}
           actionLabel={t('sports.subnav.home')}
           onAction={() => {
             window.location.assign('/sports');
           }}
+          testId="sports-vip-empty"
         />
       </div>
     </div>

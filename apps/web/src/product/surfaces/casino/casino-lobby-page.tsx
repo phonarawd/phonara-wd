@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { GAME_CODES, type GameCode } from '@phonara/game-engine';
 import { ShieldCheck } from 'lucide-react';
 
@@ -27,6 +28,7 @@ import { useWallet } from '@/hooks/use-wallet';
 import { useT } from '@/product/i18n';
 import { Button } from '@/product/primitives/button';
 import { Card, CardBody } from '@/product/primitives/card';
+import { EmptyState } from '@/product/primitives/empty-state';
 import { MoneyDisplay } from '@/product/primitives/money-display';
 import { cn } from '@/product/primitives/lib/cn';
 import type { MessageKey } from '@phonara/i18n';
@@ -119,7 +121,7 @@ export function CasinoLobbyPage() {
         </div>
 
         <div
-          className="border-line bg-surface flex min-w-[12rem] flex-col gap-2 rounded-lg border px-4 py-3"
+          className="border-line bg-surface flex min-w-48 flex-col gap-2 rounded-lg border px-4 py-3"
           data-testid="casino-lobby-balance"
           aria-label={t(CASINO_LOBBY_BALANCE_LABEL_KEY)}
         >
@@ -167,13 +169,13 @@ export function CasinoLobbyPage() {
           </div>
         </div>
         {pfEnabled ? (
-          <a
-            href={CASINO_FAIRNESS_ROUTE}
+          <Link
+            to={CASINO_FAIRNESS_ROUTE}
             className="text-accent text-sm font-medium underline-offset-4 hover:underline"
             data-testid="casino-lobby-pf-verify"
           >
             {t('casino.hub.pf.verify')}
-          </a>
+          </Link>
         ) : (
           <div className="flex flex-col items-start gap-1 sm:items-end">
             <Button
@@ -254,17 +256,28 @@ export function CasinoLobbyPage() {
         <h2 className="text-foreground m-0 text-lg font-semibold">
           {t(CASINO_LOBBY_GRID_TITLE_KEY)}
         </h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {gridCodes.map((code, index) => (
-            <CasinoGameTile
-              key={code}
-              code={code}
-              playTileTestId={
-                category !== 'all' && index === 0 ? 'casino-hub-play-tile' : undefined
-              }
-            />
-          ))}
-        </div>
+        {gridCodes.length === 0 ? (
+          <EmptyState
+            domain="casino"
+            title={t('state.empty.title')}
+            description={t('casino.search.empty.title')}
+            actionLabel={t('state.empty.action.casino')}
+            onAction={() => setCategory('all')}
+            testId="casino-lobby-empty"
+          />
+        ) : (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {gridCodes.map((code, index) => (
+              <CasinoGameTile
+                key={code}
+                code={code}
+                playTileTestId={
+                  category !== 'all' && index === 0 ? 'casino-hub-play-tile' : undefined
+                }
+              />
+            ))}
+          </div>
+        )}
       </section>
     </section>
   );

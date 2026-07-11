@@ -60,6 +60,6 @@ describe('casino-lobby-display-contract (p10-page-casino)', () => {
     expect(slots).toEqual(['mint_reels', 'gold_rush']);
     expect(table).toEqual(['roulette', 'blackjack']);
     expect(live).toEqual(['roulette', 'blackjack']);
-    expect(resolveCasinoLobbyPfCtaEnabled()).toBe(false);
+    expect(resolveCasinoLobbyPfCtaEnabled()).toBe(true);
   });
 });
