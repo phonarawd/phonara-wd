@@ -158,24 +158,33 @@ bun run stack:verify-worldno1-edge
 | ---- | ---- | ---- |
 | **pg_cron** | **PASS** 14/14 active | schedules 표 §2.1과 일치 |
 | **price-feed Vault** | **PASS** `price_feed_url` · `price_feed_invoke_key` | 값 미조회 |
-| **insurance rows** | **PASS** 2행 | balance **0** — CB 전 주입 필요 |
-| **treasury rows** | **PASS** PHON/USDT/KRW | `real_balance=0` — CB 전 기입 필요 |
-| **OI/leverage** | **PASS** seed | majors lev=20 OI=500k · PHON lev=10 OI=100k · pos cap=50 |
+| **insurance rows** | **PASS** 2행 | balance **0** · **실입금/자본 주입 DEFER** (아래 §3.1) |
+| **treasury rows** | **PASS** PHON/USDT/KRW | `real_balance=0` · **실입금 DEFER** (아래 §3.1) |
+| **OI/leverage** | **PASS** CB 적용 | lev **5** · majors OI **250k** · PHON **50k** (seed 50%) |
 | **cross margin** | **PASS** `false` | |
 | **funding gate** | **PASS** `false` | 2026-07-11 agent set (T0-A 정책) |
 | **withdrawal** | **PASS** `false` | 2026-07-11 agent set (Launch-Ops 권고) |
 | **halt/readonly** | **PASS** false | |
-| **admin_role_grants** | empty | MFA enroll = operator MANUAL_TASKS §3 |
+| **admin_role_grants** | empty | **MFA enroll DEFER** (아래 §3.1) |
 | **코드 diff 0** | **PASS** | 본 산출물 migration 0 |
 | **Vault/edge verify** | **PASS** | `stack:verify-worldno1-edge` price-feed HTTP 200 |
 
-**판정:** T0-A **인프라 hard checks PASS** · funding/withdrawal **OFF 적용됨**. Soft Launch 전 **남은** operator 액션:
+**판정:** T0-A **인프라 hard checks PASS** · funding/withdrawal OFF · CB leverage/OI 적용됨.
+
+### 3.1 Operator DEFER (2026-07-11 · 명시 보류 · soft-launch blocker 아님)
+
+> **operator 지시:** 아래 2항은 **나중으로 미룸**. Soft Launch UI/QA(`p13-soft-launch-bundle`)는 **이 DEFER와 독립**으로 진행 가능. 실거래 GO / 실돈 CB 직전에만 재개.
+
+| # | 항목 | 보류 이유 | 재개 조건 | 상태 |
+| - | ---- | --------- | --------- | ---- |
+| D1 | **Admin MFA enroll + AAL2 smoke** | Supabase MFA/관련 기능 **유료 결제** 필요 | Pro(또는 MFA 가능 플랜) 결제 후 · MANUAL_TASKS §3-1 | **`[ ]` DEFER** |
+| D2 | **실입금 · insurance 자본 주입 · treasury real_balance** | 실돈 입금·시드 자본 **나중** | operator 금액 확정 + `rpc_contribute_insurance_capital` · `rpc_update_treasury_reserve` | **`[ ]` DEFER** |
+
+적용 완료 (보류 아님):
 
 1. ~~`feature_funding_enabled` → `false`~~ **`[x]`** 2026-07-11
 2. ~~`feature_withdrawal_enabled` → `false`~~ **`[x]`** 2026-07-11
-3. Admin MFA enroll + AAL2 smoke — **operator만** (TOTP 기기)
-4. insurance capital inject · treasury real_balance (CB 숫자 §20.14.5) — **금액 operator 확정 후**
-5. (선택) futures max_leverage → 5 · OI utilization 50% — soft-launch
+3. ~~futures max_leverage → 5 · OI 50%~~ **`[x]`** 2026-07-11 — majors OI `250000` · PHON `50000` · lev `5`
 
 ---
 
@@ -208,5 +217,5 @@ bun run gate:ai-impl -- --test apps/admin/src/domain/__tests__/p13-ops-prod-pref
 
 ---
 
-**Implemented:** display-contract · spotcheck · 본 canon · live audit 표  
-**다음:** `p13-soft-launch-bundle` — operator 액션 1–5 해소 후 CB
+**Implemented:** display-contract · spotcheck · 본 canon · live audit 표 · §3.1 MFA/실입금 **DEFER**  
+**다음:** `p13-soft-launch-bundle` — UI/QA (MFA·실입금 DEFER와 독립)

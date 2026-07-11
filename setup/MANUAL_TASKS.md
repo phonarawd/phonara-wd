@@ -60,14 +60,18 @@ SELECT * FROM liquidation_run_log ORDER BY ran_at DESC LIMIT 20;
 
 ### 3-1. Admin MFA 강제 (`admin-mfa-hibp` 작업 시 필요)
 
+> **DEFER (2026-07-11 · operator):** MFA **유료 결제** 필요 → **나중으로 보류**.  
+> 정본 기록: [`docs/OPERATIONS/P13_T0A_PROD_PREFLIGHT.md`](../docs/OPERATIONS/P13_T0A_PROD_PREFLIGHT.md) §3.1 D1.  
+> Soft Launch UI/QA는 MFA 없이 진행 가능 · **실거래 GO / 실돈 CB 직전**에 재개.
+
 앱은 프로덕션 Admin route에서 Supabase AAL2(MFA 완료 세션)를 요구합니다.
 Dashboard에서 아래 설정이 끝나야 운영자가 접근할 수 있습니다.
 
 Supabase Dashboard → Authentication → **MFA (Multi-Factor Auth)**:
 
 - [x] TOTP 활성화 (Google Authenticator / Authy 등) — AI가 원격 Auth config push로 적용
-- [ ] 관리자 계정에 MFA 등록
-- [ ] 프로덕션 Admin 로그인 후 MFA challenge 완료 상태로 `/overview` 접근 확인
+- [ ] 관리자 계정에 MFA 등록 — **DEFER (유료)**
+- [ ] 프로덕션 Admin 로그인 후 MFA challenge 완료 상태로 `/overview` 접근 확인 — **DEFER (유료)**
 
 AI가 함께 적용한 Auth 기본 보안 설정:
 
@@ -372,13 +376,14 @@ AI가 read-only로 확인한 최신 원격 상태:
 
 Launch-Ops 전환 전 필수 수동 확인:
 
-- [ ] 운영자 Admin 계정 + MFA + no-mutation authenticated smoke 완료.
+- [ ] 운영자 Admin 계정 + MFA + no-mutation authenticated smoke 완료. — **MFA = DEFER (유료 · 2026-07-11)** · 계정 smoke만 soft-launch 가능
 - [ ] 첫 reconciliation을 실행하거나 scheduled `phonara_daily_reconciliation` 후 결과 확인.
 - [ ] `reconciliation_log` 최신 5개 check가 모두 `is_match = true`.
 - [ ] `system_halt=false`, `system_readonly=false` 유지.
 - [ ] `feature_withdrawal_enabled=false` 유지(출금은 별도 운영 승인 전까지 닫힘).
 - [ ] open ops alerts, pending queues, active risk flags, open STR cases가 모두 0 또는 운영자가 사유를 확인함.
 - [ ] 출시 후 24시간 high-risk freeze: feature flag 변경, withdrawal enable, reserve edit, manual balance/ledger correction, admin high-risk RPC는 원칙적으로 금지. 예외 시 reason + audit row 확인.
+- [ ] **실입금 · insurance/treasury 시드 자본** — **DEFER (2026-07-11)** · 실돈 CB/GO 직전 ([`P13_T0A_PROD_PREFLIGHT.md`](../docs/OPERATIONS/P13_T0A_PROD_PREFLIGHT.md) §3.1 D2)
 
 확인 SQL:
 
@@ -467,10 +472,12 @@ bun run build
   ✅ 완료 — pg_cron 마이그레이션으로 자동화됨 (수동 작업 없음)
 
 나중에 (AI가 코드 완성 후 / 출시 직전)
-  3. [ ] MFA + HIBP Auth 설정
+  3. [ ] MFA + HIBP Auth 설정 — **MFA = DEFER 2026-07-11 (유료)** · HIBP는 플랜 준비 후
   4. [ ] 프로덕션 배포 환경 변수
   5. [ ] GitHub Secrets (CI/CD)
   6. [ ] VAPID 키 (PWA)
-  7. [ ] 운영자 Admin 계정 + 무변경 authenticated smoke
+  7. [ ] 운영자 Admin 계정 + 무변경 authenticated smoke (MFA 제외 가능)
   8. [ ] Launch-Ops 첫 reconciliation green 확인
+  9. [ ] 실입금 · insurance/treasury 시드 — **DEFER 2026-07-11** (실돈 CB/GO 직전)
+       정본: docs/OPERATIONS/P13_T0A_PROD_PREFLIGHT.md §3.1
 ```

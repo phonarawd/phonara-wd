@@ -350,7 +350,11 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** `P13_T0A_PROD_PREFLIGHT.md` · `p13-ops-prod-preflight-display-contract.ts` · `scripts/p13-ops-prod-preflight-spotcheck.sql`
 
-**증거:** `gate:ai-impl` T0-A **7/7** · pg_cron 14/14 · Vault price-feed · cross margin false · funding DRIFT true · insurance/treasury rows · engine **0**
+**증거:** `gate:ai-impl` T0-A **7/7** · pg_cron 14/14 · Vault price-feed · funding/withdrawal **false** · CB lev 5 / OI 50% · engine **0**
+
+**Operator DEFER (2026-07-11 · soft-launch blocker 아님):**  
+- **MFA enroll** — 유료 결제 필요 → 나중 ([`P13_T0A_PROD_PREFLIGHT.md`](../OPERATIONS/P13_T0A_PROD_PREFLIGHT.md) §3.1 D1)  
+- **실입금 · insurance/treasury 자본** — 나중 (같은 문서 §3.1 D2)
 
 **다음 todo:** `p13-soft-launch-bundle` (#233)
 
