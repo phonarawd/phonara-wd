@@ -317,13 +317,13 @@
 | `p12-community-support-hub`             | `[x]` DONE      | 2026-07-11 | `/announcements` · `/support*` · `/feedback` · `gate:ai-impl` **40/40**                                                          |
 | `p12-legal-pages`                       | `[x]` DONE      | 2026-07-11 | `/legal/affiliate` · `/legal/cookies` · redirects · `gate:ai-impl` **40/40**                                                     |
 | `p12-gate-marketing`                    | `[x]` DONE      | 2026-07-11 | §32.5 FAQ·feedback·affiliate·cookies + marketing · `gate:ai-impl` **59/59**                                                     |
-| `da-w8-signature-surfaces-bundle`       | `[ ]` NEXT      | —          | YAML #226 pending                                                                                                               |
-| `da-w8-sound-design-spec-defer`         | `[ ]` NEXT      | —          | YAML #227 pending                                                                                                               |
-| `da-w8-gate-signature-experience`       | `[ ]` NEXT      | —          | YAML #228 pending                                                                                                               |
-| `p13-prep-admin-canonical-docs`         | `[ ]` NEXT      | —          | YAML #229 pending                                                                                                               |
-| `p13-prep-admin-team-desk`              | `[ ]` NEXT      | —          | YAML #230 pending                                                                                                               |
-| `p13-admin-ops-push`                    | `[ ]` NEXT      | —          | YAML #231 pending                                                                                                               |
-| `p13-ops-prod-preflight`                | `[ ]` NEXT      | —          | YAML #232 pending                                                                                                               |
+| `da-w8-signature-surfaces-bundle`       | `[x]` DONE      | 2026-07-11 | §34.21–34.26 home·wallet·trade·casino·sports·vip · `gate:ai-impl` **36/36**                                                     |
+| `da-w8-sound-design-spec-defer`         | `[x]` DONE      | 2026-07-11 | §34.27 mission·wallet·trade·vip 4톤 DOC · `SOUND_DESIGN_CANON` · `gate:ai-impl` **5/5** · 구현=E-Wave                            |
+| `da-w8-gate-signature-experience`       | `[x]` DONE      | 2026-07-11 | §34.2 Emotion Map spot-check · da-w8 bundle · VISUAL advisory · `gate:ai-impl` **49/49**                                         |
+| `p13-prep-admin-canonical-docs`         | `[x]` DONE      | 2026-07-11 | §29.1·§29.5 · ADMIN_BEGINNER_LANGUAGE_CANON · correspondence · RBAC · §12.14 · `gate:ai-impl` **12/12**                          |
+| `p13-prep-admin-team-desk`              | `[x]` DONE      | 2026-07-11 | `/admin/team` · AdminTable · owner-only · settings link · `rpc_admin_set_role_grant` · `gate:ai-impl` **22/22**                  |
+| `p13-admin-ops-push`                    | `[x]` DONE      | 2026-07-11 | settings phone-alert CTA · SW · `push_subscriptions` · `ops-notify` web_push → `/queues` · `gate:ai-impl` **8/8** · migration **0** |
+| `p13-ops-prod-preflight`                | `[x]` DONE      | 2026-07-11 | T0-A checklist · live audit · `gate:ai-impl` **7/7** · migration **0**                                                          |
 | `p13-soft-launch-bundle`                | `[ ]` NEXT      | —          | YAML #233 pending                                                                                                               |
 | `da-w7-enforcement-strict-tokens`       | `[ ]` NEXT      | —          | YAML #234 pending                                                                                                               |
 | `da-w7-operator-visual-dae-signoff`     | `[ ]` NEXT      | —          | YAML #235 pending                                                                                                               |

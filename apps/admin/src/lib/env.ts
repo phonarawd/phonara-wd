@@ -28,6 +28,8 @@ const envSchema = z.object({
       (key) => !looksLikeServiceRoleKey(key),
       'VITE_SUPABASE_ANON_KEY must not be a service_role key (server-only secret)',
     ),
+  /** Optional — required to persist VAPID push_subscriptions for ops alerts. */
+  VITE_VAPID_PUBLIC_KEY: z.string().min(1).optional(),
 });
 
 function isTestEnv(): boolean {
@@ -42,6 +44,7 @@ function loadEnv() {
   const raw = {
     VITE_SUPABASE_URL: import.meta.env['VITE_SUPABASE_URL'] as string | undefined,
     VITE_SUPABASE_ANON_KEY: import.meta.env['VITE_SUPABASE_ANON_KEY'] as string | undefined,
+    VITE_VAPID_PUBLIC_KEY: import.meta.env['VITE_VAPID_PUBLIC_KEY'] as string | undefined,
   };
 
   const input = isTestEnv()
@@ -49,6 +52,7 @@ function loadEnv() {
         VITE_SUPABASE_URL: raw.VITE_SUPABASE_URL ?? TEST_ENV_DEFAULTS.VITE_SUPABASE_URL,
         VITE_SUPABASE_ANON_KEY:
           raw.VITE_SUPABASE_ANON_KEY ?? TEST_ENV_DEFAULTS.VITE_SUPABASE_ANON_KEY,
+        VITE_VAPID_PUBLIC_KEY: raw.VITE_VAPID_PUBLIC_KEY,
       }
     : raw;
 

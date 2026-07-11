@@ -1,5 +1,7 @@
 import { Link, useRouterState } from '@tanstack/react-router';
 
+import { canAccessAdminTeamDesk } from '@/domain/admin-team-desk-display-contract';
+import { useAdminOperatorRbac, type AdminRbacRole } from '@/hooks/admin/useAdminOperatorRbac';
 import { useT } from '@/product/i18n';
 import { cn } from '@/product/primitives/lib/cn';
 import type { MessageKey } from '@phonara/i18n';
@@ -51,9 +53,19 @@ const ADMIN_NAV: NavEntry[] = [
   { kind: 'leaf', labelKey: 'admin.nav.staking', to: '/staking' },
   { kind: 'leaf', labelKey: 'admin.nav.audit', to: '/audit' },
   { kind: 'leaf', labelKey: 'admin.nav.settings', to: '/settings' },
+  { kind: 'leaf', labelKey: 'admin.nav.team', to: '/team' },
   { kind: 'leaf', labelKey: 'admin.nav.mfa', to: '/mfa/policy' },
   { kind: 'leaf', labelKey: 'admin.nav.ops', to: '/ops' },
 ];
+
+/** Owner-only `/team` — full role allowlist ships with later RBAC nav pass. */
+function filterNavForRole(entries: NavEntry[], role: AdminRbacRole): NavEntry[] {
+  const showTeam = canAccessAdminTeamDesk(role);
+  return entries.filter((entry) => {
+    if (entry.kind === 'leaf' && entry.to === '/team') return showTeam;
+    return true;
+  });
+}
 
 function normalizePath(pathname: string): string {
   if (pathname.length > 1 && pathname.endsWith('/')) {
@@ -151,10 +163,12 @@ const MOBILE_QUICK_NAV: NavLeaf[] = [
 
 export function AdminNav({ className }: { className?: string }) {
   const t = useT();
+  const { role } = useAdminOperatorRbac();
+  const entries = filterNavForRole(ADMIN_NAV, role);
 
   return (
     <nav className={cn('space-y-4', className)} aria-label={t('admin.nav.ariaLabel')}>
-      {ADMIN_NAV.map((entry) =>
+      {entries.map((entry) =>
         entry.kind === 'leaf' ? (
           <NavLinkItem key={entry.to} {...entry} />
         ) : (
@@ -188,6 +202,10 @@ export function resolveAdminNavTitleKey(pathname: string): MessageKey {
 
   if (current === '/mfa/policy') {
     return 'admin.nav.mfa';
+  }
+
+  if (current === '/team') {
+    return 'admin.nav.team';
   }
 
   for (const entry of ADMIN_NAV) {

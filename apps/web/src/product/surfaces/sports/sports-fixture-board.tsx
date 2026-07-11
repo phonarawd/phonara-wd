@@ -16,6 +16,7 @@ import { Card } from '@/product/primitives/card';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { QuadStreamLoading } from '@/product/primitives/quad-stream-loading';
 import { cn } from '@/product/primitives/lib/cn';
+import { SportsKickoffCountdown } from '@/product/surfaces/sports/sports-kickoff-countdown';
 import type { MessageKey } from '@phonara/i18n';
 
 type SportsFixtureBoardProps = {
@@ -170,8 +171,18 @@ export function SportsFixtureBoard({
                     {t(SPORTS_LIVE_BADGE_KEY)}
                   </span>
                 ) : null}
-                <span>
-                  {t(resolveSportsLeagueLabelKey(fixture.league_code))} · {kickoff}
+                <span className="inline-flex flex-wrap items-center gap-1">
+                  <span>{t(resolveSportsLeagueLabelKey(fixture.league_code))} ·</span>
+                  {showLiveBadge ? (
+                    <span className="tabular-nums">{kickoff}</span>
+                  ) : (
+                    <SportsKickoffCountdown
+                      kickoffAt={fixture.kickoff_at}
+                      staticLabel={kickoff}
+                      t={t}
+                      data-testid={`sports-kickoff-countdown-${fixture.fixture_id}`}
+                    />
+                  )}
                 </span>
                 {score ? (
                   <span

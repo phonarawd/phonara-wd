@@ -213,6 +213,7 @@ bun run check:advisors
 | [`ENGINE_APEX_CLOSEOUT.md`](../ENGINE_APEX_CLOSEOUT.md)                             | 엔진 마감 정본   |
 | [`OPERATOR_GATES.md`](../SSOT/OPERATOR_GATES.md)                                    | gate 명령 모음   |
 | [`FUNDING_RAILS_SOP.md`](FUNDING_RAILS_SOP.md)                                      | 입출금 수동 절차 |
+| [`P13_T0A_PROD_PREFLIGHT.md`](P13_T0A_PROD_PREFLIGHT.md)                            | P13 T0-A prod checklist |
 | [`ENGINE_CLOSED_BETA_SCENARIO_MATRIX.md`](../ENGINE_CLOSED_BETA_SCENARIO_MATRIX.md) | CB 시나리오      |
 | [`LOWSPEC_RULES.md`](../rebuild/LOWSPEC_RULES.md)                                   | 8GB PC 운영      |
 

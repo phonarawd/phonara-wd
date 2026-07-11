@@ -62,6 +62,7 @@ function CasinoGameTile({
       data-testid={playTileTestId}
       data-game-code={code}
       data-featured={featured ? 'true' : undefined}
+      data-signature="tile-float-glow"
     >
       <CardBody className="flex h-full flex-col gap-3 p-4">
         <div className="flex flex-col gap-1">

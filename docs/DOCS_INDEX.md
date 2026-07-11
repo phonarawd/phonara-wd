@@ -33,6 +33,7 @@
 | [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md)                                                         | Dev environment                                |
 | [`RUNBOOK.md`](RUNBOOK.md)                                                                             | Operations                                     |
 | [`OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md)           | Pre-launch (operator)                          |
+| [`OPERATIONS/P13_T0A_PROD_PREFLIGHT.md`](OPERATIONS/P13_T0A_PROD_PREFLIGHT.md)                         | P13 T0-A prod checklist · `#232` **`[x]`**     |
 | [`OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md`](OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md) | PIR evidence **`[x]` DONE** · `#205` unblocked |
 
 ## Audit reports (PQA §33 · read-only)
@@ -88,8 +89,12 @@
 | Doc                                                                    | Role                                                                     |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | [`SSOT/PRODUCT_EXPERIENCE_CANON.md`](SSOT/PRODUCT_EXPERIENCE_CANON.md) | **DA W0** Emotion · Brand Memory · elevation · motion · §35.1 Tech Stack |
+| [`SSOT/SOUND_DESIGN_CANON.md`](SSOT/SOUND_DESIGN_CANON.md)             | **DA W8 DOC** §34.27 mission·wallet·trade·vip 4톤 · 구현=E-Wave · GATE `#228` `[x]` |
 | [`SSOT/UNIFIED_UX_CANON.md`](SSOT/UNIFIED_UX_CANON.md)                 | Interaction Grammar · high-risk confirm                                  |
 | [`SSOT/DESIGN_PRINCIPLES.md`](SSOT/DESIGN_PRINCIPLES.md)               | D0 + §7 Accessibility Elevation                                          |
+| [`SSOT/ADMIN_BEGINNER_LANGUAGE_CANON.md`](SSOT/ADMIN_BEGINNER_LANGUAGE_CANON.md) | **P13 DOC** §29.1·§29.5 초등어 · `#229` `[x]` |
+| [`SSOT/ADMIN_TEAM_RBAC_CANON.md`](SSOT/ADMIN_TEAM_RBAC_CANON.md)       | **P13 DOC** 역할 5종 · `/admin/team` 계약 · `#229` `[x]` |
+| [`PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md`](PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md) | **P13 DOC** 유저↔Admin 1:1 · §12.14 sync · `#229` `[x]` |
 
 `SSOT/*_UX_CANON.md` · `UX_REFERENCE_CANON.md` · `SURFACE_BLUEPRINTS.md` · `PRODUCT_PRINCIPLES.md` · `COPYWRITING_CANON.md` · `I18N_FIRST.md`
 

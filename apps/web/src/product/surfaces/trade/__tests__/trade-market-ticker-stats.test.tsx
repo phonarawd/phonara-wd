@@ -30,9 +30,15 @@ describe('TradeMarketTickerStats', () => {
   it('renders change and desktop advanced stats for spot', () => {
     renderStats('spot');
 
+    expect(screen.getByTestId('trade-ticker-signature')).toHaveAttribute(
+      'data-signature',
+      'market-heat-volume-pulse',
+    );
+    expect(screen.getByTestId('trade-ticker-signature')).toHaveAttribute('data-market-heat', 'up');
     expect(screen.getByTestId('trade-ticker-change24')).toHaveTextContent('+1.25%');
     expect(screen.getByTestId('trade-ticker-high24')).toHaveTextContent('66,000.0');
     expect(screen.getByTestId('trade-ticker-vol24')).toHaveTextContent('78.00M');
+    expect(screen.getByTestId('trade-ticker-vol24')).toHaveAttribute('data-volume-pulse', 'true');
   });
 
   it('shows open interest instead of volume for futures', () => {

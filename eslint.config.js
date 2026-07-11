@@ -80,11 +80,12 @@ export default tseslint.config(
     },
   },
   {
-    files: ['apps/web/public/**/*.js'],
+    files: ['apps/web/public/**/*.js', 'apps/admin/public/**/*.js'],
     languageOptions: {
       ecmaVersion: 2022,
       globals: {
         ...globals.browser,
+        ...globals.serviceworker,
       },
     },
   },

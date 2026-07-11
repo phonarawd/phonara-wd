@@ -1,4 +1,4 @@
-import type { DaW6DomainEmptyDomain } from '@/domain/da-w6-brand-elevation-display-contract';
+import type { DaW6DomainEmptyDomain } from '../../domain/da-w6-brand-elevation-display-contract';
 import { Button } from '@/product/primitives/button';
 import { DomainEmptyMark } from '@/product/primitives/domain-empty-mark';
 import { cn } from '@/product/primitives/lib/cn';

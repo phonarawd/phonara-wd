@@ -275,7 +275,8 @@ SELECT count(*) AS open_ops_alerts
 
 ## 10-B. Ops pager (Launch E3 · `ops-notify`)
 
-**정본:** ntfy 무료 푸시 1순위 · Telegram/HMAC webhook 선택 · critical `ops_alerts` → cron 1분 → Edge → ntfy
+**정본:** ntfy 무료 푸시 1순위 · Telegram/HMAC webhook 선택 · critical `ops_alerts` → cron 1분 → Edge → ntfy  
+**P13 Web Push (`p13-admin-ops-push`):** Admin `/settings` 「알림 받기」 → `push_subscriptions` · edge fan-out `WEB_PUSH_DISPATCH_URL` · 탭 시 `/queues` · (선택) `OPS_ADMIN_PUBLIC_URL` = ntfy Click
 
 ### A. ntfy (권장 · chat id 불필요)
 

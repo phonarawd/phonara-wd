@@ -55,6 +55,10 @@ describe('CasinoLobbyPage (p10-page-casino)', () => {
       'data-card-variant',
       'casino-play',
     );
+    expect(screen.getByTestId('casino-hub-play-tile')).toHaveAttribute(
+      'data-signature',
+      'tile-float-glow',
+    );
 
     const balance = screen.getByTestId('casino-lobby-balance');
     expect(within(balance).getByText(/USDT/i)).toBeInTheDocument();

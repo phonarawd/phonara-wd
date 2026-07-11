@@ -76,6 +76,7 @@ describe('WalletPage', () => {
     const hero = screen.getByTestId('wallet-balance-hero');
     expect(hero).toBeInTheDocument();
     expect(hero).toHaveAttribute('data-card-variant', 'wallet-hero');
+    expect(hero).toHaveAttribute('data-signature', 'living-balance');
     expect(within(hero).getByText('12,345')).toBeInTheDocument();
     expect(within(hero).getByText('PHON')).toBeInTheDocument();
     expect(hero.querySelector('[data-count-up="true"]')).not.toBeNull();

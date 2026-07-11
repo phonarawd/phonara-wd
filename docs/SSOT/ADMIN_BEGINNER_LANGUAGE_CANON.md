@@ -1,9 +1,9 @@
 # Admin Beginner Language Canon (33차)
 
-> **상태:** Plan §29.5 흡수 (2026-07-05)  
-> **Authority:** [`phase_r_super-app_8bdf2c10`](../../.cursor/plans/phase_r_super-app_8bdf2c10.plan.md) §29.5 · [`ADMIN_UX_CANON.md`](ADMIN_UX_CANON.md)  
+> **상태:** `[x] DONE` — `p13-prep-admin-canonical-docs` (2026-07-11)  
+> **Authority:** Plan §29.1 · §29.5 · [`ADMIN_UX_CANON.md`](ADMIN_UX_CANON.md)  
 > **코드:** `apps/admin/src/domain/admin-beginner-language-display-contract.ts`  
-> **검증 todo:** `p13-prep-admin-canonical-docs`
+> **검증 todo:** `p13-prep-admin-canonical-docs` **`[x]`**
 
 프로그래밍·금융 지식이 없는 operator가 **메뉴 이름만 보고** 무엇을 하는 화면인지 알 수 있게 하는 Admin 전용 언어 정본입니다.  
 목표 독자 = **초등학생도 이해할 수 있는 짧은 한국어** (내부 RPC명·영어 업무어 화면 노출 0).
@@ -50,16 +50,36 @@
 
 ---
 
-## 3. 상태·버튼 초등어 (§29.1 동일)
+## 3. §29.1 용어 사전 (화면 단어 = 이 표만)
 
-| 화면 단어 | 뜻                  |
-| --------- | ------------------- |
-| 대기중    | 아직 시작 안 함     |
-| 확인중    | 지금 보고 있음      |
-| 완료      | 끝남                |
-| 실패      | 안 됨 — 다시 시도   |
-| 반려      | 안 해줌 (사유 필수) |
-| 보류      | 잠시 멈춤           |
+| 왕초보 정본 (ko) | 내부 개념 | 금지 혼용어 |
+| ---------------- | --------- | ----------- |
+| 입금 확인 | deposit match/approve | 충전 · 머니인 · 매칭 |
+| 출금 보내기 | withdrawal approve+send | 환전 · 머니아웃 |
+| 반려 (사유 필수) | reject | 거절 · 거부 · 취소 혼용 |
+| 보류 | hold/halt | 정지·중단 혼용 |
+| 이상 거래 | flag | 플래그 |
+| 처리 대기 | pending queue item | 펜딩 · 큐 |
+| 확인 중 | reviewing | 리뷰 · 검토중 혼용 |
+| 완료 | settled/done | 승인됨 혼용 |
+| 실패 | failed | 에러 |
+| 미정산 경기 | unsettled fixture | 언세틀 |
+| 경기 정산하기 | manual settle | 세틀 |
+| 마켓 중지 | suspend market | 서스펜드 |
+| 베팅 무효 처리 | void | 보이드 |
+| 수동 지급·차감 | manual wallet adjust | 어드저스트 |
+| 추천 정산 승인 | affiliate commission approve | 커미션 |
+| 감사 기록 | audit log | 로그 |
+| 기능 켜기/끄기 | feature enable | 토글 |
+| 점검 모드 | system mode | 메인터넌스 |
+| 이용 정지/해제 | user activity set | 밴 · 블락 |
+| 자기제한 해제 | self-exclusion release | RG 해제 |
+| 위험 표시 해제 | clear risk flag | — |
+| 상품권 수수료 시세 | giftcard fee market | 피마켓 |
+| 사유 | reason (≥4자) | 메모 혼용 |
+| 오늘 할 일 | ops dashboard summary | 대시보드 |
+
+**상태 6종 (StatusBadge · 유저앱과 동일):** 대기중 · 확인중 · 완료 · 실패 · 반려 · 보류
 
 고위험 버튼(R3) 모달 고정 문구: **「이 작업은 되돌릴 수 없어요」**
 
@@ -73,10 +93,12 @@
 
 ## 5. 완료 신호
 
-- [ ] `admin-beginner-language-display-contract` test green
-- [ ] `rg` 금지어 admin product surfaces 0
-- [ ] 모든 P2+ desk에 `admin.help.*` 3줄
-- [ ] `p13-soft-launch-qa` operator 초등어 spot-check
+- [x] `admin-beginner-language-display-contract` test green (`p13-prep-admin-canonical-docs`)
+- [x] SSOT 3종 + display contract **동일 PR** (50차 merge)
+- [x] §12.14 ↔ §29.2 planned desks (`/admin/team` · `/support` · `/earn/activity`) pin
+- [ ] `rg` 금지어 admin product surfaces 0 (soft-launch spot-check)
+- [ ] 모든 P2+ desk에 `admin.help.*` 3줄 (desk UI wire)
+- [ ] `p13-soft-launch-bundle` operator 초등어 spot-check
 
 ---
 
@@ -84,4 +106,6 @@
 
 - [`ADMIN_TEAM_RBAC_CANON.md`](ADMIN_TEAM_RBAC_CANON.md) — 역할별 메뉴
 - [`PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md`](../PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md) — 유저 화면 ↔ Admin 데스크
-- Plan §29.1–29.5 · §32.6
+- Plan §29.1–29.5 · §12.14 · §32.6
+- 다음: `p13-soft-launch-bundle` (#233) · T0-A `#232` **`[x]`** · ops Web Push `#231` **`[x]`** · team desk `#230` **`[x]`**
+

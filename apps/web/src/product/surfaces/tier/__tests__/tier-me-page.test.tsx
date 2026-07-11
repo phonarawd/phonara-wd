@@ -112,6 +112,8 @@ describe('TierMePage', () => {
     expect(screen.getByTestId('tier-me-page')).toBeInTheDocument();
     expect(screen.getByTestId('tier-me-badge')).toBeInTheDocument();
     expect(screen.getByTestId('tier-me-progress-card')).toHaveAttribute('data-card-variant', 'vip');
+    expect(screen.getByTestId('tier-me-progress-card')).toHaveAttribute('data-signature', 'xp-fill');
+    expect(screen.getByTestId('tier-me-xp')).toHaveAttribute('data-count-up', 'true');
     expect(screen.getByTestId('tier-me-decay-panel')).toBeInTheDocument();
     expect(screen.getByTestId('tier-me-limits')).toBeInTheDocument();
     expect(screen.getByTestId('tier-me-keep-mission')).toBeInTheDocument();

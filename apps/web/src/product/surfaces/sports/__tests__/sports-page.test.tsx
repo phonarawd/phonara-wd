@@ -145,6 +145,10 @@ describe('SportsPage', () => {
 
     expect(screen.getByTestId('sports-page')).toBeInTheDocument();
     expect(screen.getByTestId('sports-fixture-board')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-kickoff-countdown-fx-1')).toHaveAttribute(
+      'data-signature',
+      'kickoff-countdown',
+    );
     expect(screen.getByTestId('sports-bet-slip-panel')).toBeInTheDocument();
     expect(screen.getByTestId('sports-stake-currency-selector')).toBeInTheDocument();
   });

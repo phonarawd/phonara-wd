@@ -1,9 +1,9 @@
 # Admin Team RBAC Canon (33차)
 
-> **상태:** Plan §29.5 · §32.6 흡수 (2026-07-05)  
-> **Authority:** [`phase_r_super-app_8bdf2c10`](../../.cursor/plans/phase_r_super-app_8bdf2c10.plan.md) · [`ADMIN_UX_CANON.md`](ADMIN_UX_CANON.md) §2  
+> **상태:** `[x] DOC DONE` — `p13-prep-admin-canonical-docs` (2026-07-11) · UI = `p13-prep-admin-team-desk` **`[x]`**  
+> **Authority:** Plan §29.5 · §32.6 · [`ADMIN_UX_CANON.md`](ADMIN_UX_CANON.md) §2  
 > **엔진:** `rpc_admin_set_role_grant` · server RPC/RLS = **정본** (UI hide만 = FAIL)  
-> **UI todo:** `p13-prep-admin-team-desk` → `/admin/team`
+> **UI todo:** `p13-prep-admin-team-desk` → `/admin/team` **`[x]` DONE** 2026-07-11
 
 1인 operator로 시작해 **직원이 늘어나도** 메뉴·권한을 초등어로 나누는 정본입니다.
 
@@ -42,6 +42,8 @@
 
 **규칙:** 표에 없는 메뉴 = **nav 미노출** + **RPC 거부** 둘 다 필수.
 
+**코드 pin:** `ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST` in `admin-beginner-language-display-contract.ts`
+
 ---
 
 ## 3. `/admin/team` 화면 계약
@@ -52,6 +54,7 @@
 | 부여 | 역할 선택 드롭다운 = §1 표 5종만 · R3 모달 + 사유         |
 | 해제 | 「권한 빼기」 · R3                                        |
 | 접근 | **owner만** nav 노출 · 타 역할 URL 직접 입력 시 forbidden |
+| RPC  | `rpc_admin_set_role_grant` only                           |
 
 Settings(`/admin/settings`)에 있던 권한 부여는 **team 데스크로 이동** — settings에는 「직원 권한 관리로 가기」 링크만.
 
@@ -68,9 +71,11 @@ Settings(`/admin/settings`)에 있던 권한 부여는 **team 데스크로 이�
 
 ## 5. 완료 신호
 
+- [x] DOC + display contract (`p13-prep-admin-canonical-docs`)
+- [x] `/admin/team` surface (`p13-prep-admin-team-desk`)
 - [ ] viewer가 `rpc_approve_withdrawal` 호출 시 서버 거부 E2E/SQL
-- [ ] finance가 `/admin/team` nav 미노출
-- [ ] 모든 role grant → audit row + 사유
+- [x] finance가 `/admin/team` nav 미노출
+- [x] 모든 role grant → audit row + 사유 (RPC `admin.role_grant.set`)
 
 ---
 
@@ -78,4 +83,4 @@ Settings(`/admin/settings`)에 있던 권한 부여는 **team 데스크로 이�
 
 - [`ADMIN_BEGINNER_LANGUAGE_CANON.md`](ADMIN_BEGINNER_LANGUAGE_CANON.md)
 - [`PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md`](../PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md)
-- Plan §29.5 역할 표 · `p13-prep-admin-team-desk`
+- Plan §12.14 · §29.5 역할 표 · `p13-prep-admin-team-desk`

@@ -1,4 +1,7 @@
-import { DA_W6_DOMAIN_EMPTY_SIGNATURES, type DaW6DomainEmptyDomain } from '@/domain/da-w6-brand-elevation-display-contract';
+import {
+  DA_W6_DOMAIN_EMPTY_SIGNATURES,
+  type DaW6DomainEmptyDomain,
+} from '../../domain/da-w6-brand-elevation-display-contract';
 import { cn } from '@/product/primitives/lib/cn';
 
 export type DomainEmptyMarkProps = {

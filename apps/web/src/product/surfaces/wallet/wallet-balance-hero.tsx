@@ -41,6 +41,7 @@ export function WalletBalanceHero({
       className={cn('overflow-hidden', className)}
       data-testid="wallet-balance-hero"
       data-fiat-hint-todo={P4_PAGE_WALLET_FIAT_HINT_TODO}
+      data-signature="living-balance"
       aria-label={label}
     >
       <CardBody className="pb-2">

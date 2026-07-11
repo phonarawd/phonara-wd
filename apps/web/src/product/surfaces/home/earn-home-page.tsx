@@ -3,6 +3,11 @@ import { Link } from '@tanstack/react-router';
 import { ChevronRight, Crown } from 'lucide-react';
 
 import { TIER_ME_ROUTE, resolveTierCssVar } from '@/domain/tier-me-display-contract';
+import {
+  DA_W8_HOME_DAY_FLOW,
+  resolveHomeGreetingMessageKey,
+  resolveHomeGreetingPeriod,
+} from '@/domain/da-w8-signature-surfaces-display-contract';
 import { useEarnHomePageController } from '@/features/earn/use-earn-home-page-controller';
 import { useEarnFiatHint } from '@/features/earn/use-earn-fiat-hint';
 import { LiveActivityTicker } from '@/product/surfaces/landing/live-activity-ticker';
@@ -66,11 +71,15 @@ export function EarnHomePage() {
 
   const tierColorVar = tierProgress ? resolveTierCssVar(tierProgress.tier) : null;
   const fold3Summary = t('earn.home.fold3.summary', { count: missionsInProgress });
+  const greetingKey = resolveHomeGreetingMessageKey(
+    resolveHomeGreetingPeriod(new Date().getHours()),
+  );
 
   return (
     <div
       className="mx-auto flex w-full max-w-4xl flex-col gap-ds-8 py-4 md:py-6"
       data-testid="earn-home-page"
+      data-signature="greeting-day-flow"
     >
       {/* Fold1 — always: status + next action (above-fold) */}
       <section
@@ -82,6 +91,14 @@ export function EarnHomePage() {
           <Text variant="tiny" className="text-accent m-0 font-semibold tracking-wide uppercase">
             {t('earn.home.eyebrow')}
           </Text>
+          <Text
+            variant="section"
+            as="p"
+            className="text-foreground m-0"
+            data-testid="earn-home-greeting"
+          >
+            {t(greetingKey)}
+          </Text>
           <Text variant="title" as="h1" className="m-0 md:text-3xl">
             {t('earn.home.title')}
           </Text>
@@ -89,6 +106,31 @@ export function EarnHomePage() {
             {t('earn.home.subtitle')}
           </Text>
         </header>
+
+        <nav
+          className="flex flex-wrap items-center gap-2"
+          aria-label={t('earn.home.signatureFlow.label')}
+          data-testid="earn-home-signature-flow"
+          data-flow-order={DA_W8_HOME_DAY_FLOW.map((step) => step.id).join(',')}
+        >
+          {DA_W8_HOME_DAY_FLOW.map((step, index) => (
+            <span key={step.id} className="inline-flex items-center gap-2">
+              {index > 0 ? (
+                <span className="text-foreground-muted text-xs" aria-hidden>
+                  →
+                </span>
+              ) : null}
+              <Link
+                to={step.route}
+                className="border-line bg-surface text-foreground hover:border-accent hover:text-accent inline-flex min-h-10 items-center rounded-full border px-3 text-xs font-medium no-underline"
+                data-testid={`earn-home-flow-${step.id}`}
+                data-flow-step={step.id}
+              >
+                {t(step.titleKey)}
+              </Link>
+            </span>
+          ))}
+        </nav>
 
         {tierProgress ? (
           <Card data-testid="earn-home-tier-card">
@@ -98,6 +140,7 @@ export function EarnHomePage() {
                 size={80}
                 strokeWidth={6}
                 tone="accent"
+                fillOnMount
                 aria-label={t('tier.me.xpProgressAria', { pct: tierProgress.progressPercent })}
               />
               <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -228,7 +271,7 @@ export function EarnHomePage() {
           <div className="flex flex-col gap-ds-6">
             {useAmbientTicker ? (
               <div data-testid="earn-home-activity-ticker">
-                <LiveActivityTicker className="border-line bg-surface rounded-(--ds-radius-lg) border px-4 py-3" />
+                <LiveActivityTicker className="border-line bg-surface rounded-lg border px-4 py-3" />
               </div>
             ) : null}
 
@@ -368,7 +411,7 @@ export function EarnHomePage() {
               <div
                 key={mission.id}
                 data-testid={`earn-home-mission-${mission.id}`}
-                className={cn(highlighted && 'ring-accent/50 rounded-(--ds-radius-md) ring-2')}
+                className={cn(highlighted && 'ring-accent/50 rounded-md ring-2')}
               >
                 <MissionCard
                   title={t(mission.titleKey)}

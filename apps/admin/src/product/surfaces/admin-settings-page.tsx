@@ -4,6 +4,8 @@ import { RefreshCw } from 'lucide-react';
 
 import type { MessageKey } from '@phonara/i18n';
 
+import type { AdminOpsPushStatus } from '@/domain/admin-ops-push-display-contract';
+import { useAdminOpsPush } from '@/hooks/admin/useAdminOpsPush';
 import { useAdminSettingsDesk } from '@/hooks/admin/useAdminSettingsDesk';
 import type { AdminSettingsRow } from '@/product/bridge/parse-admin-settings-config';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
@@ -16,6 +18,14 @@ import { Input } from '@/product/primitives/input';
 import { cn } from '@/product/primitives/lib/cn';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/product/primitives/tabs';
+
+function pushStatusLabelKey(status: AdminOpsPushStatus): MessageKey {
+  if (status === 'on') return 'admin.settings.push.status.on';
+  if (status === 'denied') return 'admin.settings.push.status.denied';
+  if (status === 'unsupported') return 'admin.settings.push.status.unsupported';
+  if (status === 'error') return 'admin.settings.push.status.error';
+  return 'admin.settings.push.status.off';
+}
 
 function booleanStatus(value: string): MoneyStatusState {
   return value === 'on' ? 'settled' : 'halted';
@@ -43,6 +53,7 @@ export function AdminSettingsPage() {
   const goTo = useAdminRouteNavigate();
   const { sections, entryCount, search, setSearch, isLoading, isError, isFetching, refresh } =
     useAdminSettingsDesk();
+  const opsPush = useAdminOpsPush();
   const [refreshing, setRefreshing] = useState(false);
 
   const defaultTab = sections[0]?.id ?? 'system';
@@ -51,6 +62,7 @@ export function AdminSettingsPage() {
     setRefreshing(true);
     try {
       await refresh();
+      await opsPush.refresh();
     } finally {
       setRefreshing(false);
     }
@@ -70,6 +82,15 @@ export function AdminSettingsPage() {
           </p>
           <p className="text-foreground-muted m-0 text-sm">{t('admin.settings.description')}</p>
           <p className="text-foreground-muted m-0 text-sm">{t('admin.settings.readOnly')}</p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-1 w-fit"
+            data-testid="admin-settings-team-link"
+            onClick={() => goTo('/team')}
+          >
+            {t('admin.settings.teamLink')}
+          </Button>
         </div>
         <Button
           variant="outline"
@@ -95,6 +116,64 @@ export function AdminSettingsPage() {
           'admin.help.settings.step3',
         ]}
       />
+
+      <section
+        aria-labelledby="admin-settings-push-heading"
+        className="border-border bg-surface-1 space-y-3 rounded-xl border p-4"
+        data-testid="admin-settings-ops-push"
+      >
+        <div className="space-y-1">
+          <h3
+            id="admin-settings-push-heading"
+            className="text-foreground m-0 text-base font-semibold"
+          >
+            {t('admin.settings.push.title')}
+          </h3>
+          <p className="text-foreground-muted m-0 text-sm leading-relaxed">
+            {t('admin.settings.push.body')}
+          </p>
+          <p className="text-foreground-muted m-0 text-sm">{t('admin.settings.push.queuesHint')}</p>
+          <p className="text-foreground m-0 text-sm" data-testid="admin-settings-ops-push-status">
+            {t(pushStatusLabelKey(opsPush.status))}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {opsPush.status === 'on' ? (
+            <Button
+              variant="outline"
+              size="sm"
+              loading={opsPush.busy}
+              data-testid="admin-settings-ops-push-disable"
+              onClick={() => void opsPush.disable()}
+            >
+              {t('admin.settings.push.disable')}
+            </Button>
+          ) : (
+            <Button
+              variant="primary"
+              size="sm"
+              loading={opsPush.busy || opsPush.status === 'loading'}
+              disabled={
+                opsPush.status === 'denied' ||
+                opsPush.status === 'unsupported' ||
+                !opsPush.supported
+              }
+              data-testid="admin-settings-ops-push-enable"
+              onClick={() => void opsPush.enable()}
+            >
+              {t('admin.settings.push.enable')}
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            data-testid="admin-settings-ops-push-queues"
+            onClick={() => goTo('/queues')}
+          >
+            {t('admin.nav.queues')}
+          </Button>
+        </div>
+      </section>
 
       {isError ? (
         <EmptyState

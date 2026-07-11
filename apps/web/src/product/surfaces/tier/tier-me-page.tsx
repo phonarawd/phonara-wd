@@ -22,6 +22,7 @@ import { MissionCard } from '@/product/primitives/mission-card';
 import { ProgressRing } from '@/product/primitives/progress-ring';
 import { Skeleton } from '@/product/primitives/skeleton';
 import { cn } from '@/product/primitives/lib/cn';
+import { formatCountUpGrouped, useCountUp } from '@/product/primitives/lib/use-count-up';
 import { EarnMissionReward } from '@/product/surfaces/home/earn-mission-reward';
 
 /** Canonical `/tier/me` — VIP tier hero · decay UX until E1 · `tier_keep_status` (P7). */
@@ -41,6 +42,9 @@ export function TierMePage() {
     claimKeepMission,
   } = engine;
   const earnFiat = useEarnFiatHint();
+  const xpTarget = tierProgress ? String(tierProgress.xp) : '0';
+  const xpDisplay = useCountUp(xpTarget, { enabled: Boolean(tierProgress), tier: 'L1' });
+  const xpLabel = formatCountUpGrouped(xpDisplay);
 
   useEffect(() => {
     document.title = t(TIER_ME_SEO_TITLE_KEY);
@@ -108,6 +112,8 @@ export function TierMePage() {
         <Card
           variant="vip"
           data-testid="tier-me-progress-card"
+          data-signature="xp-fill"
+          data-xp-fill="true"
           style={{ ['--ds-card-tier' as string]: `var(${tierColorVar})` }}
         >
           <CardBody className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -116,6 +122,7 @@ export function TierMePage() {
               size={88}
               strokeWidth={6}
               tone="accent"
+              fillOnMount
               aria-label={t('tier.me.xpProgressAria', { pct: tierProgress.progressPercent })}
             />
             <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -123,8 +130,9 @@ export function TierMePage() {
               <p
                 className="text-foreground m-0 text-2xl font-semibold tabular-nums"
                 data-testid="tier-me-xp"
+                data-count-up="true"
               >
-                {tierProgress.xp.toLocaleString()} XP
+                {xpLabel} XP
               </p>
               {tierProgress.atMaxTier ? (
                 <p className="text-accent m-0 text-sm font-medium">{t('tier.me.maxTier')}</p>

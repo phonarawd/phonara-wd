@@ -217,6 +217,16 @@ describe('EarnHomePage', () => {
     renderPage();
 
     expect(screen.getByTestId('earn-home-page')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-page')).toHaveAttribute(
+      'data-signature',
+      'greeting-day-flow',
+    );
+    expect(screen.getByTestId('earn-home-greeting')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-signature-flow')).toHaveAttribute(
+      'data-flow-order',
+      'reward,tasks,market,events',
+    );
+    expect(screen.getByTestId('earn-home-flow-market')).toHaveAttribute('href', '/trade');
     expect(screen.getByTestId('earn-home-fold1')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-tier-card')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-tier-xp')).toHaveAttribute('data-count-up', 'true');
