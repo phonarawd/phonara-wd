@@ -59,7 +59,10 @@ describe('p11-gate-side-income-display-contract §12.19.6 · YAML #221', () => {
       expect(assertRegisteredFullPath(route as RegisteredFullPath)).toBe(route);
     }
 
-    expect([...P11_WALLET_REDEEM_REGISTERED_ROUTES]).toEqual(['/wallet/redeem']);
+    expect([...P11_WALLET_REDEEM_REGISTERED_ROUTES]).toEqual([
+      '/wallet/redeem',
+      '/wallet/redeem/giftcard',
+    ]);
     expect(P11_SIDE_INCOME_REGISTERED_ROUTES).toContain('/events');
     expect(P11_SIDE_INCOME_REGISTERED_ROUTES).toContain('/earn/play');
     expect(P11_SIDE_INCOME_REGISTERED_ROUTES).toContain('/earn/cashback');

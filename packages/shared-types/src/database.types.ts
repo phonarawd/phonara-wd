@@ -4547,6 +4547,38 @@ export type Database = {
           },
         ]
       }
+      service_ingress_rate_buckets: {
+        Row: {
+          bucket_key: string
+          bucket_scope: string
+          last_refill: string
+          resource: string
+          tokens: number
+        }
+        Insert: {
+          bucket_key: string
+          bucket_scope: string
+          last_refill?: string
+          resource: string
+          tokens: number
+        }
+        Update: {
+          bucket_key?: string
+          bucket_scope?: string
+          last_refill?: string
+          resource?: string
+          tokens?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_ingress_rate_buckets_resource_fkey"
+            columns: ["resource"]
+            isOneToOne: false
+            referencedRelation: "rpc_rate_limit_configs"
+            referencedColumns: ["rpc_name"]
+          },
+        ]
+      }
       siwe_challenges: {
         Row: {
           address: string
@@ -6997,6 +7029,7 @@ export type Database = {
         Args: { p_role: Database["public"]["Enums"]["admin_role"] }
         Returns: boolean
       }
+      _advisor_wrap_rls_auth_expr: { Args: { p_expr: string }; Returns: string }
       _affiliate_commission_requires_approval: {
         Args: { p_total_commission: Json }
         Returns: boolean
@@ -7185,6 +7218,15 @@ export type Database = {
         Returns: undefined
       }
       _assert_price_fresh: { Args: { p_symbol: string }; Returns: number }
+      _assert_product_analytics_payload: {
+        Args: {
+          p_anonymous_id: string
+          p_client_event_id: string
+          p_properties: Json
+          p_surface: string
+        }
+        Returns: undefined
+      }
       _assert_rg_deposit_allowed: {
         Args: {
           p_amount: number
@@ -7357,6 +7399,17 @@ export type Database = {
         Returns: Json
       }
       _compute_oracle_median: { Args: { p_symbol: string }; Returns: number }
+      _consume_service_ingress_bucket: {
+        Args: {
+          p_capacity: number
+          p_cost: number
+          p_key: string
+          p_refill_rate: number
+          p_resource: string
+          p_scope: string
+        }
+        Returns: undefined
+      }
       _create_bonus_wagering_obligation: {
         Args: {
           p_bonus_amount: string
@@ -7524,6 +7577,10 @@ export type Database = {
       }
       _enforce_rate_limit: {
         Args: { p_rpc_name: string; p_user_id: string }
+        Returns: undefined
+      }
+      _enforce_service_ingress_rate_limit: {
+        Args: { p_ip_hmac: string; p_resource: string }
         Returns: undefined
       }
       _enqueue_admin_review: {
@@ -7975,6 +8032,10 @@ export type Database = {
       _momentum_evaluate: {
         Args: { p_floats: number[]; p_selection: Json }
         Returns: Json
+      }
+      _normalize_ingress_ip_hmac: {
+        Args: { p_ip_hmac: string }
+        Returns: string
       }
       _normalize_person_name: { Args: { p_name: string }; Returns: string }
       _notify_deposit_credited: {
@@ -8813,6 +8874,10 @@ export type Database = {
         Args: { p_deposit_id: string; p_reason: string; p_transfer_id: string }
         Returns: Json
       }
+      rpc_admin_rebase_resume_market: {
+        Args: { p_reason: string; p_symbol: string }
+        Returns: Json
+      }
       rpc_admin_reject_giftcard_redeem: {
         Args: { p_reason: string; p_redeem_id: string }
         Returns: Json
@@ -9098,9 +9163,9 @@ export type Database = {
         Returns: Json
       }
       rpc_get_ops_health: { Args: never; Returns: Json }
-      rpc_get_public_platform_status: { Args: never; Returns: Json }
       rpc_get_phon_balance_breakdown: { Args: never; Returns: Json }
       rpc_get_position_mode: { Args: never; Returns: Json }
+      rpc_get_public_platform_status: { Args: never; Returns: Json }
       rpc_get_repeatable_mission_status: {
         Args: { p_lane?: string }
         Returns: Json
@@ -9511,10 +9576,6 @@ export type Database = {
         Args: { p_reason: string; p_symbol: string }
         Returns: Json
       }
-      rpc_admin_rebase_resume_market: {
-        Args: { p_reason: string; p_symbol: string }
-        Returns: Json
-      }
       rpc_reveal_game_round: { Args: { p_round_id: string }; Returns: Json }
       rpc_reveal_roulette_spin: {
         Args: { p_spin_date?: string }
@@ -9608,6 +9669,10 @@ export type Database = {
         Args: { p_address: string; p_challenge_id: string; p_user_id: string }
         Returns: Json
       }
+      rpc_service_create_siwe_challenge: {
+        Args: { p_address: string; p_chain_id?: number; p_ip_hmac?: string }
+        Returns: Json
+      }
       rpc_service_enqueue_ops_telegram_digest: {
         Args: { p_digest_hour_utc?: number }
         Returns: Json
@@ -9625,6 +9690,10 @@ export type Database = {
         Args: { p_rate: string; p_source?: string }
         Returns: Json
       }
+      rpc_service_lookup_siwe_identity: {
+        Args: { p_address: string; p_chain_id?: number }
+        Returns: Json
+      }
       rpc_service_mark_withdrawal_broadcast: {
         Args: {
           p_reason?: string
@@ -9634,6 +9703,7 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_service_purge_siwe_analytics_retention: { Args: never; Returns: Json }
       rpc_service_record_circuit_breaker_outcome: {
         Args: {
           p_channel: string
@@ -9657,6 +9727,19 @@ export type Database = {
           p_request_id: string
           p_skipped_count?: number
           p_status: string
+        }
+        Returns: Json
+      }
+      rpc_service_record_product_analytics_event: {
+        Args: {
+          p_anonymous_id?: string
+          p_client_event_id?: string
+          p_event_name: string
+          p_ip_hmac?: string
+          p_occurred_at?: string
+          p_properties?: Json
+          p_surface?: string
+          p_user_id?: string
         }
         Returns: Json
       }
