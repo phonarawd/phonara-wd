@@ -14,7 +14,7 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 
 describe('SystemStatusStubPage', () => {
-  it('renders E10 defer stub markers', () => {
+  it('renders E10 live stub markers', () => {
     render(
       <I18nProvider>
         <SystemStatusStubPage />
@@ -25,7 +25,7 @@ describe('SystemStatusStubPage', () => {
       'data-engine-todo',
       'ew-e10-trust-support-ui',
     );
-    expect(screen.getByTestId('system-status-stub')).toHaveAttribute('data-deferred', 'true');
+    expect(screen.getByTestId('system-status-stub')).toHaveAttribute('data-deferred', 'false');
     expect(screen.getByTestId('system-status-empty')).toBeInTheDocument();
   });
 });

@@ -88,6 +88,8 @@ describe('AppShell chrome', () => {
       '/referral',
       '/tier/me',
       '/tier/benefits',
+      '/earn/cashback',
+      '/earn/play',
       '/share/earnings',
       '/staking',
     ]);

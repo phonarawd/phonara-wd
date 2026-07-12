@@ -1,5 +1,6 @@
 import type { SportsBetSlipState } from '@/features/sports/use-sports-bet-slip-state';
 import type { SportsStakeCurrency } from '@/domain/sports-page-display-contract';
+import { EW_E22_ODDS_ACCEPTANCE_POLICIES } from '@/domain/ew-e22-sports-parity-display-contract';
 import {
   isSportsBalancePercentPresetActive,
   SPORTS_BALANCE_PERCENT_PRESETS,
@@ -93,7 +94,7 @@ export function SportsBetSlipPanel({
               {slip.selections.map((row) => (
                 <li
                   key={row.outcomeId}
-                  className="border-line flex items-start justify-between gap-2 rounded-(--ds-radius-md) border px-2 py-2 text-sm"
+                  className="border-line flex items-start justify-between gap-2 rounded-md border px-2 py-2 text-sm"
                 >
                   <div className="min-w-0">
                     <p className="text-foreground m-0 truncate font-medium">
@@ -137,7 +138,7 @@ export function SportsBetSlipPanel({
                 {t('sports.slip.odds_acceptance.label')}
               </span>
               <div className="flex flex-wrap gap-2">
-                {slip.oddsAcceptancePolicies.map((policy) => {
+                {(slip.oddsAcceptancePolicies ?? EW_E22_ODDS_ACCEPTANCE_POLICIES).map((policy) => {
                   const active = slip.oddsAcceptance === policy;
                   return (
                     <Button
@@ -162,7 +163,7 @@ export function SportsBetSlipPanel({
           ) : null}
 
           <div
-            className="border-line grid gap-2 rounded-(--ds-radius-md) border px-2 py-2"
+            className="border-line grid gap-2 rounded-md border px-2 py-2"
             data-testid="sports-slip-balances"
           >
             <div className="flex items-baseline justify-between gap-2">

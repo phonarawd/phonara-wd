@@ -14,7 +14,7 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 
 describe('SupportTicketStubPage', () => {
-  it('renders E9 defer stub markers', () => {
+  it('renders E9 live stub markers', () => {
     render(
       <I18nProvider>
         <SupportTicketStubPage />
@@ -25,7 +25,7 @@ describe('SupportTicketStubPage', () => {
       'data-engine-todo',
       'ew-e9-identity-wave',
     );
-    expect(screen.getByTestId('support-ticket-stub')).toHaveAttribute('data-deferred', 'true');
+    expect(screen.getByTestId('support-ticket-stub')).toHaveAttribute('data-deferred', 'false');
     expect(screen.getByTestId('support-ticket-empty')).toBeInTheDocument();
   });
 });

@@ -4,6 +4,15 @@ import { describe, expect, it, vi } from 'vitest';
 import { I18nProvider } from '@/product/i18n';
 import { AdminNav } from '@/product/layout/admin-nav';
 
+vi.mock('@/hooks/admin/useAdminOperatorRbac', () => ({
+  useAdminOperatorRbac: () => ({
+    role: 'owner',
+    can: () => true,
+    setPreviewRole: vi.fn(),
+    roleLabelKey: 'admin.access.role.owner.label',
+  }),
+}));
+
 vi.mock('@tanstack/react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@tanstack/react-router')>();
   return {
