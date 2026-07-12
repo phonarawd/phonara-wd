@@ -7,18 +7,18 @@
 
 ## Probe 5 — capture OK (8GB low-RAM · 2026-07-13)
 
-| 항목 | 값 |
-| --- | --- |
-| **MCP server** | `project-0-phonara-gb-playwright` |
-| **serverStatus** | **`ready`** |
-| **Launcher** | `scripts/run-playwright-mcp.cmd` + `scripts/playwright-mcp-8gb.json` |
-| **Browser binary** | `chromium_headless_shell-1232` / `chrome-headless-shell.exe` |
-| **Navigate** | **PASS** — `https://preview.phonara-web.pages.dev/` |
-| **Page title** | `PHONARA \| Earn, Trade, Play` → post-hydration `PrimeForge — 부업 습관` |
-| **Screenshot** | **PASS** — [`probe5-preview-landing-390.png`](probe5-preview-landing-390.png) (49 985 bytes) |
-| **Snapshot** | [`probe5-snapshot-390.yml`](probe5-snapshot-390.yml) |
-| **Viewport** | 390×844 (mobile) |
-| **System RAM** | **2210MB free / 7920MB** · Cursor **3097MB** (warn · headless-shell OK) |
+| 항목               | 값                                                                                           |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| **MCP server**     | `project-0-phonara-gb-playwright`                                                            |
+| **serverStatus**   | **`ready`**                                                                                  |
+| **Launcher**       | `scripts/run-playwright-mcp.cmd` + `scripts/playwright-mcp-8gb.json`                         |
+| **Browser binary** | `chromium_headless_shell-1232` / `chrome-headless-shell.exe`                                 |
+| **Navigate**       | **PASS** — `https://preview.phonara-web.pages.dev/`                                          |
+| **Page title**     | `PHONARA \| Earn, Trade, Play` → post-hydration `PrimeForge — 부업 습관`                     |
+| **Screenshot**     | **PASS** — [`probe5-preview-landing-390.png`](probe5-preview-landing-390.png) (49 985 bytes) |
+| **Snapshot**       | [`probe5-snapshot-390.yml`](probe5-snapshot-390.yml)                                         |
+| **Viewport**       | 390×844 (mobile)                                                                             |
+| **System RAM**     | **2210MB free / 7920MB** · Cursor **3097MB** (warn · headless-shell OK)                      |
 
 ### Status enum (R0 Exit)
 
@@ -29,16 +29,16 @@
 
 ## Probe 4 — re-verify (operator request · 2026-07-13)
 
-| 항목 | 값 |
-| --- | --- |
-| **MCP server** | `project-0-phonara-gb-playwright` |
-| **serverStatus** | **`ready`** |
-| **Tool count** | **24+** (`browser_navigate` · `browser_snapshot` · `browser_take_screenshot` · …) |
-| **Browser binary** | `chromium-1232` + `chromium_headless_shell-1232` **installed** |
-| **Capture** | **TIMEOUT** — full `chrome.exe` launches but CDP pipe handshake 180s 초과 |
-| **Target URL** | `https://preview.phonara-web.pages.dev/` |
-| **Viewport intent** | 390×844 |
-| **System RAM** | **1833MB free / 7920MB** · Cursor **3715MB** (warn) |
+| 항목                | 값                                                                                |
+| ------------------- | --------------------------------------------------------------------------------- |
+| **MCP server**      | `project-0-phonara-gb-playwright`                                                 |
+| **serverStatus**    | **`ready`**                                                                       |
+| **Tool count**      | **24+** (`browser_navigate` · `browser_snapshot` · `browser_take_screenshot` · …) |
+| **Browser binary**  | `chromium-1232` + `chromium_headless_shell-1232` **installed**                    |
+| **Capture**         | **TIMEOUT** — full `chrome.exe` launches but CDP pipe handshake 180s 초과         |
+| **Target URL**      | `https://preview.phonara-web.pages.dev/`                                          |
+| **Viewport intent** | 390×844                                                                           |
+| **System RAM**      | **1833MB free / 7920MB** · Cursor **3715MB** (warn)                               |
 
 ### Status enum (R0)
 
@@ -68,21 +68,21 @@ GCM Registration response error: DEPRECATED_ENDPOINT (반복)
 
 ## Probe 3 — re-verify (2026-07-13T01:00)
 
-| 항목 | 값 |
-| --- | --- |
-| **MCP server** | `project-0-phonara-gb-playwright` |
-| **serverStatus** | **`ready`** |
-| **Tool count** | **24+** |
+| 항목               | 값                                                               |
+| ------------------ | ---------------------------------------------------------------- |
+| **MCP server**     | `project-0-phonara-gb-playwright`                                |
+| **serverStatus**   | **`ready`**                                                      |
+| **Tool count**     | **24+**                                                          |
 | **Browser binary** | Chrome for Testing **installed** (`ms-playwright/chromium-1232`) |
-| **Capture** | **TIMEOUT** — CDP handshake 180s 초과 |
-| **Status** | `AVAILABLE_TOOLS_OK` + `BROWSER_LAUNCH_TIMEOUT` |
+| **Capture**        | **TIMEOUT** — CDP handshake 180s 초과                            |
+| **Status**         | `AVAILABLE_TOOLS_OK` + `BROWSER_LAUNCH_TIMEOUT`                  |
 
 ## History
 
-| Probe | Result |
-| --- | --- |
-| 1 | NOT_AVAILABLE (tools=0) |
-| 2 | CONFIGURED · EOVERRIDE then fixed |
-| 3 | tools ready · chrome installed · capture TIMEOUT |
-| 4 | tools ready · capture TIMEOUT · RAM warn · launcher→headless-shell |
-| 5 | **CAPTURE OK** · 8gb.json · headless-shell · free RAM ~2210MB |
+| Probe | Result                                                             |
+| ----- | ------------------------------------------------------------------ |
+| 1     | NOT_AVAILABLE (tools=0)                                            |
+| 2     | CONFIGURED · EOVERRIDE then fixed                                  |
+| 3     | tools ready · chrome installed · capture TIMEOUT                   |
+| 4     | tools ready · capture TIMEOUT · RAM warn · launcher→headless-shell |
+| 5     | **CAPTURE OK** · 8gb.json · headless-shell · free RAM ~2210MB      |

@@ -7,7 +7,7 @@
 
 - [x] 본 Playbook Plan이 Owner에게 승인됨 (2026-07-13 operator chat)
 - [x] Finding이 registry에 존재하고 `APPROVED_FOR_IMPLEMENT` | `IN_PROGRESS` | `VERIFYING` (R1 Finding 배치 시)
-- [x] `blocked_by`가 모두 CLOSED/VERIFIED_* (R0 baseline · R1 Finding 개별 확인)
+- [x] `blocked_by`가 모두 CLOSED/VERIFIED\_\* (R0 baseline · R1 Finding 개별 확인)
 - [x] Domain · Stage · Execution Budget · Scope Lock 준수
 - [x] 신규 migration 파일 추가가 **아닌** 변경 (R1 UI 범위)
 - [x] No Assumption 확인 로그가 Investigate Evidence에 존재 (R0 probe/bucket)

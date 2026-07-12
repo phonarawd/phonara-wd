@@ -6,16 +6,16 @@
 
 ## 결정 표
 
-| 결정 | R (실행) | A (최종 책임·승인) | C (협의) | I (통보) |
-| --- | --- | --- | --- | --- |
-| Finding APPROVED_FOR_IMPLEMENT | AI / Domain Owner | **Product Owner** | Security (해당 시) | Runtime |
-| Migration / RLS / GRANT | Domain + DB | **Security Owner** | Product · Runtime | AI |
-| Release 승인 | AI (증거 패키지) | **3-Owner 전원** (§46) — 전원 A | Incident lead | All domain owners |
-| Exception(§50) SOP 우회 | Requestor | **Security Owner + Product Owner** (공동 A) | Runtime | All |
-| Freeze 해제 | Runtime | **Product Owner** | Security | AI |
-| Production 정상 선언 | Runtime | **Product Owner (A)** + Security·Runtime 동의 | — | Stakeholders |
-| SLO/Trigger 수치 확정 | AI (초안) | **Product Owner** + Runtime 동의 | Security | AI |
-| Observability ADR 변경 | SRE / AI | **Runtime Owner** | Security · Product | AI |
+| 결정                           | R (실행)          | A (최종 책임·승인)                            | C (협의)           | I (통보)          |
+| ------------------------------ | ----------------- | --------------------------------------------- | ------------------ | ----------------- |
+| Finding APPROVED_FOR_IMPLEMENT | AI / Domain Owner | **Product Owner**                             | Security (해당 시) | Runtime           |
+| Migration / RLS / GRANT        | Domain + DB       | **Security Owner**                            | Product · Runtime  | AI                |
+| Release 승인                   | AI (증거 패키지)  | **3-Owner 전원** (§46) — 전원 A               | Incident lead      | All domain owners |
+| Exception(§50) SOP 우회        | Requestor         | **Security Owner + Product Owner** (공동 A)   | Runtime            | All               |
+| Freeze 해제                    | Runtime           | **Product Owner**                             | Security           | AI                |
+| Production 정상 선언           | Runtime           | **Product Owner (A)** + Security·Runtime 동의 | —                  | Stakeholders      |
+| SLO/Trigger 수치 확정          | AI (초안)         | **Product Owner** + Runtime 동의              | Security           | AI                |
+| Observability ADR 변경         | SRE / AI          | **Runtime Owner**                             | Security · Product | AI                |
 
 ## 1인 겸임 규칙 (non-waivable)
 
@@ -28,11 +28,11 @@
 
 ## 역할 ↔ Owner Matrix 키
 
-| RACI 역할 | Matrix 키 (1인 겸임 시 동일 operator) |
-| --- | --- |
-| Product Owner | `product` |
-| Security Owner | `security` |
-| Runtime Owner | `sre` |
-| Domain Owner | `earn` · `wallet` · `trade` · `sports` · `casino` · `admin` · `marketing` · `auth` · `platform` |
+| RACI 역할      | Matrix 키 (1인 겸임 시 동일 operator)                                                           |
+| -------------- | ----------------------------------------------------------------------------------------------- |
+| Product Owner  | `product`                                                                                       |
+| Security Owner | `security`                                                                                      |
+| Runtime Owner  | `sre`                                                                                           |
+| Domain Owner   | `earn` · `wallet` · `trade` · `sports` · `casino` · `admin` · `marketing` · `auth` · `platform` |
 
 충돌 시 **본 RACI의 A가 Owner Matrix보다 우선**.

@@ -1,4 +1,4 @@
 - generic [active]:
-  - generic:
     - generic:
-      - region "Notifications alt+T"
+        - generic:
+            - region "Notifications alt+T"

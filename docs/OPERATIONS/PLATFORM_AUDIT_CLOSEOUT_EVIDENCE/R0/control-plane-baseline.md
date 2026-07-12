@@ -7,19 +7,19 @@
 
 ## Deliverables present
 
-| 산출물 | 경로 | 상태 |
-| --- | --- | --- |
-| Finding registry (+ `dod_profile`) | [`PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](../../PLATFORM_AUDIT_FINDING_REGISTRY.yaml) | DONE |
-| Risk register | [`PLATFORM_AUDIT_RISK_REGISTER.yaml`](../../PLATFORM_AUDIT_RISK_REGISTER.yaml) | DONE |
-| Owner Matrix | [`PLATFORM_AUDIT_OWNER_MATRIX.md`](../../PLATFORM_AUDIT_OWNER_MATRIX.md) | DONE |
-| RACI (1인 겸임) | [`PLATFORM_AUDIT_RACI.md`](../../PLATFORM_AUDIT_RACI.md) | DONE |
-| Observability ADR | [`ADR-021`](../../../PRODUCT/ADR/021-platform-observability-stack.md) | DONE |
-| Evidence bucket | [`PLATFORM_EVIDENCE_RETENTION.md`](../../PLATFORM_EVIDENCE_RETENTION.md) | DONE |
-| Browser MCP probe | [`browser-mcp-probe.md`](browser-mcp-probe.md) | DONE · Probe5 **CAPTURE_OK** |
-| SLO/Trigger 수치 초안 | [`PLATFORM_SLO_SLA.yaml`](../../PLATFORM_SLO_SLA.yaml) | DRAFT_PENDING_OWNER_SIGN |
-| Exception / Drill / Secrets | 각 OPERATIONS 템플릿 | DONE |
-| Stage 일정표 | [`PLATFORM_STAGE_SCHEDULE.md`](../../PLATFORM_STAGE_SCHEDULE.md) | DONE |
-| Playbook version | [`PLATFORM_PLAYBOOK_VERSION.yaml`](../../PLATFORM_PLAYBOOK_VERSION.yaml) | DONE |
+| 산출물                             | 경로                                                                                 | 상태                         |
+| ---------------------------------- | ------------------------------------------------------------------------------------ | ---------------------------- |
+| Finding registry (+ `dod_profile`) | [`PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](../../PLATFORM_AUDIT_FINDING_REGISTRY.yaml) | DONE                         |
+| Risk register                      | [`PLATFORM_AUDIT_RISK_REGISTER.yaml`](../../PLATFORM_AUDIT_RISK_REGISTER.yaml)       | DONE                         |
+| Owner Matrix                       | [`PLATFORM_AUDIT_OWNER_MATRIX.md`](../../PLATFORM_AUDIT_OWNER_MATRIX.md)             | DONE                         |
+| RACI (1인 겸임)                    | [`PLATFORM_AUDIT_RACI.md`](../../PLATFORM_AUDIT_RACI.md)                             | DONE                         |
+| Observability ADR                  | [`ADR-021`](../../../PRODUCT/ADR/021-platform-observability-stack.md)                | DONE                         |
+| Evidence bucket                    | [`PLATFORM_EVIDENCE_RETENTION.md`](../../PLATFORM_EVIDENCE_RETENTION.md)             | DONE                         |
+| Browser MCP probe                  | [`browser-mcp-probe.md`](browser-mcp-probe.md)                                       | DONE · Probe5 **CAPTURE_OK** |
+| SLO/Trigger 수치 초안              | [`PLATFORM_SLO_SLA.yaml`](../../PLATFORM_SLO_SLA.yaml)                               | DRAFT_PENDING_OWNER_SIGN     |
+| Exception / Drill / Secrets        | 각 OPERATIONS 템플릿                                                                 | DONE                         |
+| Stage 일정표                       | [`PLATFORM_STAGE_SCHEDULE.md`](../../PLATFORM_STAGE_SCHEDULE.md)                     | DONE                         |
+| Playbook version                   | [`PLATFORM_PLAYBOOK_VERSION.yaml`](../../PLATFORM_PLAYBOOK_VERSION.yaml)             | DONE                         |
 
 ## Reporting language (고정)
 

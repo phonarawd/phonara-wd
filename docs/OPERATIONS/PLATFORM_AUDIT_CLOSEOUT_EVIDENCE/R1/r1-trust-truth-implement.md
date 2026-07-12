@@ -7,13 +7,13 @@
 
 ## Findings touched
 
-| Finding | Fix summary | Unit / contract gate |
-| --- | --- | --- |
-| **C-01** | `resolveLandingProof` fail-closed — stats/testimonials/withdrawalProof/ambientSocial default `hidden` | landing-display-contract · landing-page |
-| **H-01** | Wallet preview = `MoneyDisplay` + `useEarnFiatHint` · omit KRW when missing/stale · remove 1:1 footnote UI | landing-wallet-preview · landing-page |
-| **M-01** | Landing teasers `+N PHON` via `formatLandingRewardPhonLabel` | landing-display-contract · landing-page |
-| **C-02** | `/status` badges `pending` + unknown copy · never `settled`/`정상` | system-status-page · contract |
-| **Brand** | `PLATFORM_PRODUCT_NAME=PHONARA` · pageTitle/i18n/meta | platform-narrative · i18n |
+| Finding   | Fix summary                                                                                                | Unit / contract gate                    |
+| --------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| **C-01**  | `resolveLandingProof` fail-closed — stats/testimonials/withdrawalProof/ambientSocial default `hidden`      | landing-display-contract · landing-page |
+| **H-01**  | Wallet preview = `MoneyDisplay` + `useEarnFiatHint` · omit KRW when missing/stale · remove 1:1 footnote UI | landing-wallet-preview · landing-page   |
+| **M-01**  | Landing teasers `+N PHON` via `formatLandingRewardPhonLabel`                                               | landing-display-contract · landing-page |
+| **C-02**  | `/status` badges `pending` + unknown copy · never `settled`/`정상`                                         | system-status-page · contract           |
+| **Brand** | `PLATFORM_PRODUCT_NAME=PHONARA` · pageTitle/i18n/meta                                                      | platform-narrative · i18n               |
 
 ## Gates (local L0–L4)
 
@@ -33,10 +33,10 @@ Owner paths:
 
 ## Runtime / Browser
 
-| Item | Status |
-| --- | --- |
+| Item                               | Status                                                        |
+| ---------------------------------- | ------------------------------------------------------------- |
 | Stage1 `/` · `/status` Browser MCP | **pending** — capture after feature-branch preview SHA deploy |
-| Preview SHA parity | pending push |
+| Preview SHA parity                 | pending push                                                  |
 
 Finding status after this evidence: **VERIFYING** (not CLOSED / not VERIFIED_FIXED until Stage1 Browser).
 

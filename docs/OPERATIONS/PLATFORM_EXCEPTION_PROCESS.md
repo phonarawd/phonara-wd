@@ -24,18 +24,18 @@
 ```yaml
 id: EXC-YYYYMMDD-01
 status: REQUESTED # REQUESTED|APPROVED|ACTIVE|EXPIRED|REJECTED
-reason: ""
-scope: ""
+reason: ''
+scope: ''
 domains: []
-expires_at: ""
+expires_at: ''
 allowed_bypasses: []
-denied_always: ["money-sigma", "no-shortcut", "reference-edit", "main-push"]
+denied_always: ['money-sigma', 'no-shortcut', 'reference-edit', 'main-push']
 approvals:
-  security: { by: "", at: "" }
-  product: { by: "", at: "" }
-runtime_consulted: { by: "", at: "" }
-evidence_uri: ""
-postmortem_finding_or_risk: ""
+  security: { by: '', at: '' }
+  product: { by: '', at: '' }
+runtime_consulted: { by: '', at: '' }
+evidence_uri: ''
+postmortem_finding_or_risk: ''
 ```
 
 승인 없는 우회 = FAIL · 다음 RC Gate Block.

@@ -5,12 +5,12 @@
 
 ## 목표 수치 (초안 · Owner 서명 대상)
 
-| 항목 | 초안 | 비고 |
-| --- | --- | --- |
-| **RPO** | 24h | PITR/backup 창 · soft-launch |
-| **RTO** | 4h | 서비스 복구 목표 |
-| Backup 검증 | 로컬 dump restore Evidence 필수 | “설정됨”만으로 통과 금지 |
-| Region Failover | ACCEPTED Risk (단일 리전 soft-launch) | Owner 서명·만료일 |
+| 항목            | 초안                                  | 비고                         |
+| --------------- | ------------------------------------- | ---------------------------- |
+| **RPO**         | 24h                                   | PITR/backup 창 · soft-launch |
+| **RTO**         | 4h                                    | 서비스 복구 목표             |
+| Backup 검증     | 로컬 dump restore Evidence 필수       | “설정됨”만으로 통과 금지     |
+| Region Failover | ACCEPTED Risk (단일 리전 soft-launch) | Owner 서명·만료일            |
 
 ## Restore 검증 수단 (single-project lock)
 
@@ -32,6 +32,6 @@ method: local-dump # local-dump|pitr-check|accepted-risk
 rpo_hours: 24
 rto_hours: 4
 result: PASS
-evidence_uri: ""
-signed_by: { sre: "", security: "" }
+evidence_uri: ''
+signed_by: { sre: '', security: '' }
 ```

@@ -15,9 +15,9 @@ docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/
   binaries/                 # .gitkeep only — 실파일 커밋 금지
 ```
 
-| Stage | 슬롯 | 상태 |
-| --- | --- | --- |
-| **R0** | `R0/` | control-plane · Browser MCP Probe5 · bun audit |
+| Stage  | 슬롯  | 상태                                                  |
+| ------ | ----- | ----------------------------------------------------- |
+| **R0** | `R0/` | control-plane · Browser MCP Probe5 · bun audit        |
 | **R1** | `R1/` | trust-truth Investigate **`[x]`** · Implement pending |
 
 ## CI 링크 템플릿

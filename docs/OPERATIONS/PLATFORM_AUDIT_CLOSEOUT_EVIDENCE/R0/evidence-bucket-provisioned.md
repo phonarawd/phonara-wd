@@ -7,12 +7,12 @@
 
 ## Result
 
-| 항목 | 값 |
-| --- | --- |
-| bucket id | `platform-audit-evidence` |
-| public | `false` |
-| project | `yocjhjsdwoijfdrehzoq` |
-| method | Supabase MCP `execute_sql` INSERT into `storage.buckets` |
-| verify | `SELECT id,name,public FROM storage.buckets WHERE id='platform-audit-evidence'` → 1 row |
+| 항목      | 값                                                                                      |
+| --------- | --------------------------------------------------------------------------------------- |
+| bucket id | `platform-audit-evidence`                                                               |
+| public    | `false`                                                                                 |
+| project   | `yocjhjsdwoijfdrehzoq`                                                                  |
+| method    | Supabase MCP `execute_sql` INSERT into `storage.buckets`                                |
+| verify    | `SELECT id,name,public FROM storage.buckets WHERE id='platform-audit-evidence'` → 1 row |
 
 Index: [`PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/`](../README.md) · Retention: [`PLATFORM_EVIDENCE_RETENTION.md`](../../PLATFORM_EVIDENCE_RETENTION.md)

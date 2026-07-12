@@ -21,10 +21,7 @@ function loadEnvFile(path: string): Map<string, string> {
     if (i <= 0) continue;
     const k = t.slice(0, i).trim();
     let v = t.slice(i + 1).trim();
-    if (
-      (v.startsWith('"') && v.endsWith('"')) ||
-      (v.startsWith("'") && v.endsWith("'"))
-    ) {
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
       v = v.slice(1, -1);
     }
     out.set(k, v);
