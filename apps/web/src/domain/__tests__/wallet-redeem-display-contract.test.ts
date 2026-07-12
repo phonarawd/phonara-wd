@@ -16,12 +16,13 @@ describe('wallet-redeem-display-contract', () => {
     expect(P11_PAGE_WALLET_REDEEM_TODO).toBe('p11-page-wallet-redeem');
   });
 
-  it('exposes three payment method cards reusing withdraw/deposit rails', () => {
+  it('exposes four payment method cards reusing withdraw/deposit/redeem rails', () => {
     assertWalletRedeemRailsSync();
     expect(WALLET_REDEEM_RAILS.map((rail) => rail.href)).toEqual([
       '/wallet/withdraw/krw',
       '/wallet/withdraw/crypto',
       '/wallet/deposit/giftcard',
+      '/wallet/redeem/giftcard',
     ]);
   });
 

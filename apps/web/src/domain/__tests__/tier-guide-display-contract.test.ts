@@ -20,7 +20,7 @@ describe('tier-guide-display-contract', () => {
 
   it('builds ladder rows with optional current highlight', () => {
     const guest = buildTierGuideRows(null);
-    expect(guest).toHaveLength(5);
+    expect(guest).toHaveLength(6);
     expect(guest.every((row) => !row.current)).toBe(true);
 
     const gold = buildTierGuideRows('gold');

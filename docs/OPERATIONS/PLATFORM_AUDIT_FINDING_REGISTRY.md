@@ -8,23 +8,23 @@
 
 ## Summary
 
-| 항목       | 값                                         |
-| ---------- | ------------------------------------------ |
-| Finding 수 | 36 (감사 34 + EXT 2)                       |
-| CRITICAL   | 4                                          |
-| HIGH       | 10                                         |
-| MEDIUM     | 22                                         |
-| CLOSED     | 0 (R1 C-01/C-02/H-01/M-01 = **VERIFYING**) |
+| 항목       | 값                                              |
+| ---------- | ----------------------------------------------- |
+| Finding 수 | 36 (감사 34 + EXT 2)                            |
+| CRITICAL   | 4                                               |
+| HIGH       | 10                                              |
+| MEDIUM     | 22                                              |
+| CLOSED     | 0 (R1 C-01/C-02/H-01/M-01 = **VERIFIED_FIXED**) |
 
 ## Registry
 
-| Finding | Severity | Score | Domain    | Stage | Status         | dod_profile | Symptom               | Fix                 | Evidence     | UpdatedAt                 |
-| ------- | -------- | ----- | --------- | ----- | -------------- | ----------- | --------------------- | ------------------- | ------------ | ------------------------- |
-| C-01    | CRITICAL | 21    | Marketing | R1    | VERIFYING      | ui-route    | 합성 social proof     | fail-closed hide    | R1 implement | 2026-07-13T03:10:00+09:00 |
-| C-02    | CRITICAL | 20    | Marketing | R1    | VERIFYING      | ui-route    | `/status` false-green | unknown badges      | R1 implement | 2026-07-13T03:10:00+09:00 |
-| H-01    | HIGH     | 18    | Marketing | R1    | VERIFYING      | ui-route    | 1 PHON = 1 KRW        | FiatHint omit       | R1 implement | 2026-07-13T03:10:00+09:00 |
-| M-01    | MEDIUM   | 14    | Earn      | R1    | VERIFYING      | ui-route    | P vs PHON             | landing PHON labels | R1 implement | 2026-07-13T03:10:00+09:00 |
-| M-18    | MEDIUM   | 14    | Ops       | R0    | VERIFIED_FIXED | ui-route    | Browser MCP 부재      | Probe5              | R0 probe     | 2026-07-13T01:52:00+09:00 |
+| Finding | Severity | Score | Domain    | Stage | Status         | dod_profile | Symptom               | Fix                 | Evidence    | UpdatedAt                 |
+| ------- | -------- | ----- | --------- | ----- | -------------- | ----------- | --------------------- | ------------------- | ----------- | ------------------------- |
+| C-01    | CRITICAL | 21    | Marketing | R1    | VERIFIED_FIXED | ui-route    | 합성 social proof     | fail-closed hide    | Stage1 PASS | 2026-07-13T02:35:00+09:00 |
+| C-02    | CRITICAL | 20    | Marketing | R1    | VERIFIED_FIXED | ui-route    | `/status` false-green | unknown badges      | Stage1 PASS | 2026-07-13T02:35:00+09:00 |
+| H-01    | HIGH     | 18    | Marketing | R1    | VERIFIED_FIXED | ui-route    | 1 PHON = 1 KRW        | FiatHint omit       | Stage1 PASS | 2026-07-13T02:35:00+09:00 |
+| M-01    | MEDIUM   | 14    | Earn      | R1    | VERIFIED_FIXED | ui-route    | P vs PHON             | landing PHON labels | Stage1 PASS | 2026-07-13T02:35:00+09:00 |
+| M-18    | MEDIUM   | 14    | Ops       | R0    | VERIFIED_FIXED | ui-route    | Browser MCP 부재      | Probe5              | R0 probe    | 2026-07-13T01:52:00+09:00 |
 
 > 전체 36행 상세 필드는 YAML 정본을 본다. 위 표는 R1 활성 Finding 요약이다.
 

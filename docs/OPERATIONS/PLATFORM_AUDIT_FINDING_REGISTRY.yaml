@@ -5,7 +5,7 @@ known_good_sha: '9c4bf29b40d31b2d2952bd6257f5690d691ecbc2'
 updated_at: '2026-07-13T03:10:00+09:00'
 source_audit: 'docs/audit/PLATFORM_AUDIT_REFERENCE.md'
 finding_count: 36
-notes: 'R1 Implement 2026-07-13. C-01/C-02/H-01/M-01 VERIFYING (vitest 26/26 · typecheck · i18n). Stage1 Browser = PREVIEW_SHA_MISMATCH on preview.phonara-web.pages.dev (still synthetic/+P/1:1 FX). M-18 VERIFIED_FIXED.'
+notes: 'R1 Stage1 PASS 2026-07-13. C-01/C-02/H-01/M-01 VERIFIED_FIXED (preview redeploy + DOM matrix 390/580/1455). Docs SHA b466e8fc. M-18 VERIFIED_FIXED.'
 findings:
   - id: 'C-01'
     severity: 'CRITICAL'
@@ -17,7 +17,7 @@ findings:
     score: 21
     domain: 'Marketing'
     stage: 'R1'
-    status: 'VERIFYING'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
@@ -56,7 +56,7 @@ findings:
     score: 20
     domain: 'Marketing'
     stage: 'R1'
-    status: 'VERIFYING'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
@@ -95,7 +95,7 @@ findings:
     score: 18
     domain: 'Marketing'
     stage: 'R1'
-    status: 'VERIFYING'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
@@ -424,7 +424,7 @@ findings:
     score: 14
     domain: 'Earn'
     stage: 'R1'
-    status: 'VERIFYING'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []

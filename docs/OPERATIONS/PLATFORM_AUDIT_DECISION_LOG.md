@@ -117,15 +117,15 @@
 | A        | Product Owner                                                                   |
 | Scope    | 동일 Finding 내 investigate→commit→push→PR→CI≤5 · migration/Domain/Release 제외 |
 
-## DL-R1-001 — Stage1 Browser = PREVIEW_SHA_MISMATCH
+## DL-R1-001 — Stage1 Browser PASS (after preview redeploy)
 
-| 항목       | 값                                                                                                                                                                                                             |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| When       | 2026-07-13                                                                                                                                                                                                     |
-| Decision   | Live preview still pre-R1 (synthetic stats · `+P` · 1:1 FX · title PrimeForge). Finding C-01/C-02/H-01/M-01 **VERIFYING 유지** · R2 Implement **blocked** until `deploy:pages:web:preview` + Stage1 re-capture |
-| A          | Runtime / Product                                                                                                                                                                                              |
-| Evidence   | [`R1/r1-stage1-browser.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R1/r1-stage1-browser.md)                                                                                                                          |
-| Intent SHA | `391646f6`                                                                                                                                                                                                     |
+| 항목       | 값                                                                                                                                                |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| When       | 2026-07-13                                                                                                                                        |
+| Decision   | `deploy:pages:web:preview` 후 Stage1 **PASS** · C-01/C-02/H-01/M-01 → **VERIFIED_FIXED** · NEXT=`audit-r2-capability-rails` Implement (H-03+H-11) |
+| A          | Runtime / Product                                                                                                                                 |
+| Evidence   | [`R1/r1-stage1-browser.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R1/r1-stage1-browser.md)                                                             |
+| Intent SHA | `391646f6` · Docs `b466e8fc` · Deploy `949b87ec.phonara-web.pages.dev`                                                                            |
 
 ## Concurrent signoff note (1인 겸임)
 
