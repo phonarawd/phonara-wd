@@ -87,6 +87,26 @@ describe('DepositHubPage', () => {
     );
   });
 
+  it('hides crypto and giftcard rails when controller fail-closes them (H-03 · H-11)', () => {
+    renderPage(
+      makeEngine({
+        rails: [
+          {
+            id: 'krw',
+            href: '/wallet/deposit/krw',
+            titleKey: 'wallet.deposit.rail.krw',
+            descriptionKey: 'wallet.deposit.rail.krw.desc',
+            metaKey: 'wallet.deposit.krw.sla',
+          },
+        ],
+      }),
+    );
+
+    expect(screen.getByTestId('deposit-rail-krw')).toBeInTheDocument();
+    expect(screen.queryByTestId('deposit-rail-crypto')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('deposit-rail-giftcard')).not.toBeInTheDocument();
+  });
+
   it('shows paused banner and disables rail navigation when deposit is blocked', () => {
     renderPage(makeEngine({ depositBlocked: true }));
 

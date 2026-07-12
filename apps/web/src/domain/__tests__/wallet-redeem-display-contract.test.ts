@@ -4,6 +4,7 @@ import {
   assertWalletRedeemRailsSync,
   P11_PAGE_WALLET_REDEEM_TODO,
   resolveRedeemRailDisabled,
+  resolveWalletRedeemRails,
   WALLET_REDEEM_LEGACY_REDIRECT_FROM,
   WALLET_REDEEM_RAILS,
   WALLET_REDEEM_ROUTE,
@@ -16,7 +17,7 @@ describe('wallet-redeem-display-contract', () => {
     expect(P11_PAGE_WALLET_REDEEM_TODO).toBe('p11-page-wallet-redeem');
   });
 
-  it('exposes four payment method cards reusing withdraw/deposit/redeem rails', () => {
+  it('keeps four-rail catalog and fail-closes crypto/giftcard until capability live', () => {
     assertWalletRedeemRailsSync();
     expect(WALLET_REDEEM_RAILS.map((rail) => rail.href)).toEqual([
       '/wallet/withdraw/krw',
@@ -24,6 +25,19 @@ describe('wallet-redeem-display-contract', () => {
       '/wallet/deposit/giftcard',
       '/wallet/redeem/giftcard',
     ]);
+    expect(resolveWalletRedeemRails().map((rail) => rail.id)).toEqual(['krw']);
+    expect(
+      resolveWalletRedeemRails({
+        cryptoRails: false,
+        giftcardMarketAvailable: true,
+      }).map((rail) => rail.id),
+    ).toEqual(['krw', 'giftcard', 'giftcard_out']);
+    expect(
+      resolveWalletRedeemRails({
+        cryptoRails: true,
+        giftcardMarketAvailable: true,
+      }).map((rail) => rail.id),
+    ).toEqual(['krw', 'crypto', 'giftcard', 'giftcard_out']);
   });
 
   it('disables withdraw rails when blocked or KYC not ready', () => {

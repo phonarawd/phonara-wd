@@ -90,9 +90,24 @@ export function isGiftcardRedeemReverseLive(): boolean {
   return LAUNCH_GATES.financialConnectivityEngine && LAUNCH_GATES.financialConnectivityLive;
 }
 
-export function resolveWalletRedeemRails(): readonly WalletRedeemRailView[] {
+export function resolveWalletRedeemRails(options?: {
+  cryptoRails?: boolean;
+  giftcardMarketAvailable?: boolean;
+}): readonly WalletRedeemRailView[] {
+  const cryptoRails = options?.cryptoRails ?? LAUNCH_GATES.cryptoRails;
+  /** Fail-closed: omit giftcard rails until caller confirms ≥1 enabled+fresh market. */
+  const giftcardMarketAvailable = options?.giftcardMarketAvailable ?? false;
+
   return WALLET_REDEEM_RAILS.filter((rail) => {
-    if (rail.id === 'giftcard_out') return isGiftcardRedeemReverseLive();
+    if (rail.id === 'giftcard_out') {
+      return isGiftcardRedeemReverseLive() && giftcardMarketAvailable;
+    }
+    if (rail.id === 'crypto') {
+      return rail.live && cryptoRails;
+    }
+    if (rail.id === 'giftcard') {
+      return rail.live && giftcardMarketAvailable;
+    }
     return rail.live;
   });
 }

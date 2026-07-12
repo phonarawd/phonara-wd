@@ -1,6 +1,10 @@
 import type { MessageKey } from '@phonara/i18n';
 import type { Currency } from '@phonara/shared-types';
 
+import {
+  isWithdrawRailCapabilityLive,
+  type WalletCapabilityRailsInput,
+} from '@/domain/wallet-capability-rails-display-contract';
 import type { MoneyStatusState } from '@/product/primitives/status-badge';
 
 import {
@@ -47,6 +51,13 @@ export const WITHDRAW_HUB_RAILS: readonly WithdrawHubRailView[] = [
     metaKey: 'wallet.withdraw.rail.crypto.meta',
   },
 ] as const;
+
+/** H-03 — omit crypto withdraw rail while `cryptoRails` is false. */
+export function resolveWithdrawHubRails(
+  input: Pick<WalletCapabilityRailsInput, 'cryptoRails'>,
+): readonly WithdrawHubRailView[] {
+  return WITHDRAW_HUB_RAILS.filter((rail) => isWithdrawRailCapabilityLive(rail.id, input));
+}
 
 const METHOD_LABEL: Record<WithdrawRail, MessageKey> = {
   krw: 'wallet.tx.method.krw',

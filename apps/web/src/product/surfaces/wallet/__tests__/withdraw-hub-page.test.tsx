@@ -78,6 +78,25 @@ describe('WithdrawHubPage', () => {
     );
   });
 
+  it('hides crypto rail when controller fail-closes it (H-03)', () => {
+    renderPage(
+      makeEngine({
+        rails: [
+          {
+            id: 'krw',
+            href: '/wallet/withdraw/krw',
+            titleKey: 'wallet.withdraw.rail.krw',
+            descriptionKey: 'wallet.withdraw.rail.krw.desc',
+            metaKey: 'wallet.withdraw.rail.krw.meta',
+          },
+        ],
+      }),
+    );
+
+    expect(screen.getByTestId('withdraw-rail-krw')).toBeInTheDocument();
+    expect(screen.queryByTestId('withdraw-rail-crypto')).not.toBeInTheDocument();
+  });
+
   it('shows paused banner and disables rail navigation when withdrawal is blocked', () => {
     renderPage(makeEngine({ withdrawalBlocked: true, railsDisabled: true }));
 

@@ -3,16 +3,24 @@ import { describe, expect, it } from 'vitest';
 import {
   inferWithdrawRail,
   mergeWithdrawHistoryRows,
+  resolveWithdrawHubRails,
   withdrawStatusToMoneyState,
   WITHDRAW_HUB_RAILS,
 } from '../withdraw-hub-display';
 
 describe('withdraw-hub-display', () => {
-  it('exposes exactly two canonical withdraw rails', () => {
+  it('keeps a two-rail catalog and omits crypto while gate is false (H-03)', () => {
     expect(WITHDRAW_HUB_RAILS.map((rail) => rail.id)).toEqual(['krw', 'crypto']);
     expect(WITHDRAW_HUB_RAILS.map((rail) => rail.href)).toEqual([
       '/wallet/withdraw/krw',
       '/wallet/withdraw/crypto',
+    ]);
+    expect(resolveWithdrawHubRails({ cryptoRails: false }).map((rail) => rail.id)).toEqual([
+      'krw',
+    ]);
+    expect(resolveWithdrawHubRails({ cryptoRails: true }).map((rail) => rail.id)).toEqual([
+      'krw',
+      'crypto',
     ]);
   });
 

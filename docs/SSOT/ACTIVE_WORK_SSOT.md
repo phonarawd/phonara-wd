@@ -13,27 +13,49 @@
 | **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                                    |
 | **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                                       |
 | **Cursor 8GB perf (v4.4.5)**  | **`[x]` DONE**                               | `cursor:perf-rollout` diagnosis-first · `high-remediation` dry-run 기본 · evidence JSONL · summary remediation assert · tsserver/argv **옵트인** (`--include-tsserver-tuning`)                                                                                 |
-| **Platform Perfect Launch**   | **R1 `[x]` DONE** · NEXT R2-a (H-03+H-11)    | Plan `platform-perfect-launch` · C-01/C-02/H-01/M-01 **VERIFIED_FIXED** · Stage1 PASS · preview redeployed · R2 Investigate DONE · Implement NEXT                                                                                                              |
+| **Platform Perfect Launch**   | **Plan 3/19 completed** · **NEXT audit-r2b** | Plan `platform-perfect-launch` — **todo id = 착수 단위** · Handoff [`PLATFORM_AUDIT_TODO_HANDOFF.md`](../OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md) · 채팅 `Implement <todo-id>` |
 
 ## Platform Perfect Launch Remediation (Plan `platform-perfect-launch` · execute SSOT)
 
-> **감사 정본(참고):** [`PLATFORM_AUDIT_REFERENCE.md`](../audit/PLATFORM_AUDIT_REFERENCE.md) — 실행 큐 아님  
-> **통제 정본:** [`PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](../OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml) · [`PLATFORM_AUDIT_RACI.md`](../OPERATIONS/PLATFORM_AUDIT_RACI.md) · [`PLATFORM_PLAYBOOK_VERSION.yaml`](../OPERATIONS/PLATFORM_PLAYBOOK_VERSION.yaml)  
-> **Standing Grant:** [`PLATFORM_STANDING_GRANT.md`](../OPERATIONS/PLATFORM_STANDING_GRANT.md) · Decision Log [`PLATFORM_AUDIT_DECISION_LOG.md`](../OPERATIONS/PLATFORM_AUDIT_DECISION_LOG.md)  
-> **Known Good SHA (R0 baseline):** `9c4bf29b40d31b2d2952bd6257f5690d691ecbc2`  
-> **보고 언어:** Gate green = **출시 후보**까지 · 좋은 SOP ≠ 품질 증명 · Capability ≠ Correctness
+> **착수 정본 (1:1):** [`PLATFORM_AUDIT_TODO_HANDOFF.md`](../OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md) — **Plan todo id = Handoff id = 실행 단위**  
+> **Plan 파일:** `.cursor/plans/platform-perfect-launch_6982dfdf.plan.md` (Cursor 체크박스)  
+> **통제:** [`PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](../OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml) · Standing Grant [`PLATFORM_STANDING_GRANT.md`](../OPERATIONS/PLATFORM_STANDING_GRANT.md)  
+> **Release SHA (R1):** `391646f6f8ab6ae204d17f55ae59677036ca0728`
 
-| Todo                            | 상태                                        | 완료일         | 증거                                                                                                                                                                                                                                                                                                                           |
-| ------------------------------- | ------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **`audit-r0-control-plane`**    | **`[x]` DONE**                              | **2026-07-13** | Finding registry(+`dod_profile`) · ADR-021 · Evidence bucket **CREATED** · Playwright MCP Probe5 **CAPTURE_OK** · 1인 RACI · SLO **confirmed** · [`R0/control-plane-baseline.md`](../OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R0/control-plane-baseline.md)                                                                 |
-| **`audit-r1-trust-truth`**      | **`[x]` DONE**                              | **2026-07-13** | C-01/C-02/H-01/M-01 **VERIFIED_FIXED** · Stage1 PASS · preview redeploy · [`R1/r1-stage1-browser.md`](../OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R1/r1-stage1-browser.md) · implement [`R1/r1-trust-truth-implement.md`](../OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R1/r1-trust-truth-implement.md) · vitest **26/26** |
-| **`audit-r2-capability-rails`** | **`[ ]` NEXT Implement** (Investigate DONE) | **2026-07-13** | READ-ONLY [`R2/r2-capability-rails-investigate.md`](../OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2-capability-rails-investigate.md) · **R2-a = H-03+H-11** Crypto+Giftcard hub fail-closed                                                                                                                               |
+### Operator — 플랜에서 바로 시작
 
-**R0 Exit 메모:** Finding CLOSED **0** (M-18 **VERIFIED_FIXED** R0 tool availability) · SLO **confirmed** · M-18 Browser MCP **CAPTURE_OK** Probe 5 · bucket `platform-audit-evidence` **public=false**
+```text
+1. Cursor Plan에서 다음 pending todo 확인 (지금: audit-r2b-withdrawal-copy)
+2. 채팅: Implement audit-r2b-withdrawal-copy
+   (또는 Plan UI Assign / todo 체크 후 동일 문장)
+3. 에이전트: PLATFORM_AUDIT_TODO_HANDOFF.md 해당 절만 읽고 Implement
+4. 마감: Evidence · registry · Plan todo completed · 본 표 [x]
+```
 
-**Plan 승인:** **`[x]`** 2026-07-13 operator chat · Standing Grant 활성
+| Plan todo id | Finding | Plan | 실행 | Handoff |
+| --- | --- | --- | --- | --- |
+| `audit-r0-control-plane` | R0 통제 | completed | **`[x]`** | §audit-r0 |
+| `audit-r1-trust-truth` | C-01/C-02/H-01/M-01 | completed | **`[x]`** | §audit-r1 |
+| **`audit-r2a-crypto-giftcard`** | **H-03 · H-11** | completed | **`[x]` DONE** | §audit-r2a |
+| **`audit-r2b-withdrawal-copy`** | **H-10** | pending | **`[ ]` NEXT** | §audit-r2b |
+| `audit-r2c-sports-odds-freshness` | H-05 | pending | `[ ]` | §audit-r2c |
+| `audit-r2d-krw-proof-wire` | M-21 | pending | `[ ]` | §audit-r2d |
+| `audit-r3a-wallet-mutator-live-crash` | H-02 | pending | `[ ]` | §audit-r3a |
+| `audit-r3b-service-write-grants` | M-06 | pending | `[ ]` | §audit-r3b |
+| `audit-r3c-search-path-sweep` | M-05 | pending | `[ ]` | §audit-r3c |
+| `audit-r3d-siwe-analytics-ingress` | M-04 | pending | `[ ]` | §audit-r3d |
+| `audit-r3e-auth-hibp-feature-flag` | H-09 | pending | `[ ]` | §audit-r3e |
+| `audit-r4-market-ops` | H-04·M-20·관측 | pending | `[ ]` | §audit-r4 |
+| `audit-r5-admin-safety` | H-07·H-08·M-12… | pending | `[ ]` | §audit-r5 |
+| `audit-r6-product-consistency` | M-03…M-19 | pending | `[ ]` | §audit-r6 |
+| `audit-r7-type-ui-hygiene` | M-14·M-15·M-16 | pending | `[ ]` | §audit-r7 |
+| `audit-r8-deploy-parity` | H-06 | pending | `[ ]` | §audit-r8 |
+| `audit-r9-runtime-matrix` | M-18·124 URL | pending | `[ ]` | §audit-r9 |
+| `audit-r10-rollout-soak` | soak·rollback | pending | `[ ]` | §audit-r10 |
+| `audit-r11-closeout` | 3-Owner | pending | `[ ]` | §audit-r11 |
+| `audit-r12-post-release` | PPR·DR | pending | `[ ]` | §audit-r12 |
 
-**현재 NEXT (본 큐):** **`audit-r2-capability-rails` Implement (H-03 + H-11)** — Crypto/Giftcard hub fail-closed · CI sql는 브랜치 기존 red(별도 triage)
+**현재 NEXT:** **`audit-r2b-withdrawal-copy`** — 채팅 `Implement audit-r2b-withdrawal-copy`
 
 ## Cursor 8GB Performance Rollout (v4.4.5 · diagnosis-first · YAML `phase0-gate`)
 

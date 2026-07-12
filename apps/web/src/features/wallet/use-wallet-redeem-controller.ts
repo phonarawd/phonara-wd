@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import type { MessageKey } from '@phonara/i18n';
 
 import { useAuth } from '@/contexts/auth-context';
+import { hasAvailableGiftcardMarket } from '@/domain/wallet-capability-rails-display-contract';
 import {
   resolveRedeemRailDisabled,
   resolveWalletRedeemRails,
@@ -10,8 +11,10 @@ import {
 import { useComplianceStatus } from '@/hooks/use-compliance-status';
 import { usePlatformGates } from '@/hooks/use-platform-gates';
 import { useWallet } from '@/hooks/use-wallet';
+import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { useT } from '@/product/i18n';
 
+import { useGiftcardFeeMarket } from './use-giftcard-fee-market';
 import { usePhonBalanceBreakdown } from './use-phon-balance-breakdown';
 
 export type WalletRedeemRailCardView = WalletRedeemRailView & {
@@ -36,12 +39,17 @@ export function useWalletRedeemController(): WalletRedeemControllerView {
   const { breakdown, loading: breakdownLoading, error: breakdownError } = usePhonBalanceBreakdown();
   const { data: compliance, isLoading: complianceLoading } = useComplianceStatus();
   const { depositBlocked, withdrawalBlocked, loading: gatesLoading } = usePlatformGates();
+  const { data: feeMarket = [], isLoading: marketLoading } = useGiftcardFeeMarket();
 
   const withdrawalReady = Boolean(compliance?.withdrawal_ready);
+  const giftcardMarketAvailable = hasAvailableGiftcardMarket(feeMarket.length);
 
   const rails = useMemo(
     () =>
-      resolveWalletRedeemRails().map((rail) => ({
+      resolveWalletRedeemRails({
+        cryptoRails: LAUNCH_GATES.cryptoRails,
+        giftcardMarketAvailable,
+      }).map((rail) => ({
         ...rail,
         disabled: resolveRedeemRailDisabled({
           rail,
@@ -50,12 +58,18 @@ export function useWalletRedeemController(): WalletRedeemControllerView {
           depositBlocked,
         }),
       })),
-    [depositBlocked, withdrawalBlocked, withdrawalReady],
+    [depositBlocked, giftcardMarketAvailable, withdrawalBlocked, withdrawalReady],
   );
 
   return {
     t,
-    loading: authLoading || walletLoading || breakdownLoading || complianceLoading || gatesLoading,
+    loading:
+      authLoading ||
+      walletLoading ||
+      breakdownLoading ||
+      complianceLoading ||
+      gatesLoading ||
+      marketLoading,
     errorKey: walletError ?? breakdownError,
     phonAvailableDisplay: wallet?.phon_available ?? breakdown?.phon_available ?? '0',
     withdrawalBlocked,

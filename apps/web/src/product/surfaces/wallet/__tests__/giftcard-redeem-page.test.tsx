@@ -26,6 +26,9 @@ vi.mock('@tanstack/react-router', () => ({
       {children}
     </a>
   ),
+  Navigate: ({ to }: { to: string; replace?: boolean }) => (
+    <div data-testid="giftcard-redeem-redirect" data-to={to} />
+  ),
 }));
 
 function makeEngine(
@@ -36,6 +39,9 @@ function makeEngine(
     route: '/wallet/redeem/giftcard',
     live: true,
     loading: false,
+    marketEmpty: false,
+    giftcardMarketAvailable: true,
+    shouldRedirect: false,
     withdrawalBlocked: false,
     kinds: ['culture'],
     kind: null,
@@ -79,6 +85,22 @@ describe('GiftcardRedeemPage', () => {
     expect(screen.getByTestId('giftcard-redeem-page')).toBeInTheDocument();
     expect(screen.getByTestId('giftcard-redeem-back')).toHaveAttribute('href', '/wallet/redeem');
     expect(screen.getByTestId('giftcard-redeem-form-card')).toBeInTheDocument();
+  });
+
+  it('redirects to redeem hub when giftcard market is empty (H-11)', () => {
+    renderPage(
+      makeEngine({
+        marketEmpty: true,
+        giftcardMarketAvailable: false,
+        shouldRedirect: true,
+        kinds: [],
+      }),
+    );
+    expect(screen.getByTestId('giftcard-redeem-redirect')).toHaveAttribute(
+      'data-to',
+      '/wallet/redeem',
+    );
+    expect(screen.queryByTestId('giftcard-redeem-page')).not.toBeInTheDocument();
   });
 
   it('shows quote when preview is ready', () => {

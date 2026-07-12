@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, Navigate } from '@tanstack/react-router';
 import { Gift } from 'lucide-react';
 
+import { WALLET_REDEEM_HUB_ROUTE } from '@/domain/wallet-capability-rails-display-contract';
 import {
   WALLET_REDEEM_GIFTCARD_SEO_DESCRIPTION_KEY,
   WALLET_REDEEM_GIFTCARD_SEO_TITLE_KEY,
@@ -37,6 +38,10 @@ export function GiftcardRedeemPage() {
         <Skeleton className="h-40 w-full" />
       </div>
     );
+  }
+
+  if (engine.shouldRedirect || engine.marketEmpty) {
+    return <Navigate to={WALLET_REDEEM_HUB_ROUTE} replace />;
   }
 
   return (

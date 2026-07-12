@@ -4,6 +4,10 @@ import type { MessageKey } from '@phonara/i18n';
 
 import { useAuth } from '@/contexts/auth-context';
 import {
+  hasAvailableGiftcardMarket,
+  shouldRedirectGiftcardRedeemRoute,
+} from '@/domain/wallet-capability-rails-display-contract';
+import {
   isGiftcardRedeemReverseLive,
   WALLET_REDEEM_GIFTCARD_ROUTE,
 } from '@/domain/wallet-redeem-display-contract';
@@ -25,6 +29,9 @@ export type GiftcardRedeemControllerView = {
   route: typeof WALLET_REDEEM_GIFTCARD_ROUTE;
   live: boolean;
   loading: boolean;
+  marketEmpty: boolean;
+  giftcardMarketAvailable: boolean;
+  shouldRedirect: boolean;
   withdrawalBlocked: boolean;
   kinds: GiftcardKind[];
   kind: GiftcardKind | null;
@@ -76,12 +83,18 @@ export function useGiftcardRedeemController(): GiftcardRedeemControllerView {
     return out;
   }, [feeMarket]);
 
+  const giftcardMarketAvailable = hasAvailableGiftcardMarket(feeMarket.length);
+  const marketEmpty = !marketLoading && !giftcardMarketAvailable;
+  const shouldRedirect = !marketLoading && shouldRedirectGiftcardRedeemRoute(giftcardMarketAvailable);
+
   const setFaceValueKrw = useCallback((value: string) => {
     setFaceValueRaw(normalizeGiftcardFaceValueInput(value));
     setPreview(null);
   }, []);
 
-  const canLoadPreview = Boolean(live && kind && faceValueKrw && !withdrawalBlocked);
+  const canLoadPreview = Boolean(
+    live && giftcardMarketAvailable && kind && faceValueKrw && !withdrawalBlocked,
+  );
 
   const previewMutation = useMutation({
     mutationFn: async () => {
@@ -123,6 +136,9 @@ export function useGiftcardRedeemController(): GiftcardRedeemControllerView {
     route: WALLET_REDEEM_GIFTCARD_ROUTE,
     live,
     loading: authLoading || gatesLoading || marketLoading,
+    marketEmpty,
+    giftcardMarketAvailable,
+    shouldRedirect,
     withdrawalBlocked,
     kinds,
     kind,

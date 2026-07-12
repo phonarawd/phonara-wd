@@ -110,6 +110,31 @@ describe('WalletRedeemPage', () => {
     expect(screen.getByTestId('wallet-redeem-balance')).toBeInTheDocument();
   });
 
+  it('hides crypto and giftcard rails when controller fail-closes them (H-03 · H-11)', () => {
+    renderPage(
+      makeEngine({
+        rails: [
+          {
+            id: 'krw',
+            kind: 'withdraw',
+            href: '/wallet/withdraw/krw',
+            titleKey: 'wallet.redeem.rail.krw',
+            descriptionKey: 'wallet.redeem.rail.krw.desc',
+            metaKey: 'wallet.redeem.rail.krw.meta',
+            ctaKey: 'wallet.redeem.rail.cta.withdraw',
+            live: true,
+            disabled: false,
+          },
+        ],
+      }),
+    );
+
+    expect(screen.getByTestId('wallet-redeem-rail-krw')).toBeInTheDocument();
+    expect(screen.queryByTestId('wallet-redeem-rail-crypto')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('wallet-redeem-rail-giftcard')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('wallet-redeem-rail-giftcard_out')).not.toBeInTheDocument();
+  });
+
   it('disables withdraw rails and shows KYC lock when withdrawal is not ready', () => {
     renderPage(
       makeEngine({

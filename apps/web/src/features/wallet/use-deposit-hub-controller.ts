@@ -7,15 +7,18 @@ import {
 } from '@phonara/shared-types';
 
 import { useAuth } from '@/contexts/auth-context';
+import { hasAvailableGiftcardMarket } from '@/domain/wallet-capability-rails-display-contract';
 import { usePlatformGates } from '@/hooks/use-platform-gates';
+import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { supabase } from '@/lib/supabase';
 
 import {
-  DEPOSIT_HUB_RAILS,
   mergeDepositHistoryRows,
+  resolveDepositHubRails,
   type DepositHistoryRowView,
   type DepositHubRailView,
 } from './deposit-hub-display';
+import { useGiftcardFeeMarket } from './use-giftcard-fee-market';
 import type {
   CryptoDepositRequest,
   DepositRequest,
@@ -71,6 +74,7 @@ export function useDepositHubController(activeTab: DepositHubTab): DepositHubCon
   const { session, loading: authLoading } = useAuth();
   const userId = session?.user.id ?? null;
   const { depositBlocked, loading: gatesLoading } = usePlatformGates();
+  const { data: feeMarket = [], isLoading: marketLoading } = useGiftcardFeeMarket();
 
   const { data: historyRows = [], isLoading: historyLoading } = useQuery({
     queryKey: ['deposit-hub-history', userId],
@@ -79,10 +83,19 @@ export function useDepositHubController(activeTab: DepositHubTab): DepositHubCon
     staleTime: 30_000,
   });
 
-  const rails = useMemo(() => DEPOSIT_HUB_RAILS, []);
+  const giftcardMarketAvailable = hasAvailableGiftcardMarket(feeMarket.length);
+
+  const rails = useMemo(
+    () =>
+      resolveDepositHubRails({
+        cryptoRails: LAUNCH_GATES.cryptoRails,
+        giftcardMarketAvailable,
+      }),
+    [giftcardMarketAvailable],
+  );
 
   return {
-    loading: authLoading || gatesLoading,
+    loading: authLoading || gatesLoading || marketLoading,
     depositBlocked,
     rails,
     historyRows,
