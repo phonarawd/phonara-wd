@@ -5,6 +5,7 @@ import {
   shouldShowSportsCashoutCard,
   SPORTS_LAUNCH_GATE_DEFAULTS,
 } from '@/domain/sports-cashout-combo-display-contract';
+import { shouldBlockSportsCashoutNetworkMutation } from '@/domain/sports-odds-freshness-display-contract';
 import { EW_E22_PARTIAL_CASHOUT_PERCENT_PRESETS } from '@/domain/ew-e22-ui-sports-parity-unlocks-display-contract';
 import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { sportsPartialCashoutPortionFromPercent } from '@/features/sports/sports-slip-display';
@@ -28,6 +29,11 @@ type SportsCashoutCardProps = {
   t: (key: MessageKey, params?: Record<string, string | number>) => string;
   sportsCashoutGate?: boolean;
   sportsParityLive?: boolean;
+  /**
+   * H-05 — fail-closed default false until ingest health is green.
+   * Parent must pass true only after fresh odds attestation.
+   */
+  oddsIngestHealthGreen?: boolean;
 };
 
 /**
@@ -42,6 +48,7 @@ export function SportsCashoutCard({
   t,
   sportsCashoutGate = SPORTS_LAUNCH_GATE_DEFAULTS.sportsCashout,
   sportsParityLive = LAUNCH_GATES.sportsParityLive,
+  oddsIngestHealthGreen = false,
 }: SportsCashoutCardProps) {
   const status =
     betStatus === 'won' ||
@@ -52,6 +59,10 @@ export function SportsCashoutCard({
       : 'pending';
 
   const visible = shouldShowSportsCashoutCard(status, sportsCashoutGate);
+  const cashoutMutationBlocked = shouldBlockSportsCashoutNetworkMutation({
+    sportsCashoutGate,
+    ingestHealthGreen: oddsIngestHealthGreen,
+  });
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [partialConfirmOpen, setPartialConfirmOpen] = useState(false);
   const [portionPercent, setPortionPercent] =
@@ -78,7 +89,7 @@ export function SportsCashoutCard({
   const partialBusy = partialCashout.isPending || partialPreview.isFetching;
 
   const onConfirmFull = () => {
-    if (!offer) return;
+    if (!offer || cashoutMutationBlocked) return;
     void (async () => {
       try {
         await cashout.mutateAsync({
@@ -95,7 +106,7 @@ export function SportsCashoutCard({
   };
 
   const onConfirmPartial = () => {
-    if (!stakePortion || !partialOffer) return;
+    if (!stakePortion || !partialOffer || cashoutMutationBlocked) return;
     void (async () => {
       try {
         await partialCashout.mutateAsync({
@@ -128,7 +139,7 @@ export function SportsCashoutCard({
         type="button"
         size="sm"
         variant="secondary"
-        disabled={!offer || busy}
+        disabled={!offer || busy || cashoutMutationBlocked}
         data-testid="sports-cashout-cta"
         onClick={() => setConfirmOpen(true)}
       >
@@ -187,7 +198,7 @@ export function SportsCashoutCard({
             type="button"
             size="sm"
             variant="outline"
-            disabled={!stakePortion || !partialOffer || partialBusy}
+            disabled={!stakePortion || !partialOffer || partialBusy || cashoutMutationBlocked}
             data-testid="sports-partial-cashout-cta"
             onClick={() => setPartialConfirmOpen(true)}
           >

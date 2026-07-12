@@ -9098,6 +9098,7 @@ export type Database = {
         Returns: Json
       }
       rpc_get_ops_health: { Args: never; Returns: Json }
+      rpc_get_public_platform_status: { Args: never; Returns: Json }
       rpc_get_phon_balance_breakdown: { Args: never; Returns: Json }
       rpc_get_position_mode: { Args: never; Returns: Json }
       rpc_get_repeatable_mission_status: {
@@ -9507,6 +9508,10 @@ export type Database = {
         Returns: Json
       }
       rpc_resume_market: {
+        Args: { p_reason: string; p_symbol: string }
+        Returns: Json
+      }
+      rpc_admin_rebase_resume_market: {
         Args: { p_reason: string; p_symbol: string }
         Returns: Json
       }

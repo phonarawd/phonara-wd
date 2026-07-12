@@ -10,9 +10,8 @@ import {
   EW_E23_LIVE_CRASH_PLACE_RPC,
 } from '@/domain/ew-e23-casino-live-display-contract';
 import { LAUNCH_GATES } from '@/lib/launch-gates';
+import { callRpc } from '@/lib/rpc';
 import { useAuth } from '@/contexts/auth-context';
-
-import { casinoLiveRpc } from './casino-live-rpc';
 
 export type LiveCrashRound = {
   id: string;
@@ -56,7 +55,7 @@ export function useLiveCrashCurrent(enabled = true) {
   return useQuery({
     queryKey: ['casino', 'live-crash', 'current'],
     enabled: live && enabled,
-    queryFn: async () => casinoLiveRpc<LiveCrashCurrent>(EW_E23_LIVE_CRASH_GET_RPC),
+    queryFn: async () => (await callRpc(EW_E23_LIVE_CRASH_GET_RPC)) as LiveCrashCurrent,
     staleTime: 1_000,
     refetchInterval: (query) => {
       const status = query.state.data?.round?.status;
@@ -81,14 +80,14 @@ export function useLiveCrashPlaceBet() {
     }) => {
       assertLive();
       if (!session?.user) throw new Error('UNAUTHENTICATED');
-      return casinoLiveRpc<LiveCrashBetResult>(EW_E23_LIVE_CRASH_PLACE_RPC, {
+      return (await callRpc(EW_E23_LIVE_CRASH_PLACE_RPC, {
         p_currency: input.currency,
         p_stake: input.stake,
         p_auto_cashout: input.autoCashout,
         p_client_seed: input.clientSeed,
         p_idempotency_key: input.idempotencyKey,
         p_use_account_pf: input.useAccountPf ?? false,
-      });
+      })) as LiveCrashBetResult;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['casino', 'live-crash'] });
@@ -105,10 +104,10 @@ export function useLiveCrashCashout() {
     mutationFn: async (input: { betId: string; idempotencyKey: string }) => {
       assertLive();
       if (!session?.user) throw new Error('UNAUTHENTICATED');
-      return casinoLiveRpc<LiveCrashBetResult>(EW_E23_LIVE_CRASH_CASHOUT_RPC, {
+      return (await callRpc(EW_E23_LIVE_CRASH_CASHOUT_RPC, {
         p_bet_id: input.betId,
         p_idempotency_key: input.idempotencyKey,
-      });
+      })) as LiveCrashBetResult;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['casino', 'live-crash'] });

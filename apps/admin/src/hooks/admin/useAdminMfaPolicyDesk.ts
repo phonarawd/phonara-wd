@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Json } from '@phonara/shared-types';
 import type { AdminAuditEvent } from '@/shared-types';
 
-import { supabase } from '../../lib/supabase';
+import { callRpc } from '../../lib/rpc';
 import { useAuditLogs } from '../use-audit-logs';
 import { useAdminMfaReady } from '../use-admin-mfa-ready';
 
@@ -122,10 +122,7 @@ export function useAdminMfaPolicyDesk(): UseAdminMfaPolicyDesk {
   const policiesQuery = useQuery({
     queryKey: ['admin', 'mfa-policy', 'list'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc(
-        'rpc_admin_list_mfa_policy' as 'rpc_admin_list_casino_catalog',
-      );
-      if (error) throw error;
+      const data = await callRpc('rpc_admin_list_mfa_policy');
       return isRecord(data) && Array.isArray(data['policies']) ? (data['policies'] as Json[]) : [];
     },
     enabled: mfaReady,
@@ -162,17 +159,13 @@ export function useAdminMfaPolicyDesk(): UseAdminMfaPolicyDesk {
       enrollRate: number;
       reason: string;
     }) => {
-      const { error } = await supabase.rpc(
-        'rpc_admin_set_mfa_policy' as 'rpc_admin_set_casino_game_status',
-        {
-          p_tier_key: args.tierKey,
-          p_mfa_required: args.mfaRequired,
-          p_grace_days: args.graceDays,
-          p_enroll_rate: args.enrollRate,
-          p_reason: args.reason,
-        } as never,
-      );
-      if (error) throw error;
+      await callRpc('rpc_admin_set_mfa_policy', {
+        p_tier_key: args.tierKey,
+        p_mfa_required: args.mfaRequired,
+        p_grace_days: args.graceDays,
+        p_enroll_rate: args.enrollRate,
+        p_reason: args.reason,
+      });
     },
     onSuccess: invalidate,
   });

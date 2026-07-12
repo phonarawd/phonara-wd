@@ -11,7 +11,10 @@ import {
   resolveSpotOrderSubmitDisabled,
   resolveSubmitDisabledReason,
 } from '@/domain/trade-submit-display-contract';
-import { formatMoney } from '@/hooks/use-money';
+import {
+  formatSpotBaseQuantityDisplay,
+  resolveSpotBaseQuantityPrecision,
+} from '@/domain/spot-base-quantity-display-contract';
 import { isPositiveAmount } from '@/lib/money-display';
 import { toDecimal } from '@phonara/money';
 import type { Currency } from '@phonara/shared-types';
@@ -42,10 +45,12 @@ function isWalletCurrency(asset: string): asset is Currency {
 function SpotAmountDisplay({
   amount,
   asset,
+  quantityPrecision,
   className,
 }: {
   amount: string;
   asset: string;
+  quantityPrecision: number | null;
   className?: string;
 }) {
   if (isWalletCurrency(asset)) {
@@ -62,8 +67,11 @@ function SpotAmountDisplay({
     return <MoneyDisplay amount={amount} currency={asset} showCurrency className={className} />;
   }
   return (
-    <span className={cn('text-foreground text-sm font-medium tabular-nums', className)}>
-      {formatMoney(amount, 'USDT', { grouping: true, showCurrency: false })}{' '}
+    <span
+      className={cn('text-foreground text-sm font-medium tabular-nums', className)}
+      data-testid="spot-base-quantity"
+    >
+      {formatSpotBaseQuantityDisplay(amount, quantityPrecision)}{' '}
       <span className="text-foreground-muted">{asset}</span>
     </span>
   );
@@ -102,8 +110,11 @@ export function SpotOrderTicket({
     orderPricesReady,
     spotCapabilities,
     houseCounterpartyAck,
+    quantityPrecision,
     t,
   } = wire;
+
+  const baseQuantityPrecision = quantityPrecision ?? resolveSpotBaseQuantityPrecision(null);
 
   const insufficientAvail = useMemo(() => {
     if (!isPositiveAmount(amount)) return false;
@@ -298,6 +309,7 @@ export function SpotOrderTicket({
               <SpotAmountDisplay
                 amount={availBalance.amount}
                 asset={availBalance.currency}
+                quantityPrecision={baseQuantityPrecision}
                 className="text-foreground text-sm font-medium"
               />
             </dd>
@@ -309,6 +321,7 @@ export function SpotOrderTicket({
                 <SpotAmountDisplay
                   amount={estimate}
                   asset={estimateCurrency}
+                  quantityPrecision={baseQuantityPrecision}
                   className="text-foreground text-sm font-medium"
                 />
               ) : (
@@ -323,6 +336,7 @@ export function SpotOrderTicket({
                 <SpotAmountDisplay
                   amount={estimateFee}
                   asset={estimateFeeCurrency}
+                  quantityPrecision={baseQuantityPrecision}
                   className="text-foreground text-sm font-medium"
                 />
               ) : (
@@ -365,7 +379,11 @@ export function SpotOrderTicket({
         ) : null}
       </div>
 
-      <SpotConfirmDialog wire={wire} amountCurrency={amountCurrency} />
+      <SpotConfirmDialog
+        wire={wire}
+        amountCurrency={amountCurrency}
+        quantityPrecision={baseQuantityPrecision}
+      />
     </Card>
   );
 }
@@ -373,9 +391,11 @@ export function SpotOrderTicket({
 function SpotConfirmDialog({
   wire,
   amountCurrency,
+  quantityPrecision,
 }: {
   wire: SpotDeskWire;
   amountCurrency: string;
+  quantityPrecision: number | null;
 }) {
   const {
     confirmOpen,
@@ -420,7 +440,11 @@ function SpotConfirmDialog({
           <div className="flex justify-between gap-3">
             <dt className="text-foreground-muted">{t('confirm.row.pay')}</dt>
             <dd className="text-foreground m-0 tabular-nums">
-              <SpotAmountDisplay amount={amount} asset={amountCurrency} />
+              <SpotAmountDisplay
+                amount={amount}
+                asset={amountCurrency}
+                quantityPrecision={quantityPrecision}
+              />
             </dd>
           </div>
           <TradeConfirmSettingsLink />

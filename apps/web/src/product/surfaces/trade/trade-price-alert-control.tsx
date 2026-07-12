@@ -127,7 +127,7 @@ export function TradePriceAlertControl({
         >
           <Bell className="size-4" aria-hidden />
           {activeForSymbol ? (
-            <span className="max-w-[8rem] truncate text-xs tabular-nums">
+            <span className="max-w-32 truncate text-xs tabular-nums">
               {t('notif.priceAlert.active', {
                 symbol,
                 direction: formatPriceAlertDirectionLabel(priceAlert!.direction, t),
@@ -145,6 +145,14 @@ export function TradePriceAlertControl({
           <DialogTitle>{t('notif.priceAlert.formTitle')}</DialogTitle>
           <DialogDescription>{t('notif.priceAlert.formDescription')}</DialogDescription>
         </DialogHeader>
+
+        <p
+          className="text-foreground-muted m-0 text-xs leading-relaxed"
+          data-testid="trade-price-alert-local-only"
+          role="note"
+        >
+          {t('notif.priceAlert.localOnly')}
+        </p>
 
         <div className="flex flex-col gap-4">
           {priceHint ? (

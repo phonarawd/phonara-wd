@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Json } from '@phonara/shared-types';
 import { callRpc } from '../../lib/rpc';
-import { supabase } from '../../lib/supabase';
 import { setFeatureEnabled } from '../../domain/ops';
 import { useAppConfig } from '../use-app-config';
 import type {
@@ -35,12 +34,8 @@ export { formatKrwGrouped } from '../../lib/admin-time';
 const MIN_REASON = 4;
 
 async function firstMarketIdForFixture(fixtureId: string): Promise<string | null> {
-  const { data: rawPayload, error } = await supabase.rpc(
-    'rpc_get_fixture_markets' as never,
-    { p_fixture_id: fixtureId } as never,
-  );
-  const payload = rawPayload as Json | null;
-  if (error || !isRecord(payload)) return null;
+  const payload = await callRpc('rpc_get_fixture_markets', { p_fixture_id: fixtureId });
+  if (!isRecord(payload)) return null;
   const marketsRaw = payload['markets'];
   if (!Array.isArray(marketsRaw) || marketsRaw.length === 0) return null;
   const first = marketsRaw[0];
@@ -259,13 +254,10 @@ export function useAdminSports(): AdminSportsState & AdminSportsActions {
       const marketId = await firstMarketIdForFixture(fixtureId);
       if (!marketId) return false;
       try {
-        await supabase.rpc(
-          'rpc_void_sports_market' as never,
-          {
-            p_market_id: marketId,
-            p_reason: reason.trim(),
-          } as never,
-        );
+        await callRpc('rpc_void_sports_market', {
+          p_market_id: marketId,
+          p_reason: reason.trim(),
+        });
         await invalidate();
         return true;
       } catch {
@@ -279,16 +271,11 @@ export function useAdminSports(): AdminSportsState & AdminSportsActions {
     async (userId: string, tier: SportsUserRiskTier, reason: string): Promise<boolean> => {
       if (reason.trim().length < MIN_REASON) return false;
       try {
-        await supabase.rpc(
-          'rpc_admin_set_sports_risk_tier' as never,
-          {
-            p_user_id: userId,
-            p_tier: tier,
-            p_reason: reason.trim(),
-            p_stake_multiplier: null,
-            p_live_delay_ms: null,
-          } as never,
-        );
+        await callRpc('rpc_admin_set_sports_risk_tier', {
+          p_user_id: userId,
+          p_tier: tier,
+          p_reason: reason.trim(),
+        });
         await invalidate();
         return true;
       } catch {

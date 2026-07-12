@@ -5,6 +5,7 @@ import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { RefreshCw } from 'lucide-react';
 
 import { useAdminTiersDesk } from '@/hooks/admin/useAdminTiersDesk';
+import { formatAdminMoney } from '@/lib/format-admin-money';
 import { useT } from '@/product/i18n';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
@@ -142,7 +143,7 @@ export function AdminTiersPage() {
                   {
                     id: 'phonPerTap',
                     header: t('admin.tiers.col.phonPerTap'),
-                    cell: ({ row }) => `${row.phonPerTap} PHON`,
+                    cell: ({ row }) => formatAdminMoney(row.phonPerTap, 'PHON'),
                     meta: { className: 'tabular-nums' },
                   },
                 ]}

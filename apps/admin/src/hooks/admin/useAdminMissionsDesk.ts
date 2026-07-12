@@ -11,7 +11,7 @@ import {
   parseMissionCatalogRows,
   type AdminMissionCatalogUpsertInput,
 } from '@/product/bridge/parse-admin-missions-config';
-import { supabase } from '../../lib/supabase';
+import { callRpc } from '../../lib/rpc';
 import type { UseAdminMissionsDesk } from './useAdminMissionsDeskMock';
 
 export type { UseAdminMissionsDesk } from './useAdminMissionsDeskMock';
@@ -26,10 +26,7 @@ export function useAdminMissionsDesk(): UseAdminMissionsDesk {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: QUERY_KEY,
     queryFn: async () => {
-      const { data: rows, error } = await supabase.rpc(
-        ADMIN_MISSION_CATALOG_LIST_RPC as 'rpc_admin_list_casino_catalog',
-      );
-      if (error) throw error;
+      const rows = await callRpc(ADMIN_MISSION_CATALOG_LIST_RPC);
       return parseMissionCatalogRows(rows);
     },
     staleTime: 15_000,
@@ -38,14 +35,9 @@ export function useAdminMissionsDesk(): UseAdminMissionsDesk {
 
   const upsertMutation = useMutation({
     mutationFn: async (input: AdminMissionCatalogUpsertInput) => {
-      const { data: result, error } = await supabase.rpc(
-        ADMIN_MISSION_CATALOG_UPSERT_RPC as 'rpc_admin_set_casino_game_status',
-        {
-          p_payload: buildMissionCatalogUpsertPayload(input),
-        } as never,
-      );
-      if (error) throw error;
-      return result;
+      return callRpc(ADMIN_MISSION_CATALOG_UPSERT_RPC, {
+        p_payload: buildMissionCatalogUpsertPayload(input),
+      });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEY });

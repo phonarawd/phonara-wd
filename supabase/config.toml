@@ -1,28 +1,29 @@
 project_id = "yocjhjsdwoijfdrehzoq"
 
-# Windows Hyper-V may reserve 54255–54354 (blocks default 54321–54324 on operator PC).
+# Windows Hyper-V excluded TCP ranges shift after reboot (operator PC).
+# Keep local ports outside the current reservation (2026-07-13: 54398–54597).
 [api]
 enabled = true
-port = 54521
+port = 54621
 schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
 [db]
-port = 54400
-shadow_port = 54401
+port = 54600
+shadow_port = 54601
 # Matches the linked production project (yocjhjsdwoijfdrehzoq runs PostgreSQL 17),
 # so local `db reset` and SQL tests run on the same engine as prod.
 major_version = 17
 
 [studio]
 enabled = true
-port = 54523
+port = 54623
 
 [inbucket]
-# Catch signup/reset/magic-link emails locally in Mailpit (http://127.0.0.1:54524).
+# Catch signup/reset/magic-link emails locally in Mailpit (http://127.0.0.1:54624).
 enabled = true
-port = 54524
+port = 54624
 
 [auth]
 enabled = true
@@ -149,4 +150,8 @@ verify_jwt = true
 
 [functions.siwe-auth]
 # Public wallet-login entry: signature verified in-function; JWT optional.
+verify_jwt = false
+
+[functions.product-analytics]
+# Public analytics ingress: HMAC(IP) dual-bucket in RPC; JWT optional.
 verify_jwt = false

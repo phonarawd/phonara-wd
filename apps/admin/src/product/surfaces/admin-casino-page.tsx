@@ -14,8 +14,14 @@ type Target = { row: AdminCasinoGameRow; status: 'live' | 'maintenance' | 'disab
 /** E6 casino desk (`/casino`) — catalog status and RTP reviews. */
 export function AdminCasinoPage() {
   const t = useT();
-  const { filteredCatalog, filteredRtpReviews, setGameStatus, ackRtpReview, resolveRtpReview } =
-    useAdminCasinoDesk();
+  const {
+    filteredCatalog,
+    filteredRtpReviews,
+    setGameStatus,
+    ackRtpReview,
+    resolveRtpReview,
+    refresh,
+  } = useAdminCasinoDesk();
   const [target, setTarget] = useState<Target | null>(null);
 
   const submitStatus = async (reason: string) => {
@@ -73,7 +79,7 @@ export function AdminCasinoPage() {
                 title={t('admin.overview.empty.title')}
                 description={t('admin.casino.catalog.empty')}
                 actionLabel={t('admin.overview.action.refresh')}
-                onAction={() => undefined}
+                onAction={() => void refresh()}
               />
             }
             rowActionsHeader={t('admin.casino.catalog.col.action')}
@@ -126,7 +132,7 @@ export function AdminCasinoPage() {
                 title={t('admin.overview.empty.title')}
                 description={t('admin.casino.rtp.empty')}
                 actionLabel={t('admin.overview.action.refresh')}
-                onAction={() => undefined}
+                onAction={() => void refresh()}
               />
             }
             rowActionsHeader={t('admin.casino.rtp.col.action')}

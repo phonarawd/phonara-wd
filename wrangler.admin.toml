@@ -5,3 +5,6 @@ compatibility_date = "2024-12-01"
 pages_build_output_dir = "apps/admin/dist"
 
 # Build command: bun install && bun run build:packages && bun --filter @phonara/admin build
+# Security headers: apps/admin/public/_headers (CSP · HSTS · frame-ancestors · nosniff)
+# Deploy: bun run deploy:pages:admin[:preview] → scripts/deploy-pages.ts (--commit-dirty=false)
+# Release manifest: apps/admin/dist/release-manifest.json (H-06)

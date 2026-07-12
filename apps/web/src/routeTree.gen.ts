@@ -8,839 +8,840 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root';
-import { Route as WalletRouteImport } from './routes/wallet';
-import { Route as VerifyEmailRouteImport } from './routes/verify-email';
-import { Route as TradeRouteImport } from './routes/trade';
-import { Route as StatusRouteImport } from './routes/status';
-import { Route as StakingRouteImport } from './routes/staking';
-import { Route as SportsRouteImport } from './routes/sports';
-import { Route as SignupRouteImport } from './routes/signup';
-import { Route as SettingsRouteImport } from './routes/settings';
-import { Route as SecurityRouteImport } from './routes/security';
-import { Route as ResetPasswordRouteImport } from './routes/reset-password';
-import { Route as ReferralRouteImport } from './routes/referral';
-import { Route as OnboardingRouteImport } from './routes/onboarding';
-import { Route as NotificationsRouteImport } from './routes/notifications';
-import { Route as LoginRouteImport } from './routes/login';
-import { Route as LedgerRouteImport } from './routes/ledger';
-import { Route as InstallRouteImport } from './routes/install';
-import { Route as HomeRouteImport } from './routes/home';
-import { Route as FeesRouteImport } from './routes/fees';
-import { Route as FeedbackRouteImport } from './routes/feedback';
-import { Route as EventsRouteImport } from './routes/events';
-import { Route as CasinoRouteImport } from './routes/casino';
-import { Route as AnnouncementsRouteImport } from './routes/announcements';
-import { Route as IndexRouteImport } from './routes/index';
-import { Route as WalletIndexRouteImport } from './routes/wallet.index';
-import { Route as TradeIndexRouteImport } from './routes/trade.index';
-import { Route as TierIndexRouteImport } from './routes/tier.index';
-import { Route as SupportIndexRouteImport } from './routes/support.index';
-import { Route as SportsIndexRouteImport } from './routes/sports.index';
-import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index';
-import { Route as FeaturesIndexRouteImport } from './routes/features.index';
-import { Route as CasinoIndexRouteImport } from './routes/casino.index';
-import { Route as AccountIndexRouteImport } from './routes/account.index';
-import { Route as WalletWithdrawRouteImport } from './routes/wallet.withdraw';
-import { Route as WalletTransferRouteImport } from './routes/wallet.transfer';
-import { Route as WalletRedeemRouteImport } from './routes/wallet.redeem';
-import { Route as WalletDepositRouteImport } from './routes/wallet.deposit';
-import { Route as TradePositionsRouteImport } from './routes/trade.positions';
-import { Route as TradeOrdersRouteImport } from './routes/trade.orders';
-import { Route as TradeFuturesRouteImport } from './routes/trade.futures';
-import { Route as TierMeRouteImport } from './routes/tier.me';
-import { Route as TierLeaderboardRouteImport } from './routes/tier.leaderboard';
-import { Route as TierBenefitsRouteImport } from './routes/tier.benefits';
-import { Route as SupportTicketRouteImport } from './routes/support.ticket';
-import { Route as SupportFaqRouteImport } from './routes/support.faq';
-import { Route as StakingPositionsRouteImport } from './routes/staking.positions';
-import { Route as SportsVipRouteImport } from './routes/sports.vip';
-import { Route as SportsRulesRouteImport } from './routes/sports.rules';
-import { Route as SportsPrematchRouteImport } from './routes/sports.prematch';
-import { Route as SportsMyBetsRouteImport } from './routes/sports.my-bets';
-import { Route as SportsLiveRouteImport } from './routes/sports.live';
-import { Route as ShareEarningsRouteImport } from './routes/share.earnings';
-import { Route as SettingsSecurityRouteImport } from './routes/settings.security';
-import { Route as SettingsReferralRouteImport } from './routes/settings.referral';
-import { Route as SettingsPreferencesRouteImport } from './routes/settings.preferences';
-import { Route as SettingsNotificationsRouteImport } from './routes/settings.notifications';
-import { Route as SettingsBankAccountsRouteImport } from './routes/settings.bank-accounts';
-import { Route as SettingsApiKeysRouteImport } from './routes/settings.api-keys';
-import { Route as SettingsAccountRouteImport } from './routes/settings.account';
-import { Route as RewardsHistoryRouteImport } from './routes/rewards.history';
-import { Route as ReferralLeaderboardRouteImport } from './routes/referral.leaderboard';
-import { Route as ReferralInviteRouteImport } from './routes/referral.invite';
-import { Route as RCodeRouteImport } from './routes/r/$code';
-import { Route as OnboardingMissionsRouteImport } from './routes/onboarding.missions';
-import { Route as LegalTermsRouteImport } from './routes/legal/terms';
-import { Route as LegalRiskDisclosureRouteImport } from './routes/legal/risk-disclosure';
-import { Route as LegalResponsibleGamingRouteImport } from './routes/legal/responsible-gaming';
-import { Route as LegalPrivacyRouteImport } from './routes/legal/privacy';
-import { Route as LegalCookiesRouteImport } from './routes/legal/cookies';
-import { Route as LegalAffiliateRouteImport } from './routes/legal/affiliate';
-import { Route as HomeMissionsRouteImport } from './routes/home.missions';
-import { Route as HomeAttendanceRouteImport } from './routes/home.attendance';
-import { Route as GamesGameCodeRouteImport } from './routes/games.$gameCode';
-import { Route as FeaturesVipRouteImport } from './routes/features.vip';
-import { Route as FeaturesEarnRouteImport } from './routes/features.earn';
-import { Route as EarnPlayRouteImport } from './routes/earn.play';
-import { Route as EarnCashbackRouteImport } from './routes/earn.cashback';
-import { Route as CasinoFairnessRouteImport } from './routes/casino.fairness';
-import { Route as AuthCallbackRouteImport } from './routes/auth/callback';
-import { Route as AccountResponsibleGamingRouteImport } from './routes/account.responsible-gaming';
-import { Route as AccountProfileRouteImport } from './routes/account.profile';
-import { Route as AccountKycRouteImport } from './routes/account.kyc';
-import { Route as WalletWithdrawIndexRouteImport } from './routes/wallet.withdraw.index';
-import { Route as WalletDepositIndexRouteImport } from './routes/wallet.deposit.index';
-import { Route as WalletWithdrawKrwRouteImport } from './routes/wallet.withdraw.krw';
-import { Route as WalletWithdrawCryptoRouteImport } from './routes/wallet.withdraw.crypto';
-import { Route as WalletRedeemGiftcardRouteImport } from './routes/wallet.redeem.giftcard';
-import { Route as WalletDepositKrwRouteImport } from './routes/wallet.deposit.krw';
-import { Route as WalletDepositGiftcardRouteImport } from './routes/wallet.deposit.giftcard';
-import { Route as WalletDepositCryptoRouteImport } from './routes/wallet.deposit.crypto';
-import { Route as SportsFixtureFixtureIdRouteImport } from './routes/sports.fixture.$fixtureId';
-import { Route as HomeMissionsReferralRouteImport } from './routes/home.missions.referral';
-import { Route as HomeMissionsInviteRouteImport } from './routes/home.missions.invite';
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
+import { Route as TradeRouteImport } from './routes/trade'
+import { Route as StatusRouteImport } from './routes/status'
+import { Route as StakingRouteImport } from './routes/staking'
+import { Route as SportsRouteImport } from './routes/sports'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SecurityRouteImport } from './routes/security'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ReferralRouteImport } from './routes/referral'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LedgerRouteImport } from './routes/ledger'
+import { Route as InstallRouteImport } from './routes/install'
+import { Route as HomeRouteImport } from './routes/home'
+import { Route as FeesRouteImport } from './routes/fees'
+import { Route as FeedbackRouteImport } from './routes/feedback'
+import { Route as EventsRouteImport } from './routes/events'
+import { Route as CasinoRouteImport } from './routes/casino'
+import { Route as AnnouncementsRouteImport } from './routes/announcements'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as WalletIndexRouteImport } from './routes/wallet.index'
+import { Route as TradeIndexRouteImport } from './routes/trade.index'
+import { Route as TierIndexRouteImport } from './routes/tier.index'
+import { Route as SupportIndexRouteImport } from './routes/support.index'
+import { Route as SportsIndexRouteImport } from './routes/sports.index'
+import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
+import { Route as FeaturesIndexRouteImport } from './routes/features.index'
+import { Route as CasinoIndexRouteImport } from './routes/casino.index'
+import { Route as AccountIndexRouteImport } from './routes/account.index'
+import { Route as WalletWithdrawRouteImport } from './routes/wallet.withdraw'
+import { Route as WalletTransferRouteImport } from './routes/wallet.transfer'
+import { Route as WalletRedeemRouteImport } from './routes/wallet.redeem'
+import { Route as WalletDepositRouteImport } from './routes/wallet.deposit'
+import { Route as TradePositionsRouteImport } from './routes/trade.positions'
+import { Route as TradeOrdersRouteImport } from './routes/trade.orders'
+import { Route as TradeFuturesRouteImport } from './routes/trade.futures'
+import { Route as TierMeRouteImport } from './routes/tier.me'
+import { Route as TierLeaderboardRouteImport } from './routes/tier.leaderboard'
+import { Route as TierBenefitsRouteImport } from './routes/tier.benefits'
+import { Route as SupportTicketRouteImport } from './routes/support.ticket'
+import { Route as SupportFaqRouteImport } from './routes/support.faq'
+import { Route as StakingPositionsRouteImport } from './routes/staking.positions'
+import { Route as SportsVipRouteImport } from './routes/sports.vip'
+import { Route as SportsRulesRouteImport } from './routes/sports.rules'
+import { Route as SportsPrematchRouteImport } from './routes/sports.prematch'
+import { Route as SportsMyBetsRouteImport } from './routes/sports.my-bets'
+import { Route as SportsLiveRouteImport } from './routes/sports.live'
+import { Route as ShareEarningsRouteImport } from './routes/share.earnings'
+import { Route as SettingsSecurityRouteImport } from './routes/settings.security'
+import { Route as SettingsReferralRouteImport } from './routes/settings.referral'
+import { Route as SettingsPreferencesRouteImport } from './routes/settings.preferences'
+import { Route as SettingsNotificationsRouteImport } from './routes/settings.notifications'
+import { Route as SettingsBankAccountsRouteImport } from './routes/settings.bank-accounts'
+import { Route as SettingsApiKeysRouteImport } from './routes/settings.api-keys'
+import { Route as SettingsAccountRouteImport } from './routes/settings.account'
+import { Route as RewardsHistoryRouteImport } from './routes/rewards.history'
+import { Route as ReferralLeaderboardRouteImport } from './routes/referral.leaderboard'
+import { Route as ReferralInviteRouteImport } from './routes/referral.invite'
+import { Route as RCodeRouteImport } from './routes/r/$code'
+import { Route as OnboardingMissionsRouteImport } from './routes/onboarding.missions'
+import { Route as LegalTermsRouteImport } from './routes/legal/terms'
+import { Route as LegalRiskDisclosureRouteImport } from './routes/legal/risk-disclosure'
+import { Route as LegalResponsibleGamingRouteImport } from './routes/legal/responsible-gaming'
+import { Route as LegalPrivacyRouteImport } from './routes/legal/privacy'
+import { Route as LegalCookiesRouteImport } from './routes/legal/cookies'
+import { Route as LegalAffiliateRouteImport } from './routes/legal/affiliate'
+import { Route as HomeMissionsRouteImport } from './routes/home.missions'
+import { Route as HomeAttendanceRouteImport } from './routes/home.attendance'
+import { Route as GamesGameCodeRouteImport } from './routes/games.$gameCode'
+import { Route as FeaturesVipRouteImport } from './routes/features.vip'
+import { Route as FeaturesEarnRouteImport } from './routes/features.earn'
+import { Route as EarnPlayRouteImport } from './routes/earn.play'
+import { Route as EarnCashbackRouteImport } from './routes/earn.cashback'
+import { Route as CasinoFairnessRouteImport } from './routes/casino.fairness'
+import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
+import { Route as AccountResponsibleGamingRouteImport } from './routes/account.responsible-gaming'
+import { Route as AccountProfileRouteImport } from './routes/account.profile'
+import { Route as AccountKycRouteImport } from './routes/account.kyc'
+import { Route as WalletWithdrawIndexRouteImport } from './routes/wallet.withdraw.index'
+import { Route as WalletDepositIndexRouteImport } from './routes/wallet.deposit.index'
+import { Route as WalletWithdrawKrwRouteImport } from './routes/wallet.withdraw.krw'
+import { Route as WalletWithdrawCryptoRouteImport } from './routes/wallet.withdraw.crypto'
+import { Route as WalletRedeemGiftcardRouteImport } from './routes/wallet.redeem.giftcard'
+import { Route as WalletDepositKrwRouteImport } from './routes/wallet.deposit.krw'
+import { Route as WalletDepositGiftcardRouteImport } from './routes/wallet.deposit.giftcard'
+import { Route as WalletDepositCryptoRouteImport } from './routes/wallet.deposit.crypto'
+import { Route as SportsFixtureFixtureIdRouteImport } from './routes/sports.fixture.$fixtureId'
+import { Route as HomeMissionsReferralRouteImport } from './routes/home.missions.referral'
+import { Route as HomeMissionsInviteRouteImport } from './routes/home.missions.invite'
 
 const WalletRoute = WalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
   path: '/verify-email',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const TradeRoute = TradeRouteImport.update({
   id: '/trade',
   path: '/trade',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const StatusRoute = StatusRouteImport.update({
   id: '/status',
   path: '/status',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const StakingRoute = StakingRouteImport.update({
   id: '/staking',
   path: '/staking',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SportsRoute = SportsRouteImport.update({
   id: '/sports',
   path: '/sports',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SecurityRoute = SecurityRouteImport.update({
   id: '/security',
   path: '/security',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ReferralRoute = ReferralRouteImport.update({
   id: '/referral',
   path: '/referral',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LedgerRoute = LedgerRouteImport.update({
   id: '/ledger',
   path: '/ledger',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const InstallRoute = InstallRouteImport.update({
   id: '/install',
   path: '/install',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const FeesRoute = FeesRouteImport.update({
   id: '/fees',
   path: '/fees',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const FeedbackRoute = FeedbackRouteImport.update({
   id: '/feedback',
   path: '/feedback',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const CasinoRoute = CasinoRouteImport.update({
   id: '/casino',
   path: '/casino',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AnnouncementsRoute = AnnouncementsRouteImport.update({
   id: '/announcements',
   path: '/announcements',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const WalletIndexRoute = WalletIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => WalletRoute,
-} as any);
+} as any)
 const TradeIndexRoute = TradeIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TradeRoute,
-} as any);
+} as any)
 const TierIndexRoute = TierIndexRouteImport.update({
   id: '/tier/',
   path: '/tier/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SupportIndexRoute = SupportIndexRouteImport.update({
   id: '/support/',
   path: '/support/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SportsIndexRoute = SportsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SportsRoute,
-} as any);
+} as any)
 const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => OnboardingRoute,
-} as any);
+} as any)
 const FeaturesIndexRoute = FeaturesIndexRouteImport.update({
   id: '/features/',
   path: '/features/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const CasinoIndexRoute = CasinoIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => CasinoRoute,
-} as any);
+} as any)
 const AccountIndexRoute = AccountIndexRouteImport.update({
   id: '/account/',
   path: '/account/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const WalletWithdrawRoute = WalletWithdrawRouteImport.update({
   id: '/withdraw',
   path: '/withdraw',
   getParentRoute: () => WalletRoute,
-} as any);
+} as any)
 const WalletTransferRoute = WalletTransferRouteImport.update({
   id: '/transfer',
   path: '/transfer',
   getParentRoute: () => WalletRoute,
-} as any);
+} as any)
 const WalletRedeemRoute = WalletRedeemRouteImport.update({
   id: '/redeem',
   path: '/redeem',
   getParentRoute: () => WalletRoute,
-} as any);
+} as any)
 const WalletDepositRoute = WalletDepositRouteImport.update({
   id: '/deposit',
   path: '/deposit',
   getParentRoute: () => WalletRoute,
-} as any);
+} as any)
 const TradePositionsRoute = TradePositionsRouteImport.update({
   id: '/positions',
   path: '/positions',
   getParentRoute: () => TradeRoute,
-} as any);
+} as any)
 const TradeOrdersRoute = TradeOrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
   getParentRoute: () => TradeRoute,
-} as any);
+} as any)
 const TradeFuturesRoute = TradeFuturesRouteImport.update({
   id: '/futures',
   path: '/futures',
   getParentRoute: () => TradeRoute,
-} as any);
+} as any)
 const TierMeRoute = TierMeRouteImport.update({
   id: '/tier/me',
   path: '/tier/me',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const TierLeaderboardRoute = TierLeaderboardRouteImport.update({
   id: '/tier/leaderboard',
   path: '/tier/leaderboard',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const TierBenefitsRoute = TierBenefitsRouteImport.update({
   id: '/tier/benefits',
   path: '/tier/benefits',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SupportTicketRoute = SupportTicketRouteImport.update({
   id: '/support/ticket',
   path: '/support/ticket',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SupportFaqRoute = SupportFaqRouteImport.update({
   id: '/support/faq',
   path: '/support/faq',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const StakingPositionsRoute = StakingPositionsRouteImport.update({
   id: '/positions',
   path: '/positions',
   getParentRoute: () => StakingRoute,
-} as any);
+} as any)
 const SportsVipRoute = SportsVipRouteImport.update({
   id: '/vip',
   path: '/vip',
   getParentRoute: () => SportsRoute,
-} as any);
+} as any)
 const SportsRulesRoute = SportsRulesRouteImport.update({
   id: '/rules',
   path: '/rules',
   getParentRoute: () => SportsRoute,
-} as any);
+} as any)
 const SportsPrematchRoute = SportsPrematchRouteImport.update({
   id: '/prematch',
   path: '/prematch',
   getParentRoute: () => SportsRoute,
-} as any);
+} as any)
 const SportsMyBetsRoute = SportsMyBetsRouteImport.update({
   id: '/my-bets',
   path: '/my-bets',
   getParentRoute: () => SportsRoute,
-} as any);
+} as any)
 const SportsLiveRoute = SportsLiveRouteImport.update({
   id: '/live',
   path: '/live',
   getParentRoute: () => SportsRoute,
-} as any);
+} as any)
 const ShareEarningsRoute = ShareEarningsRouteImport.update({
   id: '/share/earnings',
   path: '/share/earnings',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SettingsSecurityRoute = SettingsSecurityRouteImport.update({
   id: '/security',
   path: '/security',
   getParentRoute: () => SettingsRoute,
-} as any);
+} as any)
 const SettingsReferralRoute = SettingsReferralRouteImport.update({
   id: '/referral',
   path: '/referral',
   getParentRoute: () => SettingsRoute,
-} as any);
+} as any)
 const SettingsPreferencesRoute = SettingsPreferencesRouteImport.update({
   id: '/preferences',
   path: '/preferences',
   getParentRoute: () => SettingsRoute,
-} as any);
+} as any)
 const SettingsNotificationsRoute = SettingsNotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
   getParentRoute: () => SettingsRoute,
-} as any);
+} as any)
 const SettingsBankAccountsRoute = SettingsBankAccountsRouteImport.update({
   id: '/bank-accounts',
   path: '/bank-accounts',
   getParentRoute: () => SettingsRoute,
-} as any);
+} as any)
 const SettingsApiKeysRoute = SettingsApiKeysRouteImport.update({
   id: '/api-keys',
   path: '/api-keys',
   getParentRoute: () => SettingsRoute,
-} as any);
+} as any)
 const SettingsAccountRoute = SettingsAccountRouteImport.update({
   id: '/account',
   path: '/account',
   getParentRoute: () => SettingsRoute,
-} as any);
+} as any)
 const RewardsHistoryRoute = RewardsHistoryRouteImport.update({
   id: '/rewards/history',
   path: '/rewards/history',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ReferralLeaderboardRoute = ReferralLeaderboardRouteImport.update({
   id: '/leaderboard',
   path: '/leaderboard',
   getParentRoute: () => ReferralRoute,
-} as any);
+} as any)
 const ReferralInviteRoute = ReferralInviteRouteImport.update({
   id: '/invite',
   path: '/invite',
   getParentRoute: () => ReferralRoute,
-} as any);
+} as any)
 const RCodeRoute = RCodeRouteImport.update({
   id: '/r/$code',
   path: '/r/$code',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const OnboardingMissionsRoute = OnboardingMissionsRouteImport.update({
   id: '/missions',
   path: '/missions',
   getParentRoute: () => OnboardingRoute,
-} as any);
+} as any)
 const LegalTermsRoute = LegalTermsRouteImport.update({
   id: '/legal/terms',
   path: '/legal/terms',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LegalRiskDisclosureRoute = LegalRiskDisclosureRouteImport.update({
   id: '/legal/risk-disclosure',
   path: '/legal/risk-disclosure',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LegalResponsibleGamingRoute = LegalResponsibleGamingRouteImport.update({
   id: '/legal/responsible-gaming',
   path: '/legal/responsible-gaming',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LegalPrivacyRoute = LegalPrivacyRouteImport.update({
   id: '/legal/privacy',
   path: '/legal/privacy',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LegalCookiesRoute = LegalCookiesRouteImport.update({
   id: '/legal/cookies',
   path: '/legal/cookies',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LegalAffiliateRoute = LegalAffiliateRouteImport.update({
   id: '/legal/affiliate',
   path: '/legal/affiliate',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const HomeMissionsRoute = HomeMissionsRouteImport.update({
   id: '/missions',
   path: '/missions',
   getParentRoute: () => HomeRoute,
-} as any);
+} as any)
 const HomeAttendanceRoute = HomeAttendanceRouteImport.update({
   id: '/attendance',
   path: '/attendance',
   getParentRoute: () => HomeRoute,
-} as any);
+} as any)
 const GamesGameCodeRoute = GamesGameCodeRouteImport.update({
   id: '/games/$gameCode',
   path: '/games/$gameCode',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const FeaturesVipRoute = FeaturesVipRouteImport.update({
   id: '/features/vip',
   path: '/features/vip',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const FeaturesEarnRoute = FeaturesEarnRouteImport.update({
   id: '/features/earn',
   path: '/features/earn',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const EarnPlayRoute = EarnPlayRouteImport.update({
   id: '/earn/play',
   path: '/earn/play',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const EarnCashbackRoute = EarnCashbackRouteImport.update({
   id: '/earn/cashback',
   path: '/earn/cashback',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const CasinoFairnessRoute = CasinoFairnessRouteImport.update({
   id: '/fairness',
   path: '/fairness',
   getParentRoute: () => CasinoRoute,
-} as any);
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
-} as any);
-const AccountResponsibleGamingRoute = AccountResponsibleGamingRouteImport.update({
-  id: '/account/responsible-gaming',
-  path: '/account/responsible-gaming',
-  getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
+const AccountResponsibleGamingRoute =
+  AccountResponsibleGamingRouteImport.update({
+    id: '/account/responsible-gaming',
+    path: '/account/responsible-gaming',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AccountProfileRoute = AccountProfileRouteImport.update({
   id: '/account/profile',
   path: '/account/profile',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AccountKycRoute = AccountKycRouteImport.update({
   id: '/account/kyc',
   path: '/account/kyc',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const WalletWithdrawIndexRoute = WalletWithdrawIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => WalletWithdrawRoute,
-} as any);
+} as any)
 const WalletDepositIndexRoute = WalletDepositIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => WalletDepositRoute,
-} as any);
+} as any)
 const WalletWithdrawKrwRoute = WalletWithdrawKrwRouteImport.update({
   id: '/krw',
   path: '/krw',
   getParentRoute: () => WalletWithdrawRoute,
-} as any);
+} as any)
 const WalletWithdrawCryptoRoute = WalletWithdrawCryptoRouteImport.update({
   id: '/crypto',
   path: '/crypto',
   getParentRoute: () => WalletWithdrawRoute,
-} as any);
+} as any)
 const WalletRedeemGiftcardRoute = WalletRedeemGiftcardRouteImport.update({
   id: '/giftcard',
   path: '/giftcard',
   getParentRoute: () => WalletRedeemRoute,
-} as any);
+} as any)
 const WalletDepositKrwRoute = WalletDepositKrwRouteImport.update({
   id: '/krw',
   path: '/krw',
   getParentRoute: () => WalletDepositRoute,
-} as any);
+} as any)
 const WalletDepositGiftcardRoute = WalletDepositGiftcardRouteImport.update({
   id: '/giftcard',
   path: '/giftcard',
   getParentRoute: () => WalletDepositRoute,
-} as any);
+} as any)
 const WalletDepositCryptoRoute = WalletDepositCryptoRouteImport.update({
   id: '/crypto',
   path: '/crypto',
   getParentRoute: () => WalletDepositRoute,
-} as any);
+} as any)
 const SportsFixtureFixtureIdRoute = SportsFixtureFixtureIdRouteImport.update({
   id: '/fixture/$fixtureId',
   path: '/fixture/$fixtureId',
   getParentRoute: () => SportsRoute,
-} as any);
+} as any)
 const HomeMissionsReferralRoute = HomeMissionsReferralRouteImport.update({
   id: '/referral',
   path: '/referral',
   getParentRoute: () => HomeMissionsRoute,
-} as any);
+} as any)
 const HomeMissionsInviteRoute = HomeMissionsInviteRouteImport.update({
   id: '/invite',
   path: '/invite',
   getParentRoute: () => HomeMissionsRoute,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute;
-  '/announcements': typeof AnnouncementsRoute;
-  '/casino': typeof CasinoRouteWithChildren;
-  '/events': typeof EventsRoute;
-  '/feedback': typeof FeedbackRoute;
-  '/fees': typeof FeesRoute;
-  '/home': typeof HomeRouteWithChildren;
-  '/install': typeof InstallRoute;
-  '/ledger': typeof LedgerRoute;
-  '/login': typeof LoginRoute;
-  '/notifications': typeof NotificationsRoute;
-  '/onboarding': typeof OnboardingRouteWithChildren;
-  '/referral': typeof ReferralRouteWithChildren;
-  '/reset-password': typeof ResetPasswordRoute;
-  '/security': typeof SecurityRoute;
-  '/settings': typeof SettingsRouteWithChildren;
-  '/signup': typeof SignupRoute;
-  '/sports': typeof SportsRouteWithChildren;
-  '/staking': typeof StakingRouteWithChildren;
-  '/status': typeof StatusRoute;
-  '/trade': typeof TradeRouteWithChildren;
-  '/verify-email': typeof VerifyEmailRoute;
-  '/wallet': typeof WalletRouteWithChildren;
-  '/account/kyc': typeof AccountKycRoute;
-  '/account/profile': typeof AccountProfileRoute;
-  '/account/responsible-gaming': typeof AccountResponsibleGamingRoute;
-  '/auth/callback': typeof AuthCallbackRoute;
-  '/casino/fairness': typeof CasinoFairnessRoute;
-  '/earn/cashback': typeof EarnCashbackRoute;
-  '/earn/play': typeof EarnPlayRoute;
-  '/features/earn': typeof FeaturesEarnRoute;
-  '/features/vip': typeof FeaturesVipRoute;
-  '/games/$gameCode': typeof GamesGameCodeRoute;
-  '/home/attendance': typeof HomeAttendanceRoute;
-  '/home/missions': typeof HomeMissionsRouteWithChildren;
-  '/legal/affiliate': typeof LegalAffiliateRoute;
-  '/legal/cookies': typeof LegalCookiesRoute;
-  '/legal/privacy': typeof LegalPrivacyRoute;
-  '/legal/responsible-gaming': typeof LegalResponsibleGamingRoute;
-  '/legal/risk-disclosure': typeof LegalRiskDisclosureRoute;
-  '/legal/terms': typeof LegalTermsRoute;
-  '/onboarding/missions': typeof OnboardingMissionsRoute;
-  '/r/$code': typeof RCodeRoute;
-  '/referral/invite': typeof ReferralInviteRoute;
-  '/referral/leaderboard': typeof ReferralLeaderboardRoute;
-  '/rewards/history': typeof RewardsHistoryRoute;
-  '/settings/account': typeof SettingsAccountRoute;
-  '/settings/api-keys': typeof SettingsApiKeysRoute;
-  '/settings/bank-accounts': typeof SettingsBankAccountsRoute;
-  '/settings/notifications': typeof SettingsNotificationsRoute;
-  '/settings/preferences': typeof SettingsPreferencesRoute;
-  '/settings/referral': typeof SettingsReferralRoute;
-  '/settings/security': typeof SettingsSecurityRoute;
-  '/share/earnings': typeof ShareEarningsRoute;
-  '/sports/live': typeof SportsLiveRoute;
-  '/sports/my-bets': typeof SportsMyBetsRoute;
-  '/sports/prematch': typeof SportsPrematchRoute;
-  '/sports/rules': typeof SportsRulesRoute;
-  '/sports/vip': typeof SportsVipRoute;
-  '/staking/positions': typeof StakingPositionsRoute;
-  '/support/faq': typeof SupportFaqRoute;
-  '/support/ticket': typeof SupportTicketRoute;
-  '/tier/benefits': typeof TierBenefitsRoute;
-  '/tier/leaderboard': typeof TierLeaderboardRoute;
-  '/tier/me': typeof TierMeRoute;
-  '/trade/futures': typeof TradeFuturesRoute;
-  '/trade/orders': typeof TradeOrdersRoute;
-  '/trade/positions': typeof TradePositionsRoute;
-  '/wallet/deposit': typeof WalletDepositRouteWithChildren;
-  '/wallet/redeem': typeof WalletRedeemRouteWithChildren;
-  '/wallet/transfer': typeof WalletTransferRoute;
-  '/wallet/withdraw': typeof WalletWithdrawRouteWithChildren;
-  '/account/': typeof AccountIndexRoute;
-  '/casino/': typeof CasinoIndexRoute;
-  '/features/': typeof FeaturesIndexRoute;
-  '/onboarding/': typeof OnboardingIndexRoute;
-  '/sports/': typeof SportsIndexRoute;
-  '/support/': typeof SupportIndexRoute;
-  '/tier/': typeof TierIndexRoute;
-  '/trade/': typeof TradeIndexRoute;
-  '/wallet/': typeof WalletIndexRoute;
-  '/home/missions/invite': typeof HomeMissionsInviteRoute;
-  '/home/missions/referral': typeof HomeMissionsReferralRoute;
-  '/sports/fixture/$fixtureId': typeof SportsFixtureFixtureIdRoute;
-  '/wallet/deposit/crypto': typeof WalletDepositCryptoRoute;
-  '/wallet/deposit/giftcard': typeof WalletDepositGiftcardRoute;
-  '/wallet/deposit/krw': typeof WalletDepositKrwRoute;
-  '/wallet/redeem/giftcard': typeof WalletRedeemGiftcardRoute;
-  '/wallet/withdraw/crypto': typeof WalletWithdrawCryptoRoute;
-  '/wallet/withdraw/krw': typeof WalletWithdrawKrwRoute;
-  '/wallet/deposit/': typeof WalletDepositIndexRoute;
-  '/wallet/withdraw/': typeof WalletWithdrawIndexRoute;
+  '/': typeof IndexRoute
+  '/announcements': typeof AnnouncementsRoute
+  '/casino': typeof CasinoRouteWithChildren
+  '/events': typeof EventsRoute
+  '/feedback': typeof FeedbackRoute
+  '/fees': typeof FeesRoute
+  '/home': typeof HomeRouteWithChildren
+  '/install': typeof InstallRoute
+  '/ledger': typeof LedgerRoute
+  '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
+  '/onboarding': typeof OnboardingRouteWithChildren
+  '/referral': typeof ReferralRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
+  '/security': typeof SecurityRoute
+  '/settings': typeof SettingsRouteWithChildren
+  '/signup': typeof SignupRoute
+  '/sports': typeof SportsRouteWithChildren
+  '/staking': typeof StakingRouteWithChildren
+  '/status': typeof StatusRoute
+  '/trade': typeof TradeRouteWithChildren
+  '/verify-email': typeof VerifyEmailRoute
+  '/wallet': typeof WalletRouteWithChildren
+  '/account/kyc': typeof AccountKycRoute
+  '/account/profile': typeof AccountProfileRoute
+  '/account/responsible-gaming': typeof AccountResponsibleGamingRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/casino/fairness': typeof CasinoFairnessRoute
+  '/earn/cashback': typeof EarnCashbackRoute
+  '/earn/play': typeof EarnPlayRoute
+  '/features/earn': typeof FeaturesEarnRoute
+  '/features/vip': typeof FeaturesVipRoute
+  '/games/$gameCode': typeof GamesGameCodeRoute
+  '/home/attendance': typeof HomeAttendanceRoute
+  '/home/missions': typeof HomeMissionsRouteWithChildren
+  '/legal/affiliate': typeof LegalAffiliateRoute
+  '/legal/cookies': typeof LegalCookiesRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/responsible-gaming': typeof LegalResponsibleGamingRoute
+  '/legal/risk-disclosure': typeof LegalRiskDisclosureRoute
+  '/legal/terms': typeof LegalTermsRoute
+  '/onboarding/missions': typeof OnboardingMissionsRoute
+  '/r/$code': typeof RCodeRoute
+  '/referral/invite': typeof ReferralInviteRoute
+  '/referral/leaderboard': typeof ReferralLeaderboardRoute
+  '/rewards/history': typeof RewardsHistoryRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/api-keys': typeof SettingsApiKeysRoute
+  '/settings/bank-accounts': typeof SettingsBankAccountsRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
+  '/settings/preferences': typeof SettingsPreferencesRoute
+  '/settings/referral': typeof SettingsReferralRoute
+  '/settings/security': typeof SettingsSecurityRoute
+  '/share/earnings': typeof ShareEarningsRoute
+  '/sports/live': typeof SportsLiveRoute
+  '/sports/my-bets': typeof SportsMyBetsRoute
+  '/sports/prematch': typeof SportsPrematchRoute
+  '/sports/rules': typeof SportsRulesRoute
+  '/sports/vip': typeof SportsVipRoute
+  '/staking/positions': typeof StakingPositionsRoute
+  '/support/faq': typeof SupportFaqRoute
+  '/support/ticket': typeof SupportTicketRoute
+  '/tier/benefits': typeof TierBenefitsRoute
+  '/tier/leaderboard': typeof TierLeaderboardRoute
+  '/tier/me': typeof TierMeRoute
+  '/trade/futures': typeof TradeFuturesRoute
+  '/trade/orders': typeof TradeOrdersRoute
+  '/trade/positions': typeof TradePositionsRoute
+  '/wallet/deposit': typeof WalletDepositRouteWithChildren
+  '/wallet/redeem': typeof WalletRedeemRouteWithChildren
+  '/wallet/transfer': typeof WalletTransferRoute
+  '/wallet/withdraw': typeof WalletWithdrawRouteWithChildren
+  '/account/': typeof AccountIndexRoute
+  '/casino/': typeof CasinoIndexRoute
+  '/features/': typeof FeaturesIndexRoute
+  '/onboarding/': typeof OnboardingIndexRoute
+  '/sports/': typeof SportsIndexRoute
+  '/support/': typeof SupportIndexRoute
+  '/tier/': typeof TierIndexRoute
+  '/trade/': typeof TradeIndexRoute
+  '/wallet/': typeof WalletIndexRoute
+  '/home/missions/invite': typeof HomeMissionsInviteRoute
+  '/home/missions/referral': typeof HomeMissionsReferralRoute
+  '/sports/fixture/$fixtureId': typeof SportsFixtureFixtureIdRoute
+  '/wallet/deposit/crypto': typeof WalletDepositCryptoRoute
+  '/wallet/deposit/giftcard': typeof WalletDepositGiftcardRoute
+  '/wallet/deposit/krw': typeof WalletDepositKrwRoute
+  '/wallet/redeem/giftcard': typeof WalletRedeemGiftcardRoute
+  '/wallet/withdraw/crypto': typeof WalletWithdrawCryptoRoute
+  '/wallet/withdraw/krw': typeof WalletWithdrawKrwRoute
+  '/wallet/deposit/': typeof WalletDepositIndexRoute
+  '/wallet/withdraw/': typeof WalletWithdrawIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute;
-  '/announcements': typeof AnnouncementsRoute;
-  '/events': typeof EventsRoute;
-  '/feedback': typeof FeedbackRoute;
-  '/fees': typeof FeesRoute;
-  '/home': typeof HomeRouteWithChildren;
-  '/install': typeof InstallRoute;
-  '/ledger': typeof LedgerRoute;
-  '/login': typeof LoginRoute;
-  '/notifications': typeof NotificationsRoute;
-  '/referral': typeof ReferralRouteWithChildren;
-  '/reset-password': typeof ResetPasswordRoute;
-  '/security': typeof SecurityRoute;
-  '/settings': typeof SettingsRouteWithChildren;
-  '/signup': typeof SignupRoute;
-  '/staking': typeof StakingRouteWithChildren;
-  '/status': typeof StatusRoute;
-  '/verify-email': typeof VerifyEmailRoute;
-  '/account/kyc': typeof AccountKycRoute;
-  '/account/profile': typeof AccountProfileRoute;
-  '/account/responsible-gaming': typeof AccountResponsibleGamingRoute;
-  '/auth/callback': typeof AuthCallbackRoute;
-  '/casino/fairness': typeof CasinoFairnessRoute;
-  '/earn/cashback': typeof EarnCashbackRoute;
-  '/earn/play': typeof EarnPlayRoute;
-  '/features/earn': typeof FeaturesEarnRoute;
-  '/features/vip': typeof FeaturesVipRoute;
-  '/games/$gameCode': typeof GamesGameCodeRoute;
-  '/home/attendance': typeof HomeAttendanceRoute;
-  '/home/missions': typeof HomeMissionsRouteWithChildren;
-  '/legal/affiliate': typeof LegalAffiliateRoute;
-  '/legal/cookies': typeof LegalCookiesRoute;
-  '/legal/privacy': typeof LegalPrivacyRoute;
-  '/legal/responsible-gaming': typeof LegalResponsibleGamingRoute;
-  '/legal/risk-disclosure': typeof LegalRiskDisclosureRoute;
-  '/legal/terms': typeof LegalTermsRoute;
-  '/onboarding/missions': typeof OnboardingMissionsRoute;
-  '/r/$code': typeof RCodeRoute;
-  '/referral/invite': typeof ReferralInviteRoute;
-  '/referral/leaderboard': typeof ReferralLeaderboardRoute;
-  '/rewards/history': typeof RewardsHistoryRoute;
-  '/settings/account': typeof SettingsAccountRoute;
-  '/settings/api-keys': typeof SettingsApiKeysRoute;
-  '/settings/bank-accounts': typeof SettingsBankAccountsRoute;
-  '/settings/notifications': typeof SettingsNotificationsRoute;
-  '/settings/preferences': typeof SettingsPreferencesRoute;
-  '/settings/referral': typeof SettingsReferralRoute;
-  '/settings/security': typeof SettingsSecurityRoute;
-  '/share/earnings': typeof ShareEarningsRoute;
-  '/sports/live': typeof SportsLiveRoute;
-  '/sports/my-bets': typeof SportsMyBetsRoute;
-  '/sports/prematch': typeof SportsPrematchRoute;
-  '/sports/rules': typeof SportsRulesRoute;
-  '/sports/vip': typeof SportsVipRoute;
-  '/staking/positions': typeof StakingPositionsRoute;
-  '/support/faq': typeof SupportFaqRoute;
-  '/support/ticket': typeof SupportTicketRoute;
-  '/tier/benefits': typeof TierBenefitsRoute;
-  '/tier/leaderboard': typeof TierLeaderboardRoute;
-  '/tier/me': typeof TierMeRoute;
-  '/trade/futures': typeof TradeFuturesRoute;
-  '/trade/orders': typeof TradeOrdersRoute;
-  '/trade/positions': typeof TradePositionsRoute;
-  '/wallet/redeem': typeof WalletRedeemRouteWithChildren;
-  '/wallet/transfer': typeof WalletTransferRoute;
-  '/account': typeof AccountIndexRoute;
-  '/casino': typeof CasinoIndexRoute;
-  '/features': typeof FeaturesIndexRoute;
-  '/onboarding': typeof OnboardingIndexRoute;
-  '/sports': typeof SportsIndexRoute;
-  '/support': typeof SupportIndexRoute;
-  '/tier': typeof TierIndexRoute;
-  '/trade': typeof TradeIndexRoute;
-  '/wallet': typeof WalletIndexRoute;
-  '/home/missions/invite': typeof HomeMissionsInviteRoute;
-  '/home/missions/referral': typeof HomeMissionsReferralRoute;
-  '/sports/fixture/$fixtureId': typeof SportsFixtureFixtureIdRoute;
-  '/wallet/deposit/crypto': typeof WalletDepositCryptoRoute;
-  '/wallet/deposit/giftcard': typeof WalletDepositGiftcardRoute;
-  '/wallet/deposit/krw': typeof WalletDepositKrwRoute;
-  '/wallet/redeem/giftcard': typeof WalletRedeemGiftcardRoute;
-  '/wallet/withdraw/crypto': typeof WalletWithdrawCryptoRoute;
-  '/wallet/withdraw/krw': typeof WalletWithdrawKrwRoute;
-  '/wallet/deposit': typeof WalletDepositIndexRoute;
-  '/wallet/withdraw': typeof WalletWithdrawIndexRoute;
+  '/': typeof IndexRoute
+  '/announcements': typeof AnnouncementsRoute
+  '/events': typeof EventsRoute
+  '/feedback': typeof FeedbackRoute
+  '/fees': typeof FeesRoute
+  '/home': typeof HomeRouteWithChildren
+  '/install': typeof InstallRoute
+  '/ledger': typeof LedgerRoute
+  '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
+  '/referral': typeof ReferralRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
+  '/security': typeof SecurityRoute
+  '/settings': typeof SettingsRouteWithChildren
+  '/signup': typeof SignupRoute
+  '/staking': typeof StakingRouteWithChildren
+  '/status': typeof StatusRoute
+  '/verify-email': typeof VerifyEmailRoute
+  '/account/kyc': typeof AccountKycRoute
+  '/account/profile': typeof AccountProfileRoute
+  '/account/responsible-gaming': typeof AccountResponsibleGamingRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/casino/fairness': typeof CasinoFairnessRoute
+  '/earn/cashback': typeof EarnCashbackRoute
+  '/earn/play': typeof EarnPlayRoute
+  '/features/earn': typeof FeaturesEarnRoute
+  '/features/vip': typeof FeaturesVipRoute
+  '/games/$gameCode': typeof GamesGameCodeRoute
+  '/home/attendance': typeof HomeAttendanceRoute
+  '/home/missions': typeof HomeMissionsRouteWithChildren
+  '/legal/affiliate': typeof LegalAffiliateRoute
+  '/legal/cookies': typeof LegalCookiesRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/responsible-gaming': typeof LegalResponsibleGamingRoute
+  '/legal/risk-disclosure': typeof LegalRiskDisclosureRoute
+  '/legal/terms': typeof LegalTermsRoute
+  '/onboarding/missions': typeof OnboardingMissionsRoute
+  '/r/$code': typeof RCodeRoute
+  '/referral/invite': typeof ReferralInviteRoute
+  '/referral/leaderboard': typeof ReferralLeaderboardRoute
+  '/rewards/history': typeof RewardsHistoryRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/api-keys': typeof SettingsApiKeysRoute
+  '/settings/bank-accounts': typeof SettingsBankAccountsRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
+  '/settings/preferences': typeof SettingsPreferencesRoute
+  '/settings/referral': typeof SettingsReferralRoute
+  '/settings/security': typeof SettingsSecurityRoute
+  '/share/earnings': typeof ShareEarningsRoute
+  '/sports/live': typeof SportsLiveRoute
+  '/sports/my-bets': typeof SportsMyBetsRoute
+  '/sports/prematch': typeof SportsPrematchRoute
+  '/sports/rules': typeof SportsRulesRoute
+  '/sports/vip': typeof SportsVipRoute
+  '/staking/positions': typeof StakingPositionsRoute
+  '/support/faq': typeof SupportFaqRoute
+  '/support/ticket': typeof SupportTicketRoute
+  '/tier/benefits': typeof TierBenefitsRoute
+  '/tier/leaderboard': typeof TierLeaderboardRoute
+  '/tier/me': typeof TierMeRoute
+  '/trade/futures': typeof TradeFuturesRoute
+  '/trade/orders': typeof TradeOrdersRoute
+  '/trade/positions': typeof TradePositionsRoute
+  '/wallet/redeem': typeof WalletRedeemRouteWithChildren
+  '/wallet/transfer': typeof WalletTransferRoute
+  '/account': typeof AccountIndexRoute
+  '/casino': typeof CasinoIndexRoute
+  '/features': typeof FeaturesIndexRoute
+  '/onboarding': typeof OnboardingIndexRoute
+  '/sports': typeof SportsIndexRoute
+  '/support': typeof SupportIndexRoute
+  '/tier': typeof TierIndexRoute
+  '/trade': typeof TradeIndexRoute
+  '/wallet': typeof WalletIndexRoute
+  '/home/missions/invite': typeof HomeMissionsInviteRoute
+  '/home/missions/referral': typeof HomeMissionsReferralRoute
+  '/sports/fixture/$fixtureId': typeof SportsFixtureFixtureIdRoute
+  '/wallet/deposit/crypto': typeof WalletDepositCryptoRoute
+  '/wallet/deposit/giftcard': typeof WalletDepositGiftcardRoute
+  '/wallet/deposit/krw': typeof WalletDepositKrwRoute
+  '/wallet/redeem/giftcard': typeof WalletRedeemGiftcardRoute
+  '/wallet/withdraw/crypto': typeof WalletWithdrawCryptoRoute
+  '/wallet/withdraw/krw': typeof WalletWithdrawKrwRoute
+  '/wallet/deposit': typeof WalletDepositIndexRoute
+  '/wallet/withdraw': typeof WalletWithdrawIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  '/': typeof IndexRoute;
-  '/announcements': typeof AnnouncementsRoute;
-  '/casino': typeof CasinoRouteWithChildren;
-  '/events': typeof EventsRoute;
-  '/feedback': typeof FeedbackRoute;
-  '/fees': typeof FeesRoute;
-  '/home': typeof HomeRouteWithChildren;
-  '/install': typeof InstallRoute;
-  '/ledger': typeof LedgerRoute;
-  '/login': typeof LoginRoute;
-  '/notifications': typeof NotificationsRoute;
-  '/onboarding': typeof OnboardingRouteWithChildren;
-  '/referral': typeof ReferralRouteWithChildren;
-  '/reset-password': typeof ResetPasswordRoute;
-  '/security': typeof SecurityRoute;
-  '/settings': typeof SettingsRouteWithChildren;
-  '/signup': typeof SignupRoute;
-  '/sports': typeof SportsRouteWithChildren;
-  '/staking': typeof StakingRouteWithChildren;
-  '/status': typeof StatusRoute;
-  '/trade': typeof TradeRouteWithChildren;
-  '/verify-email': typeof VerifyEmailRoute;
-  '/wallet': typeof WalletRouteWithChildren;
-  '/account/kyc': typeof AccountKycRoute;
-  '/account/profile': typeof AccountProfileRoute;
-  '/account/responsible-gaming': typeof AccountResponsibleGamingRoute;
-  '/auth/callback': typeof AuthCallbackRoute;
-  '/casino/fairness': typeof CasinoFairnessRoute;
-  '/earn/cashback': typeof EarnCashbackRoute;
-  '/earn/play': typeof EarnPlayRoute;
-  '/features/earn': typeof FeaturesEarnRoute;
-  '/features/vip': typeof FeaturesVipRoute;
-  '/games/$gameCode': typeof GamesGameCodeRoute;
-  '/home/attendance': typeof HomeAttendanceRoute;
-  '/home/missions': typeof HomeMissionsRouteWithChildren;
-  '/legal/affiliate': typeof LegalAffiliateRoute;
-  '/legal/cookies': typeof LegalCookiesRoute;
-  '/legal/privacy': typeof LegalPrivacyRoute;
-  '/legal/responsible-gaming': typeof LegalResponsibleGamingRoute;
-  '/legal/risk-disclosure': typeof LegalRiskDisclosureRoute;
-  '/legal/terms': typeof LegalTermsRoute;
-  '/onboarding/missions': typeof OnboardingMissionsRoute;
-  '/r/$code': typeof RCodeRoute;
-  '/referral/invite': typeof ReferralInviteRoute;
-  '/referral/leaderboard': typeof ReferralLeaderboardRoute;
-  '/rewards/history': typeof RewardsHistoryRoute;
-  '/settings/account': typeof SettingsAccountRoute;
-  '/settings/api-keys': typeof SettingsApiKeysRoute;
-  '/settings/bank-accounts': typeof SettingsBankAccountsRoute;
-  '/settings/notifications': typeof SettingsNotificationsRoute;
-  '/settings/preferences': typeof SettingsPreferencesRoute;
-  '/settings/referral': typeof SettingsReferralRoute;
-  '/settings/security': typeof SettingsSecurityRoute;
-  '/share/earnings': typeof ShareEarningsRoute;
-  '/sports/live': typeof SportsLiveRoute;
-  '/sports/my-bets': typeof SportsMyBetsRoute;
-  '/sports/prematch': typeof SportsPrematchRoute;
-  '/sports/rules': typeof SportsRulesRoute;
-  '/sports/vip': typeof SportsVipRoute;
-  '/staking/positions': typeof StakingPositionsRoute;
-  '/support/faq': typeof SupportFaqRoute;
-  '/support/ticket': typeof SupportTicketRoute;
-  '/tier/benefits': typeof TierBenefitsRoute;
-  '/tier/leaderboard': typeof TierLeaderboardRoute;
-  '/tier/me': typeof TierMeRoute;
-  '/trade/futures': typeof TradeFuturesRoute;
-  '/trade/orders': typeof TradeOrdersRoute;
-  '/trade/positions': typeof TradePositionsRoute;
-  '/wallet/deposit': typeof WalletDepositRouteWithChildren;
-  '/wallet/redeem': typeof WalletRedeemRouteWithChildren;
-  '/wallet/transfer': typeof WalletTransferRoute;
-  '/wallet/withdraw': typeof WalletWithdrawRouteWithChildren;
-  '/account/': typeof AccountIndexRoute;
-  '/casino/': typeof CasinoIndexRoute;
-  '/features/': typeof FeaturesIndexRoute;
-  '/onboarding/': typeof OnboardingIndexRoute;
-  '/sports/': typeof SportsIndexRoute;
-  '/support/': typeof SupportIndexRoute;
-  '/tier/': typeof TierIndexRoute;
-  '/trade/': typeof TradeIndexRoute;
-  '/wallet/': typeof WalletIndexRoute;
-  '/home/missions/invite': typeof HomeMissionsInviteRoute;
-  '/home/missions/referral': typeof HomeMissionsReferralRoute;
-  '/sports/fixture/$fixtureId': typeof SportsFixtureFixtureIdRoute;
-  '/wallet/deposit/crypto': typeof WalletDepositCryptoRoute;
-  '/wallet/deposit/giftcard': typeof WalletDepositGiftcardRoute;
-  '/wallet/deposit/krw': typeof WalletDepositKrwRoute;
-  '/wallet/redeem/giftcard': typeof WalletRedeemGiftcardRoute;
-  '/wallet/withdraw/crypto': typeof WalletWithdrawCryptoRoute;
-  '/wallet/withdraw/krw': typeof WalletWithdrawKrwRoute;
-  '/wallet/deposit/': typeof WalletDepositIndexRoute;
-  '/wallet/withdraw/': typeof WalletWithdrawIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/announcements': typeof AnnouncementsRoute
+  '/casino': typeof CasinoRouteWithChildren
+  '/events': typeof EventsRoute
+  '/feedback': typeof FeedbackRoute
+  '/fees': typeof FeesRoute
+  '/home': typeof HomeRouteWithChildren
+  '/install': typeof InstallRoute
+  '/ledger': typeof LedgerRoute
+  '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
+  '/onboarding': typeof OnboardingRouteWithChildren
+  '/referral': typeof ReferralRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
+  '/security': typeof SecurityRoute
+  '/settings': typeof SettingsRouteWithChildren
+  '/signup': typeof SignupRoute
+  '/sports': typeof SportsRouteWithChildren
+  '/staking': typeof StakingRouteWithChildren
+  '/status': typeof StatusRoute
+  '/trade': typeof TradeRouteWithChildren
+  '/verify-email': typeof VerifyEmailRoute
+  '/wallet': typeof WalletRouteWithChildren
+  '/account/kyc': typeof AccountKycRoute
+  '/account/profile': typeof AccountProfileRoute
+  '/account/responsible-gaming': typeof AccountResponsibleGamingRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/casino/fairness': typeof CasinoFairnessRoute
+  '/earn/cashback': typeof EarnCashbackRoute
+  '/earn/play': typeof EarnPlayRoute
+  '/features/earn': typeof FeaturesEarnRoute
+  '/features/vip': typeof FeaturesVipRoute
+  '/games/$gameCode': typeof GamesGameCodeRoute
+  '/home/attendance': typeof HomeAttendanceRoute
+  '/home/missions': typeof HomeMissionsRouteWithChildren
+  '/legal/affiliate': typeof LegalAffiliateRoute
+  '/legal/cookies': typeof LegalCookiesRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/responsible-gaming': typeof LegalResponsibleGamingRoute
+  '/legal/risk-disclosure': typeof LegalRiskDisclosureRoute
+  '/legal/terms': typeof LegalTermsRoute
+  '/onboarding/missions': typeof OnboardingMissionsRoute
+  '/r/$code': typeof RCodeRoute
+  '/referral/invite': typeof ReferralInviteRoute
+  '/referral/leaderboard': typeof ReferralLeaderboardRoute
+  '/rewards/history': typeof RewardsHistoryRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/api-keys': typeof SettingsApiKeysRoute
+  '/settings/bank-accounts': typeof SettingsBankAccountsRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
+  '/settings/preferences': typeof SettingsPreferencesRoute
+  '/settings/referral': typeof SettingsReferralRoute
+  '/settings/security': typeof SettingsSecurityRoute
+  '/share/earnings': typeof ShareEarningsRoute
+  '/sports/live': typeof SportsLiveRoute
+  '/sports/my-bets': typeof SportsMyBetsRoute
+  '/sports/prematch': typeof SportsPrematchRoute
+  '/sports/rules': typeof SportsRulesRoute
+  '/sports/vip': typeof SportsVipRoute
+  '/staking/positions': typeof StakingPositionsRoute
+  '/support/faq': typeof SupportFaqRoute
+  '/support/ticket': typeof SupportTicketRoute
+  '/tier/benefits': typeof TierBenefitsRoute
+  '/tier/leaderboard': typeof TierLeaderboardRoute
+  '/tier/me': typeof TierMeRoute
+  '/trade/futures': typeof TradeFuturesRoute
+  '/trade/orders': typeof TradeOrdersRoute
+  '/trade/positions': typeof TradePositionsRoute
+  '/wallet/deposit': typeof WalletDepositRouteWithChildren
+  '/wallet/redeem': typeof WalletRedeemRouteWithChildren
+  '/wallet/transfer': typeof WalletTransferRoute
+  '/wallet/withdraw': typeof WalletWithdrawRouteWithChildren
+  '/account/': typeof AccountIndexRoute
+  '/casino/': typeof CasinoIndexRoute
+  '/features/': typeof FeaturesIndexRoute
+  '/onboarding/': typeof OnboardingIndexRoute
+  '/sports/': typeof SportsIndexRoute
+  '/support/': typeof SupportIndexRoute
+  '/tier/': typeof TierIndexRoute
+  '/trade/': typeof TradeIndexRoute
+  '/wallet/': typeof WalletIndexRoute
+  '/home/missions/invite': typeof HomeMissionsInviteRoute
+  '/home/missions/referral': typeof HomeMissionsReferralRoute
+  '/sports/fixture/$fixtureId': typeof SportsFixtureFixtureIdRoute
+  '/wallet/deposit/crypto': typeof WalletDepositCryptoRoute
+  '/wallet/deposit/giftcard': typeof WalletDepositGiftcardRoute
+  '/wallet/deposit/krw': typeof WalletDepositKrwRoute
+  '/wallet/redeem/giftcard': typeof WalletRedeemGiftcardRoute
+  '/wallet/withdraw/crypto': typeof WalletWithdrawCryptoRoute
+  '/wallet/withdraw/krw': typeof WalletWithdrawKrwRoute
+  '/wallet/deposit/': typeof WalletDepositIndexRoute
+  '/wallet/withdraw/': typeof WalletWithdrawIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/announcements'
@@ -933,8 +934,8 @@ export interface FileRouteTypes {
     | '/wallet/withdraw/crypto'
     | '/wallet/withdraw/krw'
     | '/wallet/deposit/'
-    | '/wallet/withdraw/';
-  fileRoutesByTo: FileRoutesByTo;
+    | '/wallet/withdraw/'
+  fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/announcements'
@@ -1020,7 +1021,7 @@ export interface FileRouteTypes {
     | '/wallet/withdraw/crypto'
     | '/wallet/withdraw/krw'
     | '/wallet/deposit'
-    | '/wallet/withdraw';
+    | '/wallet/withdraw'
   id:
     | '__root__'
     | '/'
@@ -1114,779 +1115,786 @@ export interface FileRouteTypes {
     | '/wallet/withdraw/crypto'
     | '/wallet/withdraw/krw'
     | '/wallet/deposit/'
-    | '/wallet/withdraw/';
-  fileRoutesById: FileRoutesById;
+    | '/wallet/withdraw/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  AnnouncementsRoute: typeof AnnouncementsRoute;
-  CasinoRoute: typeof CasinoRouteWithChildren;
-  EventsRoute: typeof EventsRoute;
-  FeedbackRoute: typeof FeedbackRoute;
-  FeesRoute: typeof FeesRoute;
-  HomeRoute: typeof HomeRouteWithChildren;
-  InstallRoute: typeof InstallRoute;
-  LedgerRoute: typeof LedgerRoute;
-  LoginRoute: typeof LoginRoute;
-  NotificationsRoute: typeof NotificationsRoute;
-  OnboardingRoute: typeof OnboardingRouteWithChildren;
-  ReferralRoute: typeof ReferralRouteWithChildren;
-  ResetPasswordRoute: typeof ResetPasswordRoute;
-  SecurityRoute: typeof SecurityRoute;
-  SettingsRoute: typeof SettingsRouteWithChildren;
-  SignupRoute: typeof SignupRoute;
-  SportsRoute: typeof SportsRouteWithChildren;
-  StakingRoute: typeof StakingRouteWithChildren;
-  StatusRoute: typeof StatusRoute;
-  TradeRoute: typeof TradeRouteWithChildren;
-  VerifyEmailRoute: typeof VerifyEmailRoute;
-  WalletRoute: typeof WalletRouteWithChildren;
-  AccountKycRoute: typeof AccountKycRoute;
-  AccountProfileRoute: typeof AccountProfileRoute;
-  AccountResponsibleGamingRoute: typeof AccountResponsibleGamingRoute;
-  AuthCallbackRoute: typeof AuthCallbackRoute;
-  EarnCashbackRoute: typeof EarnCashbackRoute;
-  EarnPlayRoute: typeof EarnPlayRoute;
-  FeaturesEarnRoute: typeof FeaturesEarnRoute;
-  FeaturesVipRoute: typeof FeaturesVipRoute;
-  GamesGameCodeRoute: typeof GamesGameCodeRoute;
-  LegalAffiliateRoute: typeof LegalAffiliateRoute;
-  LegalCookiesRoute: typeof LegalCookiesRoute;
-  LegalPrivacyRoute: typeof LegalPrivacyRoute;
-  LegalResponsibleGamingRoute: typeof LegalResponsibleGamingRoute;
-  LegalRiskDisclosureRoute: typeof LegalRiskDisclosureRoute;
-  LegalTermsRoute: typeof LegalTermsRoute;
-  RCodeRoute: typeof RCodeRoute;
-  RewardsHistoryRoute: typeof RewardsHistoryRoute;
-  ShareEarningsRoute: typeof ShareEarningsRoute;
-  SupportFaqRoute: typeof SupportFaqRoute;
-  SupportTicketRoute: typeof SupportTicketRoute;
-  TierBenefitsRoute: typeof TierBenefitsRoute;
-  TierLeaderboardRoute: typeof TierLeaderboardRoute;
-  TierMeRoute: typeof TierMeRoute;
-  AccountIndexRoute: typeof AccountIndexRoute;
-  FeaturesIndexRoute: typeof FeaturesIndexRoute;
-  SupportIndexRoute: typeof SupportIndexRoute;
-  TierIndexRoute: typeof TierIndexRoute;
+  IndexRoute: typeof IndexRoute
+  AnnouncementsRoute: typeof AnnouncementsRoute
+  CasinoRoute: typeof CasinoRouteWithChildren
+  EventsRoute: typeof EventsRoute
+  FeedbackRoute: typeof FeedbackRoute
+  FeesRoute: typeof FeesRoute
+  HomeRoute: typeof HomeRouteWithChildren
+  InstallRoute: typeof InstallRoute
+  LedgerRoute: typeof LedgerRoute
+  LoginRoute: typeof LoginRoute
+  NotificationsRoute: typeof NotificationsRoute
+  OnboardingRoute: typeof OnboardingRouteWithChildren
+  ReferralRoute: typeof ReferralRouteWithChildren
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SecurityRoute: typeof SecurityRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
+  SignupRoute: typeof SignupRoute
+  SportsRoute: typeof SportsRouteWithChildren
+  StakingRoute: typeof StakingRouteWithChildren
+  StatusRoute: typeof StatusRoute
+  TradeRoute: typeof TradeRouteWithChildren
+  VerifyEmailRoute: typeof VerifyEmailRoute
+  WalletRoute: typeof WalletRouteWithChildren
+  AccountKycRoute: typeof AccountKycRoute
+  AccountProfileRoute: typeof AccountProfileRoute
+  AccountResponsibleGamingRoute: typeof AccountResponsibleGamingRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
+  EarnCashbackRoute: typeof EarnCashbackRoute
+  EarnPlayRoute: typeof EarnPlayRoute
+  FeaturesEarnRoute: typeof FeaturesEarnRoute
+  FeaturesVipRoute: typeof FeaturesVipRoute
+  GamesGameCodeRoute: typeof GamesGameCodeRoute
+  LegalAffiliateRoute: typeof LegalAffiliateRoute
+  LegalCookiesRoute: typeof LegalCookiesRoute
+  LegalPrivacyRoute: typeof LegalPrivacyRoute
+  LegalResponsibleGamingRoute: typeof LegalResponsibleGamingRoute
+  LegalRiskDisclosureRoute: typeof LegalRiskDisclosureRoute
+  LegalTermsRoute: typeof LegalTermsRoute
+  RCodeRoute: typeof RCodeRoute
+  RewardsHistoryRoute: typeof RewardsHistoryRoute
+  ShareEarningsRoute: typeof ShareEarningsRoute
+  SupportFaqRoute: typeof SupportFaqRoute
+  SupportTicketRoute: typeof SupportTicketRoute
+  TierBenefitsRoute: typeof TierBenefitsRoute
+  TierLeaderboardRoute: typeof TierLeaderboardRoute
+  TierMeRoute: typeof TierMeRoute
+  AccountIndexRoute: typeof AccountIndexRoute
+  FeaturesIndexRoute: typeof FeaturesIndexRoute
+  SupportIndexRoute: typeof SupportIndexRoute
+  TierIndexRoute: typeof TierIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/wallet': {
-      id: '/wallet';
-      path: '/wallet';
-      fullPath: '/wallet';
-      preLoaderRoute: typeof WalletRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof WalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verify-email': {
-      id: '/verify-email';
-      path: '/verify-email';
-      fullPath: '/verify-email';
-      preLoaderRoute: typeof VerifyEmailRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trade': {
-      id: '/trade';
-      path: '/trade';
-      fullPath: '/trade';
-      preLoaderRoute: typeof TradeRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/trade'
+      path: '/trade'
+      fullPath: '/trade'
+      preLoaderRoute: typeof TradeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/status': {
-      id: '/status';
-      path: '/status';
-      fullPath: '/status';
-      preLoaderRoute: typeof StatusRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/status'
+      path: '/status'
+      fullPath: '/status'
+      preLoaderRoute: typeof StatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/staking': {
-      id: '/staking';
-      path: '/staking';
-      fullPath: '/staking';
-      preLoaderRoute: typeof StakingRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/staking'
+      path: '/staking'
+      fullPath: '/staking'
+      preLoaderRoute: typeof StakingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sports': {
-      id: '/sports';
-      path: '/sports';
-      fullPath: '/sports';
-      preLoaderRoute: typeof SportsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/sports'
+      path: '/sports'
+      fullPath: '/sports'
+      preLoaderRoute: typeof SportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
-      id: '/signup';
-      path: '/signup';
-      fullPath: '/signup';
-      preLoaderRoute: typeof SignupRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
-      id: '/settings';
-      path: '/settings';
-      fullPath: '/settings';
-      preLoaderRoute: typeof SettingsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/security': {
-      id: '/security';
-      path: '/security';
-      fullPath: '/security';
-      preLoaderRoute: typeof SecurityRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
-      id: '/reset-password';
-      path: '/reset-password';
-      fullPath: '/reset-password';
-      preLoaderRoute: typeof ResetPasswordRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/referral': {
-      id: '/referral';
-      path: '/referral';
-      fullPath: '/referral';
-      preLoaderRoute: typeof ReferralRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/referral'
+      path: '/referral'
+      fullPath: '/referral'
+      preLoaderRoute: typeof ReferralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
-      id: '/onboarding';
-      path: '/onboarding';
-      fullPath: '/onboarding';
-      preLoaderRoute: typeof OnboardingRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/notifications': {
-      id: '/notifications';
-      path: '/notifications';
-      fullPath: '/notifications';
-      preLoaderRoute: typeof NotificationsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
-      id: '/login';
-      path: '/login';
-      fullPath: '/login';
-      preLoaderRoute: typeof LoginRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ledger': {
-      id: '/ledger';
-      path: '/ledger';
-      fullPath: '/ledger';
-      preLoaderRoute: typeof LedgerRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/ledger'
+      path: '/ledger'
+      fullPath: '/ledger'
+      preLoaderRoute: typeof LedgerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/install': {
-      id: '/install';
-      path: '/install';
-      fullPath: '/install';
-      preLoaderRoute: typeof InstallRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/install'
+      path: '/install'
+      fullPath: '/install'
+      preLoaderRoute: typeof InstallRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/home': {
-      id: '/home';
-      path: '/home';
-      fullPath: '/home';
-      preLoaderRoute: typeof HomeRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/fees': {
-      id: '/fees';
-      path: '/fees';
-      fullPath: '/fees';
-      preLoaderRoute: typeof FeesRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/fees'
+      path: '/fees'
+      fullPath: '/fees'
+      preLoaderRoute: typeof FeesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/feedback': {
-      id: '/feedback';
-      path: '/feedback';
-      fullPath: '/feedback';
-      preLoaderRoute: typeof FeedbackRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof FeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events': {
-      id: '/events';
-      path: '/events';
-      fullPath: '/events';
-      preLoaderRoute: typeof EventsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/casino': {
-      id: '/casino';
-      path: '/casino';
-      fullPath: '/casino';
-      preLoaderRoute: typeof CasinoRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/casino'
+      path: '/casino'
+      fullPath: '/casino'
+      preLoaderRoute: typeof CasinoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/announcements': {
-      id: '/announcements';
-      path: '/announcements';
-      fullPath: '/announcements';
-      preLoaderRoute: typeof AnnouncementsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/announcements'
+      path: '/announcements'
+      fullPath: '/announcements'
+      preLoaderRoute: typeof AnnouncementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/wallet/': {
-      id: '/wallet/';
-      path: '/';
-      fullPath: '/wallet/';
-      preLoaderRoute: typeof WalletIndexRouteImport;
-      parentRoute: typeof WalletRoute;
-    };
+      id: '/wallet/'
+      path: '/'
+      fullPath: '/wallet/'
+      preLoaderRoute: typeof WalletIndexRouteImport
+      parentRoute: typeof WalletRoute
+    }
     '/trade/': {
-      id: '/trade/';
-      path: '/';
-      fullPath: '/trade/';
-      preLoaderRoute: typeof TradeIndexRouteImport;
-      parentRoute: typeof TradeRoute;
-    };
+      id: '/trade/'
+      path: '/'
+      fullPath: '/trade/'
+      preLoaderRoute: typeof TradeIndexRouteImport
+      parentRoute: typeof TradeRoute
+    }
     '/tier/': {
-      id: '/tier/';
-      path: '/tier';
-      fullPath: '/tier/';
-      preLoaderRoute: typeof TierIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/tier/'
+      path: '/tier'
+      fullPath: '/tier/'
+      preLoaderRoute: typeof TierIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/support/': {
-      id: '/support/';
-      path: '/support';
-      fullPath: '/support/';
-      preLoaderRoute: typeof SupportIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/support/'
+      path: '/support'
+      fullPath: '/support/'
+      preLoaderRoute: typeof SupportIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sports/': {
-      id: '/sports/';
-      path: '/';
-      fullPath: '/sports/';
-      preLoaderRoute: typeof SportsIndexRouteImport;
-      parentRoute: typeof SportsRoute;
-    };
+      id: '/sports/'
+      path: '/'
+      fullPath: '/sports/'
+      preLoaderRoute: typeof SportsIndexRouteImport
+      parentRoute: typeof SportsRoute
+    }
     '/onboarding/': {
-      id: '/onboarding/';
-      path: '/';
-      fullPath: '/onboarding/';
-      preLoaderRoute: typeof OnboardingIndexRouteImport;
-      parentRoute: typeof OnboardingRoute;
-    };
+      id: '/onboarding/'
+      path: '/'
+      fullPath: '/onboarding/'
+      preLoaderRoute: typeof OnboardingIndexRouteImport
+      parentRoute: typeof OnboardingRoute
+    }
     '/features/': {
-      id: '/features/';
-      path: '/features';
-      fullPath: '/features/';
-      preLoaderRoute: typeof FeaturesIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/features/'
+      path: '/features'
+      fullPath: '/features/'
+      preLoaderRoute: typeof FeaturesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/casino/': {
-      id: '/casino/';
-      path: '/';
-      fullPath: '/casino/';
-      preLoaderRoute: typeof CasinoIndexRouteImport;
-      parentRoute: typeof CasinoRoute;
-    };
+      id: '/casino/'
+      path: '/'
+      fullPath: '/casino/'
+      preLoaderRoute: typeof CasinoIndexRouteImport
+      parentRoute: typeof CasinoRoute
+    }
     '/account/': {
-      id: '/account/';
-      path: '/account';
-      fullPath: '/account/';
-      preLoaderRoute: typeof AccountIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/account/'
+      path: '/account'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AccountIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/wallet/withdraw': {
-      id: '/wallet/withdraw';
-      path: '/withdraw';
-      fullPath: '/wallet/withdraw';
-      preLoaderRoute: typeof WalletWithdrawRouteImport;
-      parentRoute: typeof WalletRoute;
-    };
+      id: '/wallet/withdraw'
+      path: '/withdraw'
+      fullPath: '/wallet/withdraw'
+      preLoaderRoute: typeof WalletWithdrawRouteImport
+      parentRoute: typeof WalletRoute
+    }
     '/wallet/transfer': {
-      id: '/wallet/transfer';
-      path: '/transfer';
-      fullPath: '/wallet/transfer';
-      preLoaderRoute: typeof WalletTransferRouteImport;
-      parentRoute: typeof WalletRoute;
-    };
+      id: '/wallet/transfer'
+      path: '/transfer'
+      fullPath: '/wallet/transfer'
+      preLoaderRoute: typeof WalletTransferRouteImport
+      parentRoute: typeof WalletRoute
+    }
     '/wallet/redeem': {
-      id: '/wallet/redeem';
-      path: '/redeem';
-      fullPath: '/wallet/redeem';
-      preLoaderRoute: typeof WalletRedeemRouteImport;
-      parentRoute: typeof WalletRoute;
-    };
+      id: '/wallet/redeem'
+      path: '/redeem'
+      fullPath: '/wallet/redeem'
+      preLoaderRoute: typeof WalletRedeemRouteImport
+      parentRoute: typeof WalletRoute
+    }
     '/wallet/deposit': {
-      id: '/wallet/deposit';
-      path: '/deposit';
-      fullPath: '/wallet/deposit';
-      preLoaderRoute: typeof WalletDepositRouteImport;
-      parentRoute: typeof WalletRoute;
-    };
+      id: '/wallet/deposit'
+      path: '/deposit'
+      fullPath: '/wallet/deposit'
+      preLoaderRoute: typeof WalletDepositRouteImport
+      parentRoute: typeof WalletRoute
+    }
     '/trade/positions': {
-      id: '/trade/positions';
-      path: '/positions';
-      fullPath: '/trade/positions';
-      preLoaderRoute: typeof TradePositionsRouteImport;
-      parentRoute: typeof TradeRoute;
-    };
+      id: '/trade/positions'
+      path: '/positions'
+      fullPath: '/trade/positions'
+      preLoaderRoute: typeof TradePositionsRouteImport
+      parentRoute: typeof TradeRoute
+    }
     '/trade/orders': {
-      id: '/trade/orders';
-      path: '/orders';
-      fullPath: '/trade/orders';
-      preLoaderRoute: typeof TradeOrdersRouteImport;
-      parentRoute: typeof TradeRoute;
-    };
+      id: '/trade/orders'
+      path: '/orders'
+      fullPath: '/trade/orders'
+      preLoaderRoute: typeof TradeOrdersRouteImport
+      parentRoute: typeof TradeRoute
+    }
     '/trade/futures': {
-      id: '/trade/futures';
-      path: '/futures';
-      fullPath: '/trade/futures';
-      preLoaderRoute: typeof TradeFuturesRouteImport;
-      parentRoute: typeof TradeRoute;
-    };
+      id: '/trade/futures'
+      path: '/futures'
+      fullPath: '/trade/futures'
+      preLoaderRoute: typeof TradeFuturesRouteImport
+      parentRoute: typeof TradeRoute
+    }
     '/tier/me': {
-      id: '/tier/me';
-      path: '/tier/me';
-      fullPath: '/tier/me';
-      preLoaderRoute: typeof TierMeRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/tier/me'
+      path: '/tier/me'
+      fullPath: '/tier/me'
+      preLoaderRoute: typeof TierMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tier/leaderboard': {
-      id: '/tier/leaderboard';
-      path: '/tier/leaderboard';
-      fullPath: '/tier/leaderboard';
-      preLoaderRoute: typeof TierLeaderboardRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/tier/leaderboard'
+      path: '/tier/leaderboard'
+      fullPath: '/tier/leaderboard'
+      preLoaderRoute: typeof TierLeaderboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tier/benefits': {
-      id: '/tier/benefits';
-      path: '/tier/benefits';
-      fullPath: '/tier/benefits';
-      preLoaderRoute: typeof TierBenefitsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/tier/benefits'
+      path: '/tier/benefits'
+      fullPath: '/tier/benefits'
+      preLoaderRoute: typeof TierBenefitsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/support/ticket': {
-      id: '/support/ticket';
-      path: '/support/ticket';
-      fullPath: '/support/ticket';
-      preLoaderRoute: typeof SupportTicketRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/support/ticket'
+      path: '/support/ticket'
+      fullPath: '/support/ticket'
+      preLoaderRoute: typeof SupportTicketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/support/faq': {
-      id: '/support/faq';
-      path: '/support/faq';
-      fullPath: '/support/faq';
-      preLoaderRoute: typeof SupportFaqRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/support/faq'
+      path: '/support/faq'
+      fullPath: '/support/faq'
+      preLoaderRoute: typeof SupportFaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/staking/positions': {
-      id: '/staking/positions';
-      path: '/positions';
-      fullPath: '/staking/positions';
-      preLoaderRoute: typeof StakingPositionsRouteImport;
-      parentRoute: typeof StakingRoute;
-    };
+      id: '/staking/positions'
+      path: '/positions'
+      fullPath: '/staking/positions'
+      preLoaderRoute: typeof StakingPositionsRouteImport
+      parentRoute: typeof StakingRoute
+    }
     '/sports/vip': {
-      id: '/sports/vip';
-      path: '/vip';
-      fullPath: '/sports/vip';
-      preLoaderRoute: typeof SportsVipRouteImport;
-      parentRoute: typeof SportsRoute;
-    };
+      id: '/sports/vip'
+      path: '/vip'
+      fullPath: '/sports/vip'
+      preLoaderRoute: typeof SportsVipRouteImport
+      parentRoute: typeof SportsRoute
+    }
     '/sports/rules': {
-      id: '/sports/rules';
-      path: '/rules';
-      fullPath: '/sports/rules';
-      preLoaderRoute: typeof SportsRulesRouteImport;
-      parentRoute: typeof SportsRoute;
-    };
+      id: '/sports/rules'
+      path: '/rules'
+      fullPath: '/sports/rules'
+      preLoaderRoute: typeof SportsRulesRouteImport
+      parentRoute: typeof SportsRoute
+    }
     '/sports/prematch': {
-      id: '/sports/prematch';
-      path: '/prematch';
-      fullPath: '/sports/prematch';
-      preLoaderRoute: typeof SportsPrematchRouteImport;
-      parentRoute: typeof SportsRoute;
-    };
+      id: '/sports/prematch'
+      path: '/prematch'
+      fullPath: '/sports/prematch'
+      preLoaderRoute: typeof SportsPrematchRouteImport
+      parentRoute: typeof SportsRoute
+    }
     '/sports/my-bets': {
-      id: '/sports/my-bets';
-      path: '/my-bets';
-      fullPath: '/sports/my-bets';
-      preLoaderRoute: typeof SportsMyBetsRouteImport;
-      parentRoute: typeof SportsRoute;
-    };
+      id: '/sports/my-bets'
+      path: '/my-bets'
+      fullPath: '/sports/my-bets'
+      preLoaderRoute: typeof SportsMyBetsRouteImport
+      parentRoute: typeof SportsRoute
+    }
     '/sports/live': {
-      id: '/sports/live';
-      path: '/live';
-      fullPath: '/sports/live';
-      preLoaderRoute: typeof SportsLiveRouteImport;
-      parentRoute: typeof SportsRoute;
-    };
+      id: '/sports/live'
+      path: '/live'
+      fullPath: '/sports/live'
+      preLoaderRoute: typeof SportsLiveRouteImport
+      parentRoute: typeof SportsRoute
+    }
     '/share/earnings': {
-      id: '/share/earnings';
-      path: '/share/earnings';
-      fullPath: '/share/earnings';
-      preLoaderRoute: typeof ShareEarningsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/share/earnings'
+      path: '/share/earnings'
+      fullPath: '/share/earnings'
+      preLoaderRoute: typeof ShareEarningsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/security': {
-      id: '/settings/security';
-      path: '/security';
-      fullPath: '/settings/security';
-      preLoaderRoute: typeof SettingsSecurityRouteImport;
-      parentRoute: typeof SettingsRoute;
-    };
+      id: '/settings/security'
+      path: '/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof SettingsSecurityRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/referral': {
-      id: '/settings/referral';
-      path: '/referral';
-      fullPath: '/settings/referral';
-      preLoaderRoute: typeof SettingsReferralRouteImport;
-      parentRoute: typeof SettingsRoute;
-    };
+      id: '/settings/referral'
+      path: '/referral'
+      fullPath: '/settings/referral'
+      preLoaderRoute: typeof SettingsReferralRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/preferences': {
-      id: '/settings/preferences';
-      path: '/preferences';
-      fullPath: '/settings/preferences';
-      preLoaderRoute: typeof SettingsPreferencesRouteImport;
-      parentRoute: typeof SettingsRoute;
-    };
+      id: '/settings/preferences'
+      path: '/preferences'
+      fullPath: '/settings/preferences'
+      preLoaderRoute: typeof SettingsPreferencesRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/notifications': {
-      id: '/settings/notifications';
-      path: '/notifications';
-      fullPath: '/settings/notifications';
-      preLoaderRoute: typeof SettingsNotificationsRouteImport;
-      parentRoute: typeof SettingsRoute;
-    };
+      id: '/settings/notifications'
+      path: '/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof SettingsNotificationsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/bank-accounts': {
-      id: '/settings/bank-accounts';
-      path: '/bank-accounts';
-      fullPath: '/settings/bank-accounts';
-      preLoaderRoute: typeof SettingsBankAccountsRouteImport;
-      parentRoute: typeof SettingsRoute;
-    };
+      id: '/settings/bank-accounts'
+      path: '/bank-accounts'
+      fullPath: '/settings/bank-accounts'
+      preLoaderRoute: typeof SettingsBankAccountsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/api-keys': {
-      id: '/settings/api-keys';
-      path: '/api-keys';
-      fullPath: '/settings/api-keys';
-      preLoaderRoute: typeof SettingsApiKeysRouteImport;
-      parentRoute: typeof SettingsRoute;
-    };
+      id: '/settings/api-keys'
+      path: '/api-keys'
+      fullPath: '/settings/api-keys'
+      preLoaderRoute: typeof SettingsApiKeysRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/account': {
-      id: '/settings/account';
-      path: '/account';
-      fullPath: '/settings/account';
-      preLoaderRoute: typeof SettingsAccountRouteImport;
-      parentRoute: typeof SettingsRoute;
-    };
+      id: '/settings/account'
+      path: '/account'
+      fullPath: '/settings/account'
+      preLoaderRoute: typeof SettingsAccountRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/rewards/history': {
-      id: '/rewards/history';
-      path: '/rewards/history';
-      fullPath: '/rewards/history';
-      preLoaderRoute: typeof RewardsHistoryRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/rewards/history'
+      path: '/rewards/history'
+      fullPath: '/rewards/history'
+      preLoaderRoute: typeof RewardsHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/referral/leaderboard': {
-      id: '/referral/leaderboard';
-      path: '/leaderboard';
-      fullPath: '/referral/leaderboard';
-      preLoaderRoute: typeof ReferralLeaderboardRouteImport;
-      parentRoute: typeof ReferralRoute;
-    };
+      id: '/referral/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/referral/leaderboard'
+      preLoaderRoute: typeof ReferralLeaderboardRouteImport
+      parentRoute: typeof ReferralRoute
+    }
     '/referral/invite': {
-      id: '/referral/invite';
-      path: '/invite';
-      fullPath: '/referral/invite';
-      preLoaderRoute: typeof ReferralInviteRouteImport;
-      parentRoute: typeof ReferralRoute;
-    };
+      id: '/referral/invite'
+      path: '/invite'
+      fullPath: '/referral/invite'
+      preLoaderRoute: typeof ReferralInviteRouteImport
+      parentRoute: typeof ReferralRoute
+    }
     '/r/$code': {
-      id: '/r/$code';
-      path: '/r/$code';
-      fullPath: '/r/$code';
-      preLoaderRoute: typeof RCodeRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/r/$code'
+      path: '/r/$code'
+      fullPath: '/r/$code'
+      preLoaderRoute: typeof RCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding/missions': {
-      id: '/onboarding/missions';
-      path: '/missions';
-      fullPath: '/onboarding/missions';
-      preLoaderRoute: typeof OnboardingMissionsRouteImport;
-      parentRoute: typeof OnboardingRoute;
-    };
+      id: '/onboarding/missions'
+      path: '/missions'
+      fullPath: '/onboarding/missions'
+      preLoaderRoute: typeof OnboardingMissionsRouteImport
+      parentRoute: typeof OnboardingRoute
+    }
     '/legal/terms': {
-      id: '/legal/terms';
-      path: '/legal/terms';
-      fullPath: '/legal/terms';
-      preLoaderRoute: typeof LegalTermsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/legal/terms'
+      path: '/legal/terms'
+      fullPath: '/legal/terms'
+      preLoaderRoute: typeof LegalTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal/risk-disclosure': {
-      id: '/legal/risk-disclosure';
-      path: '/legal/risk-disclosure';
-      fullPath: '/legal/risk-disclosure';
-      preLoaderRoute: typeof LegalRiskDisclosureRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/legal/risk-disclosure'
+      path: '/legal/risk-disclosure'
+      fullPath: '/legal/risk-disclosure'
+      preLoaderRoute: typeof LegalRiskDisclosureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal/responsible-gaming': {
-      id: '/legal/responsible-gaming';
-      path: '/legal/responsible-gaming';
-      fullPath: '/legal/responsible-gaming';
-      preLoaderRoute: typeof LegalResponsibleGamingRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/legal/responsible-gaming'
+      path: '/legal/responsible-gaming'
+      fullPath: '/legal/responsible-gaming'
+      preLoaderRoute: typeof LegalResponsibleGamingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal/privacy': {
-      id: '/legal/privacy';
-      path: '/legal/privacy';
-      fullPath: '/legal/privacy';
-      preLoaderRoute: typeof LegalPrivacyRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/legal/privacy'
+      path: '/legal/privacy'
+      fullPath: '/legal/privacy'
+      preLoaderRoute: typeof LegalPrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal/cookies': {
-      id: '/legal/cookies';
-      path: '/legal/cookies';
-      fullPath: '/legal/cookies';
-      preLoaderRoute: typeof LegalCookiesRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/legal/cookies'
+      path: '/legal/cookies'
+      fullPath: '/legal/cookies'
+      preLoaderRoute: typeof LegalCookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal/affiliate': {
-      id: '/legal/affiliate';
-      path: '/legal/affiliate';
-      fullPath: '/legal/affiliate';
-      preLoaderRoute: typeof LegalAffiliateRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/legal/affiliate'
+      path: '/legal/affiliate'
+      fullPath: '/legal/affiliate'
+      preLoaderRoute: typeof LegalAffiliateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/home/missions': {
-      id: '/home/missions';
-      path: '/missions';
-      fullPath: '/home/missions';
-      preLoaderRoute: typeof HomeMissionsRouteImport;
-      parentRoute: typeof HomeRoute;
-    };
+      id: '/home/missions'
+      path: '/missions'
+      fullPath: '/home/missions'
+      preLoaderRoute: typeof HomeMissionsRouteImport
+      parentRoute: typeof HomeRoute
+    }
     '/home/attendance': {
-      id: '/home/attendance';
-      path: '/attendance';
-      fullPath: '/home/attendance';
-      preLoaderRoute: typeof HomeAttendanceRouteImport;
-      parentRoute: typeof HomeRoute;
-    };
+      id: '/home/attendance'
+      path: '/attendance'
+      fullPath: '/home/attendance'
+      preLoaderRoute: typeof HomeAttendanceRouteImport
+      parentRoute: typeof HomeRoute
+    }
     '/games/$gameCode': {
-      id: '/games/$gameCode';
-      path: '/games/$gameCode';
-      fullPath: '/games/$gameCode';
-      preLoaderRoute: typeof GamesGameCodeRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/games/$gameCode'
+      path: '/games/$gameCode'
+      fullPath: '/games/$gameCode'
+      preLoaderRoute: typeof GamesGameCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/features/vip': {
-      id: '/features/vip';
-      path: '/features/vip';
-      fullPath: '/features/vip';
-      preLoaderRoute: typeof FeaturesVipRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/features/vip'
+      path: '/features/vip'
+      fullPath: '/features/vip'
+      preLoaderRoute: typeof FeaturesVipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/features/earn': {
-      id: '/features/earn';
-      path: '/features/earn';
-      fullPath: '/features/earn';
-      preLoaderRoute: typeof FeaturesEarnRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/features/earn'
+      path: '/features/earn'
+      fullPath: '/features/earn'
+      preLoaderRoute: typeof FeaturesEarnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/earn/play': {
-      id: '/earn/play';
-      path: '/earn/play';
-      fullPath: '/earn/play';
-      preLoaderRoute: typeof EarnPlayRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/earn/play'
+      path: '/earn/play'
+      fullPath: '/earn/play'
+      preLoaderRoute: typeof EarnPlayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/earn/cashback': {
-      id: '/earn/cashback';
-      path: '/earn/cashback';
-      fullPath: '/earn/cashback';
-      preLoaderRoute: typeof EarnCashbackRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/earn/cashback'
+      path: '/earn/cashback'
+      fullPath: '/earn/cashback'
+      preLoaderRoute: typeof EarnCashbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/casino/fairness': {
-      id: '/casino/fairness';
-      path: '/fairness';
-      fullPath: '/casino/fairness';
-      preLoaderRoute: typeof CasinoFairnessRouteImport;
-      parentRoute: typeof CasinoRoute;
-    };
+      id: '/casino/fairness'
+      path: '/fairness'
+      fullPath: '/casino/fairness'
+      preLoaderRoute: typeof CasinoFairnessRouteImport
+      parentRoute: typeof CasinoRoute
+    }
     '/auth/callback': {
-      id: '/auth/callback';
-      path: '/auth/callback';
-      fullPath: '/auth/callback';
-      preLoaderRoute: typeof AuthCallbackRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/account/responsible-gaming': {
-      id: '/account/responsible-gaming';
-      path: '/account/responsible-gaming';
-      fullPath: '/account/responsible-gaming';
-      preLoaderRoute: typeof AccountResponsibleGamingRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/account/responsible-gaming'
+      path: '/account/responsible-gaming'
+      fullPath: '/account/responsible-gaming'
+      preLoaderRoute: typeof AccountResponsibleGamingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/account/profile': {
-      id: '/account/profile';
-      path: '/account/profile';
-      fullPath: '/account/profile';
-      preLoaderRoute: typeof AccountProfileRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/account/profile'
+      path: '/account/profile'
+      fullPath: '/account/profile'
+      preLoaderRoute: typeof AccountProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/account/kyc': {
-      id: '/account/kyc';
-      path: '/account/kyc';
-      fullPath: '/account/kyc';
-      preLoaderRoute: typeof AccountKycRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/account/kyc'
+      path: '/account/kyc'
+      fullPath: '/account/kyc'
+      preLoaderRoute: typeof AccountKycRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/wallet/withdraw/': {
-      id: '/wallet/withdraw/';
-      path: '/';
-      fullPath: '/wallet/withdraw/';
-      preLoaderRoute: typeof WalletWithdrawIndexRouteImport;
-      parentRoute: typeof WalletWithdrawRoute;
-    };
+      id: '/wallet/withdraw/'
+      path: '/'
+      fullPath: '/wallet/withdraw/'
+      preLoaderRoute: typeof WalletWithdrawIndexRouteImport
+      parentRoute: typeof WalletWithdrawRoute
+    }
     '/wallet/deposit/': {
-      id: '/wallet/deposit/';
-      path: '/';
-      fullPath: '/wallet/deposit/';
-      preLoaderRoute: typeof WalletDepositIndexRouteImport;
-      parentRoute: typeof WalletDepositRoute;
-    };
+      id: '/wallet/deposit/'
+      path: '/'
+      fullPath: '/wallet/deposit/'
+      preLoaderRoute: typeof WalletDepositIndexRouteImport
+      parentRoute: typeof WalletDepositRoute
+    }
     '/wallet/withdraw/krw': {
-      id: '/wallet/withdraw/krw';
-      path: '/krw';
-      fullPath: '/wallet/withdraw/krw';
-      preLoaderRoute: typeof WalletWithdrawKrwRouteImport;
-      parentRoute: typeof WalletWithdrawRoute;
-    };
+      id: '/wallet/withdraw/krw'
+      path: '/krw'
+      fullPath: '/wallet/withdraw/krw'
+      preLoaderRoute: typeof WalletWithdrawKrwRouteImport
+      parentRoute: typeof WalletWithdrawRoute
+    }
     '/wallet/withdraw/crypto': {
-      id: '/wallet/withdraw/crypto';
-      path: '/crypto';
-      fullPath: '/wallet/withdraw/crypto';
-      preLoaderRoute: typeof WalletWithdrawCryptoRouteImport;
-      parentRoute: typeof WalletWithdrawRoute;
-    };
+      id: '/wallet/withdraw/crypto'
+      path: '/crypto'
+      fullPath: '/wallet/withdraw/crypto'
+      preLoaderRoute: typeof WalletWithdrawCryptoRouteImport
+      parentRoute: typeof WalletWithdrawRoute
+    }
     '/wallet/redeem/giftcard': {
-      id: '/wallet/redeem/giftcard';
-      path: '/giftcard';
-      fullPath: '/wallet/redeem/giftcard';
-      preLoaderRoute: typeof WalletRedeemGiftcardRouteImport;
-      parentRoute: typeof WalletRedeemRoute;
-    };
+      id: '/wallet/redeem/giftcard'
+      path: '/giftcard'
+      fullPath: '/wallet/redeem/giftcard'
+      preLoaderRoute: typeof WalletRedeemGiftcardRouteImport
+      parentRoute: typeof WalletRedeemRoute
+    }
     '/wallet/deposit/krw': {
-      id: '/wallet/deposit/krw';
-      path: '/krw';
-      fullPath: '/wallet/deposit/krw';
-      preLoaderRoute: typeof WalletDepositKrwRouteImport;
-      parentRoute: typeof WalletDepositRoute;
-    };
+      id: '/wallet/deposit/krw'
+      path: '/krw'
+      fullPath: '/wallet/deposit/krw'
+      preLoaderRoute: typeof WalletDepositKrwRouteImport
+      parentRoute: typeof WalletDepositRoute
+    }
     '/wallet/deposit/giftcard': {
-      id: '/wallet/deposit/giftcard';
-      path: '/giftcard';
-      fullPath: '/wallet/deposit/giftcard';
-      preLoaderRoute: typeof WalletDepositGiftcardRouteImport;
-      parentRoute: typeof WalletDepositRoute;
-    };
+      id: '/wallet/deposit/giftcard'
+      path: '/giftcard'
+      fullPath: '/wallet/deposit/giftcard'
+      preLoaderRoute: typeof WalletDepositGiftcardRouteImport
+      parentRoute: typeof WalletDepositRoute
+    }
     '/wallet/deposit/crypto': {
-      id: '/wallet/deposit/crypto';
-      path: '/crypto';
-      fullPath: '/wallet/deposit/crypto';
-      preLoaderRoute: typeof WalletDepositCryptoRouteImport;
-      parentRoute: typeof WalletDepositRoute;
-    };
+      id: '/wallet/deposit/crypto'
+      path: '/crypto'
+      fullPath: '/wallet/deposit/crypto'
+      preLoaderRoute: typeof WalletDepositCryptoRouteImport
+      parentRoute: typeof WalletDepositRoute
+    }
     '/sports/fixture/$fixtureId': {
-      id: '/sports/fixture/$fixtureId';
-      path: '/fixture/$fixtureId';
-      fullPath: '/sports/fixture/$fixtureId';
-      preLoaderRoute: typeof SportsFixtureFixtureIdRouteImport;
-      parentRoute: typeof SportsRoute;
-    };
+      id: '/sports/fixture/$fixtureId'
+      path: '/fixture/$fixtureId'
+      fullPath: '/sports/fixture/$fixtureId'
+      preLoaderRoute: typeof SportsFixtureFixtureIdRouteImport
+      parentRoute: typeof SportsRoute
+    }
     '/home/missions/referral': {
-      id: '/home/missions/referral';
-      path: '/referral';
-      fullPath: '/home/missions/referral';
-      preLoaderRoute: typeof HomeMissionsReferralRouteImport;
-      parentRoute: typeof HomeMissionsRoute;
-    };
+      id: '/home/missions/referral'
+      path: '/referral'
+      fullPath: '/home/missions/referral'
+      preLoaderRoute: typeof HomeMissionsReferralRouteImport
+      parentRoute: typeof HomeMissionsRoute
+    }
     '/home/missions/invite': {
-      id: '/home/missions/invite';
-      path: '/invite';
-      fullPath: '/home/missions/invite';
-      preLoaderRoute: typeof HomeMissionsInviteRouteImport;
-      parentRoute: typeof HomeMissionsRoute;
-    };
+      id: '/home/missions/invite'
+      path: '/invite'
+      fullPath: '/home/missions/invite'
+      preLoaderRoute: typeof HomeMissionsInviteRouteImport
+      parentRoute: typeof HomeMissionsRoute
+    }
   }
 }
 
 interface CasinoRouteChildren {
-  CasinoFairnessRoute: typeof CasinoFairnessRoute;
-  CasinoIndexRoute: typeof CasinoIndexRoute;
+  CasinoFairnessRoute: typeof CasinoFairnessRoute
+  CasinoIndexRoute: typeof CasinoIndexRoute
 }
 
 const CasinoRouteChildren: CasinoRouteChildren = {
   CasinoFairnessRoute: CasinoFairnessRoute,
   CasinoIndexRoute: CasinoIndexRoute,
-};
+}
 
-const CasinoRouteWithChildren = CasinoRoute._addFileChildren(CasinoRouteChildren);
+const CasinoRouteWithChildren =
+  CasinoRoute._addFileChildren(CasinoRouteChildren)
 
 interface HomeMissionsRouteChildren {
-  HomeMissionsInviteRoute: typeof HomeMissionsInviteRoute;
-  HomeMissionsReferralRoute: typeof HomeMissionsReferralRoute;
+  HomeMissionsInviteRoute: typeof HomeMissionsInviteRoute
+  HomeMissionsReferralRoute: typeof HomeMissionsReferralRoute
 }
 
 const HomeMissionsRouteChildren: HomeMissionsRouteChildren = {
   HomeMissionsInviteRoute: HomeMissionsInviteRoute,
   HomeMissionsReferralRoute: HomeMissionsReferralRoute,
-};
+}
 
-const HomeMissionsRouteWithChildren = HomeMissionsRoute._addFileChildren(HomeMissionsRouteChildren);
+const HomeMissionsRouteWithChildren = HomeMissionsRoute._addFileChildren(
+  HomeMissionsRouteChildren,
+)
 
 interface HomeRouteChildren {
-  HomeAttendanceRoute: typeof HomeAttendanceRoute;
-  HomeMissionsRoute: typeof HomeMissionsRouteWithChildren;
+  HomeAttendanceRoute: typeof HomeAttendanceRoute
+  HomeMissionsRoute: typeof HomeMissionsRouteWithChildren
 }
 
 const HomeRouteChildren: HomeRouteChildren = {
   HomeAttendanceRoute: HomeAttendanceRoute,
   HomeMissionsRoute: HomeMissionsRouteWithChildren,
-};
+}
 
-const HomeRouteWithChildren = HomeRoute._addFileChildren(HomeRouteChildren);
+const HomeRouteWithChildren = HomeRoute._addFileChildren(HomeRouteChildren)
 
 interface OnboardingRouteChildren {
-  OnboardingMissionsRoute: typeof OnboardingMissionsRoute;
-  OnboardingIndexRoute: typeof OnboardingIndexRoute;
+  OnboardingMissionsRoute: typeof OnboardingMissionsRoute
+  OnboardingIndexRoute: typeof OnboardingIndexRoute
 }
 
 const OnboardingRouteChildren: OnboardingRouteChildren = {
   OnboardingMissionsRoute: OnboardingMissionsRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
-};
+}
 
-const OnboardingRouteWithChildren = OnboardingRoute._addFileChildren(OnboardingRouteChildren);
+const OnboardingRouteWithChildren = OnboardingRoute._addFileChildren(
+  OnboardingRouteChildren,
+)
 
 interface ReferralRouteChildren {
-  ReferralInviteRoute: typeof ReferralInviteRoute;
-  ReferralLeaderboardRoute: typeof ReferralLeaderboardRoute;
+  ReferralInviteRoute: typeof ReferralInviteRoute
+  ReferralLeaderboardRoute: typeof ReferralLeaderboardRoute
 }
 
 const ReferralRouteChildren: ReferralRouteChildren = {
   ReferralInviteRoute: ReferralInviteRoute,
   ReferralLeaderboardRoute: ReferralLeaderboardRoute,
-};
+}
 
-const ReferralRouteWithChildren = ReferralRoute._addFileChildren(ReferralRouteChildren);
+const ReferralRouteWithChildren = ReferralRoute._addFileChildren(
+  ReferralRouteChildren,
+)
 
 interface SettingsRouteChildren {
-  SettingsAccountRoute: typeof SettingsAccountRoute;
-  SettingsApiKeysRoute: typeof SettingsApiKeysRoute;
-  SettingsBankAccountsRoute: typeof SettingsBankAccountsRoute;
-  SettingsNotificationsRoute: typeof SettingsNotificationsRoute;
-  SettingsPreferencesRoute: typeof SettingsPreferencesRoute;
-  SettingsReferralRoute: typeof SettingsReferralRoute;
-  SettingsSecurityRoute: typeof SettingsSecurityRoute;
+  SettingsAccountRoute: typeof SettingsAccountRoute
+  SettingsApiKeysRoute: typeof SettingsApiKeysRoute
+  SettingsBankAccountsRoute: typeof SettingsBankAccountsRoute
+  SettingsNotificationsRoute: typeof SettingsNotificationsRoute
+  SettingsPreferencesRoute: typeof SettingsPreferencesRoute
+  SettingsReferralRoute: typeof SettingsReferralRoute
+  SettingsSecurityRoute: typeof SettingsSecurityRoute
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
@@ -1897,18 +1905,20 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsPreferencesRoute: SettingsPreferencesRoute,
   SettingsReferralRoute: SettingsReferralRoute,
   SettingsSecurityRoute: SettingsSecurityRoute,
-};
+}
 
-const SettingsRouteWithChildren = SettingsRoute._addFileChildren(SettingsRouteChildren);
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
 
 interface SportsRouteChildren {
-  SportsLiveRoute: typeof SportsLiveRoute;
-  SportsMyBetsRoute: typeof SportsMyBetsRoute;
-  SportsPrematchRoute: typeof SportsPrematchRoute;
-  SportsRulesRoute: typeof SportsRulesRoute;
-  SportsVipRoute: typeof SportsVipRoute;
-  SportsIndexRoute: typeof SportsIndexRoute;
-  SportsFixtureFixtureIdRoute: typeof SportsFixtureFixtureIdRoute;
+  SportsLiveRoute: typeof SportsLiveRoute
+  SportsMyBetsRoute: typeof SportsMyBetsRoute
+  SportsPrematchRoute: typeof SportsPrematchRoute
+  SportsRulesRoute: typeof SportsRulesRoute
+  SportsVipRoute: typeof SportsVipRoute
+  SportsIndexRoute: typeof SportsIndexRoute
+  SportsFixtureFixtureIdRoute: typeof SportsFixtureFixtureIdRoute
 }
 
 const SportsRouteChildren: SportsRouteChildren = {
@@ -1919,25 +1929,27 @@ const SportsRouteChildren: SportsRouteChildren = {
   SportsVipRoute: SportsVipRoute,
   SportsIndexRoute: SportsIndexRoute,
   SportsFixtureFixtureIdRoute: SportsFixtureFixtureIdRoute,
-};
+}
 
-const SportsRouteWithChildren = SportsRoute._addFileChildren(SportsRouteChildren);
+const SportsRouteWithChildren =
+  SportsRoute._addFileChildren(SportsRouteChildren)
 
 interface StakingRouteChildren {
-  StakingPositionsRoute: typeof StakingPositionsRoute;
+  StakingPositionsRoute: typeof StakingPositionsRoute
 }
 
 const StakingRouteChildren: StakingRouteChildren = {
   StakingPositionsRoute: StakingPositionsRoute,
-};
+}
 
-const StakingRouteWithChildren = StakingRoute._addFileChildren(StakingRouteChildren);
+const StakingRouteWithChildren =
+  StakingRoute._addFileChildren(StakingRouteChildren)
 
 interface TradeRouteChildren {
-  TradeFuturesRoute: typeof TradeFuturesRoute;
-  TradeOrdersRoute: typeof TradeOrdersRoute;
-  TradePositionsRoute: typeof TradePositionsRoute;
-  TradeIndexRoute: typeof TradeIndexRoute;
+  TradeFuturesRoute: typeof TradeFuturesRoute
+  TradeOrdersRoute: typeof TradeOrdersRoute
+  TradePositionsRoute: typeof TradePositionsRoute
+  TradeIndexRoute: typeof TradeIndexRoute
 }
 
 const TradeRouteChildren: TradeRouteChildren = {
@@ -1945,15 +1957,15 @@ const TradeRouteChildren: TradeRouteChildren = {
   TradeOrdersRoute: TradeOrdersRoute,
   TradePositionsRoute: TradePositionsRoute,
   TradeIndexRoute: TradeIndexRoute,
-};
+}
 
-const TradeRouteWithChildren = TradeRoute._addFileChildren(TradeRouteChildren);
+const TradeRouteWithChildren = TradeRoute._addFileChildren(TradeRouteChildren)
 
 interface WalletDepositRouteChildren {
-  WalletDepositCryptoRoute: typeof WalletDepositCryptoRoute;
-  WalletDepositGiftcardRoute: typeof WalletDepositGiftcardRoute;
-  WalletDepositKrwRoute: typeof WalletDepositKrwRoute;
-  WalletDepositIndexRoute: typeof WalletDepositIndexRoute;
+  WalletDepositCryptoRoute: typeof WalletDepositCryptoRoute
+  WalletDepositGiftcardRoute: typeof WalletDepositGiftcardRoute
+  WalletDepositKrwRoute: typeof WalletDepositKrwRoute
+  WalletDepositIndexRoute: typeof WalletDepositIndexRoute
 }
 
 const WalletDepositRouteChildren: WalletDepositRouteChildren = {
@@ -1961,44 +1973,46 @@ const WalletDepositRouteChildren: WalletDepositRouteChildren = {
   WalletDepositGiftcardRoute: WalletDepositGiftcardRoute,
   WalletDepositKrwRoute: WalletDepositKrwRoute,
   WalletDepositIndexRoute: WalletDepositIndexRoute,
-};
+}
 
 const WalletDepositRouteWithChildren = WalletDepositRoute._addFileChildren(
   WalletDepositRouteChildren,
-);
+)
 
 interface WalletRedeemRouteChildren {
-  WalletRedeemGiftcardRoute: typeof WalletRedeemGiftcardRoute;
+  WalletRedeemGiftcardRoute: typeof WalletRedeemGiftcardRoute
 }
 
 const WalletRedeemRouteChildren: WalletRedeemRouteChildren = {
   WalletRedeemGiftcardRoute: WalletRedeemGiftcardRoute,
-};
+}
 
-const WalletRedeemRouteWithChildren = WalletRedeemRoute._addFileChildren(WalletRedeemRouteChildren);
+const WalletRedeemRouteWithChildren = WalletRedeemRoute._addFileChildren(
+  WalletRedeemRouteChildren,
+)
 
 interface WalletWithdrawRouteChildren {
-  WalletWithdrawCryptoRoute: typeof WalletWithdrawCryptoRoute;
-  WalletWithdrawKrwRoute: typeof WalletWithdrawKrwRoute;
-  WalletWithdrawIndexRoute: typeof WalletWithdrawIndexRoute;
+  WalletWithdrawCryptoRoute: typeof WalletWithdrawCryptoRoute
+  WalletWithdrawKrwRoute: typeof WalletWithdrawKrwRoute
+  WalletWithdrawIndexRoute: typeof WalletWithdrawIndexRoute
 }
 
 const WalletWithdrawRouteChildren: WalletWithdrawRouteChildren = {
   WalletWithdrawCryptoRoute: WalletWithdrawCryptoRoute,
   WalletWithdrawKrwRoute: WalletWithdrawKrwRoute,
   WalletWithdrawIndexRoute: WalletWithdrawIndexRoute,
-};
+}
 
 const WalletWithdrawRouteWithChildren = WalletWithdrawRoute._addFileChildren(
   WalletWithdrawRouteChildren,
-);
+)
 
 interface WalletRouteChildren {
-  WalletDepositRoute: typeof WalletDepositRouteWithChildren;
-  WalletRedeemRoute: typeof WalletRedeemRouteWithChildren;
-  WalletTransferRoute: typeof WalletTransferRoute;
-  WalletWithdrawRoute: typeof WalletWithdrawRouteWithChildren;
-  WalletIndexRoute: typeof WalletIndexRoute;
+  WalletDepositRoute: typeof WalletDepositRouteWithChildren
+  WalletRedeemRoute: typeof WalletRedeemRouteWithChildren
+  WalletTransferRoute: typeof WalletTransferRoute
+  WalletWithdrawRoute: typeof WalletWithdrawRouteWithChildren
+  WalletIndexRoute: typeof WalletIndexRoute
 }
 
 const WalletRouteChildren: WalletRouteChildren = {
@@ -2007,9 +2021,10 @@ const WalletRouteChildren: WalletRouteChildren = {
   WalletTransferRoute: WalletTransferRoute,
   WalletWithdrawRoute: WalletWithdrawRouteWithChildren,
   WalletIndexRoute: WalletIndexRoute,
-};
+}
 
-const WalletRouteWithChildren = WalletRoute._addFileChildren(WalletRouteChildren);
+const WalletRouteWithChildren =
+  WalletRoute._addFileChildren(WalletRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -2062,7 +2077,7 @@ const rootRouteChildren: RootRouteChildren = {
   FeaturesIndexRoute: FeaturesIndexRoute,
   SupportIndexRoute: SupportIndexRoute,
   TierIndexRoute: TierIndexRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()

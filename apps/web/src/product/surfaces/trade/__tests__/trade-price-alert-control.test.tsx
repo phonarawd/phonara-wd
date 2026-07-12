@@ -30,6 +30,9 @@ describe('TradePriceAlertControl', () => {
     fireEvent.click(screen.getByTestId('trade-price-alert-trigger'));
 
     const dialog = screen.getByTestId('trade-price-alert-dialog');
+    expect(within(dialog).getByTestId('trade-price-alert-local-only')).toHaveTextContent(
+      'notif.priceAlert.localOnly',
+    );
     fireEvent.click(within(dialog).getByTestId('trade-price-alert-direction-below'));
     fireEvent.change(within(dialog).getByTestId('trade-price-alert-target-input'), {
       target: { value: '63000' },

@@ -87,13 +87,18 @@ AI가 함께 적용한 Auth 기본 보안 설정:
 
 ### 3-2. HIBP 비밀번호 유출 감지
 
-Supabase Dashboard → Authentication → **Password Policies / Attack Protection**:
+Supabase Auth leaked-password protection (HaveIBeenPwned) — **Management API 정본**:
 
-- [ ] "Check for compromised passwords (HIBP)" 활성화
-- [ ] Auth logs에서 유출 비밀번호 거부 이벤트가 기록되는지 확인
+```powershell
+bun run stack:auth-hibp-enable
+```
 
-> 현재 Dashboard에서 HIBP는 email provider/플랜 조건에 묶여 있어 AI가 안전하게 강제 적용하지
-> 않았습니다. Pro/SMTP 준비 후 Dashboard에서 직접 활성화하세요.
+- [ ] **`[ ]` DEFER (유료)** — 2026-07-13 PATCH `password_hibp_enabled` → **402 Pro+ required**
+- [ ] Pro 업그레이드 후 `bun run stack:auth-hibp-enable` → advisor `auth_leaked_password_protection` WARN **0**
+- [ ] Auth logs에서 유출 비밀번호 거부 이벤트 스모크 (선택)
+
+> Dashboard 수동 토글 대신 `stack:auth-hibp-enable`만 사용. Soft-launch blocker 아님 (P13 MFA DEFER와 동급).
+> Evidence: `docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R3/r3e-auth-hibp-feature-flag-implement.md`
 
 ### 3-3. 프로덕션 사이트 URL 설정
 
@@ -509,7 +514,7 @@ bun run build
   ✅ 완료 — pg_cron 마이그레이션으로 자동화됨 (수동 작업 없음)
 
 나중에 (AI가 코드 완성 후 / 출시 직전)
-  3. [ ] MFA + HIBP Auth 설정 — **MFA = DEFER 2026-07-11 (유료)** · HIBP는 플랜 준비 후
+  3. [ ] MFA + HIBP Auth 설정 — **MFA = DEFER 2026-07-11 (유료)** · **HIBP = DEFER 2026-07-13 (402 Pro+ · `stack:auth-hibp-enable`)**
   4. [ ] 프로덕션 배포 환경 변수
   5. [ ] GitHub Secrets (CI/CD)
   6. [ ] VAPID 키 (PWA)

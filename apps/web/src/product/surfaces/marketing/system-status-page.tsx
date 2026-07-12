@@ -1,20 +1,22 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Activity } from 'lucide-react';
 
 import {
-  SYSTEM_STATUS_COMPONENT_IDS,
   SYSTEM_STATUS_COMPONENT_TITLE_KEYS,
   SYSTEM_STATUS_ENGINE_TODO,
-  SYSTEM_STATUS_FAIL_CLOSED_BADGE_STATE,
   SYSTEM_STATUS_SEO_DESCRIPTION_KEY,
   SYSTEM_STATUS_SEO_TITLE_KEY,
-  SYSTEM_STATUS_SUMMARY_UNKNOWN_KEY,
   SYSTEM_STATUS_UI_UNLOCK_TODO,
-  SYSTEM_STATUS_UNKNOWN_KEY,
+  failClosedPublicPlatformStatus,
+  mapPublicStatusToBadgeState,
+  resolveLaneLabelKey,
+  resolveSummaryLabelKey,
   resolveSystemStatusAnnouncementsRoute,
   resolveSystemStatusBackRoute,
+  type PublicPlatformStatus,
 } from '@/domain/system-status-display-contract';
+import { fetchPublicPlatformStatus } from '@/features/marketing/use-system-status';
 import { useT } from '@/product/i18n';
 import { buttonVariants } from '@/product/primitives/button';
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
@@ -24,17 +26,30 @@ import { cn } from '@/product/primitives/lib/cn';
 import { MarketingPageLayout } from './marketing-page-layout';
 
 /**
- * Canonical `/status` — fail-closed unknown until R4 public health aggregate (C-02).
- * Never render settled/operational badges without a verified live source.
+ * Canonical `/status` — live from `rpc_get_public_platform_status` (R4).
+ * Fetch failure stays fail-closed unknown (C-02).
  */
 export function SystemStatusPage() {
   const t = useT();
   const backRoute = resolveSystemStatusBackRoute();
   const announcementsRoute = resolveSystemStatusAnnouncementsRoute();
+  const [status, setStatus] = useState<PublicPlatformStatus>(() => failClosedPublicPlatformStatus());
 
   useEffect(() => {
     document.title = t(SYSTEM_STATUS_SEO_TITLE_KEY);
   }, [t]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchPublicPlatformStatus().then((next) => {
+      if (!cancelled) setStatus(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const mode = status.source === 'live' ? 'live' : 'fail-closed';
 
   return (
     <MarketingPageLayout
@@ -49,7 +64,7 @@ export function SystemStatusPage() {
         data-engine-todo={SYSTEM_STATUS_ENGINE_TODO}
         data-ui-unlock-todo={SYSTEM_STATUS_UI_UNLOCK_TODO}
         data-testid="system-status-live"
-        data-status-mode="fail-closed"
+        data-status-mode={mode}
       >
         <Card data-testid="system-status-summary" className="mb-4">
           <CardHeader className="pb-2">
@@ -65,8 +80,8 @@ export function SystemStatusPage() {
           </CardHeader>
           <CardBody className="pt-0">
             <StatusBadge
-              state={SYSTEM_STATUS_FAIL_CLOSED_BADGE_STATE}
-              label={t(SYSTEM_STATUS_SUMMARY_UNKNOWN_KEY)}
+              state={mapPublicStatusToBadgeState(status.overall)}
+              label={t(resolveSummaryLabelKey(status.overall))}
             />
           </CardBody>
         </Card>
@@ -78,18 +93,20 @@ export function SystemStatusPage() {
           </CardHeader>
           <CardBody className="pt-0">
             <ul className="m-0 flex list-none flex-col gap-2 p-0">
-              {SYSTEM_STATUS_COMPONENT_IDS.map((id) => (
+              {status.lanes.map((lane) => (
                 <li
-                  key={id}
+                  key={lane.id}
                   className="border-border flex items-center justify-between gap-3 border-b py-3 last:border-b-0"
-                  data-testid={`system-status-component-${id}`}
+                  data-testid={`system-status-component-${lane.id}`}
+                  data-lane-status={lane.status}
+                  data-reason-category={lane.reasonCategory}
                 >
                   <span className="text-foreground text-sm font-medium">
-                    {t(SYSTEM_STATUS_COMPONENT_TITLE_KEYS[id])}
+                    {t(SYSTEM_STATUS_COMPONENT_TITLE_KEYS[lane.id])}
                   </span>
                   <StatusBadge
-                    state={SYSTEM_STATUS_FAIL_CLOSED_BADGE_STATE}
-                    label={t(SYSTEM_STATUS_UNKNOWN_KEY)}
+                    state={mapPublicStatusToBadgeState(lane.status)}
+                    label={t(resolveLaneLabelKey(lane.status))}
                   />
                 </li>
               ))}

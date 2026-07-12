@@ -218,6 +218,9 @@ export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
             sportsBlocked={engine.sportsBlocked}
             onToggleSelection={engine.toggleSelection}
             onRetry={engine.refreshFixtureMarkets}
+            isLive={Boolean(
+              engine.activeLiveState && isSportsLiveInPlayStatus(engine.activeLiveState.status),
+            )}
             t={t}
           />
         ) : null}

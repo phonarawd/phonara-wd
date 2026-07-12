@@ -301,6 +301,7 @@ export interface UseAdminCmsDesk {
 
   // shared
   audit: AdminAuditEvent[];
+  refresh: () => Promise<void>;
   resetForTest: () => void;
 }
 
@@ -530,6 +531,7 @@ export function useAdminCmsDeskMock(): UseAdminCmsDesk {
     promoStatuses: PROMO_STATUSES,
 
     audit,
+    refresh: async () => undefined,
     resetForTest,
   };
 }

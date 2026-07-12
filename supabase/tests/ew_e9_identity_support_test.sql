@@ -62,11 +62,20 @@ BEGIN
     WHERE key IN ('system_halt', 'system_readonly', 'consent_gate_enabled');
   UPDATE app_config SET value = 'true' WHERE key = 'feature_siwe_login_enabled';
 
+  -- M-04: anon path revoked — challenge via authenticated (binds user_id) or service ingress
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('sub', v_user::TEXT, 'role', 'authenticated')::TEXT,
+    TRUE
+  );
+  SET LOCAL ROLE authenticated;
   v_ch := rpc_create_siwe_challenge(v_addr, 1);
   ASSERT COALESCE((v_ch->>'ok')::BOOLEAN, FALSE), format('challenge ok %s', v_ch);
   v_cid := (v_ch->>'challenge_id')::UUID;
   ASSERT (v_ch->>'address') = v_addr, 'address normalize';
   ASSERT (v_ch->>'message') LIKE '%' || v_addr || '%', 'message contains address';
+  RESET ROLE;
+  PERFORM set_config('request.jwt.claims', '{}', TRUE);
 
   -- authenticated cannot complete (service_role only)
   PERFORM set_config(

@@ -20,9 +20,12 @@ import {
   EW_E9_IDENTITY_TODO,
   EW_E9_LIVE_UI_SAME_PR_FORBIDDEN,
   EW_E9_NEW_ENGINE_FEATURES,
+  EW_E9_PRODUCT_ANALYTICS_EDGE_FUNCTION,
   EW_E9_RECORD_ANALYTICS_RPC,
   EW_E9_RECORD_APP_INSTALL_RPC,
   EW_E9_SERVICE_COMPLETE_SIWE_RPC,
+  EW_E9_SERVICE_CREATE_SIWE_CHALLENGE_RPC,
+  EW_E9_SERVICE_RECORD_ANALYTICS_RPC,
   EW_E9_SIWE_EDGE_FUNCTION,
   EW_E9_TIER_LEADERBOARD_RPC,
   isEwE9IdentityEngineReady,
@@ -105,6 +108,19 @@ describe('ew-e9-identity-support-display-contract (E9 WAVE)', () => {
     const edge = readRepo('supabase/functions/siwe-auth/index.ts');
     expect(edge).toContain(EW_E9_SIWE_EDGE_FUNCTION);
     expect(edge).toContain(EW_E9_SERVICE_COMPLETE_SIWE_RPC);
+    expect(edge).toContain('siwe_user_id_forbidden');
+    expect(edge).toContain(EW_E9_SERVICE_CREATE_SIWE_CHALLENGE_RPC);
+
+    const analyticsEdge = readRepo('supabase/functions/product-analytics/index.ts');
+    expect(analyticsEdge).toContain(EW_E9_PRODUCT_ANALYTICS_EDGE_FUNCTION);
+    expect(analyticsEdge).toContain(EW_E9_SERVICE_RECORD_ANALYTICS_RPC);
+    expect(analyticsEdge).toContain('analytics_user_id_forbidden');
+
+    const m04 = readRepo('supabase/migrations/20260817000001_m04_r3d_siwe_analytics_ingress.sql');
+    expect(m04).toContain(EW_E9_SERVICE_CREATE_SIWE_CHALLENGE_RPC);
+    expect(m04).toContain(EW_E9_SERVICE_RECORD_ANALYTICS_RPC);
+    expect(m04).toContain('service_ingress_rate_buckets');
+    expect(m04).toContain('FROM PUBLIC, anon');
 
     const sqlTest = readRepo('supabase/tests/ew_e9_identity_support_test.sql');
     expect(sqlTest).toContain('E9-0');
@@ -114,5 +130,11 @@ describe('ew-e9-identity-support-display-contract (E9 WAVE)', () => {
     expect(sqlTest).toContain('E9-4');
     expect(sqlTest).toContain('E9-5');
     expect(sqlTest).toContain(EW_E9_CREATE_SIWE_CHALLENGE_RPC);
+
+    const m04Test = readRepo('supabase/tests/m04_r3d_siwe_analytics_ingress_test.sql');
+    expect(m04Test).toContain('M04-0');
+    expect(m04Test).toContain('rate_limit_exceeded');
+    expect(m04Test).toContain('siwe_user_mismatch');
+    expect(m04Test).toContain('analytics_payload_too_large');
   });
 });

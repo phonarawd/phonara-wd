@@ -5,6 +5,7 @@ import { RefreshCw } from 'lucide-react';
 import type { MessageKey } from '@phonara/i18n';
 
 import { useAdminMissionsDesk } from '@/hooks/admin/useAdminMissionsDesk';
+import { formatAdminMoney } from '@/lib/format-admin-money';
 import type {
   AdminEarnLimitRow,
   AdminViralMissionRow,
@@ -266,7 +267,7 @@ export function AdminEarnMissionsPage() {
                 {
                   id: 'reward',
                   header: t('admin.missions.col.reward'),
-                  cell: ({ row }) => `${row.rewardPhon} PHON`,
+                  cell: ({ row }) => formatAdminMoney(row.rewardPhon, 'PHON'),
                   meta: { className: 'tabular-nums' },
                 },
                 {

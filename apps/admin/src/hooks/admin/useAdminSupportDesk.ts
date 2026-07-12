@@ -13,7 +13,7 @@ import {
   type AdminSupportTicketPriority,
   type AdminSupportTicketStatus,
 } from '@/domain/admin-support-desk-display-contract';
-import { supabase } from '../../lib/supabase';
+import { callRpc } from '../../lib/rpc';
 import { useAuditLogs } from '../use-audit-logs';
 import { useAdminMfaReady } from '../use-admin-mfa-ready';
 
@@ -170,11 +170,7 @@ export function useAdminSupportDesk(): UseAdminSupportDesk {
   const ticketsQuery = useQuery({
     queryKey: ['admin', 'support', 'tickets'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc(
-        'rpc_admin_list_support_tickets' as 'rpc_admin_list_casino_catalog',
-        { p_status: null, p_limit: 100 } as never,
-      );
-      if (error) throw error;
+      const data = await callRpc('rpc_admin_list_support_tickets', { p_limit: 100 });
       return isRecord(data) && Array.isArray(data['tickets']) ? (data['tickets'] as Json[]) : [];
     },
     enabled: mfaReady,
@@ -216,15 +212,11 @@ export function useAdminSupportDesk(): UseAdminSupportDesk {
 
   const resolveMutation = useMutation({
     mutationFn: async (args: { ticketId: string; reason: string; resolutionNote?: string }) => {
-      const { error } = await supabase.rpc(
-        'rpc_admin_resolve_support_ticket' as 'rpc_admin_set_casino_game_status',
-        {
-          p_ticket_id: args.ticketId,
-          p_reason: args.reason,
-          p_resolution_note: args.resolutionNote ?? null,
-        } as never,
-      );
-      if (error) throw error;
+      await callRpc('rpc_admin_resolve_support_ticket', {
+        p_ticket_id: args.ticketId,
+        p_reason: args.reason,
+        p_resolution_note: args.resolutionNote,
+      });
     },
     onSuccess: invalidate,
   });
@@ -234,11 +226,7 @@ export function useAdminSupportDesk(): UseAdminSupportDesk {
   }, [ticketsQuery]);
 
   const loadTicketDetail = useCallback(async (ticketId: string) => {
-    const { data, error } = await supabase.rpc(
-      'rpc_get_support_ticket' as 'rpc_admin_list_casino_catalog',
-      { p_ticket_id: ticketId } as never,
-    );
-    if (error) throw error;
+    const data = await callRpc('rpc_get_support_ticket', { p_ticket_id: ticketId });
     if (!isRecord(data) || !isRecord(data['ticket'])) return null;
     return mapTicketRow(data['ticket'] as Json);
   }, []);

@@ -13,6 +13,7 @@ export const EARN_SURFACE_PREFIXES = [
   '/events',
   '/share/earnings',
   '/staking',
+  '/onboarding',
 ] as const;
 
 const PUBLIC_AUTH_ROUTES = new Set(['/login', '/signup', '/reset-password', '/verify-email']);

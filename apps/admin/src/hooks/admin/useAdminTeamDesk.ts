@@ -8,7 +8,7 @@ import {
   type AdminTeamGrantableRole,
 } from '@/domain/admin-team-desk-display-contract';
 import { isAdminRbacRole, type AdminRbacRole } from '@/domain/admin-rbac';
-import { supabase } from '../../lib/supabase';
+import { callRpc } from '../../lib/rpc';
 import { useAuditLogs } from '../use-audit-logs';
 import { useAdminMfaReady } from '../use-admin-mfa-ready';
 
@@ -126,10 +126,7 @@ export function useAdminTeamDesk(): UseAdminTeamDesk {
   const grantsQuery = useQuery({
     queryKey: ['admin', 'team', 'role-grants'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc(
-        'rpc_admin_list_role_grants' as 'rpc_admin_list_casino_catalog',
-      );
-      if (error) throw error;
+      const data = await callRpc('rpc_admin_list_role_grants');
       return isRecord(data) && Array.isArray(data['grants']) ? (data['grants'] as Json[]) : [];
     },
     enabled: mfaReady,
@@ -169,16 +166,12 @@ export function useAdminTeamDesk(): UseAdminTeamDesk {
       enabled: boolean;
       reason: string;
     }) => {
-      const { error } = await supabase.rpc(
-        'rpc_admin_set_role_grant' as 'rpc_admin_set_casino_game_status',
-        {
-          p_user_id: args.userId,
-          p_role: args.role,
-          p_enabled: args.enabled,
-          p_reason: args.reason,
-        } as never,
-      );
-      if (error) throw error;
+      await callRpc('rpc_admin_set_role_grant', {
+        p_user_id: args.userId,
+        p_role: args.role,
+        p_enabled: args.enabled,
+        p_reason: args.reason,
+      });
     },
     onSuccess: invalidate,
   });

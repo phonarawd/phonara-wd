@@ -7,6 +7,11 @@ import {
   type SportsCashoutExposureMode,
 } from '@/domain/sports-cashout-combo-display-contract';
 import {
+  collectSportsMatch1x2Outcomes,
+  isSportsOddsIngestHealthGreen,
+  shouldBlockSportsPlaceNetworkMutation,
+} from '@/domain/sports-odds-freshness-display-contract';
+import {
   leagueFilterToRpcParam,
   resolveSportsPageModeStatusFilter,
   type SportsLeagueFilter,
@@ -55,6 +60,8 @@ export type SportsPageControllerView = {
   sportsBlockedKey: MessageKey;
   /** `LAUNCH_GATES.sportsBetting` → contract exposure (`built_disabled` until soft-launch flip). */
   placeCtaExposure: SportsCashoutExposureMode;
+  /** H-05 — true only when ≥1 fresh server `captured_at` outcome is on the board. */
+  oddsIngestHealthGreen: boolean;
   phonAvail: string;
   usdtAvail: string;
   phonBonusAvailable: string | null;
@@ -102,12 +109,23 @@ export function useSportsPageController(
   const placeBetMutation = usePlaceSportsBet();
 
   const fixtures = fixturesQuery.data ?? [];
+  const fixtureMarkets = fixtureMarketsQuery.data ?? [];
   /** On-screen fixtures for odds INSERT debounce scope (PIR pir-p1-sports-odds-debounce). */
   const visibleFixtureIds = useMemo(() => {
     const ids = new Set(fixtures.map((row) => row.fixture_id));
     if (resolvedFixtureId) ids.add(resolvedFixtureId);
     return ids;
   }, [fixtures, resolvedFixtureId]);
+
+  const oddsIngestHealthGreen = useMemo(() => {
+    const outcomes = fixtures.flatMap((row) => collectSportsMatch1x2Outcomes(row.match_1x2));
+    for (const market of fixtureMarkets) {
+      for (const outcome of market.outcomes) {
+        outcomes.push({ odds: outcome.odds, captured_at: outcome.captured_at });
+      }
+    }
+    return isSportsOddsIngestHealthGreen(outcomes);
+  }, [fixtureMarkets, fixtures]);
 
   const realtime = useSportsRealtime({
     enabled: liveSurfaceActive,
@@ -157,6 +175,7 @@ export function useSportsPageController(
 
   const canPlaceBet =
     launchPlaceAllowed &&
+    oddsIngestHealthGreen &&
     !consentBlocked &&
     Boolean(session?.user) &&
     slip.selections.length > 0 &&
@@ -170,6 +189,15 @@ export function useSportsPageController(
 
   const confirmPlaceBet = useCallback(async () => {
     if (!canPlaceBet) return;
+    if (
+      shouldBlockSportsPlaceNetworkMutation({
+        sportsBettingGate: LAUNCH_GATES.sportsBetting,
+        ingestHealthGreen: oddsIngestHealthGreen,
+        hasStaleOrMissingSelection: false,
+      })
+    ) {
+      return;
+    }
     const stakeRaw = slip.stake.replace(/,/g, '').trim();
     try {
       await placeBetMutation.mutateAsync({
@@ -195,7 +223,7 @@ export function useSportsPageController(
         key: translateError(error),
       });
     }
-  }, [canPlaceBet, placeBetMutation, slip]);
+  }, [canPlaceBet, oddsIngestHealthGreen, placeBetMutation, slip]);
 
   const fixturesErrorKey = fixturesQuery.error ? translateError(fixturesQuery.error) : null;
   const fixtureMarketsErrorKey = fixtureMarketsQuery.error
@@ -231,7 +259,7 @@ export function useSportsPageController(
     fixturesErrorKey,
     fixtures,
     activeFixture,
-    fixtureMarkets: fixtureMarketsQuery.data ?? [],
+    fixtureMarkets,
     fixtureMarketsLoading: fixtureMarketsQuery.isLoading,
     fixtureMarketsErrorKey,
     refreshFixtureMarkets: () => {
@@ -242,6 +270,7 @@ export function useSportsPageController(
     sportsBlocked: entryBlocked,
     sportsBlockedKey: entryBlockedKey,
     placeCtaExposure,
+    oddsIngestHealthGreen,
     phonAvail,
     usdtAvail,
     phonBonusAvailable,

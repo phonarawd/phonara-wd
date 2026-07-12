@@ -27,6 +27,31 @@ export async function createKrwDepositRequest(
   return data as unknown as KrwDepositResult;
 }
 
+/** Result of attaching a KRW deposit proof (ledger credit 0 — pending review only). */
+export interface AttachKrwDepositProofResult {
+  ok: boolean;
+  deposit_id: string;
+  proof_status: string;
+  idempotent?: boolean;
+}
+
+export interface AttachKrwDepositProofInput {
+  depositId: string;
+  proofPath: string;
+  clientRequestId: string;
+}
+
+export async function attachKrwDepositProof(
+  input: AttachKrwDepositProofInput,
+): Promise<AttachKrwDepositProofResult> {
+  const data = await callRpc('rpc_attach_krw_deposit_proof', {
+    p_deposit_id: input.depositId,
+    p_proof_path: input.proofPath,
+    p_client_request_id: input.clientRequestId,
+  });
+  return data as unknown as AttachKrwDepositProofResult;
+}
+
 export type WithdrawDestinationPayload =
   | string
   | {

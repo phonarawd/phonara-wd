@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import type { AnchorHTMLAttributes } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -13,8 +13,23 @@ vi.mock('@tanstack/react-router', () => ({
   ),
 }));
 
+vi.mock('@/features/marketing/use-system-status', () => ({
+  fetchPublicPlatformStatus: vi.fn(async () => ({
+    checkedAt: '2026-07-13T00:00:00.000Z',
+    overall: 'unknown',
+    source: 'fail-closed',
+    lanes: [
+      { id: 'earn', status: 'unknown', reasonCategory: 'unknown', checkedAt: '2026-07-13T00:00:00.000Z' },
+      { id: 'wallet', status: 'unknown', reasonCategory: 'unknown', checkedAt: '2026-07-13T00:00:00.000Z' },
+      { id: 'trade', status: 'unknown', reasonCategory: 'unknown', checkedAt: '2026-07-13T00:00:00.000Z' },
+      { id: 'sports', status: 'unknown', reasonCategory: 'unknown', checkedAt: '2026-07-13T00:00:00.000Z' },
+      { id: 'casino', status: 'unknown', reasonCategory: 'unknown', checkedAt: '2026-07-13T00:00:00.000Z' },
+    ],
+  })),
+}));
+
 describe('SystemStatusPage', () => {
-  it('renders fail-closed unknown status — never operational without live health (C-02)', () => {
+  it('renders fail-closed unknown when public health feed is unavailable (C-02)', async () => {
     render(
       <I18nProvider>
         <SystemStatusPage />
@@ -22,10 +37,12 @@ describe('SystemStatusPage', () => {
     );
 
     expect(screen.getByTestId('system-status-page')).toBeInTheDocument();
-    expect(screen.getByTestId('system-status-live')).toHaveAttribute(
-      'data-status-mode',
-      'fail-closed',
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('system-status-live')).toHaveAttribute(
+        'data-status-mode',
+        'fail-closed',
+      );
+    });
     expect(screen.getByTestId('system-status-component-earn')).toBeInTheDocument();
     expect(screen.getByTestId('system-status-announcements-cta')).toHaveAttribute(
       'href',

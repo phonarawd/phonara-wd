@@ -366,6 +366,7 @@ export interface UseAdminCasinoDesk {
 
   // shared
   audit: AdminAuditEvent[];
+  refresh: () => Promise<void>;
   resetForTest: () => void;
 }
 
@@ -523,6 +524,7 @@ export function useAdminCasinoDeskMock(): UseAdminCasinoDesk {
     rtpStatuses: RTP_STATUSES,
 
     audit,
+    refresh: async () => undefined,
     resetForTest,
   };
 }

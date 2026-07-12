@@ -97,10 +97,15 @@ describe('WithdrawHubPage', () => {
     expect(screen.queryByTestId('withdraw-rail-crypto')).not.toBeInTheDocument();
   });
 
-  it('shows paused banner and disables rail navigation when withdrawal is blocked', () => {
+  it('shows paused banner with next-action CTA and disables rails when withdrawal is blocked (H-10)', () => {
     renderPage(makeEngine({ withdrawalBlocked: true, railsDisabled: true }));
 
     expect(screen.getByTestId('withdraw-hub-paused')).toBeInTheDocument();
+    expect(screen.getByText(/소프트 런치 운영 정책/)).toBeInTheDocument();
+    expect(screen.getByTestId('withdraw-hub-paused-next-cta')).toHaveAttribute(
+      'href',
+      '/wallet/deposit',
+    );
     expect(screen.getByTestId('withdraw-rail-krw')).not.toHaveAttribute('href');
   });
 

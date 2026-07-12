@@ -21,7 +21,7 @@ const STATUS_KEYS: Record<AdminCmsPromoRow['status'], MessageKey> = {
 /** E6 promotions desk (`/promotions`) — schedule operations only. */
 export function AdminPromotionsPage() {
   const t = useT();
-  const { filteredPromos, activatePromo, endPromoEarly } = useAdminCmsDesk();
+  const { filteredPromos, activatePromo, endPromoEarly, refresh } = useAdminCmsDesk();
   const [target, setTarget] = useState<Target | null>(null);
 
   const submit = async (reason: string) => {
@@ -74,7 +74,7 @@ export function AdminPromotionsPage() {
             title={t('admin.overview.empty.title')}
             description={t('admin.cms.promos.empty')}
             actionLabel={t('admin.overview.action.refresh')}
-            onAction={() => undefined}
+            onAction={() => void refresh()}
           />
         }
         rowActionsHeader={t('admin.cms.promos.col.action')}

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import type { AdminAuditEvent } from '@/shared-types';
-import { supabase } from '../../lib/supabase';
+import { callRpc } from '../../lib/rpc';
 import { useAuditLogs } from '../use-audit-logs';
 import type { AdminUserRow } from './useAdminUsersDeskMock';
 import type {
@@ -98,16 +98,8 @@ export function useAdminRewardsDesk(): UseAdminRewardsDesk {
   } = useQuery({
     queryKey: USERS_QUERY_KEY,
     queryFn: async () => {
-      const { data, error } = await (
-        supabase as {
-          rpc: (
-            fn: string,
-            args: Record<string, unknown>,
-          ) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
-        }
-      ).rpc('rpc_admin_list_users', { p_search: null, p_limit: 200 });
-      if (error) throw error;
-      return ((data ?? []) as Record<string, unknown>[]).map(mapUserRow);
+      const data = await callRpc('rpc_admin_list_users', { p_limit: 200 });
+      return (data as Record<string, unknown>[]).map(mapUserRow);
     },
     staleTime: 15_000,
   });
@@ -152,14 +144,7 @@ export function useAdminRewardsDesk(): UseAdminRewardsDesk {
     async (userId: string, input: ManualRewardAdjustInput): Promise<boolean> => {
       if (input.reason.trim().length < MIN_ADJUST_REASON) return false;
       try {
-        const { error } = await (
-          supabase as {
-            rpc: (
-              fn: string,
-              args: Record<string, unknown>,
-            ) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
-          }
-        ).rpc('rpc_admin_manual_wallet_adjust', {
+        await callRpc('rpc_admin_manual_wallet_adjust', {
           p_user_id: userId,
           p_currency: input.currency,
           p_amount: input.amount,
@@ -167,7 +152,6 @@ export function useAdminRewardsDesk(): UseAdminRewardsDesk {
           p_reason: input.reason.trim(),
           p_client_request_id: input.clientRequestId,
         });
-        if (error) throw error;
         setLocalAudit((prev) =>
           [
             {

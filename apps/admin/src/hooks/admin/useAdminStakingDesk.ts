@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AdminAuditEvent } from '@/shared-types';
-import { supabase } from '../../lib/supabase';
+import { callRpc } from '../../lib/rpc';
 import { useAuditLogs } from '../use-audit-logs';
 import { useAdminMfaReady } from '../use-admin-mfa-ready';
 
@@ -82,9 +82,8 @@ export function useAdminStakingDesk(): UseAdminStakingDesk {
     queryKey: ['admin', 'staking-pools'],
     enabled: mfaReady,
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('rpc_admin_list_staking_pools' as never);
-      if (error) throw error;
-      return ((data ?? []) as StakingPoolRow[]).map(mapPool);
+      const data = await callRpc('rpc_admin_list_staking_pools');
+      return (data as StakingPoolRow[]).map(mapPool);
     },
   });
 
@@ -98,15 +97,11 @@ export function useAdminStakingDesk(): UseAdminStakingDesk {
       isActive: boolean;
       reason: string;
     }) => {
-      const { error } = await supabase.rpc(
-        'rpc_admin_set_staking_pool_active' as never,
-        {
-          p_pool_id: poolId,
-          p_is_active: isActive,
-          p_reason: reason,
-        } as never,
-      );
-      if (error) throw error;
+      await callRpc('rpc_admin_set_staking_pool_active', {
+        p_pool_id: poolId,
+        p_is_active: isActive,
+        p_reason: reason,
+      });
     },
     onSettled: async () => {
       await qc.invalidateQueries({ queryKey: ['admin', 'staking-pools'] });

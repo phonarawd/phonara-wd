@@ -42,7 +42,7 @@ export function OrderBookDepthChart({ model, midDisplay, t, className }: OrderBo
           {midDisplay}
         </div>
       </div>
-      <p className="text-foreground-muted m-0 px-1 text-[11px]">
+      <p className="text-foreground-muted m-0 px-1 text-xs">
         {t('trade.orderbook.depthChartHint')}
       </p>
     </div>

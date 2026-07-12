@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { EARN_SUBNAV, EARN_SUBNAV_CORE } from '../earn-subnav';
+import { CASINO_SUBNAV } from '../casino-subnav';
 import { TRADE_SUBNAV } from '../trade-subnav';
 import {
   filterRegisteredSubnavItems,
@@ -121,5 +122,6 @@ describe('subnav-route-manifest §12.19.6', () => {
   it('shows casino fairness after p10-page-casino-fairness manifest', () => {
     expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/casino/fairness')).toBe(true);
     expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/casino/tournaments')).toBe(false);
+    expect(CASINO_SUBNAV.map((item) => item.to)).not.toContain('/casino/tournaments');
   });
 });

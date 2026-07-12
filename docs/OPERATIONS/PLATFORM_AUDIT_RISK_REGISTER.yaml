@@ -81,14 +81,14 @@ risks:
     title: '관측/알림 스택 R4 미구축 시 R10 Gate Block'
     domain: Ops
     impact: 4
-    likelihood: 4
+    likelihood: 1
     severity: HIGH
-    status: OPEN
-    mitigation: 'ADR-021 최소안 · EXT-01'
+    status: MITIGATED
+    mitigation: 'ADR-021 Option A executed · EXT-01 dry-fire 6/6 · edge_ops outcome split'
     owner: sre
-    trigger_link: ''
-    evidence: 'docs/PRODUCT/ADR/021-platform-observability-stack.md'
-    updated_at: '2026-07-13T00:34:00+09:00'
+    trigger_link: 'PLATFORM_SLO_SLA.yaml#rollback_triggers'
+    evidence: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R4/r4-market-ops-implement.md'
+    updated_at: '2026-07-13T04:42:00+09:00'
   - id: RISK-PII-RETENTION
     title: '개인정보 보존·파기 정책 초안은 R5 · 완성 R12+'
     domain: Ops

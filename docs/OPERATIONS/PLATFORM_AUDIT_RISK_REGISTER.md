@@ -11,7 +11,7 @@
 | RISK-SINGLE-REGION       | 단일 리전 failover              | Ops      | HIGH     | ACCEPTED  | sre      | 2026-10-13        | DR doc            |
 | RISK-DEP-OTEL            | bun audit moderate otel         | Ops      | MEDIUM   | OPEN      | sre      | —                 | R0 bun-audit      |
 | RISK-BROWSER-MCP         | Browser MCP 부재                | Ops      | HIGH     | MITIGATED | sre      | Probe5 CAPTURE_OK | browser-mcp-probe |
-| RISK-OBS-STACK           | 관측 스택 미구축                | Ops      | HIGH     | OPEN      | sre      | —                 | ADR-021           |
+| RISK-OBS-STACK           | 관측 스택 미구축                | Ops      | HIGH     | MITIGATED | sre      | R4 dry-fire 6/6   | ADR-021           |
 | RISK-PII-RETENTION       | PII retention 정책              | Ops      | MEDIUM   | OPEN      | product  | —                 | —                 |
 
 **status:** `OPEN` = 식별됨 · `UNMITIGATED` = 완화 불가 확인 · `MITIGATED` · `ACCEPTED`(서명+만료일).

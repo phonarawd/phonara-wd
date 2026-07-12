@@ -12,8 +12,6 @@ import { TradeHowItWorksPanel } from '@/features/trading/trade-beginner-help/tra
 
 import { useTradePageController } from '@/features/trading/use-trade-page-controller';
 
-import { formatMoney } from '@/hooks/use-money';
-
 import type { Currency } from '@phonara/shared-types';
 
 import { MoneyDisplay } from '@/product/primitives/money-display';
@@ -24,6 +22,10 @@ import { useTradeFiatHint } from '@/features/trading/use-trade-fiat-hint';
 import { Skeleton } from '@/product/primitives/skeleton';
 
 import { cn } from '@/product/primitives/lib/cn';
+
+import {
+  formatSpotBaseQuantityDisplay,
+} from '@/domain/spot-base-quantity-display-contract';
 
 import {
   TRADE_DESK_BOTTOM_DOCK_SLOT_CLASS,
@@ -76,12 +78,12 @@ function isWalletCurrency(asset: string): asset is Currency {
 
 function SpotAssetBalance({
   amount,
-
   asset,
+  quantityPrecision,
 }: {
   amount: string;
-
   asset: string;
+  quantityPrecision: number | null;
 }) {
   if (isWalletCurrency(asset)) {
     return (
@@ -95,8 +97,8 @@ function SpotAssetBalance({
   }
 
   return (
-    <span className="text-foreground text-sm tabular-nums">
-      {formatMoney(amount, 'USDT', { grouping: true, showCurrency: false })}{' '}
+    <span className="text-foreground text-sm tabular-nums" data-testid="spot-base-quantity">
+      {formatSpotBaseQuantityDisplay(amount, quantityPrecision)}{' '}
       <span className="text-foreground-muted">{asset}</span>
     </span>
   );
@@ -108,6 +110,8 @@ function SpotAssetsPanel({
   baseLabel,
 
   baseAvail,
+
+  baseQuantityPrecision,
 
   phonBonusAvailableDisplay,
 
@@ -122,6 +126,8 @@ function SpotAssetsPanel({
   baseLabel: string;
 
   baseAvail: string;
+
+  baseQuantityPrecision: number | null;
 
   phonBonusAvailableDisplay: string | null;
 
@@ -155,7 +161,11 @@ function SpotAssetsPanel({
           <div className="flex items-baseline justify-between gap-3">
             <dt className="text-foreground-muted text-sm">{baseLabel}</dt>
             <dd className="m-0">
-              <SpotAssetBalance amount={baseAvail} asset={baseLabel} />
+              <SpotAssetBalance
+                amount={baseAvail}
+                asset={baseLabel}
+                quantityPrecision={baseQuantityPrecision}
+              />
             </dd>
           </div>
         )}
@@ -350,6 +360,7 @@ export function SpotDeskPage() {
               usdtAvail={wire.usdtAvail}
               baseLabel={wire.baseLabel}
               baseAvail={wire.baseLabel === 'PHON' ? wire.phonAvail : wire.baseHoldingQty}
+              baseQuantityPrecision={wire.quantityPrecision}
               phonBonusAvailableDisplay={wire.phonBonusAvailableDisplay}
               phonRealAvailableDisplay={wire.phonRealAvailableDisplay}
               phonAvail={wire.phonAvail}
@@ -405,6 +416,7 @@ export function SpotDeskPage() {
               usdtAvail={wire.usdtAvail}
               baseLabel={wire.baseLabel}
               baseAvail={wire.baseLabel === 'PHON' ? wire.phonAvail : wire.baseHoldingQty}
+              baseQuantityPrecision={wire.quantityPrecision}
               phonBonusAvailableDisplay={wire.phonBonusAvailableDisplay}
               phonRealAvailableDisplay={wire.phonRealAvailableDisplay}
               phonAvail={wire.phonAvail}

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Banknote, Coins } from 'lucide-react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 
+import { resolveWalletWithdrawalOffBanner } from '@/domain/wallet-withdrawal-off-display-contract';
 import {
   useWithdrawHubController,
   type WithdrawHubTab,
@@ -56,6 +57,8 @@ export function WithdrawHubPage() {
     return <WithdrawHubLoadingShell />;
   }
 
+  const withdrawalOffBanner = resolveWalletWithdrawalOffBanner(engine.withdrawalBlocked);
+
   const dateFormatter = new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'ko-KR', {
     month: 'short',
     day: 'numeric',
@@ -80,18 +83,26 @@ export function WithdrawHubPage() {
         </div>
       </header>
 
-      {engine.withdrawalBlocked ? (
+      {withdrawalOffBanner ? (
         <div
           className="border-warning/30 bg-warning/10 rounded-(--ds-radius-lg) border p-4"
           data-testid="withdraw-hub-paused"
           role="status"
         >
-          <p className="text-foreground m-0 text-sm font-medium">
-            {t('wallet.withdraw.unavailableTitle')}
-          </p>
+          <p className="text-foreground m-0 text-sm font-medium">{t(withdrawalOffBanner.titleKey)}</p>
           <p className="text-foreground-muted m-0 mt-1 text-sm">
-            {t('wallet.withdraw.unavailableDesc')}
+            {t(withdrawalOffBanner.descriptionKey)}
           </p>
+          <p className="text-foreground-muted m-0 mt-2 text-sm">
+            {t(withdrawalOffBanner.nextActionKey)}
+          </p>
+          <a
+            href={withdrawalOffBanner.nextHref}
+            className={cn(buttonVariants({ variant: 'outline', size: 'md' }), 'mt-3 inline-flex')}
+            data-testid="withdraw-hub-paused-next-cta"
+          >
+            {t(withdrawalOffBanner.nextCtaKey)}
+          </a>
         </div>
       ) : !engine.withdrawalReady ? (
         <div

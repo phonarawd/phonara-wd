@@ -4,9 +4,9 @@ import {
   parseSportsLiveFixtureState,
   type SportsLiveFixtureState,
 } from '@/domain/sports-live-surface-display-contract';
+import { callRpc } from '@/lib/rpc';
 
 import { useAuth } from '../../contexts/auth-context';
-import { supabase } from '../../lib/supabase';
 
 export type { SportsLiveFixtureState };
 
@@ -58,12 +58,6 @@ export interface SportsBetLegInput {
   readonly odds_at_bet: string;
 }
 
-async function sportsRpc<T>(fn: string, args: Record<string, unknown>): Promise<T> {
-  const { data, error } = await supabase.rpc(fn as never, args as never);
-  if (error) throw error;
-  return data as T;
-}
-
 const VISUAL_FIXTURE_FIXTURES: SportsFixtureSummary[] = [
   {
     fixture_id: 'visual-fixture-1',
@@ -98,11 +92,10 @@ export function useListSportsFixtures(league?: string, status?: string) {
     queryKey: ['sports', 'fixtures', league ?? 'all', status ?? 'all'],
     queryFn: async (): Promise<SportsFixtureSummary[]> => {
       if (fixture) return VISUAL_FIXTURE_FIXTURES;
-      return sportsRpc<SportsFixtureSummary[]>('rpc_list_sports_fixtures', {
-        p_date: null,
-        p_league: league ?? null,
-        p_status: status ?? null,
-      });
+      return (await callRpc('rpc_list_sports_fixtures', {
+        p_league: league,
+        p_status: status,
+      })) as unknown as SportsFixtureSummary[];
     },
     staleTime: fixture ? Infinity : 5_000,
     refetchInterval: fixture ? false : 60_000,
@@ -167,11 +160,11 @@ export function useGetFixtureMarkets(fixtureId: string | undefined) {
       if (fixture && fixtureId === 'visual-fixture-1') {
         return VISUAL_FIXTURE_MARKETS;
       }
-      const payload = await sportsRpc<{
+      const payload = (await callRpc('rpc_get_fixture_markets', {
+        p_fixture_id: fixtureId!,
+      })) as {
         markets?: SportsMarketSummary[];
-      }>('rpc_get_fixture_markets', {
-        p_fixture_id: fixtureId,
-      });
+      };
       return payload?.markets ?? [];
     },
     staleTime: fixture ? Infinity : 5_000,
@@ -200,22 +193,25 @@ export function usePlaceSportsBet() {
       if (!session?.user) throw new Error('UNAUTHENTICATED');
       const betKind =
         input.betKind ?? (input.legs.length > 1 ? ('combo' as const) : ('single' as const));
-      return sportsRpc<{
+      return (await callRpc('rpc_place_sports_bet', {
+        p_legs: input.legs.map((leg) => ({
+          outcome_id: leg.outcome_id,
+          odds_at_bet: leg.odds_at_bet,
+        })),
+        p_stake: input.stake,
+        p_currency: input.currency,
+        p_idempotency_key: input.idempotencyKey,
+        p_bet_kind: betKind,
+        p_device_hash: input.deviceHash ?? undefined,
+        p_ip_hash: input.ipHash ?? undefined,
+        p_odds_acceptance: input.oddsAcceptance ?? undefined,
+      })) as {
         bet_id: string;
         status: string;
         combined_odds: string;
         potential_payout: string;
         already_placed: boolean;
-      }>('rpc_place_sports_bet', {
-        p_legs: input.legs,
-        p_stake: input.stake,
-        p_currency: input.currency,
-        p_idempotency_key: input.idempotencyKey,
-        p_bet_kind: betKind,
-        p_device_hash: input.deviceHash ?? null,
-        p_ip_hash: input.ipHash ?? null,
-        p_odds_acceptance: input.oddsAcceptance ?? null,
-      });
+      };
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['sports'] });
@@ -231,7 +227,7 @@ export function useMySportsBets(limit = 50) {
     queryKey: ['sports', 'my-bets', session?.user?.id, limit],
     enabled: Boolean(session?.user),
     queryFn: async () => {
-      return sportsRpc<unknown[]>('rpc_list_my_sports_bets', { p_limit: limit });
+      return callRpc('rpc_list_my_sports_bets', { p_limit: limit });
     },
   });
 }
@@ -243,7 +239,7 @@ export function useGetSportsBet(betId: string | undefined) {
     queryKey: ['sports', 'bet', betId],
     enabled: Boolean(session?.user && betId),
     queryFn: async () => {
-      return sportsRpc<unknown>('rpc_get_sports_bet', { p_bet_id: betId });
+      return callRpc('rpc_get_sports_bet', { p_bet_id: betId! });
     },
   });
 }
@@ -253,8 +249,8 @@ export function useLiveFixtureState(fixtureId: string | undefined) {
     queryKey: ['sports', 'live-state', fixtureId],
     enabled: Boolean(fixtureId),
     queryFn: async (): Promise<SportsLiveFixtureState | null> => {
-      const raw = await sportsRpc<unknown>('rpc_get_live_fixture_state', {
-        p_fixture_id: fixtureId,
+      const raw = await callRpc('rpc_get_live_fixture_state', {
+        p_fixture_id: fixtureId!,
       });
       return parseSportsLiveFixtureState(raw);
     },
@@ -271,7 +267,7 @@ export function useLiveFixtureStates(fixtureIds: readonly string[]) {
     queries: uniqueIds.map((fixtureId) => ({
       queryKey: ['sports', 'live-state', fixtureId] as const,
       queryFn: async (): Promise<SportsLiveFixtureState | null> => {
-        const raw = await sportsRpc<unknown>('rpc_get_live_fixture_state', {
+        const raw = await callRpc('rpc_get_live_fixture_state', {
           p_fixture_id: fixtureId,
         });
         return parseSportsLiveFixtureState(raw);
@@ -307,12 +303,12 @@ export function usePreviewSportsCashout(
     queryKey: ['sports', 'cashout-preview', betId],
     enabled: Boolean(session?.user && betId),
     queryFn: async () => {
-      return sportsRpc<{
+      return (await callRpc('rpc_preview_sports_cashout', { p_bet_id: betId! })) as {
         bet_id: string;
         cashout_amount: string;
         currency: string;
         potential_payout: string;
-      }>('rpc_preview_sports_cashout', { p_bet_id: betId });
+      };
     },
     staleTime: 5_000,
     refetchInterval: liveRefresh ? 15_000 : false,
@@ -334,15 +330,18 @@ export function usePlaceSportsSystemBet() {
       ipHash?: string;
     }) => {
       if (!session?.user) throw new Error('UNAUTHENTICATED');
-      return sportsRpc<{ lines: unknown[] }>('rpc_place_sports_system_bet', {
-        p_legs: input.legs,
-        p_system_sizes: input.systemSizes,
+      return (await callRpc('rpc_place_sports_system_bet', {
+        p_legs: input.legs.map((leg) => ({
+          outcome_id: leg.outcome_id,
+          odds_at_bet: leg.odds_at_bet,
+        })),
+        p_system_sizes: [...input.systemSizes],
         p_stake_per_line: input.stakePerLine,
         p_currency: input.currency,
         p_idempotency_key: input.idempotencyKey,
-        p_device_hash: input.deviceHash ?? null,
-        p_ip_hash: input.ipHash ?? null,
-      });
+        p_device_hash: input.deviceHash ?? undefined,
+        p_ip_hash: input.ipHash ?? undefined,
+      })) as { lines: unknown[] };
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['sports'] });
@@ -358,14 +357,11 @@ export function useCashoutSportsBet() {
   return useMutation({
     mutationFn: async (input: { betId: string; cashoutAmount: string; idempotencyKey: string }) => {
       if (!session?.user) throw new Error('UNAUTHENTICATED');
-      return sportsRpc<{ bet_id: string; status: string; cashout_amount: string }>(
-        'rpc_cashout_sports_bet',
-        {
-          p_bet_id: input.betId,
-          p_cashout_amount: input.cashoutAmount,
-          p_idempotency_key: input.idempotencyKey,
-        },
-      );
+      return (await callRpc('rpc_cashout_sports_bet', {
+        p_bet_id: input.betId,
+        p_cashout_amount: input.cashoutAmount,
+        p_idempotency_key: input.idempotencyKey,
+      })) as { bet_id: string; status: string; cashout_amount: string };
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['sports'] });
@@ -386,18 +382,18 @@ export function usePartialCashoutSportsBet() {
       idempotencyKey: string;
     }) => {
       if (!session?.user) throw new Error('UNAUTHENTICATED');
-      return sportsRpc<{
+      return (await callRpc('rpc_partial_cashout_sports_bet', {
+        p_bet_id: input.betId,
+        p_stake_portion: input.stakePortion,
+        p_cashout_amount: input.cashoutAmount,
+        p_idempotency_key: input.idempotencyKey,
+      })) as {
         bet_id: string;
         status: string;
         cashout_amount: string;
         remaining_stake: string;
         partial: boolean;
-      }>('rpc_partial_cashout_sports_bet', {
-        p_bet_id: input.betId,
-        p_stake_portion: input.stakePortion,
-        p_cashout_amount: input.cashoutAmount,
-        p_idempotency_key: input.idempotencyKey,
-      });
+      };
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['sports'] });
@@ -416,17 +412,17 @@ export function usePreviewSportsPartialCashout(
     queryKey: ['sports', 'partial-cashout-preview', betId, stakePortion],
     enabled: Boolean(session?.user && betId && stakePortion),
     queryFn: async () => {
-      return sportsRpc<{
+      return (await callRpc('rpc_preview_sports_partial_cashout', {
+        p_bet_id: betId!,
+        p_stake_portion: stakePortion!,
+      })) as {
         bet_id: string;
         stake_portion: string;
         cashout_amount: string;
         currency: string;
         remaining_stake: string;
         potential_payout: string;
-      }>('rpc_preview_sports_partial_cashout', {
-        p_bet_id: betId,
-        p_stake_portion: stakePortion,
-      });
+      };
     },
     staleTime: 5_000,
   });

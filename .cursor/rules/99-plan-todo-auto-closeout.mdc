@@ -1,0 +1,54 @@
+---
+description: Cursor Plan todo 자동 completed 체크 (작업 마감 시 AI 필수)
+alwaysApply: true
+---
+
+# Plan Todo Auto-Closeout (non-waivable)
+
+> **목적:** 작업이 끝나면 에이전트가 **직접** Cursor Plan frontmatter `status: completed`로 체크한다. operator 수동 체크박스에 의존하지 않는다.
+
+## 마감 시 필수 (Implement·audit todo 공통)
+
+작업을 "완료"로 보고하기 **직전**:
+
+```powershell
+bun run closeout:todo -- <plan-todo-id> --evidence "gate:ai-impl ... green · N/N"
+```
+
+또는 gate와 한 번에:
+
+```powershell
+bun run gate:ai-impl -- --test <owner-vitest-path> --closeout <plan-todo-id> --evidence "..."
+```
+
+| 입력 | 동작 |
+|------|------|
+| `<plan-todo-id>` | `~/.cursor/plans/*.plan.md` frontmatter에서 id 검색 → `status: completed` |
+| `--plan <path>` | id가 여러 plan에 있거나 자동 탐색 실패 시 명시 |
+| `--evidence "..."` | 로그·Handoff·Evidence에 남길 1줄 증거 (선택) |
+
+**구현:** `scripts/closeout-plan-todo.ts` · `scripts/lib/plan-todo-closeout.ts`
+
+## 정본 순서 (82와 함께)
+
+1. L0~L4 green (`gate:ai-impl` 또는 동등)
+2. **`closeout:todo` 또는 `gate:ai-impl --closeout`** — Plan YAML `completed`
+3. Handoff / ACTIVE_WORK_SSOT / registry 등 §82 doc sync
+4. 사용자에게 DONE 보고
+
+**FAIL =** Plan todo가 `pending`/`in_progress`인데 완료 주장 · `closeout:todo` 미실행
+
+## Idempotent
+
+- 이미 `completed`면 exit 0 (재실행 OK)
+- `cancelled` todo는 completed로 바꾸지 않음 (FAIL)
+
+## Plan 파일
+
+- 경로: `%USERPROFILE%\.cursor\plans\*.plan.md` (repo 밖 · Cursor UI 체크박스와 동일 파일)
+- **Plan 본문 `.md`는 수정하지 않음** — frontmatter `status`만 갱신
+- 알려진 SSOT: `platform-perfect-launch_6982dfdf` · `phase_r_super-app_8bdf2c10`
+
+## 교차 참조
+
+- `82-work-doc-closeout-sync` · `98-platform-audit-reference` · `AGENTS.md` Gates 표

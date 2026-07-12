@@ -1,4 +1,5 @@
 import type { MessageKey } from '@phonara/i18n';
+import type { Json } from '@phonara/shared-types';
 
 export type MissionExposure = 'live' | 'hidden';
 export type MissionCatalogFamily = 'viral' | 'earn_limit';
@@ -217,8 +218,8 @@ export function parseMissionCatalogRows(raw: unknown): {
 /** Builds upsert payload for `rpc_admin_upsert_mission_catalog` (no client money math). */
 export function buildMissionCatalogUpsertPayload(
   input: AdminMissionCatalogUpsertInput,
-): Record<string, unknown> {
-  const payload: Record<string, unknown> = {
+): Json {
+  const payload: Record<string, Json | undefined> = {
     catalog_key: input.catalogKey,
     reason: input.reason,
   };

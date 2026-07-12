@@ -3,6 +3,7 @@
  * Gated by `LAUNCH_GATES.casinoLiveLive`.
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import type { Json } from '@phonara/shared-types';
 
 import {
   EW_E23_PROGRESSIVE_CASHOUT_RPC,
@@ -10,9 +11,8 @@ import {
   EW_E23_PROGRESSIVE_STEP_RPC,
 } from '@/domain/ew-e23-casino-live-display-contract';
 import { LAUNCH_GATES } from '@/lib/launch-gates';
+import { callRpc } from '@/lib/rpc';
 import { useAuth } from '@/contexts/auth-context';
-
-import { casinoLiveRpc } from './casino-live-rpc';
 
 export type ProgressiveGame = 'mines' | 'hilo' | 'blackjack';
 
@@ -43,14 +43,14 @@ export function useProgressiveStart() {
       game: ProgressiveGame;
       currency: string;
       stake: string;
-      init: Record<string, unknown>;
+      init: Json;
       clientSeed: string;
       idempotencyKey: string;
       useAccountPf?: boolean;
     }) => {
       assertLive();
       if (!session?.user) throw new Error('UNAUTHENTICATED');
-      return casinoLiveRpc<ProgressiveSessionPublic>(EW_E23_PROGRESSIVE_START_RPC, {
+      return (await callRpc(EW_E23_PROGRESSIVE_START_RPC, {
         p_game: input.game,
         p_currency: input.currency,
         p_stake: input.stake,
@@ -58,7 +58,7 @@ export function useProgressiveStart() {
         p_client_seed: input.clientSeed,
         p_idempotency_key: input.idempotencyKey,
         p_use_account_pf: input.useAccountPf ?? false,
-      });
+      })) as ProgressiveSessionPublic;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['wallet'] });
@@ -73,16 +73,16 @@ export function useProgressiveStep() {
   return useMutation({
     mutationFn: async (input: {
       sessionId: string;
-      action: Record<string, unknown>;
+      action: Json;
       idempotencyKey: string;
     }) => {
       assertLive();
       if (!session?.user) throw new Error('UNAUTHENTICATED');
-      return casinoLiveRpc<ProgressiveSessionPublic>(EW_E23_PROGRESSIVE_STEP_RPC, {
+      return (await callRpc(EW_E23_PROGRESSIVE_STEP_RPC, {
         p_session_id: input.sessionId,
         p_action: input.action,
         p_idempotency_key: input.idempotencyKey,
-      });
+      })) as ProgressiveSessionPublic;
     },
     onSuccess: async (data) => {
       if (data.status !== 'active') {
@@ -100,10 +100,10 @@ export function useProgressiveCashout() {
     mutationFn: async (input: { sessionId: string; idempotencyKey: string }) => {
       assertLive();
       if (!session?.user) throw new Error('UNAUTHENTICATED');
-      return casinoLiveRpc<ProgressiveSessionPublic>(EW_E23_PROGRESSIVE_CASHOUT_RPC, {
+      return (await callRpc(EW_E23_PROGRESSIVE_CASHOUT_RPC, {
         p_session_id: input.sessionId,
         p_idempotency_key: input.idempotencyKey,
-      });
+      })) as ProgressiveSessionPublic;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['wallet'] });

@@ -1,9 +1,23 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, type ChangeEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { MessageKey } from '@phonara/i18n';
 
 import { useAuth } from '@/contexts/auth-context';
-import { createKrwDepositRequest, type KrwDepositResult } from '@/domain/wallet';
+import {
+  canAttachKrwDepositProof,
+  isKrwDepositProofLive,
+  krwDepositProofUploadErrorKey,
+  resolveKrwDepositProofStatusKey,
+  shouldShowKrwDepositProofUpload,
+  validateKrwDepositProofFile,
+  type KrwDepositProofStatus,
+} from '@/domain/krw-deposit-proof-display-contract';
+import { uploadKrwDepositProof } from '@/domain/krw-deposit-proof-storage';
+import {
+  attachKrwDepositProof,
+  createKrwDepositRequest,
+  type KrwDepositResult,
+} from '@/domain/wallet';
 import { usePlatformGates } from '@/hooks/use-platform-gates';
 import { isPhonKrwRateStale, isPhonKrwRateUnavailable } from '@/lib/phon-krw-rate-stale';
 import {
@@ -60,6 +74,16 @@ export type KrwDepositControllerView = {
   copyReference: (code: string) => Promise<boolean>;
   copyState: 'idle' | 'ok' | 'failed';
   refreshRates: () => void;
+  /** M-21 — `LAUNCH_GATES.krwDepositProofLive`. */
+  proofLive: boolean;
+  showProofUpload: boolean;
+  proofStatus: KrwDepositProofStatus | null;
+  proofStatusKey: MessageKey | null;
+  proofFileName: string | null;
+  proofBusy: boolean;
+  proofErrorKey: MessageKey | null;
+  canAttachProof: boolean;
+  handleProofSelect: (event: ChangeEvent<HTMLInputElement>) => Promise<void>;
 };
 
 export function useKrwDepositController(locale: string): KrwDepositControllerView {
@@ -74,6 +98,12 @@ export function useKrwDepositController(locale: string): KrwDepositControllerVie
   const [submitResult, setSubmitResult] = useState<KrwDepositResult | null>(null);
   const [submitErrorKey, setSubmitErrorKey] = useState<MessageKey | null>(null);
   const [copyState, setCopyState] = useState<'idle' | 'ok' | 'failed'>('idle');
+  const [proofStatus, setProofStatus] = useState<KrwDepositProofStatus | null>(null);
+  const [proofFileName, setProofFileName] = useState<string | null>(null);
+  const [proofBusy, setProofBusy] = useState(false);
+  const [proofErrorKey, setProofErrorKey] = useState<MessageKey | null>(null);
+
+  const proofLive = isKrwDepositProofLive();
 
   const {
     data: phonKrwRate = null,
@@ -132,12 +162,18 @@ export function useKrwDepositController(locale: string): KrwDepositControllerVie
     setAmountRaw(normalizeKrwAmountInput(value));
     setSubmitResult(null);
     setSubmitErrorKey(null);
+    setProofStatus(null);
+    setProofFileName(null);
+    setProofErrorKey(null);
   }, []);
 
   const addChip = useCallback((chipAmount: string) => {
     setAmountRaw((current) => addKrwChipAmount(current, chipAmount));
     setSubmitResult(null);
     setSubmitErrorKey(null);
+    setProofStatus(null);
+    setProofFileName(null);
+    setProofErrorKey(null);
   }, []);
 
   const openConfirm = useCallback(() => {
@@ -145,6 +181,9 @@ export function useKrwDepositController(locale: string): KrwDepositControllerVie
     setConfirmOpen(true);
     setSubmitResult(null);
     setSubmitErrorKey(null);
+    setProofStatus(null);
+    setProofFileName(null);
+    setProofErrorKey(null);
   }, [canOpenConfirm]);
 
   const closeConfirm = useCallback(() => {
@@ -188,6 +227,77 @@ export function useKrwDepositController(locale: string): KrwDepositControllerVie
     void refetchPhonKrw();
     void refetchUsdtKrw();
   }, [refetchPhonKrw, refetchUsdtKrw]);
+
+  const showProofUpload = shouldShowKrwDepositProofUpload({
+    proofLive,
+    depositId: submitResult?.deposit_id,
+    proofStatus,
+  });
+
+  const canAttachProof = canAttachKrwDepositProof({
+    proofLive,
+    depositId: submitResult?.deposit_id,
+    proofStatus,
+    busy: proofBusy,
+  });
+
+  const proofStatusKey = resolveKrwDepositProofStatusKey(proofStatus);
+
+  const handleProofSelect = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      event.target.value = '';
+      if (!file || !userId || !submitResult?.deposit_id) return;
+      if (
+        !canAttachKrwDepositProof({
+          proofLive,
+          depositId: submitResult.deposit_id,
+          proofStatus,
+          busy: proofBusy,
+        })
+      ) {
+        return;
+      }
+
+      const validation = validateKrwDepositProofFile(file);
+      if (validation) {
+        setProofErrorKey(krwDepositProofUploadErrorKey(validation));
+        return;
+      }
+
+      setProofBusy(true);
+      setProofErrorKey(null);
+      setProofFileName(file.name);
+      try {
+        const proofPath = await uploadKrwDepositProof(userId, file);
+        const result = await attachKrwDepositProof({
+          depositId: submitResult.deposit_id,
+          proofPath,
+          clientRequestId: crypto.randomUUID(),
+        });
+        const nextStatus =
+          result.proof_status === 'pending' ||
+          result.proof_status === 'approved' ||
+          result.proof_status === 'rejected'
+            ? result.proof_status
+            : 'pending';
+        setProofStatus(nextStatus);
+        void qc.invalidateQueries({ queryKey: ['krw-deposits', userId] });
+        void qc.invalidateQueries({ queryKey: ['deposit-hub-history', userId] });
+      } catch (error) {
+        const code = error instanceof Error ? error.message : 'upload_failed';
+        setProofErrorKey(
+          code.startsWith('krw_deposit_proof_')
+            ? krwDepositProofUploadErrorKey(code)
+            : translateError(error, 'wallet.deposit.krw.proof.error'),
+        );
+        setProofFileName(null);
+      } finally {
+        setProofBusy(false);
+      }
+    },
+    [proofBusy, proofLive, proofStatus, qc, submitResult?.deposit_id, userId],
+  );
 
   const timelineSteps = useMemo(
     () => buildKrwDepositTimelineSteps(submitResult?.sla_hours),
@@ -238,5 +348,14 @@ export function useKrwDepositController(locale: string): KrwDepositControllerVie
     copyReference,
     copyState,
     refreshRates,
+    proofLive,
+    showProofUpload,
+    proofStatus,
+    proofStatusKey,
+    proofFileName,
+    proofBusy,
+    proofErrorKey,
+    canAttachProof,
+    handleProofSelect,
   };
 }

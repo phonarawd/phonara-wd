@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { RefreshCw } from 'lucide-react';
 
 import { useAdminViralStatsDesk } from '@/hooks/admin/useAdminViralStatsDesk';
+import { formatAdminMoney } from '@/lib/format-admin-money';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
 import { AdminTable } from '@/product/primitives/admin-table';
@@ -219,7 +220,7 @@ export function AdminViralStatsPage() {
                   {
                     id: 'phonAwarded',
                     header: t('admin.viralStats.col.phonAwarded'),
-                    cell: ({ row }) => `${row.phonAwardedTotal} PHON`,
+                    cell: ({ row }) => formatAdminMoney(row.phonAwardedTotal, 'PHON'),
                     meta: { className: 'tabular-nums' },
                   },
                 ]}

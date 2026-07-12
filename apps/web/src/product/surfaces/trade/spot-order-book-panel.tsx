@@ -219,7 +219,7 @@ export function SpotOrderBookPanel({
               </div>
               <p
                 className={cn(
-                  'text-foreground-muted m-0 mt-0.5 min-h-4 text-[11px]',
+                  'text-foreground-muted m-0 mt-0.5 min-h-4 text-xs',
                   !spread && 'invisible',
                 )}
                 aria-hidden={!spread}

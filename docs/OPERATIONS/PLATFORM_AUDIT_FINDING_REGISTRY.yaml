@@ -2,10 +2,10 @@ schema_version: 1
 playbook_version: '1.0.0'
 release_sha: '391646f6f8ab6ae204d17f55ae59677036ca0728'
 known_good_sha: '9c4bf29b40d31b2d2952bd6257f5690d691ecbc2'
-updated_at: '2026-07-13T02:35:00+09:00'
+updated_at: '2026-07-13T06:30:00+09:00'
 source_audit: 'docs/audit/PLATFORM_AUDIT_REFERENCE.md'
 finding_count: 36
-notes: 'R1 Stage1 PASS 2026-07-13. C-01/C-02/H-01/M-01 VERIFIED_FIXED (preview 949b87ec · DOM 390/580/1455). Intent SHA 391646f6. M-18+EXT-02 VERIFIED_FIXED.'
+notes: 'R8 H-06 VERIFIED_FIXED 2026-07-13 (deploy parity · clean SHA). OPEN remaining: 0. BLOCKED_DEP: H-09. Intent SHA 391646f6. R9 blocked until check:deploy-parity --remote green.'
 findings:
   - id: 'C-01'
     severity: 'CRITICAL'
@@ -67,7 +67,7 @@ findings:
     blocked_by: []
     symptom: '작업 트리 /status가 원격 장애와 무관하게 전 구성요소 정상 표시'
     root_cause: 'SystemStatusPage uses fixed StatusBadge state=settled; no health RPC/table fetch'
-    fix: 'Fail-closed pending/unknown badges + copy until R4 rpc_get_public_platform_status verified'
+    fix: 'Fail-closed pending/unknown until R4; R4 wired rpc_get_public_platform_status (fetch fail stays fail-closed)'
     evidence:
       - type: 'console'
         sha: '9c4bf29b40d31b2d2952bd6257f5690d691ecbc2'
@@ -149,25 +149,30 @@ findings:
     score: 18
     domain: 'Security'
     stage: 'R3'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'backend-db'
-    depends_on: ['R3-a-wallet-mutator']
+    depends_on: []
     blocked_by: []
     symptom: '범용 rpc_lock_wallet이 authenticated에 노출'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'phon_bonus_real_wagering가 P0 lockdown 이후 rpc_lock_wallet을 authenticated에 재GRANT · live_crash_rounds에 open SELECT/policy'
+    fix: '20260814000001 revoke client EXECUTE · live_crash_rounds RPC-only · server_seed column revoke · bets/tier_admin SELECT-only pin'
+    evidence:
+      - type: 'console'
+        sha: '294ce2d0'
+        timestamp: '2026-07-13T03:57:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R3/r3a-wallet-mutator-live-crash-implement.md'
+    regression: 'h02_r3a_wallet_mutator_live_crash_test · grants_rls_inventory · check:wallet-mutators · advisor 0'
     owner: 'security'
     reviewer: 'wallet'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'supabase/migrations/'
+    owner_path: 'supabase/migrations/20260814000001_h02_r3a_wallet_mutator_live_crash.sql'
     pr: ''
-    sha: ''
+    sha: '294ce2d0'
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T03:57:00+09:00'
   - id: 'H-03'
     severity: 'HIGH'
     impact: 4
@@ -217,15 +222,20 @@ findings:
     score: 18
     domain: 'Trade'
     stage: 'R4'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'backend-db'
     depends_on: ['ADR-021-obs-stack']
     blocked_by: []
     symptom: '시장 대규모 저하인데 edge_ops_events는 ok false-green'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'price-feed recorded status=ok when submitted>0; HTTP body always ok:true ignoring rejected/circuit/rpc failures'
+    fix: 'classifyEdgeOpsOutcome + edge_ops status enum expansion; metadata applied/rejected/circuitOpen/rpcFailed; Edge deploy price-feed+crypto-chain-watcher'
+    evidence:
+      - type: 'sql'
+        sha: '294ce2d00e999a9ff354e082719c55082ed18a9a'
+        timestamp: '2026-07-13T04:42:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R4/r4-market-ops-implement.md'
+    regression: 'edge_observability_test · h04_r4a SQL · edge-ops-outcome vitest · gate:ai-impl 8/8'
     owner: 'trade'
     reviewer: 'sre'
     security: 'security'
@@ -233,9 +243,9 @@ findings:
     runtime: 'sre'
     owner_path: 'supabase/functions/_shared/edge-observability.ts'
     pr: ''
-    sha: ''
+    sha: '294ce2d00e999a9ff354e082719c55082ed18a9a'
     adr: 'ADR-021'
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T04:42:00+09:00'
   - id: 'H-05'
     severity: 'HIGH'
     impact: 4
@@ -246,25 +256,27 @@ findings:
     score: 18
     domain: 'Sports'
     stage: 'R2'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: '스포츠 배당 337개 stale · betting/cashout built_disabled'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'odds ingest halted (newest captured_at 2026-06-16); board showed numeric stale odds as selectable'
+    fix: 'sports-odds-freshness-display-contract; stale→—; place/cashout mutation block; gates stay false until ingest green'
+    evidence:
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2c-sports-odds-implement.md'
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2c-stage1-browser.md'
+    regression: 'owner vitest sports-odds-freshness + sports-page + controller + cashout 28/28'
     owner: 'sports'
     reviewer: 'product'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'apps/web/src/product/surfaces/sports/'
+    owner_path: 'apps/web/src/domain/sports-odds-freshness-display-contract.ts'
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T03:30:00+09:00'
   - id: 'H-06'
     severity: 'HIGH'
     impact: 4
@@ -275,25 +287,30 @@ findings:
     score: 18
     domain: 'Ops'
     stage: 'R8'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'type-hygiene'
     depends_on: []
     blocked_by: []
     symptom: '배포본과 작업 트리가 trust route에서 분리(dirty deploy)'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'wrangler pages deploy --commit-dirty=true + release identity(manifest) 부재'
+    fix: 'deploy-pages.ts clean SHA · commit-dirty=false · release-manifest.json · check:deploy-parity · Admin _headers'
+    evidence:
+      - type: 'console'
+        sha: ''
+        timestamp: '2026-07-13T06:30:00+09:00'
+        pr: ''
+        path: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R8/r8-deploy-parity-implement.md'
+    regression: 'check:deploy-parity · release-manifest.test · check-deploy-parity.test'
     owner: 'sre'
     reviewer: 'product'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'docs/OPERATIONS/'
+    owner_path: 'scripts/check-deploy-parity.ts'
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T06:30:00+09:00'
   - id: 'H-07'
     severity: 'HIGH'
     impact: 4
@@ -304,15 +321,20 @@ findings:
     score: 16
     domain: 'Admin'
     stage: 'R5'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: 'Admin 역할별 메뉴 allowlist가 실제 nav에 미적용'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'AdminNav filtered only team/support; allowlist unused'
+    fix: 'filterAdminNavEntries + isAdminNavRouteAllowed on desktop/mobile/group; route gate redirect'
+    evidence:
+      - type: 'console'
+        sha: ''
+        timestamp: '2026-07-13T05:00:00+09:00'
+        pr: ''
+        path: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R5/r5-admin-safety-implement.md'
+    regression: 'admin-nav-filter · admin-rbac · use-admin-route-gate'
     owner: 'admin'
     reviewer: 'security'
     security: 'security'
@@ -322,7 +344,7 @@ findings:
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:00:00+09:00'
   - id: 'H-08'
     severity: 'HIGH'
     impact: 4
@@ -333,15 +355,20 @@ findings:
     score: 16
     domain: 'Admin'
     stage: 'R5'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: 'Earn settlement 승인에 운영자 사유 입력 없음'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'Approve button called RPC with hardcoded reason string'
+    fix: 'Earn settlement: RBAC can(earn.settlement.approve) + AdminQueueActionDialog reason>=4 + RPC p_reason'
+    evidence:
+      - type: 'console'
+        sha: ''
+        timestamp: '2026-07-13T05:00:00+09:00'
+        pr: ''
+        path: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R5/r5-admin-safety-implement.md'
+    regression: 'admin-earn-page · useAdminEarnDesk · admin-rbac'
     owner: 'admin'
     reviewer: 'security'
     security: 'security'
@@ -351,7 +378,7 @@ findings:
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:00:00+09:00'
   - id: 'H-09'
     severity: 'HIGH'
     impact: 4
@@ -362,25 +389,30 @@ findings:
     score: 17
     domain: 'Auth'
     stage: 'R3'
-    status: 'OPEN'
+    status: 'BLOCKED_DEP'
     dod_profile: 'backend-db'
     depends_on: []
-    blocked_by: []
+    blocked_by: ['supabase-pro-entitlement-password-hibp']
     symptom: 'Supabase leaked-password protection 비활성'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'password_hibp_enabled=false; Management API PATCH requires Pro+ (402). Separately E10 wiped AAL2 and omitted sports/live_crash from rpc_set_feature_enabled allowlist.'
+    fix: '20260818000001 sports/live_crash allowlist + _assert_admin_aal2; stack:auth-hibp-enable script; HIBP remains DEFER until Pro+ (402 evidence 2026-07-13)'
+    evidence:
+      - type: 'console'
+        sha: ''
+        timestamp: '2026-07-13T04:40:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R3/r3e-auth-hibp-feature-flag-implement.md'
+    regression: 'h09_r3e_feature_flag_allowlist_test · stack:auth-hibp-enable after Pro · advisor auth_leaked_password_protection 0'
     owner: 'security'
     reviewer: 'auth'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'supabase/config.toml'
+    owner_path: 'supabase/migrations/20260818000001_h09_r3e_feature_flag_allowlist.sql'
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T04:40:00+09:00'
   - id: 'H-10'
     severity: 'CRITICAL'
     impact: 4
@@ -391,25 +423,40 @@ findings:
     score: 20
     domain: 'Wallet'
     stage: 'R2'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: '출금 기능이 feature_withdrawal_enabled=false로 전역 중지'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'Soft launch/T1 intentional OFF (P13 · feature_withdrawal_enabled=false) — not a client defect; ops intent was undocumented'
+    fix: 'DL-R2B-H10 + PLATFORM_WITHDRAWAL_REENABLE_GATE (Feature Flag 5조건) + wallet-withdrawal-off display contract (reason/next-action i18n); flag stays false until R10'
+    evidence:
+      - type: 'console'
+        sha: '294ce2d0'
+        timestamp: '2026-07-13T03:30:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2b-withdrawal-copy-implement.md'
+      - type: 'console'
+        sha: '294ce2d0'
+        timestamp: '2026-07-13T03:30:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_DECISION_LOG.md#dl-r2b-h10--withdrawal-off--운영-의도-재개-게이트-문서화'
+      - type: 'browser_mcp'
+        sha: '294ce2d0'
+        timestamp: '2026-07-13T03:13:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2b-stage1-browser.md'
+    regression: 'wallet-withdrawal-off-display-contract · withdraw-hub-page 9/9 · typecheck · check:i18n'
     owner: 'wallet'
     reviewer: 'product'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'apps/web/src/domain/platform-gate-contract.ts'
+    owner_path: 'apps/web/src/domain/wallet-withdrawal-off-display-contract.ts'
     pr: ''
-    sha: ''
+    sha: '294ce2d0'
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T03:30:00+09:00'
   - id: 'H-11'
     severity: 'HIGH'
     impact: 3
@@ -503,15 +550,20 @@ findings:
     score: 12
     domain: 'Admin'
     stage: 'R5'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: 'Admin 3 desk가 PHON 금액을 문자열로 이어 붙임'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'Raw string concat PHON without Decimal format'
+    fix: 'formatAdminMoney via @phonara/money on tiers/missions/viral-stats + wallet helper'
+    evidence:
+      - type: 'console'
+        sha: ''
+        timestamp: '2026-07-13T05:00:00+09:00'
+        pr: ''
+        path: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R5/r5-admin-safety-implement.md'
+    regression: 'format-admin-money'
     owner: 'admin'
     reviewer: 'wallet'
     security: 'security'
@@ -521,7 +573,7 @@ findings:
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:00:00+09:00'
   - id: 'M-03'
     severity: 'MEDIUM'
     impact: 3
@@ -532,25 +584,27 @@ findings:
     score: 13
     domain: 'Trade'
     stage: 'R6'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: '비지갑 base asset도 USDT precision으로 포맷'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'formatMoney(amount, USDT) on spot base holdings/ticket amounts'
+    fix: 'formatSpotBaseQuantityDisplay + resolveSpotBaseQuantityPrecision (market or _fmt6=6) · fail-closed —'
+    evidence:
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R6/r6-product-consistency-implement.md'
+      - 'gate:ai-impl vitest 40/40 · spot-base-quantity-display-contract'
+    regression: 'apps/web/src/domain/__tests__/spot-base-quantity-display-contract.test.ts'
     owner: 'trade'
     reviewer: 'product'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'apps/web/src/product/surfaces/trade/'
+    owner_path: 'apps/web/src/domain/spot-base-quantity-display-contract.ts'
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:15:00+09:00'
   - id: 'M-04'
     severity: 'MEDIUM'
     impact: 4
@@ -561,25 +615,27 @@ findings:
     score: 14
     domain: 'Security'
     stage: 'R3'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'backend-db'
     depends_on: []
     blocked_by: []
     symptom: '익명 SIWE·analytics 쓰기에 익명 rate limit 없음'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'E9 challenge/analytics anon EXECUTE + rate limit only when auth.uid() present · siwe-auth trusted body user_id'
+    fix: 'migration 20260817000001_m04_r3d_siwe_analytics_ingress — anon REVOKE · HMAC(IP)+resource dual bucket service ingress · payload/retention · edge reject body user_id · siweLoginLive=false'
+    evidence:
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R3/r3d-siwe-analytics-implement.md'
+      - 'stack:push-remote …_m04_r3d_siwe_analytics_ingress · edge siwe-auth+product-analytics · anon EXECUTE 0 · advisor 0 ERROR'
+    regression: 'supabase/tests/m04_r3d_siwe_analytics_ingress_test.sql'
     owner: 'security'
     reviewer: 'auth'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'supabase/migrations/'
+    owner_path: 'supabase/migrations/20260817000001_m04_r3d_siwe_analytics_ingress.sql'
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T04:25:00+09:00'
   - id: 'M-05'
     severity: 'MEDIUM'
     impact: 3
@@ -590,25 +646,27 @@ findings:
     score: 13
     domain: 'Security'
     stage: 'R3'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'backend-db'
-    depends_on: ['R3-c-search-path']
+    depends_on: []
     blocked_by: []
     symptom: '함수 hardening WARN 대량 잔존(search_path 등)'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'E4 Option B CREATE OR REPLACE가 earn/tier IMMUTABLE helper 8건에서 function-level search_path pin을 누락(이전 launch_rc pin 무효화)'
+    fix: 'migration 20260816000001_m05_r3c_search_path_sweep — ALTER FUNCTION SET search_path=public,pg_temp × 8 · client REVOKE 재고정'
+    evidence:
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R3/r3c-search-path-sweep-implement.md'
+      - 'advisor function_search_path_mutable 8→0 · stack:push-remote …_m05_r3c_search_path_sweep · check:advisors 0 ERROR'
+    regression: 'supabase/tests/m05_r3c_search_path_sweep_test.sql'
     owner: 'security'
     reviewer: 'db'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'supabase/migrations/'
+    owner_path: 'supabase/migrations/20260816000001_m05_r3c_search_path_sweep.sql'
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T04:35:00+09:00'
   - id: 'M-06'
     severity: 'MEDIUM'
     impact: 3
@@ -619,25 +677,30 @@ findings:
     score: 12
     domain: 'Security'
     stage: 'R3'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'backend-db'
-    depends_on: ['R3-b-service-grants']
+    depends_on: []
     blocked_by: []
     symptom: 'service-write table에 client DML base GRANT 잔존'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'public DEFAULT PRIVILEGES가 신규 object에 anon/authenticated ALL·EXECUTE 자동 부여 · trigger helper REVOKE 누락'
+    fix: '20260815000001 client write allowlist pin · trigger EXECUTE revoke · postgres DEFAULT PRIVILEGES 최소화'
+    evidence:
+      - type: 'console'
+        sha: ''
+        timestamp: '2026-07-13T04:20:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R3/r3b-service-write-grants-implement.md'
+    regression: 'm06_r3b_service_write_grants_test · grants_rls_inventory · advisor 0'
     owner: 'security'
     reviewer: 'db'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'supabase/migrations/'
+    owner_path: 'supabase/migrations/20260815000001_m06_r3b_service_write_grants.sql'
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T04:20:00+09:00'
   - id: 'M-07'
     severity: 'MEDIUM'
     impact: 2
@@ -648,15 +711,17 @@ findings:
     score: 10
     domain: 'Auth'
     stage: 'R6'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: '알림 센터 launch gate가 chrome마다 다르게 적용'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'resolveSettingsHubNavItems did not filter NOTIFICATIONS_CENTER_ROUTE by notificationsCenter gate'
+    fix: 'resolveNotificationsCenterVisible on inbox · prefs route /settings/notifications kept'
+    evidence:
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R6/r6-product-consistency-implement.md'
+      - 'settings-hub-display-contract vitest'
+    regression: 'apps/web/src/domain/__tests__/settings-hub-display-contract.test.ts'
     owner: 'auth'
     reviewer: 'product'
     security: 'security'
@@ -666,7 +731,7 @@ findings:
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:15:00+09:00'
   - id: 'M-08'
     severity: 'MEDIUM'
     impact: 2
@@ -677,25 +742,27 @@ findings:
     score: 13
     domain: 'Earn'
     stage: 'R6'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: 'Home Fold4 미션 카드가 route를 받지만 클릭 불가'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'missionPreviews.route not wired to MissionCard'
+    fix: 'Wrap Fold4 MissionCard in Link to mission.route'
+    evidence:
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R6/r6-product-consistency-implement.md'
+      - 'earn-home-page vitest href /home/missions'
+    regression: 'apps/web/src/product/surfaces/home/__tests__/earn-home-page.test.tsx'
     owner: 'earn'
     reviewer: 'product'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'apps/web/src/product/surfaces/home/'
+    owner_path: 'apps/web/src/product/surfaces/home/earn-home-page.tsx'
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:15:00+09:00'
   - id: 'M-09'
     severity: 'MEDIUM'
     impact: 2
@@ -706,25 +773,27 @@ findings:
     score: 9
     domain: 'Casino'
     stage: 'R6'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: '/casino/tournaments가 registry에 남았지만 route 없음'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'CASINO_SUBNAV listed tournaments while SHELL_SUBNAV_REGISTERED_ROUTES omitted it'
+    fix: 'Remove tournaments row from CASINO_SUBNAV · no new route · i18n key retained'
+    evidence:
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R6/r6-product-consistency-implement.md'
+      - 'subnav-route-manifest vitest'
+    regression: 'apps/web/src/product/shell/__tests__/subnav-route-manifest.test.ts'
     owner: 'casino'
     reviewer: 'product'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'apps/web/src/product/shell/'
+    owner_path: 'apps/web/src/product/shell/casino-subnav.ts'
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:15:00+09:00'
   - id: 'M-10'
     severity: 'MEDIUM'
     impact: 2
@@ -735,25 +804,27 @@ findings:
     score: 10
     domain: 'Trade'
     stage: 'R6'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: 'Price alert가 local store에만 저장'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'notification store local persistence without user disclosure'
+    fix: 'notif.priceAlert.localOnly disclosure · no server persistence (deferred)'
+    evidence:
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R6/r6-product-consistency-implement.md'
+      - 'trade-price-alert-control vitest'
+    regression: 'apps/web/src/product/surfaces/trade/__tests__/trade-price-alert-control.test.tsx'
     owner: 'trade'
     reviewer: 'product'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'apps/web/src/product/surfaces/trade/'
+    owner_path: 'apps/web/src/product/surfaces/trade/trade-price-alert-control.tsx'
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:15:00+09:00'
   - id: 'M-11'
     severity: 'MEDIUM'
     impact: 3
@@ -764,25 +835,27 @@ findings:
     score: 13
     domain: 'Trade'
     stage: 'R6'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: 'limit/stop TP·SL과 cross margin이 구축됐지만 비활성'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'entryTpSlOnOpenOrders=false · feature_cross_margin_enabled=false with incomplete honesty surface'
+    fix: 'Keep disabled · cross disabled reason + entryTpSlDeferHint · capability honesty vitest · no canary flip'
+    evidence:
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R6/r6-product-consistency-implement.md'
+      - 'r6-trade-capability-honesty vitest'
+    regression: 'apps/web/src/domain/__tests__/r6-trade-capability-honesty.test.ts'
     owner: 'trade'
     reviewer: 'product'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'apps/web/src/domain/trade-rpc-capabilities.ts'
+    owner_path: 'apps/web/src/features/trading/trade-rpc-capabilities.ts'
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:15:00+09:00'
   - id: 'M-12'
     severity: 'MEDIUM'
     impact: 2
@@ -793,15 +866,20 @@ findings:
     score: 9
     domain: 'Admin'
     stage: 'R5'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: '사용자 tier write hook은 열렸지만 조작 UI 없음'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'writeUiUnlocked=true but page omitted setUserTier UI'
+    fix: 'AdminUserTierPage owner write UI + users.tier.write + reason dialog + refetch'
+    evidence:
+      - type: 'console'
+        sha: ''
+        timestamp: '2026-07-13T05:00:00+09:00'
+        pr: ''
+        path: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R5/r5-admin-safety-implement.md'
+    regression: 'admin-user-tier-page · admin-rbac'
     owner: 'admin'
     reviewer: 'product'
     security: 'security'
@@ -811,7 +889,7 @@ findings:
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:00:00+09:00'
   - id: 'M-13'
     severity: 'MEDIUM'
     impact: 2
@@ -822,15 +900,20 @@ findings:
     score: 10
     domain: 'Admin'
     stage: 'R5'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: 'agents tab과 여러 EmptyState action이 no-op'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'Agents stub tab + EmptyState onAction no-op'
+    fix: 'Removed agents tab; CMS/casino/promotions EmptyState wired to refresh()'
+    evidence:
+      - type: 'console'
+        sha: ''
+        timestamp: '2026-07-13T05:00:00+09:00'
+        pr: ''
+        path: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R5/r5-admin-safety-implement.md'
+    regression: 'admin-earn-page · admin-cms/casino/promotions'
     owner: 'admin'
     reviewer: 'product'
     security: 'security'
@@ -840,7 +923,7 @@ findings:
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:00:00+09:00'
   - id: 'M-14'
     severity: 'MEDIUM'
     impact: 2
@@ -851,15 +934,20 @@ findings:
     score: 8
     domain: 'Platform'
     stage: 'R7'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'type-hygiene'
     depends_on: []
     blocked_by: []
     symptom: 'route 미사용 surface·hook 잔존'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'live owner 대체 후 stub/orphan hook 잔존'
+    fix: 'domain-hub·status/support stub·Access/Giftcard orphan hook 삭제 · admin-desk-views Access types 제거'
+    evidence:
+      - type: 'console'
+        sha: ''
+        timestamp: '2026-07-13T05:40:00+09:00'
+        pr: ''
+        path: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R7/r7-type-ui-hygiene-implement.md'
+    regression: 'apps/web/src/domain/__tests__/r7-type-ui-hygiene.test.ts'
     owner: 'platform'
     reviewer: 'product'
     security: 'security'
@@ -869,7 +957,7 @@ findings:
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:40:00+09:00'
   - id: 'M-15'
     severity: 'MEDIUM'
     impact: 2
@@ -880,15 +968,20 @@ findings:
     score: 10
     domain: 'Platform'
     stage: 'R7'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: '공용 primitive·token 우회가 Casino·Trade·Auth에 집중'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'page-local raw button/input · text-[11px] · chart RGB'
+    fix: 'check:primitive-ratchet baseline · text-xs · chart primitive-allow · file input allow · residual signed'
+    evidence:
+      - type: 'console'
+        sha: ''
+        timestamp: '2026-07-13T05:40:00+09:00'
+        pr: ''
+        path: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R7/r7-type-ui-hygiene-implement.md'
+    regression: 'scripts/check-primitive-ratchet.ts'
     owner: 'platform'
     reviewer: 'product'
     security: 'security'
@@ -898,7 +991,7 @@ findings:
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:40:00+09:00'
   - id: 'M-16'
     severity: 'MEDIUM'
     impact: 3
@@ -909,15 +1002,20 @@ findings:
     score: 12
     domain: 'Platform'
     stage: 'R7'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'type-hygiene'
     depends_on: []
     blocked_by: []
     symptom: 'RPC 정적 타입 증명이 cast로 약화(as never/type-lie)'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'generated types 전 wrong-name / as never / dynamic helpers'
+    fix: 'typed callRpc sweep · sportsRpc/casinoLiveRpc 삭제 · check:rpc-type-hygiene 0'
+    evidence:
+      - type: 'console'
+        sha: ''
+        timestamp: '2026-07-13T05:40:00+09:00'
+        pr: ''
+        path: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R7/r7-type-ui-hygiene-implement.md'
+    regression: 'scripts/check-rpc-type-hygiene.ts'
     owner: 'platform'
     reviewer: 'security'
     security: 'security'
@@ -927,7 +1025,7 @@ findings:
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:40:00+09:00'
   - id: 'M-17'
     severity: 'MEDIUM'
     impact: 2
@@ -938,15 +1036,20 @@ findings:
     score: 7
     domain: 'Ops'
     stage: 'R5'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'backend-db'
     depends_on: []
     blocked_by: []
     symptom: '운영 auth에 test-like 이름 패턴 3개(신원 UNVERIFIED)'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: '3 auth.users matched test-like patterns (UNVERIFIED PII)'
+    fix: 'Aggregate probe 3/12 never-signin wallet0; banned_until 2099; triage runbook; ledger delete 0'
+    evidence:
+      - type: 'console'
+        sha: ''
+        timestamp: '2026-07-13T05:00:00+09:00'
+        pr: ''
+        path: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R5/r5-admin-safety-implement.md'
+    regression: 'scripts/platform-audit-r5-auth-test-like-spotcheck.sql'
     owner: 'sre'
     reviewer: 'security'
     security: 'security'
@@ -956,7 +1059,7 @@ findings:
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:00:00+09:00'
   - id: 'M-18'
     severity: 'MEDIUM'
     impact: 3
@@ -1005,26 +1108,28 @@ findings:
     revenue_impact: 1
     score: 9
     domain: 'Platform'
-    stage: 'R7'
-    status: 'OPEN'
+    stage: 'R6'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: 'install banner bottom offset이 shell token과 분리'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'hardcoded 4.5rem bottom offset'
+    fix: 'bottom-[calc(var(--ds-shell-bottomnav-height)+env(safe-area-inset-bottom,0px))]'
+    evidence:
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R6/r6-product-consistency-implement.md'
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R6/r6-stage1-browser.md'
+    regression: 'apps/web/src/product/shell/pwa-install-banner.tsx'
     owner: 'platform'
     reviewer: 'product'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'apps/web/src/'
+    owner_path: 'apps/web/src/product/shell/pwa-install-banner.tsx'
     pr: ''
     sha: ''
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T05:15:00+09:00'
   - id: 'M-20'
     severity: 'MEDIUM'
     impact: 2
@@ -1034,16 +1139,21 @@ findings:
     revenue_impact: 1
     score: 9
     domain: 'Ops'
-    stage: 'R7'
-    status: 'OPEN'
+    stage: 'R4'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'backend-db'
     depends_on: []
     blocked_by: []
     symptom: '성능 advisor 경고 62개(auth initplan·multiple permissive)'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'E8/E9/E10 policies reintroduced bare auth.uid(); admin+own SELECT pairs duplicated'
+    fix: 'R4-b wrap auth_rls_initplan 26→0; R4-c consolidate permissive 36→2 residual (sports_sport_catalog service ALL∩public SELECT)'
+    evidence:
+      - type: 'sql'
+        sha: '294ce2d00e999a9ff354e082719c55082ed18a9a'
+        timestamp: '2026-07-13T04:42:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R4/r4-market-ops-implement.md'
+    regression: 'm20_r4b/r4c SQL · performance advisor recount · security ERROR 0'
     owner: 'db'
     reviewer: 'sre'
     security: 'security'
@@ -1051,9 +1161,9 @@ findings:
     runtime: 'sre'
     owner_path: 'supabase/'
     pr: ''
-    sha: ''
+    sha: '294ce2d00e999a9ff354e082719c55082ed18a9a'
     adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T04:42:00+09:00'
   - id: 'M-21'
     severity: 'MEDIUM'
     impact: 3
@@ -1064,25 +1174,27 @@ findings:
     score: 14
     domain: 'Wallet'
     stage: 'R2'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
     symptom: 'KRW proof RPC는 live지만 Web caller 없음'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'E10 WAVE가 attach RPC를 live로 두고 Web UI gate를 false로 분리'
+    fix: '/wallet/deposit/krw proof upload wire + krwDepositProofLive=true'
+    evidence:
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2d-krw-proof-implement.md'
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2d-stage1-browser.md'
+    regression: 'krw-deposit-proof-display-contract · krw-deposit-page · gate:ai-impl 24/24'
     owner: 'wallet'
     reviewer: 'product'
     security: 'security'
     db: 'db'
     runtime: 'sre'
-    owner_path: 'apps/web/src/domain/launch-gates.ts'
+    owner_path: 'apps/web/src/domain/krw-deposit-proof-display-contract.ts'
     pr: ''
     sha: ''
-    adr: ''
-    updated_at: '2026-07-13T00:34:00+09:00'
+    adr: 'docs/PRODUCT/ADR/020-platform-engine.md'
+    updated_at: '2026-07-13T03:35:00+09:00'
   - id: 'EXT-01'
     severity: 'HIGH'
     impact: 4
@@ -1093,15 +1205,20 @@ findings:
     score: 17
     domain: 'Ops'
     stage: 'R4'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'backend-db'
     depends_on: ['ADR-021-obs-stack']
     blocked_by: []
     symptom: '관측/알림 스택 미구축 — Release Gate §39 blocker'
-    root_cause: ''
-    fix: ''
-    evidence: []
-    regression: ''
+    root_cause: 'ADR-021 Option A decided in R0 but alert dry-fire / trigger mapping not executed'
+    fix: 'stack:ops-alert-dry-fire open→resolve 6/6 §20b triggers · edge_ops/provider_health path live · price-feed correlation request_id'
+    evidence:
+      - type: 'runtime_log'
+        sha: '294ce2d00e999a9ff354e082719c55082ed18a9a'
+        timestamp: '2026-07-13T04:42:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R4/r4-market-ops-implement.md'
+    regression: 'ops-alert-dry-fire 6/6 · existing ops-notify pager path unchanged'
     owner: 'sre'
     reviewer: 'product'
     security: 'security'
@@ -1109,9 +1226,9 @@ findings:
     runtime: 'sre'
     owner_path: 'docs/PRODUCT/ADR/021-platform-observability-stack.md'
     pr: ''
-    sha: ''
+    sha: '294ce2d00e999a9ff354e082719c55082ed18a9a'
     adr: 'ADR-021'
-    updated_at: '2026-07-13T00:34:00+09:00'
+    updated_at: '2026-07-13T04:42:00+09:00'
   - id: 'EXT-02'
     severity: 'MEDIUM'
     impact: 3

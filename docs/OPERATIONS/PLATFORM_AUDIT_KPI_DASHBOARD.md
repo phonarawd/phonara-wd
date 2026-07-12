@@ -5,20 +5,21 @@
 
 | KPI                             |                            값 |
 | ------------------------------- | ----------------------------: |
-| Findings OPEN                   |                            31 |
-| Findings APPROVED_FOR_IMPLEMENT | 4 (C-01 · C-02 · H-01 · M-01) |
+| Findings OPEN                   |                             1 |
+| Findings APPROVED_FOR_IMPLEMENT |                             0 |
 | Findings IN_PROGRESS            |                             0 |
 | Findings INVESTIGATING          |                             0 |
-| Findings VERIFYING              |                      1 (M-18) |
+| Findings VERIFYING              |                             0 |
+| Findings VERIFIED_FIXED         |                            34 |
 | Findings CLOSED                 |                             0 |
-| Findings BLOCKED_DEP            |                             0 |
+| Findings BLOCKED_DEP            |              1 (H-09 HIBP) |
 | Findings UNVERIFIED             |                             0 |
 | Severity CRITICAL               |                             4 |
 | Severity HIGH                   |                            10 |
 | Severity MEDIUM                 |                            22 |
-| Evidence coverage %             |  R0 complete · R1 Investigate |
-| CI required jobs                |      n/a (docs pre-Implement) |
-| Runtime Stage1                  |       TOOL_READY (M-18 fixed) |
+| Evidence coverage %             | R0 complete · R1 Stage1 PASS |
+| CI required jobs                | quality green · sql red (pre-R1 · 별도 triage) |
+| Runtime Stage1                  | PASS (R1 · 390/580/1455 · preview.phonara-web.pages.dev) |
 | Runtime Stage2                  |                   NOT_STARTED |
 | Risks UNMITIGATED High+         |                             0 |
 | Risks MITIGATED High            |          1 (RISK-BROWSER-MCP) |

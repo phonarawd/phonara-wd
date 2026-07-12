@@ -88,7 +88,7 @@ bun run stack:smoke-pg-webhook-hmac
 | `authenticated_security_definer_function_executable` | 135   | **의도** — guarded `rpc_*` client surface         |
 | `auth_rls_initplan`                                  | 11    | **defer** — 성능 튜닝 큐                          |
 | `anon_security_definer_function_executable`          | 4     | **의도** — public read allowlist (inventory test) |
-| `auth_leaked_password_protection`                    | 1     | **defer** — Auth dashboard 설정                   |
+| `auth_leaked_password_protection`                    | 1     | **defer** — Pro+ entitlement · `bun run stack:auth-hibp-enable` (H-09 · 2026-07-13 402) |
 | `unused_index` (INFO)                                | 157   | **defer** — 운영 쿼리 evidence 후                 |
 | `rls_enabled_no_policy` (INFO)                       | 1     | **의도** — internal table                         |
 

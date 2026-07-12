@@ -224,6 +224,8 @@ BEGIN
         OR has_table_privilege('anon', c.oid, 'UPDATE')
         OR has_table_privilege('anon', c.oid, 'DELETE')
         OR has_table_privilege('anon', c.oid, 'TRUNCATE')
+        OR has_table_privilege('anon', c.oid, 'TRIGGER')
+        OR has_table_privilege('anon', c.oid, 'REFERENCES')
       )
     ORDER BY c.relname
   LOOP
@@ -245,6 +247,8 @@ BEGIN
         OR has_table_privilege('authenticated', c.oid, 'UPDATE')
         OR has_table_privilege('authenticated', c.oid, 'DELETE')
         OR has_table_privilege('authenticated', c.oid, 'TRUNCATE')
+        OR has_table_privilege('authenticated', c.oid, 'TRIGGER')
+        OR has_table_privilege('authenticated', c.oid, 'REFERENCES')
       )
     ORDER BY c.relname
   LOOP
@@ -380,16 +384,38 @@ BEGIN
     'authenticated may SELECT game_progressive_sessions (own/admin RLS)';
   ASSERT NOT has_table_privilege('authenticated', 'public.game_progressive_sessions', 'INSERT'),
     'authenticated must NOT INSERT game_progressive_sessions directly';
-  ASSERT has_table_privilege('anon', 'public.live_crash_rounds', 'SELECT'),
-    'anon may SELECT live_crash_rounds (server_seed column revoked)';
-  ASSERT has_table_privilege('authenticated', 'public.live_crash_rounds', 'SELECT'),
-    'authenticated may SELECT live_crash_rounds';
+  ASSERT NOT has_table_privilege('anon', 'public.live_crash_rounds', 'SELECT'),
+    'anon must NOT SELECT live_crash_rounds (RPC only · H-02 R3-a)';
+  ASSERT NOT has_table_privilege('authenticated', 'public.live_crash_rounds', 'SELECT'),
+    'authenticated must NOT SELECT live_crash_rounds (RPC only · H-02 R3-a)';
+  ASSERT has_table_privilege('service_role', 'public.live_crash_rounds', 'SELECT'),
+    'service_role must SELECT live_crash_rounds';
+  ASSERT NOT has_column_privilege('anon', 'public.live_crash_rounds', 'server_seed', 'SELECT'),
+    'anon must NOT SELECT live_crash_rounds.server_seed';
+  ASSERT NOT has_column_privilege(
+    'authenticated', 'public.live_crash_rounds', 'server_seed', 'SELECT'
+  ), 'authenticated must NOT SELECT live_crash_rounds.server_seed';
   ASSERT NOT has_table_privilege('anon', 'public.live_crash_bets', 'SELECT'),
     'anon must NOT SELECT live_crash_bets';
   ASSERT has_table_privilege('authenticated', 'public.live_crash_bets', 'SELECT'),
     'authenticated may SELECT live_crash_bets (own RLS)';
   ASSERT NOT has_table_privilege('authenticated', 'public.live_crash_bets', 'INSERT'),
     'authenticated must NOT INSERT live_crash_bets directly';
+  ASSERT NOT has_function_privilege(
+    'anon',
+    'public.rpc_lock_wallet(currency,text,text,text,uuid)',
+    'EXECUTE'
+  ), 'anon must NOT EXECUTE rpc_lock_wallet (H-02)';
+  ASSERT NOT has_function_privilege(
+    'authenticated',
+    'public.rpc_lock_wallet(currency,text,text,text,uuid)',
+    'EXECUTE'
+  ), 'authenticated must NOT EXECUTE rpc_lock_wallet (H-02)';
+  ASSERT has_function_privilege(
+    'service_role',
+    'public.rpc_lock_wallet(currency,text,text,text,uuid)',
+    'EXECUTE'
+  ), 'service_role must EXECUTE rpc_lock_wallet';
   ASSERT has_function_privilege('authenticated', 'public.rpc_get_game_pf_state()', 'EXECUTE'),
     'authenticated must EXECUTE rpc_get_game_pf_state';
   ASSERT has_function_privilege('authenticated', 'public.rpc_set_game_client_seed(text)', 'EXECUTE'),
@@ -753,10 +779,22 @@ BEGIN
     'authenticated may SELECT app_install_attributions (own/admin RLS)';
 
   -- E9 Identity+Support RPCs
-  ASSERT has_function_privilege('anon', 'public.rpc_create_siwe_challenge(text, integer)', 'EXECUTE'),
-    'anon may EXECUTE rpc_create_siwe_challenge';
+  ASSERT NOT has_function_privilege('anon', 'public.rpc_create_siwe_challenge(text, integer)', 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_create_siwe_challenge (M-04)';
   ASSERT has_function_privilege('authenticated', 'public.rpc_create_siwe_challenge(text, integer)', 'EXECUTE'),
     'authenticated may EXECUTE rpc_create_siwe_challenge';
+  ASSERT has_function_privilege(
+    'service_role',
+    'public.rpc_service_create_siwe_challenge(text, integer, text)',
+    'EXECUTE'
+  ),
+    'service_role must EXECUTE rpc_service_create_siwe_challenge';
+  ASSERT NOT has_function_privilege(
+    'anon',
+    'public.rpc_service_create_siwe_challenge(text, integer, text)',
+    'EXECUTE'
+  ),
+    'anon must NOT EXECUTE rpc_service_create_siwe_challenge';
   ASSERT NOT has_function_privilege(
     'anon',
     'public.rpc_service_complete_siwe_login(uuid, text, uuid)',
@@ -787,12 +825,24 @@ BEGIN
     'EXECUTE'
   ),
     'authenticated may EXECUTE rpc_admin_resolve_support_ticket (admin body guard)';
-  ASSERT has_function_privilege(
+  ASSERT NOT has_function_privilege(
     'anon',
     'public.rpc_record_product_analytics_event(text, text, jsonb, text, text, timestamp with time zone)',
     'EXECUTE'
   ),
-    'anon may EXECUTE rpc_record_product_analytics_event';
+    'anon must NOT EXECUTE rpc_record_product_analytics_event (M-04)';
+  ASSERT has_function_privilege(
+    'authenticated',
+    'public.rpc_record_product_analytics_event(text, text, jsonb, text, text, timestamp with time zone)',
+    'EXECUTE'
+  ),
+    'authenticated may EXECUTE rpc_record_product_analytics_event';
+  ASSERT has_function_privilege(
+    'service_role',
+    'public.rpc_service_record_product_analytics_event(text, text, jsonb, text, text, timestamp with time zone, text, uuid)',
+    'EXECUTE'
+  ),
+    'service_role must EXECUTE rpc_service_record_product_analytics_event';
   ASSERT NOT has_function_privilege('anon', 'public.rpc_get_tier_leaderboard(integer)', 'EXECUTE'),
     'anon must NOT EXECUTE rpc_get_tier_leaderboard';
   ASSERT has_function_privilege('authenticated', 'public.rpc_get_tier_leaderboard(integer)', 'EXECUTE'),
@@ -840,7 +890,42 @@ BEGIN
   ASSERT has_function_privilege('authenticated', 'public.rpc_recommend_missions(integer)', 'EXECUTE'),
     'authenticated must EXECUTE rpc_recommend_missions';
 
-  RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges + E1 tier decay + E3 viral cms + E9 identity + E10 platform';
+  -- M-06 / R3-b — trigger helpers + default privileges (service-write GRANT minimize)
+  ASSERT NOT has_function_privilege(
+    'anon', 'public._earn_vip_preserve_prime_elite()', 'EXECUTE'
+  ), 'anon must NOT EXECUTE _earn_vip_preserve_prime_elite (M-06)';
+  ASSERT NOT has_function_privilege(
+    'authenticated', 'public._earn_vip_preserve_prime_elite()', 'EXECUTE'
+  ), 'authenticated must NOT EXECUTE _earn_vip_preserve_prime_elite (M-06)';
+  ASSERT NOT has_function_privilege('anon', 'public.set_updated_at()', 'EXECUTE'),
+    'anon must NOT EXECUTE set_updated_at (M-06)';
+  ASSERT NOT has_function_privilege('authenticated', 'public.set_updated_at()', 'EXECUTE'),
+    'authenticated must NOT EXECUTE set_updated_at (M-06)';
+  ASSERT NOT EXISTS (
+    SELECT 1
+    FROM pg_default_acl d
+    WHERE d.defaclnamespace = 'public'::regnamespace
+      AND d.defaclrole = 'postgres'::regrole
+      AND d.defaclobjtype = 'r'
+      AND (
+        d.defaclacl::TEXT ~ 'anon=[^/]*[awdDxt]'
+        OR d.defaclacl::TEXT ~ 'authenticated=[^/]*[awdDxt]'
+      )
+  ), 'postgres public table DEFAULT PRIVILEGES must not auto-grant client writes (M-06)';
+  ASSERT NOT EXISTS (
+    SELECT 1
+    FROM pg_default_acl d
+    WHERE d.defaclnamespace = 'public'::regnamespace
+      AND d.defaclrole = 'postgres'::regrole
+      AND d.defaclobjtype = 'f'
+      AND (
+        d.defaclacl::TEXT ~ 'anon=X'
+        OR d.defaclacl::TEXT ~ 'authenticated=X'
+        OR d.defaclacl::TEXT ~ '(^|[{,])=X/'
+      )
+  ), 'postgres public function DEFAULT PRIVILEGES must not auto-grant client EXECUTE (M-06)';
+
+  RAISE NOTICE 'GRANTS RLS INVENTORY OK — pinned role/table privileges + E1 tier decay + E3 viral cms + E9 identity + E10 platform + M-06';
 END;
 $$;
 

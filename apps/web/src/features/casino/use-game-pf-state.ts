@@ -10,9 +10,8 @@ import {
   EW_E23_SET_CLIENT_SEED_RPC,
 } from '@/domain/ew-e23-casino-live-display-contract';
 import { LAUNCH_GATES } from '@/lib/launch-gates';
+import { callRpc } from '@/lib/rpc';
 import { useAuth } from '@/contexts/auth-context';
-
-import { casinoLiveRpc } from './casino-live-rpc';
 
 export type GamePfState = {
   client_seed: string;
@@ -30,7 +29,7 @@ export function useGamePfState(enabled = true) {
   return useQuery({
     queryKey: PF_QUERY_KEY,
     enabled: Boolean(session?.user && live && enabled),
-    queryFn: async () => casinoLiveRpc<GamePfState>(EW_E23_GET_PF_STATE_RPC),
+    queryFn: async () => (await callRpc(EW_E23_GET_PF_STATE_RPC)) as GamePfState,
     staleTime: 10_000,
   });
 }
@@ -43,9 +42,9 @@ export function useSetGameClientSeed() {
       if (!LAUNCH_GATES.casinoLiveLive) {
         throw new Error('casino_live_ui_locked');
       }
-      return casinoLiveRpc<GamePfState>(EW_E23_SET_CLIENT_SEED_RPC, {
+      return (await callRpc(EW_E23_SET_CLIENT_SEED_RPC, {
         p_client_seed: clientSeed,
-      });
+      })) as GamePfState;
     },
     onSuccess: async (data) => {
       queryClient.setQueryData(PF_QUERY_KEY, data);
@@ -62,9 +61,9 @@ export function useRotateGameServerSeed() {
       if (!LAUNCH_GATES.casinoLiveLive) {
         throw new Error('casino_live_ui_locked');
       }
-      return casinoLiveRpc<GamePfState>(EW_E23_ROTATE_SERVER_SEED_RPC, {
-        p_new_client_seed: newClientSeed ?? null,
-      });
+      return (await callRpc(EW_E23_ROTATE_SERVER_SEED_RPC, {
+        p_new_client_seed: newClientSeed ?? undefined,
+      })) as GamePfState;
     },
     onSuccess: async (data) => {
       queryClient.setQueryData(PF_QUERY_KEY, data);

@@ -35,6 +35,13 @@ describe('admin-rbac permission matrix', () => {
     expect(canPerformAdminAction('finance', 'support.tickets.resolve')).toBe(false);
   });
 
+  it('finance can approve settlements · viewer cannot', () => {
+    expect(canPerformAdminAction('finance', 'earn.settlement.approve')).toBe(true);
+    expect(canPerformAdminAction('viewer', 'earn.settlement.approve')).toBe(false);
+    expect(canPerformAdminAction('owner', 'users.tier.write')).toBe(true);
+    expect(canPerformAdminAction('finance', 'users.tier.write')).toBe(false);
+  });
+
   it('finance can approve withdrawals but not manage RBAC grants', () => {
     expect(canPerformAdminAction('finance', 'queues.withdraw.approve')).toBe(true);
     expect(canPerformAdminAction('finance', 'access.rbac.manage')).toBe(false);

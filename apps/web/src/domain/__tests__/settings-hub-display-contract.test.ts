@@ -38,9 +38,17 @@ describe('settings-hub-display-contract', () => {
     expect(routes).toContain(SETTINGS_ACCOUNT_ROUTE);
     expect(routes).toContain(SETTINGS_PREFERENCES_ROUTE);
     expect(routes).toContain(SETTINGS_NOTIFICATIONS_ROUTE);
-    expect(routes).toContain(NOTIFICATIONS_CENTER_ROUTE);
+    // M-07 — inbox hidden while notificationsCenter launch gate is false
+    expect(routes).not.toContain(NOTIFICATIONS_CENTER_ROUTE);
     expect(routes).toContain('/settings/api-keys');
     expect(PLATFORM_EWAVE_HIDDEN_ROUTES).not.toContain('/settings/api-keys');
+  });
+
+  it('keeps notification preference route while inbox follows launch gate', () => {
+    const routes = resolveSettingsHubNavItems().map((row) => row.route);
+    expect(routes).toContain(SETTINGS_NOTIFICATIONS_ROUTE);
+    expect(SETTINGS_NOTIFICATIONS_ROUTE).toBe('/settings/notifications');
+    expect(routes).not.toContain(NOTIFICATIONS_CENTER_ROUTE);
   });
 
   it('exposes five quick notification pref keys on hub', () => {

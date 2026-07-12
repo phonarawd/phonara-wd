@@ -61,8 +61,8 @@ export function PwaInstallBanner() {
   return (
     <aside
       className={cn(
-        'border-accent/25 bg-surface-overlay/95 supports-[backdrop-filter]:bg-surface-overlay/80',
-        'fixed inset-x-0 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-40 border-t px-4 py-3 backdrop-blur-sm',
+        'border-accent/25 bg-surface-overlay/95 supports-backdrop-filter:bg-surface-overlay/80',
+        'fixed inset-x-0 bottom-[calc(var(--ds-shell-bottomnav-height)+env(safe-area-inset-bottom,0px))] z-40 border-t px-4 py-3 backdrop-blur-sm',
         'lg:bottom-4 lg:mx-auto lg:max-w-md lg:rounded-(--ds-radius-lg) lg:border lg:shadow-overlay',
       )}
       data-testid="pwa-install-banner"

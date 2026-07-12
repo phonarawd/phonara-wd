@@ -18,6 +18,8 @@ describe('shell-route-matchers', () => {
     expect(earnSurfaceRouteMatcher('/earn/cashback')).toBe(true);
     expect(earnSurfaceRouteMatcher('/share/earnings')).toBe(true);
     expect(earnSurfaceRouteMatcher('/staking')).toBe(true);
+    expect(earnSurfaceRouteMatcher('/onboarding')).toBe(true);
+    expect(earnSurfaceRouteMatcher('/onboarding/missions')).toBe(true);
     expect(earnSurfaceRouteMatcher('/trade')).toBe(false);
   });
 

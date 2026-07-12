@@ -178,8 +178,39 @@ describe('useSportsPageController · LAUNCH_GATES.sportsBetting', () => {
 
     expect(result.current.placeCtaExposure).toBe('built_disabled');
     expect(result.current.canPlaceBet).toBe(false);
+    expect(result.current.oddsIngestHealthGreen).toBe(false);
     expect(result.current.sportsBlocked).toBe(true);
     expect(result.current.sportsBlockedKey).toBe('sports.gate.feature_off');
+  });
+
+  it('keeps oddsIngestHealthGreen false for audit-era stale captured_at (H-05)', () => {
+    useListSportsFixturesMock.mockReturnValue({
+      data: [
+        {
+          fixture_id: 'fx-stale',
+          league_code: 'epl',
+          home_name: 'A',
+          away_name: 'B',
+          kickoff_at: '2026-07-11T12:00:00.000Z',
+          status: 'scheduled',
+          match_1x2: {
+            home: {
+              outcome_id: 'h',
+              odds: '1.90',
+              captured_at: '2026-06-16T04:43:29.944Z',
+            },
+          },
+        },
+      ],
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    const { result } = renderHook(() => useSportsPageController());
+
+    expect(result.current.oddsIngestHealthGreen).toBe(false);
+    expect(result.current.canPlaceBet).toBe(false);
   });
 
   it('keeps canPlaceBet false when kill-switch sportsBlocked even if slip is ready', () => {

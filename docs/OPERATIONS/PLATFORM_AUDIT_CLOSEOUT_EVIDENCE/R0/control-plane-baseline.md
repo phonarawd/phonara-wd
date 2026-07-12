@@ -16,7 +16,7 @@
 | Observability ADR                  | [`ADR-021`](../../../PRODUCT/ADR/021-platform-observability-stack.md)                | DONE                         |
 | Evidence bucket                    | [`PLATFORM_EVIDENCE_RETENTION.md`](../../PLATFORM_EVIDENCE_RETENTION.md)             | DONE                         |
 | Browser MCP probe                  | [`browser-mcp-probe.md`](browser-mcp-probe.md)                                       | DONE · Probe5 **CAPTURE_OK** |
-| SLO/Trigger 수치 초안              | [`PLATFORM_SLO_SLA.yaml`](../../PLATFORM_SLO_SLA.yaml)                               | DRAFT_PENDING_OWNER_SIGN     |
+| SLO/Trigger 수치 초안              | [`PLATFORM_SLO_SLA.yaml`](../../PLATFORM_SLO_SLA.yaml)                               | **confirmed** 2026-07-13     |
 | Exception / Drill / Secrets        | 각 OPERATIONS 템플릿                                                                 | DONE                         |
 | Stage 일정표                       | [`PLATFORM_STAGE_SCHEDULE.md`](../../PLATFORM_STAGE_SCHEDULE.md)                     | DONE                         |
 | Playbook version                   | [`PLATFORM_PLAYBOOK_VERSION.yaml`](../../PLATFORM_PLAYBOOK_VERSION.yaml)             | DONE                         |
@@ -33,5 +33,5 @@
 - [x] clean baseline SHA 기록
 - [x] 전 템플릿 · version/effective_date
 - [x] 관측 ADR · Evidence bucket · Browser MCP Evidence · dod_profile
-- [ ] Owner SLO/Trigger 수치 서명 (초안만 고정 — 확정은 Owner)
+- [x] Owner SLO/Trigger 수치 서명 — `PLATFORM_SLO_SLA.yaml` **confirmed** 2026-07-13 operator grant
 - [ ] Finding CLOSED — **해당 없음** (R0 Exit ≠ Finding Close)

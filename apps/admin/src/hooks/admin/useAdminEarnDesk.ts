@@ -27,6 +27,7 @@ export type {
   UseAdminEarnDesk,
 } from './useAdminEarnDeskMock';
 
+const MIN_REASON = 4;
 const SETTLEMENT_STATES: SettlementState[] = ['pending', 'approved', 'paid'];
 const AGENT_TIERS: AgentTier[] = ['bronze', 'silver', 'gold', 'platinum'];
 const AGENT_STATUSES: AgentStatus[] = ['pending', 'active', 'suspended'];
@@ -118,33 +119,33 @@ export function useAdminEarnDesk(): UseAdminEarnDesk {
   }, [settlementsQuery]);
 
   const approveSettlement = useCallback(
-    (id: string): boolean => {
+    async (id: string, reason: string): Promise<boolean> => {
+      if (reason.trim().length < MIN_REASON) return false;
       const row = settlements.find((r) => r.id === id);
       if (!row || row.state !== 'pending') return false;
-      void (async () => {
-        try {
-          await callRpc('rpc_approve_affiliate_commission', {
-            p_approval_id: id,
-            p_reason: 'admin settlement approve',
-          });
-          setAudit((prev) =>
-            [
-              {
-                id: `${id}-approve-${Date.now()}`,
-                at: new Date().toISOString(),
-                actorKey: 'admin.primitive.audit.actor.system',
-                actionKey: 'admin.earn.settlements.audit.approve',
-                subject: id,
-              },
-              ...prev,
-            ].slice(0, 50),
-          );
-          await invalidate();
-        } catch {
-          // display-only failure
-        }
-      })();
-      return true;
+      try {
+        await callRpc('rpc_approve_affiliate_commission', {
+          p_approval_id: id,
+          p_reason: reason.trim(),
+        });
+        setAudit((prev) =>
+          [
+            {
+              id: `${id}-approve-${Date.now()}`,
+              at: new Date().toISOString(),
+              actorKey: 'admin.primitive.audit.actor.system',
+              actionKey: 'admin.earn.settlements.audit.approve',
+              subject: id,
+              reason: reason.trim(),
+            },
+            ...prev,
+          ].slice(0, 50),
+        );
+        await invalidate();
+        return true;
+      } catch {
+        return false;
+      }
     },
     [invalidate, settlements],
   );
@@ -152,12 +153,14 @@ export function useAdminEarnDesk(): UseAdminEarnDesk {
   const tierCFalse = useCallback(() => false, []);
 
   const bulkApproveSettlements = useCallback(
-    (ids: string[]): boolean => {
-      let any = false;
-      for (const id of ids) {
-        if (approveSettlement(id)) any = true;
-      }
-      return any;
+    (ids: string[], reason: string): boolean => {
+      if (reason.trim().length < MIN_REASON) return false;
+      void (async () => {
+        for (const id of ids) {
+          await approveSettlement(id, reason);
+        }
+      })();
+      return true;
     },
     [approveSettlement],
   );

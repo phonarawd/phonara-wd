@@ -33,12 +33,12 @@ Owner paths:
 
 ## Runtime / Browser
 
-| Item                               | Status                                                        |
-| ---------------------------------- | ------------------------------------------------------------- |
-| Stage1 `/` · `/status` Browser MCP | **pending** — capture after feature-branch preview SHA deploy |
-| Preview SHA parity                 | pending push                                                  |
+| Item                               | Status                                                                 |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| Stage1 `/` · `/status` Browser MCP | **PASS** — [`r1-stage1-browser.md`](r1-stage1-browser.md) 390/580/1455 |
+| Preview SHA parity                 | `391646f6` · deploy `949b87ec.phonara-web.pages.dev`                   |
 
-Finding status after this evidence: **VERIFYING** (not CLOSED / not VERIFIED_FIXED until Stage1 Browser).
+Finding status after Stage1: **VERIFIED_FIXED** (see registry C-01/C-02/H-01/M-01).
 
 ## No Shortcut checklist
 

@@ -18,7 +18,14 @@ docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/
 | Stage  | 슬롯  | 상태                                                  |
 | ------ | ----- | ----------------------------------------------------- |
 | **R0** | `R0/` | control-plane · Browser MCP Probe5 · bun audit        |
-| **R1** | `R1/` | trust-truth Investigate **`[x]`** · Implement pending |
+| **R1** | `R1/` | trust-truth Investigate · Implement · Stage1 **`[x]`** |
+| **R2** | `R2/` | R2-a H-03/H-11 **`[x]`** · R2-b H-10 **`[x]`** · R2-c H-05 **`[x]`** · R2-d M-21 **`[x]`** |
+| **R3** | `R3/` | R3-a..e **`[x]`** |
+| **R4** | `R4/` | H-04 · EXT-01 · M-20 **`[x]`** |
+| **R5** | `R5/` | Admin safety **`[x]`** |
+| **R6** | `R6/` | Product consistency **`[x]`** |
+| **R7** | `R7/` | M-14 · M-15 · M-16 type/UI hygiene **`[x]`** |
+| **R8** | `R8/` | H-06 deploy parity · clean SHA · headers **`[x]`** |
 
 ## CI 링크 템플릿
 

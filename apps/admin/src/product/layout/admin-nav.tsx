@@ -1,28 +1,19 @@
 import { Link, useRouterState } from '@tanstack/react-router';
 
-import { canAccessAdminSupportDesk } from '@/domain/admin-support-desk-display-contract';
-import { canAccessAdminTeamDesk } from '@/domain/admin-team-desk-display-contract';
-import { useAdminOperatorRbac, type AdminRbacRole } from '@/hooks/admin/useAdminOperatorRbac';
+import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
 import { useT } from '@/product/i18n';
+import {
+  filterAdminNavEntries,
+  flattenAdminNavLeaves,
+  type NavEntry,
+  type NavGroup,
+  type NavLeaf,
+} from '@/product/layout/admin-nav-filter';
 import { cn } from '@/product/primitives/lib/cn';
 import type { MessageKey } from '@phonara/i18n';
 
-type NavLeaf = {
-  kind: 'leaf';
-  labelKey: MessageKey;
-  to: string;
-  end?: boolean;
-};
-
-type NavGroup = {
-  kind: 'group';
-  labelKey: MessageKey;
-  to?: string;
-  end?: boolean;
-  children: NavLeaf[];
-};
-
-type NavEntry = NavLeaf | NavGroup;
+export type { NavEntry, NavGroup, NavLeaf } from '@/product/layout/admin-nav-filter';
+export { filterAdminNavEntries, flattenAdminNavLeaves } from '@/product/layout/admin-nav-filter';
 
 /** §6.1 · §12.19 Admin chrome — operator-facing Korean labels (admin app routes omit `/admin` prefix). */
 const ADMIN_NAV: NavEntry[] = [
@@ -65,16 +56,17 @@ const ADMIN_NAV: NavEntry[] = [
   { kind: 'leaf', labelKey: 'admin.nav.ops', to: '/ops' },
 ];
 
-/** Owner-only `/team` · owner/support `/support` — server RPC still authoritative. */
-function filterNavForRole(entries: NavEntry[], role: AdminRbacRole): NavEntry[] {
-  const showTeam = canAccessAdminTeamDesk(role);
-  const showSupport = canAccessAdminSupportDesk(role);
-  return entries.filter((entry) => {
-    if (entry.kind === 'leaf' && entry.to === '/team') return showTeam;
-    if (entry.kind === 'leaf' && entry.to === '/support') return showSupport;
-    return true;
-  });
-}
+/** Mobile quick subset — still filtered by the same RBAC predicate. */
+const MOBILE_QUICK_NAV: NavLeaf[] = [
+  { kind: 'leaf', labelKey: 'admin.nav.overview', to: '/', end: true },
+  { kind: 'leaf', labelKey: 'admin.nav.queues', to: '/queues' },
+  { kind: 'leaf', labelKey: 'admin.nav.deposits', to: '/deposits' },
+  { kind: 'leaf', labelKey: 'admin.nav.withdrawals', to: '/withdrawals' },
+  { kind: 'leaf', labelKey: 'admin.nav.earn', to: '/earn' },
+  { kind: 'leaf', labelKey: 'admin.nav.users', to: '/users' },
+  { kind: 'leaf', labelKey: 'admin.nav.audit', to: '/audit' },
+  { kind: 'leaf', labelKey: 'admin.nav.ops', to: '/ops' },
+];
 
 function normalizePath(pathname: string): string {
   if (pathname.length > 1 && pathname.endsWith('/')) {
@@ -157,21 +149,10 @@ function NavGroupItem({ group }: { group: NavGroup }) {
   );
 }
 
-const MOBILE_QUICK_NAV: NavLeaf[] = [
-  { kind: 'leaf', labelKey: 'admin.nav.overview', to: '/', end: true },
-  { kind: 'leaf', labelKey: 'admin.nav.queues', to: '/queues' },
-  { kind: 'leaf', labelKey: 'admin.nav.deposits', to: '/deposits' },
-  { kind: 'leaf', labelKey: 'admin.nav.withdrawals', to: '/withdrawals' },
-  { kind: 'leaf', labelKey: 'admin.nav.earn', to: '/earn' },
-  { kind: 'leaf', labelKey: 'admin.nav.users', to: '/users' },
-  { kind: 'leaf', labelKey: 'admin.nav.audit', to: '/audit' },
-  { kind: 'leaf', labelKey: 'admin.nav.ops', to: '/ops' },
-];
-
 export function AdminNav({ className }: { className?: string }) {
   const t = useT();
   const { role } = useAdminOperatorRbac();
-  const entries = filterNavForRole(ADMIN_NAV, role);
+  const entries = filterAdminNavEntries(ADMIN_NAV, role);
 
   return (
     <nav className={cn('space-y-4', className)} aria-label={t('admin.nav.ariaLabel')}>
@@ -189,10 +170,13 @@ export function AdminNav({ className }: { className?: string }) {
 /** Touch-first quick links — flat list for horizontal scroll under the header. */
 export function AdminMobileNav({ className }: { className?: string }) {
   const t = useT();
+  const { role } = useAdminOperatorRbac();
+  const entries = filterAdminNavEntries(MOBILE_QUICK_NAV, role);
+  const items = flattenAdminNavLeaves(entries);
 
   return (
     <nav className={cn('flex min-w-max gap-1', className)} aria-label={t('admin.nav.ariaLabel')}>
-      {MOBILE_QUICK_NAV.map((item) => (
+      {items.map((item) => (
         <NavLinkItem key={item.to} {...item} nested={false} />
       ))}
     </nav>

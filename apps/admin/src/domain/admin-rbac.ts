@@ -9,6 +9,7 @@ export type AdminRbacAction =
   | 'operations.kill_switch'
   | 'users.moderate'
   | 'users.wallet_adjust'
+  | 'users.tier.write'
   | 'casino.manage'
   | 'earn.settlement.approve'
   | 'access.rbac.manage'
@@ -51,6 +52,7 @@ const PERMISSIONS: Record<AdminRbacAction, readonly AdminRbacRole[]> = {
   'operations.kill_switch': ['owner', 'finance', 'risk', 'operator'],
   'users.moderate': ['owner', 'risk', 'support'],
   'users.wallet_adjust': ['owner', 'finance'],
+  'users.tier.write': ['owner'],
   'casino.manage': ['owner', 'operator'],
   'earn.settlement.approve': ['owner', 'finance'],
   'access.rbac.manage': ['owner'],

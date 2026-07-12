@@ -18,7 +18,9 @@ export const EW_E9_IDENTITY_MIGRATION_NAME = 'ew_e9_identity_support' as const;
 export const EW_E9_APP_INSTALL_ENUM_MIGRATION_NAME = 'ew_e9_app_install_enum' as const;
 
 export const EW_E9_CREATE_SIWE_CHALLENGE_RPC = 'rpc_create_siwe_challenge' as const;
+export const EW_E9_SERVICE_CREATE_SIWE_CHALLENGE_RPC = 'rpc_service_create_siwe_challenge' as const;
 export const EW_E9_SERVICE_COMPLETE_SIWE_RPC = 'rpc_service_complete_siwe_login' as const;
+export const EW_E9_SERVICE_LOOKUP_SIWE_IDENTITY_RPC = 'rpc_service_lookup_siwe_identity' as const;
 export const EW_E9_LIST_WALLET_IDENTITIES_RPC = 'rpc_list_wallet_identities' as const;
 
 export const EW_E9_CREATE_SUPPORT_TICKET_RPC = 'rpc_create_support_ticket' as const;
@@ -28,12 +30,15 @@ export const EW_E9_ADMIN_LIST_SUPPORT_TICKETS_RPC = 'rpc_admin_list_support_tick
 export const EW_E9_ADMIN_RESOLVE_SUPPORT_TICKET_RPC = 'rpc_admin_resolve_support_ticket' as const;
 
 export const EW_E9_RECORD_ANALYTICS_RPC = 'rpc_record_product_analytics_event' as const;
+export const EW_E9_SERVICE_RECORD_ANALYTICS_RPC =
+  'rpc_service_record_product_analytics_event' as const;
 export const EW_E9_ADMIN_PRODUCT_ANALYTICS_RPC = 'rpc_admin_get_product_analytics' as const;
 
 export const EW_E9_RECORD_APP_INSTALL_RPC = 'rpc_record_app_install_attribution' as const;
 export const EW_E9_TIER_LEADERBOARD_RPC = 'rpc_get_tier_leaderboard' as const;
 
 export const EW_E9_SIWE_EDGE_FUNCTION = 'siwe-auth' as const;
+export const EW_E9_PRODUCT_ANALYTICS_EDGE_FUNCTION = 'product-analytics' as const;
 
 export const EW_E9_NEW_ENGINE_FEATURES = [
   'siwe_wallet_login',
@@ -62,8 +67,12 @@ export const EW_E9_IDENTITY_ARTIFACT_PATHS = [
   EW_E9_IDENTITY_ADR_PATH,
   'supabase/migrations/20260812000001_ew_e9_app_install_enum.sql',
   'supabase/migrations/20260812000002_ew_e9_identity_support.sql',
+  'supabase/migrations/20260817000001_m04_r3d_siwe_analytics_ingress.sql',
   'supabase/tests/ew_e9_identity_support_test.sql',
+  'supabase/tests/m04_r3d_siwe_analytics_ingress_test.sql',
   'supabase/functions/siwe-auth/index.ts',
+  'supabase/functions/product-analytics/index.ts',
+  'supabase/functions/_shared/service-ingress.ts',
   'apps/web/src/domain/ew-e9-identity-support-display-contract.ts',
   'apps/web/src/domain/__tests__/ew-e9-identity-support-display-contract.test.ts',
   'docs/OPERATIONS/ENGINE_GAP_E9_IDENTITY_SUPPORT.md',

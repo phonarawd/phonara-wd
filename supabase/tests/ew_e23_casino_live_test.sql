@@ -98,6 +98,15 @@ BEGIN
     'EXECUTE'
   ), 'authenticated must EXECUTE rpc_live_crash_get_current';
 
+  -- H-02 R3-a: live crash table is RPC-only; secret seed never client-selectable
+  ASSERT NOT has_table_privilege('anon', 'public.live_crash_rounds', 'SELECT'),
+    'anon must NOT SELECT live_crash_rounds';
+  ASSERT NOT has_table_privilege('authenticated', 'public.live_crash_rounds', 'SELECT'),
+    'authenticated must NOT SELECT live_crash_rounds';
+  ASSERT NOT has_column_privilege(
+    'authenticated', 'public.live_crash_rounds', 'server_seed', 'SELECT'
+  ), 'authenticated must NOT SELECT live_crash_rounds.server_seed';
+
   ASSERT NOT has_function_privilege(
     'anon',
     'public.rpc_progressive_start(text, text, text, jsonb, text, text, boolean)',

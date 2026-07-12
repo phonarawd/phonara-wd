@@ -1035,7 +1035,10 @@ export const koMessages = {
   'wallet.kyc.timeline.rejected': '반려',
   'wallet.withdraw.unavailableTitle': '출금 접수 일시 중지',
   'wallet.withdraw.unavailableDesc':
-    '출금 승인 절차를 점검하는 동안 새 출금 요청을 받지 않습니다. 기존 잔액 조회와 입금은 계속 이용할 수 있습니다.',
+    '소프트 런치 운영 정책으로 새 출금 접수를 열어 두지 않았습니다. 잔액은 그대로 보존되며, 입금과 잔액 조회는 계속 이용할 수 있습니다.',
+  'wallet.withdraw.unavailableNextAction':
+    '지금은 입금으로 잔액을 채우거나 원장에서 내역을 확인하세요. 출금은 운영 준비가 끝나면 안내됩니다.',
+  'wallet.withdraw.unavailableNextCta': '입금으로 이동',
   'wallet.withdraw.unavailableToast':
     '현재 새 출금 요청을 받을 수 없습니다. 지갑 잔액은 그대로 보존됩니다.',
   'wallet.withdraw.timeline.request': '출금 신청',
@@ -1115,6 +1118,19 @@ export const koMessages = {
   'wallet.deposit.krw.howItWorks.step1': '입금 금액을 입력하고 활성 환율을 확인하세요.',
   'wallet.deposit.krw.howItWorks.step2': '확인 화면에서 예상 PHON과 입금 계좌를 검토하세요.',
   'wallet.deposit.krw.howItWorks.step3': '발급된 입금 코드로 이체하면 확인 후 PHON이 적립돼요.',
+  'wallet.deposit.krw.proof.title': '이체 증빙 업로드',
+  'wallet.deposit.krw.proof.desc':
+    '이체 완료 후 영수증·이체확인증 사진을 올리면 운영팀이 더 빠르게 확인할 수 있어요.',
+  'wallet.deposit.krw.proof.ledgerNotice':
+    '증빙 업로드만으로는 잔액이 바뀌지 않아요. PHON 적립은 입금 확인(매칭) 후에만 반영됩니다.',
+  'wallet.deposit.krw.proof.choose': '사진 선택',
+  'wallet.deposit.krw.proof.uploading': '업로드 중…',
+  'wallet.deposit.krw.proof.status.pending': '증빙 검토 대기 — 운영팀이 확인 중이에요.',
+  'wallet.deposit.krw.proof.status.approved': '증빙 확인됨 — 입금 매칭을 기다리고 있어요.',
+  'wallet.deposit.krw.proof.status.rejected': '증빙이 거절됐어요. 고객센터에 문의해 주세요.',
+  'wallet.deposit.krw.proof.invalidType': 'JPG·PNG·WebP 이미지만 올릴 수 있어요.',
+  'wallet.deposit.krw.proof.tooLarge': '파일은 5MB 이하여야 해요.',
+  'wallet.deposit.krw.proof.error': '증빙 업로드에 실패했어요. 잠시 후 다시 시도해 주세요.',
   'seo.walletDepositKrw.title': '원화 입금 — PHONARA',
   'seo.walletDepositKrw.description':
     '원화 계좌이체로 PHON을 충전하세요. 환율·예상 수령액을 미리 확인하고 입금 코드로 이체합니다.',
@@ -1701,6 +1717,8 @@ export const koMessages = {
   'notif.priceAlert.formTitle': '가격 알림',
   'notif.priceAlert.formDescription':
     '앱이 열려 있을 때 오라클 가격 업데이트를 감지해 알려드립니다.',
+  'notif.priceAlert.localOnly':
+    '이 기기 브라우저에만 저장됩니다. 다른 기기·브라우저와 동기화되지 않습니다.',
   'notif.priceAlert.above': '이상',
   'notif.priceAlert.below': '이하',
   'notif.priceAlert.targetPlaceholder': '목표가',
@@ -2812,7 +2830,7 @@ export const koMessages = {
   'admin.tiers.empty.cta': '운영 상태 보기',
   'admin.userTier.title': '회원 등급',
   'admin.userTier.description':
-    '회원의 부업 등급 기록을 확인합니다. 수동 승급·편집은 지원하지 않습니다.',
+    '회원의 부업 등급 기록을 확인하고, 주인만 사유·확인 후 등급을 바꿀 수 있습니다.',
   'admin.userTier.summary.loading': '회원 등급을 불러오는 중입니다.',
   'admin.userTier.summary.member': '{name} · {email}',
   'admin.userTier.back': '회원 목록으로',
@@ -2824,11 +2842,15 @@ export const koMessages = {
   'admin.userTier.empty.body': '아직 부업 등급 데이터가 없거나 아직 생성되지 않았습니다.',
   'admin.userTier.error.title': '등급 정보를 불러오지 못했어요',
   'admin.userTier.error.body': '잠시 후 다시 시도해 주세요.',
+  'admin.userTier.write.title': '등급 수동 변경',
+  'admin.userTier.write.description': '주인만 · 사유 4자 이상 · AAL2 RPC 정본',
+  'admin.userTier.action.set': '등급 적용',
+  'admin.userTier.dialog.set.title': '회원 등급 변경',
   'admin.users.action.viewTier': '등급 보기',
   'admin.help.userTier.title': '회원 등급 보는 방법',
   'admin.help.userTier.step1': '등급·경험치·갱신 시각은 엔진 기록을 그대로 표시합니다.',
   'admin.help.userTier.step2':
-    '수동 승급·편집은 지원하지 않습니다. 변경이 필요하면 운영 절차를 따르세요.',
+    '주인만 사유·확인 후 등급을 바꿀 수 있습니다. 서버 RPC가 최종 정본입니다.',
   'admin.help.userTier.step3': '리스크 메모는 회원·리스크 데스크에서 확인하세요.',
   'admin.tiers.error.title': '등급 데이터를 불러오지 못했어요',
   'admin.tiers.error.body': '잠시 후 다시 시도하거나 운영 상태를 확인해 주세요.',
@@ -4159,7 +4181,10 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'wallet.kyc.timeline.rejected': 'Rejected',
   'wallet.withdraw.unavailableTitle': 'Withdrawal requests paused',
   'wallet.withdraw.unavailableDesc':
-    'New withdrawal requests are paused while the approval workflow is being checked. Balance viewing and deposits remain available.',
+    'New withdrawal requests are closed under soft-launch policy. Your balance is preserved; deposits and balance viewing remain available.',
+  'wallet.withdraw.unavailableNextAction':
+    'Deposit to add funds or check your ledger. Withdrawals reopen when operations are ready.',
+  'wallet.withdraw.unavailableNextCta': 'Go to deposit',
   'wallet.withdraw.unavailableToast':
     'New withdrawal requests are paused. Your wallet balance remains preserved.',
   'wallet.withdraw.timeline.request': 'Requested',
@@ -4244,6 +4269,19 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
     'On the confirm screen, review expected PHON and the bank account.',
   'wallet.deposit.krw.howItWorks.step3':
     'Transfer with the reference code — PHON is credited after verification.',
+  'wallet.deposit.krw.proof.title': 'Upload transfer proof',
+  'wallet.deposit.krw.proof.desc':
+    'After you transfer, upload a receipt photo so operators can verify faster.',
+  'wallet.deposit.krw.proof.ledgerNotice':
+    'Uploading proof does not change your balance. PHON is credited only after deposit matching.',
+  'wallet.deposit.krw.proof.choose': 'Choose photo',
+  'wallet.deposit.krw.proof.uploading': 'Uploading…',
+  'wallet.deposit.krw.proof.status.pending': 'Proof pending review — operators are checking it.',
+  'wallet.deposit.krw.proof.status.approved': 'Proof approved — waiting for deposit matching.',
+  'wallet.deposit.krw.proof.status.rejected': 'Proof rejected. Please contact support.',
+  'wallet.deposit.krw.proof.invalidType': 'Only JPG, PNG, or WebP images are allowed.',
+  'wallet.deposit.krw.proof.tooLarge': 'Files must be 5MB or smaller.',
+  'wallet.deposit.krw.proof.error': 'Proof upload failed. Please try again shortly.',
   'seo.walletDepositKrw.title': 'KRW deposit — PHONARA',
   'seo.walletDepositKrw.description':
     'Top up PHON via KRW bank transfer. Preview the rate and expected PHON, then transfer with your reference code.',
@@ -4842,6 +4880,8 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'notif.priceAlert.formTitle': 'Price alert',
   'notif.priceAlert.formDescription':
     'When the app is open, oracle price updates trigger this alert.',
+  'notif.priceAlert.localOnly':
+    'Saved on this device only. Alerts are not synced across browsers or devices.',
   'notif.priceAlert.above': 'Above',
   'notif.priceAlert.below': 'Below',
   'notif.priceAlert.targetPlaceholder': 'Target price',
@@ -5963,7 +6003,7 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'admin.tiers.empty.cta': 'Open operations desk',
   'admin.userTier.title': 'Member tier',
   'admin.userTier.description':
-    'Review this member’s earn tier record. Manual upgrades and editing are not available here.',
+    'Review this member’s earn tier record. Owners can change tier with reason and confirmation.',
   'admin.userTier.summary.loading': 'Loading member tier…',
   'admin.userTier.summary.member': '{name} · {email}',
   'admin.userTier.back': 'Back to members',
@@ -5975,11 +6015,16 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'admin.userTier.empty.body': 'This member has no earn tier data yet.',
   'admin.userTier.error.title': 'Could not load tier info',
   'admin.userTier.error.body': 'Try again shortly.',
+  'admin.userTier.write.title': 'Manual tier change',
+  'admin.userTier.write.description': 'Owner only · reason ≥4 chars · AAL2 RPC authority',
+  'admin.userTier.action.set': 'Apply tier',
+  'admin.userTier.dialog.set.title': 'Change member tier',
   'admin.users.action.viewTier': 'View tier',
   'admin.help.userTier.title': 'How to read member tier',
   'admin.help.userTier.step1':
     'Tier, XP, and updated time are shown exactly as stored by the engine.',
-  'admin.help.userTier.step2': 'Manual upgrades and edits are not supported here.',
+  'admin.help.userTier.step2':
+    'Owners can change tier only with a reason and confirmation. The server RPC is authoritative.',
   'admin.help.userTier.step3': 'Check risk notes on the members or risk desk when needed.',
   'admin.tiers.error.title': 'Could not load tier data',
   'admin.tiers.error.body': 'Try again shortly or check the operations desk.',

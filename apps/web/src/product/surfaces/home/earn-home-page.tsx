@@ -408,10 +408,15 @@ export function EarnHomePage() {
             const highlighted = nextAction.missionId === mission.id;
 
             return (
-              <div
+              <Link
                 key={mission.id}
+                to={mission.route}
+                className={cn(
+                  'block rounded-md focus-visible:ring-accent focus-visible:ring-2 focus-visible:outline-none',
+                  highlighted && 'ring-accent/50 ring-2',
+                )}
                 data-testid={`earn-home-mission-${mission.id}`}
-                className={cn(highlighted && 'ring-accent/50 rounded-md ring-2')}
+                aria-label={t(mission.titleKey)}
               >
                 <MissionCard
                   title={t(mission.titleKey)}
@@ -426,7 +431,7 @@ export function EarnHomePage() {
                   progress={Number.isFinite(progressValue) ? progressValue : 0}
                   progressLabel={mission.progressLabel}
                 />
-              </div>
+              </Link>
             );
           })}
         </div>

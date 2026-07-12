@@ -27,6 +27,7 @@ import {
 import { useAuth } from '@/contexts/auth-context';
 import { useProfile } from '@/hooks/use-profile';
 import { signOut } from '@/lib/auth';
+import { callRpc } from '@/lib/rpc';
 import { translateError } from '@/lib/translate-error';
 import { supabase } from '@/lib/supabase';
 import { productToast } from '@/product/primitives/toast-zone';
@@ -80,10 +81,7 @@ export type AccountHubControllerView = {
 };
 
 async function requestAccountDeletion(reason: string) {
-  return supabase.rpc(
-    ACCOUNT_HUB_DELETE_RPC as 'rpc_get_earn_hub_status',
-    { p_reason: reason } as never,
-  );
+  return callRpc(ACCOUNT_HUB_DELETE_RPC, { p_reason: reason });
 }
 
 /** Canonical `/account` hub — profile · KYC · RG · TopBar avatar target (P8). */
@@ -207,11 +205,7 @@ export function useAccountHubController(): AccountHubControllerView {
     setDeleteBusy(true);
     setError(null);
     try {
-      const { error: deleteError } = await requestAccountDeletion(reason.trim());
-      if (deleteError) {
-        setError(translateError(deleteError, 'account.delete.failed'));
-        return;
-      }
+      await requestAccountDeletion(reason.trim());
       productToast.show({ zone: 'strict', key: 'account.delete.submitted' });
     } catch (caught) {
       setError(translateError(caught, 'account.delete.failed'));

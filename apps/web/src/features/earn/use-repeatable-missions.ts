@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../../lib/supabase';
 import type { MessageKey } from '@phonara/i18n';
 import { useAuth } from '../../contexts/auth-context';
+import { callRpc } from '../../lib/rpc';
 import { translateError } from '../../lib/translate-error';
 
 const earnHubStatusKey = (userId: string) => ['earn-hub-status', userId] as const;
@@ -37,10 +37,9 @@ export function useRepeatableMissionStatus(lane = 'all') {
   } = useQuery({
     queryKey: repeatableMissionKeys.status(userId, lane),
     queryFn: async () => {
-      const { data: rpcData, error } = await supabase.rpc('rpc_get_repeatable_mission_status', {
+      const rpcData = await callRpc('rpc_get_repeatable_mission_status', {
         p_lane: lane,
       });
-      if (error) throw error;
       return rpcData as unknown as RepeatableMissionStatus;
     },
     enabled: !!userId,
@@ -62,11 +61,10 @@ export function useRepeatableMissionClaim() {
       setLoading(true);
       setError(null);
       try {
-        const { data, error: rpcError } = await supabase.rpc('rpc_claim_repeatable_mission', {
+        const data = await callRpc('rpc_claim_repeatable_mission', {
           p_mission: mission,
-          ...(clientRequestId ? { p_client_request_id: clientRequestId } : {}),
+          p_client_request_id: clientRequestId,
         });
-        if (rpcError) throw rpcError;
         await qc.invalidateQueries({
           queryKey: repeatableMissionKeys.status(session.user.id, 'all'),
         });

@@ -75,6 +75,10 @@ vi.mock('@tanstack/react-router', () => ({
     ),
 }));
 
+/** Within live TTL (15s) and prematch TTL (300s) for H-05 board tests. */
+const FRESH_CAPTURED_AT = new Date(Date.now() - 5_000).toISOString();
+const STALE_CAPTURED_AT = '2026-06-16T04:43:29.944Z';
+
 const sampleFixture: SportsFixtureSummary = {
   fixture_id: 'fx-1',
   league_code: 'epl',
@@ -83,9 +87,9 @@ const sampleFixture: SportsFixtureSummary = {
   kickoff_at: '2026-07-06T15:00:00.000Z',
   status: 'scheduled',
   match_1x2: {
-    home: { outcome_id: 'home-1', odds: '1.95', captured_at: '2026-07-06T12:00:00.000Z' },
-    draw: { outcome_id: 'draw-1', odds: '3.40', captured_at: '2026-07-06T12:00:00.000Z' },
-    away: { outcome_id: 'away-1', odds: '4.10', captured_at: '2026-07-06T12:00:00.000Z' },
+    home: { outcome_id: 'home-1', odds: '1.95', captured_at: FRESH_CAPTURED_AT },
+    draw: { outcome_id: 'draw-1', odds: '3.40', captured_at: FRESH_CAPTURED_AT },
+    away: { outcome_id: 'away-1', odds: '4.10', captured_at: FRESH_CAPTURED_AT },
   },
 };
 
@@ -129,6 +133,7 @@ function makeEngine(overrides: Partial<SportsPageControllerView> = {}): SportsPa
     sportsBlocked: false,
     sportsBlockedKey: 'sports.gate.feature_off',
     placeCtaExposure: 'built_disabled',
+    oddsIngestHealthGreen: true,
     phonAvail: '1000.000000',
     usdtAvail: '250.000000',
     phonBonusAvailable: '100.000000',
@@ -241,6 +246,39 @@ describe('SportsPage', () => {
     );
   });
 
+  it('shows — and blocks selection when odds captured_at is stale (H-05)', () => {
+    const toggleSelection = vi.fn();
+    useSportsPageControllerMock.mockReturnValue(
+      makeEngine({
+        toggleSelection,
+        oddsIngestHealthGreen: false,
+        fixtures: [
+          {
+            ...sampleFixture,
+            match_1x2: {
+              home: { outcome_id: 'home-1', odds: '1.95', captured_at: STALE_CAPTURED_AT },
+              draw: { outcome_id: 'draw-1', odds: '3.40', captured_at: STALE_CAPTURED_AT },
+              away: { outcome_id: 'away-1', odds: '4.10', captured_at: STALE_CAPTURED_AT },
+            },
+          },
+        ],
+      }),
+    );
+
+    render(
+      <I18nProvider>
+        <SportsPage />
+      </I18nProvider>,
+    );
+
+    const homeCell = screen.getByTestId('sports-odds-fx-1-home');
+    expect(homeCell.tagName).toBe('SPAN');
+    expect(homeCell).toHaveAttribute('data-odds-freshness', 'stale');
+    expect(homeCell).toHaveTextContent('—');
+    fireEvent.click(homeCell);
+    expect(toggleSelection).not.toHaveBeenCalled();
+  });
+
   it('renders vip room with eligibility strip and shared fixture board', () => {
     useSportsPageControllerMock.mockReturnValue(
       makeEngine({
@@ -344,7 +382,7 @@ describe('SportsPage', () => {
                 outcome_id: 'home-1',
                 selection: 'home',
                 odds: '1.95',
-                captured_at: '2026-07-06T12:00:00.000Z',
+                captured_at: FRESH_CAPTURED_AT,
               },
             ],
           },
@@ -358,14 +396,14 @@ describe('SportsPage', () => {
                 selection: 'over',
                 line: '2.5',
                 odds: '1.90',
-                captured_at: '2026-07-06T12:00:00.000Z',
+                captured_at: FRESH_CAPTURED_AT,
               },
               {
                 outcome_id: 'under-1',
                 selection: 'under',
                 line: '2.5',
                 odds: '1.95',
-                captured_at: '2026-07-06T12:00:00.000Z',
+                captured_at: FRESH_CAPTURED_AT,
               },
             ],
           },
@@ -378,7 +416,7 @@ describe('SportsPage', () => {
                 outcome_id: 'btts-yes',
                 selection: 'yes',
                 odds: '1.80',
-                captured_at: '2026-07-06T12:00:00.000Z',
+                captured_at: FRESH_CAPTURED_AT,
               },
             ],
           },

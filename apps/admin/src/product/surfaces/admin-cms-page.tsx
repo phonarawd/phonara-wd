@@ -21,7 +21,7 @@ const STATUS_KEYS: Record<AdminCmsPageRow['status'], MessageKey> = {
 /** E6 CMS desk (`/cms`) — page publishing queue only. */
 export function AdminCmsPage() {
   const t = useT();
-  const { filteredPages, publishPage, archivePage, restorePageDraft } = useAdminCmsDesk();
+  const { filteredPages, publishPage, archivePage, restorePageDraft, refresh } = useAdminCmsDesk();
   const [target, setTarget] = useState<Target | null>(null);
 
   const submit = async (reason: string) => {
@@ -81,7 +81,7 @@ export function AdminCmsPage() {
             title={t('admin.overview.empty.title')}
             description={t('admin.cms.pages.empty')}
             actionLabel={t('admin.overview.action.refresh')}
-            onAction={() => undefined}
+            onAction={() => void refresh()}
           />
         }
         rowActionsHeader={t('admin.cms.pages.col.action')}

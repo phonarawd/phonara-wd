@@ -125,9 +125,9 @@ export const LAUNCH_GATES = {
   platformEngine: true,
   /**
    * E10 UI — KRW deposit proof upload live unlock.
-   * WAVE keeps false; wallet deposit + Admin review unlock.
+   * `audit-r2d-krw-proof-wire` (M-21) flips after typed attach RPC wire.
    */
-  krwDepositProofLive: false,
+  krwDepositProofLive: true,
   /**
    * E10 UI — mission chain hub unlock on `/home/missions`.
    * WAVE keeps false; growth/missions UI unlock.

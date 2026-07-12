@@ -7,6 +7,7 @@ import {
   isSportsBoardSelectableMarketType,
   SPORTS_BOARD_SELECTABLE_MARKET_TYPES,
 } from '@/domain/sports-exchange-parity-display-contract';
+import { resolveSportsOddsCellDisplay } from '@/domain/sports-odds-freshness-display-contract';
 import { Button } from '@/product/primitives/button';
 import { Card, CardBody, CardHeader, CardTitle } from '@/product/primitives/card';
 import { cn } from '@/product/primitives/lib/cn';
@@ -24,6 +25,10 @@ type SportsFixtureMarketsPanelProps = {
   onToggleSelection: (leg: SportsSlipSelection) => void;
   onRetry: () => void;
   t: (key: MessageKey, params?: Record<string, string | number>) => string;
+  /** True when fixture is in-play — live odds TTL. */
+  isLive?: boolean;
+  /** Injected clock for H-05 freshness tests. */
+  nowMs?: number;
   className?: string;
 };
 
@@ -106,6 +111,8 @@ export function SportsFixtureMarketsPanel({
   onToggleSelection,
   onRetry,
   t,
+  isLive = false,
+  nowMs,
   className,
 }: SportsFixtureMarketsPanelProps) {
   if (loading) {
@@ -170,14 +177,28 @@ export function SportsFixtureMarketsPanel({
               <p className="text-foreground-muted m-0 text-xs">{t('sports.fixture.noQuickOdds')}</p>
             ) : (
               market.outcomes.map((outcome) => {
-                const leg = buildLeg(fixtureId, homeName, awayName, market.market_type, outcome);
+                const cellDisplay = resolveSportsOddsCellDisplay({
+                  odds: outcome.odds,
+                  capturedAt: outcome.captured_at,
+                  isLive,
+                  nowMs,
+                });
+                const leg =
+                  cellDisplay.selectable && outcome.outcome_id
+                    ? buildLeg(fixtureId, homeName, awayName, market.market_type, {
+                        ...outcome,
+                        odds: cellDisplay.display,
+                      })
+                    : null;
                 if (!leg) {
                   return (
                     <span
                       key={outcome.outcome_id ?? outcome.selection}
                       className="text-foreground-muted inline-flex min-w-14 items-center justify-center px-2 py-1 text-xs"
+                      data-testid={`sports-fixture-odds-${outcome.outcome_id ?? outcome.selection}`}
+                      data-odds-freshness={cellDisplay.kind}
                     >
-                      —
+                      {cellDisplay.display}
                     </span>
                   );
                 }
@@ -190,6 +211,7 @@ export function SportsFixtureMarketsPanel({
                     variant={active ? 'primary' : 'outline'}
                     className="min-w-16 tabular-nums"
                     data-testid={`sports-fixture-odds-${leg.outcomeId}`}
+                    data-odds-freshness={cellDisplay.kind}
                     aria-pressed={active}
                     disabled={sportsBlocked || market.status !== 'open'}
                     onClick={() => onToggleSelection(leg)}
@@ -199,7 +221,7 @@ export function SportsFixtureMarketsPanel({
                       <span className="text-[0.65rem] leading-none font-normal">
                         {outcomeButtonLabel(t, outcome)}
                       </span>
-                      <span>{outcome.odds}</span>
+                      <span>{cellDisplay.display}</span>
                     </span>
                   </Button>
                 );

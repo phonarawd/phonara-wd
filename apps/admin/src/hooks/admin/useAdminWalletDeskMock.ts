@@ -463,14 +463,7 @@ export function useAdminWalletDeskMock(): UseAdminWalletDesk {
 }
 
 // ── display helpers ───────────────────────────────────────────────────
-export function formatAmountString(amount: string, currency: string): string {
-  if (currency === 'KRW') {
-    const neg = amount.startsWith('-');
-    const body = neg ? amount.slice(1) : amount;
-    return `${neg ? '-' : ''}₩${body.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
-  }
-  return `${amount} ${currency}`;
-}
+export { formatAdminMoney as formatAmountString } from '@/lib/format-admin-money';
 
 export function isOverdueSla(slaDueAt: string, now: number = Date.now()): boolean {
   return new Date(slaDueAt).getTime() < now;

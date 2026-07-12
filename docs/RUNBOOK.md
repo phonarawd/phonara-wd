@@ -329,11 +329,13 @@ SELECT u.id, u.email
 
 프로덕션 Admin 콘솔은 앱 레벨에서 AAL2(MFA 완료 세션)를 요구한다. Supabase Dashboard 설정이 꺼져 있거나 관리자 계정에 factor가 없으면 운영자가 콘솔에 접근할 수 없다.
 
-**Dashboard 확인 경로**:
+**Dashboard / API 확인 경로**:
 
 1. Supabase Dashboard → Authentication → MFA → TOTP 활성화.
 2. 관리자 계정에 MFA factor 등록.
-3. Supabase Dashboard → Authentication → Password Policies → "Check for compromised passwords (HIBP)" 활성화.
+3. HIBP (leaked-password): **`bun run stack:auth-hibp-enable`** (Management API · Dashboard 수동 토글 대체).
+   - 2026-07-13: 현재 조직 **Pro+ 미결제** → PATCH **402** · H-09 `BLOCKED_DEP` (MANUAL_TASKS §3-2 DEFER).
+   - Pro 업그레이드 후 동일 명령 재실행 → advisor `auth_leaked_password_protection` WARN 0.
 
 **장애 대응**:
 

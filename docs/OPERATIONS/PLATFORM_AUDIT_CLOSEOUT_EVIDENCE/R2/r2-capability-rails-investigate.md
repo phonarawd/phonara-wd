@@ -1,6 +1,7 @@
 # R2 — Capability Rails Investigate Evidence (`audit-r2-capability-rails`)
 
-> **Stage:** R2 · **Plan todo:** `audit-r2-capability-rails` (Implement **전** Investigate)  
+> **Stage:** R2 · **Plan todo (착수):** `audit-r2a-crypto-giftcard` (H-03+H-11) · siblings `audit-r2b`~`audit-r2d`  
+> **Handoff:** [`PLATFORM_AUDIT_TODO_HANDOFF.md`](../../PLATFORM_AUDIT_TODO_HANDOFF.md#audit-r2a-crypto-giftcard)  
 > **Date:** 2026-07-13  
 > **Baseline / implement SHA (R1):** `391646f6f8ab6ae204d17f55ae59677036ca0728`  
 > **Command:** Investigate (수정 0 · No Assumption §37) · READ-ONLY  
@@ -10,7 +11,7 @@
 
 | PR       | Finding     | Domain                                     | 우선               |
 | -------- | ----------- | ------------------------------------------ | ------------------ |
-| **R2-a** | H-03 · H-11 | Wallet (Crypto + Giftcard hub fail-closed) | **NEXT Implement** |
+| **R2-a** | H-03 · H-11 | Wallet (Crypto + Giftcard hub fail-closed) | **Plan todo `audit-r2a-crypto-giftcard` NEXT** |
 | **R2-b** | H-10        | Wallet (출금 OFF — 운영 decision + copy)   | 후속               |
 | **R2-c** | H-05        | Sports (stale odds · ingest)               | ops 선행           |
 | **R2-d** | M-21        | Wallet (KRW proof upload wire)             | gate flip 후       |
@@ -71,7 +72,7 @@
 
 - **H-10:** `feature_withdrawal_enabled=false` fail-closed **정상** — 운영 의도 확인 + decision log.
 - **H-05:** place/cashout launch gate OFF **정상** — ingest 복구 전 flip 금지 · board freshness gate 보강 후보.
-- **M-21:** `krwDepositProofLive=false` 의도적 defer — upload wire 후 flip.
+- **M-21:** `krwDepositProofLive=true` · upload wire DONE (`audit-r2d-krw-proof-wire`).
 
 ---
 

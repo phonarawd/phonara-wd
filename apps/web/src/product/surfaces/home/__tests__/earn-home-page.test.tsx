@@ -244,6 +244,10 @@ describe('EarnHomePage', () => {
 
     expect(screen.getByTestId('earn-home-fold4')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-mission-daily-quiz')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-mission-daily-quiz')).toHaveAttribute(
+      'href',
+      '/home/missions',
+    );
     expect(screen.getByTestId('earn-home-missions-view-all')).toHaveAttribute(
       'href',
       '/home/missions',

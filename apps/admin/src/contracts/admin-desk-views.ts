@@ -12,8 +12,6 @@ import type { useAdminCompliance } from '../hooks/admin/useAdminCompliance';
 
 import type { useAdminOperations } from '../hooks/admin/useAdminOperations';
 
-import type { useAdminAccessDesk } from '../hooks/admin/useAdminAccessDesk';
-
 import type { useAdminCmsDesk } from '../hooks/admin/useAdminCmsDesk';
 
 import type { useAdminOverview } from '../hooks/admin/useAdminOverview';
@@ -31,8 +29,6 @@ import type { UseAdminEarnDesk } from '../hooks/admin/useAdminEarnDeskMock';
 import type { UseAdminCompliance } from '../hooks/admin/useAdminComplianceMock';
 
 import type { UseAdminOperations } from '../hooks/admin/useAdminOperationsMock';
-
-import type { UseAdminAccessDesk } from '../hooks/admin/useAdminAccessDeskMock';
 
 import type { UseAdminCmsDesk } from '../hooks/admin/useAdminCmsDeskMock';
 
@@ -55,8 +51,6 @@ export type AdminEarnDeskControllerView = UseAdminEarnDesk;
 export type AdminComplianceControllerView = UseAdminCompliance;
 
 export type AdminOperationsControllerView = UseAdminOperations;
-
-export type AdminAccessDeskControllerView = UseAdminAccessDesk;
 
 export type AdminCmsDeskControllerView = UseAdminCmsDesk;
 
@@ -95,11 +89,6 @@ export type _AdminComplianceFreeze = FreezeControllerView<
 export type _AdminOperationsFreeze = FreezeControllerView<
   AdminOperationsControllerView,
   ReturnType<typeof useAdminOperations>
->;
-
-export type _AdminAccessFreeze = FreezeControllerView<
-  AdminAccessDeskControllerView,
-  ReturnType<typeof useAdminAccessDesk>
 >;
 
 export type _AdminCmsFreeze = FreezeControllerView<

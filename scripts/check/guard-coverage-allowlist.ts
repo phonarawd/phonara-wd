@@ -217,11 +217,6 @@ export const GUARD_COVERAGE_ALLOWLIST: readonly GuardCoverageAllowlistEntry[] = 
     rule: 'aal2-exempt',
     reason: 'E1 service/cron tier decay runner — auth.uid() NULL',
   },
-  {
-    name: 'rpc_set_feature_enabled',
-    rule: 'aal2-exempt',
-    reason: 'E10 feature flag toggle — owner-gated inside body; MFA hardening deferred',
-  },
 ] as const;
 
 export {

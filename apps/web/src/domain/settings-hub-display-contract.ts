@@ -13,6 +13,7 @@ import {
   NOTIFICATIONS_SETTINGS_ROUTE,
   type NotificationLocalPrefKey,
   readNotificationLocalPref,
+  resolveNotificationsCenterVisible,
   writeNotificationLocalPref,
 } from './notifications-pwa-display-contract';
 import { NOTIFICATIONS_PREFS_ROUTE } from './notifications-center-display-contract';
@@ -122,8 +123,14 @@ export function resolveSettingsHubNavItems(
   hiddenRoutes: readonly string[] = PLATFORM_EWAVE_HIDDEN_ROUTES,
 ): SettingsHubNavItem[] {
   const hidden = new Set(hiddenRoutes);
+  const notificationsCenterVisible = resolveNotificationsCenterVisible();
   return SETTINGS_HUB_NAV_ITEMS.filter((item) => {
     if (hidden.has(item.route)) return false;
+    // M-07 — inbox (`/notifications`) follows the same launch gate as TopBar/Account.
+    // Preference route `/settings/notifications` stays visible.
+    if (item.route === NOTIFICATIONS_CENTER_ROUTE && !notificationsCenterVisible) {
+      return false;
+    }
     if (item.route === SETTINGS_API_KEYS_ROUTE) {
       return shouldExposeSettingsApiKeysInHubNav();
     }

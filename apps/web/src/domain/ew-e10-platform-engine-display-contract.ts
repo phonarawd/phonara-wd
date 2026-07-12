@@ -117,8 +117,9 @@ export function assertEwE10PlatformWaveSync(): void {
   if (!isEwE10PlatformEngineReady()) {
     throw new Error('E10 engine RPCs / launch gate not ready');
   }
-  if (LAUNCH_GATES.krwDepositProofLive !== false) {
-    throw new Error('E10 WAVE must keep krwDepositProofLive=false');
+  // WAVE shipped with UI gated; M-21 `audit-r2d-krw-proof-wire` unlocks upload.
+  if (LAUNCH_GATES.krwDepositProofLive !== true) {
+    throw new Error('M-21 unlock requires krwDepositProofLive=true');
   }
   if (LAUNCH_GATES.missionChainsLive !== false) {
     throw new Error('E10 WAVE must keep missionChainsLive=false');
