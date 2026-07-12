@@ -7,7 +7,9 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('web app boots and renders the stub shell', async ({ page }) => {
-  await page.goto('/?landing=1', { waitUntil: 'domcontentloaded' });
+  await page.goto('/?landing=1', { waitUntil: 'load' });
+  await expect(page).toHaveURL(/landing=1/, { timeout: 15_000 });
+  await expect(page.getByTestId('marketing-shell')).toBeVisible({ timeout: 15_000 });
   await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 15_000 });
 });
 
@@ -39,6 +41,8 @@ test('offline fallback page is reachable', async ({ page }) => {
 });
 
 test('guest readonly surfaces boot without auth', async ({ page }) => {
-  await page.goto('/?landing=1', { waitUntil: 'domcontentloaded' });
+  await page.goto('/?landing=1', { waitUntil: 'load' });
+  await expect(page).toHaveURL(/landing=1/, { timeout: 15_000 });
+  await expect(page.getByTestId('marketing-shell')).toBeVisible({ timeout: 15_000 });
   await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 15_000 });
 });

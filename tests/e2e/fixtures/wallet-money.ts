@@ -10,6 +10,7 @@ export { ANON_KEY, E2E_USER_PASSWORD, serviceClient, SUPABASE_URL };
 export async function seedWebE2EStorage(page: Page): Promise<void> {
   await page.addInitScript(() => {
     window.localStorage.setItem('phonara.ads.analytics_consent', 'denied');
+    window.localStorage.removeItem('pf.hasAccount');
   });
 }
 

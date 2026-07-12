@@ -11,11 +11,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -952,6 +947,133 @@ export type Database = {
           {
             foreignKeyName: "cms_content_updated_by_fkey"
             columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      co_bet_claims: {
+        Row: {
+          claimed_at: string
+          id: string
+          ledger_entry_id: string | null
+          session_id: string
+          user_id: string
+          window_key: string
+        }
+        Insert: {
+          claimed_at?: string
+          id?: string
+          ledger_entry_id?: string | null
+          session_id: string
+          user_id: string
+          window_key: string
+        }
+        Update: {
+          claimed_at?: string
+          id?: string
+          ledger_entry_id?: string | null
+          session_id?: string
+          user_id?: string
+          window_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "co_bet_claims_ledger_entry_id_fkey"
+            columns: ["ledger_entry_id"]
+            isOneToOne: false
+            referencedRelation: "wallet_ledger"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "co_bet_claims_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "co_bet_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "co_bet_claims_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      co_bet_sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          fixture_id: string
+          id: string
+          initiator_bet_id: string | null
+          initiator_id: string
+          partner_bet_id: string | null
+          partner_id: string
+          status: string
+          updated_at: string
+          window_key: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          fixture_id: string
+          id?: string
+          initiator_bet_id?: string | null
+          initiator_id: string
+          partner_bet_id?: string | null
+          partner_id: string
+          status?: string
+          updated_at?: string
+          window_key: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          fixture_id?: string
+          id?: string
+          initiator_bet_id?: string | null
+          initiator_id?: string
+          partner_bet_id?: string | null
+          partner_id?: string
+          status?: string
+          updated_at?: string
+          window_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "co_bet_sessions_fixture_id_fkey"
+            columns: ["fixture_id"]
+            isOneToOne: false
+            referencedRelation: "sports_fixtures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "co_bet_sessions_initiator_bet_id_fkey"
+            columns: ["initiator_bet_id"]
+            isOneToOne: false
+            referencedRelation: "sports_bets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "co_bet_sessions_initiator_id_fkey"
+            columns: ["initiator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "co_bet_sessions_partner_bet_id_fkey"
+            columns: ["partner_bet_id"]
+            isOneToOne: false
+            referencedRelation: "sports_bets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "co_bet_sessions_partner_id_fkey"
+            columns: ["partner_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -2816,6 +2938,62 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      mission_chain_steps: {
+        Row: {
+          catalog_key: string
+          chain_id: string
+          created_at: string
+          id: string
+          step_order: number
+        }
+        Insert: {
+          catalog_key: string
+          chain_id: string
+          created_at?: string
+          id?: string
+          step_order: number
+        }
+        Update: {
+          catalog_key?: string
+          chain_id?: string
+          created_at?: string
+          id?: string
+          step_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_chain_steps_chain_id_fkey"
+            columns: ["chain_id"]
+            isOneToOne: false
+            referencedRelation: "mission_chains"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mission_chains: {
+        Row: {
+          chain_key: string
+          created_at: string
+          enabled: boolean
+          id: string
+          title_i18n_key: string
+        }
+        Insert: {
+          chain_key: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          title_i18n_key: string
+        }
+        Update: {
+          chain_key?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          title_i18n_key?: string
+        }
+        Relationships: []
       }
       missions: {
         Row: {
@@ -6966,6 +7144,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      _assert_krw_deposit_proof_path_owned: {
+        Args: { p_path: string; p_user_id: string }
+        Returns: undefined
+      }
       _assert_kyc_document_paths_owned: {
         Args: {
           p_back: string
@@ -6981,6 +7163,13 @@ export type Database = {
       }
       _assert_mission_catalog_claimable: {
         Args: { p_mission: Database["public"]["Enums"]["viral_mission_code"] }
+        Returns: undefined
+      }
+      _assert_mission_chain_claimable: {
+        Args: {
+          p_mission: Database["public"]["Enums"]["viral_mission_code"]
+          p_user_id: string
+        }
         Returns: undefined
       }
       _assert_not_geo_blocked: {
@@ -7138,6 +7327,7 @@ export type Database = {
         Returns: undefined
       }
       _cms_mask_display_name: { Args: { p_raw: string }; Returns: string }
+      _co_bet_window: { Args: never; Returns: string }
       _co_mission_day_window: { Args: never; Returns: string }
       _co_mission_partners_linked: {
         Args: { p_a: string; p_b: string }
@@ -7645,6 +7835,10 @@ export type Database = {
         Args: { p_xp: number }
         Returns: Database["public"]["Enums"]["earn_vip_tier"]
       }
+      _grant_co_bet_claim: {
+        Args: { p_session: string; p_user: string; p_window: string }
+        Returns: string
+      }
       _grant_co_mission_claim: {
         Args: {
           p_mission: Database["public"]["Enums"]["co_mission_code"]
@@ -7770,6 +7964,10 @@ export type Database = {
       }
       _mission_catalog_is_forbidden_code: {
         Args: { p_code: string }
+        Returns: boolean
+      }
+      _mission_chain_step_unlocked: {
+        Args: { p_chain_id: string; p_step_order: number; p_user_id: string }
         Returns: boolean
       }
       _momentum_cash_payout_mult: { Args: { p_combo: number }; Returns: number }
@@ -8495,6 +8693,7 @@ export type Database = {
           referrer_id: string
         }[]
       }
+      rpc_accept_co_bet: { Args: { p_session_id: string }; Returns: Json }
       rpc_accept_co_mission: { Args: { p_session_id: string }; Returns: Json }
       rpc_ack_ops_alert: {
         Args: { p_alert_id: string; p_reason: string }
@@ -8789,6 +8988,7 @@ export type Database = {
         Args: { p_position_id: string }
         Returns: Json
       }
+      rpc_complete_co_bet: { Args: { p_session_id: string }; Returns: Json }
       rpc_complete_co_mission: { Args: { p_session_id: string }; Returns: Json }
       rpc_complete_mission: { Args: { p_mission: string }; Returns: Json }
       rpc_contribute_insurance_capital: {
@@ -8872,6 +9072,7 @@ export type Database = {
         Args: { p_interval: string; p_limit?: number; p_symbol: string }
         Returns: Json
       }
+      rpc_get_co_bet_status: { Args: { p_limit?: number }; Returns: Json }
       rpc_get_co_mission_status: { Args: never; Returns: Json[] }
       rpc_get_compliance_status: { Args: never; Returns: Json }
       rpc_get_crypto_deposit_address: {
@@ -8886,6 +9087,10 @@ export type Database = {
       rpc_get_golden_earth_status: { Args: never; Returns: Json }
       rpc_get_live_fixture_state: {
         Args: { p_fixture_id: string }
+        Returns: Json
+      }
+      rpc_get_mission_chain_status: {
+        Args: { p_chain_key: string }
         Returns: Json
       }
       rpc_get_ops_alerts: {
@@ -8929,8 +9134,16 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_invite_co_bet: {
+        Args: { p_fixture_id: string; p_partner_id: string }
+        Returns: Json
+      }
       rpc_invite_co_mission: {
         Args: { p_mission: string; p_partner_id: string }
+        Returns: Json
+      }
+      rpc_link_co_bet_bet: {
+        Args: { p_bet_id: string; p_session_id: string }
         Returns: Json
       }
       rpc_liquidate_position: { Args: { p_position_id: string }; Returns: Json }
@@ -8939,6 +9152,7 @@ export type Database = {
         Returns: Json[]
       }
       rpc_list_giftcard_fee_market: { Args: never; Returns: Json[] }
+      rpc_list_mission_chains: { Args: never; Returns: Json }
       rpc_list_my_sports_bets: { Args: { p_limit?: number }; Returns: Json[] }
       rpc_list_p2p_transfers: { Args: { p_limit?: number }; Returns: Json }
       rpc_list_sports_catalog: { Args: never; Returns: Json }
@@ -9193,6 +9407,7 @@ export type Database = {
         }
         Returns: Json
       }
+      rpc_recommend_missions: { Args: { p_limit?: number }; Returns: Json }
       rpc_record_app_install_attribution: {
         Args: {
           p_client_event_id?: string

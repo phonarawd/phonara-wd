@@ -5,10 +5,15 @@ export type LandingRouteGuardInput = {
   hasAccount: boolean;
 };
 
+function parseLandingSearch(search: string): URLSearchParams {
+  const normalized = search.startsWith('?') ? search.slice(1) : search;
+  return new URLSearchParams(normalized);
+}
+
 export function resolveLandingRouteRedirect(
   input: LandingRouteGuardInput,
 ): '/home' | '/login' | null {
-  if (new URLSearchParams(input.search).get('landing') === '1') return null;
+  if (parseLandingSearch(input.search).get('landing') === '1') return null;
   if (input.hasSession) return '/home';
   if (input.hasAccount) return '/login';
   return null;
