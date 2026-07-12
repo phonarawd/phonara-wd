@@ -113,7 +113,7 @@ export const P13_SOFT_LAUNCH_ADMIN_EXCEPTION_ROUTES = [
 
 /**
  * Team viewer negative — viewer must NOT see these routes
- * (ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.viewer = `/` · `/ops` only).
+ * (ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.viewer = `/` · `/ops` · `/earn/activity`).
  */
 export const P13_SOFT_LAUNCH_VIEWER_FORBIDDEN_ROUTES = [
   '/team',
@@ -124,7 +124,7 @@ export const P13_SOFT_LAUNCH_VIEWER_FORBIDDEN_ROUTES = [
 ] as const;
 
 /** Viewer allowlist (pin for Soft Launch GATE). */
-export const P13_SOFT_LAUNCH_VIEWER_ALLOWED_ROUTES = ['/', '/ops'] as const;
+export const P13_SOFT_LAUNCH_VIEWER_ALLOWED_ROUTES = ['/', '/ops', '/earn/activity'] as const;
 
 /** §29.5 admin beginner spot-check — jargon must not appear as hardcoded UI copy. */
 export const P13_SOFT_LAUNCH_ADMIN_FORBIDDEN_JARGON = [
@@ -222,8 +222,8 @@ export function assertP13SoftLaunchBundleSync(): void {
   if (P13_SOFT_LAUNCH_CLOSED_BETA_TARGETS.usdtCap !== 100) {
     throw new Error('soft-launch: USDT cap must be 100');
   }
-  if (P13_SOFT_LAUNCH_VIEWER_ALLOWED_ROUTES.length !== 2) {
-    throw new Error('soft-launch: viewer allowlist must be / and /ops only');
+  if (P13_SOFT_LAUNCH_VIEWER_ALLOWED_ROUTES.length !== 3) {
+    throw new Error('soft-launch: viewer allowlist must be /, /ops, and /earn/activity');
   }
   if (!P13_SOFT_LAUNCH_VIEWER_FORBIDDEN_ROUTES.includes('/team')) {
     throw new Error('soft-launch: viewer must be denied /team');

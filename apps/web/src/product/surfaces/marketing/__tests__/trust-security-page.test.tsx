@@ -14,7 +14,7 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 
 describe('TrustSecurityPage', () => {
-  it('renders trust blocks with fairness link and deferred status', () => {
+  it('renders trust blocks with fairness link and live status link', () => {
     render(
       <I18nProvider>
         <TrustSecurityPage />
@@ -26,7 +26,7 @@ describe('TrustSecurityPage', () => {
       'href',
       '/casino/fairness',
     );
-    expect(screen.getByTestId('trust-hub-deferred-status')).toBeInTheDocument();
-    expect(screen.queryByTestId('trust-hub-link-status')).not.toBeInTheDocument();
+    expect(screen.getByTestId('trust-hub-link-status')).toHaveAttribute('href', '/status');
+    expect(screen.queryByTestId('trust-hub-deferred-status')).not.toBeInTheDocument();
   });
 });

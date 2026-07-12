@@ -104,7 +104,7 @@ describe('p13-soft-launch-display-contract · YAML #233 Soft Launch BUNDLE', () 
   it('pins admin exception dry-run · viewer allow/deny · jargon · PWA cues', () => {
     expect(P13_SOFT_LAUNCH_ADMIN_EXCEPTION_ROUTES).toContain('/queues');
     expect(P13_SOFT_LAUNCH_ADMIN_EXCEPTION_ROUTES).toContain('/withdrawals');
-    expect(P13_SOFT_LAUNCH_VIEWER_ALLOWED_ROUTES).toEqual(['/', '/ops']);
+    expect(P13_SOFT_LAUNCH_VIEWER_ALLOWED_ROUTES).toEqual(['/', '/ops', '/earn/activity']);
     expect(P13_SOFT_LAUNCH_VIEWER_FORBIDDEN_ROUTES).toContain('/team');
     expect(P13_SOFT_LAUNCH_VIEWER_FORBIDDEN_ROUTES).toContain('/withdrawals');
     expect(P13_SOFT_LAUNCH_ADMIN_FORBIDDEN_JARGON).toContain('queue');

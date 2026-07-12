@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 import { seedWebE2EStorage } from '../e2e/fixtures/wallet-money';
 
@@ -6,11 +6,17 @@ test.beforeEach(async ({ page }) => {
   await seedWebE2EStorage(page);
 });
 
+/** Cold Vite boot on CI can exceed 15s — wait for React mount before shell assertions. */
+async function expectMarketingLandingBoot(page: Page): Promise<void> {
+  await page.goto('/?landing=1', { waitUntil: 'domcontentloaded' });
+  await expect(page).toHaveURL(/landing=1/, { timeout: 30_000 });
+  await expect(page.locator('#root').locator('*').first()).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId('marketing-shell')).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 30_000 });
+}
+
 test('web app boots and renders the stub shell', async ({ page }) => {
-  await page.goto('/?landing=1', { waitUntil: 'load' });
-  await expect(page).toHaveURL(/landing=1/, { timeout: 15_000 });
-  await expect(page.getByTestId('marketing-shell')).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 15_000 });
+  await expectMarketingLandingBoot(page);
 });
 
 test('PWA icon assets are reachable', async ({ page }) => {
@@ -41,8 +47,5 @@ test('offline fallback page is reachable', async ({ page }) => {
 });
 
 test('guest readonly surfaces boot without auth', async ({ page }) => {
-  await page.goto('/?landing=1', { waitUntil: 'load' });
-  await expect(page).toHaveURL(/landing=1/, { timeout: 15_000 });
-  await expect(page.getByTestId('marketing-shell')).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 15_000 });
+  await expectMarketingLandingBoot(page);
 });

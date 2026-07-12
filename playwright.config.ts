@@ -19,6 +19,7 @@ export default defineConfig({
           name: 'smoke',
           testMatch: 'smoke/**/*.spec.ts',
           use: chromiumDesktop,
+          timeout: 90_000,
         },
         {
           name: 'e2e',

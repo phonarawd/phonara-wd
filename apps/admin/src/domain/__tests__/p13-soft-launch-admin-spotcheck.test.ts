@@ -20,7 +20,7 @@ const en = messages.en as Record<string, string>;
 const SOFT_LAUNCH_EXCEPTION_ROUTES = ['/queues', '/deposits', '/withdrawals', '/ops'] as const;
 
 /** Soft Launch viewer allow/deny (must match ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST). */
-const SOFT_LAUNCH_VIEWER_ALLOWED = ['/', '/ops'] as const;
+const SOFT_LAUNCH_VIEWER_ALLOWED = ['/', '/ops', '/earn/activity'] as const;
 const SOFT_LAUNCH_VIEWER_FORBIDDEN = [
   '/team',
   '/withdrawals',
