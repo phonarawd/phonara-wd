@@ -14,10 +14,9 @@ import { landingAnalyticsEventAttr } from '@/domain/landing-analytics-display-co
 
 import {
   buildLandingSignupHref,
-  formatLandingPhonAmount,
   LANDING_MISSION_TEASERS,
   LANDING_TESTIMONIAL_POOL,
-  sumLandingAvailableRewardsPhon,
+  sumLandingAvailableRewardsPhonString,
 } from '@/domain/landing-display-contract';
 
 import {
@@ -44,6 +43,8 @@ import { Card, CardBody, CardHeader, CardTitle } from '@/product/primitives/card
 
 import { cn } from '@/product/primitives/lib/cn';
 
+import { MoneyDisplay } from '@/product/primitives/money-display';
+
 import { LandingCumulativeStats } from './landing-cumulative-stats';
 
 import { LandingDifferentiators } from './landing-differentiators';
@@ -59,8 +60,6 @@ import { LandingMissionPreviewRow } from './landing-mission-preview-row';
 import { LandingTestimonials } from './landing-testimonials';
 
 import { LandingWalletPreview } from './landing-wallet-preview';
-
-import { LandingSignupMomentum } from './landing-signup-momentum';
 
 import { LandingWhyStrip } from './landing-why-strip';
 
@@ -128,7 +127,7 @@ export function LandingPage() {
 
   const { proof, withdrawalMomentumCount } = useLandingLiveProof();
 
-  const availableRewards = sumLandingAvailableRewardsPhon();
+  const availableRewardsPhon = sumLandingAvailableRewardsPhonString();
 
   const activeMissionCount = LANDING_MISSION_TEASERS.length;
 
@@ -233,11 +232,12 @@ export function LandingPage() {
             </CardHeader>
 
             <CardBody>
-              <p className="text-accent m-0 text-2xl font-semibold tabular-nums">
-                {t('landing.proof.availableRewardsValue', {
-                  amount: formatLandingPhonAmount(availableRewards),
-                })}
-              </p>
+              <MoneyDisplay
+                amount={availableRewardsPhon}
+                currency="PHON"
+                showCurrency
+                className="text-accent text-2xl font-semibold"
+              />
             </CardBody>
           </Card>
 
@@ -259,11 +259,11 @@ export function LandingPage() {
             count={withdrawalMomentumCount}
             className="border-line bg-surface-raised rounded-lg border px-4 py-3"
           />
-        ) : (
-          <LandingSignupMomentum className="border-line bg-surface-raised rounded-lg border px-4 py-3" />
-        )}
+        ) : null}
 
-        <LiveActivityTicker className="border-line bg-surface rounded-lg border px-4 py-3" />
+        {proof.ambientSocial !== 'hidden' ? (
+          <LiveActivityTicker className="border-line bg-surface rounded-lg border px-4 py-3" />
+        ) : null}
       </section>
 
       <section className="flex flex-col gap-6" data-testid="landing-how">
@@ -320,7 +320,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <LandingWithdrawalProof />
+      {proof.withdrawalProof !== 'hidden' ? <LandingWithdrawalProof /> : null}
 
       {visibleTestimonials.length > 0 ? (
         <LandingTestimonials entries={visibleTestimonials} />

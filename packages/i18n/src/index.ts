@@ -434,7 +434,7 @@ export const koMessages = {
     '건강한 이용을 위한 한도·휴식·자기제외·상담 안내입니다. 아래 정책을 확인한 뒤 가입을 계속할 수 있습니다.',
 
   // ── Platform narrative (§3.5 · PLATFORM_NARRATIVE_CANON) ─────────────────────
-  'platform.positioning.pageTitle': 'PrimeForge — 부업 습관',
+  'platform.positioning.pageTitle': 'PHONARA — 부업 습관',
   'platform.positioning.eyebrow': '부업 습관 · 친구와 함께',
   'platform.positioning.headline': 'PHON 하나의 지갑에서 벌고, 거래하고, 출금해요',
   'platform.positioning.subhead':
@@ -596,7 +596,7 @@ export const koMessages = {
   'landing.wallet.title': '리워드 지갑 미리보기',
   'landing.wallet.balanceLabel': '내 PHON',
   'landing.wallet.fiatApprox': '≈ ₩{amount}',
-  'landing.wallet.footnote': '1 PHON = 1 KRW (표시용)',
+  'landing.wallet.footnote': '표시 금액은 예시이며 실제 잔액·환율이 아닙니다.',
   'landing.wallet.withdrawCta': '출금',
   'landing.wallet.withdrawHint': '가입 후 리워드 지갑에서 출금을 신청할 수 있습니다.',
   'landing.stats.title': '함께 쌓아 온 기록',
@@ -3549,7 +3549,7 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
     'Limits, breaks, self-exclusion, and support resources for healthy use. Review this policy before continuing signup.',
 
   // ── Platform narrative (§3.5 · PLATFORM_NARRATIVE_CANON) ─────────────────────
-  'platform.positioning.pageTitle': 'PrimeForge — side-hustle habit',
+  'platform.positioning.pageTitle': 'PHONARA — side-hustle habit',
   'platform.positioning.eyebrow': 'Side-hustle habit · with friends',
   'platform.positioning.headline': 'Earn, trade, and withdraw in one PHON wallet',
   'platform.positioning.subhead':
@@ -3713,7 +3713,7 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'landing.wallet.title': 'Wallet preview',
   'landing.wallet.balanceLabel': 'My PHON',
   'landing.wallet.fiatApprox': '≈ ₩{amount}',
-  'landing.wallet.footnote': '1 PHON = 1 KRW (display)',
+  'landing.wallet.footnote': 'Preview amounts are examples — not a live balance or FX rate.',
   'landing.wallet.withdrawCta': 'Withdraw',
   'landing.wallet.withdrawHint': 'After signup, request withdrawals from your reward wallet.',
   'landing.stats.title': 'Community milestones',

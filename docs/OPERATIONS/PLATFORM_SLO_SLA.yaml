@@ -1,0 +1,108 @@
+# PLATFORM_SLO_SLA — R0 metrics (§41 · §52)
+#
+# metrics_status: confirmed (operator chat grant 2026-07-13 — 「전부 진행」)
+
+schema_version: 1
+playbook_version: "1.0.0"
+updated_at: "2026-07-13T00:40:00+09:00"
+metrics_status: "confirmed"
+proposed_by: "ai"
+confirmed_by: "operator"
+confirmed_at: "2026-07-13T00:40:00+09:00"
+roles_signed: ["product", "sre"]
+confirmation_note: "Operator authorized AI to apply draft metrics as confirmed via chat (1-person RACI · same-session product+sre role checklists recorded in Decision Log)."
+decision_log: "docs/OPERATIONS/PLATFORM_AUDIT_DECISION_LOG.md"
+
+slo:
+  - id: SLO-WALLET-P95
+    key: wallet_api_p95_ms
+    target: Wallet API
+    unit: ms
+    comparator: "<="
+    draft_value: 800
+    measure: "PostgREST/Edge wallet read+mutate p95 over 5m window"
+    evidence_uri: ""
+  - id: SLO-DEPOSIT-POST
+    key: deposit_post_max_min
+    target: Deposit 반영
+    unit: min
+    comparator: "<="
+    draft_value: 30
+    measure: "detect → available balance credit (KRW/crypto)"
+    evidence_uri: ""
+  - id: SLO-WITHDRAW-QUEUE
+    key: withdraw_queue_max_min
+    target: Withdrawal Queue
+    unit: min
+    comparator: "<="
+    draft_value: 120
+    measure: "queue enter → operator/provider terminal state"
+    evidence_uri: ""
+  - id: SLO-TRADE-SUCCESS
+    key: trade_success_rate_min
+    target: Trade 주문 성공률
+    unit: pct
+    comparator: ">="
+    draft_value: 99.0
+    measure: "submit success / attempts (spot+futures) · TRADE_DESK KPI aligned"
+    evidence_uri: ""
+  - id: SLO-SPORTS-ODDS
+    key: sports_odds_stale_sec
+    target: Sports Odds Sync freshness
+    unit: sec
+    comparator: "<="
+    draft_value: 120
+    measure: "server timestamp age of newest outcome odds"
+    evidence_uri: ""
+
+rollback_triggers:
+  - key: http_5xx_rate_pct_5m
+    draft_value: 2.0
+    unit: pct
+    window: 5m
+    action: "rail OFF or Known Good rollback start"
+  - key: provider_timeout_rate_pct
+    draft_value: 5.0
+    unit: pct
+    window: 15m
+    action: "provider lane halt + Owner"
+  - key: rpc_p95_ms
+    draft_value: 1500
+    unit: ms
+    window: 5m
+    action: "feature OFF review + Incident P1 candidate"
+  - key: money_delta_alarm
+    draft_value: 1
+    unit: "boolean_alarm"
+    window: immediate
+    action: "IMMEDIATE halt all money rails + Owner + Security"
+  - key: wallet_error_burst_per_min
+    draft_value: 20
+    unit: count
+    window: 1m
+    action: "wallet rail OFF"
+  - key: permission_error_burst_per_min
+    draft_value: 10
+    unit: count
+    window: 1m
+    action: "authz review + possible freeze"
+
+performance_budget:
+  - key: stage1_lcp_max_ms
+    draft_value: 3500
+    unit: ms
+    note: "Stage1 Critical route LCP upper bound (R9)"
+  - key: stage1_initial_js_kb
+    draft_value: 450
+    unit: kb
+    note: "Stage1 initial JS transfer upper bound (compressed)"
+
+provider_sla_notes:
+  - "외부 Provider SLA와 내부 SLO를 구분 기록한다."
+  - "crypto/sports/giftcard provider timeout은 rollback_triggers.provider_timeout_rate_pct로 감시."
+
+owner_sign_template: |
+  confirmed_by: "<operator>"
+  confirmed_at: "<ISO8601>"
+  metrics_status: "confirmed"
+  roles_signed: ["product", "sre"]

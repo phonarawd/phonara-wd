@@ -13,6 +13,26 @@
 | **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                                    |
 | **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                                       |
 | **Cursor 8GB perf (v4.4.5)**  | **`[x]` DONE**                               | `cursor:perf-rollout` diagnosis-first · `high-remediation` dry-run 기본 · evidence JSONL · summary remediation assert · tsserver/argv **옵트인** (`--include-tsserver-tuning`)                                                                                 |
+| **Platform Perfect Launch**   | **R1 Implement VERIFYING** · Finding CLOSED **아님** | Plan `platform-perfect-launch` · C-01/C-02/H-01/M-01 **VERIFYING** · NEXT=Stage1 Browser after push · then `audit-r2-*` |
+
+## Platform Perfect Launch Remediation (Plan `platform-perfect-launch` · execute SSOT)
+
+> **감사 정본(참고):** [`PLATFORM_AUDIT_REFERENCE.md`](../audit/PLATFORM_AUDIT_REFERENCE.md) — 실행 큐 아님  
+> **통제 정본:** [`PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](../OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml) · [`PLATFORM_AUDIT_RACI.md`](../OPERATIONS/PLATFORM_AUDIT_RACI.md) · [`PLATFORM_PLAYBOOK_VERSION.yaml`](../OPERATIONS/PLATFORM_PLAYBOOK_VERSION.yaml)  
+> **Standing Grant:** [`PLATFORM_STANDING_GRANT.md`](../OPERATIONS/PLATFORM_STANDING_GRANT.md) · Decision Log [`PLATFORM_AUDIT_DECISION_LOG.md`](../OPERATIONS/PLATFORM_AUDIT_DECISION_LOG.md)  
+> **Known Good SHA (R0 baseline):** `9c4bf29b40d31b2d2952bd6257f5690d691ecbc2`  
+> **보고 언어:** Gate green = **출시 후보**까지 · 좋은 SOP ≠ 품질 증명 · Capability ≠ Correctness
+
+| Todo | 상태 | 완료일 | 증거 |
+| --- | --- | --- | --- |
+| **`audit-r0-control-plane`** | **`[x]` DONE** | **2026-07-13** | Finding registry(+`dod_profile`) · ADR-021 · Evidence bucket **CREATED** · Playwright MCP Probe5 **CAPTURE_OK** · 1인 RACI · SLO **confirmed** · [`R0/control-plane-baseline.md`](../OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R0/control-plane-baseline.md) |
+| **`audit-r1-trust-truth`** | **`[x]` impl** · VERIFYING | **2026-07-13** | C-01/C-02/H-01/M-01 fail-closed · PrimeForge→PHONARA · vitest **26/26** · typecheck · i18n · [`R1/r1-trust-truth-implement.md`](../OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R1/r1-trust-truth-implement.md) · Stage1 Browser **pending** preview SHA |
+
+**R0 Exit 메모:** Finding CLOSED **0** (M-18 **VERIFIED_FIXED** R0 tool availability) · SLO **confirmed** · M-18 Browser MCP **CAPTURE_OK** Probe 5 · bucket `platform-audit-evidence` **public=false**
+
+**Plan 승인:** **`[x]`** 2026-07-13 operator chat · Standing Grant 활성
+
+**현재 NEXT (본 큐):** **R1 Verify** — Stage1 Browser `/` · `/status` (390·580·1455) on preview SHA → Finding `VERIFIED_FIXED` → then **`audit-r2-*`**
 
 ## Cursor 8GB Performance Rollout (v4.4.5 · diagnosis-first · YAML `phase0-gate`)
 

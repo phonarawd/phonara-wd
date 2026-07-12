@@ -5,7 +5,7 @@
 
 import type { MessageKey } from '@phonara/i18n';
 
-export const PLATFORM_PRODUCT_NAME = 'PrimeForge' as const;
+export const PLATFORM_PRODUCT_NAME = 'PHONARA' as const;
 export const PLATFORM_ENGINE_NAME = 'PHONARA' as const;
 
 export type PlatformPillarId = 'earn' | 'wallet' | 'play';

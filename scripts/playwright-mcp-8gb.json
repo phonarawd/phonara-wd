@@ -1,0 +1,46 @@
+{
+  "browser": {
+    "browserName": "chromium",
+    "isolated": true,
+    "launchOptions": {
+      "headless": true,
+      "args": [
+        "--disable-gpu",
+        "--disable-software-rasterizer",
+        "--disable-dev-shm-usage",
+        "--disable-extensions",
+        "--disable-background-networking",
+        "--disable-sync",
+        "--disable-default-apps",
+        "--disable-component-update",
+        "--disable-features=TranslateUI,MediaRouter,OptimizationHints",
+        "--mute-audio",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--disable-notifications"
+      ]
+    },
+    "contextOptions": {
+      "viewport": { "width": 390, "height": 844 },
+      "deviceScaleFactor": 1,
+      "isMobile": true,
+      "hasTouch": true
+    }
+  },
+  "imageResponses": "omit",
+  "timeouts": {
+    "action": 15000,
+    "navigation": 45000,
+    "expect": 10000
+  },
+  "network": {
+    "blockedOrigins": [
+      "*.google-analytics.com",
+      "*.googletagmanager.com",
+      "*.facebook.com",
+      "*.tiktok.com",
+      "*.doubleclick.net"
+    ]
+  },
+  "capabilities": ["core", "core-navigation", "core-tabs", "core-input", "vision"]
+}

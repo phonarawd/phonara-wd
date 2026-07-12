@@ -36,7 +36,6 @@ async function fetchLandingLiveProofRows(locale: string): Promise<readonly Landi
 /** LIVE proof reads — CMS-backed L0b momentum · member count (Phase 4 · anon-safe RPC). */
 export function useLandingLiveProof(locale = 'ko') {
   const proofMode = resolveLandingLiveProofModeFromEnv();
-  const proof = resolveLandingProof({ proofMode });
 
   const query = useQuery({
     queryKey: ['landing-live-proof', locale, proofMode],
@@ -52,6 +51,11 @@ export function useLandingLiveProof(locale = 'ko') {
   const liveMemberCount = parseLandingLiveCmsCount(
     findLandingLiveCmsRow(rows, LANDING_LIVE_MEMBER_COUNT_KEY)?.body,
   );
+
+  const proof = resolveLandingProof({
+    proofMode,
+    liveMemberCount: liveMemberCount ?? undefined,
+  });
 
   return {
     proofMode,

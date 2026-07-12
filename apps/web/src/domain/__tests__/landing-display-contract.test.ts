@@ -65,10 +65,10 @@ describe('landing-display-contract', () => {
     expect(LANDING_FAQ_ALL_IDS.at(-1)).toBe('afterWithdraw');
   });
 
-  it('defines presentation wallet preview constant', () => {
-    expect(LANDING_WALLET_PREVIEW_PHON).toBe(2900);
+  it('defines presentation wallet preview constant as Decimal string', () => {
+    expect(LANDING_WALLET_PREVIEW_PHON).toBe('2900');
 
-    expect(sumLandingAvailableRewardsPhon()).toBe(LANDING_WALLET_PREVIEW_PHON);
+    expect(sumLandingAvailableRewardsPhon()).toBe(2900);
   });
 
   it('exposes operator-approved testimonial pool for L5', () => {
@@ -83,7 +83,9 @@ describe('landing-display-contract', () => {
       'growth-completeProfile',
     ]);
 
-    expect(findLandingMissionTeaser(LANDING_MISSION_PREVIEW_FEATURED_ID).rewardLabel).toBe('+200P');
+    expect(findLandingMissionTeaser(LANDING_MISSION_PREVIEW_FEATURED_ID).rewardLabel).toBe(
+      '+200 PHON',
+    );
   });
 
   it('sums catalog rewards for L2 proof (never zero on cold start)', () => {
@@ -96,6 +98,15 @@ describe('landing-display-contract', () => {
     expect(parseLandingRewardPhon('+200P')).toBe(200);
 
     expect(parseLandingRewardPhon('+2,000P')).toBe(2000);
+
+    expect(parseLandingRewardPhon('+200 PHON')).toBe(200);
+  });
+
+  it('formats landing rewards as PHON — never bare P suffix', () => {
+    for (const mission of LANDING_MISSION_TEASERS) {
+      expect(mission.rewardLabel).toMatch(/^\+[\d,]+ PHON$/);
+      expect(mission.rewardLabel).not.toMatch(/P$/);
+    }
   });
 
   it('preserves attribution query keys for signup handoff', () => {
@@ -120,13 +131,31 @@ describe('landing-display-contract', () => {
 });
 
 describe('landing-proof-resolver', () => {
-  it('defaults to presentation stats and testimonials when pool has entries', () => {
+  it('fail-closes synthetic stats and testimonials by default (C-01)', () => {
     const proof = resolveLandingProof();
 
-    expect(proof.stats).toBe('presentation');
+    expect(proof.stats).toBe('hidden');
 
-    expect(proof.testimonials).toBe('presentation');
+    expect(proof.testimonials).toBe('hidden');
 
     expect(proof.withdrawalMomentum).toBe('hidden');
+
+    expect(proof.withdrawalProof).toBe('hidden');
+
+    expect(proof.ambientSocial).toBe('hidden');
+  });
+
+  it('opens live stats only with verified live member threshold', () => {
+    const proof = resolveLandingProof({ proofMode: 'live', liveMemberCount: 150 });
+
+    expect(proof.stats).toBe('live');
+
+    expect(proof.testimonials).toBe('verified');
+
+    expect(proof.withdrawalMomentum).toBe('live');
+
+    expect(proof.withdrawalProof).toBe('hidden');
+
+    expect(proof.ambientSocial).toBe('hidden');
   });
 });

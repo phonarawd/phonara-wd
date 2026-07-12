@@ -6,10 +6,12 @@ import {
   SYSTEM_STATUS_COMPONENT_IDS,
   SYSTEM_STATUS_COMPONENT_TITLE_KEYS,
   SYSTEM_STATUS_ENGINE_TODO,
-  SYSTEM_STATUS_OPERATIONAL_KEY,
+  SYSTEM_STATUS_FAIL_CLOSED_BADGE_STATE,
   SYSTEM_STATUS_SEO_DESCRIPTION_KEY,
   SYSTEM_STATUS_SEO_TITLE_KEY,
+  SYSTEM_STATUS_SUMMARY_UNKNOWN_KEY,
   SYSTEM_STATUS_UI_UNLOCK_TODO,
+  SYSTEM_STATUS_UNKNOWN_KEY,
   resolveSystemStatusAnnouncementsRoute,
   resolveSystemStatusBackRoute,
 } from '@/domain/system-status-display-contract';
@@ -21,7 +23,10 @@ import { cn } from '@/product/primitives/lib/cn';
 
 import { MarketingPageLayout } from './marketing-page-layout';
 
-/** Canonical `/status` — E10 public service status presentation. */
+/**
+ * Canonical `/status` — fail-closed unknown until R4 public health aggregate (C-02).
+ * Never render settled/operational badges without a verified live source.
+ */
 export function SystemStatusPage() {
   const t = useT();
   const backRoute = resolveSystemStatusBackRoute();
@@ -44,6 +49,7 @@ export function SystemStatusPage() {
         data-engine-todo={SYSTEM_STATUS_ENGINE_TODO}
         data-ui-unlock-todo={SYSTEM_STATUS_UI_UNLOCK_TODO}
         data-testid="system-status-live"
+        data-status-mode="fail-closed"
       >
         <Card data-testid="system-status-summary" className="mb-4">
           <CardHeader className="pb-2">
@@ -58,7 +64,10 @@ export function SystemStatusPage() {
             </div>
           </CardHeader>
           <CardBody className="pt-0">
-            <StatusBadge state="settled" label={t('status.page.summary.operational')} />
+            <StatusBadge
+              state={SYSTEM_STATUS_FAIL_CLOSED_BADGE_STATE}
+              label={t(SYSTEM_STATUS_SUMMARY_UNKNOWN_KEY)}
+            />
           </CardBody>
         </Card>
 
@@ -78,7 +87,10 @@ export function SystemStatusPage() {
                   <span className="text-foreground text-sm font-medium">
                     {t(SYSTEM_STATUS_COMPONENT_TITLE_KEYS[id])}
                   </span>
-                  <StatusBadge state="settled" label={t(SYSTEM_STATUS_OPERATIONAL_KEY)} />
+                  <StatusBadge
+                    state={SYSTEM_STATUS_FAIL_CLOSED_BADGE_STATE}
+                    label={t(SYSTEM_STATUS_UNKNOWN_KEY)}
+                  />
                 </li>
               ))}
             </ul>

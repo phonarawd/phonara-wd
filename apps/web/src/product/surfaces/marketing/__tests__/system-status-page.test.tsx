@@ -14,7 +14,7 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 
 describe('SystemStatusPage', () => {
-  it('renders E10 live status components', () => {
+  it('renders fail-closed unknown status — never operational without live health (C-02)', () => {
     render(
       <I18nProvider>
         <SystemStatusPage />
@@ -22,11 +22,17 @@ describe('SystemStatusPage', () => {
     );
 
     expect(screen.getByTestId('system-status-page')).toBeInTheDocument();
-    expect(screen.getByTestId('system-status-live')).toBeInTheDocument();
+    expect(screen.getByTestId('system-status-live')).toHaveAttribute(
+      'data-status-mode',
+      'fail-closed',
+    );
     expect(screen.getByTestId('system-status-component-earn')).toBeInTheDocument();
     expect(screen.getByTestId('system-status-announcements-cta')).toHaveAttribute(
       'href',
       '/announcements',
     );
+    expect(screen.getAllByText('확인 중').length).toBeGreaterThanOrEqual(5);
+    expect(screen.getByText('상태 확인 중')).toBeInTheDocument();
+    expect(screen.queryByText('정상')).not.toBeInTheDocument();
   });
 });

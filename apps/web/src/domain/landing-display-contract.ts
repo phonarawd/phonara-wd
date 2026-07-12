@@ -11,9 +11,13 @@ export const LANDING_SURFACE = 'apps/web/src/product/surfaces/landing/landing-pa
 
 export const LANDING_ENGINE_STATUS = 'ui_only' as const;
 
-/** L1 ambient (default) · L1 live swaps to `rpc_get_earn_activity_feed` when operator enables. */
+/**
+ * Historical ambient/live flag — ambient presentation social proof is fail-closed (C-01).
+ * Live aggregates only via `VITE_PHONARA_LANDING_PROOF_MODE=live` + verified counts.
+ */
 export type LandingProofMode = 'ambient' | 'live';
 
+/** @deprecated Prefer `resolveLandingLiveProofModeFromEnv` — ambient never surfaces synthetic proof. */
 export const LANDING_PROOF_MODE: LandingProofMode = 'ambient';
 
 /** L3 cumulative stats hidden until operator threshold (§28.7). */
@@ -80,7 +84,7 @@ export const LANDING_LIVE_MISSION_IDS = [
 
 export type LandingLiveMissionId = (typeof LANDING_LIVE_MISSION_IDS)[number];
 
-/** Hero fold featured mission — quiz 3min +200P (CVR §3.3). */
+/** Hero fold featured mission — quiz 3min +200 PHON (CVR §3.3). */
 export const LANDING_MISSION_PREVIEW_FEATURED_ID =
   'daily-quiz' as const satisfies LandingLiveMissionId;
 
@@ -121,16 +125,17 @@ export const LANDING_MISSION_TEASERS: readonly LandingMissionTeaser[] =
     if (!mission) {
       throw new Error(`landing-display-contract: missing mission ${id}`);
     }
+    const rewardPhon = parseLandingRewardPhon(mission.rewardLabel);
     return {
       id,
       titleKey: mission.titleKey as MessageKey,
-      rewardLabel: mission.rewardLabel,
+      rewardLabel: formatLandingRewardPhonLabel(rewardPhon),
       eligibilityKey: LANDING_ELIGIBILITY_KEYS[id],
     };
   });
 
-/** Presentation wallet preview — not user balance (CVR §3.4). */
-export const LANDING_WALLET_PREVIEW_PHON = 2900;
+/** Presentation wallet preview amount — Decimal string · not user balance (CVR §3.4 · H-01). */
+export const LANDING_WALLET_PREVIEW_PHON = '2900' as const;
 
 /** L0a cumulative stats — presentation constants until live threshold (CVR §4). */
 export const LANDING_CUMULATIVE_STAT_IDS = ['members', 'rewardsPaid', 'withdrawals'] as const;
@@ -232,11 +237,16 @@ export const LANDING_TESTIMONIAL_POOL: readonly LandingTestimonialEntry[] = [
   },
 ];
 
-/** Parse catalog display label like "+200P" → 200 (presentation display only). */
+/** Parse catalog/landing reward label like "+200P" / "+200 PHON" → integer PHON (display only). */
 export function parseLandingRewardPhon(rewardLabel: string): number {
   const digits = rewardLabel.replace(/[^\d]/g, '');
   const parsed = Number.parseInt(digits, 10);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+/** Landing-path reward label — PHON only · never bare `P` (M-01). */
+export function formatLandingRewardPhonLabel(amount: number): string {
+  return `+${formatLandingPhonAmount(amount)} PHON`;
 }
 
 export function sumLandingAvailableRewardsPhon(
@@ -246,6 +256,13 @@ export function sumLandingAvailableRewardsPhon(
     (total, mission) => total + parseLandingRewardPhon(mission.rewardLabel),
     0,
   );
+}
+
+/** Decimal string for MoneyDisplay — catalog sum is display-only (not ledger). */
+export function sumLandingAvailableRewardsPhonString(
+  missions: readonly LandingMissionTeaser[] = LANDING_MISSION_TEASERS,
+): string {
+  return String(sumLandingAvailableRewardsPhon(missions));
 }
 
 export function findLandingMissionTeaser(missionId: LandingLiveMissionId): LandingMissionTeaser {

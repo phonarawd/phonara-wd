@@ -35,6 +35,12 @@
 | [`OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md)           | Pre-launch (operator)                          |
 | [`OPERATIONS/P13_T0A_PROD_PREFLIGHT.md`](OPERATIONS/P13_T0A_PROD_PREFLIGHT.md)                         | P13 T0-A prod checklist · `#232` **`[x]`**     |
 | [`OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md`](OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md) | PIR evidence **`[x]` DONE** · `#205` unblocked |
+| [`OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml) | Perfect Launch Finding registry (+`dod_profile`) |
+| [`OPERATIONS/PLATFORM_AUDIT_RACI.md`](OPERATIONS/PLATFORM_AUDIT_RACI.md) | 1인 겸임 RACI |
+| [`PRODUCT/ADR/021-platform-observability-stack.md`](PRODUCT/ADR/021-platform-observability-stack.md) | 관측/알림 스택 ADR (R0) |
+| [`OPERATIONS/PLATFORM_EVIDENCE_RETENTION.md`](OPERATIONS/PLATFORM_EVIDENCE_RETENTION.md) | Evidence bucket · 90일 |
+| [`OPERATIONS/PLATFORM_SLO_SLA.yaml`](OPERATIONS/PLATFORM_SLO_SLA.yaml) | SLO/Trigger 수치 (draft→Owner) |
+| [`audit/PLATFORM_AUDIT_REFERENCE.md`](audit/PLATFORM_AUDIT_REFERENCE.md) | Zero-assumption audit **참고** 정본 |
 
 ## Audit reports (PQA §33 · read-only)
 
