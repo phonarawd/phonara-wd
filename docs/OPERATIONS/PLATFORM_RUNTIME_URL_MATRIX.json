@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-13T21:20:00+09:00",
+  "source": "docs/audit/PLATFORM_AUDIT_REFERENCE.md",
+  "formula": {
+    "webCanonical": 84,
+    "webMinusDynamicGames": 1,
+    "webPlusCasinoSlugs": 12,
+    "webConcrete": 95,
+    "adminConcrete": 29,
+    "totalConcrete": 124
+  },
+  "previewOrigins": {
+    "web": "https://preview.phonara-web.pages.dev",
+    "admin": "https://preview.phonara-admin.pages.dev"
+  },
+  "stage1": {
+    "viewports": [
+      { "width": 390, "height": 844, "tier": "mobile" },
+      { "width": 580, "height": 844, "tier": "tablet-narrow" },
+      { "width": 1455, "height": 900, "tier": "desktop" }
+    ],
+    "criticalSurfaces": [
+      { "id": "landing", "label": "Landing", "app": "web", "path": "/" },
+      { "id": "home", "label": "Home", "app": "web", "path": "/home" },
+      { "id": "wallet", "label": "Wallet", "app": "web", "path": "/wallet" },
+      { "id": "trade", "label": "Trade", "app": "web", "path": "/trade" },
+      { "id": "sports", "label": "Sports", "app": "web", "path": "/sports" },
+      { "id": "casino", "label": "Casino", "app": "web", "path": "/casino" },
+      { "id": "admin-dashboard", "label": "Admin Dashboard", "app": "admin", "path": "/" },
+      { "id": "settings", "label": "Settings", "app": "web", "path": "/settings" }
+    ]
+  },
+  "stage2": {
+    "viewports": [
+      { "width": 768, "height": 1024, "tier": "tablet" },
+      { "width": 1024, "height": 900, "tier": "desktop-md" },
+      { "width": 2560, "height": 1440, "tier": "desktop-ultra" }
+    ]
+  },
+  "webUrls": {
+    "publicAuth": ["/", "/login", "/signup", "/reset-password", "/verify-email", "/auth/callback", "/install"],
+    "marketingTrust": [
+      "/features",
+      "/features/earn",
+      "/features/vip",
+      "/fees",
+      "/security",
+      "/announcements",
+      "/status",
+      "/support",
+      "/support/faq",
+      "/support/ticket",
+      "/feedback",
+      "/tier"
+    ],
+    "legal": [
+      "/legal/terms",
+      "/legal/privacy",
+      "/legal/cookies",
+      "/legal/affiliate",
+      "/legal/risk-disclosure",
+      "/legal/responsible-gaming"
+    ],
+    "earn": [
+      "/home",
+      "/home/missions",
+      "/home/missions/invite",
+      "/home/missions/referral",
+      "/home/attendance",
+      "/referral",
+      "/referral/invite",
+      "/referral/leaderboard",
+      "/tier/me",
+      "/tier/benefits",
+      "/tier/leaderboard",
+      "/earn/cashback",
+      "/earn/play",
+      "/events",
+      "/share/earnings",
+      "/onboarding",
+      "/onboarding/missions",
+      "/staking",
+      "/staking/positions"
+    ],
+    "wallet": [
+      "/wallet",
+      "/wallet/deposit",
+      "/wallet/deposit/crypto",
+      "/wallet/deposit/krw",
+      "/wallet/deposit/giftcard",
+      "/wallet/withdraw",
+      "/wallet/withdraw/crypto",
+      "/wallet/withdraw/krw",
+      "/wallet/transfer",
+      "/wallet/redeem",
+      "/wallet/redeem/giftcard",
+      "/ledger",
+      "/rewards/history"
+    ],
+    "trade": ["/trade", "/trade/futures", "/trade/positions", "/trade/orders"],
+    "sports": [
+      "/sports",
+      "/sports/prematch",
+      "/sports/live",
+      "/sports/my-bets",
+      "/sports/rules",
+      "/sports/vip",
+      { "path": "/sports/fixture/$fixtureId", "parameterized": true }
+    ],
+    "casino": ["/casino", "/casino/fairness"],
+    "games": [
+      "/games/crash",
+      "/games/limbo",
+      "/games/dice",
+      "/games/mines",
+      "/games/hilo",
+      "/games/plinko",
+      "/games/mint-reels",
+      "/games/gold-rush",
+      "/games/roulette",
+      "/games/blackjack",
+      "/games/deepshaft",
+      "/games/momentum"
+    ],
+    "accountSettings": [
+      "/account",
+      "/account/profile",
+      "/account/kyc",
+      "/account/responsible-gaming",
+      "/settings",
+      "/settings/account",
+      "/settings/security",
+      "/settings/bank-accounts",
+      "/settings/referral",
+      "/settings/preferences",
+      "/settings/notifications",
+      "/settings/api-keys",
+      "/notifications"
+    ]
+  },
+  "adminUrls": {
+    "opsDesk": [
+      "/",
+      "/queues",
+      "/deposits",
+      "/withdrawals",
+      "/sports",
+      "/earn",
+      "/earn/referrals",
+      "/earn/missions",
+      "/earn/rewards",
+      "/earn/activity",
+      "/viral-stats",
+      "/users",
+      "/tiers",
+      "/tier-benefits",
+      "/promotions",
+      "/cms",
+      "/casino",
+      "/risk",
+      "/staking",
+      "/audit",
+      "/settings",
+      "/team",
+      "/support",
+      "/ops",
+      "/mfa/policy"
+    ],
+    "authMfa": ["/login", "/mfa/enroll", "/mfa/challenge"],
+    "detail": [{ "path": "/users/$userId/tier", "parameterized": true }]
+  }
+}

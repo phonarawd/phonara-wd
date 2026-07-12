@@ -194,7 +194,35 @@
 
 ## audit-r9-runtime-matrix `[ ]`
 
-| M-18 · Stage1 Critical 8 × 390/580/1455 → Stage2 124 URL · R1 수시 Browser와 별개 **전수** 판정
+| 항목 | 값 |
+| --- | --- |
+| **Finding** | M-18 (R9 일괄 Runtime · Stage1+2) |
+| **Phase** | Browser MCP only — 코드 수정 0 (증거 수집만) |
+| **선행 (non-waivable)** | clean dual preview deploy → `bun run check:deploy-parity -- --remote` green · Web/Admin `releaseSha` 일치 · `gitDirty=false` |
+| **SOT** | [`PLATFORM_RUNTIME_URL_MATRIX.json`](PLATFORM_RUNTIME_URL_MATRIX.json) · `bun run audit:runtime-urls` |
+| **Evidence** | [`R9/r9-preflight.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-preflight.md) · [`R9/r9-stage1-matrix-template.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-stage1-matrix-template.md) |
+| **범위 Stage1** | Critical 8 surface × 390/580/1455 = **24 states** (Landing · Home · Wallet · Trade · Sports · Casino · Admin `/` · Settings) |
+| **범위 Stage2** | Stage1 green 후 · remaining 124 concrete URL · 768/1024/2560 · parameterized fixture/user seed |
+| **정본 URL** | Web 95 + Admin 29 = 124 (`audit:runtime-urls`) |
+| **MCP** | `project-0-phonara-gb-playwright` · `playwright-mcp-8gb.json` · preview origin only (G5) |
+| **판정** | R1–R7 수시 Stage1 PASS는 **재측정만** — R9 Stage1이 최종 판정 · Stage1 red → Stage2 금지 |
+| **게이트** | Stage1+2 green · console/page error 0 · axe critical+serious 0 · overflow/overlap 0 · SLO LCP/JS (Stage1) |
+
+### Preflight (착수 전 — 본 세션 완료)
+
+- [x] URL matrix JSON + `audit:runtime-urls` validator
+- [x] Stage1 matrix template · R9 preflight evidence
+- [x] Browser MCP preview `/` navigate OK
+- [ ] `check:deploy-parity -- --remote` green — **operator: clean preview deploy**
+
+### Implement 절차 (순서 고정)
+
+```text
+1. Remote parity green 확인 (manifest JSON · SHA 기록)
+2. Stage1 24 states — r9-stage1-matrix-template.md 채움 (Browser MCP)
+3. Stage1 24/24 PASS → Stage2 remaining URL + viewports
+4. Evidence → registry · closeout:todo audit-r9-runtime-matrix
+```
 
 **착수:** `Implement audit-r9-runtime-matrix per PLATFORM_AUDIT_TODO_HANDOFF.md — Browser MCP only`
 

@@ -120,6 +120,7 @@
     "audit:pqa-d": "tsx scripts/audit/audit-d-config-state.ts",
     "audit:pqa": "tsx scripts/audit/audit-a-db-guards.ts && tsx scripts/audit/audit-b-rpc-contract.ts && tsx scripts/audit/audit-c-surface-controls.ts && tsx scripts/audit/audit-d-config-state.ts",
     "audit:todo": "tsx scripts/print-platform-audit-todo.ts",
+    "audit:runtime-urls": "tsx scripts/print-runtime-url-matrix.ts",
     "check:reconciliation-launch": "tsx scripts/check-reconciliation-launch.ts",
     "check:wallet-mutators": "tsx scripts/check-wallet-mutator-privileges.ts",
     "lock:migrations": "tsx scripts/check-migrations.ts --write",

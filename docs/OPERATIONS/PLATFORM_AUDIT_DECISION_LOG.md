@@ -231,6 +231,17 @@
 | Evidence | [`R8/r8-deploy-parity-implement.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R8/r8-deploy-parity-implement.md)                                                    |
 | Next     | clean dual preview deploy → remote SHA parity → **`audit-r9-runtime-matrix`**                                                                              |
 
+## DL-R9-PREFLIGHT — Browser Stage1 착수 전 준비 (Implement 미착수)
+
+| 항목     | 값                                                                                                                                                         |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| When     | 2026-07-13                                                                                                                                                 |
+| Decision | R9 **preflight only**: `PLATFORM_RUNTIME_URL_MATRIX.json` (124 URL) · `audit:runtime-urls` · Stage1 template · Handoff §audit-r9 확장 · Browser MCP preview `/`·`/status`·580px resize OK. **블로커:** `check:deploy-parity -- --remote` red (manifest SPA fallback · Admin preview fetch fail). |
+| A        | SRE (Standing Grant · Plan R9 preflight)                                                                                                                   |
+| Gates    | `audit:runtime-urls` 124/124 · vitest 2/2 · local deploy-parity 4/4 · remote parity **FAIL**                                                               |
+| Evidence | [`R9/r9-preflight.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-preflight.md) · [`R9/r9-stage1-matrix-template.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-stage1-matrix-template.md) |
+| Next     | operator: clean `deploy:pages:web:preview` + `deploy:pages:admin:preview` → remote parity green → `Implement audit-r9-runtime-matrix`                      |
+
 ## Concurrent signoff note (1인 겸임)
 
 R0 문서 채택 시 Security / Runtime / Product 역할 체크리스트를 **시차 서명**한다. AI는 A 대행 금지.

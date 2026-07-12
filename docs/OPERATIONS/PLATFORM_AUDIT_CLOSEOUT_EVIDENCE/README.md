@@ -26,6 +26,7 @@ docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/
 | **R6** | `R6/` | Product consistency **`[x]`** |
 | **R7** | `R7/` | M-14 · M-15 · M-16 type/UI hygiene **`[x]`** |
 | **R8** | `R8/` | H-06 deploy parity · clean SHA · headers **`[x]`** |
+| **R9** | `R9/` | preflight **`[x]`** · Stage1 matrix template · remote parity **pending** |
 
 ## CI 링크 템플릿
 

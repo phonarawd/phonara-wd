@@ -55,7 +55,7 @@
 | `audit-r11-closeout` | 3-Owner | pending | `[ ]` | §audit-r11 |
 | `audit-r12-post-release` | PPR·DR | pending | `[ ]` | §audit-r12 |
 
-**현재 NEXT:** **`audit-r9-runtime-matrix`** — 채팅 `Implement audit-r9-runtime-matrix` (선행: clean dual preview → `check:deploy-parity -- --remote` green)
+**현재 NEXT:** **`audit-r9-runtime-matrix`** — preflight **`[x]`** (URL matrix · template · MCP probe) · **블로커:** clean dual preview → `check:deploy-parity -- --remote` green 후 `Implement audit-r9-runtime-matrix`
 
 ## Cursor 8GB Performance Rollout (v4.4.5 · diagnosis-first · YAML `phase0-gate`)
 
