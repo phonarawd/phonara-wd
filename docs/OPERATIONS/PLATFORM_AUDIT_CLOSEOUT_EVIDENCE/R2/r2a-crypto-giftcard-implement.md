@@ -55,7 +55,9 @@ Owner paths:
 
 | Item | Status |
 | ---- | ------ |
-| Stage1 Wallet hub Browser MCP | see [`r2a-stage1-browser.md`](r2a-stage1-browser.md) |
+| Stage1 Wallet Browser MCP | **PASS** — [`r2a-stage1-browser.md`](r2a-stage1-browser.md) · preview `19976b6e` / `preview.phonara-web.pages.dev` |
+
+Finding status after Stage1: **VERIFIED_FIXED** (H-03 · H-11).
 
 ## No Shortcut checklist
 

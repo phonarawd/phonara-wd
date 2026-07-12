@@ -27,7 +27,7 @@
 
 ## audit-r2a-crypto-giftcard `[x]` DONE
 
-**상태:** DONE 2026-07-13 · H-03/H-11 IMPLEMENTED (Stage1 Browser 후 VERIFIED_FIXED) · 재착수 금지
+**상태:** DONE 2026-07-13 · H-03/H-11 **VERIFIED_FIXED** · 재착수 금지
 
 | 항목 | 값 |
 | --- | --- |

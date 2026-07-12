@@ -178,7 +178,7 @@ findings:
     score: 19
     domain: 'Wallet'
     stage: 'R2'
-    status: 'IMPLEMENTED'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
@@ -187,10 +187,15 @@ findings:
     fix: 'wallet-capability-rails resolver + hub omit + route beforeLoad redirect + derive/submit invoke block; LAUNCH_GATES.cryptoRails stays false until provider green'
     evidence:
       - type: 'console'
-        sha: ''
+        sha: '2f3785c986d273d48432d471ef5e86f9784007be'
         timestamp: '2026-07-13T03:00:00+09:00'
         pr: ''
         uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2a-crypto-giftcard-implement.md'
+      - type: 'browser_mcp'
+        sha: '2f3785c986d273d48432d471ef5e86f9784007be'
+        timestamp: '2026-07-13T03:07:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2a-stage1-browser.md'
     regression: 'wallet-capability-rails-display-contract · deposit/withdraw hub · crypto-edge'
     owner: 'wallet'
     reviewer: 'product'
@@ -199,9 +204,9 @@ findings:
     runtime: 'sre'
     owner_path: 'apps/web/src/domain/wallet-capability-rails-display-contract.ts'
     pr: ''
-    sha: ''
+    sha: '2f3785c986d273d48432d471ef5e86f9784007be'
     adr: ''
-    updated_at: '2026-07-13T03:00:00+09:00'
+    updated_at: '2026-07-13T03:07:00+09:00'
   - id: 'H-04'
     severity: 'HIGH'
     impact: 4
@@ -415,7 +420,7 @@ findings:
     score: 15
     domain: 'Wallet'
     stage: 'R2'
-    status: 'IMPLEMENTED'
+    status: 'VERIFIED_FIXED'
     dod_profile: 'ui-route'
     depends_on: []
     blocked_by: []
@@ -424,10 +429,15 @@ findings:
     fix: 'hub/redeem omit until rpc_list_giftcard_fee_market ≥1 enabled+fresh row; direct giftcard URLs Navigate to hubs'
     evidence:
       - type: 'console'
-        sha: ''
+        sha: '2f3785c986d273d48432d471ef5e86f9784007be'
         timestamp: '2026-07-13T03:00:00+09:00'
         pr: ''
         uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2a-crypto-giftcard-implement.md'
+      - type: 'browser_mcp'
+        sha: '2f3785c986d273d48432d471ef5e86f9784007be'
+        timestamp: '2026-07-13T03:07:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2a-stage1-browser.md'
     regression: 'wallet-capability-rails · giftcard deposit/redeem page · wallet-redeem-display-contract'
     owner: 'wallet'
     reviewer: 'product'
@@ -436,9 +446,9 @@ findings:
     runtime: 'sre'
     owner_path: 'apps/web/src/features/wallet/'
     pr: ''
-    sha: ''
+    sha: '2f3785c986d273d48432d471ef5e86f9784007be'
     adr: ''
-    updated_at: '2026-07-13T03:00:00+09:00'
+    updated_at: '2026-07-13T03:07:00+09:00'
   - id: 'M-01'
     severity: 'MEDIUM'
     impact: 3
