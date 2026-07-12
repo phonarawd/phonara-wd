@@ -35,9 +35,7 @@ const CHART_RGB = /\brgba?\s*\(/g;
 const CHART_HEX = /#[0-9a-fA-F]{3,8}\b/g;
 
 /** Whole-file signed exceptions (path relative to repo root). */
-const FILE_ALLOWLIST = new Set([
-  'apps/web/src/product/surfaces/trade/chart/chart-theme.ts',
-]);
+const FILE_ALLOWLIST = new Set(['apps/web/src/product/surfaces/trade/chart/chart-theme.ts']);
 
 function rel(path: string): string {
   return relative(root, path).replaceAll('\\', '/');
@@ -81,9 +79,7 @@ type Census = {
 };
 
 function census(): Census {
-  const files = [
-    ...SCAN_DIRS.flatMap((d) => collectFiles(d, ['.tsx', '.ts'])),
-  ];
+  const files = [...SCAN_DIRS.flatMap((d) => collectFiles(d, ['.tsx', '.ts']))];
 
   let rawButton = 0;
   let rawButtonFiles = 0;
@@ -143,17 +139,13 @@ function main(): void {
     findings.push(`raw <button> ${c.rawButton} > baseline ${BASELINE.rawButton}`);
   }
   if (c.rawButtonFiles > BASELINE.rawButtonFiles) {
-    findings.push(
-      `raw <button> files ${c.rawButtonFiles} > baseline ${BASELINE.rawButtonFiles}`,
-    );
+    findings.push(`raw <button> files ${c.rawButtonFiles} > baseline ${BASELINE.rawButtonFiles}`);
   }
   if (c.rawInput > BASELINE.rawInput) {
     findings.push(`raw <input> ${c.rawInput} > baseline ${BASELINE.rawInput}`);
   }
   if (c.rawInputFiles > BASELINE.rawInputFiles) {
-    findings.push(
-      `raw <input> files ${c.rawInputFiles} > baseline ${BASELINE.rawInputFiles}`,
-    );
+    findings.push(`raw <input> files ${c.rawInputFiles} > baseline ${BASELINE.rawInputFiles}`);
   }
   if (c.text11px > BASELINE.text11px) {
     findings.push(`text-[11px] ${c.text11px} > baseline ${BASELINE.text11px} (use text-xs)`);
@@ -173,7 +165,9 @@ function main(): void {
   }
 
   for (const f of findings) {
-    console[strict ? 'error' : 'warn'](`[check:primitive-ratchet] ${strict ? 'FAIL' : 'WARN'}: ${f}`);
+    console[strict ? 'error' : 'warn'](
+      `[check:primitive-ratchet] ${strict ? 'FAIL' : 'WARN'}: ${f}`,
+    );
   }
 
   if (strict) process.exit(1);

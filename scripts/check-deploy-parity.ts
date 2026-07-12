@@ -169,7 +169,9 @@ function checkMigrationsLock(): Finding {
   };
 }
 
-async function fetchManifest(origin: string): Promise<{ ok: boolean; manifest?: ReleaseManifest; detail: string }> {
+async function fetchManifest(
+  origin: string,
+): Promise<{ ok: boolean; manifest?: ReleaseManifest; detail: string }> {
   const url = `${origin.replace(/\/$/, '')}/${RELEASE_MANIFEST_FILENAME}`;
   try {
     const res = await fetch(url, { redirect: 'follow' });
@@ -242,9 +244,10 @@ async function checkRemoteParity(): Promise<Finding[]> {
     findings.push({
       ok: sameSha && sameLock && sameRef && !dirty,
       id: 'remote-web-admin-sha-parity',
-      detail: sameSha && sameLock && sameRef && !dirty
-        ? `parity OK sha=${web.manifest.releaseShaShort} lock=${web.manifest.migrationLockHash.slice(0, 12)}…`
-        : `mismatch sha=${sameSha} lock=${sameLock} ref=${sameRef} dirty=${dirty}`,
+      detail:
+        sameSha && sameLock && sameRef && !dirty
+          ? `parity OK sha=${web.manifest.releaseShaShort} lock=${web.manifest.migrationLockHash.slice(0, 12)}…`
+          : `mismatch sha=${sameSha} lock=${sameLock} ref=${sameRef} dirty=${dirty}`,
     });
   }
   findings.push(await fetchSecurityHeaders(WEB_PREVIEW_ORIGIN));
@@ -265,10 +268,7 @@ function checkBunAudit(): Finding {
       metadata?: { vulnerabilities?: { critical?: number } };
       vulnerabilities?: { critical?: number };
     };
-    critical =
-      parsed.metadata?.vulnerabilities?.critical ??
-      parsed.vulnerabilities?.critical ??
-      0;
+    critical = parsed.metadata?.vulnerabilities?.critical ?? parsed.vulnerabilities?.critical ?? 0;
   } catch {
     // bun audit --json shape varies; fall back to text scan
     if (/critical/i.test(stdout) && /[1-9]\d*\s+critical/i.test(stdout)) {

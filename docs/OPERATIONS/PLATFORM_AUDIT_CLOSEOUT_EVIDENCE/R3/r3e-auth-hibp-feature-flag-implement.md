@@ -7,30 +7,30 @@
 
 ## Finding touched
 
-| Finding  | Fix summary                                                                                         | Gate |
-| -------- | --------------------------------------------------------------------------------------------------- | ---- |
-| **H-09** | HIBP enable attempted via Management API → **402 Pro+ required** · script + DEFER documented        | Auth API · advisor WARN residual 1 |
-| **(R3)** | `rpc_set_feature_enabled` sports/`live_crash` allowlist + `_assert_admin_aal2` + reason/audit 복구 | SQL · remote probe |
+| Finding  | Fix summary                                                                                        | Gate                               |
+| -------- | -------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| **H-09** | HIBP enable attempted via Management API → **402 Pro+ required** · script + DEFER documented       | Auth API · advisor WARN residual 1 |
+| **(R3)** | `rpc_set_feature_enabled` sports/`live_crash` allowlist + `_assert_admin_aal2` + reason/audit 복구 | SQL · remote probe                 |
 
 ## Root cause / fix
 
-| 필드 | 값 |
-| ---- | --- |
-| **Root cause (flag)** | E10 `CREATE OR REPLACE`가 gameday AAL2 injection을 지움 · allowlist에 Admin이 쓰는 `sports`/`live_crash` 누락 |
-| **Fix (flag)** | migration `20260818000001_h09_r3e_feature_flag_allowlist` — allowlist 확장 + AAL2 + grant pin |
-| **Root cause (HIBP)** | Auth `password_hibp_enabled=false` · advisor `auth_leaked_password_protection` WARN |
-| **Fix attempt (HIBP)** | `bun run stack:auth-hibp-enable` → PATCH 402 `"…available on Pro Plans and up"` |
-| **Ledger** | money path 변경 0 |
-| **Residual** | HIBP = **BLOCKED_DEP** (Pro+) · MFA DEFER와 동급 soft-launch non-blocker |
+| 필드                   | 값                                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Root cause (flag)**  | E10 `CREATE OR REPLACE`가 gameday AAL2 injection을 지움 · allowlist에 Admin이 쓰는 `sports`/`live_crash` 누락 |
+| **Fix (flag)**         | migration `20260818000001_h09_r3e_feature_flag_allowlist` — allowlist 확장 + AAL2 + grant pin                 |
+| **Root cause (HIBP)**  | Auth `password_hibp_enabled=false` · advisor `auth_leaked_password_protection` WARN                           |
+| **Fix attempt (HIBP)** | `bun run stack:auth-hibp-enable` → PATCH 402 `"…available on Pro Plans and up"`                               |
+| **Ledger**             | money path 변경 0                                                                                             |
+| **Residual**           | HIBP = **BLOCKED_DEP** (Pro+) · MFA DEFER와 동급 soft-launch non-blocker                                      |
 
 ## Code owners
 
-| Path | Role |
-| ---- | ---- |
-| `supabase/migrations/20260818000001_h09_r3e_feature_flag_allowlist.sql` | feature flag allowlist + AAL2 |
-| `supabase/tests/h09_r3e_feature_flag_allowlist_test.sql` | RED-first owner |
-| `scripts/enable-auth-hibp.ts` · `stack:auth-hibp-enable` | HIBP Management API |
-| `scripts/check/guard-coverage-allowlist.ts` | `rpc_set_feature_enabled` aal2-exempt **제거** |
+| Path                                                                    | Role                                           |
+| ----------------------------------------------------------------------- | ---------------------------------------------- |
+| `supabase/migrations/20260818000001_h09_r3e_feature_flag_allowlist.sql` | feature flag allowlist + AAL2                  |
+| `supabase/tests/h09_r3e_feature_flag_allowlist_test.sql`                | RED-first owner                                |
+| `scripts/enable-auth-hibp.ts` · `stack:auth-hibp-enable`                | HIBP Management API                            |
+| `scripts/check/guard-coverage-allowlist.ts`                             | `rpc_set_feature_enabled` aal2-exempt **제거** |
 
 ## Gates
 
@@ -46,14 +46,14 @@ bun run check:advisors → 0 ERROR · auth_leaked_password_protection WARN **1**
 
 ## Remote probe (2026-07-13)
 
-| Check | Result |
-| ----- | ------ |
-| `_assert_admin_aal2` in body | **true** |
-| allowlist `sports` / `live_crash` | **true** |
-| anon EXECUTE | **false** |
-| authenticated EXECUTE | true (body admin+AAL2) |
-| `password_hibp_enabled` | **false** (402 Pro+) |
-| advisor `auth_leaked_password_protection` | WARN **1** residual |
+| Check                                     | Result                 |
+| ----------------------------------------- | ---------------------- |
+| `_assert_admin_aal2` in body              | **true**               |
+| allowlist `sports` / `live_crash`         | **true**               |
+| anon EXECUTE                              | **false**              |
+| authenticated EXECUTE                     | true (body admin+AAL2) |
+| `password_hibp_enabled`                   | **false** (402 Pro+)   |
+| advisor `auth_leaked_password_protection` | WARN **1** residual    |
 
 ## No Shortcut checklist
 

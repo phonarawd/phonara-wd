@@ -20,8 +20,7 @@ export const KRW_DEPOSIT_PROOF_ATTACH_RPC = 'rpc_attach_krw_deposit_proof' as co
 export const KRW_DEPOSIT_PROOF_STORAGE_BUCKET = 'krw-deposit-proofs' as const;
 
 /** Engine CHECK: `{uuid}/proof.(jpg|jpeg|png|webp)`. */
-export const KRW_DEPOSIT_PROOF_PATH_PATTERN =
-  /^[0-9a-f-]{36}\/proof\.(jpg|jpeg|png|webp)$/i;
+export const KRW_DEPOSIT_PROOF_PATH_PATTERN = /^[0-9a-f-]{36}\/proof\.(jpg|jpeg|png|webp)$/i;
 
 export const KRW_DEPOSIT_PROOF_MAX_BYTES = 5 * 1024 * 1024;
 export const KRW_DEPOSIT_PROOF_ALLOWED_MIME = [

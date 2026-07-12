@@ -255,12 +255,7 @@ export function SportsFixtureBoard({
                     disabled={sportsBlocked || marketsSuspended}
                     onClick={() =>
                       onToggleSelection(
-                        buildSelectionLeg(
-                          fixture,
-                          selection,
-                          cell.outcome_id,
-                          cellDisplay.display,
-                        ),
+                        buildSelectionLeg(fixture, selection, cell.outcome_id, cellDisplay.display),
                       )
                     }
                   >

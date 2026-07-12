@@ -39,7 +39,9 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}));
-    const action = String(body.action ?? 'complete').trim().toLowerCase();
+    const action = String(body.action ?? 'complete')
+      .trim()
+      .toLowerCase();
     const service = serviceClient();
     const ipHmac = await ingressIpHmac(req);
 
@@ -109,10 +111,13 @@ Deno.serve(async (req) => {
 
     let userId = decodeJwtSub(req.headers.get('authorization'));
     if (!userId) {
-      const { data: lookup, error: lookupErr } = await service.rpc('rpc_service_lookup_siwe_identity', {
-        p_address: address,
-        p_chain_id: null,
-      });
+      const { data: lookup, error: lookupErr } = await service.rpc(
+        'rpc_service_lookup_siwe_identity',
+        {
+          p_address: address,
+          p_chain_id: null,
+        },
+      );
       if (lookupErr) {
         ctx.logError('auth.siwe.lookup_failed', mapSupabaseError(lookupErr));
         return ctx.jsonErr(mapSupabaseError(lookupErr), 400, { internal: lookupErr });

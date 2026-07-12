@@ -5,14 +5,14 @@
 
 ## Covered by unit (authoritative for this closeout)
 
-| Check | Result |
-| --- | --- |
-| viewer hides withdrawals/team | PASS (`admin-nav-filter`) |
-| finance keeps deposits · no team | PASS |
-| owner sees team + mfa | PASS |
-| earn settlement opens reason dialog before RPC | PASS (`admin-earn-page`) |
-| user tier write UI when unlocked | PASS (`admin-user-tier-page`) |
-| formatAdminMoney strips `.000000` | PASS |
+| Check                                          | Result                        |
+| ---------------------------------------------- | ----------------------------- |
+| viewer hides withdrawals/team                  | PASS (`admin-nav-filter`)     |
+| finance keeps deposits · no team               | PASS                          |
+| owner sees team + mfa                          | PASS                          |
+| earn settlement opens reason dialog before RPC | PASS (`admin-earn-page`)      |
+| user tier write UI when unlocked               | PASS (`admin-user-tier-page`) |
+| formatAdminMoney strips `.000000`              | PASS                          |
 
 ## Operator optional Browser
 

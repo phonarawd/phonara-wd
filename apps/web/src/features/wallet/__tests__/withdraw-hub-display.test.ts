@@ -15,9 +15,7 @@ describe('withdraw-hub-display', () => {
       '/wallet/withdraw/krw',
       '/wallet/withdraw/crypto',
     ]);
-    expect(resolveWithdrawHubRails({ cryptoRails: false }).map((rail) => rail.id)).toEqual([
-      'krw',
-    ]);
+    expect(resolveWithdrawHubRails({ cryptoRails: false }).map((rail) => rail.id)).toEqual(['krw']);
     expect(resolveWithdrawHubRails({ cryptoRails: true }).map((rail) => rail.id)).toEqual([
       'krw',
       'crypto',

@@ -35,3 +35,5 @@ signed_by: { sre: '', product: '' }
 ```
 
 R12에서 다음 Drill 일정을 재확인한다.
+
+**R12 Implement (2026-07-13):** Rollback 2026-08-13 · DR/Incident 2026-10-13 — **scheduled** (기한 초과 아님). Checklist: [`R12/r12-dr-drill-checklist.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R12/r12-dr-drill-checklist.md).

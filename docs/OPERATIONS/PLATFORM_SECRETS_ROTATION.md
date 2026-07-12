@@ -35,3 +35,6 @@ evidence_uri: '' # 경로·시각만 · 값 금지
 
 Rotation 기한 초과 = Risk High + Release Gate Block.  
 유출 의심 시 Exception 없이도 Security Owner가 즉시 revoke 가능.
+
+**기계 정본:** [`PLATFORM_SECRETS_ROTATION.yaml`](PLATFORM_SECRETS_ROTATION.yaml)  
+**R12 spotcheck:** [`R12/r12-secrets-rotation-spotcheck.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R12/r12-secrets-rotation-spotcheck.md)

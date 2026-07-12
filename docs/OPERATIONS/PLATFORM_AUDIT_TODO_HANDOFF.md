@@ -29,14 +29,14 @@
 
 **상태:** DONE 2026-07-13 · H-03/H-11 **VERIFIED_FIXED** · 재착수 금지
 
-| 항목 | 값 |
-| --- | --- |
-| **Finding** | H-03 · H-11 |
-| **Phase** | Implement **`[x]`** · Investigate **`[x]`** |
-| **Evidence** | [`R2/r2a-crypto-giftcard-implement.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2a-crypto-giftcard-implement.md) · [`R2/r2a-stage1-browser.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2a-stage1-browser.md) |
-| **범위** | `cryptoRails=false` → deposit/withdraw hub에서 crypto rail 제거·direct URL fail-closed · giftcard market 0 → hub 숨김/submit 차단 |
-| **Owner path** | `apps/web/src/product/surfaces/wallet/` · `crypto-edge-display-contract` · giftcard hub |
-| **게이트** | `typecheck` green · owner vitest 56/56 |
+| 항목           | 값                                                                                                                                                                                                      |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Finding**    | H-03 · H-11                                                                                                                                                                                             |
+| **Phase**      | Implement **`[x]`** · Investigate **`[x]`**                                                                                                                                                             |
+| **Evidence**   | [`R2/r2a-crypto-giftcard-implement.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2a-crypto-giftcard-implement.md) · [`R2/r2a-stage1-browser.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2a-stage1-browser.md) |
+| **범위**       | `cryptoRails=false` → deposit/withdraw hub에서 crypto rail 제거·direct URL fail-closed · giftcard market 0 → hub 숨김/submit 차단                                                                       |
+| **Owner path** | `apps/web/src/product/surfaces/wallet/` · `crypto-edge-display-contract` · giftcard hub                                                                                                                 |
+| **게이트**     | `typecheck` green · owner vitest 56/56                                                                                                                                                                  |
 
 ---
 
@@ -44,14 +44,14 @@
 
 **상태:** DONE 2026-07-13 · H-10 **VERIFIED_FIXED** · 재착수 금지
 
-| 항목 | 값 |
-| --- | --- |
-| **Finding** | H-10 |
-| **Phase** | Implement + 운영 decision log **`[x]`** |
-| **Evidence** | [`R2/r2b-withdrawal-copy-implement.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2b-withdrawal-copy-implement.md) · [`R2/r2b-stage1-browser.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2b-stage1-browser.md) · DL-R2B-H10 · [`PLATFORM_WITHDRAWAL_REENABLE_GATE.md`](PLATFORM_WITHDRAWAL_REENABLE_GATE.md) |
-| **범위** | OFF=운영 의도 문서화 · 사유/다음 행동 i18n · Feature Flag 5조건 재개 체크리스트 · flag flip 0 |
-| **Owner path** | `apps/web/src/domain/wallet-withdrawal-off-display-contract.ts` · withdraw hub |
-| **게이트** | typecheck · check:i18n · owner vitest 9/9 · Browser `/wallet/withdraw` → login |
+| 항목           | 값                                                                                                                                                                                                                                                                                                    |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Finding**    | H-10                                                                                                                                                                                                                                                                                                  |
+| **Phase**      | Implement + 운영 decision log **`[x]`**                                                                                                                                                                                                                                                               |
+| **Evidence**   | [`R2/r2b-withdrawal-copy-implement.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2b-withdrawal-copy-implement.md) · [`R2/r2b-stage1-browser.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2b-stage1-browser.md) · DL-R2B-H10 · [`PLATFORM_WITHDRAWAL_REENABLE_GATE.md`](PLATFORM_WITHDRAWAL_REENABLE_GATE.md) |
+| **범위**       | OFF=운영 의도 문서화 · 사유/다음 행동 i18n · Feature Flag 5조건 재개 체크리스트 · flag flip 0                                                                                                                                                                                                         |
+| **Owner path** | `apps/web/src/domain/wallet-withdrawal-off-display-contract.ts` · withdraw hub                                                                                                                                                                                                                        |
+| **게이트**     | typecheck · check:i18n · owner vitest 9/9 · Browser `/wallet/withdraw` → login                                                                                                                                                                                                                        |
 
 **착수:** ~~`Implement audit-r2b-withdrawal-copy per PLATFORM_AUDIT_TODO_HANDOFF.md`~~
 
@@ -59,13 +59,13 @@
 
 ## audit-r2c-sports-odds-freshness `[x]` DONE
 
-| 항목 | 값 |
-| --- | --- |
-| **Finding** | H-05 |
-| **Phase** | Implement (ingest health 선행 확인) **`[x]`** |
-| **범위** | stale odds `—` · bet/cashout gate · server timestamp freshness |
-| **Owner** | `apps/web/src/domain/sports-odds-freshness-display-contract.ts` · sports surfaces |
-| **게이트** | gate:ai-impl L0~L4 · vitest **28/28** · Stage1 `/sports` → login |
+| 항목         | 값                                                                                                                                                                                              |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Finding**  | H-05                                                                                                                                                                                            |
+| **Phase**    | Implement (ingest health 선행 확인) **`[x]`**                                                                                                                                                   |
+| **범위**     | stale odds `—` · bet/cashout gate · server timestamp freshness                                                                                                                                  |
+| **Owner**    | `apps/web/src/domain/sports-odds-freshness-display-contract.ts` · sports surfaces                                                                                                               |
+| **게이트**   | gate:ai-impl L0~L4 · vitest **28/28** · Stage1 `/sports` → login                                                                                                                                |
 | **Evidence** | [`R2/r2c-sports-odds-implement.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2c-sports-odds-implement.md) · [`R2/r2c-stage1-browser.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2c-stage1-browser.md) |
 
 **착수:** ~~`Implement audit-r2c-sports-odds-freshness per PLATFORM_AUDIT_TODO_HANDOFF.md`~~
@@ -74,14 +74,14 @@
 
 ## audit-r2d-krw-proof-wire `[x]` DONE
 
-| 항목 | 값 |
-| --- | --- |
-| **Finding** | M-21 |
-| **Phase** | Implement |
-| **범위** | `/wallet/deposit/krw` proof upload · typed attach RPC · pending only · ledger 0 |
-| **Owner** | wallet deposit krw · Admin deposits |
+| 항목         | 값                                                                                                                                                                                          |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Finding**  | M-21                                                                                                                                                                                        |
+| **Phase**    | Implement                                                                                                                                                                                   |
+| **범위**     | `/wallet/deposit/krw` proof upload · typed attach RPC · pending only · ledger 0                                                                                                             |
+| **Owner**    | wallet deposit krw · Admin deposits                                                                                                                                                         |
 | **Evidence** | [`R2/r2d-krw-proof-implement.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2d-krw-proof-implement.md) · [`R2/r2d-stage1-browser.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R2/r2d-stage1-browser.md) |
-| **Gate** | `gate:ai-impl` vitest **24/24** · `krwDepositProofLive=true` |
+| **Gate**     | `gate:ai-impl` vitest **24/24** · `krwDepositProofLive=true`                                                                                                                                |
 
 **착수:** ~~`Implement audit-r2d-krw-proof-wire per PLATFORM_AUDIT_TODO_HANDOFF.md`~~
 
@@ -192,60 +192,94 @@
 
 ---
 
-## audit-r9-runtime-matrix `[ ]`
+## audit-r9-runtime-matrix `[x]` DONE 2026-07-13
 
-| 항목 | 값 |
-| --- | --- |
-| **Finding** | M-18 (R9 일괄 Runtime · Stage1+2) |
-| **Phase** | Browser MCP only — 코드 수정 0 (증거 수집만) |
-| **선행 (non-waivable)** | clean dual preview deploy → `bun run check:deploy-parity -- --remote` green · Web/Admin `releaseSha` 일치 · `gitDirty=false` |
-| **SOT** | [`PLATFORM_RUNTIME_URL_MATRIX.json`](PLATFORM_RUNTIME_URL_MATRIX.json) · `bun run audit:runtime-urls` |
-| **Evidence** | [`R9/r9-preflight.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-preflight.md) · [`R9/r9-stage1-matrix-template.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-stage1-matrix-template.md) |
-| **범위 Stage1** | Critical 8 surface × 390/580/1455 = **24 states** (Landing · Home · Wallet · Trade · Sports · Casino · Admin `/` · Settings) |
-| **범위 Stage2** | Stage1 green 후 · remaining 124 concrete URL · 768/1024/2560 · parameterized fixture/user seed |
-| **정본 URL** | Web 95 + Admin 29 = 124 (`audit:runtime-urls`) |
-| **MCP** | `project-0-phonara-gb-playwright` · `playwright-mcp-8gb.json` · preview origin only (G5) |
-| **판정** | R1–R7 수시 Stage1 PASS는 **재측정만** — R9 Stage1이 최종 판정 · Stage1 red → Stage2 금지 |
-| **게이트** | Stage1+2 green · console/page error 0 · axe critical+serious 0 · overflow/overlap 0 · SLO LCP/JS (Stage1) |
+| 항목         | 값                                                                                                                                                                                                                                                                |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Finding**  | M-18 (R9 일괄 Runtime · Stage1+2)                                                                                                                                                                                                                                 |
+| **Phase**    | Browser MCP evidence — **Release green 아님** (JS SLO · `/install` 결함)                                                                                                                                                                                          |
+| **선행**     | `check:deploy-parity -- --remote` **PASS** · SHA `dcfd8c7e`                                                                                                                                                                                                       |
+| **SOT**      | [`PLATFORM_RUNTIME_URL_MATRIX.json`](PLATFORM_RUNTIME_URL_MATRIX.json) · `bun run audit:runtime-urls`                                                                                                                                                             |
+| **Evidence** | [`R9/r9-runtime-implement.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-runtime-implement.md) · [`r9-stage1-matrix.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-stage1-matrix.md) · [`r9-stage2-matrix.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-stage2-matrix.md) |
+| **Stage1**   | 24 states · functional **24/24** · strict **3/24** (Web JS 539kb > 450kb SLO)                                                                                                                                                                                     |
+| **Stage2**   | **366** states · **290 PASS** · FAIL `/install@2560` InstallPromptProvider                                                                                                                                                                                        |
+| **MCP**      | `project-0-phonara-gb-playwright` · preview only (G5)                                                                                                                                                                                                             |
+| **게이트**   | `audit:runtime-urls` 124/124 · vitest 2/2 · remote parity 9/9                                                                                                                                                                                                     |
 
-### Preflight (착수 전 — 본 세션 완료)
+### 마감 체크
 
-- [x] URL matrix JSON + `audit:runtime-urls` validator
-- [x] Stage1 matrix template · R9 preflight evidence
-- [x] Browser MCP preview `/` navigate OK
-- [ ] `check:deploy-parity -- --remote` green — **operator: clean preview deploy**
+- [x] Remote parity green
+- [x] Stage1 24 states Browser MCP
+- [x] Stage2 remaining URL + 768/1024/2560 (parameterized 2 deferred)
+- [x] Evidence · Decision Log · `closeout:todo audit-r9-runtime-matrix`
 
-### Implement 절차 (순서 고정)
+### Release blockers (R10 전 triage)
 
-```text
-1. Remote parity green 확인 (manifest JSON · SHA 기록)
-2. Stage1 24 states — r9-stage1-matrix-template.md 채움 (Browser MCP)
-3. Stage1 24/24 PASS → Stage2 remaining URL + viewports
-4. Evidence → registry · closeout:todo audit-r9-runtime-matrix
-```
+| ID             | 요약                                 |
+| -------------- | ------------------------------------ |
+| R9-PERF-JS     | Web Stage1 initial JS SLO 21/21 FAIL |
+| R9-INSTALL-CTX | `/install@2560` pageerror            |
 
-**착수:** `Implement audit-r9-runtime-matrix per PLATFORM_AUDIT_TODO_HANDOFF.md — Browser MCP only`
+**NEXT:** `audit-r10-rollout-soak` — **BLOCKED** until 위 2건 triage 또는 operator waiver
 
 ---
 
-## audit-r10-rollout-soak `[ ]`
+## audit-r10-rollout-soak `[x]` DONE 2026-07-13
 
-| Feature Flag 5조건 · Rollback Trigger · SLO soak ≥24h
+| 항목          | 값                                                                                                                                                                         |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase**     | Feature Flag 5조건 · Rollback Trigger · SLO soak ≥24h SOP                                                                                                                  |
+| **Evidence**  | [`R10/r10-rollout-soak-implement.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R10/r10-rollout-soak-implement.md) · [`PLATFORM_R10_ROLLOUT_SOAK.md`](PLATFORM_R10_ROLLOUT_SOAK.md) |
+| **R9 triage** | R9-INSTALL-CTX **FIXED** · R9-PERF-JS **ACCEPTED_RISK** baseline (flip 0)                                                                                                  |
+| **게이트**    | `audit:r10-rollout` · vitest contract 3/3 + script 3/3 · `check:pwa`                                                                                                       |
 
-**착수:** `Implement audit-r10-rollout-soak per PLATFORM_AUDIT_TODO_HANDOFF.md`
+### 마감 체크
+
+- [x] 5조건 SOP + 재개 순서 6단계 (baseline + 5 flip)
+- [x] Rollback Trigger 6건 ↔ dry-fire 매핑
+- [x] Soak 24h 타임라인 + spotcheck SQL
+- [x] R9-INSTALL-CTX Provider wrap fix
+- [x] Operator 24h snapshot **template** ([`r10-soak-24h-snapshot.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R10/r10-soak-24h-snapshot.md))
+- [x] `closeout:todo audit-r10-rollout-soak`
+
+**NEXT:** `audit-r12-post-release` — PPR 24h/72h/7d · DR drill
+
+**착수:** ~~`Implement audit-r10-rollout-soak per PLATFORM_AUDIT_TODO_HANDOFF.md`~~
 
 ---
 
-## audit-r11-closeout `[ ]`
+## audit-r11-closeout `[x]` DONE
 
-| Release Freeze · 3-Owner Sign-off · Evidence 90일 · 출시 후보 보고만
+**상태:** DONE 2026-07-13 · Release Freeze ACTIVE · Release candidate **BLOCKED** · 재착수 금지
 
-**착수:** `Implement audit-r11-closeout per PLATFORM_AUDIT_TODO_HANDOFF.md`
+| 항목                  | 값                                                                                                                                                             |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase**             | Closeout **`[x]`**                                                                                                                                             |
+| **RC SHA**            | `dcfd8c7eab0374296ffeecdc5cd3f79433786ebe`                                                                                                                     |
+| **Freeze**            | ACTIVE · Critical-only                                                                                                                                         |
+| **Release candidate** | **BLOCKED** (R9-PERF-JS · 3-Owner · soak 24h · DR drill)                                                                                                       |
+| **Evidence**          | [`R11/r11-closeout-implement.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R11/r11-closeout-implement.md) · [`PLATFORM_RELEASE_FREEZE.md`](PLATFORM_RELEASE_FREEZE.md) |
+| **게이트**            | `audit:r11-closeout` · vitest · `gate:ai-impl`                                                                                                                 |
+
+**Operator NEXT:** 3-Owner 시차 서명 · 24h soak snapshot · R9-PERF-JS fix 또는 waiver
+
+**착수:** ~~`Implement audit-r11-closeout per PLATFORM_AUDIT_TODO_HANDOFF.md`~~
 
 ---
 
-## audit-r12-post-release `[ ]`
+## audit-r12-post-release `[x]` DONE
 
-| 24h/72h/7d PPR · DR drill · Secrets rotation
+**상태:** DONE 2026-07-13 · PPR 스케줄·템플릿 등록 · Production normal **pending_ppr** · 재착수 금지
 
-**착수:** `Implement audit-r12-post-release per PLATFORM_AUDIT_TODO_HANDOFF.md`
+| 항목                  | 값                                                                                                        |
+| --------------------- | --------------------------------------------------------------------------------------------------------- |
+| **Phase**             | Post Release **`[x]`**                                                                                    |
+| **RC SHA**            | `dcfd8c7eab0374296ffeecdc5cd3f79433786ebe`                                                                |
+| **PPR due**           | 24h 2026-07-14 · 72h 2026-07-16 · 7d 2026-07-20 (KST)                                                     |
+| **Production normal** | **pending_ppr** (3 reviews PENDING_OPERATOR)                                                              |
+| **Evidence**          | [`R12/r12-post-release-implement.md`](PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R12/r12-post-release-implement.md) |
+| **게이트**            | `audit:r12-post-release` · vitest · `gate:ai-impl`                                                        |
+
+**Operator NEXT:** PPR 24h/72h/7d template fill · secrets spotcheck · DR drill 2026-10-13
+
+**착수:** ~~`Implement audit-r12-post-release per PLATFORM_AUDIT_TODO_HANDOFF.md`~~

@@ -10,12 +10,12 @@
 
 ## 1. 현재 운영 상태 (의도적 OFF)
 
-| 항목 | 값 |
-| --- | --- |
-| `app_config.feature_withdrawal_enabled` | **`false`** (의도 · 코드 결함 아님) |
-| Soft Launch / T1 | [`P13_T1_LIVE_RAMP_FEATURE_GATES.md`](P13_T1_LIVE_RAMP_FEATURE_GATES.md) §2.3 Launch OFF |
-| 사용자 UI | 사유 + 다음 행동 i18n · rail CTA disabled · RPC submit fail-closed |
-| 잔액 | 조회·입금 가능 · 잔액 보존 |
+| 항목                                    | 값                                                                                       |
+| --------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `app_config.feature_withdrawal_enabled` | **`false`** (의도 · 코드 결함 아님)                                                      |
+| Soft Launch / T1                        | [`P13_T1_LIVE_RAMP_FEATURE_GATES.md`](P13_T1_LIVE_RAMP_FEATURE_GATES.md) §2.3 Launch OFF |
+| 사용자 UI                               | 사유 + 다음 행동 i18n · rail CTA disabled · RPC submit fail-closed                       |
+| 잔액                                    | 조회·입금 가능 · 잔액 보존                                                               |
 
 **금지:** Owner 승인·본 체크리스트 Green 없이 `feature_withdrawal_enabled=true` flip.
 
@@ -25,13 +25,13 @@
 
 신규/재개 rail을 `live`로 켜려면 아래 **5가지 전부 Green**. 하나라도 red면 `false` 유지.
 
-| # | 조건 | Withdrawal 판정 근거 | Green 기준 |
-| --- | --- | --- | --- |
-| **1** | Feature Flag | `feature_withdrawal_enabled` 명시 OFF/ON + Admin kill audit | flip 직전에만 ON · reason/audit 기록 |
-| **2** | Capability | KYC/AML · MFA(AAL2) · tier cap · `withdrawal_ready` · queue/runbook | 준비 조건 전부 충족 (§3) |
-| **3** | Provider Health | KRW 송금 경로 · (재개 시) crypto withdraw provider | false-green 금지 · health OK |
-| **4** | Runtime | 성공 + negative E2E 1쌍 (money Σ=0) | CI e2e 또는 승인 orchestrator green |
-| **5** | Browser Evidence | Stage1 `/wallet/withdraw` (+ rail) | paused→live 전환 후 Browser MCP PASS |
+| #     | 조건             | Withdrawal 판정 근거                                                | Green 기준                           |
+| ----- | ---------------- | ------------------------------------------------------------------- | ------------------------------------ |
+| **1** | Feature Flag     | `feature_withdrawal_enabled` 명시 OFF/ON + Admin kill audit         | flip 직전에만 ON · reason/audit 기록 |
+| **2** | Capability       | KYC/AML · MFA(AAL2) · tier cap · `withdrawal_ready` · queue/runbook | 준비 조건 전부 충족 (§3)             |
+| **3** | Provider Health  | KRW 송금 경로 · (재개 시) crypto withdraw provider                  | false-green 금지 · health OK         |
+| **4** | Runtime          | 성공 + negative E2E 1쌍 (money Σ=0)                                 | CI e2e 또는 승인 orchestrator green  |
+| **5** | Browser Evidence | Stage1 `/wallet/withdraw` (+ rail)                                  | paused→live 전환 후 Browser MCP PASS |
 
 R10은 재개 단계마다 본 표를 **재확인**한다.
 
@@ -41,15 +41,15 @@ R10은 재개 단계마다 본 표를 **재확인**한다.
 
 5조건 **Capability**에 포함되는 withdrawal-specific 체크리스트:
 
-| # | 항목 | 확인 |
-| --- | --- | --- |
-| W1 | KYC/AML 정책·심사 큐 가동 | [ ] |
-| W2 | MFA(AAL2) withdraw path live | [ ] |
-| W3 | Tier/cap · per-user limit 문서화 | [ ] |
-| W4 | Admin `/withdrawals` queue SLA · runbook | [ ] |
-| W5 | 기존 audited RPC만 사용 (`rpc_create_*_withdrawal` 등) · 신규 mutator 0 | [ ] |
-| W6 | Ledger conservation Σ=0 · hash-chain SQL/CI green | [ ] |
-| W7 | Rollback Trigger(§20b) + Observability(§39) 매핑 | [ ] |
+| #   | 항목                                                                    | 확인 |
+| --- | ----------------------------------------------------------------------- | ---- |
+| W1  | KYC/AML 정책·심사 큐 가동                                               | [ ]  |
+| W2  | MFA(AAL2) withdraw path live                                            | [ ]  |
+| W3  | Tier/cap · per-user limit 문서화                                        | [ ]  |
+| W4  | Admin `/withdrawals` queue SLA · runbook                                | [ ]  |
+| W5  | 기존 audited RPC만 사용 (`rpc_create_*_withdrawal` 등) · 신규 mutator 0 | [ ]  |
+| W6  | Ledger conservation Σ=0 · hash-chain SQL/CI green                       | [ ]  |
+| W7  | Rollback Trigger(§20b) + Observability(§39) 매핑                        | [ ]  |
 
 ---
 

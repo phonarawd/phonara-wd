@@ -7,26 +7,26 @@
 
 ## Finding touched
 
-| Finding  | Fix summary                                                                                                      | Gate |
-| -------- | ---------------------------------------------------------------------------------------------------------------- | ---- |
+| Finding  | Fix summary                                                                                                     | Gate          |
+| -------- | --------------------------------------------------------------------------------------------------------------- | ------------- |
 | **M-06** | Client DML allowlist pin · trigger EXECUTE revoke · postgres DEFAULT PRIVILEGES no longer auto-grant client ALL | SQL + advisor |
 
 ## Root cause / fix
 
-| 필드 | 값 |
-| ---- | --- |
+| 필드           | 값                                                                                                                                                                                       |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Root cause** | `public` schema DEFAULT PRIVILEGES가 신규 table/function에 anon·authenticated ALL/EXECUTE를 자동 부여 · E4 `_earn_vip_preserve_prime_elite` 등 trigger가 REVOKE 없이 PostgREST 호출 가능 |
-| **Fix** | migration `20260815000001_m06_r3b_service_write_grants` — client write allowlist 재고정 · 전 trigger EXECUTE revoke · postgres DEFAULT PRIVILEGES 최소화 |
-| **Ledger** | money path 변경 0 (GRANT/REVOKE + default privileges only) |
-| **Note** | hosted Supabase에서 `ALTER DEFAULT PRIVILEGES FOR ROLE supabase_admin`는 42501 — migration postgres가 강제 가능한 postgres defaults만 고정 |
+| **Fix**        | migration `20260815000001_m06_r3b_service_write_grants` — client write allowlist 재고정 · 전 trigger EXECUTE revoke · postgres DEFAULT PRIVILEGES 최소화                                 |
+| **Ledger**     | money path 변경 0 (GRANT/REVOKE + default privileges only)                                                                                                                               |
+| **Note**       | hosted Supabase에서 `ALTER DEFAULT PRIVILEGES FOR ROLE supabase_admin`는 42501 — migration postgres가 강제 가능한 postgres defaults만 고정                                               |
 
 ## Code owners
 
-| Path | Role |
-| ---- | ---- |
-| `supabase/migrations/20260815000001_m06_r3b_service_write_grants.sql` | M-06 lockdown |
-| `supabase/tests/m06_r3b_service_write_grants_test.sql` | RED-first owner |
-| `supabase/tests/grants_rls_inventory_test.sql` | inventory pin (TRIGGER/REFERENCES + defacl) |
+| Path                                                                  | Role                                        |
+| --------------------------------------------------------------------- | ------------------------------------------- |
+| `supabase/migrations/20260815000001_m06_r3b_service_write_grants.sql` | M-06 lockdown                               |
+| `supabase/tests/m06_r3b_service_write_grants_test.sql`                | RED-first owner                             |
+| `supabase/tests/grants_rls_inventory_test.sql`                        | inventory pin (TRIGGER/REFERENCES + defacl) |
 
 ## Gates
 
@@ -40,17 +40,17 @@ remote privilege probe (MCP) → auth_earn_vip=f · auth_set_updated=f · trigge
 
 ## Remote privilege probe (2026-07-13)
 
-| Check | Result |
-| ----- | ------ |
-| authenticated EXECUTE `_earn_vip_preserve_prime_elite` | false |
-| authenticated EXECUTE `set_updated_at` | false |
-| trigger funcs with client EXECUTE | 0 |
-| authenticated INSERT `wallets` / `live_crash_rounds` | false |
-| authenticated UPDATE `profiles` | true (allowlist) |
-| authenticated INSERT `push_subscriptions` | true (allowlist) |
-| service_role INSERT `live_crash_rounds` | true |
-| postgres table DEFAULT PRIVILEGES client write | false |
-| postgres function DEFAULT PRIVILEGES client EXECUTE | false |
+| Check                                                  | Result           |
+| ------------------------------------------------------ | ---------------- |
+| authenticated EXECUTE `_earn_vip_preserve_prime_elite` | false            |
+| authenticated EXECUTE `set_updated_at`                 | false            |
+| trigger funcs with client EXECUTE                      | 0                |
+| authenticated INSERT `wallets` / `live_crash_rounds`   | false            |
+| authenticated UPDATE `profiles`                        | true (allowlist) |
+| authenticated INSERT `push_subscriptions`              | true (allowlist) |
+| service_role INSERT `live_crash_rounds`                | true             |
+| postgres table DEFAULT PRIVILEGES client write         | false            |
+| postgres function DEFAULT PRIVILEGES client EXECUTE    | false            |
 
 ## No Shortcut checklist
 

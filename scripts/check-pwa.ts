@@ -156,6 +156,14 @@ assert(
   pwaShell.includes('notifyPwaSwUpdateReady'),
   'PwaShell must wire SW update UX via notifyPwaSwUpdateReady (productToast strict toast.pwa.updateAvailable)',
 );
+assert(
+  pwaShell.includes('InstallPromptProvider'),
+  'PwaShell must provide InstallPromptProvider for /install and deferred prompt UX',
+);
+assert(
+  pwaShell.includes('children'),
+  'PwaShell must accept children so InstallPromptProvider wraps the route outlet',
+);
 
 const serviceWorker = read('apps/web/src/sw.ts');
 assert(

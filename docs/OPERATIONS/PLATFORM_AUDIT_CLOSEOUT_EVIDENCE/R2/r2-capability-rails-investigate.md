@@ -9,12 +9,12 @@
 
 ## R2 Finding 배치 (Standing Grant · max 3 Finding/PR)
 
-| PR       | Finding     | Domain                                     | 우선               |
-| -------- | ----------- | ------------------------------------------ | ------------------ |
+| PR       | Finding     | Domain                                     | 우선                                           |
+| -------- | ----------- | ------------------------------------------ | ---------------------------------------------- |
 | **R2-a** | H-03 · H-11 | Wallet (Crypto + Giftcard hub fail-closed) | **Plan todo `audit-r2a-crypto-giftcard` NEXT** |
-| **R2-b** | H-10        | Wallet (출금 OFF — 운영 decision + copy)   | 후속               |
-| **R2-c** | H-05        | Sports (stale odds · ingest)               | ops 선행           |
-| **R2-d** | M-21        | Wallet (KRW proof upload wire)             | gate flip 후       |
+| **R2-b** | H-10        | Wallet (출금 OFF — 운영 decision + copy)   | 후속                                           |
+| **R2-c** | H-05        | Sports (stale odds · ingest)               | ops 선행                                       |
+| **R2-d** | M-21        | Wallet (KRW proof upload wire)             | gate flip 후                                   |
 
 ---
 

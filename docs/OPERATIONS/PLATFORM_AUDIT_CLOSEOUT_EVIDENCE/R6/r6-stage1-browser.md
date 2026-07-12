@@ -5,16 +5,16 @@
 
 ## Covered by unit (authoritative for this closeout)
 
-| Check | Result |
-| --- | --- |
-| Spot base qty fail-closed / Decimal precision | PASS (`spot-base-quantity-display-contract`) |
-| Settings inbox hidden when `notificationsCenter=false` · prefs kept | PASS (`settings-hub-display-contract`) |
-| Fold4 mission card is Link to `/home/missions` | PASS (`earn-home-page`) |
-| Casino subnav has no `/casino/tournaments` | PASS (`subnav-route-manifest` · `p10-gate`) |
-| Price alert shows local-only note | PASS (`trade-price-alert-control`) |
-| Cross margin disabled + entry TP/SL limit/stop off | PASS (`r6-trade-capability-honesty`) |
-| Onboarding matches Earn tab | PASS (`shell-route-matchers`) |
-| PWA banner uses bottomnav CSS var | PASS (source assert · typecheck) |
+| Check                                                               | Result                                       |
+| ------------------------------------------------------------------- | -------------------------------------------- |
+| Spot base qty fail-closed / Decimal precision                       | PASS (`spot-base-quantity-display-contract`) |
+| Settings inbox hidden when `notificationsCenter=false` · prefs kept | PASS (`settings-hub-display-contract`)       |
+| Fold4 mission card is Link to `/home/missions`                      | PASS (`earn-home-page`)                      |
+| Casino subnav has no `/casino/tournaments`                          | PASS (`subnav-route-manifest` · `p10-gate`)  |
+| Price alert shows local-only note                                   | PASS (`trade-price-alert-control`)           |
+| Cross margin disabled + entry TP/SL limit/stop off                  | PASS (`r6-trade-capability-honesty`)         |
+| Onboarding matches Earn tab                                         | PASS (`shell-route-matchers`)                |
+| PWA banner uses bottomnav CSS var                                   | PASS (source assert · typecheck)             |
 
 ## Operator optional Browser
 

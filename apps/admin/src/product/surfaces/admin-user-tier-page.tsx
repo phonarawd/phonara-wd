@@ -6,7 +6,10 @@ import { ArrowLeft, RefreshCw } from 'lucide-react';
 import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
 import { useAdminUserTierDesk } from '@/hooks/admin/useAdminUserTierDesk';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
-import { ADMIN_EARN_VIP_TIERS, type AdminEarnVipTier } from '@/product/bridge/parse-admin-tiers-desk';
+import {
+  ADMIN_EARN_VIP_TIERS,
+  type AdminEarnVipTier,
+} from '@/product/bridge/parse-admin-tiers-desk';
 import { useT } from '@/product/i18n';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
@@ -71,11 +74,7 @@ export function AdminUserTierPage({ userId }: { userId: string }) {
     if (!writeEnabled || !selectedTier) return false;
     const xpRaw = draftXp.trim();
     const xp =
-      xpRaw.length === 0
-        ? null
-        : Number.isFinite(Number(xpRaw))
-          ? Math.trunc(Number(xpRaw))
-          : null;
+      xpRaw.length === 0 ? null : Number.isFinite(Number(xpRaw)) ? Math.trunc(Number(xpRaw)) : null;
     if (xpRaw.length > 0 && xp === null) return false;
     try {
       await setUserTier({

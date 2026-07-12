@@ -4,10 +4,7 @@ import { RefreshCw } from 'lucide-react';
 
 import type { MessageKey } from '@phonara/i18n';
 
-import {
-  useAdminEarnDesk,
-  type SettlementState,
-} from '@/hooks/admin/useAdminEarnDesk';
+import { useAdminEarnDesk, type SettlementState } from '@/hooks/admin/useAdminEarnDesk';
 import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
 import { formatAmountString } from '@/hooks/admin/useAdminWalletDesk';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
@@ -231,7 +228,9 @@ export function AdminEarnPage() {
         <div className="space-y-4">
           <Card>
             <CardHeader className="gap-2">
-              <CardTitle className="text-base">{t('admin.earn.settlements.section.title')}</CardTitle>
+              <CardTitle className="text-base">
+                {t('admin.earn.settlements.section.title')}
+              </CardTitle>
               <CardDescription>{t('admin.earn.deferred.settlementsPayout')}</CardDescription>
             </CardHeader>
           </Card>

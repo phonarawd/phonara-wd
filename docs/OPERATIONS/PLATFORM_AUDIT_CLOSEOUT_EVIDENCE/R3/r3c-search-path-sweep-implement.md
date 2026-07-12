@@ -7,25 +7,25 @@
 
 ## Finding touched
 
-| Finding  | Fix summary                                                                                          | Gate |
-| -------- | ---------------------------------------------------------------------------------------------------- | ---- |
+| Finding  | Fix summary                                                                                     | Gate          |
+| -------- | ----------------------------------------------------------------------------------------------- | ------------- |
 | **M-05** | Advisor `function_search_path_mutable` 8건 → 0 · earn/tier IMMUTABLE helpers function-level pin | SQL + advisor |
 
 ## Root cause / fix
 
-| 필드 | 값 |
-| ---- | --- |
+| 필드           | 값                                                                                                                                                                    |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Root cause** | E4 Option B (`20260804000002`)가 `_earn_*` / `_tier_decay_*` IMMUTABLE helper를 `CREATE OR REPLACE`로 재작성하며 `SET search_path` 누락 — 이전 `launch_rc` pin 무효화 |
-| **Fix** | migration `20260816000001_m05_r3c_search_path_sweep` — `ALTER FUNCTION … SET search_path = public, pg_temp` × 8 · client REVOKE 재고정 |
-| **Ledger** | money path 변경 0 (proconfig only · body 미개서) |
-| **Note** | Plan 문구의 “SECURITY DEFINER”와 달리 advisor 8건은 **IMMUTABLE SQL helpers**(prosecdef=false). 정본은 advisor `function_search_path_mutable` 목록 |
+| **Fix**        | migration `20260816000001_m05_r3c_search_path_sweep` — `ALTER FUNCTION … SET search_path = public, pg_temp` × 8 · client REVOKE 재고정                                |
+| **Ledger**     | money path 변경 0 (proconfig only · body 미개서)                                                                                                                      |
+| **Note**       | Plan 문구의 “SECURITY DEFINER”와 달리 advisor 8건은 **IMMUTABLE SQL helpers**(prosecdef=false). 정본은 advisor `function_search_path_mutable` 목록                    |
 
 ## Code owners
 
-| Path | Role |
-| ---- | ---- |
-| `supabase/migrations/20260816000001_m05_r3c_search_path_sweep.sql` | M-05 pin |
-| `supabase/tests/m05_r3c_search_path_sweep_test.sql` | RED-first owner |
+| Path                                                               | Role            |
+| ------------------------------------------------------------------ | --------------- |
+| `supabase/migrations/20260816000001_m05_r3c_search_path_sweep.sql` | M-05 pin        |
+| `supabase/tests/m05_r3c_search_path_sweep_test.sql`                | RED-first owner |
 
 ## Targets (8)
 
@@ -51,12 +51,12 @@ remote probe (MCP) → 8/8 has_search_path=true · anon/auth EXECUTE=false · sm
 
 ## Remote probe (2026-07-13)
 
-| Check | Result |
-| ----- | ------ |
-| `search_path=public, pg_temp` on all 8 | true |
-| anon/authenticated EXECUTE | false × 8 |
-| `_earn_tier_index('bronze')` | 0 |
-| `_earn_referral_multiplier('gold')` | 1.25 |
+| Check                                  | Result        |
+| -------------------------------------- | ------------- |
+| `search_path=public, pg_temp` on all 8 | true          |
+| anon/authenticated EXECUTE             | false × 8     |
+| `_earn_tier_index('bronze')`           | 0             |
+| `_earn_referral_multiplier('gold')`    | 1.25          |
 | advisor `function_search_path_mutable` | **0** (was 8) |
 
 ## No Shortcut checklist

@@ -89,7 +89,9 @@ export function WithdrawHubPage() {
           data-testid="withdraw-hub-paused"
           role="status"
         >
-          <p className="text-foreground m-0 text-sm font-medium">{t(withdrawalOffBanner.titleKey)}</p>
+          <p className="text-foreground m-0 text-sm font-medium">
+            {t(withdrawalOffBanner.titleKey)}
+          </p>
           <p className="text-foreground-muted m-0 mt-1 text-sm">
             {t(withdrawalOffBanner.descriptionKey)}
           </p>

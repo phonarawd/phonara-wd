@@ -6,12 +6,12 @@
 
 ## Gate outcome
 
-| Check | Result | Evidence |
-| ----- | ------ | -------- |
-| Navigate `/wallet/deposit/krw` | **PASS** | final URL `/login` (auth required) — route exists · no app crash |
-| App JS crash 0 | **PASS** | login heading `로그인` · brand `phonara` |
-| Proof upload wire | **PASS (unit)** | `krw-deposit-page.test.tsx` · `krw-deposit-proof-display-contract` |
-| `krwDepositProofLive=true` | **PASS** | display contract assert + launch-gates |
+| Check                          | Result          | Evidence                                                           |
+| ------------------------------ | --------------- | ------------------------------------------------------------------ |
+| Navigate `/wallet/deposit/krw` | **PASS**        | final URL `/login` (auth required) — route exists · no app crash   |
+| App JS crash 0                 | **PASS**        | login heading `로그인` · brand `phonara`                           |
+| Proof upload wire              | **PASS (unit)** | `krw-deposit-page.test.tsx` · `krw-deposit-proof-display-contract` |
+| `krwDepositProofLive=true`     | **PASS**        | display contract assert + launch-gates                             |
 
 ## Notes
 

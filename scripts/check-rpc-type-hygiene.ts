@@ -13,10 +13,7 @@ const advisory = process.argv.includes('--advisory');
 const SCAN_DIRS = ['apps/web/src', 'apps/admin/src'] as const;
 const SKIP_DIRS = new Set(['node_modules', 'dist', '.turbo', '__tests__']);
 
-const ALLOW_AS_NEVER = new Set([
-  'apps/web/src/lib/rpc.ts',
-  'apps/admin/src/lib/rpc.ts',
-]);
+const ALLOW_AS_NEVER = new Set(['apps/web/src/lib/rpc.ts', 'apps/admin/src/lib/rpc.ts']);
 
 /** Non-RPC `as never` that are out of M-16 scope (navigate / i18n / realtime / table). */
 const LINE_ALLOW = [
@@ -124,9 +121,7 @@ function main(): void {
   const findings = scan();
   console.log(`[check:rpc-type-hygiene] findings=${findings.length}`);
   for (const f of findings) {
-    console[advisory ? 'warn' : 'error'](
-      `  ${f.id} ${f.file}:${f.line}  ${f.snippet}`,
-    );
+    console[advisory ? 'warn' : 'error'](`  ${f.id} ${f.file}:${f.line}  ${f.snippet}`);
   }
   if (findings.length === 0) {
     console.log('[check:rpc-type-hygiene] ✓ type-lie / dynamic RPC helper 0');

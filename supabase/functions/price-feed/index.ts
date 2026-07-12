@@ -429,7 +429,10 @@ Deno.serve(async (request) => {
           rejected += 1;
           continue;
         }
-        if (rpcResult['circuit_breaker_triggered'] === true || rpcResult['market_halted'] === true) {
+        if (
+          rpcResult['circuit_breaker_triggered'] === true ||
+          rpcResult['market_halted'] === true
+        ) {
           // Source stored / feed attempted but settlement rejected by circuit — count as rejected.
           rejected += 1;
           continue;

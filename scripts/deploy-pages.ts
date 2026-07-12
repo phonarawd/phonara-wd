@@ -75,13 +75,10 @@ function main(): void {
   const buildScript = app === 'web' ? 'build:web:production' : 'build:admin:production';
   run('bun', ['run', buildScript], 'build');
 
-  run(
-    'bun',
-    ['run', 'release:manifest', '--', `--app=${app}`, `--branch=${branch}`],
-    'manifest',
-  );
+  run('bun', ['run', 'release:manifest', '--', `--app=${app}`, `--branch=${branch}`], 'manifest');
 
   const distDir = path.join('apps', app, 'dist');
+  // Pages deploy: --project-name only (wrangler rejects --config for Pages).
   const wranglerArgs = [
     'pages',
     'deploy',
@@ -94,9 +91,6 @@ function main(): void {
     '--commit-hash',
     sha,
   ];
-  if (app === 'admin') {
-    wranglerArgs.push('--config', 'wrangler.admin.toml');
-  }
 
   run('wrangler', wranglerArgs, 'wrangler');
   process.stdout.write(`[deploy-pages] OK — ${app} @ ${sha.slice(0, 8)} (${branch})\n`);

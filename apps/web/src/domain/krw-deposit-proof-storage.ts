@@ -15,10 +15,12 @@ export async function uploadKrwDepositProof(userId: string, file: File): Promise
   if (validation) throw new Error(validation);
 
   const path = buildKrwDepositProofPath(userId, file.type);
-  const { error } = await supabase.storage.from(KRW_DEPOSIT_PROOF_STORAGE_BUCKET).upload(path, file, {
-    upsert: true,
-    contentType: file.type,
-  });
+  const { error } = await supabase.storage
+    .from(KRW_DEPOSIT_PROOF_STORAGE_BUCKET)
+    .upload(path, file, {
+      upsert: true,
+      contentType: file.type,
+    });
   if (error) throw error;
   return path;
 }

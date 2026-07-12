@@ -24,7 +24,9 @@ describe('spot-base-quantity-display-contract (M-03)', () => {
     expect(resolveSpotBaseQuantityPrecision({ quantity_precision: null })).toBe(
       SPOT_HOLDING_ENGINE_QUANTITY_PRECISION,
     );
-    expect(resolveSpotBaseQuantityPrecision(undefined)).toBe(SPOT_HOLDING_ENGINE_QUANTITY_PRECISION);
+    expect(resolveSpotBaseQuantityPrecision(undefined)).toBe(
+      SPOT_HOLDING_ENGINE_QUANTITY_PRECISION,
+    );
   });
 
   it('formats with Decimal precision and fails closed on unknown precision', () => {

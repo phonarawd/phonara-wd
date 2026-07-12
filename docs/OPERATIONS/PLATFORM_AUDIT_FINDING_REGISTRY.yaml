@@ -1,11 +1,11 @@
 schema_version: 1
 playbook_version: '1.0.0'
-release_sha: '391646f6f8ab6ae204d17f55ae59677036ca0728'
+release_sha: 'dcfd8c7eab0374296ffeecdc5cd3f79433786ebe'
 known_good_sha: '9c4bf29b40d31b2d2952bd6257f5690d691ecbc2'
-updated_at: '2026-07-13T06:30:00+09:00'
+updated_at: '2026-07-13T10:00:00+09:00'
 source_audit: 'docs/audit/PLATFORM_AUDIT_REFERENCE.md'
-finding_count: 36
-notes: 'R8 H-06 VERIFIED_FIXED 2026-07-13 (deploy parity · clean SHA). OPEN remaining: 0. BLOCKED_DEP: H-09. Intent SHA 391646f6. R9 blocked until check:deploy-parity --remote green.'
+finding_count: 38
+notes: 'R12 audit-r12-post-release Implement DONE 2026-07-13. Plan 19/19 complete. Freeze ACTIVE. Release candidate BLOCKED. Production normal pending_ppr. OPEN: R9-PERF-JS. BLOCKED_DEP: H-09.'
 findings:
   - id: 'C-01'
     severity: 'CRITICAL'
@@ -1263,3 +1263,71 @@ findings:
     sha: '9c4bf29b40d31b2d2952bd6257f5690d691ecbc2'
     adr: 'ADR-021'
     updated_at: '2026-07-13T00:40:00+09:00'
+  - id: 'R9-PERF-JS'
+    severity: 'HIGH'
+    impact: 4
+    likelihood: 5
+    exploitability: 1
+    customer_impact: 4
+    revenue_impact: 3
+    score: 17
+    domain: 'Ops'
+    stage: 'R9'
+    status: 'OPEN'
+    dod_profile: 'ui-route'
+    depends_on: []
+    blocked_by: []
+    symptom: 'Web Stage1 initial JS 539kb > SLO 450kb (21/21 web states FAIL)'
+    root_cause: 'SPA entry+i18n bundle loads before DCL exceeds Stage1 JS budget on preview.phonara-web.pages.dev'
+    fix: 'Code-split / defer non-critical chunks; re-measure Stage1 — ACCEPTED_RISK for R10 baseline soak (flip 0) per DL-R10-PERF-JS'
+    evidence:
+      - type: 'browser_mcp'
+        sha: 'dcfd8c7eab0374296ffeecdc5cd3f79433786ebe'
+        timestamp: '2026-07-13T07:00:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-stage1-matrix.md'
+    regression: 'Stage1 initial JS ≤ 450kb on 21 web states · strict matrix 24/24'
+    owner: 'sre'
+    reviewer: 'product'
+    security: 'security'
+    db: 'db'
+    runtime: 'sre'
+    owner_path: 'apps/web'
+    pr: ''
+    sha: 'dcfd8c7eab0374296ffeecdc5cd3f79433786ebe'
+    adr: ''
+    updated_at: '2026-07-13T07:15:00+09:00'
+  - id: 'R9-INSTALL-CTX'
+    severity: 'MEDIUM'
+    impact: 3
+    likelihood: 3
+    exploitability: 1
+    customer_impact: 3
+    revenue_impact: 2
+    score: 12
+    domain: 'Ops'
+    stage: 'R9'
+    status: 'VERIFIED_FIXED'
+    dod_profile: 'ui-route'
+    depends_on: []
+    blocked_by: []
+    symptom: '/install@2560 pageerror — useInstallPrompt outside InstallPromptProvider'
+    root_cause: 'PwaShell mounted InstallPromptProvider as sibling of RootOutlet instead of wrapping route tree'
+    fix: 'PwaShell children prop wraps RootOutlet inside InstallPromptProvider'
+    evidence:
+      - type: 'code'
+        sha: 'dcfd8c7eab0374296ffeecdc5cd3f79433786ebe'
+        timestamp: '2026-07-13T08:00:00+09:00'
+        pr: ''
+        uri: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R10/r10-rollout-soak-implement.md'
+    regression: 'web/install@2560 no pageerror · check:pwa children contract'
+    owner: 'sre'
+    reviewer: 'product'
+    security: 'security'
+    db: 'db'
+    runtime: 'sre'
+    owner_path: 'apps/web/src/product/surfaces/install/install-page.tsx'
+    pr: ''
+    sha: 'dcfd8c7eab0374296ffeecdc5cd3f79433786ebe'
+    adr: ''
+    updated_at: '2026-07-13T07:15:00+09:00'

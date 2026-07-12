@@ -13,7 +13,7 @@
 | **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                                    |
 | **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                                       |
 | **Cursor 8GB perf (v4.4.5)**  | **`[x]` DONE**                               | `cursor:perf-rollout` diagnosis-first · `high-remediation` dry-run 기본 · evidence JSONL · summary remediation assert · tsserver/argv **옵트인** (`--include-tsserver-tuning`)                                                                                 |
-| **Platform Perfect Launch**   | **Plan 15/19 completed** · **NEXT audit-r9** | Plan `platform-perfect-launch` — **todo id = 착수 단위** · Handoff [`PLATFORM_AUDIT_TODO_HANDOFF.md`](../OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md) · 채팅 `Implement <todo-id>` |
+| **Platform Perfect Launch**   | **Plan 19/19 completed** · **R12 DONE**      | Plan `platform-perfect-launch` — **todo id = 착수 단위** · Handoff [`PLATFORM_AUDIT_TODO_HANDOFF.md`](../OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md) · 채팅 `Implement <todo-id>`                                                                               |
 
 ## Platform Perfect Launch Remediation (Plan `platform-perfect-launch` · execute SSOT)
 
@@ -25,37 +25,37 @@
 ### Operator — 플랜에서 바로 시작
 
 ```text
-1. Cursor Plan에서 다음 pending todo 확인 (지금: audit-r9-runtime-matrix)
-2. 채팅: Implement audit-r9-runtime-matrix
+1. Cursor Plan에서 다음 pending todo 확인 (Plan **19/19 complete** — operator PPR 실행)
+2. 채팅: PPR 24h template fill 또는 Phase R Track B NEXT todo
    (또는 Plan UI Assign / todo 체크 후 동일 문장)
 3. 에이전트: PLATFORM_AUDIT_TODO_HANDOFF.md 해당 절만 읽고 Implement
 4. 마감: Evidence · registry · **`bun run closeout:todo -- <id>`** · ACTIVE_WORK `[x]`
 ```
 
-| Plan todo id | Finding | Plan | 실행 | Handoff |
-| --- | --- | --- | --- | --- |
-| `audit-r0-control-plane` | R0 통제 | completed | **`[x]`** | §audit-r0 |
-| `audit-r1-trust-truth` | C-01/C-02/H-01/M-01 | completed | **`[x]`** | §audit-r1 |
-| **`audit-r2a-crypto-giftcard`** | **H-03 · H-11** | completed | **`[x]` DONE** | §audit-r2a |
-| **`audit-r2b-withdrawal-copy`** | **H-10** | completed | **`[x]` DONE** | §audit-r2b |
-| **`audit-r2c-sports-odds-freshness`** | **H-05** | completed | **`[x]` DONE** | §audit-r2c |
-| **`audit-r2d-krw-proof-wire`** | **M-21** | completed | **`[x]` DONE** | §audit-r2d |
-| **`audit-r3a-wallet-mutator-live-crash`** | **H-02** | completed | **`[x]` DONE** | §audit-r3a |
-| **`audit-r3b-service-write-grants`** | **M-06** | completed | **`[x]` DONE** | §audit-r3b |
-| **`audit-r3c-search-path-sweep`** | **M-05** | completed | **`[x]` DONE** | §audit-r3c |
-| **`audit-r3d-siwe-analytics-ingress`** | **M-04** | completed | **`[x]` DONE** | §audit-r3d |
-| **`audit-r3e-auth-hibp-feature-flag`** | **H-09** | completed | **`[x]` DONE** (HIBP `BLOCKED_DEP` Pro+) | §audit-r3e |
-| **`audit-r4-market-ops`** | H-04·EXT-01·M-20 | completed | **`[x]` DONE** | §audit-r4 |
-| `audit-r5-admin-safety` | H-07·H-08·M-12… | completed | **`[x]` DONE** | §audit-r5 |
-| `audit-r6-product-consistency` | M-03…M-19 | completed | **`[x]` DONE** | §audit-r6 |
-| `audit-r7-type-ui-hygiene` | M-14·M-15·M-16 | completed | **`[x]` DONE** | §audit-r7 |
-| `audit-r8-deploy-parity` | H-06 | completed | **`[x]` DONE** | §audit-r8 |
-| `audit-r9-runtime-matrix` | M-18·124 URL | pending | **`[ ]` NEXT** | §audit-r9 |
-| `audit-r10-rollout-soak` | soak·rollback | pending | `[ ]` | §audit-r10 |
-| `audit-r11-closeout` | 3-Owner | pending | `[ ]` | §audit-r11 |
-| `audit-r12-post-release` | PPR·DR | pending | `[ ]` | §audit-r12 |
+| Plan todo id                              | Finding             | Plan      | 실행                                     | Handoff    |
+| ----------------------------------------- | ------------------- | --------- | ---------------------------------------- | ---------- |
+| `audit-r0-control-plane`                  | R0 통제             | completed | **`[x]`**                                | §audit-r0  |
+| `audit-r1-trust-truth`                    | C-01/C-02/H-01/M-01 | completed | **`[x]`**                                | §audit-r1  |
+| **`audit-r2a-crypto-giftcard`**           | **H-03 · H-11**     | completed | **`[x]` DONE**                           | §audit-r2a |
+| **`audit-r2b-withdrawal-copy`**           | **H-10**            | completed | **`[x]` DONE**                           | §audit-r2b |
+| **`audit-r2c-sports-odds-freshness`**     | **H-05**            | completed | **`[x]` DONE**                           | §audit-r2c |
+| **`audit-r2d-krw-proof-wire`**            | **M-21**            | completed | **`[x]` DONE**                           | §audit-r2d |
+| **`audit-r3a-wallet-mutator-live-crash`** | **H-02**            | completed | **`[x]` DONE**                           | §audit-r3a |
+| **`audit-r3b-service-write-grants`**      | **M-06**            | completed | **`[x]` DONE**                           | §audit-r3b |
+| **`audit-r3c-search-path-sweep`**         | **M-05**            | completed | **`[x]` DONE**                           | §audit-r3c |
+| **`audit-r3d-siwe-analytics-ingress`**    | **M-04**            | completed | **`[x]` DONE**                           | §audit-r3d |
+| **`audit-r3e-auth-hibp-feature-flag`**    | **H-09**            | completed | **`[x]` DONE** (HIBP `BLOCKED_DEP` Pro+) | §audit-r3e |
+| **`audit-r4-market-ops`**                 | H-04·EXT-01·M-20    | completed | **`[x]` DONE**                           | §audit-r4  |
+| `audit-r5-admin-safety`                   | H-07·H-08·M-12…     | completed | **`[x]` DONE**                           | §audit-r5  |
+| `audit-r6-product-consistency`            | M-03…M-19           | completed | **`[x]` DONE**                           | §audit-r6  |
+| `audit-r7-type-ui-hygiene`                | M-14·M-15·M-16      | completed | **`[x]` DONE**                           | §audit-r7  |
+| `audit-r8-deploy-parity`                  | H-06                | completed | **`[x]` DONE**                           | §audit-r8  |
+| `audit-r9-runtime-matrix`                 | M-18·124 URL        | completed | **`[x]` DONE** 2026-07-13                | §audit-r9  |
+| `audit-r10-rollout-soak`                  | soak·rollback       | completed | **`[x]` DONE** 2026-07-13                | §audit-r10 |
+| `audit-r11-closeout`                      | 3-Owner             | completed | **`[x]` DONE** 2026-07-13                | §audit-r11 |
+| `audit-r12-post-release`                  | PPR·DR              | completed | **`[x]` DONE** 2026-07-13                | §audit-r12 |
 
-**현재 NEXT:** **`audit-r9-runtime-matrix`** — preflight **`[x]`** (URL matrix · template · MCP probe) · **블로커:** clean dual preview → `check:deploy-parity -- --remote` green 후 `Implement audit-r9-runtime-matrix`
+**현재:** Platform Perfect Launch Plan **19/19 DONE** · operator PPR 24h/72h/7d 실행 · Release candidate **BLOCKED** (R9-PERF-JS · 3-Owner pending)
 
 ## Cursor 8GB Performance Rollout (v4.4.5 · diagnosis-first · YAML `phase0-gate`)
 

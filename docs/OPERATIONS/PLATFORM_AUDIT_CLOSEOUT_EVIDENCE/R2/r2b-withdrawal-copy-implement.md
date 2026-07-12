@@ -8,27 +8,27 @@
 
 ## Finding touched
 
-| Finding  | Fix summary                                                                                                      | Unit / contract gate                          |
-| -------- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Finding  | Fix summary                                                                                                                  | Unit / contract gate                        |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
 | **H-10** | OFF = 운영 의도(Decision Log) · 사유/다음 행동 i18n · Feature Flag 5조건 재개 문서 · `feature_withdrawal_enabled` 유지 false | wallet-withdrawal-off · withdraw-hub vitest |
 
 ## Root cause / fix
 
-| 필드 | 값 |
-| ---- | --- |
+| 필드           | 값                                                                                           |
+| -------------- | -------------------------------------------------------------------------------------------- |
 | **Root cause** | Soft launch / T1 `feature_withdrawal_enabled=false` (의도) — 감사 시 “결함 vs 운영” 미문서화 |
-| **Fix** | DL-R2B-H10 · `PLATFORM_WITHDRAWAL_REENABLE_GATE.md` · display contract + hub next-action CTA |
-| **Not done** | flag ON · 신규 withdrawal RPC — R10 + 5조건 Green 전 **금지** |
+| **Fix**        | DL-R2B-H10 · `PLATFORM_WITHDRAWAL_REENABLE_GATE.md` · display contract + hub next-action CTA |
+| **Not done**   | flag ON · 신규 withdrawal RPC — R10 + 5조건 Green 전 **금지**                                |
 
 ## Code / docs owners
 
-| Path | Role |
-| ---- | ---- |
+| Path                                                            | Role                          |
+| --------------------------------------------------------------- | ----------------------------- |
 | `apps/web/src/domain/wallet-withdrawal-off-display-contract.ts` | paused banner keys · nextHref |
-| `apps/web/src/product/surfaces/wallet/withdraw-hub-page.tsx` | reason + next-action CTA |
-| `packages/i18n/src/index.ts` | ko/en unavailable* keys |
-| `docs/OPERATIONS/PLATFORM_WITHDRAWAL_REENABLE_GATE.md` | Feature Flag 5조건 + W1–W7 |
-| `docs/OPERATIONS/PLATFORM_AUDIT_DECISION_LOG.md` | DL-R2B-H10 |
+| `apps/web/src/product/surfaces/wallet/withdraw-hub-page.tsx`    | reason + next-action CTA      |
+| `packages/i18n/src/index.ts`                                    | ko/en unavailable\* keys      |
+| `docs/OPERATIONS/PLATFORM_WITHDRAWAL_REENABLE_GATE.md`          | Feature Flag 5조건 + W1–W7    |
+| `docs/OPERATIONS/PLATFORM_AUDIT_DECISION_LOG.md`                | DL-R2B-H10                    |
 
 ## Gates (local L0–L4)
 
@@ -45,8 +45,8 @@ Owner paths:
 
 ## Runtime / Browser
 
-| Item | Status |
-| ---- | ------ |
+| Item                                  | Status                                                                                                    |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | Stage1 `/wallet/withdraw` Browser MCP | **PASS** — [`r2b-stage1-browser.md`](r2b-stage1-browser.md) · preview → `/login` (auth) · copy via vitest |
 
 Finding status after Stage1: **VERIFIED_FIXED** (H-10).

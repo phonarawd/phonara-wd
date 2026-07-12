@@ -4726,8 +4726,7 @@ export const presentationEnMessages = {
   'status.page.summary.outage': 'Outage',
   'status.page.summary.unknown': 'Status unknown',
   'status.page.components.title': 'Service lanes',
-  'status.page.components.body':
-    'Service lane status from the public health aggregate.',
+  'status.page.components.body': 'Service lane status from the public health aggregate.',
   'status.page.component.earn.title': 'Earn',
   'status.page.component.wallet.title': 'Wallet',
   'status.page.component.trade.title': 'Trade',

@@ -15,18 +15,21 @@ docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/
   binaries/                 # .gitkeep only — 실파일 커밋 금지
 ```
 
-| Stage  | 슬롯  | 상태                                                  |
-| ------ | ----- | ----------------------------------------------------- |
-| **R0** | `R0/` | control-plane · Browser MCP Probe5 · bun audit        |
-| **R1** | `R1/` | trust-truth Investigate · Implement · Stage1 **`[x]`** |
-| **R2** | `R2/` | R2-a H-03/H-11 **`[x]`** · R2-b H-10 **`[x]`** · R2-c H-05 **`[x]`** · R2-d M-21 **`[x]`** |
-| **R3** | `R3/` | R3-a..e **`[x]`** |
-| **R4** | `R4/` | H-04 · EXT-01 · M-20 **`[x]`** |
-| **R5** | `R5/` | Admin safety **`[x]`** |
-| **R6** | `R6/` | Product consistency **`[x]`** |
-| **R7** | `R7/` | M-14 · M-15 · M-16 type/UI hygiene **`[x]`** |
-| **R8** | `R8/` | H-06 deploy parity · clean SHA · headers **`[x]`** |
-| **R9** | `R9/` | preflight **`[x]`** · Stage1 matrix template · remote parity **pending** |
+| Stage   | 슬롯   | 상태                                                                                       |
+| ------- | ------ | ------------------------------------------------------------------------------------------ |
+| **R0**  | `R0/`  | control-plane · Browser MCP Probe5 · bun audit                                             |
+| **R1**  | `R1/`  | trust-truth Investigate · Implement · Stage1 **`[x]`**                                     |
+| **R2**  | `R2/`  | R2-a H-03/H-11 **`[x]`** · R2-b H-10 **`[x]`** · R2-c H-05 **`[x]`** · R2-d M-21 **`[x]`** |
+| **R3**  | `R3/`  | R3-a..e **`[x]`**                                                                          |
+| **R4**  | `R4/`  | H-04 · EXT-01 · M-20 **`[x]`**                                                             |
+| **R5**  | `R5/`  | Admin safety **`[x]`**                                                                     |
+| **R6**  | `R6/`  | Product consistency **`[x]`**                                                              |
+| **R7**  | `R7/`  | M-14 · M-15 · M-16 type/UI hygiene **`[x]`**                                               |
+| **R8**  | `R8/`  | H-06 deploy parity · clean SHA · headers **`[x]`**                                         |
+| **R9**  | `R9/`  | preflight **`[x]`** · Stage1+2 matrix **`[x]`** · R9-PERF-JS OPEN                          |
+| **R10** | `R10/` | rollout soak SOP · rollback template **`[x]`**                                             |
+| **R11** | `R11/` | Freeze · Release Gate · 3-Owner template · Retention **`[x]`**                             |
+| **R12** | `R12/` | PPR 24h/72h/7d templates · DR · Secrets spotcheck **`[x]`**                                |
 
 ## CI 링크 템플릿
 

@@ -110,8 +110,9 @@ function RootLayout() {
   return (
     <AuthProvider>
       <SkipLink />
-      <PwaShell />
-      <RootOutlet />
+      <PwaShell>
+        <RootOutlet />
+      </PwaShell>
     </AuthProvider>
   );
 }

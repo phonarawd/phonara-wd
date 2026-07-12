@@ -1,0 +1,82 @@
+# schema_version: 1
+# PLATFORM_R10_ROLLOUT_SOAK — R10 기계 정본 (Plan §8 · §20b · §41)
+updated_at: '2026-07-13T08:00:00+09:00'
+plan_todo: audit-r10-rollout-soak
+known_good_sha: 'dcfd8c7eab0374296ffeecdc5cd3f79433786ebe'
+soak_window_hours: 24
+
+five_conditions:
+  - id: feature_flag
+    label: Feature Flag
+    green: '명시 OFF/ON + Admin kill audit 기록'
+  - id: capability
+    label: Capability
+    green: 'live 판정 근거 · engine/provider · runbook'
+  - id: provider_health
+    label: Provider Health
+    green: 'false-green 금지 · health OK'
+  - id: runtime
+    label: Runtime
+    green: '성공 + negative E2E 1쌍 · money rail Σ=0'
+  - id: browser_evidence
+    label: Browser Evidence
+    green: 'Stage1 해당 surface PASS'
+
+rollout_stages:
+  - id: baseline-soak
+    order: 0
+    flip_allowed: false
+    feature_keys: []
+    note: 'T1 rails 감시만 · 신규 flip 0'
+  - id: live-crash
+    order: 1
+    flip_allowed: true
+    feature_keys: [feature_game_enabled]
+    stage1_routes: [/casino, '/games/crash']
+  - id: trade
+    order: 2
+    flip_allowed: true
+    feature_keys: [feature_spot_enabled, feature_futures_enabled]
+    stage1_routes: [/trade]
+  - id: sports
+    order: 3
+    flip_allowed: true
+    feature_keys: [feature_sports_enabled]
+    stage1_routes: [/sports]
+  - id: giftcard
+    order: 4
+    flip_allowed: true
+    feature_keys: [feature_deposit_enabled]
+    stage1_routes: ['/wallet/deposit/giftcard', '/wallet/redeem/giftcard']
+  - id: withdrawal
+    order: 5
+    flip_allowed: true
+    feature_keys: [feature_withdrawal_enabled]
+    stage1_routes: ['/wallet/withdraw']
+    extra_gate: PLATFORM_WITHDRAWAL_REENABLE_GATE.md
+
+soak_checkpoints:
+  - id: pre-deploy-30m
+    offset: T-30m
+    script: stack:ops-alert-dry-fire
+  - id: post-deploy-smoke-5m
+    offset: T+5m
+    script: audit:runtime-urls
+  - id: post-deploy-60m
+    offset: T+60m
+    script: platform-r10-rollout-spotcheck.sql
+  - id: snapshot-24h
+    offset: T+24h
+    evidence: PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R10/r10-soak-24h-snapshot.md
+
+rollback_triggers_sot: docs/OPERATIONS/PLATFORM_SLO_SLA.yaml
+rollback_dry_run_minutes: 15
+rollback_drill_next: '2026-08-13'
+
+release_blockers_triage:
+  - id: R9-PERF-JS
+    status: ACCEPTED_RISK_BASELINE
+    note: 'Baseline soak flip 0 · Stage1 JS re-measure before rail flip'
+  - id: R9-INSTALL-CTX
+    status: VERIFIED_FIXED
+    note: 'PwaShell children wrap InstallPromptProvider'

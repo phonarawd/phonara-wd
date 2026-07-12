@@ -71,11 +71,7 @@ export function useProgressiveStep() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (input: {
-      sessionId: string;
-      action: Json;
-      idempotencyKey: string;
-    }) => {
+    mutationFn: async (input: { sessionId: string; action: Json; idempotencyKey: string }) => {
       assertLive();
       if (!session?.user) throw new Error('UNAUTHENTICATED');
       return (await callRpc(EW_E23_PROGRESSIVE_STEP_RPC, {

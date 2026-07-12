@@ -101,9 +101,7 @@ export function resolveSystemStatusAnnouncementsRoute(): typeof ANNOUNCEMENTS_RO
   return ANNOUNCEMENTS_ROUTE;
 }
 
-export function mapPublicStatusToBadgeState(
-  status: PublicPlatformLaneStatus,
-): MoneyStatusState {
+export function mapPublicStatusToBadgeState(status: PublicPlatformLaneStatus): MoneyStatusState {
   switch (status) {
     case 'operational':
       return 'settled';
@@ -167,7 +165,8 @@ export function parsePublicPlatformStatus(raw: unknown): PublicPlatformStatus | 
     byId.set(id, {
       id: id as SystemStatusComponentId,
       status: asLaneStatus(lane['status']),
-      reasonCategory: typeof lane['reasonCategory'] === 'string' ? lane['reasonCategory'] : 'unknown',
+      reasonCategory:
+        typeof lane['reasonCategory'] === 'string' ? lane['reasonCategory'] : 'unknown',
       checkedAt: typeof lane['checkedAt'] === 'string' ? lane['checkedAt'] : checkedAt,
     });
   }

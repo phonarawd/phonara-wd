@@ -85,7 +85,8 @@ export function useGiftcardRedeemController(): GiftcardRedeemControllerView {
 
   const giftcardMarketAvailable = hasAvailableGiftcardMarket(feeMarket.length);
   const marketEmpty = !marketLoading && !giftcardMarketAvailable;
-  const shouldRedirect = !marketLoading && shouldRedirectGiftcardRedeemRoute(giftcardMarketAvailable);
+  const shouldRedirect =
+    !marketLoading && shouldRedirectGiftcardRedeemRoute(giftcardMarketAvailable);
 
   const setFaceValueKrw = useCallback((value: string) => {
     setFaceValueRaw(normalizeGiftcardFaceValueInput(value));

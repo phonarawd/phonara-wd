@@ -1,5 +1,13 @@
 import { useEffect, useId } from 'react';
-import { AlertTriangle, ArrowLeft, Banknote, CheckCircle2, Circle, RefreshCw, Upload } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  Banknote,
+  CheckCircle2,
+  Circle,
+  RefreshCw,
+  Upload,
+} from 'lucide-react';
 
 import {
   KRW_DEPOSIT_PROOF_CHOOSE_KEY,
@@ -241,7 +249,10 @@ export function KrwDepositPage() {
               </CardHeader>
               <CardBody className="flex flex-col gap-3 pt-0">
                 <p className="text-foreground-muted m-0 text-sm">{t(KRW_DEPOSIT_PROOF_DESC_KEY)}</p>
-                <p className="text-foreground-muted m-0 text-xs" data-testid="krw-deposit-proof-ledger-notice">
+                <p
+                  className="text-foreground-muted m-0 text-xs"
+                  data-testid="krw-deposit-proof-ledger-notice"
+                >
                   {t(KRW_DEPOSIT_PROOF_LEDGER_NOTICE_KEY)}
                 </p>
                 {engine.proofStatusKey ? (
@@ -254,7 +265,9 @@ export function KrwDepositPage() {
                   </p>
                 ) : null}
                 {engine.proofFileName ? (
-                  <p className="text-foreground-muted m-0 truncate text-xs">{engine.proofFileName}</p>
+                  <p className="text-foreground-muted m-0 truncate text-xs">
+                    {engine.proofFileName}
+                  </p>
                 ) : null}
                 {engine.proofErrorKey ? (
                   <p className="text-danger m-0 text-sm" role="alert">

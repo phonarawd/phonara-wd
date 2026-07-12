@@ -216,9 +216,7 @@ export function parseMissionCatalogRows(raw: unknown): {
 }
 
 /** Builds upsert payload for `rpc_admin_upsert_mission_catalog` (no client money math). */
-export function buildMissionCatalogUpsertPayload(
-  input: AdminMissionCatalogUpsertInput,
-): Json {
+export function buildMissionCatalogUpsertPayload(input: AdminMissionCatalogUpsertInput): Json {
   const payload: Record<string, Json | undefined> = {
     catalog_key: input.catalogKey,
     reason: input.reason,

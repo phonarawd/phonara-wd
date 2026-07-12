@@ -7,31 +7,31 @@
 
 ## Finding touched
 
-| Finding  | Fix summary                                                                                         | Gate |
-| -------- | --------------------------------------------------------------------------------------------------- | ---- |
+| Finding  | Fix summary                                                                                                                                               | Gate                 |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
 | **M-04** | anon SIWE/analytics EXECUTE revoke · HMAC(IP)+resource dual bucket service ingress · payload/retention · SIWE body `user_id` 거부 · `siweLoginLive=false` | SQL + edge + advisor |
 
 ## Root cause / fix
 
-| 필드 | 값 |
-| ---- | --- |
-| **Root cause** | E9 `rpc_create_siwe_challenge` / `rpc_record_product_analytics_event`가 anon EXECUTE + rate limit은 `auth.uid()` 있을 때만 → 익명 flood 가능 · siwe-auth가 body `user_id`를 신뢰 |
-| **Fix** | migration `20260817000001_m04_r3d_siwe_analytics_ingress` — anon REVOKE · `rpc_service_*` + `service_ingress_rate_buckets` dual bucket · payload limits · retention purge · edge `siwe-auth`/`product-analytics` |
-| **Ledger** | money path 변경 0 |
-| **Live** | `LAUNCH_GATES.siweLoginLive=false` 유지 |
+| 필드           | 값                                                                                                                                                                                                               |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Root cause** | E9 `rpc_create_siwe_challenge` / `rpc_record_product_analytics_event`가 anon EXECUTE + rate limit은 `auth.uid()` 있을 때만 → 익명 flood 가능 · siwe-auth가 body `user_id`를 신뢰                                 |
+| **Fix**        | migration `20260817000001_m04_r3d_siwe_analytics_ingress` — anon REVOKE · `rpc_service_*` + `service_ingress_rate_buckets` dual bucket · payload limits · retention purge · edge `siwe-auth`/`product-analytics` |
+| **Ledger**     | money path 변경 0                                                                                                                                                                                                |
+| **Live**       | `LAUNCH_GATES.siweLoginLive=false` 유지                                                                                                                                                                          |
 
 ## Code owners
 
-| Path | Role |
-| ---- | ---- |
-| `supabase/migrations/20260817000001_m04_r3d_siwe_analytics_ingress.sql` | M-04 ingress |
-| `supabase/tests/m04_r3d_siwe_analytics_ingress_test.sql` | RED-first owner |
-| `supabase/tests/grants_rls_inventory_test.sql` | inventory pin |
-| `supabase/tests/ew_e9_identity_support_test.sql` | E9-1 auth challenge path |
-| `supabase/functions/siwe-auth/index.ts` | challenge+complete · no body user_id |
-| `supabase/functions/product-analytics/index.ts` | analytics ingress |
-| `supabase/functions/_shared/service-ingress.ts` | HMAC(IP) helper |
-| `apps/web/src/domain/ew-e9-identity-support-display-contract.ts` | contract pin |
+| Path                                                                    | Role                                 |
+| ----------------------------------------------------------------------- | ------------------------------------ |
+| `supabase/migrations/20260817000001_m04_r3d_siwe_analytics_ingress.sql` | M-04 ingress                         |
+| `supabase/tests/m04_r3d_siwe_analytics_ingress_test.sql`                | RED-first owner                      |
+| `supabase/tests/grants_rls_inventory_test.sql`                          | inventory pin                        |
+| `supabase/tests/ew_e9_identity_support_test.sql`                        | E9-1 auth challenge path             |
+| `supabase/functions/siwe-auth/index.ts`                                 | challenge+complete · no body user_id |
+| `supabase/functions/product-analytics/index.ts`                         | analytics ingress                    |
+| `supabase/functions/_shared/service-ingress.ts`                         | HMAC(IP) helper                      |
+| `apps/web/src/domain/ew-e9-identity-support-display-contract.ts`        | contract pin                         |
 
 ## Gates
 
@@ -48,16 +48,16 @@ remote privilege probe → anon challenge/analytics = false · service_* = servi
 
 ## Remote privilege probe (2026-07-13)
 
-| Check | Result |
-| ----- | ------ |
-| anon EXECUTE `rpc_create_siwe_challenge` | **false** |
-| anon EXECUTE `rpc_record_product_analytics_event` | **false** |
-| authenticated EXECUTE challenge/analytics | true (uid rate limit) |
-| service_role EXECUTE `rpc_service_create_siwe_challenge` | true |
-| service_role EXECUTE `rpc_service_record_product_analytics_event` | true |
-| anon/auth EXECUTE service ingress RPCs | false |
-| `service_ingress_rate_buckets` | present |
-| `siweLoginLive` | **false** |
+| Check                                                             | Result                |
+| ----------------------------------------------------------------- | --------------------- |
+| anon EXECUTE `rpc_create_siwe_challenge`                          | **false**             |
+| anon EXECUTE `rpc_record_product_analytics_event`                 | **false**             |
+| authenticated EXECUTE challenge/analytics                         | true (uid rate limit) |
+| service_role EXECUTE `rpc_service_create_siwe_challenge`          | true                  |
+| service_role EXECUTE `rpc_service_record_product_analytics_event` | true                  |
+| anon/auth EXECUTE service ingress RPCs                            | false                 |
+| `service_ingress_rate_buckets`                                    | present               |
+| `siweLoginLive`                                                   | **false**             |
 
 ## No Shortcut checklist
 

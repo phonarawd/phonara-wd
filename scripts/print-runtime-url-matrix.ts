@@ -24,7 +24,9 @@ type MatrixDoc = {
   adminUrls: Record<string, UrlEntry[]>;
 };
 
-function flattenUrls(groups: Record<string, UrlEntry[]>): Array<{ group: string; path: string; parameterized: boolean }> {
+function flattenUrls(
+  groups: Record<string, UrlEntry[]>,
+): Array<{ group: string; path: string; parameterized: boolean }> {
   const out: Array<{ group: string; path: string; parameterized: boolean }> = [];
   for (const [group, entries] of Object.entries(groups)) {
     for (const entry of entries) {
@@ -64,7 +66,9 @@ const stage1Only = process.argv.includes('--stage1');
 if (stage1Only) {
   const surfaces = doc.stage1.criticalSurfaces;
   const vps = doc.stage1.viewports;
-  console.log(`# R9 Stage1 — Critical ${surfaces.length} × viewports ${vps.length} = ${surfaces.length * vps.length} states`);
+  console.log(
+    `# R9 Stage1 — Critical ${surfaces.length} × viewports ${vps.length} = ${surfaces.length * vps.length} states`,
+  );
   for (const s of surfaces) {
     const origin = s.app === 'admin' ? doc.previewOrigins.admin : doc.previewOrigins.web;
     console.log(`\n## ${s.label} (${s.id})`);
@@ -87,7 +91,9 @@ if (stage1Only) {
   );
 } else {
   console.log(`# PLATFORM_RUNTIME_URL_MATRIX — ${matrixPath}`);
-  console.log(`web concrete: ${webConcrete.length} · admin concrete: ${adminConcrete.length} · total: ${total}`);
+  console.log(
+    `web concrete: ${webConcrete.length} · admin concrete: ${adminConcrete.length} · total: ${total}`,
+  );
   console.log(
     `Stage1 critical: ${doc.stage1.criticalSurfaces.length} surfaces · viewports: ${doc.stage1.viewports.map((v) => v.width).join(' · ')}`,
   );

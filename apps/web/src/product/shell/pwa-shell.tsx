@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 
 import { registerSW } from 'virtual:pwa-register';
 
@@ -24,11 +24,12 @@ function PwaSwRegister() {
 }
 
 /** SW registration + deferred install prompt (§25.10). */
-export function PwaShell() {
+export function PwaShell({ children }: { children?: ReactNode }) {
   return (
     <InstallPromptProvider>
       <PwaSwRegister />
       <PwaInstallBanner />
+      {children}
     </InstallPromptProvider>
   );
 }

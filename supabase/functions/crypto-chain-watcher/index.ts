@@ -199,8 +199,7 @@ Deno.serve(async (req) => {
       else matched += 1;
     }
 
-    const missingConfig =
-      (trongridKey ? 0 : 1) + (etherscanKey ? 0 : 1);
+    const missingConfig = (trongridKey ? 0 : 1) + (etherscanKey ? 0 : 1);
     const providerRejected = (tronFetchError ? 1 : 0) + (ercFetchError ? 1 : 0);
     const channelAttempts = 2;
     const appliedChannels =

@@ -6,12 +6,12 @@
 
 ## Gate outcome
 
-| Check | Result | Evidence |
-| ----- | ------ | -------- |
-| Navigate `/sports` | **PASS** | final URL `/login` (auth required) — route exists · no app crash |
-| App JS crash 0 | **PASS** | login title `PHONARA \| Earn, Trade, Play` |
-| Stale odds → `—` · selection 0 | **PASS (unit)** | `sports-page.test.tsx` · `sports-odds-freshness-display-contract` |
-| `sportsBetting` / `sportsCashout` flip 0 | **PASS** | Decision DL-R2C-H05 · LAUNCH_GATES false · ingest newest 2026-06-16 |
+| Check                                    | Result          | Evidence                                                            |
+| ---------------------------------------- | --------------- | ------------------------------------------------------------------- |
+| Navigate `/sports`                       | **PASS**        | final URL `/login` (auth required) — route exists · no app crash    |
+| App JS crash 0                           | **PASS**        | login title `PHONARA \| Earn, Trade, Play`                          |
+| Stale odds → `—` · selection 0           | **PASS (unit)** | `sports-page.test.tsx` · `sports-odds-freshness-display-contract`   |
+| `sportsBetting` / `sportsCashout` flip 0 | **PASS**        | Decision DL-R2C-H05 · LAUNCH_GATES false · ingest newest 2026-06-16 |
 
 ## Notes
 

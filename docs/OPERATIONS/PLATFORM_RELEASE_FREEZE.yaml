@@ -1,0 +1,43 @@
+# schema_version: 1
+# PLATFORM_RELEASE_FREEZE — R11 기계 정본 (Playbook §44)
+updated_at: '2026-07-13T09:00:00+09:00'
+plan_todo: audit-r11-closeout
+rc_sha: 'dcfd8c7eab0374296ffeecdc5cd3f79433786ebe'
+known_good_sha: '9c4bf29b40d31b2d2952bd6257f5690d691ecbc2'
+freeze_status: active # active|lifted|cancelled
+freeze_started_at: '2026-07-13T09:00:00+09:00'
+release_candidate: blocked # yes|no|blocked — blocked until R9-PERF-JS green or R11 waiver + 3-Owner
+release_blockers:
+  - id: R9-PERF-JS
+    severity: HIGH
+    status: OPEN
+    note: 'Stage1 JS 539>450 · DL-R10-PERF-JS ACCEPTED_RISK baseline only'
+  - id: three-owner-signoff
+    severity: process
+    status: PENDING_OPERATOR
+    note: 'Security · Runtime · Product 시차 서명 대기'
+  - id: soak-24h-evidence
+    severity: process
+    status: PENDING_OPERATOR
+    note: 'r10-soak-24h-snapshot.md operator fill'
+  - id: dr-drill-never
+    severity: process
+    status: SCHEDULED
+    note: 'next 2026-10-13 per PLATFORM_DRILL_CALENDAR'
+allowed_during_freeze:
+  - critical_finding_fix
+  - p0_incident_minimal_fix
+  - rollback
+  - feature_flag_off
+  - kill_switch
+  - evidence_registry_doc_sync
+forbidden_during_freeze:
+  - design_refactor
+  - i18n_copy_polish
+  - feature_add
+  - hygiene_rename_format_sweep
+post_release_review:
+  prr_24h: 'RC+24h'
+  prr_72h: 'RC+72h'
+  prr_7d: 'RC+7d'
+  schedule_owner: product

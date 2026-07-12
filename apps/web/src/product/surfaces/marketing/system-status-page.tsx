@@ -33,7 +33,9 @@ export function SystemStatusPage() {
   const t = useT();
   const backRoute = resolveSystemStatusBackRoute();
   const announcementsRoute = resolveSystemStatusAnnouncementsRoute();
-  const [status, setStatus] = useState<PublicPlatformStatus>(() => failClosedPublicPlatformStatus());
+  const [status, setStatus] = useState<PublicPlatformStatus>(() =>
+    failClosedPublicPlatformStatus(),
+  );
 
   useEffect(() => {
     document.title = t(SYSTEM_STATUS_SEO_TITLE_KEY);

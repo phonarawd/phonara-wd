@@ -324,9 +324,10 @@ export interface EdgeOpsOutcomeCounts {
  * Classify price-feed / watcher batch outcomes. `ok` only when every item applied
  * with zero rejects/circuit/RPC failures — never false-green on partial success.
  */
-export function classifyEdgeOpsOutcome(
-  counts: EdgeOpsOutcomeCounts,
-): { status: EdgeOpsOutcomeStatus; errorCode: string | null } {
+export function classifyEdgeOpsOutcome(counts: EdgeOpsOutcomeCounts): {
+  status: EdgeOpsOutcomeStatus;
+  errorCode: string | null;
+} {
   const missing = counts.missingConfig ?? 0;
   if (counts.total <= 0 && missing > 0) {
     return { status: 'missing_config', errorCode: 'missing_config' };

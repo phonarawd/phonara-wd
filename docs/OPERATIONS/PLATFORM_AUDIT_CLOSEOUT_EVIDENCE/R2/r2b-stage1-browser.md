@@ -6,12 +6,12 @@
 
 ## Gate outcome
 
-| Check | Result | Evidence |
-| ----- | ------ | -------- |
-| Navigate `/wallet/withdraw` | **PASS** | final URL `/login` (auth required) — route exists · no app crash |
-| App JS crash 0 | **PASS** | login title `PHONARA \| Earn, Trade, Play` |
-| Paused banner + next-action CTA | **PASS (unit)** | `withdraw-hub-page.test.tsx` · `wallet-withdrawal-off-display-contract` 9/9 |
-| `feature_withdrawal_enabled` flip 0 | **PASS** | Decision DL-R2B-H10 · flag stays false |
+| Check                               | Result          | Evidence                                                                    |
+| ----------------------------------- | --------------- | --------------------------------------------------------------------------- |
+| Navigate `/wallet/withdraw`         | **PASS**        | final URL `/login` (auth required) — route exists · no app crash            |
+| App JS crash 0                      | **PASS**        | login title `PHONARA \| Earn, Trade, Play`                                  |
+| Paused banner + next-action CTA     | **PASS (unit)** | `withdraw-hub-page.test.tsx` · `wallet-withdrawal-off-display-contract` 9/9 |
+| `feature_withdrawal_enabled` flip 0 | **PASS**        | Decision DL-R2B-H10 · flag stays false                                      |
 
 ## Notes
 

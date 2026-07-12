@@ -23,9 +23,7 @@ import { Skeleton } from '@/product/primitives/skeleton';
 
 import { cn } from '@/product/primitives/lib/cn';
 
-import {
-  formatSpotBaseQuantityDisplay,
-} from '@/domain/spot-base-quantity-display-contract';
+import { formatSpotBaseQuantityDisplay } from '@/domain/spot-base-quantity-display-contract';
 
 import {
   TRADE_DESK_BOTTOM_DOCK_SLOT_CLASS,

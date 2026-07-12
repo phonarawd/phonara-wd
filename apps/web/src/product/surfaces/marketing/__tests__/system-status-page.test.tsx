@@ -19,11 +19,36 @@ vi.mock('@/features/marketing/use-system-status', () => ({
     overall: 'unknown',
     source: 'fail-closed',
     lanes: [
-      { id: 'earn', status: 'unknown', reasonCategory: 'unknown', checkedAt: '2026-07-13T00:00:00.000Z' },
-      { id: 'wallet', status: 'unknown', reasonCategory: 'unknown', checkedAt: '2026-07-13T00:00:00.000Z' },
-      { id: 'trade', status: 'unknown', reasonCategory: 'unknown', checkedAt: '2026-07-13T00:00:00.000Z' },
-      { id: 'sports', status: 'unknown', reasonCategory: 'unknown', checkedAt: '2026-07-13T00:00:00.000Z' },
-      { id: 'casino', status: 'unknown', reasonCategory: 'unknown', checkedAt: '2026-07-13T00:00:00.000Z' },
+      {
+        id: 'earn',
+        status: 'unknown',
+        reasonCategory: 'unknown',
+        checkedAt: '2026-07-13T00:00:00.000Z',
+      },
+      {
+        id: 'wallet',
+        status: 'unknown',
+        reasonCategory: 'unknown',
+        checkedAt: '2026-07-13T00:00:00.000Z',
+      },
+      {
+        id: 'trade',
+        status: 'unknown',
+        reasonCategory: 'unknown',
+        checkedAt: '2026-07-13T00:00:00.000Z',
+      },
+      {
+        id: 'sports',
+        status: 'unknown',
+        reasonCategory: 'unknown',
+        checkedAt: '2026-07-13T00:00:00.000Z',
+      },
+      {
+        id: 'casino',
+        status: 'unknown',
+        reasonCategory: 'unknown',
+        checkedAt: '2026-07-13T00:00:00.000Z',
+      },
     ],
   })),
 }));

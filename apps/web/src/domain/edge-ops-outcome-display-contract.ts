@@ -22,9 +22,10 @@ export interface EdgeOpsOutcomeCounts {
   missingConfig?: number;
 }
 
-export function classifyEdgeOpsOutcome(
-  counts: EdgeOpsOutcomeCounts,
-): { status: EdgeOpsOutcomeStatus; errorCode: string | null } {
+export function classifyEdgeOpsOutcome(counts: EdgeOpsOutcomeCounts): {
+  status: EdgeOpsOutcomeStatus;
+  errorCode: string | null;
+} {
   const missing = counts.missingConfig ?? 0;
   if (counts.total <= 0 && missing > 0) {
     return { status: 'missing_config', errorCode: 'missing_config' };

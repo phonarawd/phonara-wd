@@ -11,7 +11,7 @@
 - [x] Domain · Stage · Execution Budget · Scope Lock 준수
 - [x] 신규 migration 파일 추가가 **아닌** 변경 (R1 UI 범위)
 - [x] No Assumption 확인 로그가 Investigate Evidence에 존재 (R0 probe/bucket)
-- [x] Release Freeze 중이 아님 (Freeze 중이면 Critical Fix만)
+- [x] Release Freeze 중이 아님 (Freeze 중이면 Critical Fix만) — **R11 이후 Freeze ACTIVE · Critical Fix만**
 
 ## Standing Grant 내 자동 허용
 

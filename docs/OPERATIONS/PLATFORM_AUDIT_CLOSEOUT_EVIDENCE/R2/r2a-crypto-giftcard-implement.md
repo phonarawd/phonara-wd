@@ -8,28 +8,28 @@
 
 ## Findings touched
 
-| Finding  | Fix summary                                                                                                      | Unit / contract gate                                      |
-| -------- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Finding  | Fix summary                                                                                                       | Unit / contract gate                                         |
+| -------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
 | **H-03** | `cryptoRails=false` → deposit/withdraw/redeem hub omit crypto · route `beforeLoad` redirect · derive/submit block | wallet-capability-rails · deposit/withdraw hub · crypto-edge |
-| **H-11** | giftcard market 0 → hub/redeem omit giftcard rails · direct deposit/redeem URL → hub `Navigate`                    | wallet-capability-rails · giftcard deposit/redeem pages   |
+| **H-11** | giftcard market 0 → hub/redeem omit giftcard rails · direct deposit/redeem URL → hub `Navigate`                   | wallet-capability-rails · giftcard deposit/redeem pages      |
 
 ## Code owners
 
-| Path | Role |
-| ---- | ---- |
+| Path                                                              | Role                                           |
+| ----------------------------------------------------------------- | ---------------------------------------------- |
 | `apps/web/src/domain/wallet-capability-rails-display-contract.ts` | capability predicates · redirect/block helpers |
-| `apps/web/src/features/wallet/deposit-hub-display.ts` | `resolveDepositHubRails` |
-| `apps/web/src/features/wallet/withdraw-hub-display.ts` | `resolveWithdrawHubRails` |
-| `apps/web/src/domain/wallet-redeem-display-contract.ts` | redeem rail filter (crypto + giftcard market) |
-| `apps/web/src/features/wallet/use-deposit-hub-controller.ts` | fee market + LAUNCH_GATES wire |
-| `apps/web/src/features/wallet/use-withdraw-hub-controller.ts` | cryptoRails wire |
-| `apps/web/src/features/wallet/use-wallet-redeem-controller.ts` | market + cryptoRails wire |
-| `apps/web/src/features/wallet/use-crypto-deposit.ts` | derive/create invoke block |
-| `apps/web/src/features/wallet/use-crypto-withdraw-controller.ts` | withdraw invoke block |
-| `apps/web/src/routes/wallet.deposit.crypto.tsx` | fail-closed redirect → `/wallet/deposit` |
-| `apps/web/src/routes/wallet.withdraw.crypto.tsx` | fail-closed redirect → `/wallet/withdraw` |
-| `apps/web/src/product/surfaces/wallet/giftcard-deposit-page.tsx` | empty market → deposit hub |
-| `apps/web/src/product/surfaces/wallet/giftcard-redeem-page.tsx` | empty market → redeem hub |
+| `apps/web/src/features/wallet/deposit-hub-display.ts`             | `resolveDepositHubRails`                       |
+| `apps/web/src/features/wallet/withdraw-hub-display.ts`            | `resolveWithdrawHubRails`                      |
+| `apps/web/src/domain/wallet-redeem-display-contract.ts`           | redeem rail filter (crypto + giftcard market)  |
+| `apps/web/src/features/wallet/use-deposit-hub-controller.ts`      | fee market + LAUNCH_GATES wire                 |
+| `apps/web/src/features/wallet/use-withdraw-hub-controller.ts`     | cryptoRails wire                               |
+| `apps/web/src/features/wallet/use-wallet-redeem-controller.ts`    | market + cryptoRails wire                      |
+| `apps/web/src/features/wallet/use-crypto-deposit.ts`              | derive/create invoke block                     |
+| `apps/web/src/features/wallet/use-crypto-withdraw-controller.ts`  | withdraw invoke block                          |
+| `apps/web/src/routes/wallet.deposit.crypto.tsx`                   | fail-closed redirect → `/wallet/deposit`       |
+| `apps/web/src/routes/wallet.withdraw.crypto.tsx`                  | fail-closed redirect → `/wallet/withdraw`      |
+| `apps/web/src/product/surfaces/wallet/giftcard-deposit-page.tsx`  | empty market → deposit hub                     |
+| `apps/web/src/product/surfaces/wallet/giftcard-redeem-page.tsx`   | empty market → redeem hub                      |
 
 ## Gates (local L0–L4)
 
@@ -53,8 +53,8 @@ Owner paths:
 
 ## Runtime / Browser
 
-| Item | Status |
-| ---- | ------ |
+| Item                      | Status                                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | Stage1 Wallet Browser MCP | **PASS** — [`r2a-stage1-browser.md`](r2a-stage1-browser.md) · preview `19976b6e` / `preview.phonara-web.pages.dev` |
 
 Finding status after Stage1: **VERIFIED_FIXED** (H-03 · H-11).
