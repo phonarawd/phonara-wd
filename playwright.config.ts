@@ -7,7 +7,7 @@ const includeFullE2E = process.env.PHONARA_E2E_ACTIVE === '1';
 export default defineConfig({
   ...E2E_LOW_SPEC_BASE,
   testDir: './tests',
-  testMatch: includeFullE2E ? ['e2e/**/*.spec.ts', 'smoke/**/*.spec.ts'] : ['smoke/**/*.spec.ts'],
+  testMatch: includeFullE2E ? ['smoke/**/*.spec.ts', 'e2e/**/*.spec.ts'] : ['smoke/**/*.spec.ts'],
   timeout: 60_000,
   use: {
     baseURL: 'http://127.0.0.1:3000',

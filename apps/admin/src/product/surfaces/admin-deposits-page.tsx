@@ -466,7 +466,7 @@ export function AdminDepositsPage() {
 
       <AdminQueueActionDialog
         open={actionTarget !== null}
-        onOpenChange={(open) => {
+        onOpenChange={(open: boolean) => {
           if (!open) setActionTarget(null);
         }}
         titleKey={actionTarget?.titleKey ?? 'admin.deposits.dialog.flag'}
@@ -483,7 +483,7 @@ export function AdminDepositsPage() {
 
       <Dialog
         open={proofPreviewOpen}
-        onOpenChange={(open) => {
+        onOpenChange={(open: boolean) => {
           setProofPreviewOpen(open);
           if (!open) setProofPreviewUrl(null);
         }}
