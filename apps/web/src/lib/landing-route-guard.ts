@@ -5,7 +5,7 @@ export type LandingRouteGuardInput = {
   hasAccount: boolean;
 };
 
-function parseLandingSearch(search: string): URLSearchParams {
+export function parseLandingSearch(search: string): URLSearchParams {
   const normalized = search.startsWith('?') ? search.slice(1) : search;
   return new URLSearchParams(normalized);
 }
