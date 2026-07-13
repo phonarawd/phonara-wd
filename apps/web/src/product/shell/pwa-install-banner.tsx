@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
 import { X } from 'lucide-react';
 
-import { resolvePwaInstallBannerVisible } from '@/domain/notifications-pwa-display-contract';
+import {
+  resolvePwaInstallBannerPosition,
+  resolvePwaInstallBannerVisible,
+} from '@/domain/notifications-pwa-display-contract';
 import {
   consumePwaInstallBannerNudge,
   dismissPwaInstallPrompt,
@@ -15,6 +18,7 @@ import { peekAuthLoginPwaNudge, clearAuthLoginPwaNudge } from '@/lib/pwa-auth-nu
 import { useT } from '@/product/i18n';
 import { buttonVariants } from '@/product/primitives/button';
 import { cn } from '@/product/primitives/lib/cn';
+import { shouldMountAppShell } from '@/product/shell/shell-route-matchers';
 
 /** Contextual install banner — session cap · 7-day dismiss (§25.10). */
 export function PwaInstallBanner() {
@@ -58,14 +62,20 @@ export function PwaInstallBanner() {
     setVisible(false);
   };
 
+  const position = resolvePwaInstallBannerPosition(shouldMountAppShell(pathname));
+
   return (
     <aside
       className={cn(
         'border-accent/25 bg-surface-overlay/95 supports-backdrop-filter:bg-surface-overlay/80',
-        'fixed inset-x-0 bottom-[calc(var(--ds-shell-bottomnav-height)+env(safe-area-inset-bottom,0px))] z-40 border-t px-4 py-3 backdrop-blur-sm',
+        'fixed inset-x-0 z-40 border-t px-4 py-3 backdrop-blur-sm',
+        position === 'above-bottom-nav'
+          ? 'bottom-[calc(var(--ds-shell-bottomnav-height)+env(safe-area-inset-bottom,0px))]'
+          : 'bottom-[calc(1rem+env(safe-area-inset-bottom,0px))]',
         'lg:bottom-4 lg:mx-auto lg:max-w-md lg:rounded-(--ds-radius-lg) lg:border lg:shadow-overlay',
       )}
       data-testid="pwa-install-banner"
+      data-position={position}
       aria-label={t('pwa.banner.title')}
     >
       <div className="flex items-start gap-3">
