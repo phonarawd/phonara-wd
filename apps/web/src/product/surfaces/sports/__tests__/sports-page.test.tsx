@@ -277,6 +277,35 @@ describe('SportsPage', () => {
     expect(homeCell).toHaveTextContent('—');
     fireEvent.click(homeCell);
     expect(toggleSelection).not.toHaveBeenCalled();
+
+    // ZA-13: board-level transparency banner when fixtures exist but ingest is not green
+    expect(screen.getByTestId('sports-board-ingest-offline-banner')).toBeInTheDocument();
+  });
+
+  it('ZA-13: hides ingest-offline banner when odds ingest is healthy', () => {
+    useSportsPageControllerMock.mockReturnValue(makeEngine({ oddsIngestHealthGreen: true }));
+
+    render(
+      <I18nProvider>
+        <SportsPage />
+      </I18nProvider>,
+    );
+
+    expect(screen.queryByTestId('sports-board-ingest-offline-banner')).not.toBeInTheDocument();
+  });
+
+  it('ZA-13: hides ingest-offline banner when there are no fixtures (empty state owns messaging)', () => {
+    useSportsPageControllerMock.mockReturnValue(
+      makeEngine({ oddsIngestHealthGreen: false, fixtures: [] }),
+    );
+
+    render(
+      <I18nProvider>
+        <SportsPage />
+      </I18nProvider>,
+    );
+
+    expect(screen.queryByTestId('sports-board-ingest-offline-banner')).not.toBeInTheDocument();
   });
 
   it('renders vip room with eligibility strip and shared fixture board', () => {

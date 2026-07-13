@@ -127,6 +127,20 @@ export function collectSportsMatch1x2Outcomes(
 }
 
 /**
+ * ZA-13 — board transparency: fixtures exist (board is not empty) but every
+ * outcome is stale/missing (ingest health not green). The per-cell `—` +
+ * `selectable: false` freshness rule (above) stays untouched — this only adds
+ * a board-level banner so a fully-stale board reads as "feed paused" instead
+ * of a silent wall of dashes. Never flips LAUNCH_GATES.
+ */
+export function shouldShowSportsIngestOfflineBanner(input: {
+  hasFixtures: boolean;
+  ingestHealthGreen: boolean;
+}): boolean {
+  return input.hasFixtures && !input.ingestHealthGreen;
+}
+
+/**
  * Gate flip eligibility — never auto-flip. Ops may set LAUNCH_GATES only after
  * this returns true (ingest health green).
  */

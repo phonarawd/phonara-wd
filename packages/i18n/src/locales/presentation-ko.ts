@@ -3537,6 +3537,9 @@ export const presentationKoMessages = {
   'sports.hero.title': '실시간 배당을 한 화면에서 잡으세요',
   'sports.board.count': '{count}경기',
   'sports.board.title': '경기판',
+  'sports.board.ingestOfflineBanner.title': '배당 피드 갱신 대기 중',
+  'sports.board.ingestOfflineBanner.body':
+    '운영 배당 수집이 잠시 멈춰 있어요. 경기 목록은 보이지만 배당은 새로고침될 때까지 「—」로 표시돼요.',
   'sports.league.all': '전체',
   'sports.league.epl': 'EPL',
   'sports.league.k_league': 'K리그',

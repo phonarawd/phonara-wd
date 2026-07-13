@@ -17,6 +17,7 @@ import {
   shouldAllowSportsCashoutGateFlip,
   shouldBlockSportsCashoutNetworkMutation,
   shouldBlockSportsPlaceNetworkMutation,
+  shouldShowSportsIngestOfflineBanner,
   sportsBettingGatesClosedUntilIngestGreen,
 } from '../sports-odds-freshness-display-contract';
 
@@ -103,6 +104,18 @@ describe('sports-odds-freshness-display-contract (H-05)', () => {
     expect(isSportsOddsIngestHealthGreen(outcomes, NOW)).toBe(false);
     expect(shouldAllowSportsBettingGateFlip(false)).toBe(false);
     expect(shouldAllowSportsCashoutGateFlip(false)).toBe(false);
+  });
+
+  it('ZA-13: shows board-level ingest-offline banner only when fixtures exist and ingest is not green', () => {
+    expect(
+      shouldShowSportsIngestOfflineBanner({ hasFixtures: true, ingestHealthGreen: false }),
+    ).toBe(true);
+    expect(
+      shouldShowSportsIngestOfflineBanner({ hasFixtures: true, ingestHealthGreen: true }),
+    ).toBe(false);
+    expect(
+      shouldShowSportsIngestOfflineBanner({ hasFixtures: false, ingestHealthGreen: false }),
+    ).toBe(false);
   });
 
   it('keeps LAUNCH_GATES.sportsBetting/sportsCashout false until ingest green (H-05)', () => {

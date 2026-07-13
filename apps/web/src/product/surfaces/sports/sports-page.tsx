@@ -8,6 +8,7 @@ import {
   type SportsLeagueFilter,
   type SportsPageMode,
 } from '@/domain/sports-page-display-contract';
+import { shouldShowSportsIngestOfflineBanner } from '@/domain/sports-odds-freshness-display-contract';
 import {
   canBrowseSportsVipMarkets,
   SPORTS_RULES_SEO_TITLE_KEY,
@@ -192,6 +193,30 @@ export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
                 {t('sports.board.count', { count: engine.fixtures.length })}
               </span>
             </div>
+
+            {shouldShowSportsIngestOfflineBanner({
+              hasFixtures: engine.fixtures.length > 0,
+              ingestHealthGreen: engine.oddsIngestHealthGreen,
+            }) ? (
+              <div
+                role="status"
+                data-testid="sports-board-ingest-offline-banner"
+                className="border-line bg-surface-raised flex items-start gap-2 rounded-lg border px-3 py-2.5"
+              >
+                <div className="min-w-0">
+                  <p
+                    className="text-foreground m-0 text-sm font-semibold"
+                    data-testid="sports-board-ingest-offline-banner-title"
+                  >
+                    {t('sports.board.ingestOfflineBanner.title')}
+                  </p>
+                  <p className="text-foreground-muted m-0 mt-0.5 text-xs leading-relaxed">
+                    {t('sports.board.ingestOfflineBanner.body')}
+                  </p>
+                </div>
+              </div>
+            ) : null}
+
             <SportsFixtureBoard
               fixtures={engine.fixtures}
               loading={engine.fixturesLoading}

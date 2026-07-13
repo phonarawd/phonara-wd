@@ -3592,6 +3592,9 @@ export const presentationEnMessages = {
   'sports.hero.title': 'Catch live odds from one screen',
   'sports.board.count': '{count} matches',
   'sports.board.title': 'Fixture board',
+  'sports.board.ingestOfflineBanner.title': 'Odds feed is waiting for an update',
+  'sports.board.ingestOfflineBanner.body':
+    'Odds collection is paused right now. Fixtures still show, but odds display "—" until the feed refreshes.',
   'sports.league.all': 'All',
   'sports.league.epl': 'EPL',
   'sports.league.k_league': 'K League',
