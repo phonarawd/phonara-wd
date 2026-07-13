@@ -692,42 +692,42 @@ SQL에 캐시백을 자동으로 크레딧하는 RPC/트리거 자체가 없다(
 
 ## Finding remediation 상태 (ZA-01~19 · Closeout)
 
-| ID | 심각도 | 상태 | Wave | 근거 1줄 |
-| --- | --- | --- | --- | --- |
-| ZA-01 | P2 | **VERIFIED_FIXED** | 0 | closeout3/4 + killswitch `stack:push-remote` · lock · remote advisor 0 |
-| ZA-02 | P3 | **VERIFIED_FIXED** | 6 | RPC 도메인 매트릭스 생성기 그룹 출력 |
-| ZA-03 | P2 | **VERIFIED_FIXED** | 5 | CURRENT_STATUS admin 각주 정정 |
-| ZA-04 | P3 | **VERIFIED_FIXED** | 5 | README 아키텍처/스택 재작성 |
-| ZA-05 | P0 | **VERIFIED_FIXED** | 2 | Earn/Account `callRpc` 단일화 |
-| ZA-06 | P2 | **VERIFIED_FIXED** | 3 | orphan 3라우트 인페이지 CTA |
-| ZA-07 | P1 | **VERIFIED_FIXED** | 1 | `/tier/me/history` → `/rewards/history` |
-| ZA-08 | P2 | **VERIFIED_FIXED** | 7 | 캐시백 4-surface i18n 키 동일성 vitest |
-| ZA-09 | P3 | **VERIFIED_FIXED** | 6 | theme.css breakpoint 사용규칙 주석 |
-| ZA-10 | LOW | **VERIFIED_FIXED** | 8 | PWA 배너 `shouldMountAppShell` 반영 |
-| ZA-11 | P2 | **VERIFIED_FIXED** | 4 | Earn Home Fold5 Trade 진입 카드 |
-| ZA-12 | P2 | **코드측 VERIFIED_FIXED · 운영측 OPEN** | 9 | empty 카피 원인 분화 · Network 실측은 Soft Launch 체크리스트 |
-| ZA-13 | P2 | **코드측 VERIFIED_FIXED · 운영측 OPEN** | 10 | ingest-offline 보드 배너+런북 · dry-run 해제는 operator |
-| ZA-14 | P0 | **완화조치 구현 · 근본수정 OPEN** | 0.5 | PHON 마진 배너 + kill switch · 오라클 notional 변환은 후속 |
-| ZA-15 | — | **VERIFIED_FIXED** | 0.5 | 지갑 1:1 페그 허위 문구 제거 |
-| ZA-16 | — | **양성(결함 아님)** | 4.5 | `currency` ENUM = CHECK 동등 이상 |
-| ZA-17 | P2 | **OPEN(후속)** | — | Sports 확인모달 통화 미표시 |
-| ZA-18 | P3 | **OPEN(후속)** | — | 통화 상태관리 4곳 독립 구현 |
-| ZA-19 | P2~P3 | **OPEN(후속)** | — | sportsbook USDT conservation 파일 발견성 |
+| ID    | 심각도 | 상태                                    | Wave | 근거 1줄                                                               |
+| ----- | ------ | --------------------------------------- | ---- | ---------------------------------------------------------------------- |
+| ZA-01 | P2     | **VERIFIED_FIXED**                      | 0    | closeout3/4 + killswitch `stack:push-remote` · lock · remote advisor 0 |
+| ZA-02 | P3     | **VERIFIED_FIXED**                      | 6    | RPC 도메인 매트릭스 생성기 그룹 출력                                   |
+| ZA-03 | P2     | **VERIFIED_FIXED**                      | 5    | CURRENT_STATUS admin 각주 정정                                         |
+| ZA-04 | P3     | **VERIFIED_FIXED**                      | 5    | README 아키텍처/스택 재작성                                            |
+| ZA-05 | P0     | **VERIFIED_FIXED**                      | 2    | Earn/Account `callRpc` 단일화                                          |
+| ZA-06 | P2     | **VERIFIED_FIXED**                      | 3    | orphan 3라우트 인페이지 CTA                                            |
+| ZA-07 | P1     | **VERIFIED_FIXED**                      | 1    | `/tier/me/history` → `/rewards/history`                                |
+| ZA-08 | P2     | **VERIFIED_FIXED**                      | 7    | 캐시백 4-surface i18n 키 동일성 vitest                                 |
+| ZA-09 | P3     | **VERIFIED_FIXED**                      | 6    | theme.css breakpoint 사용규칙 주석                                     |
+| ZA-10 | LOW    | **VERIFIED_FIXED**                      | 8    | PWA 배너 `shouldMountAppShell` 반영                                    |
+| ZA-11 | P2     | **VERIFIED_FIXED**                      | 4    | Earn Home Fold5 Trade 진입 카드                                        |
+| ZA-12 | P2     | **코드측 VERIFIED_FIXED · 운영측 OPEN** | 9    | empty 카피 원인 분화 · Network 실측은 Soft Launch 체크리스트           |
+| ZA-13 | P2     | **코드측 VERIFIED_FIXED · 운영측 OPEN** | 10   | ingest-offline 보드 배너+런북 · dry-run 해제는 operator                |
+| ZA-14 | P0     | **완화조치 구현 · 근본수정 OPEN**       | 0.5  | PHON 마진 배너 + kill switch · 오라클 notional 변환은 후속             |
+| ZA-15 | —      | **VERIFIED_FIXED**                      | 0.5  | 지갑 1:1 페그 허위 문구 제거                                           |
+| ZA-16 | —      | **양성(결함 아님)**                     | 4.5  | `currency` ENUM = CHECK 동등 이상                                      |
+| ZA-17 | P2     | **OPEN(후속)**                          | —    | Sports 확인모달 통화 미표시                                            |
+| ZA-18 | P3     | **OPEN(후속)**                          | —    | 통화 상태관리 4곳 독립 구현                                            |
+| ZA-19 | P2~P3  | **OPEN(후속)**                          | —    | sportsbook USDT conservation 파일 발견성                               |
 
 **본 플랜 범위 DONE:** ZA-01~15 + ZA-16 양성. **후속 트랙만 OPEN:** ZA-14 근본수정 · ZA-12/13 운영측 · ZA-17~19.
 
 ## 전체 문제 수 (본 감사 신규 발견 · 심각도별 · 발견 시점 스냅샷)
 
-| 심각도                    |    개수 | ID                                                                                                                                                                                                                                                                                                              |
-| ------------------------- | ------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| P0                        |       2 | ZA-05 (Earn 도메인 `callRpc` 우회 — **VERIFIED_FIXED**) · **ZA-14**(futures PHON 마진 오라클 변환 누락 — **완화조치 구현 · 근본수정 OPEN**)                                                                                                                                                                       |
-| P1                        |       1 | ZA-07 (등급 페이지 죽은 링크 — **VERIFIED_FIXED**)                                                                                                                                                                                                                                                              |
-| P2                        |      10 | ZA-01·ZA-03·ZA-06·ZA-08·ZA-11(**VERIFIED_FIXED**) · ZA-12·ZA-13(코드측 VERIFIED_FIXED · 운영측 OPEN) · **ZA-17**·**ZA-19**(후속 OPEN)                                                                                                                                                                            |
-| P3                        |       3 | ZA-02·ZA-04·ZA-09(**VERIFIED_FIXED**) · **ZA-18**(후속 OPEN)                                                                                                                                                                                                                                                    |
-| LOW                       |       1 | ZA-10(**VERIFIED_FIXED**)                                                                                                                                                                                                                                                                                       |
-| 확정·수정 완료            |       1 | **ZA-15**(**VERIFIED_FIXED**)                                                                                                                                                                                                                                                                                   |
-| 조사 완료·양성(결함 아님) | 0(별도) | **ZA-16**                                                                                                                                                                                                                                                                                                       |
-| **합계**                  |  **18** | 발견 시점 소계(ZA-16 제외) — remediation 후 코드측 OPEN은 ZA-14 근본·ZA-17~19 + ZA-12/13 운영측뿐                                                                                                                                                                                                                |
+| 심각도                    |    개수 | ID                                                                                                                                          |
+| ------------------------- | ------: | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| P0                        |       2 | ZA-05 (Earn 도메인 `callRpc` 우회 — **VERIFIED_FIXED**) · **ZA-14**(futures PHON 마진 오라클 변환 누락 — **완화조치 구현 · 근본수정 OPEN**) |
+| P1                        |       1 | ZA-07 (등급 페이지 죽은 링크 — **VERIFIED_FIXED**)                                                                                          |
+| P2                        |      10 | ZA-01·ZA-03·ZA-06·ZA-08·ZA-11(**VERIFIED_FIXED**) · ZA-12·ZA-13(코드측 VERIFIED_FIXED · 운영측 OPEN) · **ZA-17**·**ZA-19**(후속 OPEN)       |
+| P3                        |       3 | ZA-02·ZA-04·ZA-09(**VERIFIED_FIXED**) · **ZA-18**(후속 OPEN)                                                                                |
+| LOW                       |       1 | ZA-10(**VERIFIED_FIXED**)                                                                                                                   |
+| 확정·수정 완료            |       1 | **ZA-15**(**VERIFIED_FIXED**)                                                                                                               |
+| 조사 완료·양성(결함 아님) | 0(별도) | **ZA-16**                                                                                                                                   |
+| **합계**                  |  **18** | 발견 시점 소계(ZA-16 제외) — remediation 후 코드측 OPEN은 ZA-14 근본·ZA-17~19 + ZA-12/13 운영측뿐                                           |
 
 기존 `SYSTEM_AUDIT_2026-07-13`(SA-01~06, 6건)과 합산하면 문서화된 이슈는 최대 **24건**이다. Critical(실제 자금 손실 경로)은 0건. Casino 1-H는 finding 0(positive · 완성도 93%).
 
@@ -735,7 +735,7 @@ SQL에 캐시백을 자동으로 크레딧하는 RPC/트리거 자체가 없다(
 
 | 도메인        | 완성도 추정 | 신뢰도                           | 통화 분리 무결성                                                                                                                 | 근거                                                                                                                                                                                                                                |
 | ------------- | ----------: | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Earn          |     **90%** | **높음**(1-E 직접 코드 판독)     | 해당 없음(캐시백 크레딧 메커니즘 자체 없음 — 1-J.4)                                                                              | 8/8 페이지 실작동. ZA-07 죽은 링크·ZA-06 orphan CTA·ZA-05 `callRpc`·ZA-11 Trade 진입 **VERIFIED_FIXED**. Trade 연계 **1**                                                                                                                                            |
+| Earn          |     **90%** | **높음**(1-E 직접 코드 판독)     | 해당 없음(캐시백 크레딧 메커니즘 자체 없음 — 1-J.4)                                                                              | 8/8 페이지 실작동. ZA-07 죽은 링크·ZA-06 orphan CTA·ZA-05 `callRpc`·ZA-11 Trade 진입 **VERIFIED_FIXED**. Trade 연계 **1**                                                                                                           |
 | Wallet/Ledger |     **92%** | **높음**(1-F 직접 코드 판독)     | **정상** — 정산 경로 4종 전부 저장 통화 컬럼 재사용, 교차 오염 없음(1-J.1)                                                       | 동시성·멱등성·Σ=0 로직 표본 확인 결과 최상위 수준                                                                                                                                                                                   |
 | Admin         |     **85%** | 중간(1-A 표본 확인)              | 해당 없음                                                                                                                        | "구현 금지" 표기 페이지가 실제로는 구현되어 있음 확인(ZA-03) — 문서 신뢰도 문제, 코드 자체는 양호                                                                                                                                   |
 | Trade         |     **85%** | **높음**(1-G·1-J 직접 코드 판독) | **부분 결함(완화됨)** — PHON 마진 notional 오라클 변환 누락(ZA-14 P0), kill switch로 신규 오픈 차단 중 · 근본수정 OPEN           | Spot/Futures/Staking RPC 정상·오라클/표시 이중 경로 설계대로. 차트 empty 카피 원인 분화 완료(ZA-12 코드측 VERIFIED_FIXED). R9 lazy≠원인. Earn 연계 완료(ZA-11)                                                                      |
@@ -746,9 +746,9 @@ SQL에 캐시백을 자동으로 크레딧하는 RPC/트리거 자체가 없다(
 
 ## Earn 도메인 세부 완성도 (1-E 근거 · Closeout 후)
 
-| 상태 | 개수 | 비율 | 목록 |
-| --- | ---: | ---: | --- |
-| 정상 | 11 | 100% | 출석·미션·친구초대·혜택·캐시백·공유·스테이킹(허브)·등급(ZA-07 수정)·리더보드/포지션(ZA-06 CTA)·홈 Trade 진입(ZA-11) |
+| 상태 | 개수 | 비율 | 목록                                                                                                                |
+| ---- | ---: | ---: | ------------------------------------------------------------------------------------------------------------------- |
+| 정상 |   11 | 100% | 출석·미션·친구초대·혜택·캐시백·공유·스테이킹(허브)·등급(ZA-07 수정)·리더보드/포지션(ZA-06 CTA)·홈 Trade 진입(ZA-11) |
 
 Trade/Sports/Casino 전환 지점: **Casino 3 · Sports 1 · Trade 1**(Wave 4/ZA-11).
 

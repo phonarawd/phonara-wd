@@ -14,7 +14,7 @@
 | **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                                       |
 | **Cursor 8GB perf (v4.4.5)**  | **`[x]` DONE**                               | `cursor:perf-rollout` diagnosis-first · `high-remediation` dry-run 기본 · evidence JSONL · summary remediation assert · tsserver/argv **옵트인** (`--include-tsserver-tuning`)                                                                                 |
 | **Platform Perfect Launch**   | **Plan 19/19 completed** · **R12 DONE**      | Plan `platform-perfect-launch` — **todo id = 착수 단위** · Handoff [`PLATFORM_AUDIT_TODO_HANDOFF.md`](../OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md) · 채팅 `Implement <todo-id>`                                                                               |
-| **ZA 통합 Remediation**       | **`[x]` DONE** 2026-07-14                    | Plan `za_통합_실행순서_c6df1c56` · ZA-01~15 코드/문서 **VERIFIED_FIXED**(ZA-14는 완화조치·근본 OPEN) · ZA-12/13 운영측 OPEN · ZA-17~19 후속 · 감사 [`ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](../audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)              |
+| **ZA 통합 Remediation**       | **`[x]` DONE** 2026-07-14                    | Plan `za_통합_실행순서_c6df1c56` · ZA-01~15 코드/문서 **VERIFIED_FIXED**(ZA-14는 완화조치·근본 OPEN) · ZA-12/13 운영측 OPEN · ZA-17~19 후속 · 감사 [`ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](../audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)             |
 
 ## Zero Assumption 통합 Remediation (Plan `za_통합_실행순서_c6df1c56` · `[x]` DONE)
 
@@ -22,24 +22,24 @@
 > **대체된 원본 플랜:** `듀얼_통화_자금_안전성_감사_za-14_e30fb04f` · `zero_assumption_11결함_해소_52756742`  
 > **후속(별도 승인):** ZA-14 오라클 notional 근본수정 · ZA-12/13 Soft Launch 운영 · ZA-17~19
 
-| Todo | 상태 | 완료일 | 증거 |
-| --- | --- | --- | --- |
-| `w0-za01-freeze-hygiene` | **`[x]` DONE** | 2026-07-14 | closeout migration push · lock · types CI sync · advisor 0 |
-| `w0b-za14-mitigation-banner` | **`[x]` DONE** | 2026-07-13 | PHON 마진 경고 배너 + i18n |
+| Todo                             | 상태           | 완료일     | 증거                                                       |
+| -------------------------------- | -------------- | ---------- | ---------------------------------------------------------- |
+| `w0-za01-freeze-hygiene`         | **`[x]` DONE** | 2026-07-14 | closeout migration push · lock · types CI sync · advisor 0 |
+| `w0b-za14-mitigation-banner`     | **`[x]` DONE** | 2026-07-13 | PHON 마진 경고 배너 + i18n                                 |
 | `w0b-za14-mitigation-killswitch` | **`[x]` DONE** | 2026-07-13 | `feature_futures_phon_margin` kill switch · remote applied |
-| `w0b-za15-wallet-copy` | **`[x]` DONE** | 2026-07-13 | `wallet.phon.guide.balance` 1:1 페그 문구 제거 |
-| `w1-za07-tier-history-link` | **`[x]` DONE** | 2026-07-13 | `/rewards/history` redirect |
-| `w2-za05-earn-rpc-boundary` | **`[x]` DONE** | 2026-07-13 | Earn/Account `callRpc` |
-| `w3-za06-orphan-route-ctas` | **`[x]` DONE** | 2026-07-13 | orphan 3라우트 CTA |
-| `w4-za11-trade-entry-cta` | **`[x]` DONE** | 2026-07-13 | Earn Fold5 Trade 카드 |
-| `w4b-za14-doc-1j-sections` | **`[x]` DONE** | 2026-07-13 | 1-J.0~1-J.5 + ZA-16~19 |
-| `w5-za03-za04-doc-accuracy` | **`[x]` DONE** | 2026-07-13 | CURRENT_STATUS · README |
-| `w6-za02-za09-naming-docs` | **`[x]` DONE** | 2026-07-13 | breakpoint 주석 · RPC 도메인 그룹 |
-| `w7-za08-cashback-single-source` | **`[x]` DONE** | 2026-07-14 | cashback key vitest |
-| `w8-za10-pwa-shell-aware` | **`[x]` DONE** | 2026-07-14 | shell-aware PWA banner |
-| `w9-za12-trade-chart-empty` | **`[x]` DONE** | 2026-07-14 | chart empty 카피 분화 · 운영측 OPEN |
-| `w10-za13-sports-ingest-ops` | **`[x]` DONE** | 2026-07-14 | ingest-offline 배너+런북 · 운영측 OPEN |
-| `closeout-za-doc-resync` | **`[x]` DONE** | 2026-07-14 | 요약표·ACTIVE_WORK·DOCS_INDEX·Plan YAML |
+| `w0b-za15-wallet-copy`           | **`[x]` DONE** | 2026-07-13 | `wallet.phon.guide.balance` 1:1 페그 문구 제거             |
+| `w1-za07-tier-history-link`      | **`[x]` DONE** | 2026-07-13 | `/rewards/history` redirect                                |
+| `w2-za05-earn-rpc-boundary`      | **`[x]` DONE** | 2026-07-13 | Earn/Account `callRpc`                                     |
+| `w3-za06-orphan-route-ctas`      | **`[x]` DONE** | 2026-07-13 | orphan 3라우트 CTA                                         |
+| `w4-za11-trade-entry-cta`        | **`[x]` DONE** | 2026-07-13 | Earn Fold5 Trade 카드                                      |
+| `w4b-za14-doc-1j-sections`       | **`[x]` DONE** | 2026-07-13 | 1-J.0~1-J.5 + ZA-16~19                                     |
+| `w5-za03-za04-doc-accuracy`      | **`[x]` DONE** | 2026-07-13 | CURRENT_STATUS · README                                    |
+| `w6-za02-za09-naming-docs`       | **`[x]` DONE** | 2026-07-13 | breakpoint 주석 · RPC 도메인 그룹                          |
+| `w7-za08-cashback-single-source` | **`[x]` DONE** | 2026-07-14 | cashback key vitest                                        |
+| `w8-za10-pwa-shell-aware`        | **`[x]` DONE** | 2026-07-14 | shell-aware PWA banner                                     |
+| `w9-za12-trade-chart-empty`      | **`[x]` DONE** | 2026-07-14 | chart empty 카피 분화 · 운영측 OPEN                        |
+| `w10-za13-sports-ingest-ops`     | **`[x]` DONE** | 2026-07-14 | ingest-offline 배너+런북 · 운영측 OPEN                     |
+| `closeout-za-doc-resync`         | **`[x]` DONE** | 2026-07-14 | 요약표·ACTIVE_WORK·DOCS_INDEX·Plan YAML                    |
 
 ## Platform Perfect Launch Remediation (Plan `platform-perfect-launch` · execute SSOT)
 
