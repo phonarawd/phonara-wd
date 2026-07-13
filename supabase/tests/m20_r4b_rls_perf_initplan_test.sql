@@ -1,4 +1,13 @@
 -- M-20 R4-b — auth_rls_initplan wrap on targeted hot/residual tables
+--
+-- "Wrapped" detection anchors on "SELECT (any case) + whitespace + auth.uid()"
+-- with no requirement on what precedes SELECT. RLS policy quals are a parsed
+-- expression tree, not source text — pg_get_expr() re-deparses the scalar
+-- subquery on every read, and Postgres's deparser does not reliably reproduce
+-- a literal `(select ` prefix immediately before SELECT (spacing/target alias
+-- can vary). Anchoring on the immediately-preceding `(` produced false
+-- positives against policies that were, in fact, already wrapped
+-- (platform_sql_ci_closeout3 Fix C).
 
 BEGIN;
 
@@ -24,11 +33,11 @@ BEGIN
     AND (
       (
         COALESCE(pg_get_expr(p.polqual, p.polrelid), '') ~ 'auth\.uid\(\)'
-        AND COALESCE(pg_get_expr(p.polqual, p.polrelid), '') !~ '\([Ss][Ee][Ll][Ee][Cc][Tt][[:space:]]+auth\.uid\(\)'
+        AND COALESCE(pg_get_expr(p.polqual, p.polrelid), '') !~ '[Ss][Ee][Ll][Ee][Cc][Tt][[:space:]]+auth\.uid\(\)'
       )
       OR (
         COALESCE(pg_get_expr(p.polwithcheck, p.polrelid), '') ~ 'auth\.uid\(\)'
-        AND COALESCE(pg_get_expr(p.polwithcheck, p.polrelid), '') !~ '\([Ss][Ee][Ll][Ee][Cc][Tt][[:space:]]+auth\.uid\(\)'
+        AND COALESCE(pg_get_expr(p.polwithcheck, p.polrelid), '') !~ '[Ss][Ee][Ll][Ee][Cc][Tt][[:space:]]+auth\.uid\(\)'
       )
     );
 

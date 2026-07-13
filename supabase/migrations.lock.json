@@ -242,6 +242,7 @@
     "20260821000001_m20_r4c_rls_permissive_consolidate.sql": "b5b2103ebc7e45524b5402c4fa2314f1e661102cf4c79d42540764e3029338e2",
     "20260822000001_platform_sql_ci_closeout.sql": "e89eaa8a69e23205c9bccd5a0bee3a830f7317f217c58eee56af38fdfc202bec",
     "20260823000001_platform_sql_ci_closeout2.sql": "45f7cc30bb2e1807aa384556aa96ba2f8e8ab8ec633afcf57fca3a04a29c51c3",
-    "20260824000001_platform_sql_ci_closeout3.sql": "5ba486ace99729a6b233890785603b638db4ff1e048db54432e03b9559ec0e6c"
+    "20260824000001_platform_sql_ci_closeout3.sql": "5ba486ace99729a6b233890785603b638db4ff1e048db54432e03b9559ec0e6c",
+    "20260825000001_platform_sql_ci_closeout4.sql": "1b15c3eb1aeeb98ecd9d4a6ba5a8283421a506cdf4b0fc90940c3ffdc5c9530b"
   }
 }

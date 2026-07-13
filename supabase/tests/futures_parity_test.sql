@@ -271,6 +271,9 @@ BEGIN
   END;
   ASSERT v_blocked, format('long one tick above liq must not liquidate, got %s', COALESCE(v_msg, '<none>'));
 
+  -- E21 one_way mode: close before opening the opposite side below (short scenarios).
+  PERFORM rpc_close_futures_position(v_pos_id);
+
   -- Long instant predicate: exact/below are breached, above is not.
   UPDATE oracle_prices SET price = '100.000000', updated_at = NOW() WHERE symbol = 'PHONUSDT-PERP';
   v_open := rpc_open_futures_position('PHONUSDT-PERP', 'long', 'USDT', '100.000000', '10', NULL, NULL,
@@ -316,6 +319,9 @@ BEGIN
     IF v_msg = 'not_liquidatable' THEN v_blocked := TRUE; END IF;
   END;
   ASSERT v_blocked, format('short one tick below liq must not liquidate, got %s', COALESCE(v_msg, '<none>'));
+
+  -- E21 one_way mode: close before the next open below re-probes the same side.
+  PERFORM rpc_close_futures_position(v_pos_id);
 
   -- Short instant predicate: exact/above are breached, below is not.
   UPDATE oracle_prices SET price = '100.000000', updated_at = NOW() WHERE symbol = 'PHONUSDT-PERP';
