@@ -1,6 +1,9 @@
 #!/usr/bin/env bun
 /**
  * database.types.ts rpc_* ↔ apps/web|admin call-site cross matrix.
+ * SA-04 — also cross-references Edge Functions (supabase/functions/**) and
+ * SQL (supabase/migrations|tests/**) so "unused in apps" is split into
+ * genuine cross-use (edge/cron/internal/test-only) vs true dead candidates.
  * Output: docs/audit/RPC_USAGE_MATRIX.md (+ .json)
  */
 import { readFileSync, readdirSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -11,8 +14,12 @@ const OUT_DIR = join(ROOT, 'docs', 'audit');
 const TYPES_PATH = join(ROOT, 'packages', 'shared-types', 'src', 'database.types.ts');
 const WEB_SRC = join(ROOT, 'apps', 'web', 'src');
 const ADMIN_SRC = join(ROOT, 'apps', 'admin', 'src');
+const EDGE_FUNCTIONS_DIR = join(ROOT, 'supabase', 'functions');
+const MIGRATIONS_DIR = join(ROOT, 'supabase', 'migrations');
+const SQL_TESTS_DIR = join(ROOT, 'supabase', 'tests');
 
 type AppScope = 'web' | 'admin';
+type CrossUseScope = 'edge' | 'sql_cron_or_internal' | 'sql_test_only' | 'none';
 
 type CallSite = {
   app: AppScope;
@@ -116,6 +123,106 @@ function scanRpcCalls(app: AppScope, srcRoot: string, constants: Map<string, str
   return calls;
 }
 
+/** Edge Functions call rpc_* via `supabase.rpc('rpc_name', ...)` / `service.rpc(...)`. */
+function scanEdgeRpcCalls(): Set<string> {
+  const found = new Set<string>();
+  if (!existsDir(EDGE_FUNCTIONS_DIR)) return found;
+  const files = walkTsFiles(EDGE_FUNCTIONS_DIR).filter((f) => !f.endsWith('.test.ts'));
+  const callRe = /\.rpc\(\s*['"](rpc_[a-z0-9_]+)['"]/g;
+  for (const file of files) {
+    const content = readFileSync(file, 'utf8');
+    let m: RegExpExecArray | null;
+    callRe.lastIndex = 0;
+    while ((m = callRe.exec(content)) !== null) {
+      found.add(m[1]!);
+    }
+  }
+  return found;
+}
+
+/**
+ * SQL cross-use: an rpc_* name appearing anywhere in migrations OUTSIDE of its
+ * own CREATE/DROP/REVOKE/GRANT declaration lines — i.e. inside a
+ * `cron.schedule(...)` body, another function's body calling it internally
+ * (including via a `_*_logged()` wrapper that itself contains the literal
+ * name), or a comment/doc reference. This is a text cross-reference, not a
+ * call graph — sufficient to separate "something in SQL still names this"
+ * from "nothing outside its own definition ever mentions it".
+ */
+function scanSqlCrossUse(rpcNames: string[]): {
+  cronOrInternal: Set<string>;
+  testOnly: Set<string>;
+} {
+  const declLineRe = /^(?:CREATE(?:\s+OR\s+REPLACE)?\s+FUNCTION|DROP\s+FUNCTION|REVOKE|GRANT)\b/i;
+  const cronOrInternal = new Set<string>();
+  const testOnly = new Set<string>();
+
+  const migrationFiles = existsDir(MIGRATIONS_DIR)
+    ? readdirSync(MIGRATIONS_DIR)
+        .filter((f) => f.endsWith('.sql'))
+        .map((f) => join(MIGRATIONS_DIR, f))
+    : [];
+  const testFiles = existsDir(SQL_TESTS_DIR)
+    ? readdirSync(SQL_TESTS_DIR)
+        .filter((f) => f.endsWith('.sql'))
+        .map((f) => join(SQL_TESTS_DIR, f))
+    : [];
+
+  for (const rpc of rpcNames) {
+    const callRe = new RegExp(`\\b${rpc}\\s*\\(`, 'g');
+    let hitInMigrations = false;
+    for (const file of migrationFiles) {
+      const lines = readFileSync(file, 'utf8').split('\n');
+      for (const line of lines) {
+        if (declLineRe.test(line.trim()) && line.includes(rpc)) continue;
+        callRe.lastIndex = 0;
+        if (callRe.test(line)) {
+          hitInMigrations = true;
+          break;
+        }
+      }
+      if (hitInMigrations) break;
+    }
+    if (hitInMigrations) {
+      cronOrInternal.add(rpc);
+      continue;
+    }
+
+    let hitInTests = false;
+    for (const file of testFiles) {
+      const content = readFileSync(file, 'utf8');
+      callRe.lastIndex = 0;
+      if (callRe.test(content)) {
+        hitInTests = true;
+        break;
+      }
+    }
+    if (hitInTests) testOnly.add(rpc);
+  }
+
+  return { cronOrInternal, testOnly };
+}
+
+function existsDir(path: string): boolean {
+  try {
+    return statSync(path).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
+function classifyCrossUse(
+  rpc: string,
+  edgeUsed: Set<string>,
+  sqlCronOrInternal: Set<string>,
+  sqlTestOnly: Set<string>,
+): CrossUseScope {
+  if (edgeUsed.has(rpc)) return 'edge';
+  if (sqlCronOrInternal.has(rpc)) return 'sql_cron_or_internal';
+  if (sqlTestOnly.has(rpc)) return 'sql_test_only';
+  return 'none';
+}
+
 function parseTypesRpcNames(): string[] {
   const content = readFileSync(TYPES_PATH, 'utf8');
   const publicIdx = content.indexOf('public: {');
@@ -152,13 +259,23 @@ function main() {
   const unusedInApps = typesRpcs.filter((r) => !byRpc.has(r));
   const orphanCalls = [...byRpc.keys()].filter((r) => !typesRpcs.includes(r)).sort();
 
+  const edgeUsed = scanEdgeRpcCalls();
+  const { cronOrInternal: sqlCronOrInternal, testOnly: sqlTestOnly } =
+    scanSqlCrossUse(unusedInApps);
+  const crossUse = new Map<string, CrossUseScope>();
+  for (const rpc of unusedInApps) {
+    crossUse.set(rpc, classifyCrossUse(rpc, edgeUsed, sqlCronOrInternal, sqlTestOnly));
+  }
+  const trulyUnused = unusedInApps.filter((r) => crossUse.get(r) === 'none');
+  const crossUseCount = unusedInApps.length - trulyUnused.length;
+
   const generatedAt = new Date().toISOString();
   const lines: string[] = [
     `# RPC Usage Matrix`,
     ``,
     `> Generated: ${generatedAt}  `,
     `> SOT: \`packages/shared-types/src/database.types.ts\` Functions \`rpc_*\`  `,
-    `> Call sites: \`apps/web\` · \`apps/admin\` (\`callRpc\` / \`supabase.rpc\` / string constants)`,
+    `> Call sites: \`apps/web\` · \`apps/admin\` (\`callRpc\` / \`supabase.rpc\` / string constants) · \`supabase/functions/**\` (edge) · \`supabase/migrations|tests/**\` (SQL cron/internal/test)`,
     ``,
     `## Summary`,
     ``,
@@ -167,6 +284,8 @@ function main() {
     `| Types \`rpc_*\` | ${typesRpcs.length} |`,
     `| Called from apps (∩ types) | ${usedInTypes.length} |`,
     `| Types but **no app call site** | ${unusedInApps.length} |`,
+    `| — of which Edge/SQL cross-use (SA-04) | ${crossUseCount} |`,
+    `| — of which **genuinely unused** (no app/edge/SQL reference) | ${trulyUnused.length} |`,
     `| App call sites not in types | ${orphanCalls.length} |`,
     `| Total call-site rows | ${calls.length} |`,
     ``,
@@ -186,13 +305,36 @@ function main() {
   }
 
   if (unusedInApps.length) {
-    lines.push(``, `## Types RPCs with no app call site`, ``);
+    lines.push(
+      ``,
+      `## SA-04 — Edge/SQL cross-use classification for "no app call site" RPCs`,
+      ``,
+      `Cross-reference of the ${unusedInApps.length} types RPCs with no \`apps/web\`|\`apps/admin\` call site against`,
+      `\`supabase/functions/**\` (edge) and \`supabase/migrations|tests/**\` (SQL). "sql_cron_or_internal" means the`,
+      `name appears in SQL outside its own CREATE/DROP/REVOKE/GRANT declaration lines (cron.schedule body, another`,
+      `function calling it internally, or a \`_*_logged()\` wrapper). "sql_test_only" means it is exercised only by`,
+      `\`supabase/tests/*.sql\` (SQL integration test coverage without a live wiring). "none" is not proof of dead`,
+      `code — some remain intentionally callable admin/service paths not yet wired into a UI — but it is the`,
+      `strongest static signal available without a live DB read.`,
+      ``,
+      `| Classification | Count |`,
+      `|---|---:|`,
+      `| \`edge\` | ${unusedInApps.filter((r) => crossUse.get(r) === 'edge').length} |`,
+      `| \`sql_cron_or_internal\` | ${unusedInApps.filter((r) => crossUse.get(r) === 'sql_cron_or_internal').length} |`,
+      `| \`sql_test_only\` | ${unusedInApps.filter((r) => crossUse.get(r) === 'sql_test_only').length} |`,
+      `| \`none\` (genuinely unused candidate) | ${trulyUnused.length} |`,
+      ``,
+      `| RPC | Classification |`,
+      `|-----|----------------|`,
+    );
     for (const r of unusedInApps) {
-      lines.push(`- \`${r}\``);
+      lines.push(`| \`${r}\` | \`${crossUse.get(r)}\` |`);
     }
     lines.push(``);
     lines.push(
-      `> Note: unused in apps ≠ dead — Edge Functions, SQL tests, cron, or admin-only paths may still call these.`,
+      `> Deletion of \`none\`-classified RPCs is **not** authorized by this scan — engine freeze`,
+      `> (\`00-post-closeout-active-ssot.mdc\`) bars new/removed \`rpc_*\` without an explicit operator-approved`,
+      `> Phase R plan item. This table is inventory for that future decision, not an action list.`,
     );
   }
 
@@ -210,6 +352,13 @@ function main() {
     `2. Walk \`apps/web/src\` + \`apps/admin/src\` for \`callRpc\` / \`.rpc(\` / RPC string constants.`,
   );
   lines.push(`3. Resolve \`RPC_*\` exported constants to literal names.`);
+  lines.push(
+    `4. SA-04: for each app-unused RPC, scan \`supabase/functions/**/*.ts\` for \`.rpc('rpc_name', ...)\`,`,
+  );
+  lines.push(
+    `   then \`supabase/migrations/**/*.sql\` for the name outside its own declaration lines (cron/internal),`,
+  );
+  lines.push(`   then \`supabase/tests/**/*.sql\` for test-only coverage.`);
   lines.push(``);
 
   const mdPath = join(OUT_DIR, 'RPC_USAGE_MATRIX.md');
@@ -224,6 +373,8 @@ function main() {
         typesCount: typesRpcs.length,
         usedInTypes: usedInTypes.length,
         unusedInApps,
+        crossUse: Object.fromEntries(unusedInApps.map((r) => [r, crossUse.get(r)])),
+        trulyUnused,
         orphanCalls,
         callSiteCount: calls.length,
         byRpc: Object.fromEntries(
@@ -240,7 +391,7 @@ function main() {
   );
 
   console.log(
-    `[rpc-matrix] types=${typesRpcs.length} used=${usedInTypes.length} unused=${unusedInApps.length} orphans=${orphanCalls.length}`,
+    `[rpc-matrix] types=${typesRpcs.length} used=${usedInTypes.length} unused=${unusedInApps.length} orphans=${orphanCalls.length} crossUse=${crossUseCount} trulyUnused=${trulyUnused.length}`,
   );
   console.log(`[rpc-matrix] wrote ${relative(ROOT, mdPath).replace(/\\/g, '/')}`);
 }

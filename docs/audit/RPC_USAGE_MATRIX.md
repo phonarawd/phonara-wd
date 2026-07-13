@@ -1,18 +1,20 @@
 # RPC Usage Matrix
 
-> Generated: 2026-07-13T00:43:27.782Z  
+> Generated: 2026-07-13T03:41:10.777Z  
 > SOT: `packages/shared-types/src/database.types.ts` Functions `rpc_*`  
-> Call sites: `apps/web` · `apps/admin` (`callRpc` / `supabase.rpc` / string constants)
+> Call sites: `apps/web` · `apps/admin` (`callRpc` / `supabase.rpc` / string constants) · `supabase/functions/**` (edge) · `supabase/migrations|tests/**` (SQL cron/internal/test)
 
 ## Summary
 
-| Metric                         | Count |
-| ------------------------------ | ----: |
-| Types `rpc_*`                  |   256 |
-| Called from apps (∩ types)     |   144 |
-| Types but **no app call site** |   112 |
-| App call sites not in types    |     3 |
-| Total call-site rows           |   215 |
+| Metric                                                      | Count |
+| ----------------------------------------------------------- | ----: |
+| Types `rpc_*`                                               |   256 |
+| Called from apps (∩ types)                                  |   144 |
+| Types but **no app call site**                              |   112 |
+| — of which Edge/SQL cross-use (SA-04)                       |    99 |
+| — of which **genuinely unused** (no app/edge/SQL reference) |    13 |
+| App call sites not in types                                 |     3 |
+| Total call-site rows                                        |   215 |
 
 ## Matrix (types ∩ apps)
 
@@ -275,122 +277,140 @@
 | `rpc_void_sports_fixture_dead_heat`                 |   0 |     0 | **unused** | —                                                                                |
 | `rpc_void_sports_market`                            |   0 |     1 |          1 | apps/admin/src/hooks/admin/useAdminSports.ts:257                                 |
 
-## Types RPCs with no app call site
+## SA-04 — Edge/SQL cross-use classification for "no app call site" RPCs
 
-- `rpc_accept_co_bet`
-- `rpc_accept_co_mission`
-- `rpc_admin_fulfill_giftcard_redeem`
-- `rpc_admin_get_product_analytics`
-- `rpc_admin_list_giftcard_fee_market`
-- `rpc_admin_list_linked_device_users`
-- `rpc_admin_list_outcome_liability`
-- `rpc_admin_rebase_resume_market`
-- `rpc_admin_reject_giftcard_redeem`
-- `rpc_admin_trade_exposure_summary`
-- `rpc_admin_upsert_giftcard_fee_market`
-- `rpc_admin_void_game_bet`
-- `rpc_cancel_game_bet`
-- `rpc_check_casino_rtp_drift`
-- `rpc_check_reserve_ratio`
-- `rpc_claim_whale_mission`
-- `rpc_complete_co_bet`
-- `rpc_complete_co_mission`
-- `rpc_complete_mission`
-- `rpc_contribute_insurance_capital`
-- `rpc_create_game_round`
-- `rpc_create_siwe_challenge`
-- `rpc_create_support_ticket`
-- `rpc_disable_market_source`
-- `rpc_get_affiliate_rank_leaderboard`
-- `rpc_get_co_bet_status`
-- `rpc_get_co_mission_status`
-- `rpc_get_dr_health_summary`
-- `rpc_get_earn_activity_feed`
-- `rpc_get_mission_chain_status`
-- `rpc_get_reward_config`
-- `rpc_get_tier_leaderboard`
-- `rpc_get_whale_mission_status`
-- `rpc_golden_earth_tap`
-- `rpc_ingest_sports_c1`
-- `rpc_ingest_sports_c1_batch`
-- `rpc_ingest_sports_fixture_status`
-- `rpc_invite_co_bet`
-- `rpc_invite_co_mission`
-- `rpc_link_co_bet_bet`
-- `rpc_liquidate_position`
-- `rpc_list_mission_chains`
-- `rpc_list_sports_catalog`
-- `rpc_list_sports_market_types`
-- `rpc_list_wallet_identities`
-- `rpc_live_crash_advance`
-- `rpc_lock_wallet`
-- `rpc_process_bank_transfer`
-- `rpc_process_bank_transfer_batch`
-- `rpc_process_on_chain_transfer`
-- `rpc_rate_limit_buckets`
-- `rpc_rate_limit_configs`
-- `rpc_recommend_missions`
-- `rpc_record_app_install_attribution`
-- `rpc_record_product_analytics_event`
-- `rpc_record_sports_ingest_health`
-- `rpc_record_sports_score_quorum_mismatch`
-- `rpc_refresh_affiliate_commission_daily_aggregates`
-- `rpc_refresh_affiliate_tier_snapshots`
-- `rpc_register_affiliate_relationship`
-- `rpc_request_idem`
-- `rpc_request_self_exclusion_release`
-- `rpc_reveal_roulette_spin`
-- `rpc_run_cms_publish_scheduled`
-- `rpc_run_custody_reconciliation`
-- `rpc_run_funding_accrual`
-- `rpc_run_invariant_checks`
-- `rpc_run_liquidations`
-- `rpc_run_open_order_fills`
-- `rpc_run_phon_internal_oracle`
-- `rpc_run_reconciliation`
-- `rpc_run_spot_order_fills`
-- `rpc_run_stop_orders`
-- `rpc_run_tier_decay`
-- `rpc_service_assess_circuit_breaker`
-- `rpc_service_claim_notification_dispatch_batch`
-- `rpc_service_claim_ops_notify_batch`
-- `rpc_service_claim_withdrawal_broadcast_batch`
-- `rpc_service_complete_notification_dispatch`
-- `rpc_service_complete_ops_notify`
-- `rpc_service_complete_siwe_login`
-- `rpc_service_create_siwe_challenge`
-- `rpc_service_enqueue_ops_telegram_digest`
-- `rpc_service_fail_withdrawal_broadcast`
-- `rpc_service_ingest_usdt_krw_rate`
-- `rpc_service_lookup_siwe_identity`
-- `rpc_service_mark_withdrawal_broadcast`
-- `rpc_service_purge_siwe_analytics_retention`
-- `rpc_service_record_circuit_breaker_outcome`
-- `rpc_service_record_edge_ops_event`
-- `rpc_service_record_product_analytics_event`
-- `rpc_service_register_pg_webhook_replay`
-- `rpc_service_set_crypto_address`
-- `rpc_service_upsert_provider_health`
-- `rpc_set_affiliate_elite_override`
-- `rpc_set_market_limits`
-- `rpc_set_market_source`
-- `rpc_settle_game_bet`
-- `rpc_settle_sports_fixture`
-- `rpc_settle_sports_fixture_scores`
-- `rpc_settle_sports_prop_outcomes`
-- `rpc_submit_oracle_source_price`
-- `rpc_suspend_sports_fixture`
-- `rpc_sweep_stale_game_bets`
-- `rpc_sweep_stale_progressive_sessions`
-- `rpc_sync_sports_ingest_ops_alerts`
-- `rpc_transition_fixture_live`
-- `rpc_unlock_wallet`
-- `rpc_update_oracle_price`
-- `rpc_update_treasury_reserve`
-- `rpc_void_sports_bet`
-- `rpc_void_sports_fixture_dead_heat`
+Cross-reference of the 112 types RPCs with no `apps/web`|`apps/admin` call site against
+`supabase/functions/**` (edge) and `supabase/migrations|tests/**` (SQL). "sql*cron_or_internal" means the
+name appears in SQL outside its own CREATE/DROP/REVOKE/GRANT declaration lines (cron.schedule body, another
+function calling it internally, or a `*_\_logged()`wrapper). "sql_test_only" means it is exercised only by`supabase/tests/_.sql` (SQL integration test coverage without a live wiring). "none" is not proof of dead
+code — some remain intentionally callable admin/service paths not yet wired into a UI — but it is the
+strongest static signal available without a live DB read.
 
-> Note: unused in apps ≠ dead — Edge Functions, SQL tests, cron, or admin-only paths may still call these.
+| Classification                      | Count |
+| ----------------------------------- | ----: |
+| `edge`                              |    22 |
+| `sql_cron_or_internal`              |    36 |
+| `sql_test_only`                     |    41 |
+| `none` (genuinely unused candidate) |    13 |
+
+| RPC                                                 | Classification         |
+| --------------------------------------------------- | ---------------------- |
+| `rpc_accept_co_bet`                                 | `sql_test_only`        |
+| `rpc_accept_co_mission`                             | `sql_test_only`        |
+| `rpc_admin_fulfill_giftcard_redeem`                 | `none`                 |
+| `rpc_admin_get_product_analytics`                   | `none`                 |
+| `rpc_admin_list_giftcard_fee_market`                | `none`                 |
+| `rpc_admin_list_linked_device_users`                | `none`                 |
+| `rpc_admin_list_outcome_liability`                  | `none`                 |
+| `rpc_admin_rebase_resume_market`                    | `sql_test_only`        |
+| `rpc_admin_reject_giftcard_redeem`                  | `sql_test_only`        |
+| `rpc_admin_trade_exposure_summary`                  | `none`                 |
+| `rpc_admin_upsert_giftcard_fee_market`              | `sql_test_only`        |
+| `rpc_admin_void_game_bet`                           | `sql_test_only`        |
+| `rpc_cancel_game_bet`                               | `sql_cron_or_internal` |
+| `rpc_check_casino_rtp_drift`                        | `sql_cron_or_internal` |
+| `rpc_check_reserve_ratio`                           | `sql_test_only`        |
+| `rpc_claim_whale_mission`                           | `sql_test_only`        |
+| `rpc_complete_co_bet`                               | `sql_test_only`        |
+| `rpc_complete_co_mission`                           | `sql_test_only`        |
+| `rpc_complete_mission`                              | `sql_cron_or_internal` |
+| `rpc_contribute_insurance_capital`                  | `sql_cron_or_internal` |
+| `rpc_create_game_round`                             | `sql_test_only`        |
+| `rpc_create_siwe_challenge`                         | `sql_cron_or_internal` |
+| `rpc_create_support_ticket`                         | `sql_test_only`        |
+| `rpc_disable_market_source`                         | `sql_test_only`        |
+| `rpc_get_affiliate_rank_leaderboard`                | `sql_test_only`        |
+| `rpc_get_co_bet_status`                             | `none`                 |
+| `rpc_get_co_mission_status`                         | `sql_test_only`        |
+| `rpc_get_dr_health_summary`                         | `none`                 |
+| `rpc_get_earn_activity_feed`                        | `none`                 |
+| `rpc_get_mission_chain_status`                      | `sql_test_only`        |
+| `rpc_get_reward_config`                             | `none`                 |
+| `rpc_get_tier_leaderboard`                          | `sql_test_only`        |
+| `rpc_get_whale_mission_status`                      | `none`                 |
+| `rpc_golden_earth_tap`                              | `sql_test_only`        |
+| `rpc_ingest_sports_c1`                              | `sql_cron_or_internal` |
+| `rpc_ingest_sports_c1_batch`                        | `sql_test_only`        |
+| `rpc_ingest_sports_fixture_status`                  | `sql_test_only`        |
+| `rpc_invite_co_bet`                                 | `sql_test_only`        |
+| `rpc_invite_co_mission`                             | `sql_test_only`        |
+| `rpc_link_co_bet_bet`                               | `sql_test_only`        |
+| `rpc_liquidate_position`                            | `sql_cron_or_internal` |
+| `rpc_list_mission_chains`                           | `sql_test_only`        |
+| `rpc_list_sports_catalog`                           | `sql_test_only`        |
+| `rpc_list_sports_market_types`                      | `sql_test_only`        |
+| `rpc_list_wallet_identities`                        | `sql_test_only`        |
+| `rpc_live_crash_advance`                            | `sql_test_only`        |
+| `rpc_lock_wallet`                                   | `sql_cron_or_internal` |
+| `rpc_process_bank_transfer`                         | `sql_cron_or_internal` |
+| `rpc_process_bank_transfer_batch`                   | `edge`                 |
+| `rpc_process_on_chain_transfer`                     | `edge`                 |
+| `rpc_rate_limit_buckets`                            | `sql_cron_or_internal` |
+| `rpc_rate_limit_configs`                            | `sql_cron_or_internal` |
+| `rpc_recommend_missions`                            | `sql_test_only`        |
+| `rpc_record_app_install_attribution`                | `sql_test_only`        |
+| `rpc_record_product_analytics_event`                | `sql_test_only`        |
+| `rpc_record_sports_ingest_health`                   | `sql_test_only`        |
+| `rpc_record_sports_score_quorum_mismatch`           | `sql_test_only`        |
+| `rpc_refresh_affiliate_commission_daily_aggregates` | `sql_cron_or_internal` |
+| `rpc_refresh_affiliate_tier_snapshots`              | `sql_cron_or_internal` |
+| `rpc_register_affiliate_relationship`               | `none`                 |
+| `rpc_request_idem`                                  | `sql_cron_or_internal` |
+| `rpc_request_self_exclusion_release`                | `none`                 |
+| `rpc_reveal_roulette_spin`                          | `sql_test_only`        |
+| `rpc_run_cms_publish_scheduled`                     | `sql_cron_or_internal` |
+| `rpc_run_custody_reconciliation`                    | `sql_test_only`        |
+| `rpc_run_funding_accrual`                           | `sql_cron_or_internal` |
+| `rpc_run_invariant_checks`                          | `sql_cron_or_internal` |
+| `rpc_run_liquidations`                              | `sql_cron_or_internal` |
+| `rpc_run_open_order_fills`                          | `sql_cron_or_internal` |
+| `rpc_run_phon_internal_oracle`                      | `sql_cron_or_internal` |
+| `rpc_run_reconciliation`                            | `sql_cron_or_internal` |
+| `rpc_run_spot_order_fills`                          | `sql_cron_or_internal` |
+| `rpc_run_stop_orders`                               | `sql_cron_or_internal` |
+| `rpc_run_tier_decay`                                | `sql_cron_or_internal` |
+| `rpc_service_assess_circuit_breaker`                | `edge`                 |
+| `rpc_service_claim_notification_dispatch_batch`     | `edge`                 |
+| `rpc_service_claim_ops_notify_batch`                | `edge`                 |
+| `rpc_service_claim_withdrawal_broadcast_batch`      | `edge`                 |
+| `rpc_service_complete_notification_dispatch`        | `edge`                 |
+| `rpc_service_complete_ops_notify`                   | `edge`                 |
+| `rpc_service_complete_siwe_login`                   | `edge`                 |
+| `rpc_service_create_siwe_challenge`                 | `edge`                 |
+| `rpc_service_enqueue_ops_telegram_digest`           | `edge`                 |
+| `rpc_service_fail_withdrawal_broadcast`             | `edge`                 |
+| `rpc_service_ingest_usdt_krw_rate`                  | `edge`                 |
+| `rpc_service_lookup_siwe_identity`                  | `edge`                 |
+| `rpc_service_mark_withdrawal_broadcast`             | `edge`                 |
+| `rpc_service_purge_siwe_analytics_retention`        | `sql_test_only`        |
+| `rpc_service_record_circuit_breaker_outcome`        | `edge`                 |
+| `rpc_service_record_edge_ops_event`                 | `edge`                 |
+| `rpc_service_record_product_analytics_event`        | `edge`                 |
+| `rpc_service_register_pg_webhook_replay`            | `edge`                 |
+| `rpc_service_set_crypto_address`                    | `edge`                 |
+| `rpc_service_upsert_provider_health`                | `edge`                 |
+| `rpc_set_affiliate_elite_override`                  | `sql_test_only`        |
+| `rpc_set_market_limits`                             | `sql_test_only`        |
+| `rpc_set_market_source`                             | `sql_test_only`        |
+| `rpc_settle_game_bet`                               | `sql_cron_or_internal` |
+| `rpc_settle_sports_fixture`                         | `sql_cron_or_internal` |
+| `rpc_settle_sports_fixture_scores`                  | `sql_cron_or_internal` |
+| `rpc_settle_sports_prop_outcomes`                   | `sql_cron_or_internal` |
+| `rpc_submit_oracle_source_price`                    | `edge`                 |
+| `rpc_suspend_sports_fixture`                        | `sql_cron_or_internal` |
+| `rpc_sweep_stale_game_bets`                         | `sql_cron_or_internal` |
+| `rpc_sweep_stale_progressive_sessions`              | `sql_test_only`        |
+| `rpc_sync_sports_ingest_ops_alerts`                 | `sql_test_only`        |
+| `rpc_transition_fixture_live`                       | `sql_cron_or_internal` |
+| `rpc_unlock_wallet`                                 | `sql_cron_or_internal` |
+| `rpc_update_oracle_price`                           | `sql_cron_or_internal` |
+| `rpc_update_treasury_reserve`                       | `sql_cron_or_internal` |
+| `rpc_void_sports_bet`                               | `sql_cron_or_internal` |
+| `rpc_void_sports_fixture_dead_heat`                 | `sql_cron_or_internal` |
+
+> Deletion of `none`-classified RPCs is **not** authorized by this scan — engine freeze
+> (`00-post-closeout-active-ssot.mdc`) bars new/removed `rpc_*` without an explicit operator-approved
+> Phase R plan item. This table is inventory for that future decision, not an action list.
 
 ## App references not in database.types Functions
 
@@ -403,3 +423,6 @@
 1. Parse `Functions` block in `database.types.ts` for keys matching `rpc_*`.
 2. Walk `apps/web/src` + `apps/admin/src` for `callRpc` / `.rpc(` / RPC string constants.
 3. Resolve `RPC_*` exported constants to literal names.
+4. SA-04: for each app-unused RPC, scan `supabase/functions/**/*.ts` for `.rpc('rpc_name', ...)`,
+   then `supabase/migrations/**/*.sql` for the name outside its own declaration lines (cron/internal),
+   then `supabase/tests/**/*.sql` for test-only coverage.
