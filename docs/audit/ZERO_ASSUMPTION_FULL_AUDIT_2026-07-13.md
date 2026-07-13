@@ -8,12 +8,12 @@
 
 착수 전 `git status` + 문서 탐색으로 아래 4종이 오늘(2026-07-13) 날짜로 이미 존재함을 확인했다. 이 문서는 이들을 **재사용**하고, 이들이 다루지 않은 **코드 레벨 격차만** 신규로 추가한다.
 
-| 문서 | 역할 | 본 문서에서의 취급 |
-|---|---|---|
-| [`PLATFORM_AUDIT_REFERENCE.md`](PLATFORM_AUDIT_REFERENCE.md) (484줄) | "PHONARA 전체 플랫폼 Zero Assumption Audit — 참고 정본" | 인용, 재도출 안 함 |
-| [`PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](../OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml) (38 findings) | 구조화 결함 등록부 | 인용 |
-| [`MASTER_INVENTORY_AUDIT_2026-07-13.md`](MASTER_INVENTORY_AUDIT_2026-07-13.md) + `PER_PAGE_UI_MATRIX.md` / `RPC_USAGE_MATRIX.md` / `REPO_TREE_APPENDIX` / `KNIP_DEADCODE_REPORT.md` | 라우트·페이지·RPC·DB 전수 인벤토리 | 인용 + 표본 스팟체크 |
-| [`SYSTEM_AUDIT_2026-07-13/`](SYSTEM_AUDIT_2026-07-13/) 00~07 + FINDINGS.yaml | 7-Pillar 재점수 (Repository 86·DB 82·Frontend 78·Backend 85·Security 84·Performance 58·Release 38) + SA-01~06 | 인용, 신규 finding은 이 registry와 중복되지 않게 `ZA-*` id 부여 |
+| 문서                                                                                                                                                                                | 역할                                                                                                          | 본 문서에서의 취급                                              |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| [`PLATFORM_AUDIT_REFERENCE.md`](PLATFORM_AUDIT_REFERENCE.md) (484줄)                                                                                                                | "PHONARA 전체 플랫폼 Zero Assumption Audit — 참고 정본"                                                       | 인용, 재도출 안 함                                              |
+| [`PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](../OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml) (38 findings)                                                                          | 구조화 결함 등록부                                                                                            | 인용                                                            |
+| [`MASTER_INVENTORY_AUDIT_2026-07-13.md`](MASTER_INVENTORY_AUDIT_2026-07-13.md) + `PER_PAGE_UI_MATRIX.md` / `RPC_USAGE_MATRIX.md` / `REPO_TREE_APPENDIX` / `KNIP_DEADCODE_REPORT.md` | 라우트·페이지·RPC·DB 전수 인벤토리                                                                            | 인용 + 표본 스팟체크                                            |
+| [`SYSTEM_AUDIT_2026-07-13/`](SYSTEM_AUDIT_2026-07-13/) 00~07 + FINDINGS.yaml                                                                                                        | 7-Pillar 재점수 (Repository 86·DB 82·Frontend 78·Backend 85·Security 84·Performance 58·Release 38) + SA-01~06 | 인용, 신규 finding은 이 registry와 중복되지 않게 `ZA-*` id 부여 |
 
 **신규 finding ID 규칙:** 본 문서의 신규 발견은 `ZA-01`부터 번호를 매기며, 기존 `SA-*`/Registry id와 충돌하지 않는다. 기존 finding을 재확인만 한 경우 "(기존 SA-xx 재확인)"으로 표기한다.
 
@@ -27,16 +27,16 @@
 
 `MASTER_INVENTORY_AUDIT_2026-07-13.md` §1~§23의 수치를 표본 재확인했다. 방법: `Get-ChildItem`/Glob 직접 재계수 + `package.json` 직접 열람 (문서 신뢰 안 함).
 
-| 항목 | 문서 기재값 | 직접 재측정 | 판정 |
-|---|---|---|---|
-| Web route 파일 (`apps/web/src/routes/**/*.tsx`) | 93 | **93** | ✅ 일치 |
-| Web page 파일 (`*-page.tsx`) | 77 | **77** | ✅ 일치 |
-| Web shell 파일 (`*-shell.tsx`) | 2 | **2** | ✅ 일치 |
-| Admin route 파일 | 34 | **34** | ✅ 일치 |
-| SQL 통합 테스트 (`supabase/tests/*.sql`) | 142 | **142** | ✅ 일치 |
-| React / Vite / TanStack Router / Tailwind / TypeScript / Zustand / Vitest / Playwright 버전 | React 19.2.7 · Vite 8 · Router ~1.170 · Tailwind 4 · TS 6 · Zustand 5 · Vitest 4 · Playwright 1.60 | `package.json` 직접 대조 — **전부 일치** (`apps/web/package.json`: react 19.2.7, `@tanstack/react-router` ^1.170.15, tailwindcss ^4.3.1, typescript 6.0.3, zustand 5.0.14) | ✅ 일치 |
-| Admin page 파일 (`admin-*-page.tsx`) | **32** | **29** (정밀 재계수, `__tests__`·dialog·shell 컴포넌트 3종 제외) | ⚠️ **불일치 — 원인 미확인** |
-| DB migration 파일 (`supabase/migrations/*.sql`) | 239 (Phase 1) → **241** (같은 날 Pillar 2 재측정) | **243** (본 감사 재측정) | ⚠️ **불일치 — 계속 증가 중** |
+| 항목                                                                                        | 문서 기재값                                                                                        | 직접 재측정                                                                                                                                                                | 판정                         |
+| ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| Web route 파일 (`apps/web/src/routes/**/*.tsx`)                                             | 93                                                                                                 | **93**                                                                                                                                                                     | ✅ 일치                      |
+| Web page 파일 (`*-page.tsx`)                                                                | 77                                                                                                 | **77**                                                                                                                                                                     | ✅ 일치                      |
+| Web shell 파일 (`*-shell.tsx`)                                                              | 2                                                                                                  | **2**                                                                                                                                                                      | ✅ 일치                      |
+| Admin route 파일                                                                            | 34                                                                                                 | **34**                                                                                                                                                                     | ✅ 일치                      |
+| SQL 통합 테스트 (`supabase/tests/*.sql`)                                                    | 142                                                                                                | **142**                                                                                                                                                                    | ✅ 일치                      |
+| React / Vite / TanStack Router / Tailwind / TypeScript / Zustand / Vitest / Playwright 버전 | React 19.2.7 · Vite 8 · Router ~1.170 · Tailwind 4 · TS 6 · Zustand 5 · Vitest 4 · Playwright 1.60 | `package.json` 직접 대조 — **전부 일치** (`apps/web/package.json`: react 19.2.7, `@tanstack/react-router` ^1.170.15, tailwindcss ^4.3.1, typescript 6.0.3, zustand 5.0.14) | ✅ 일치                      |
+| Admin page 파일 (`admin-*-page.tsx`)                                                        | **32**                                                                                             | **29** (정밀 재계수, `__tests__`·dialog·shell 컴포넌트 3종 제외)                                                                                                           | ⚠️ **불일치 — 원인 미확인**  |
+| DB migration 파일 (`supabase/migrations/*.sql`)                                             | 239 (Phase 1) → **241** (같은 날 Pillar 2 재측정)                                                  | **243** (본 감사 재측정)                                                                                                                                                   | ⚠️ **불일치 — 계속 증가 중** |
 
 **해석:**
 
@@ -50,17 +50,17 @@
 
 `RPC_USAGE_MATRIX.md`(256개 `rpc_*`)는 알파벳순 평면 목록만 제공하고 Trading/Wallet/Casino/Sports/Mission/Admin 도메인 그룹핑이 없다. 함수명·호출 파일 경로를 근거로 도메인별로 재분류했다:
 
-| 도메인 | 근사 개수 | 대표 함수 |
-|---|---:|---|
-| Admin (`rpc_admin_*` 정확 카운트) | **35** | `rpc_admin_halt_market`, `rpc_admin_review_krw_deposit_proof`, `rpc_admin_set_role_grant` |
-| Platform/Service 내부 (`rpc_service_*` 정확 카운트, edge·cron 전용) | **19** | `rpc_service_ingest_usdt_krw_rate`, `rpc_service_record_edge_ops_event` |
-| Earn/Mission/Referral/Tier/Staking | ~38 | `rpc_get_earn_hub_status`, `rpc_claim_repeatable_mission`, `rpc_get_tier_decay_status`, `rpc_stake_phon` |
-| Trading (Spot/Futures/Margin/Oracle) | ~34 | `rpc_open_futures_position`, `rpc_place_spot_limit_order`, `rpc_run_liquidations` |
-| Sports | ~29 | `rpc_place_sports_bet`, `rpc_settle_sports_fixture`, `rpc_cashout_sports_bet` |
-| Wallet/Ledger/Payments | ~23 | `rpc_request_withdrawal`, `rpc_create_krw_deposit_request`, `rpc_transfer_to_user` |
-| Casino (게임/PF) | ~20 | `rpc_place_game_bet`, `rpc_live_crash_place_bet`, `rpc_reveal_game_round` |
-| Identity/Auth/Compliance/RG | ~9 | `rpc_submit_kyc`, `rpc_set_self_exclusion`, `rpc_record_consent` |
-| Platform/Ops/Marketing/CMS (비-admin·비-service) | ~15 | `rpc_list_cms_content`, `rpc_run_reconciliation`, `rpc_get_public_platform_status` |
+| 도메인                                                              | 근사 개수 | 대표 함수                                                                                                |
+| ------------------------------------------------------------------- | --------: | -------------------------------------------------------------------------------------------------------- |
+| Admin (`rpc_admin_*` 정확 카운트)                                   |    **35** | `rpc_admin_halt_market`, `rpc_admin_review_krw_deposit_proof`, `rpc_admin_set_role_grant`                |
+| Platform/Service 내부 (`rpc_service_*` 정확 카운트, edge·cron 전용) |    **19** | `rpc_service_ingest_usdt_krw_rate`, `rpc_service_record_edge_ops_event`                                  |
+| Earn/Mission/Referral/Tier/Staking                                  |       ~38 | `rpc_get_earn_hub_status`, `rpc_claim_repeatable_mission`, `rpc_get_tier_decay_status`, `rpc_stake_phon` |
+| Trading (Spot/Futures/Margin/Oracle)                                |       ~34 | `rpc_open_futures_position`, `rpc_place_spot_limit_order`, `rpc_run_liquidations`                        |
+| Sports                                                              |       ~29 | `rpc_place_sports_bet`, `rpc_settle_sports_fixture`, `rpc_cashout_sports_bet`                            |
+| Wallet/Ledger/Payments                                              |       ~23 | `rpc_request_withdrawal`, `rpc_create_krw_deposit_request`, `rpc_transfer_to_user`                       |
+| Casino (게임/PF)                                                    |       ~20 | `rpc_place_game_bet`, `rpc_live_crash_place_bet`, `rpc_reveal_game_round`                                |
+| Identity/Auth/Compliance/RG                                         |        ~9 | `rpc_submit_kyc`, `rpc_set_self_exclusion`, `rpc_record_consent`                                         |
+| Platform/Ops/Marketing/CMS (비-admin·비-service)                    |       ~15 | `rpc_list_cms_content`, `rpc_run_reconciliation`, `rpc_get_public_platform_status`                       |
 
 **UNVERIFIED (명시):** Admin(35)·Service(19) 두 버킷은 접두어가 명확해 정확하지만, 나머지 6개 도메인 합계(~168)는 함수명 키워드 기반 수동 분류로 **경계 사례가 존재**한다. 예: `rpc_stake`/`rpc_stake_phon`(Earn 스테이킹 개념이지만 실제 코드는 `trading-rpc-display-contract.ts`에 위치), `rpc_spin_roulette`(Earn 일일 룰렛, `earn-play-page-controller.ts` 호출)와 `rpc_reveal_roulette_spin`(Casino PF 룰렛 게임)처럼 **이름이 비슷하지만 다른 도메인**인 쌍이 존재해 총합이 256과 정확히 일치하지 않을 수 있다. 정밀 태깅은 스크립트화가 필요하며 본 감사는 근사치임을 명시한다.
 
@@ -68,11 +68,11 @@
 
 ### 1-A.3 README / 상태 문서 vs 실제 코드 불일치표 (신규)
 
-| 문서 | 기재 내용 | 실제 코드/SSOT 상태 | 불일치 |
-|---|---|---|---|
-| [`README.md`](../../README.md) (루트, 15줄) | "PHONARA GB master repository" + "Phase D (Demolition)" 섹션만. 아키텍처·기술스택·설치법 설명 0줄 | 실제로는 Demolition **DONE**, Engine Apex **FULLY CLOSED**, Phase R UI Rebuild가 280개 항목 중 273개 완료(`§AI Todo Sync`), Release Candidate가 Freeze 상태로 3-Owner 서명 대기 중인 **성숙한 플랫폼** | 새 기여자/외부 감사자가 README만 읽으면 "삭제 작업 중인 초기 저장소"로 오인함. 기술스택·아키텍처 설명이 전혀 없어 `MASTER_INVENTORY_AUDIT`가 실질적 README 역할을 대신하고 있음 |
+| 문서                                                                                  | 기재 내용                                                                                                                                                                                                                                                | 실제 코드/SSOT 상태                                                                                                                                                                                                                                                                                                                                                                                                                           | 불일치                                                                                                                                                                                                                    |
+| ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`README.md`](../../README.md) (루트, 15줄)                                           | "PHONARA GB master repository" + "Phase D (Demolition)" 섹션만. 아키텍처·기술스택·설치법 설명 0줄                                                                                                                                                        | 실제로는 Demolition **DONE**, Engine Apex **FULLY CLOSED**, Phase R UI Rebuild가 280개 항목 중 273개 완료(`§AI Todo Sync`), Release Candidate가 Freeze 상태로 3-Owner 서명 대기 중인 **성숙한 플랫폼**                                                                                                                                                                                                                                        | 새 기여자/외부 감사자가 README만 읽으면 "삭제 작업 중인 초기 저장소"로 오인함. 기술스택·아키텍처 설명이 전혀 없어 `MASTER_INVENTORY_AUDIT`가 실질적 README 역할을 대신하고 있음                                           |
 | [`docs/CURRENT_STATUS.md`](../CURRENT_STATUS.md) (README 링크 텍스트 자체가 "(stub)") | 2026-07-10 날짜 고정, §AI Todo Sync 표에 `p2-defer-admin-tier-benefits`·`p2-defer-admin-promotions`·`p2-defer-admin-cms`·`p2-defer-admin-casino`·`p2-defer-admin-staking`·`p2-defer-admin-support` 전부 **"`[x]` cancelled · DEFER — 구현 금지"**로 표기 | 위 6개 admin 페이지 중 5개(tier-benefits·promotions·cms·casino·staking)를 직접 열람한 결과 **전부 실제 구현되어 있음** — `admin-casino-page.tsx`(138줄, `useAdminCasinoDesk` 훅 실연결), `admin-staking-page.tsx`(240줄+), `admin-tier-benefits-page.tsx`(77줄+), 전부 실 RPC 연동·`AdminTable`·`HowItWorks` 완비. `admin-support-page.tsx`도 `apps/admin/AGENTS.md`에 "E9 UI (`ew-e9-page-admin-support`)"로 명시적으로 문서화되어 실존 확인 | **"구현 금지"라고 적힌 기능이 실제로는 구현되어 운영 중.** 나중에(E6/E9 admin desks wave, `ew-e6-admin-desks-wave` #250 등) 같은 기능이 다시 만들어졌는데 CURRENT_STATUS.md의 원래 "defer/cancelled" 표기가 갱신되지 않음 |
-| `docs/CURRENT_STATUS.md` 날짜 | 2026-07-10 | `SYSTEM_AUDIT_2026-07-13`·`ACTIVE_WORK_SSOT` 등은 2026-07-13 | 3일 정체 — README가 가리키는 "현재 상태" 문서가 실제로는 최신이 아님 |
+| `docs/CURRENT_STATUS.md` 날짜                                                         | 2026-07-10                                                                                                                                                                                                                                               | `SYSTEM_AUDIT_2026-07-13`·`ACTIVE_WORK_SSOT` 등은 2026-07-13                                                                                                                                                                                                                                                                                                                                                                                  | 3일 정체 — README가 가리키는 "현재 상태" 문서가 실제로는 최신이 아님                                                                                                                                                      |
 
 **Finding ZA-03 (문서 신뢰성 — P2):** `docs/CURRENT_STATUS.md`의 admin 6개 서피스 "cancelled/구현 금지" 표기가 이후 완료된 E6/E9 admin desk 구현과 충돌한다. 이 문서만 보고 "해당 admin 기능은 없다"고 판단하면 실제로 존재하는 기능을 중복 구현하거나, 반대로 실제 운영 중인 기능을 "금지된 것"으로 오인해 건드리지 않아야 할 코드를 방치할 위험이 있다. 근거: `docs/CURRENT_STATUS.md:370-376` vs `apps/admin/src/product/surfaces/admin-casino-page.tsx`·`admin-staking-page.tsx`·`admin-tier-benefits-page.tsx` 실제 코드, `apps/admin/AGENTS.md` E9 섹션. **권장(실행은 다음 단계):** §82 doc sync 규칙에 따라 CURRENT_STATUS.md의 해당 6행에 "이후 E6/E9 wave에서 구현됨 — 아래 참조" 각주 추가.
 
@@ -90,14 +90,14 @@
 
 기존 발견(1-A 이전 조사)에서 `tier-me-page`는 타입세이프 `callRpc()`를, `earn-home-page`는 `supabase.rpc()`를 직접 호출한다는 사례 하나를 확인했다. `apps/web/src/features/**`, `apps/web/src/hooks/**`를 전수 grep한 결과, 이것은 **2개 페이지의 우연한 차이가 아니라 25개 파일에 퍼진 구조적 패턴**이었다.
 
-| 그룹 | `callRpc` 우회 파일 수 | 목록 |
-|---|---:|---|
-| `features/earn/*` | **15** | `use-earn-home-page-controller` · `use-tier-benefits-page-controller` · `use-tier-guide-page-controller` · `use-staking-page-controller` · `use-referral-page-controller` · `use-referral-invite-page-controller` · `use-share-earnings-page-controller` · `use-home-attendance-page-controller` · `use-home-missions-page-controller` · `use-home-missions-invite-page-controller` · `use-home-missions-referral-page-controller` · `use-earn-play-page-controller` · `use-earn-cashback-page-controller` · `use-events-hub-page-controller` · `use-viral-missions` |
-| `features/wallet/earn-hub-tier.ts` · `features/trading/use-trade-earn-vip-tier.ts` · `features/onboarding/use-onboarding-missions-page-controller.ts` | **3** | 폴더는 wallet/trading/onboarding이지만 실제로는 Earn Hub 데이터를 재조회하는 헬퍼 |
-| `features/account/*` | 2 | `use-account-hub-controller` · `use-account-profile-controller` (둘 다 `rpc_get_earn_hub_status` 직접 호출) |
-| `features/wallet/use-crypto-deposit.ts` · `features/notifications/web-push-subscription.ts` | 2 | Earn과 무관 |
-| `hooks/*` | 3 | `use-compliance-status` · `use-client-gate-prechecks` · `use-trading` |
-| **합계** | **25** | — |
+| 그룹                                                                                                                                                  | `callRpc` 우회 파일 수 | 목록                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `features/earn/*`                                                                                                                                     |                 **15** | `use-earn-home-page-controller` · `use-tier-benefits-page-controller` · `use-tier-guide-page-controller` · `use-staking-page-controller` · `use-referral-page-controller` · `use-referral-invite-page-controller` · `use-share-earnings-page-controller` · `use-home-attendance-page-controller` · `use-home-missions-page-controller` · `use-home-missions-invite-page-controller` · `use-home-missions-referral-page-controller` · `use-earn-play-page-controller` · `use-earn-cashback-page-controller` · `use-events-hub-page-controller` · `use-viral-missions` |
+| `features/wallet/earn-hub-tier.ts` · `features/trading/use-trade-earn-vip-tier.ts` · `features/onboarding/use-onboarding-missions-page-controller.ts` |                  **3** | 폴더는 wallet/trading/onboarding이지만 실제로는 Earn Hub 데이터를 재조회하는 헬퍼                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `features/account/*`                                                                                                                                  |                      2 | `use-account-hub-controller` · `use-account-profile-controller` (둘 다 `rpc_get_earn_hub_status` 직접 호출)                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `features/wallet/use-crypto-deposit.ts` · `features/notifications/web-push-subscription.ts`                                                           |                      2 | Earn과 무관                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `hooks/*`                                                                                                                                             |                      3 | `use-compliance-status` · `use-client-gate-prechecks` · `use-trading`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| **합계**                                                                                                                                              |                 **25** | —                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 **Earn 도메인 관련 파일: 25개 중 18개 (72%)** — 사용자가 제시한 P0 판정 기준(Earn 관련 훅 비율)에 따라 이 패턴은 **P0**로 분류한다.
 
@@ -121,12 +121,12 @@ export const TIER_FEE_EARN_HUB_RPC = EARN_HUB_STATUS_RPC;
 
 BottomNav(5) · TopBar · `earn-subnav`/`wallet-subnav`/`trade-subnav`/`sports-subnav`/`casino-subnav` · `subnav-route-manifest.ts`의 전체 등재 경로를 웹 93개 라우트 전체와 대조하고, 의심 후보 각각에 대해 `<Link to="...">` / `navigate({ to: "..." })` 문자열 참조를 `apps/web/src` 전체에서 재검색했다.
 
-| 라우트 | 페이지 상태 | 인앱 진입점 검색 결과 |
-|---|---|---|
-| `/tier/leaderboard` | 실구현 (`tier-leaderboard-page.tsx`, contract+test 완비, PER_PAGE_UI_MATRIX loading/empty/error/responsive 전부 yes) | **0건** — `earn-subnav.ts`에 `/tier/me`·`/tier/benefits`는 있으나 `/tier/leaderboard`는 chip 목록에 없음. `PLATFORM_EWAVE_HIDDEN_ROUTES`에도 없어(="숨김 대상 아님") 의도적 비노출이라는 증거도 없음 |
-| `/rewards/history` | 실구현 (`rewards-history-page.tsx`) | **0건** — wallet-subnav·settings 어디에도 링크 없음 |
-| `/staking/positions` | 실구현 (`staking-positions-page.tsx`) | **0건** — `staking-hub-page.tsx`를 직접 열람한 결과 페이지 내부에 `TIER_BENEFITS_ROUTE` 링크만 있고 `/staking/positions`로 가는 버튼은 없음. 레거시 리다이렉트 `/my-earn` → `/staking/positions`(`route-redirect-registry.ts:100`)만 존재 — 옛 URL을 아는 사용자만 우회 도달 가능 |
-| `/referral/leaderboard` | 실구현이나 **의도적으로 미노출** | `P11_GATE_SIDE_INCOME_STUB_ROUTES = ['/referral/leaderboard']`로 명시적 "stub route" 지정 + `isReferralLeaderboardWireLive()` feature-flag 게이트 + 테스트가 "`earnVisible`에 포함되면 안 됨"을 명시적으로 단언(`p11-gate-side-income-display-contract.test.ts:78`) — **의도된 단계적 출시이며 버그 아님** |
+| 라우트                  | 페이지 상태                                                                                                          | 인앱 진입점 검색 결과                                                                                                                                                                                                                                                                                      |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/tier/leaderboard`     | 실구현 (`tier-leaderboard-page.tsx`, contract+test 완비, PER_PAGE_UI_MATRIX loading/empty/error/responsive 전부 yes) | **0건** — `earn-subnav.ts`에 `/tier/me`·`/tier/benefits`는 있으나 `/tier/leaderboard`는 chip 목록에 없음. `PLATFORM_EWAVE_HIDDEN_ROUTES`에도 없어(="숨김 대상 아님") 의도적 비노출이라는 증거도 없음                                                                                                       |
+| `/rewards/history`      | 실구현 (`rewards-history-page.tsx`)                                                                                  | **0건** — wallet-subnav·settings 어디에도 링크 없음                                                                                                                                                                                                                                                        |
+| `/staking/positions`    | 실구현 (`staking-positions-page.tsx`)                                                                                | **0건** — `staking-hub-page.tsx`를 직접 열람한 결과 페이지 내부에 `TIER_BENEFITS_ROUTE` 링크만 있고 `/staking/positions`로 가는 버튼은 없음. 레거시 리다이렉트 `/my-earn` → `/staking/positions`(`route-redirect-registry.ts:100`)만 존재 — 옛 URL을 아는 사용자만 우회 도달 가능                          |
+| `/referral/leaderboard` | 실구현이나 **의도적으로 미노출**                                                                                     | `P11_GATE_SIDE_INCOME_STUB_ROUTES = ['/referral/leaderboard']`로 명시적 "stub route" 지정 + `isReferralLeaderboardWireLive()` feature-flag 게이트 + 테스트가 "`earnVisible`에 포함되면 안 됨"을 명시적으로 단언(`p11-gate-side-income-display-contract.test.ts:78`) — **의도된 단계적 출시이며 버그 아님** |
 
 **Finding ZA-06 (P2):** `/tier/leaderboard`·`/rewards/history`·`/staking/positions` 3개 라우트는 완성된 페이지이지만 앱 내 어떤 링크·버튼에서도 도달할 수 없다(`/referral/leaderboard`처럼 의도적 stub 표시도 없음 — 즉 "의도적으로 숨김"이 아니라 "잊혀진 진입점"에 가깝다). 근거: `earn-subnav.ts`·`wallet-subnav.ts`·`subnav-route-manifest.ts` 전체 열람 + `apps/web/src` 전체 대상 `to="..."` grep 0건.
 
@@ -160,12 +160,12 @@ expect(screen.getByTestId('tier-me-history-link')).toHaveAttribute('href', '/tie
 
 ### 1-B.4 같은 데이터를 다른 소스에서 — 캐시백률 3중 소스 (사용자 지정 확인 항목)
 
-| 화면 | 캐시백률 데이터 소스 | 실시간 여부 |
-|---|---|---|
-| `earn-cashback-page.tsx` | `EARN_CASHBACK_HUB_STATUS_RPC` = `rpc_get_earn_hub_status` (raw `supabase.rpc`) | **실시간** — 20초 staleTime TanStack Query |
-| `tier-benefits-page.tsx` | 리터럴 `'rpc_get_earn_hub_status'` (raw `supabase.rpc`) | **실시간** |
-| `fees-page.tsx` | `buildFeesCashbackRows()` — RPC·훅 호출 **없음**, i18n 키 `tier.guide.rows.${tier}.cashback`만 참조 | **정적** (코드 주석에 "not live RPC" 명시) |
-| (참고) `tier-guide-page.tsx` | 위와 동일 i18n 키 네임스페이스 재사용(주석: "same as cashback center") | **정적** |
+| 화면                         | 캐시백률 데이터 소스                                                                                | 실시간 여부                                |
+| ---------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| `earn-cashback-page.tsx`     | `EARN_CASHBACK_HUB_STATUS_RPC` = `rpc_get_earn_hub_status` (raw `supabase.rpc`)                     | **실시간** — 20초 staleTime TanStack Query |
+| `tier-benefits-page.tsx`     | 리터럴 `'rpc_get_earn_hub_status'` (raw `supabase.rpc`)                                             | **실시간**                                 |
+| `fees-page.tsx`              | `buildFeesCashbackRows()` — RPC·훅 호출 **없음**, i18n 키 `tier.guide.rows.${tier}.cashback`만 참조 | **정적** (코드 주석에 "not live RPC" 명시) |
+| (참고) `tier-guide-page.tsx` | 위와 동일 i18n 키 네임스페이스 재사용(주석: "same as cashback center")                              | **정적**                                   |
 
 **답변(사용자 질문 — 등급 상승 시 동시 갱신 여부):** `earn-cashback-page`와 `tier-benefits-page`는 **같은 RPC를 각자 재호출**하므로 서로 간에는 일관성이 유지된다(포맷터가 다르지 않다면). 그러나 `fees-page`(및 `tier-guide-page`)는 **애초에 사용자의 등급이나 RPC 응답을 조회하지 않는 정적 안내 표**이므로, 개인의 등급 상승과 무관하게 항상 같은 i18n 카탈로그 값을 보여준다 — 이는 "동기화 실패"가 아니라 **처음부터 별개 데이터(개인화된 실시간 값 vs 공개 마케팅 정적 표)** 라는 뜻이다. 실질적 위험은 다른 지점에 있다: **운영자가 등급별 캐시백률 자체를 변경하면**, `earn-cashback`/`tier-benefits`는 다음 RPC 호출 시 즉시 새 값을 반영하지만 `fees-page`/`tier-guide-page`는 `packages/i18n` 카탈로그를 수동으로 갱신하지 않는 한 **옛 값을 계속 보여준다.** `assertFeesPageContractSync()`(`fees-page-display-contract.ts:44`)는 행(row) **개수**만 검증하고 캐시백 **값**의 일치는 검증하지 않는다.
 
@@ -218,12 +218,12 @@ CSS 파일 내 `@media (min-width: ...)` 실사용을 전수 grep한 결과(`lay
 
 `fixed`/`sticky` + `bottom` 계열 포지셔닝을 쓰는 컴포넌트를 전수 검색하고, 각각이 `--ds-shell-bottomnav-height` clearance를 실제로 적용하는지 코드로 직접 대조했다.
 
-| 컴포넌트 | 위치 방식 | BottomNav 높이 보정 여부 |
-|---|---|---|
-| `AppShell` 본문(`.ds-shell-main-with-bottomnav`, `shell-chrome.css:237-247`) | `padding-bottom: calc(var(--ds-shell-bottomnav-height) + ...)`, `lg:` 이상은 0 | ✅ 적용 (BottomNav 자체가 `lg:hidden`이므로 정확) |
-| `bottom-nav.tsx` (BottomNav 본체) | `fixed inset-x-0 bottom-0` | 해당 없음(자기 자신) |
-| `pwa-install-banner.tsx` | `fixed inset-x-0 bottom-[calc(var(--ds-shell-bottomnav-height)+env(safe-area-inset-bottom,0px))]`, `lg:bottom-4`로 전환 | ✅ 값은 정확 — **but** 아래 ZA-10 참조 |
-| `trade-desk-mobile-sticky-cta`(매수/매도 버튼, `trade-desk-layout.css:136-142`) | `position: sticky; bottom: calc(var(--ds-shell-bottomnav-height, 56px) + env(safe-area-inset-bottom, 0px))` | ✅ 적용 — Trade 데스크 매수/매도 버튼이 BottomNav와 겹치지 않도록 동일 토큰 재사용 |
+| 컴포넌트                                                                        | 위치 방식                                                                                                               | BottomNav 높이 보정 여부                                                           |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `AppShell` 본문(`.ds-shell-main-with-bottomnav`, `shell-chrome.css:237-247`)    | `padding-bottom: calc(var(--ds-shell-bottomnav-height) + ...)`, `lg:` 이상은 0                                          | ✅ 적용 (BottomNav 자체가 `lg:hidden`이므로 정확)                                  |
+| `bottom-nav.tsx` (BottomNav 본체)                                               | `fixed inset-x-0 bottom-0`                                                                                              | 해당 없음(자기 자신)                                                               |
+| `pwa-install-banner.tsx`                                                        | `fixed inset-x-0 bottom-[calc(var(--ds-shell-bottomnav-height)+env(safe-area-inset-bottom,0px))]`, `lg:bottom-4`로 전환 | ✅ 값은 정확 — **but** 아래 ZA-10 참조                                             |
+| `trade-desk-mobile-sticky-cta`(매수/매도 버튼, `trade-desk-layout.css:136-142`) | `position: sticky; bottom: calc(var(--ds-shell-bottomnav-height, 56px) + env(safe-area-inset-bottom, 0px))`             | ✅ 적용 — Trade 데스크 매수/매도 버튼이 BottomNav와 겹치지 않도록 동일 토큰 재사용 |
 
 **3곳 모두 동일한 `--ds-shell-bottomnav-height` 토큰을 일관되게 재사용하고 있음을 확인했다 — 코드 레벨에서 "하단 네비와 콘텐츠가 겹치는" 활성 결함은 발견하지 못했다.** 이는 부정 결과이지만 zero-assumption 원칙상 그대로 기록한다: 사용자가 실제로 겹침을 목격했다면 (a) 특정 기기의 `env(safe-area-inset-bottom)` 처리 차이, (b) 아래 ZA-10의 PWA 배너 조건, (c) 본 감사에서 다루지 않은 카지노 게임 스테이지 내부 UI 중 하나일 가능성이 높다 — **브라우저 실측 없이는 완전히 배제할 수 없음(NOT VERIFIED)**.
 
@@ -231,12 +231,12 @@ CSS 파일 내 `@media (min-width: ...)` 실사용을 전수 grep한 결과(`lay
 
 ### 1-C.3 페이지별 PC 전용 vs 모바일 대응 레이아웃
 
-| 영역 | 모바일 | 데스크톱(`lg:` 1024px+) | 근거 |
-|---|---|---|---|
-| Earn 셸 | `EarnSubnavMobile`(가로 스크롤 chip) | `EarnSideNavDesktop`(240px 고정 사이드바) + `EarnSideRailDesktop`(64px 축소 레일) | `appshell.tsx:99-107` |
-| BottomNav | 5탭 고정 표시 | `lg:hidden` — 완전히 사라짐(데스크톱은 TopBar+사이드바로 대체) | `appshell.tsx:109` |
-| 도메인 subnav(Trade/Sports/Casino/Wallet) | `HorizontalSubnav`(가로 스크롤) | `lg:hidden` — 데스크톱은 해당 없음(전용 데스크 레이아웃으로 대체 추정) | `appshell.tsx:34-76` |
-| Trade 데스크 | `trade-desk-mobile-tabs.tsx`(탭 전환) + `trade-desk-mobile-sticky-cta.tsx` | `trade-desk-tablet-layout.tsx` + `trade-desk-bottom-dock.tsx`(포지션/주문/히스토리 패널 동시 노출) | 파일 구조상 모바일/태블릿/데스크톱 3종 레이아웃 파일 분리 확인 |
+| 영역                                      | 모바일                                                                     | 데스크톱(`lg:` 1024px+)                                                                            | 근거                                                           |
+| ----------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Earn 셸                                   | `EarnSubnavMobile`(가로 스크롤 chip)                                       | `EarnSideNavDesktop`(240px 고정 사이드바) + `EarnSideRailDesktop`(64px 축소 레일)                  | `appshell.tsx:99-107`                                          |
+| BottomNav                                 | 5탭 고정 표시                                                              | `lg:hidden` — 완전히 사라짐(데스크톱은 TopBar+사이드바로 대체)                                     | `appshell.tsx:109`                                             |
+| 도메인 subnav(Trade/Sports/Casino/Wallet) | `HorizontalSubnav`(가로 스크롤)                                            | `lg:hidden` — 데스크톱은 해당 없음(전용 데스크 레이아웃으로 대체 추정)                             | `appshell.tsx:34-76`                                           |
+| Trade 데스크                              | `trade-desk-mobile-tabs.tsx`(탭 전환) + `trade-desk-mobile-sticky-cta.tsx` | `trade-desk-tablet-layout.tsx` + `trade-desk-bottom-dock.tsx`(포지션/주문/히스토리 패널 동시 노출) | 파일 구조상 모바일/태블릿/데스크톱 3종 레이아웃 파일 분리 확인 |
 
 **판정:** 최소 Earn·Trade 영역은 "모바일 클램프 하나로 대응"이 아니라 실제로 구조가 분리된 3-tier 반응형이 코드로 확인된다. 전체 79 web surface에 대한 개별 PC-only/mobile-only 레이아웃 존재 여부 전수화는 범위상 생략(PER_PAGE_UI_MATRIX의 Responsive yes 72.2% 인용).
 
@@ -252,13 +252,13 @@ CSS 파일 내 `@media (min-width: ...)` 실사용을 전수 grep한 결과(`lay
 
 **색상** (`colors.css`) — 전부 **OKLCH**, `light-dark()`로 라이트/다크 단일 선언(중복 규칙셋 없음). 파일 자체 주석: "hex/hsl 신규 정의 금지."
 
-| 토큰 | 라이트 | 다크 |
-|---|---|---|
-| `--ds-bg` | `oklch(0.98 0.008 260)` | `oklch(0.145 0.012 260)` |
-| `--ds-accent` (브랜드 민트, Earn 정체성) | `oklch(0.52 0.17 165)` | `oklch(0.78 0.17 165)` |
-| `--ds-success` / `--ds-danger` | `oklch(0.48 0.17 155)` / `oklch(0.5 0.21 25)` | `oklch(0.72 0.17 155)` / `oklch(0.65 0.21 25)` |
-| `--ds-market-up` / `--ds-market-down` | `oklch(0.48 0.17 155)` / `oklch(0.5 0.21 25)` | `oklch(0.72 0.17 155)` / `oklch(0.62 0.21 25)` |
-| Tier ramp (bronze~prime) | hue 고정 55~280, lightness만 단계 조정 | 동일 |
+| 토큰                                     | 라이트                                        | 다크                                           |
+| ---------------------------------------- | --------------------------------------------- | ---------------------------------------------- |
+| `--ds-bg`                                | `oklch(0.98 0.008 260)`                       | `oklch(0.145 0.012 260)`                       |
+| `--ds-accent` (브랜드 민트, Earn 정체성) | `oklch(0.52 0.17 165)`                        | `oklch(0.78 0.17 165)`                         |
+| `--ds-success` / `--ds-danger`           | `oklch(0.48 0.17 155)` / `oklch(0.5 0.21 25)` | `oklch(0.72 0.17 155)` / `oklch(0.65 0.21 25)` |
+| `--ds-market-up` / `--ds-market-down`    | `oklch(0.48 0.17 155)` / `oklch(0.5 0.21 25)` | `oklch(0.72 0.17 155)` / `oklch(0.62 0.21 25)` |
+| Tier ramp (bronze~prime)                 | hue 고정 55~280, lightness만 단계 조정        | 동일                                           |
 
 `--ds-market-up`이 `--ds-success`와 현재 라이트 모드에서 값이 같지만(둘 다 155 hue), **의미론적으로는 분리된 별도 토큰**(주석: "market 색과 분리") — 우연한 일치이지 병합은 아님.
 
@@ -291,19 +291,19 @@ CSS 파일 내 `@media (min-width: ...)` 실사용을 전수 grep한 결과(`lay
 
 `docs/audit/MASTER_INVENTORY_AUDIT_2026-07-13.md` §9는 "Earn/Missions/Referral/Tier: **Complete**"로 한 줄 판정했다. 8개 컨트롤러(`use-home-attendance-page-controller` · `use-home-missions-page-controller` · `use-referral-page-controller` · `use-tier-me-page-controller` · `use-tier-benefits-page-controller` · `use-earn-cashback-page-controller` · `use-share-earnings-page-controller` · `use-staking-page-controller`)를 직접 열어 재판정했다.
 
-| 페이지 | 판정 | 근거 |
-|---|---|---|
-| 출석 (`home-attendance-page`) | **정상** | 실 RPC 3종 + `user_streaks` 테이블 직접 조회 + claim 플로우 완비, TODO/stub 없음 |
-| 미션 (`home-missions-page` + invite/referral 하위) | **정상** | `resolveHomeMissionCtaRoute()`(1-E.2 근거) 등 미션별 딥링크 라우팅까지 구현됨 |
-| 친구초대 (`referral-page`/`referral-invite-page`) | **정상** | 실 RPC 연동 확인 |
-| 친구초대 리더보드 (`referral-leaderboard-page`) | **페이지는 정상이나 도달 불가** | 1-B.2 ZA-06 — 앱 내 링크 없음 |
-| 등급 (`tier-me-page`) | **부분** | RPC 연동은 정상이나 "히스토리 보기" 버튼이 죽은 링크(1-B.3 ZA-07) |
-| 등급 리더보드 (`tier-leaderboard-page`) | **페이지는 정상이나 도달 불가** | ZA-06 |
-| 혜택 (`tier-benefits-page`) | **정상** | 실 RPC 연동 |
-| 캐시백 (`earn-cashback-page`) | **정상** (단, 정적 병행 소스 존재 — ZA-08 참조) | |
-| 공유 (`share-earnings-page`) | **정상** | 실 RPC 연동 |
-| 스테이킹 (`staking-hub-page`) | **정상** | 실 RPC 연동, `TIER_BENEFITS_ROUTE` 링크 확인 |
-| 스테이킹 포지션 (`staking-positions-page`) | **페이지는 정상이나 도달 불가** | ZA-06 — `staking-hub-page.tsx`에 이 라우트로 가는 버튼 없음 확인 |
+| 페이지                                             | 판정                                            | 근거                                                                             |
+| -------------------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------- |
+| 출석 (`home-attendance-page`)                      | **정상**                                        | 실 RPC 3종 + `user_streaks` 테이블 직접 조회 + claim 플로우 완비, TODO/stub 없음 |
+| 미션 (`home-missions-page` + invite/referral 하위) | **정상**                                        | `resolveHomeMissionCtaRoute()`(1-E.2 근거) 등 미션별 딥링크 라우팅까지 구현됨    |
+| 친구초대 (`referral-page`/`referral-invite-page`)  | **정상**                                        | 실 RPC 연동 확인                                                                 |
+| 친구초대 리더보드 (`referral-leaderboard-page`)    | **페이지는 정상이나 도달 불가**                 | 1-B.2 ZA-06 — 앱 내 링크 없음                                                    |
+| 등급 (`tier-me-page`)                              | **부분**                                        | RPC 연동은 정상이나 "히스토리 보기" 버튼이 죽은 링크(1-B.3 ZA-07)                |
+| 등급 리더보드 (`tier-leaderboard-page`)            | **페이지는 정상이나 도달 불가**                 | ZA-06                                                                            |
+| 혜택 (`tier-benefits-page`)                        | **정상**                                        | 실 RPC 연동                                                                      |
+| 캐시백 (`earn-cashback-page`)                      | **정상** (단, 정적 병행 소스 존재 — ZA-08 참조) |                                                                                  |
+| 공유 (`share-earnings-page`)                       | **정상**                                        | 실 RPC 연동                                                                      |
+| 스테이킹 (`staking-hub-page`)                      | **정상**                                        | 실 RPC 연동, `TIER_BENEFITS_ROUTE` 링크 확인                                     |
+| 스테이킹 포지션 (`staking-positions-page`)         | **페이지는 정상이나 도달 불가**                 | ZA-06 — `staking-hub-page.tsx`에 이 라우트로 가는 버튼 없음 확인                 |
 
 **종합:** "완전 실패"는 0건이다 — 전 페이지가 실제 RPC/테이블에 연결된 실 구현체이며 TODO/stub 잔존물도 없다. 다만 (1) 8개 컨트롤러 전부가 1-B.1의 `callRpc` 우회 패턴에 걸려 있고(구조적 위험 공통), (2) 등급 페이지의 죽은 링크 1건, (3) 리더보드·포지션류 하위 페이지 3개가 도달 불가 상태다. **"Complete" 라벨은 RPC 연동 여부 기준으로는 맞지만, 내비게이션 도달성·에러 경로 일관성까지 포함하면 정확한 표현이 아니다.**
 
@@ -313,21 +313,21 @@ CSS 파일 내 `@media (min-width: ...)` 실사용을 전수 grep한 결과(`lay
 
 **(1) `earn-home-page`의 고정 진입 카드 4개** (`EARN_HOME_ENTRY_CARDS`, `earn-home-display-contract.ts:149-197`):
 
-| id | 목적지 |
-|---|---|
-| `missions` | `/home/missions` (Earn 내부) |
-| `events` | `/events` (Earn 내부) |
-| `wallet` | `/wallet` (Wallet — Earn 외부지만 사용자 질문 범위(Trade/Sports/Casino) 밖) |
-| `bet` | **`/sports`** ← Trade/Sports/Casino 중 유일한 정적 카드 |
+| id         | 목적지                                                                      |
+| ---------- | --------------------------------------------------------------------------- |
+| `missions` | `/home/missions` (Earn 내부)                                                |
+| `events`   | `/events` (Earn 내부)                                                       |
+| `wallet`   | `/wallet` (Wallet — Earn 외부지만 사용자 질문 범위(Trade/Sports/Casino) 밖) |
+| `bet`      | **`/sports`** ← Trade/Sports/Casino 중 유일한 정적 카드                     |
 
 **(2) `home-missions-page`의 미션별 딥링크** (`resolveHomeMissionCtaRoute()`, `home-missions-display-contract.ts:132-165`, 미션 14종 전수):
 
-| 목적지 | 매핑된 미션 | 개수 |
-|---|---|---|
-| `/casino` | `growth-firstGame`·`weekly-play5`·`weekly-win3` | **3** |
-| `/sports` | 없음 | 0 |
-| `/trade` | 없음 | **0** |
-| (참고) 그 외 | `/referral*`·`/wallet/deposit`·`/account*`·`/tier/me`·`/home` | 9 |
+| 목적지       | 매핑된 미션                                                   | 개수  |
+| ------------ | ------------------------------------------------------------- | ----- |
+| `/casino`    | `growth-firstGame`·`weekly-play5`·`weekly-win3`               | **3** |
+| `/sports`    | 없음                                                          | 0     |
+| `/trade`     | 없음                                                          | **0** |
+| (참고) 그 외 | `/referral*`·`/wallet/deposit`·`/account*`·`/tier/me`·`/home` | 9     |
 
 **답 (사용자 질문 — 전환 지점 몇 개·위치):**
 
@@ -478,51 +478,51 @@ IF FOUND THEN RETURN v_entry_id; END IF;
 
 ## 전체 문제 수 (본 감사 신규 발견 · 심각도별)
 
-| 심각도 | 개수 | ID |
-|---|---:|---|
-| P0 | 1 | ZA-05 (Earn 도메인 `callRpc` 우회 25파일·72% Earn) |
-| P1 | 1 | ZA-07 (등급 페이지 죽은 링크 `/tier/me/history`) |
-| P2 | 5 | ZA-01(migration drift 확대)·ZA-03(admin "구현 금지" 표기 오류)·ZA-06(오펀 라우트 3개)·ZA-08(캐시백률 이중 소스)·ZA-11(Trade 전환 지점 0개) |
-| P3 | 3 | ZA-02(RPC 도메인 명명 경계 모호)·ZA-04(README 설명 부재)·ZA-09(breakpoint 토큰 중복 명명) |
-| LOW | 1 | ZA-10(PWA 배너 셸 타입 미구분) |
-| **합계** | **11** | — |
+| 심각도   |   개수 | ID                                                                                                                                         |
+| -------- | -----: | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| P0       |      1 | ZA-05 (Earn 도메인 `callRpc` 우회 25파일·72% Earn)                                                                                         |
+| P1       |      1 | ZA-07 (등급 페이지 죽은 링크 `/tier/me/history`)                                                                                           |
+| P2       |      5 | ZA-01(migration drift 확대)·ZA-03(admin "구현 금지" 표기 오류)·ZA-06(오펀 라우트 3개)·ZA-08(캐시백률 이중 소스)·ZA-11(Trade 전환 지점 0개) |
+| P3       |      3 | ZA-02(RPC 도메인 명명 경계 모호)·ZA-04(README 설명 부재)·ZA-09(breakpoint 토큰 중복 명명)                                                  |
+| LOW      |      1 | ZA-10(PWA 배너 셸 타입 미구분)                                                                                                             |
+| **합계** | **11** | —                                                                                                                                          |
 
 기존 `SYSTEM_AUDIT_2026-07-13`(SA-01~06, 6건)과 합산하면 총 **17건**이 현재 문서화된 오늘 날짜 기준 열린 이슈다. Critical(P0급 money-safety 결함)은 0건 — ZA-05가 유일한 P0이나 이는 아키텍처 일관성 문제이며 1-F에서 확인한 실제 자금 이동 로직 자체는 안전하다.
 
 ## 도메인별 완성도 (추정 — 신뢰도 명시)
 
-| 도메인 | 완성도 추정 | 신뢰도 | 근거 |
-|---|---:|---|---|
-| Earn | **82%** | **높음**(1-E 직접 코드 판독) | 8/8 페이지 실작동, 1건 죽은 링크, 3건 도달 불가, 구조적 API 경로 불일치 |
-| Wallet/Ledger | **92%** | **높음**(1-F 직접 코드 판독) | 동시성·멱등성·Σ=0 로직 표본 확인 결과 최상위 수준 |
-| Admin | **85%** | 중간(1-A 표본 확인) | "구현 금지" 표기 페이지가 실제로는 구현되어 있음 확인(ZA-03) — 문서 신뢰도 문제, 코드 자체는 양호 |
-| Trade | **80%** | 낮음(기존 문서 인용 위주) | 기존 SYSTEM_AUDIT의 R9-PERF-JS(HIGH·OPEN) 영향권 + Earn 연계 0(ZA-11) — 본 감사에서 Trade RPC 코드는 직접 판독 안 함 |
-| Sports | **80%** | 낮음(기존 문서 인용 위주) | 기존 감사 "Complete" 인용 — 본 감사 독자 검증 미실시 |
-| Casino | **80%** | 낮음(기존 문서 인용 위주) | 12종 게임 provably-fair 테스트 존재(기존 인용) — 본 감사 독자 검증 미실시 |
+| 도메인        | 완성도 추정 | 신뢰도                       | 근거                                                                                                                 |
+| ------------- | ----------: | ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Earn          |     **82%** | **높음**(1-E 직접 코드 판독) | 8/8 페이지 실작동, 1건 죽은 링크, 3건 도달 불가, 구조적 API 경로 불일치                                              |
+| Wallet/Ledger |     **92%** | **높음**(1-F 직접 코드 판독) | 동시성·멱등성·Σ=0 로직 표본 확인 결과 최상위 수준                                                                    |
+| Admin         |     **85%** | 중간(1-A 표본 확인)          | "구현 금지" 표기 페이지가 실제로는 구현되어 있음 확인(ZA-03) — 문서 신뢰도 문제, 코드 자체는 양호                    |
+| Trade         |     **80%** | 낮음(기존 문서 인용 위주)    | 기존 SYSTEM_AUDIT의 R9-PERF-JS(HIGH·OPEN) 영향권 + Earn 연계 0(ZA-11) — 본 감사에서 Trade RPC 코드는 직접 판독 안 함 |
+| Sports        |     **80%** | 낮음(기존 문서 인용 위주)    | 기존 감사 "Complete" 인용 — 본 감사 독자 검증 미실시                                                                 |
+| Casino        |     **80%** | 낮음(기존 문서 인용 위주)    | 12종 게임 provably-fair 테스트 존재(기존 인용) — 본 감사 독자 검증 미실시                                            |
 
 **낮은 신뢰도 도메인(Trade/Sports/Casino)은 본 감사가 시간을 집중한 Earn/Wallet 대비 코드 직접 판독량이 적어 수치 정밀도가 낮다 — 추정치이지 확정치가 아니다.**
 
 ## Earn 도메인 세부 완성도 (1-E 근거)
 
-| 상태 | 개수 | 비율 | 목록 |
-|---|---:|---:|---|
-| 정상 | 7 | 64% | 출석·미션·친구초대·혜택·캐시백·공유·스테이킹(허브) |
-| 부분(버그 1건) | 1 | 9% | 등급(`/tier/me`) — 죽은 링크 |
-| 페이지 정상·도달 불가 | 3 | 27% | 등급 리더보드·친구초대 리더보드·스테이킹 포지션 |
+| 상태                  | 개수 | 비율 | 목록                                               |
+| --------------------- | ---: | ---: | -------------------------------------------------- |
+| 정상                  |    7 |  64% | 출석·미션·친구초대·혜택·캐시백·공유·스테이킹(허브) |
+| 부분(버그 1건)        |    1 |   9% | 등급(`/tier/me`) — 죽은 링크                       |
+| 페이지 정상·도달 불가 |    3 |  27% | 등급 리더보드·친구초대 리더보드·스테이킹 포지션    |
 
 Trade/Sports/Casino 전환 지점: **Casino 3 · Sports 1 · Trade 0**(1-E.2).
 
 ## 즉시 손대면 위험한 파일 목록
 
-| 파일 | 위험 이유 |
-|---|---|
-| `supabase/migrations/20260811000001_ew_e8_financial.sql` · `20260730000001_pir_idempotency_handlers.sql` · `20260609000001_phase1_auth_wallet_ledger.sql` | Wallet/Ledger 핵심 RPC — 데드락 방지 잠금 순서·TOCTOU 방어 로직 포함, 부주의한 수정 시 이중 차감/데드락 재발 위험 |
-| `supabase/migrations/20260822~20260825*_platform_sql_ci_closeout*.sql` (4개) | Freeze ACTIVE 중 이미 드리프트 중(ZA-01) — 추가 수정은 위반 확대 |
-| `apps/web/src/domain/unified-tier-display-contract.ts` | `EARN_HUB_STATUS_RPC` 정의처 — 4개 이상 다른 이름으로 재수출되어 15개+ 컨트롤러가 참조(ZA-05), 값 변경 시 파급 범위 예측 어려움 |
-| `apps/web/src/lib/rpc.ts` | 전체 앱의 유일한 타입세이프 RPC 진입점 — 단, 25개 파일이 이미 이를 우회하고 있어 여기만 고쳐도 전체가 안 고쳐짐 |
-| `apps/web/src/product/shell/appshell.tsx` · `shell-chrome.css` | 전체 앱 셸 레이아웃·BottomNav clearance 토큰 소스 — 수정 시 전 페이지 레이아웃 영향 |
-| `apps/admin/src/product/surfaces/admin-{casino,staking,tier-benefits,promotions,cms,support}-page.tsx` | `docs/CURRENT_STATUS.md`에 "구현 금지"로 잘못 표기된 실제 운영 코드(ZA-03) — 문서만 보고 삭제/미검토 대상으로 오판 위험 |
-| `supabase/migrations.lock.json` | migration 해시 lock — 위 drift와 맞물려 있어 단독 수정 시 CI parity 깨짐 |
+| 파일                                                                                                                                                      | 위험 이유                                                                                                                       |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `supabase/migrations/20260811000001_ew_e8_financial.sql` · `20260730000001_pir_idempotency_handlers.sql` · `20260609000001_phase1_auth_wallet_ledger.sql` | Wallet/Ledger 핵심 RPC — 데드락 방지 잠금 순서·TOCTOU 방어 로직 포함, 부주의한 수정 시 이중 차감/데드락 재발 위험               |
+| `supabase/migrations/20260822~20260825*_platform_sql_ci_closeout*.sql` (4개)                                                                              | Freeze ACTIVE 중 이미 드리프트 중(ZA-01) — 추가 수정은 위반 확대                                                                |
+| `apps/web/src/domain/unified-tier-display-contract.ts`                                                                                                    | `EARN_HUB_STATUS_RPC` 정의처 — 4개 이상 다른 이름으로 재수출되어 15개+ 컨트롤러가 참조(ZA-05), 값 변경 시 파급 범위 예측 어려움 |
+| `apps/web/src/lib/rpc.ts`                                                                                                                                 | 전체 앱의 유일한 타입세이프 RPC 진입점 — 단, 25개 파일이 이미 이를 우회하고 있어 여기만 고쳐도 전체가 안 고쳐짐                 |
+| `apps/web/src/product/shell/appshell.tsx` · `shell-chrome.css`                                                                                            | 전체 앱 셸 레이아웃·BottomNav clearance 토큰 소스 — 수정 시 전 페이지 레이아웃 영향                                             |
+| `apps/admin/src/product/surfaces/admin-{casino,staking,tier-benefits,promotions,cms,support}-page.tsx`                                                    | `docs/CURRENT_STATUS.md`에 "구현 금지"로 잘못 표기된 실제 운영 코드(ZA-03) — 문서만 보고 삭제/미검토 대상으로 오판 위험         |
+| `supabase/migrations.lock.json`                                                                                                                           | migration 해시 lock — 위 drift와 맞물려 있어 단독 수정 시 CI parity 깨짐                                                        |
 
 ---
 

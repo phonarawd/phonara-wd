@@ -40,9 +40,9 @@
 
 ## 4. Finding (Pillar 6)
 
-| ID                  | 심각도 | 상태             | 내용                                                                                                   |
-| ------------------- | ------ | ---------------- | ------------------------------------------------------------------------------------------------------ |
-| (링크) `R9-PERF-JS` | HIGH   | **OPEN (partial)** | Web initial JS 519.31kB(로컬 재계측)>450kb — framer-motion 제거로 -38.35kB, i18n lazy 미착수(§6)로 SLO 잔여 미달 |
+| ID                  | 심각도 | 상태               | 내용                                                                                                                               |
+| ------------------- | ------ | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| (링크) `R9-PERF-JS` | HIGH   | **OPEN (partial)** | Web initial JS 519.31kB(로컬 재계측)>450kb — framer-motion 제거로 -38.35kB, i18n lazy 미착수(§6)로 SLO 잔여 미달                   |
 | SA-06               | LOW    | **VERIFIED_FIXED** | sourcemap 직접 분석으로 계측 완료(§6) — visualizer 플러그인 대신 `sources`/`sourcesContent` 합산 + `index.html` modulepreload 대조 |
 
 ## 5. NOT VERIFIED
@@ -57,14 +57,14 @@ compat 이슈 — 제거함), 대신 **sourcemap `sources`/`sourcesContent` 직�
 
 ### 계측 결과 — 실제 eager 번들 구성 (gzip, index.html 참조 자산 전부)
 
-| 청크                     | Before (gzip) | After (gzip) | 비고                                            |
-| ------------------------ | ------------: | -----------: | ----------------------------------------------- |
-| `i18n-*.js`              |     249.97 kB |    249.97 kB | ko+en 카탈로그 동시 eager — **미해결 (아래 근거)** |
-| `index-*.js`             |     178.31 kB |    138.42 kB | **-39.89 kB** — framer-motion 제거              |
-| `supabase-*.js`          |      66.48 kB |     66.48 kB | `@supabase/supabase-js`(auth+postgrest+realtime+storage) 전체 — `createClient()` 단일 진입점이라 auth만 분리 불가 |
-| `index-*.css`            |      15.62 kB |     15.86 kB | Tailwind 생성 — 무시 가능한 증가                |
-| 기타 30개 (display-contract 등) |  ~46.6 kB |     ~44.6 kB |  |
-| **합계**                 |  **557.66 kB** | **519.31 kB** | **-38.35 kB (-6.9%)** — SLO 450kb 미달 (69.31kB 초과) |
+| 청크                            | Before (gzip) |  After (gzip) | 비고                                                                                                              |
+| ------------------------------- | ------------: | ------------: | ----------------------------------------------------------------------------------------------------------------- |
+| `i18n-*.js`                     |     249.97 kB |     249.97 kB | ko+en 카탈로그 동시 eager — **미해결 (아래 근거)**                                                                |
+| `index-*.js`                    |     178.31 kB |     138.42 kB | **-39.89 kB** — framer-motion 제거                                                                                |
+| `supabase-*.js`                 |      66.48 kB |      66.48 kB | `@supabase/supabase-js`(auth+postgrest+realtime+storage) 전체 — `createClient()` 단일 진입점이라 auth만 분리 불가 |
+| `index-*.css`                   |      15.62 kB |      15.86 kB | Tailwind 생성 — 무시 가능한 증가                                                                                  |
+| 기타 30개 (display-contract 등) |      ~46.6 kB |      ~44.6 kB |                                                                                                                   |
+| **합계**                        | **557.66 kB** | **519.31 kB** | **-38.35 kB (-6.9%)** — SLO 450kb 미달 (69.31kB 초과)                                                             |
 
 측정 스크립트: `dist/assets/*.js.map`의 `sourcesContent` 길이 합산(패키지별) + Node `zlib.gzipSync` level 9 —
 repo에 커밋하지 않은 1회성 분석(`tmp-analyze-chunk.mjs`/`tmp-sum-initial.mjs`, 세션 종료 시 삭제).

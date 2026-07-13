@@ -76,12 +76,12 @@ API: {"message":"Configuring leaked password protection via HaveIBeenPwned.org i
 
 이번 세션에서 **착수하지 않음** — 착수 전제 조건이 아직 충족되지 않았다:
 
-| 전제 조건 | 상태 |
-|---|---|
-| Wave 0~5 코드 CI green | **진행 중** — SQL job 4건→2건(ew_e21·ew_e22 conservation, 미해결) push-fix loop 4 사이클 |
-| feature branch → main PR merge | 미착수 (CI green 전 금지 · rule `94-ci-push-fix-loop`) |
-| 새 RC SHA 선언 + Freeze 재시작 | 미착수 (merge 후) |
-| soak-24h / PPR 24h·72h·7d / rollback·DR drill / 3-Owner | operator 실행 · 최소 7일 소요 · AI 대행 불가 |
+| 전제 조건                                               | 상태                                                                                     |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Wave 0~5 코드 CI green                                  | **진행 중** — SQL job 4건→2건(ew_e21·ew_e22 conservation, 미해결) push-fix loop 4 사이클 |
+| feature branch → main PR merge                          | 미착수 (CI green 전 금지 · rule `94-ci-push-fix-loop`)                                   |
+| 새 RC SHA 선언 + Freeze 재시작                          | 미착수 (merge 후)                                                                        |
+| soak-24h / PPR 24h·72h·7d / rollback·DR drill / 3-Owner | operator 실행 · 최소 7일 소요 · AI 대행 불가                                             |
 
 **AI가 할 수 없는 이유:** soak/PPR/drill은 실제 캘린더 시간 경과 + 실제 production 모니터링이 필요하고, 3-Owner sign-off는 3인의 실제 인간 서명이 필요하다 — 세션 내 시뮬레이션이나 대행 불가.
 
