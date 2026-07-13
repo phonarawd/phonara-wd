@@ -244,6 +244,10 @@
     "20260823000001_platform_sql_ci_closeout2.sql": "45f7cc30bb2e1807aa384556aa96ba2f8e8ab8ec633afcf57fca3a04a29c51c3",
     "20260824000001_platform_sql_ci_closeout3.sql": "5ba486ace99729a6b233890785603b638db4ff1e048db54432e03b9559ec0e6c",
     "20260825000001_platform_sql_ci_closeout4.sql": "1b15c3eb1aeeb98ecd9d4a6ba5a8283421a506cdf4b0fc90940c3ffdc5c9530b",
-    "20260826000001_za14_futures_phon_margin_killswitch.sql": "0ae9ecf9cf225fe0e2abed1f2e0beed05c5c48ec30caccc56daf8d22044f3422"
+    "20260826000001_za14_futures_phon_margin_killswitch.sql": "0ae9ecf9cf225fe0e2abed1f2e0beed05c5c48ec30caccc56daf8d22044f3422",
+    "20260827000001_sb_w05_prematch_only_hard_gate.sql": "f304da4d675ece4a24be614c0c2b70726f3fda9780f9b362396cb4834a37bd04",
+    "20260827000002_sb_w1_ingest_health_freshness_recompute.sql": "9f5b7729027ab4e7bfb2d76f39f8c63d0588d39f09d037254631c3826845edd5",
+    "20260827000003_sb_w4_casino_exposure_cap_ceiling.sql": "618a48d03d5475304094699ddbe3b7ff96f459151352e71b04b346e57f9f5cb5",
+    "20260827000004_sb_w4_sports_exposure_aal2_guard.sql": "65e91511587ccf49706aa03ca5937383065b1fe420d9f9cd2b9004e9fccd407a"
   }
 }
