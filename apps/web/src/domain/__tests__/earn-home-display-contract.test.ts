@@ -135,7 +135,14 @@ describe('earn-home-display-contract §20.13 #103', () => {
       'wallet',
 
       'bet',
+
+      'trade',
     ]);
+  });
+
+  it('routes home trade entry card to /trade (ZA-11 — Earn had 0 Trade cross-sell entry points)', () => {
+    const tradeCard = EARN_HOME_ENTRY_CARDS.find((card) => card.id === 'trade');
+    expect(tradeCard?.route).toBe('/trade');
   });
 
   it('prioritizes attendance as next action when claimable', () => {

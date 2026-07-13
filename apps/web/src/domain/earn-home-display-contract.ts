@@ -132,7 +132,7 @@ export const EARN_HOME_HUB_MISSION_PREVIEW_IDS = [
 
 export type EarnHomeHubMissionPreviewId = (typeof EARN_HOME_HUB_MISSION_PREVIEW_IDS)[number];
 
-export type EarnHomeEntryCardId = 'missions' | 'events' | 'wallet' | 'bet';
+export type EarnHomeEntryCardId = 'missions' | 'events' | 'wallet' | 'bet' | 'trade';
 
 export type EarnHomeEntryCardDefinition = {
   id: EarnHomeEntryCardId;
@@ -193,6 +193,18 @@ export const EARN_HOME_ENTRY_CARDS: readonly EarnHomeEntryCardDefinition[] = [
     ctaKey: 'earn.home.entry.bet.cta',
 
     route: '/sports',
+  },
+
+  {
+    id: 'trade',
+
+    titleKey: 'earn.home.entry.trade.title',
+
+    bodyKey: 'earn.home.entry.trade.body',
+
+    ctaKey: 'earn.home.entry.trade.cta',
+
+    route: '/trade',
   },
 ] as const;
 
