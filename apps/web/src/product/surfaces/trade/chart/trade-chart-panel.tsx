@@ -33,7 +33,16 @@ const TradeChartLazy = lazy(() =>
   import('./trade-chart').then((mod) => ({ default: mod.TradeChart })),
 );
 
-/** E2E uses eager import — Firefox/WebKit dev dynamic import of chart deps is flaky. */
+/**
+ * E2E uses eager import — Firefox/WebKit dev dynamic import of chart deps is
+ * flaky. This intentionally co-located static+dynamic import of `./trade-chart`
+ * makes Rollup/Rolldown fold `lightweight-charts` into the same (already-lazy,
+ * route-level) trade-desk chunk instead of a further-isolated sub-chunk —
+ * confirmed via `apps/web/dist/index.html` modulepreload list that this chunk
+ * is NOT eagerly loaded, so it doesn't affect the Stage1 initial-JS budget
+ * (R9-PERF-JS). Not worth the E2E-stability risk of a CJS/require workaround
+ * to fully isolate it — see docs/audit/SYSTEM_AUDIT_2026-07-13/06_PERFORMANCE.md.
+ */
 const TradeChart: ComponentType<TradeChartProps> =
   import.meta.env['VITE_PHONARA_E2E_ENGINE'] === '1' ? TradeChartEager : TradeChartLazy;
 

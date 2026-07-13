@@ -1,6 +1,5 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import { motion } from 'motion/react';
 import {
   forwardRef,
   type ComponentPropsWithoutRef,
@@ -10,41 +9,30 @@ import {
 
 import { cn } from './lib/cn';
 import { usePrefersReducedMotion } from './lib/use-prefers-reduced-motion';
-import {
-  dialogContentMotionVariants,
-  dialogMotionTransition,
-  overlayMotionTransition,
-  overlayMotionVariants,
-} from './lib/motion-presets';
 
 export const Dialog = DialogPrimitive.Root;
 export const DialogTrigger = DialogPrimitive.Trigger;
 export const DialogClose = DialogPrimitive.Close;
 export const DialogPortal = DialogPrimitive.Portal;
 
+/**
+ * R9-PERF-JS: CSS keyframes (`--ds-motion-*` in motion.css) replace framer-motion
+ * here — `motion.div` + `Variants`/`Transition` pulled ~450kb raw into the eager
+ * bundle for an overlay fade + dialog scale/slide that CSS handles natively.
+ * Radix's Presence defers unmount until `animationend` on `[data-state="closed"]`.
+ */
 export const DialogOverlay = forwardRef<
   ElementRef<typeof DialogPrimitive.Overlay>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => {
   const reduced = usePrefersReducedMotion() || import.meta.env['VITE_PHONARA_E2E_ENGINE'] === '1';
-  const overlayClassName = cn('fixed inset-0 z-50 bg-black/60', className);
-
-  return (
-    <DialogPrimitive.Overlay ref={ref} asChild {...props}>
-      {reduced ? (
-        <div className={overlayClassName} />
-      ) : (
-        <motion.div
-          className={overlayClassName}
-          variants={overlayMotionVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          transition={overlayMotionTransition}
-        />
-      )}
-    </DialogPrimitive.Overlay>
+  const overlayClassName = cn(
+    'fixed inset-0 z-50 bg-black/60',
+    !reduced && 'ds-motion-overlay',
+    className,
   );
+
+  return <DialogPrimitive.Overlay ref={ref} className={overlayClassName} {...props} />;
 });
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
@@ -54,45 +42,28 @@ export const DialogContent = forwardRef<
 >(({ className, children, ...props }, ref) => {
   const reduced = usePrefersReducedMotion() || import.meta.env['VITE_PHONARA_E2E_ENGINE'] === '1';
   const contentClassName = cn(
-    'fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2',
+    'fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg',
+    reduced ? '-translate-x-1/2 -translate-y-1/2' : 'ds-motion-dialog-content',
     'gap-4 rounded-(--ds-radius-lg) border border-line bg-surface-overlay p-6 shadow-overlay',
     'focus:outline-none',
     className,
-  );
-  const dialogBody = (
-    <>
-      {children}
-      <DialogPrimitive.Close
-        className={cn(
-          'absolute right-4 top-4 rounded-(--ds-radius-sm) p-1 text-foreground-muted',
-          'transition-opacity duration-(--ds-motion-press) hover:text-foreground',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
-        )}
-      >
-        <X className="size-4" aria-hidden />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
-    </>
   );
 
   return (
     <DialogPortal>
       <DialogOverlay />
-      <DialogPrimitive.Content ref={ref} asChild {...props}>
-        {reduced ? (
-          <div className={contentClassName}>{dialogBody}</div>
-        ) : (
-          <motion.div
-            className={contentClassName}
-            variants={dialogContentMotionVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            transition={dialogMotionTransition}
-          >
-            {dialogBody}
-          </motion.div>
-        )}
+      <DialogPrimitive.Content ref={ref} className={contentClassName} {...props}>
+        {children}
+        <DialogPrimitive.Close
+          className={cn(
+            'absolute right-4 top-4 rounded-(--ds-radius-sm) p-1 text-foreground-muted',
+            'transition-opacity duration-(--ds-motion-press) hover:text-foreground',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
+          )}
+        >
+          <X className="size-4" aria-hidden />
+          <span className="sr-only">Close</span>
+        </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPortal>
   );

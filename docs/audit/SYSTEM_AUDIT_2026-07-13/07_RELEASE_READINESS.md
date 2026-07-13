@@ -57,3 +57,32 @@ GO/NO-GO가 점수보다 우선: **Release candidate = BLOCKED** (R11 §24 판�
 4. **PPR 24h/72h/7d** green (07-14 · 07-16 · 07-20)
 5. **rollback drill** (2026-08-13) · **DR drill** (2026-10-13 — Public 전 앞당김 권장)
 6. **3-Owner sign-off** → Freeze lift → Release Gate 재판정
+
+## 6. Wave 6/7 실행 결과 (2026-07-13 · 7-pillar 플랜)
+
+### Wave 6 — H-09 HIBP (operator 블로킹 재확인)
+
+`bun run stack:auth-hibp-enable` 재실행(2026-07-13, 이번 세션) — **결과 불변**:
+
+```text
+[stack:auth-hibp] before password_hibp_enabled=false
+[stack:auth-hibp] PRO_PLAN_REQUIRED (402) — leaked-password (HIBP) needs Pro+ entitlement.
+API: {"message":"Configuring leaked password protection via HaveIBeenPwned.org is available on Pro Plans and up."}
+```
+
+코드/스크립트는 완전히 준비됨(idempotent · before/after 검증) — **operator의 Supabase Pro+ 결제만** 남은 유일한 블로커. 결제 완료 즉시 동일 명령 재실행으로 1분 내 마감 가능.
+
+### Wave 7 — Release Gate 17/17 (operator 실행 트랙 · 미착수)
+
+이번 세션에서 **착수하지 않음** — 착수 전제 조건이 아직 충족되지 않았다:
+
+| 전제 조건 | 상태 |
+|---|---|
+| Wave 0~5 코드 CI green | **진행 중** — SQL job 4건→2건(ew_e21·ew_e22 conservation, 미해결) push-fix loop 4 사이클 |
+| feature branch → main PR merge | 미착수 (CI green 전 금지 · rule `94-ci-push-fix-loop`) |
+| 새 RC SHA 선언 + Freeze 재시작 | 미착수 (merge 후) |
+| soak-24h / PPR 24h·72h·7d / rollback·DR drill / 3-Owner | operator 실행 · 최소 7일 소요 · AI 대행 불가 |
+
+**AI가 할 수 없는 이유:** soak/PPR/drill은 실제 캘린더 시간 경과 + 실제 production 모니터링이 필요하고, 3-Owner sign-off는 3인의 실제 인간 서명이 필요하다 — 세션 내 시뮬레이션이나 대행 불가.
+
+**다음 세션 재개 조건:** SQL job 2건(ew_e21_hedge_reduce_only_test.sql · ew_e22_sports_parity_test.sql conservation 불일치) 해결 → CI 4/4 green → PR 생성 → operator 승인 merge → 그 다음에만 Wave 7 착수 가능.

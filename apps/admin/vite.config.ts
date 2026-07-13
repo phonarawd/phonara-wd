@@ -5,7 +5,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 const adminSrc = fileURLToPath(new URL('./src', import.meta.url));
-const webProduct = fileURLToPath(new URL('../web/src/product', import.meta.url));
+const webSrc = fileURLToPath(new URL('../web/src', import.meta.url));
+const webProduct = `${webSrc}/product`;
 const i18nReactSrc = fileURLToPath(new URL('../../packages/i18n/src/react.tsx', import.meta.url));
 const i18nSrc = fileURLToPath(new URL('../../packages/i18n/src/index.ts', import.meta.url));
 
@@ -37,6 +38,10 @@ export default defineConfig({
         replacement: `${webProduct}/layout/content-shell.tsx`,
       },
       { find: '@/product/i18n', replacement: `${adminSrc}/product/i18n` },
+      // Shared web primitives above (field/status-badge/confirm-dialog/money-display)
+      // import these `@/lib/*` submodules — admin has no equivalent, so route to web's.
+      { find: '@/lib/i18n', replacement: `${webSrc}/lib/i18n.tsx` },
+      { find: '@/lib/money-display', replacement: `${webSrc}/lib/money-display.ts` },
       { find: '@', replacement: adminSrc },
       { find: '@phonara/i18n/react', replacement: i18nReactSrc },
       { find: '@phonara/i18n', replacement: i18nSrc },
