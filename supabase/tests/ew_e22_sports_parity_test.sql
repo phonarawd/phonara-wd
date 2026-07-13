@@ -346,6 +346,7 @@ BEGIN
   ASSERT v_phon_before = v_phon_after,
     format('conservation after full cashout: before=%s after=%s', v_phon_before, v_phon_after);
 
+  PERFORM set_config('request.jwt.claims', '{}', TRUE);
   RAISE NOTICE 'E22-2 OK — partial cashout · conservation · full remaining';
 END;
 $$;
@@ -357,7 +358,7 @@ DECLARE
   v_fixture_id UUID;
   v_market_id UUID;
   v_outcome_id UUID;
-  v_bet_id UUID := gen_random_uuid();
+  v_bet_id UUID;
   v_leg_status sports_leg_status;
   v_settle JSONB;
 BEGIN
@@ -367,6 +368,9 @@ BEGIN
 
   PERFORM set_config('phonara.ledger_write', 'allowed', true);
   UPDATE wallets SET phon_available = '10000.000000' WHERE user_id = v_uid;
+  UPDATE app_config SET value = 'true' WHERE key = 'feature_sports_enabled';
+  UPDATE app_config SET value = 'false' WHERE key = 'consent_gate_enabled';
+  UPDATE app_config SET value = '999999' WHERE key = 'sports_odds_velocity_ms';
 
   PERFORM rpc_ingest_sports_c1(jsonb_build_object(
     'type', 'event_upsert',
@@ -410,15 +414,24 @@ BEGIN
     SELECT selection::TEXT FROM sports_outcomes WHERE id = v_outcome_id
   ) = 'score', 'selection must be score';
 
-  INSERT INTO sports_bets (
-    id, user_id, currency, stake, combined_odds, potential_payout,
-    status, idempotency_key, bet_kind
-  ) VALUES (
-    v_bet_id, v_uid, 'PHON', '10.000000', '8.500000', '85.000000',
-    'pending', 'e22-cs-' || v_uid::TEXT, 'single'
+  -- Must place via RPC so stake is locked; raw INSERT leaves phon_locked=0 →
+  -- _finalize_sports_bet raises insufficient_locked on settle.
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('sub', v_uid::TEXT, 'role', 'authenticated')::TEXT,
+    TRUE
   );
-  INSERT INTO sports_bet_legs (bet_id, outcome_id, fixture_id, odds_at_bet)
-  VALUES (v_bet_id, v_outcome_id, v_fixture_id, '8.500000');
+  SET LOCAL ROLE authenticated;
+  v_bet_id := (rpc_place_sports_bet(
+    jsonb_build_array(jsonb_build_object(
+      'outcome_id', v_outcome_id,
+      'odds_at_bet', '8.500000'
+    )),
+    '10.000000',
+    'PHON',
+    'e22-cs-' || v_uid::TEXT
+  )->>'bet_id')::UUID;
+  RESET ROLE;
 
   PERFORM set_config('request.jwt.claims', '{}', true);
   v_settle := rpc_settle_sports_fixture_scores(v_fixture_id, 1, 0, 'e22_cs_test');
