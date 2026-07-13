@@ -23,11 +23,6 @@ export const GUARD_COVERAGE_ALLOWLIST: readonly GuardCoverageAllowlistEntry[] = 
     reason: 'read-only admin liability snapshot',
   },
   {
-    name: 'rpc_admin_list_sports_exposure',
-    rule: 'aal2-exempt',
-    reason: 'read-only admin exposure control surface',
-  },
-  {
     name: 'rpc_admin_list_sports_risk_events',
     rule: 'aal2-exempt',
     reason: 'read-only admin risk event feed',
