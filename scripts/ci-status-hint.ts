@@ -4,20 +4,13 @@
  * 정본: docs/SSOT/CI_GATE_AUTHORITY.md
  */
 import { spawnSync } from 'node:child_process';
+import { gitRemoteRepoOrExit } from './lib/git-remote-repo';
 
-const DEFAULT_REPO = 'phonaralv/phonara-gb';
 const WORKFLOW = 'ci.yml';
 
 function gitBranch(): string {
   const r = spawnSync('git', ['branch', '--show-current'], { encoding: 'utf8' });
   return (r.stdout ?? '').trim() || 'main';
-}
-
-function gitRemoteRepo(): string {
-  const r = spawnSync('git', ['remote', 'get-url', 'origin'], { encoding: 'utf8' });
-  const url = (r.stdout ?? '').trim();
-  const m = url.match(/github\.com[:/]([^/]+\/[^/.]+)/i);
-  return m?.[1]?.replace(/\.git$/, '') ?? DEFAULT_REPO;
 }
 
 function tryGhRuns(repo: string): boolean {
@@ -34,7 +27,7 @@ function tryGhRuns(repo: string): boolean {
   return true;
 }
 
-const repo = gitRemoteRepo();
+const repo = gitRemoteRepoOrExit();
 const branch = gitBranch();
 const actionsUrl = `https://github.com/${repo}/actions/workflows/${WORKFLOW}`;
 const branchUrl = `https://github.com/${repo}/actions?query=branch%3A${encodeURIComponent(branch)}`;

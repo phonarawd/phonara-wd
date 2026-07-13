@@ -9,8 +9,7 @@
  *   bun run ci:prune-runs -- --apply --keep-success 3
  */
 import { spawnSync } from 'node:child_process';
-
-const DEFAULT_REPO = 'phonaralv/phonara-gb';
+import { gitRemoteRepoOrExit } from './lib/git-remote-repo';
 
 type RunRow = {
   id: number;
@@ -20,24 +19,17 @@ type RunRow = {
   event: string;
 };
 
-function parseArgs(argv: string[]): { apply: boolean; keepSuccess: number; repo: string } {
+function parseArgs(argv: string[]): { apply: boolean; keepSuccess: number; repo?: string } {
   let apply = false;
   let keepSuccess = 1;
-  let repo = DEFAULT_REPO;
+  let repo: string | undefined;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--apply') apply = true;
     else if (a === '--keep-success') keepSuccess = Math.max(1, Number(argv[++i] ?? 1));
-    else if (a === '--repo') repo = argv[++i] ?? DEFAULT_REPO;
+    else if (a === '--repo') repo = argv[++i];
   }
   return { apply, keepSuccess, repo };
-}
-
-function gitRemoteRepo(): string {
-  const r = spawnSync('git', ['remote', 'get-url', 'origin'], { encoding: 'utf8' });
-  const url = (r.stdout ?? '').trim();
-  const m = url.match(/github\.com[:/]([^/]+\/[^/.]+)/i);
-  return m?.[1]?.replace(/\.git$/, '') ?? DEFAULT_REPO;
 }
 
 function ghDelete(repo: string, runId: number): boolean {
@@ -82,7 +74,7 @@ function pickDeletes(runs: RunRow[], keepSuccess: number): { keep: RunRow[]; del
 }
 
 const { apply, keepSuccess, repo: repoArg } = parseArgs(process.argv.slice(2));
-const repo = repoArg === DEFAULT_REPO ? gitRemoteRepo() : repoArg;
+const repo = repoArg ?? gitRemoteRepoOrExit();
 
 process.stdout.write('=== PHONARA Actions hygiene ===\n\n');
 process.stdout.write(`Repository:   ${repo}\n`);

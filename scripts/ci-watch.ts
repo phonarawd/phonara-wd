@@ -5,6 +5,7 @@
  * 정본: docs/SSOT/CI_GATE_AUTHORITY.md
  */
 import { spawnSync } from 'node:child_process';
+import { gitRemoteRepoOrExit } from './lib/git-remote-repo';
 
 const WORKFLOW = 'ci.yml';
 const REQUIRED_JOBS = ['quality', 'sql', 'e2e', 'advisors'] as const;
@@ -32,12 +33,7 @@ function gitBranch(): string {
   return (r.stdout ?? '').trim() || 'main';
 }
 
-function gitRemoteRepo(): string {
-  const r = spawnSync('git', ['remote', 'get-url', 'origin'], { encoding: 'utf8' });
-  const url = (r.stdout ?? '').trim();
-  const m = url.match(/github\.com[:/]([^/]+\/[^/.]+)/i);
-  return m?.[1]?.replace(/\.git$/, '') ?? 'phonaralv/phonara-gb';
-}
+const gitRemoteRepo = gitRemoteRepoOrExit;
 
 function ghAvailable(): boolean {
   const r = spawnSync('gh', ['--version'], { encoding: 'utf8' });
