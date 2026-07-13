@@ -19,6 +19,7 @@ import {
 } from '@/domain/tier-me-display-contract';
 import { useAuth } from '@/contexts/auth-context';
 import { useProfile } from '@/hooks/use-profile';
+import { callRpc } from '@/lib/rpc';
 import { translateError } from '@/lib/translate-error';
 import { supabase } from '@/lib/supabase';
 import { productToast } from '@/product/primitives/toast-zone';
@@ -29,8 +30,7 @@ export const accountProfilePageKeys = {
 };
 
 async function fetchAccountProfileTier(): Promise<TierProgressView | null> {
-  const { data, error } = await supabase.rpc('rpc_get_earn_hub_status');
-  if (error) throw error;
+  const data = await callRpc('rpc_get_earn_hub_status');
   const snapshot = parseEarnHubTierSnapshot((data ?? {}) as Record<string, unknown>);
   return snapshot ? buildTierProgressView(snapshot) : null;
 }

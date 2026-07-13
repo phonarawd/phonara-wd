@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../../lib/supabase';
+import { callRpc } from '../../lib/rpc';
 import type { MessageKey } from '@phonara/i18n';
 import { useAuth } from '../../contexts/auth-context';
 import { translateError } from '../../lib/translate-error';
@@ -47,8 +47,7 @@ export function useViralMissionStatus() {
   } = useQuery({
     queryKey: viralMissionKeys.status(userId),
     queryFn: async () => {
-      const { data: rpcData, error } = await supabase.rpc('rpc_get_viral_mission_status');
-      if (error) throw error;
+      const rpcData = await callRpc('rpc_get_viral_mission_status');
       return rpcData as unknown as ViralMissionStatus;
     },
     enabled: !!userId,
@@ -73,11 +72,10 @@ export function useViralMissionClaim() {
       setLoading(true);
       setError(null);
       try {
-        const { data, error: rpcError } = await supabase.rpc('rpc_claim_viral_mission', {
+        const data = await callRpc('rpc_claim_viral_mission', {
           p_mission: mission,
           p_client_request_id: clientRequestId,
         });
-        if (rpcError) throw rpcError;
         const claimed = data as unknown as ViralClaimResult;
         setResult(claimed);
         void qc.invalidateQueries({ queryKey: viralMissionKeys.status(userId) });

@@ -13,7 +13,7 @@ import {
   type TierBenefitsPreviewRow,
 } from '@/domain/tier-me-display-contract';
 import { type EarnVipTier } from '@/domain/unified-tier-display-contract';
-import { supabase } from '@/lib/supabase';
+import { callRpc } from '@/lib/rpc';
 import { translateError } from '@/lib/translate-error';
 import { useT } from '@/product/i18n';
 
@@ -22,8 +22,7 @@ export const tierGuidePageKeys = {
 };
 
 async function fetchTierGuideSnapshot(): Promise<EarnVipTier> {
-  const { data, error } = await supabase.rpc('rpc_get_earn_hub_status');
-  if (error) throw error;
+  const data = await callRpc('rpc_get_earn_hub_status');
   const tierSnapshot = parseEarnHubTierSnapshot((data ?? {}) as Record<string, unknown>);
   return tierSnapshot?.tier ?? 'bronze';
 }

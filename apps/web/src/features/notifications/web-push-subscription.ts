@@ -4,6 +4,7 @@ import {
   PUSH_CONSENT_DOC_VERSION,
 } from '@/domain/notifications-pwa-display-contract';
 import { env } from '@/lib/env';
+import { callRpc } from '@/lib/rpc';
 import { supabase } from '@/lib/supabase';
 
 export type WebPushEnableResult =
@@ -55,7 +56,7 @@ async function persistPushSubscription(
 }
 
 async function recordPushConsent(accepted: boolean): Promise<void> {
-  const { error } = await supabase.rpc(NOTIFICATIONS_CONSENT_RPC, {
+  await callRpc(NOTIFICATIONS_CONSENT_RPC, {
     p_doc_type: PUSH_CONSENT_DOC_TYPE,
     p_doc_version: PUSH_CONSENT_DOC_VERSION,
     p_accepted: accepted,
@@ -63,7 +64,6 @@ async function recordPushConsent(accepted: boolean): Promise<void> {
     p_user_agent: globalThis.navigator?.userAgent,
     p_locale: consentLocale(),
   });
-  if (error) throw error;
 }
 
 /** Browser permission + optional VAPID push_subscriptions row + consent audit. */

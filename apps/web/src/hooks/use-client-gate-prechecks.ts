@@ -18,6 +18,7 @@ import {
 import { loadUserSecurityState } from '../domain/user-auth-security';
 import { useAuth } from '../contexts/auth-context';
 import { fetchProfileGeoBlocked } from '../lib/geo-block';
+import { callRpc } from '../lib/rpc';
 import { supabase } from '../lib/supabase';
 import { usePlatformGates } from './use-platform-gates';
 
@@ -42,8 +43,7 @@ async function fetchClientGateConfig(): Promise<ClientGateConfigMap> {
 }
 
 async function fetchOnboardingConsentComplete(): Promise<boolean> {
-  const { data, error } = await supabase.rpc('rpc_check_onboarding_consent');
-  if (error) throw error;
+  const data = await callRpc('rpc_check_onboarding_consent');
   return Boolean((data as OnboardingConsentCheck)?.complete);
 }
 

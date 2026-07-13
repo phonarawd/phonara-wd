@@ -50,7 +50,7 @@ import { isPositiveAmount } from '@/lib/money-display';
 
 import { toDecimal } from '@phonara/money';
 
-import { supabase } from '@/lib/supabase';
+import { callRpc } from '@/lib/rpc';
 
 import { useT } from '@/product/i18n';
 
@@ -64,9 +64,7 @@ export const stakingPageKeys = {
 };
 
 export async function fetchStakingTier(): Promise<EarnVipTier> {
-  const { data, error } = await supabase.rpc('rpc_get_earn_hub_status');
-
-  if (error) throw error;
+  const data = await callRpc('rpc_get_earn_hub_status');
 
   const snapshot = parseEarnHubTierSnapshot((data ?? {}) as Record<string, unknown>);
 

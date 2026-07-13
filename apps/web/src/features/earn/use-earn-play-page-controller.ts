@@ -4,7 +4,6 @@ import type { MessageKey } from '@phonara/i18n';
 
 import { useAuth } from '@/contexts/auth-context';
 import {
-  EARN_PLAY_HUB_STATUS_RPC,
   parseEarnPlayRouletteQuota,
   parseEarnPlaySpinResult,
   resolveEarnPlaySpinBlocked,
@@ -12,9 +11,10 @@ import {
   type EarnPlayRouletteQuota,
   type EarnPlaySpinResult,
 } from '@/domain/earn-play-display-contract';
+import { EARN_HUB_STATUS_RPC } from '@/domain/unified-tier-display-contract';
 import { formatPhonRewardDisplay } from '@/domain/viral-missions-display-contract';
 import { walletKeys } from '@/hooks/use-wallet';
-import { supabase } from '@/lib/supabase';
+import { callRpc } from '@/lib/rpc';
 import { translateError } from '@/lib/translate-error';
 import { productToast } from '@/product/primitives/toast-zone';
 import { useT } from '@/product/i18n';
@@ -28,8 +28,7 @@ type EarnPlaySnapshot = {
 };
 
 async function fetchEarnPlaySnapshot(): Promise<EarnPlaySnapshot> {
-  const { data, error } = await supabase.rpc(EARN_PLAY_HUB_STATUS_RPC);
-  if (error) throw error;
+  const data = await callRpc(EARN_HUB_STATUS_RPC);
   const quota = parseEarnPlayRouletteQuota((data ?? {}) as Record<string, unknown>);
   if (!quota) throw new Error('EARN_PLAY_ROULETTE_QUOTA_MISSING');
   return { quota };
@@ -80,8 +79,7 @@ export function useEarnPlayPageController(): EarnPlayPageControllerView {
     setSpinning(true);
     setActionError(null);
     try {
-      const { data, error } = await supabase.rpc(SPIN_ROULETTE_RPC);
-      if (error) throw error;
+      const data = await callRpc(SPIN_ROULETTE_RPC);
       const result = parseEarnPlaySpinResult((data ?? {}) as Record<string, unknown>);
       if (!result) throw new Error('EARN_PLAY_SPIN_MISSING');
       setLastSpin(result);

@@ -29,7 +29,6 @@ import { useProfile } from '@/hooks/use-profile';
 import { signOut } from '@/lib/auth';
 import { callRpc } from '@/lib/rpc';
 import { translateError } from '@/lib/translate-error';
-import { supabase } from '@/lib/supabase';
 import { productToast } from '@/product/primitives/toast-zone';
 import { useT } from '@/product/i18n';
 
@@ -43,8 +42,7 @@ type AccountHubSnapshot = {
 };
 
 async function fetchAccountHubSnapshot(): Promise<AccountHubSnapshot> {
-  const { data, error } = await supabase.rpc('rpc_get_earn_hub_status');
-  if (error) throw error;
+  const data = await callRpc('rpc_get_earn_hub_status');
 
   const hubPayload = (data ?? {}) as Record<string, unknown>;
   const tierSnapshot = parseEarnHubTierSnapshot(hubPayload);

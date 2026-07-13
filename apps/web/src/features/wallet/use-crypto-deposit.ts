@@ -6,6 +6,7 @@ import { shouldBlockCryptoDepositInvoke } from '@/domain/wallet-capability-rails
 import { LAUNCH_GATES } from '@/lib/launch-gates';
 
 import { useAuth } from '../../contexts/auth-context';
+import { callRpc } from '../../lib/rpc';
 import { supabase } from '../../lib/supabase';
 import { translateError } from '../../lib/translate-error';
 
@@ -43,11 +44,10 @@ async function ensureCryptoAddressDerived(
   if (shouldBlockCryptoDepositInvoke(LAUNCH_GATES.cryptoRails)) {
     throw new Error('crypto_rails_built_hidden');
   }
-  const { data: rpcData, error } = await supabase.rpc('rpc_get_crypto_deposit_address', {
+  const rpcData = await callRpc('rpc_get_crypto_deposit_address', {
     p_asset: asset,
     p_chain: chain,
   });
-  if (error) throw error;
   let result = rpcData as unknown as CryptoDepositAddress;
   if (result.needs_derivation) {
     if (shouldBlockCryptoDepositInvoke(LAUNCH_GATES.cryptoRails)) {
@@ -111,13 +111,12 @@ export function useCryptoDepositRequest() {
           throw new Error('crypto_rails_built_hidden');
         }
         await ensureCryptoAddressDerived(params.asset ?? 'USDT', params.chain ?? 'TRC20');
-        const { data, error: rpcError } = await supabase.rpc('rpc_create_crypto_deposit_request', {
+        const data = await callRpc('rpc_create_crypto_deposit_request', {
           p_amount: params.amount,
           p_asset: params.asset ?? 'USDT',
           p_chain: params.chain ?? 'TRC20',
           p_client_request_id: params.clientRequestId,
         });
-        if (rpcError) throw rpcError;
         const created = data as unknown as CryptoDepositRequestResult;
         setResult(created);
         void qc.invalidateQueries({

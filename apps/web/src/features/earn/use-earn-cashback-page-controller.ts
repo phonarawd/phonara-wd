@@ -5,13 +5,16 @@ import type { MessageKey } from '@phonara/i18n';
 import { useAuth } from '@/contexts/auth-context';
 import {
   buildEarnCashbackRows,
-  EARN_CASHBACK_HUB_STATUS_RPC,
   resolveCurrentCashbackKey,
   type EarnCashbackRow,
 } from '@/domain/earn-cashback-display-contract';
 import { parseEarnHubTierSnapshot } from '@/domain/tier-me-display-contract';
-import { normalizeEarnVipTier, type EarnVipTier } from '@/domain/unified-tier-display-contract';
-import { supabase } from '@/lib/supabase';
+import {
+  EARN_HUB_STATUS_RPC,
+  normalizeEarnVipTier,
+  type EarnVipTier,
+} from '@/domain/unified-tier-display-contract';
+import { callRpc } from '@/lib/rpc';
 import { translateError } from '@/lib/translate-error';
 import { useT } from '@/product/i18n';
 
@@ -20,8 +23,7 @@ export const earnCashbackPageKeys = {
 };
 
 async function fetchEarnCashbackTier(): Promise<EarnVipTier> {
-  const { data, error } = await supabase.rpc(EARN_CASHBACK_HUB_STATUS_RPC);
-  if (error) throw error;
+  const data = await callRpc(EARN_HUB_STATUS_RPC);
   const snapshot = parseEarnHubTierSnapshot((data ?? {}) as Record<string, unknown>);
   return normalizeEarnVipTier(snapshot?.tier ?? 'bronze');
 }

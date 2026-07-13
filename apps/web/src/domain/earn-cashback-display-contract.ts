@@ -10,14 +10,9 @@ import {
   buildTierBenefitsPreviewRow,
   type TierBenefitsPreviewRow,
 } from './tier-me-display-contract';
-import {
-  EARN_HUB_STATUS_RPC,
-  EARN_VIP_TIER_ORDER,
-  type EarnVipTier,
-} from './unified-tier-display-contract';
+import { EARN_VIP_TIER_ORDER, type EarnVipTier } from './unified-tier-display-contract';
 
 export const EARN_CASHBACK_ROUTE = '/earn/cashback' as const;
-export const EARN_CASHBACK_HUB_STATUS_RPC = EARN_HUB_STATUS_RPC;
 
 export const EARN_CASHBACK_SEO_TITLE_KEY = 'earn.cashback.head.title' as const satisfies MessageKey;
 export const EARN_CASHBACK_SEO_DESCRIPTION_KEY =

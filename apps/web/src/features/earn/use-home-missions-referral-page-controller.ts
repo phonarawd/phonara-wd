@@ -39,6 +39,7 @@ import {
   useViralMissionStatus,
   viralMissionKeys,
 } from '@/features/earn/use-viral-missions';
+import { callRpc } from '@/lib/rpc';
 import { supabase } from '@/lib/supabase';
 import { translateError } from '@/lib/translate-error';
 import { productToast } from '@/product/primitives/toast-zone';
@@ -57,8 +58,8 @@ type HomeMissionsReferralSnapshot = {
 async function fetchHomeMissionsReferralSnapshot(
   userId: string,
 ): Promise<HomeMissionsReferralSnapshot> {
-  const [hubRes, missionsRes] = await Promise.all([
-    supabase.rpc('rpc_get_earn_hub_status'),
+  const [hubData, missionsRes] = await Promise.all([
+    callRpc('rpc_get_earn_hub_status'),
     supabase
       .from('missions')
       .select('mission, completed_at')
@@ -67,10 +68,9 @@ async function fetchHomeMissionsReferralSnapshot(
       .maybeSingle(),
   ]);
 
-  if (hubRes.error) throw hubRes.error;
   if (missionsRes.error) throw missionsRes.error;
 
-  const hubPayload = hubRes.data as Record<string, unknown>;
+  const hubPayload = hubData as Record<string, unknown>;
 
   return {
     hubReferral: parseEarnHubReferralSnapshot(hubPayload),

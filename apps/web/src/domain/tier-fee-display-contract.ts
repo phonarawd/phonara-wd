@@ -6,14 +6,12 @@
  */
 
 import { shouldExposeTierBenefitGap } from './tier-benefits-display-contract';
-import { EARN_HUB_STATUS_RPC, type EarnVipTier } from './unified-tier-display-contract';
+import type { EarnVipTier } from './unified-tier-display-contract';
 
 export const P9_TRADE_TIER_FEE_DISPLAY_TODO = 'p9-trade-tier-fee-display' as const;
 
 /** Est. fee / liq / margin numeric rows — single owner (step 14). */
 export const P9_TRADE_ORDER_TICKET_DENSITY_TODO = 'p9-trade-order-ticket-density' as const;
-
-export const TIER_FEE_EARN_HUB_RPC = EARN_HUB_STATUS_RPC;
 
 export const TIER_FEE_BADGE_COMPONENT = 'trade-tier-fee-badge.tsx' as const;
 

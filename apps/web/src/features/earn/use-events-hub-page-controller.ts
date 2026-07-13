@@ -15,7 +15,7 @@ import {
 } from '@/domain/events-hub-display-contract';
 import { formatPhonRewardDisplay } from '@/domain/viral-missions-display-contract';
 import { walletKeys } from '@/hooks/use-wallet';
-import { supabase } from '@/lib/supabase';
+import { callRpc } from '@/lib/rpc';
 import { translateError } from '@/lib/translate-error';
 import { productToast } from '@/product/primitives/toast-zone';
 import { useT } from '@/product/i18n';
@@ -25,8 +25,7 @@ export const eventsHubPageKeys = {
 };
 
 async function fetchEventsHubSnapshot(): Promise<GoldenEarthStatusSnapshot> {
-  const { data, error } = await supabase.rpc(EVENTS_HUB_STATUS_RPC);
-  if (error) throw error;
+  const data = await callRpc(EVENTS_HUB_STATUS_RPC);
   const snapshot = parseGoldenEarthStatusSnapshot((data ?? {}) as Record<string, unknown>);
   if (!snapshot) throw new Error('GOLDEN_EARTH_STATUS_MISSING');
   return snapshot;
@@ -86,10 +85,9 @@ export function useEventsHubPageController(): EventsHubPageControllerView {
         typeof crypto !== 'undefined' && 'randomUUID' in crypto
           ? crypto.randomUUID()
           : `ge-${Date.now()}`;
-      const { data, error } = await supabase.rpc(EVENTS_HUB_TAP_RPC, {
+      const data = await callRpc(EVENTS_HUB_TAP_RPC, {
         p_client_request_id: clientRequestId,
       });
-      if (error) throw error;
       const result = parseGoldenEarthTapResult((data ?? {}) as Record<string, unknown>);
       if (!result) throw new Error('GOLDEN_EARTH_TAP_MISSING');
 

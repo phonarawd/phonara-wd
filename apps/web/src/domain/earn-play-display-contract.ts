@@ -7,12 +7,10 @@
 import type { MessageKey } from '@phonara/i18n';
 
 import { parseEarnHubRouletteSnapshot } from './home-attendance-display-contract';
-import { EARN_HUB_STATUS_RPC } from './unified-tier-display-contract';
 
 export const EARN_PLAY_ROUTE = '/earn/play' as const;
 export const EARN_PLAY_ROULETTE_ROUTE = '/earn/play' as const;
 export const SPIN_ROULETTE_RPC = 'rpc_spin_roulette' as const;
-export const EARN_PLAY_HUB_STATUS_RPC = EARN_HUB_STATUS_RPC;
 
 export const EARN_PLAY_SEO_TITLE_KEY = 'earn.play.head.title' as const satisfies MessageKey;
 export const EARN_PLAY_SEO_DESCRIPTION_KEY = 'earn.play.head.desc' as const satisfies MessageKey;
