@@ -1,0 +1,91 @@
+schema_version: 1
+audit: 'SYSTEM_AUDIT_2026-07-13 (7-Pillar)'
+audit_date: '2026-07-13'
+mode: 'READ-ONLY'
+branch: 'phase-r/platform-integrity-2026-07-11'
+head_sha: '4d661e83'
+rc_sha: 'dcfd8c7eab0374296ffeecdc5cd3f79433786ebe'
+notes: >-
+  신규 Finding만 SA-* id로 기록. 기존 OPEN/BLOCKED_DEP는 링크만 유지
+  (정본: docs/OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml).
+  본 감사는 코드/migration 수정 0 · Plan todo 완료 주장 없음.
+
+linked_existing:
+  - id: 'R9-PERF-JS'
+    severity: 'HIGH'
+    status: 'OPEN'
+    pillar: 'performance'
+    registry: 'docs/OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml'
+    summary: 'Web Stage1 initial JS 539kb > SLO 450kb (web 21/21 FAIL) — Release Gate FAIL 2건의 근본 원인'
+  - id: 'H-09'
+    severity: 'HIGH'
+    status: 'BLOCKED_DEP'
+    pillar: 'security'
+    registry: 'docs/OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml'
+    summary: 'Supabase leaked-password protection 비활성 — Pro+ entitlement 의존 (코드 준비 완료)'
+
+findings:
+  - id: 'SA-01'
+    severity: 'MEDIUM'
+    status: 'OPEN'
+    pillar: 'database'
+    also: ['release']
+    symptom: >-
+      로컬 migration 2건(platform_sql_ci_closeout · platform_sql_ci_closeout2)이
+      원격 미적용 상태이며, Freeze ACTIVE 중 워킹트리에서 수정/추가됨.
+    evidence:
+      - 'check:engine-foundation-parity 출력 2026-07-13 — local 241 · remote 239 · missing 2'
+      - 'git status: supabase/migrations/20260822000001_*.sql (M) · 20260823000001_*.sql (??)'
+      - 'docs/OPERATIONS/PLATFORM_RELEASE_FREEZE.md — Freeze ACTIVE'
+    recommendation: >-
+      operator가 CI-fix Critical 적격 여부 판정 → commit + bun run stack:push-remote
+      (advisor 0 ERROR 확인) 또는 revert. Freeze 위반 판정 시 RC SHA 재산정.
+    owner: 'db'
+  - id: 'SA-02'
+    severity: 'LOW'
+    status: 'OPEN'
+    pillar: 'frontend'
+    symptom: '데이터 의존 surface 일부의 Empty/Error 정적 증거 공백 (Empty yes 31/79 = 39.2%)'
+    evidence:
+      - 'docs/audit/PER_PAGE_UI_MATRIX.md Summary (2026-07-13)'
+      - 'casino-lobby-page.tsx Error=no · install-page.tsx Loading=no 등'
+    recommendation: '후속 WORLD_CLASS_UX 트랙에서 fetch 보유 surface만 분모로 재산정 후 보강'
+    owner: 'product'
+  - id: 'SA-03'
+    severity: 'LOW'
+    status: 'OPEN'
+    pillar: 'repository'
+    symptom: 'knip unused 3파일 + stale script import 3건 + root decimal.js 잔존 의존성'
+    evidence:
+      - 'docs/audit/KNIP_DEADCODE_REPORT.md (2026-07-13)'
+    recommendation: 'Freeze lift 후 operator 확인 하에 hygiene 삭제 (Freeze 중 금지)'
+    owner: 'platform'
+  - id: 'SA-04'
+    severity: 'LOW'
+    status: 'OPEN'
+    pillar: 'database'
+    symptom: 'types rpc_* 256 중 112건 apps 미호출 — Edge/SQL/cron cross-use 전수 판정 미실시'
+    evidence:
+      - 'docs/audit/RPC_USAGE_MATRIX.md Summary'
+    recommendation: 'Edge/SQL 호출 스캔을 matrix generator에 추가해 진성 dead RPC만 분리 (삭제는 엔진 freeze상 금지)'
+    owner: 'db'
+  - id: 'SA-05'
+    severity: 'LOW'
+    status: 'OPEN'
+    pillar: 'backend'
+    symptom: '브라우저 직접 호출 Edge 함수(siwe-auth · product-analytics)의 CORS가 gateway 기본값 의존 — 커스텀 헤더 시나리오 미검증'
+    evidence:
+      - 'supabase/functions/** grep: Access-Control-Allow 0건 (2026-07-13)'
+      - 'supabase/config.toml verify_jwt=false 3건'
+    recommendation: '커스텀 도메인/헤더 도입 시 preflight 실측 후 필요하면 명시적 CORS 헤더 추가'
+    owner: 'sre'
+  - id: 'SA-06'
+    severity: 'LOW'
+    status: 'OPEN'
+    pillar: 'performance'
+    symptom: 'route-level code-split 커버리지·i18n 카탈로그 lazy 여부 미계측 — R9-PERF-JS 수정 설계 선행 계측 부재'
+    evidence:
+      - 'docs/audit/MASTER_INVENTORY_AUDIT_2026-07-13.md §15 (NOT VERIFIED per-route)'
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-stage1-matrix.md JS 539kb 전 상태 동일'
+    recommendation: 'R9-PERF-JS fix 착수 시 bundle visualizer 1회(operator 승인) 후 chunk 설계'
+    owner: 'sre'
