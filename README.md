@@ -26,17 +26,17 @@ supabase/     Postgres 스키마·RLS·RPC(migrations) + SQL 통합 테스트
 
 ## 공유 패키지 (`packages/*`)
 
-| 패키지                 | 역할                                                             |
-| ---------------------- | ---------------------------------------------------------------- |
-| `@phonara/money`       | Decimal 기반 금액·환율·수수료 연산(부동소수점 금지 규칙의 SOT)  |
-| `@phonara/wallet-ledger` | append-only 지갑 원장 유틸                                      |
-| `@phonara/i18n`        | ko/en 사용자 노출 문구 카탈로그 (한국어 하드코딩 금지)          |
-| `@phonara/shared-types`| Supabase 생성 DB 타입 + 프론트/백엔드 공유 타입 계약             |
-| `@phonara/game-engine` | 12종 카지노 게임 룰·RTP·provably-fair 시드/검증 로직             |
-| `@phonara/trading-engine` | 현물/선물/스테이킹 정산·펀딩비·마진 계산 참조 구현            |
-| `@phonara/sportsbook-engine` | 스포츠 배당·콤보 오즈·페이아웃 프리뷰 로직                  |
-| `@phonara/sports-ingest` | 외부 벤더(TheOddsAPI 등) 배당/스코어 수집 워커                  |
-| `@phonara/market-display` | 오더북/캔들 등 시세 표시 가공 유틸                              |
+| 패키지                       | 역할                                                           |
+| ---------------------------- | -------------------------------------------------------------- |
+| `@phonara/money`             | Decimal 기반 금액·환율·수수료 연산(부동소수점 금지 규칙의 SOT) |
+| `@phonara/wallet-ledger`     | append-only 지갑 원장 유틸                                     |
+| `@phonara/i18n`              | ko/en 사용자 노출 문구 카탈로그 (한국어 하드코딩 금지)         |
+| `@phonara/shared-types`      | Supabase 생성 DB 타입 + 프론트/백엔드 공유 타입 계약           |
+| `@phonara/game-engine`       | 12종 카지노 게임 룰·RTP·provably-fair 시드/검증 로직           |
+| `@phonara/trading-engine`    | 현물/선물/스테이킹 정산·펀딩비·마진 계산 참조 구현             |
+| `@phonara/sportsbook-engine` | 스포츠 배당·콤보 오즈·페이아웃 프리뷰 로직                     |
+| `@phonara/sports-ingest`     | 외부 벤더(TheOddsAPI 등) 배당/스코어 수집 워커                 |
+| `@phonara/market-display`    | 오더북/캔들 등 시세 표시 가공 유틸                             |
 
 ## 기술 스택
 
