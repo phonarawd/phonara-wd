@@ -34,7 +34,7 @@ function collectSourceFiles(dir: string, acc: string[] = []): string[] {
 
 export function extractTradeCatalogKeys(): string[] {
   const keys = new Set<string>();
-  for (const file of [I18N_INDEX, I18N_PRESENTATION_EN]) {
+  for (const file of [I18N_INDEX, I18N_CATALOG_EN, I18N_PRESENTATION_EN]) {
     const content = readFileSync(file, 'utf8');
     for (const match of content.matchAll(TRADE_KEY_LITERAL_RE)) {
       keys.add(match[1]!);
