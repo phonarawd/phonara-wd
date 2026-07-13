@@ -279,11 +279,15 @@ BEGIN
     'e22-pc-place-' || v_uid::TEXT
   )->>'bet_id')::UUID;
 
+  -- Conservation Σ must run as superuser: authenticated RLS hides other wallets
+  -- and all system_accounts (admin-only SELECT), which would mask house legs.
+  RESET ROLE;
   SELECT
     (SELECT COALESCE(SUM(phon_available::NUMERIC + phon_locked::NUMERIC), 0) FROM wallets)
     + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'PHON')
   INTO v_phon_before;
 
+  SET LOCAL ROLE authenticated;
   v_preview := rpc_preview_sports_partial_cashout(v_bet_id, '40.000000');
   ASSERT v_preview->>'cashout_amount' IS NOT NULL, format('partial preview: %s', v_preview);
   ASSERT trunc((v_preview->>'remaining_stake')::NUMERIC, 6) = trunc(60::NUMERIC, 6),
@@ -311,6 +315,7 @@ BEGIN
      WHERE bet_id = v_bet_id AND leg_status = 'pending'
   ) = 1, 'legs must stay pending';
 
+  RESET ROLE;
   SELECT
     (SELECT COALESCE(SUM(phon_available::NUMERIC + phon_locked::NUMERIC), 0) FROM wallets)
     + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'PHON')
@@ -324,6 +329,7 @@ BEGIN
     + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'PHON')
   INTO v_phon_before;
 
+  SET LOCAL ROLE authenticated;
   v_preview := rpc_preview_sports_cashout(v_bet_id);
   v_full := rpc_cashout_sports_bet(
     v_bet_id,
@@ -332,6 +338,7 @@ BEGIN
   );
   ASSERT (v_full->>'status') = 'cashed_out', format('full cashout: %s', v_full);
 
+  RESET ROLE;
   SELECT
     (SELECT COALESCE(SUM(phon_available::NUMERIC + phon_locked::NUMERIC), 0) FROM wallets)
     + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'PHON')
@@ -339,7 +346,6 @@ BEGIN
   ASSERT v_phon_before = v_phon_after,
     format('conservation after full cashout: before=%s after=%s', v_phon_before, v_phon_after);
 
-  RESET ROLE;
   RAISE NOTICE 'E22-2 OK — partial cashout · conservation · full remaining';
 END;
 $$;

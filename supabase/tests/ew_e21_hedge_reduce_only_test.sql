@@ -224,6 +224,9 @@ BEGIN
   FROM futures_positions WHERE id = (v_pos->>'position_id')::UUID;
   ASSERT v_pos_status = 'closed', format('position closed by reduce-only, got %s', v_pos_status);
 
+  -- Conservation Σ must run as superuser: authenticated RLS hides other wallets
+  -- and all system_accounts (admin-only SELECT).
+  RESET ROLE;
   SELECT
     (SELECT COALESCE(SUM(usdt_available::NUMERIC + usdt_locked::NUMERIC), 0) FROM wallets)
     + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'USDT')
