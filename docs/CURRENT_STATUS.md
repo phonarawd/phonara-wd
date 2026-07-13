@@ -367,12 +367,12 @@
 | `ew-e10-trust-support-ui`               | `[x]` DONE      | —      | YAML #271 completed · surface/gate evidence pending doc sync |
 | `ew-e10-growth-ui`                      | `[x]` DONE      | —      | YAML #272 completed · surface/gate evidence pending doc sync |
 | `ew-e10-gate-platform-world-class`      | `[x]` DONE      | —      | YAML #273 completed · surface/gate evidence pending doc sync |
-| `p2-defer-admin-tier-benefits`          | `[x]` cancelled | —      | YAML cancelled · DEFER — 구현 금지                           |
-| `p2-defer-admin-promotions`             | `[x]` cancelled | —      | YAML cancelled · DEFER — 구현 금지                           |
-| `p2-defer-admin-cms`                    | `[x]` cancelled | —      | YAML cancelled · DEFER — 구현 금지                           |
-| `p2-defer-admin-casino`                 | `[x]` cancelled | —      | YAML cancelled · DEFER — 구현 금지                           |
-| `p2-defer-admin-staking`                | `[x]` cancelled | —      | YAML cancelled · DEFER — 구현 금지                           |
-| `p2-defer-admin-vip`                    | `[x]` cancelled | —      | YAML cancelled · DEFER — 구현 금지                           |
-| `p2-defer-admin-support`                | `[x]` cancelled | —      | YAML cancelled · DEFER — 구현 금지                           |
+| `p2-defer-admin-tier-benefits`          | `[x]` cancelled | —      | YAML cancelled(당시 DEFER) · **이후 `ew-e6-admin-desks-wave`(#250)에서 `admin-tier-benefits-page.tsx`로 구현됨(ZA-03) — 이 행을 "구현 금지"로 읽지 말 것** |
+| `p2-defer-admin-promotions`             | `[x]` cancelled | —      | YAML cancelled(당시 DEFER) · **이후 `ew-e6-admin-desks-wave`(#250)에서 `admin-promotions-page.tsx`로 구현됨(ZA-03) — 이 행을 "구현 금지"로 읽지 말 것**    |
+| `p2-defer-admin-cms`                    | `[x]` cancelled | —      | YAML cancelled(당시 DEFER) · **이후 `ew-e6-admin-desks-wave`(#250)에서 `admin-cms-page.tsx`로 구현됨(ZA-03) — 이 행을 "구현 금지"로 읽지 말 것**            |
+| `p2-defer-admin-casino`                 | `[x]` cancelled | —      | YAML cancelled(당시 DEFER) · **이후 `ew-e6-admin-desks-wave`(#250)에서 `admin-casino-page.tsx`로 구현됨(ZA-03) — 이 행을 "구현 금지"로 읽지 말 것**         |
+| `p2-defer-admin-staking`                | `[x]` cancelled | —      | YAML cancelled(당시 DEFER) · **이후 `ew-e6-admin-desks-wave`(#250)에서 `admin-staking-page.tsx`로 구현됨(ZA-03) — 이 행을 "구현 금지"로 읽지 말 것**        |
+| `p2-defer-admin-vip`                    | `[x]` cancelled | —      | YAML cancelled(당시 DEFER) · **이후 `ew-e4-gate-tier-option-b`(#247)에서 `admin-tiers-page.tsx`/`admin-user-tier-page.tsx` 등급 관리 UI로 구현됨(ZA-03, 전용 "VIP" 명 페이지는 아님) — 이 행을 "구현 금지"로 읽지 말 것** |
+| `p2-defer-admin-support`                | `[x]` cancelled | —      | YAML cancelled(당시 DEFER) · **이후 `ew-e9-page-admin-support`(#267)에서 `admin-support-page.tsx`로 구현됨(ZA-03) — 이 행을 "구현 금지"로 읽지 말 것**      |
 
 §AI Todo Sync · YAML canonical **273/280 completed** · **NEXT:** `null` (#null) · **preflight:** [`ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md)
