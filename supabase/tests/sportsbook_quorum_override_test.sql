@@ -23,6 +23,10 @@ BEGIN
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
   UPDATE app_config SET value = 'true' WHERE key = 'feature_sports_enabled';
   UPDATE app_config SET value = 'false' WHERE key = 'consent_gate_enabled';
+  -- This test exercises live-fixture settlement quorum override (dormant
+  -- live path preserved per Wave 0.5 — sb-w05-prematch-hard-gate); the
+  -- pre-match-only hard gate default ('false') must not block it here.
+  UPDATE app_config SET value = 'true' WHERE key = 'feature_sports_live_betting_enabled';
 
   PERFORM rpc_ingest_sports_c1(jsonb_build_object(
     'type', 'event_upsert',
