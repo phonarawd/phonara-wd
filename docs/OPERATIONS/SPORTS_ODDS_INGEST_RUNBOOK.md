@@ -67,15 +67,27 @@ Wave 10(ZA-13)에서 보드에 [`shouldShowSportsIngestOfflineBanner`](../../app
 
 ## Phase 5 재검증 (2026-07-14 · Zero-Defect Critical Hardening)
 
-| 항목 | 결과 |
-| --- | --- |
-| dry-run 기본값 | **유지** — `SPORTS_INGEST_DRY_RUN !== 'false'` → dry-run (`worker.ts` / `ws-worker.ts`) |
-| ingest-offline 배너 | **유지** — `shouldShowSportsIngestOfflineBanner` · `sports-board-ingest-offline-banner` |
-| owner vitest | freshness contract + `sports-page` ZA-13 배너 케이스 **green** (Phase 5 세션) |
-| `LAUNCH_GATES.sportsBetting` / `sportsCashout` | **`false` 유지** — 본 Phase에서 flip **0** |
-| dry-run 해제 · Edge 배포 · 베팅 게이트 ON | **여전히 OPEN** — §전환 조건·§Betting/Cashout 전부 충족 + 별도 operator 승인 후에만 |
+| 항목                                           | 결과                                                                                    |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------- |
+| dry-run 기본값                                 | **유지** — `SPORTS_INGEST_DRY_RUN !== 'false'` → dry-run (`worker.ts` / `ws-worker.ts`) |
+| ingest-offline 배너                            | **유지** — `shouldShowSportsIngestOfflineBanner` · `sports-board-ingest-offline-banner` |
+| owner vitest                                   | freshness contract + `sports-page` ZA-13 배너 케이스 **green** (Phase 5 세션)           |
+| `LAUNCH_GATES.sportsBetting` / `sportsCashout` | **`false` 유지** — 본 Phase에서 flip **0**                                              |
+| dry-run 해제 · Edge 배포 · 베팅 게이트 ON      | **여전히 OPEN** — §전환 조건·§Betting/Cashout 전부 충족 + 별도 operator 승인 후에만     |
 
 정본 Plan: [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) Phase 5.
+
+## Wave 0 / 0.5 / 1 구현 (2026-07-14 · 스포츠 무료 실배당 완결 로드맵)
+
+| 항목                                                                                       | 상태                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GitHub Actions 상시 ingest (`.github/workflows/sports-odds-ingest.yml`)                    | 코드 완료 · 5분 cron + `workflow_dispatch` · WS/settle는 명시적으로 dry-run/비활성 유지                                                                                                                                                                                                                                                         |
+| 벤더 우선순위(`SPORTS_ODDS_VENDOR_PRIORITY=odds-api-io,the-odds-api`)                      | `.env.example` 문서화 완료 — **실제 `ODDS_API_IO_KEY` 무료 키 발급은 operator 액션**(에이전트가 외부 가입 대행 불가)                                                                                                                                                                                                                            |
+| `feature_sports_live_betting_enabled`(migration `20260827000001`)                          | 시딩 완료(`'false'`) + `rpc_place_sports_bet` 라이브 분기 가드 삽입 — `rpc_place_sports_system_bet`은 내부적으로 `rpc_place_sports_bet`을 호출하므로 별도 가드 불필요(원격 `pg_get_functiondef`로 확인)                                                                                                                                         |
+| ingest health freshness 재계산(`rpc_get_sports_ingest_health`, migration `20260827000002`) | `sports_ingest_health.status` 저장값이 오래돼도 read 경로에서 `stale`로 재계산 · `scripts/lib/sports-ingest-health.ts`의 `loadIngestHealthLag` 전환 완료                                                                                                                                                                                        |
+| **미완료 — CI/operator 액션 필요**                                                         | ① 위 3개 migration은 로컬 `test:sql` 실행이 에이전트에게 금지(G13)되어 있어 push 후 GitHub CI `sql` job green으로만 확정된다. ② GitHub repo secrets(`SUPABASE_URL`·`SUPABASE_SERVICE_ROLE_KEY`·`THE_ODDS_API_KEY`·`ODDS_API_IO_KEY`) 등록은 operator만 가능. ③ `workflow_dispatch` 수동 1회 트리거 + freshness 확인도 실제 키 등록 후에만 가능. |
+
+이 구현은 **Betting/Cashout 게이트를 전환하지 않는다** — 위 §Betting/Cashout 게이트 ON 조건은 그대로 유효.
 
 ## 참고
 
