@@ -32,24 +32,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard"],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/account-hub-display-contract.ts",
         "apps/web/src/domain/account-profile-display-contract.ts",
@@ -74,22 +60,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "errorEvidence": ["errorKey", "role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/account-hub-display-contract.ts",
         "apps/web/src/domain/account-profile-display-contract.ts",
@@ -110,21 +84,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/account-profile-display-contract.ts",
         "apps/web/src/domain/account-hub-display-contract.ts",
@@ -145,22 +108,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "errorEvidence": ["errorKey", "role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/account-hub-display-contract.ts",
         "apps/web/src/domain/account-profile-display-contract.ts",
@@ -181,19 +132,11 @@
       "empty": "no",
       "error": "yes",
       "responsive": "partial",
-      "loadingEvidence": [
-        "loading"
-      ],
+      "loadingEvidence": ["loading"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert"
-      ],
-      "responsiveEvidence": [
-        "md:"
-      ],
-      "displayContracts": [
-        "apps/web/src/domain/auth-landing-visual-signoff-display-contract.ts"
-      ],
+      "errorEvidence": ["role=alert"],
+      "responsiveEvidence": ["md:"],
+      "displayContracts": ["apps/web/src/domain/auth-landing-visual-signoff-display-contract.ts"],
       "tests": [
         "apps/web/src/product/surfaces/auth/__tests__/auth-callback-page.test.tsx",
         "apps/web/src/domain/__tests__/auth-landing-visual-signoff-display-contract.test.ts"
@@ -207,23 +150,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "loading",
-        "query loading flag"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard"
-      ],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["loading", "query loading flag"],
+      "emptyEvidence": ["empty", "empty length guard"],
+      "errorEvidence": ["errorKey", "role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/casino-fairness-display-contract.ts",
         "apps/web/src/domain/casino-fiat-hint-session-lock-display-contract.ts",
@@ -248,22 +178,10 @@
       "empty": "yes",
       "error": "no",
       "responsive": "yes",
-      "loadingEvidence": [
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "EmptyState",
-        "empty",
-        "empty length guard"
-      ],
+      "loadingEvidence": ["loading", "loading testid"],
+      "emptyEvidence": ["EmptyState", "empty", "empty length guard"],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:",
-        "lg:",
-        "sm:",
-        "width constraint"
-      ],
+      "responsiveEvidence": ["md:", "lg:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/casino-lobby-display-contract.ts",
         "apps/web/src/domain/casino-fairness-display-contract.ts",
@@ -288,20 +206,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/earn-cashback-display-contract.ts",
         "apps/web/src/domain/earn-home-display-contract.ts",
@@ -326,20 +234,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/earn-play-display-contract.ts",
         "apps/web/src/domain/earn-cashback-display-contract.ts",
@@ -364,22 +262,10 @@
       "empty": "partial",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty"],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/events-hub-display-contract.ts",
         "apps/web/src/domain/account-hub-display-contract.ts",
@@ -404,22 +290,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "query loading flag"
-      ],
-      "emptyEvidence": [
-        "empty length guard"
-      ],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error flag"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "lg:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["query loading flag"],
+      "emptyEvidence": ["empty length guard"],
+      "errorEvidence": ["errorKey", "role=alert", "error flag"],
+      "responsiveEvidence": ["md:", "lg:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/casino-games-batch-a-display-contract.ts",
         "apps/web/src/domain/casino-games-batch-b-display-contract.ts",
@@ -444,23 +318,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty length guard"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty length guard"],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/earn-home-display-contract.ts",
         "apps/web/src/domain/earn-cashback-display-contract.ts",
@@ -485,23 +346,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty length guard"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty length guard"],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/home-attendance-display-contract.ts",
         "apps/web/src/domain/earn-home-display-contract.ts",
@@ -526,24 +374,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/home-missions-invite-display-contract.ts",
         "apps/web/src/domain/home-missions-display-contract.ts",
@@ -568,25 +402,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["errorKey", "role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/home-missions-display-contract.ts",
         "apps/web/src/domain/home-missions-invite-display-contract.ts",
@@ -613,24 +432,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/home-missions-referral-display-contract.ts",
         "apps/web/src/domain/home-missions-display-contract.ts",
@@ -657,17 +462,9 @@
       "responsive": "yes",
       "loadingEvidence": [],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "error flag"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
-      "displayContracts": [
-        "apps/web/src/domain/app-install-mission-display-contract.ts"
-      ],
+      "errorEvidence": ["error flag"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
+      "displayContracts": ["apps/web/src/domain/app-install-mission-display-contract.ts"],
       "tests": [
         "apps/web/src/product/surfaces/install/__tests__/install-page.test.tsx",
         "apps/web/src/domain/__tests__/app-install-mission-display-contract.test.ts"
@@ -684,11 +481,7 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:",
-        "lg:",
-        "width constraint"
-      ],
+      "responsiveEvidence": ["md:", "lg:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/auth-landing-visual-signoff-display-contract.ts",
         "apps/web/src/domain/landing-ab-display-contract.ts",
@@ -717,9 +510,7 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:"
-      ],
+      "responsiveEvidence": ["md:"],
       "displayContracts": [
         "apps/web/src/domain/affiliate-partner-display-contract.ts",
         "apps/web/src/domain/legal-display-contract.ts",
@@ -743,9 +534,7 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:"
-      ],
+      "responsiveEvidence": ["md:"],
       "displayContracts": [
         "apps/web/src/domain/legal-display-contract.ts",
         "apps/web/src/domain/p12-legal-pages-display-contract.ts"
@@ -767,9 +556,7 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:"
-      ],
+      "responsiveEvidence": ["md:"],
       "displayContracts": [
         "apps/web/src/domain/legal-display-contract.ts",
         "apps/web/src/domain/p12-legal-pages-display-contract.ts"
@@ -791,9 +578,7 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:"
-      ],
+      "responsiveEvidence": ["md:"],
       "displayContracts": [
         "apps/web/src/domain/legal-display-contract.ts",
         "apps/web/src/domain/p12-legal-pages-display-contract.ts"
@@ -815,9 +600,7 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:"
-      ],
+      "responsiveEvidence": ["md:"],
       "displayContracts": [
         "apps/web/src/domain/aml-risk-display-contract.ts",
         "apps/web/src/domain/legal-display-contract.ts",
@@ -843,9 +626,7 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:"
-      ],
+      "responsiveEvidence": ["md:"],
       "displayContracts": [
         "apps/web/src/domain/legal-display-contract.ts",
         "apps/web/src/domain/p12-legal-pages-display-contract.ts"
@@ -867,13 +648,9 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:"
-      ],
+      "responsiveEvidence": ["md:"],
       "displayContracts": [],
-      "tests": [
-        "apps/web/src/product/surfaces/login/__tests__/login-page.test.tsx"
-      ]
+      "tests": ["apps/web/src/product/surfaces/login/__tests__/login-page.test.tsx"]
     },
     {
       "page": "announcements-page.tsx",
@@ -883,22 +660,9 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "no",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "query loading flag",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "EmptyState",
-        "empty",
-        "empty length guard"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error flag",
-        "error testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "query loading flag", "loading testid"],
+      "emptyEvidence": ["EmptyState", "empty", "empty length guard"],
+      "errorEvidence": ["role=alert", "error flag", "error testid"],
       "responsiveEvidence": [],
       "displayContracts": [
         "apps/web/src/domain/announcements-display-contract.ts",
@@ -953,9 +717,7 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "width constraint"
-      ],
+      "responsiveEvidence": ["width constraint"],
       "displayContracts": [
         "apps/web/src/domain/features-hub-display-contract.ts",
         "apps/web/src/domain/p12-trust-marketing-hub-display-contract.ts",
@@ -1011,9 +773,7 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "width constraint"
-      ],
+      "responsiveEvidence": ["width constraint"],
       "displayContracts": [
         "apps/web/src/domain/feedback-display-contract.ts",
         "apps/web/src/domain/marketing-shell-display-contract.ts",
@@ -1039,9 +799,7 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "width constraint"
-      ],
+      "responsiveEvidence": ["width constraint"],
       "displayContracts": [
         "apps/web/src/domain/fees-page-display-contract.ts",
         "apps/web/src/domain/marketing-shell-display-contract.ts",
@@ -1065,9 +823,7 @@
       "error": "no",
       "responsive": "no",
       "loadingEvidence": [],
-      "emptyEvidence": [
-        "empty"
-      ],
+      "emptyEvidence": ["empty"],
       "errorEvidence": [],
       "responsiveEvidence": [],
       "displayContracts": [
@@ -1095,13 +851,9 @@
       "error": "no",
       "responsive": "partial",
       "loadingEvidence": [],
-      "emptyEvidence": [
-        "empty"
-      ],
+      "emptyEvidence": ["empty"],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "width constraint"
-      ],
+      "responsiveEvidence": ["width constraint"],
       "displayContracts": [
         "apps/web/src/domain/p12-community-support-hub-display-contract.ts",
         "apps/web/src/domain/support-hub-display-contract.ts",
@@ -1126,25 +878,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error flag",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["role=alert", "error flag", "error testid"],
+      "responsiveEvidence": ["sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/support-ticket-display-contract.ts",
         "apps/web/src/domain/ew-e10-trust-support-ui-display-contract.ts",
@@ -1170,9 +907,7 @@
       "error": "no",
       "responsive": "no",
       "loadingEvidence": [],
-      "emptyEvidence": [
-        "empty length guard"
-      ],
+      "emptyEvidence": ["empty length guard"],
       "errorEvidence": [],
       "responsiveEvidence": [],
       "displayContracts": [
@@ -1199,19 +934,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "partial",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["width constraint"],
       "displayContracts": [
         "apps/web/src/domain/tier-guide-display-contract.ts",
         "apps/web/src/domain/ew-e4-gate-tier-option-b-display-contract.ts",
@@ -1264,26 +990,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["errorKey", "role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/notifications-center-display-contract.ts",
         "apps/web/src/domain/notifications-pwa-display-contract.ts",
@@ -1304,20 +1014,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/onboarding-missions-display-contract.ts",
         "apps/web/src/domain/ew-e2-gate-missions-display-contract.ts",
@@ -1342,17 +1042,10 @@
       "empty": "no",
       "error": "no",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/onboarding-handoff-display-contract.ts",
         "apps/web/src/domain/onboarding-journey-display-contract.ts",
@@ -1374,24 +1067,10 @@
       "empty": "partial",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error flag",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty"],
+      "errorEvidence": ["role=alert", "error flag", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/referral-invite-display-contract.ts",
         "apps/web/src/domain/home-missions-invite-display-contract.ts",
@@ -1416,26 +1095,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "EmptyState",
-        "empty",
-        "empty length guard"
-      ],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error flag",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["EmptyState", "empty", "empty length guard"],
+      "errorEvidence": ["errorKey", "role=alert", "error flag", "error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/referral-leaderboard-display-contract.ts",
         "apps/web/src/domain/home-missions-referral-display-contract.ts",
@@ -1460,26 +1123,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error flag",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["role=alert", "error flag", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/home-missions-referral-display-contract.ts",
         "apps/web/src/domain/referral-hub-display-contract.ts",
@@ -1506,17 +1153,10 @@
       "empty": "no",
       "error": "no",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [],
       "tests": [
         "apps/web/src/product/surfaces/reset-password/__tests__/reset-password-page.test.tsx"
@@ -1530,28 +1170,11 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
-      "displayContracts": [
-        "apps/web/src/domain/funding-history-display-contract.ts"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty testid"],
+      "errorEvidence": ["errorKey", "role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
+      "displayContracts": ["apps/web/src/domain/funding-history-display-contract.ts"],
       "tests": [
         "apps/web/src/product/surfaces/rewards/__tests__/rewards-history-page.test.tsx",
         "apps/web/src/domain/__tests__/funding-history-display-contract.test.ts"
@@ -1565,20 +1188,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/settings-account-display-contract.ts",
         "apps/web/src/domain/account-hub-display-contract.ts",
@@ -1603,23 +1216,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton"
-      ],
-      "emptyEvidence": [
-        "EmptyState",
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "role=alert"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton"],
+      "emptyEvidence": ["EmptyState", "empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["role=alert"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/settings-api-keys-display-contract.ts",
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
@@ -1644,26 +1244,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["errorKey", "role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
         "apps/web/src/domain/settings-account-display-contract.ts",
@@ -1689,14 +1273,9 @@
       "error": "no",
       "responsive": "yes",
       "loadingEvidence": [],
-      "emptyEvidence": [
-        "empty length guard"
-      ],
+      "emptyEvidence": ["empty length guard"],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/settings-notifications-display-contract.ts",
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
@@ -1724,10 +1303,7 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/settings-preferences-display-contract.ts",
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
@@ -1752,21 +1328,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/settings-referral-display-contract.ts",
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
@@ -1791,26 +1356,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["errorKey", "role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
         "apps/web/src/domain/settings-account-display-contract.ts",
@@ -1836,14 +1385,9 @@
       "error": "no",
       "responsive": "yes",
       "loadingEvidence": [],
-      "emptyEvidence": [
-        "empty length guard"
-      ],
+      "emptyEvidence": ["empty length guard"],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/settings-hub-display-contract.ts",
         "apps/web/src/domain/account-hub-display-contract.ts",
@@ -1868,21 +1412,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/share-earnings-display-contract.ts",
         "apps/web/src/domain/kakao-share-display-contract.ts"
@@ -1901,21 +1434,12 @@
       "empty": "no",
       "error": "no",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [],
-      "tests": [
-        "apps/web/src/product/surfaces/signup/__tests__/signup-page.test.tsx"
-      ]
+      "tests": ["apps/web/src/product/surfaces/signup/__tests__/signup-page.test.tsx"]
     },
     {
       "page": "sports-page.tsx",
@@ -1925,22 +1449,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty length guard"
-      ],
-      "errorEvidence": [
-        "errorKey"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "lg:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty length guard"],
+      "errorEvidence": ["errorKey"],
+      "responsiveEvidence": ["md:", "lg:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/ew-e22-gate-sports-parity-display-contract.ts",
         "apps/web/src/domain/ew-e22-sports-parity-display-contract.ts",
@@ -1967,24 +1479,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/account-hub-display-contract.ts",
         "apps/web/src/domain/events-hub-display-contract.ts",
@@ -2009,22 +1507,11 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
-      "displayContracts": [
-        "apps/web/src/domain/staking-display-contract.ts"
-      ],
+      "errorEvidence": ["error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
+      "displayContracts": ["apps/web/src/domain/staking-display-contract.ts"],
       "tests": [
         "apps/web/src/product/surfaces/staking/__tests__/staking-positions-page.test.tsx",
         "apps/web/src/domain/__tests__/staking-display-contract.test.ts"
@@ -2038,20 +1525,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/tier-benefits-display-contract.ts",
         "apps/web/src/domain/ew-e4-gate-tier-option-b-display-contract.ts",
@@ -2076,26 +1553,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "EmptyState",
-        "empty",
-        "empty length guard"
-      ],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error flag",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["EmptyState", "empty", "empty length guard"],
+      "errorEvidence": ["errorKey", "role=alert", "error flag", "error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/tier-leaderboard-display-contract.ts",
         "apps/web/src/domain/ew-e4-gate-tier-option-b-display-contract.ts",
@@ -2120,25 +1581,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/tier-me-display-contract.ts",
         "apps/web/src/domain/ew-e4-gate-tier-option-b-display-contract.ts",
@@ -2163,18 +1609,10 @@
       "empty": "partial",
       "error": "no",
       "responsive": "partial",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty"],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "responsive keyword"
-      ],
+      "responsiveEvidence": ["responsive keyword"],
       "displayContracts": [
         "apps/web/src/domain/trade-desk-a11y-display-contract.ts",
         "apps/web/src/domain/trade-desk-browser-matrix-display-contract.ts",
@@ -2199,21 +1637,10 @@
       "empty": "partial",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty"
-      ],
-      "errorEvidence": [
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty"],
+      "errorEvidence": ["error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/ew-e21-gate-trade-engine-parity-display-contract.ts",
         "apps/web/src/domain/ew-e21-trade-parity-display-contract.ts",
@@ -2238,21 +1665,10 @@
       "empty": "partial",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty"
-      ],
-      "errorEvidence": [
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty"],
+      "errorEvidence": ["error testid"],
+      "responsiveEvidence": ["md:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/ew-e21-gate-trade-engine-parity-display-contract.ts",
         "apps/web/src/domain/ew-e21-trade-parity-display-contract.ts",
@@ -2278,16 +1694,10 @@
       "empty": "no",
       "error": "no",
       "responsive": "partial",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "responsive keyword"
-      ],
+      "responsiveEvidence": ["responsive keyword"],
       "displayContracts": [
         "apps/web/src/domain/trade-desk-a11y-display-contract.ts",
         "apps/web/src/domain/trade-desk-browser-matrix-display-contract.ts",
@@ -2315,9 +1725,7 @@
       "loadingEvidence": [],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "lg:"
-      ],
+      "responsiveEvidence": ["lg:"],
       "displayContracts": [
         "apps/web/src/domain/trade-desk-a11y-display-contract.ts",
         "apps/web/src/domain/trade-desk-browser-matrix-display-contract.ts",
@@ -2341,20 +1749,11 @@
       "empty": "no",
       "error": "no",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:",
-        "width constraint"
-      ],
-      "displayContracts": [
-        "apps/web/src/domain/trade-desk-migration-verify-display-contract.ts"
-      ],
+      "responsiveEvidence": ["md:", "width constraint"],
+      "displayContracts": ["apps/web/src/domain/trade-desk-migration-verify-display-contract.ts"],
       "tests": [
         "apps/web/src/product/surfaces/verify-email/__tests__/verify-email-page.test.tsx",
         "apps/web/src/domain/__tests__/trade-desk-migration-verify-display-contract.test.ts"
@@ -2368,21 +1767,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert",
-        "error flag"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert", "error flag"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/crypto-edge-display-contract.ts",
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
@@ -2407,20 +1795,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/wallet-withdrawal-off-display-contract.ts",
         "apps/web/src/domain/crypto-edge-display-contract.ts",
@@ -2445,25 +1823,10 @@
       "empty": "yes",
       "error": "partial",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "error flag"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "lg:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["error flag"],
+      "responsiveEvidence": ["md:", "lg:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/account-hub-display-contract.ts",
         "apps/web/src/domain/events-hub-display-contract.ts",
@@ -2488,25 +1851,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error flag",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty testid"],
+      "errorEvidence": ["role=alert", "error flag", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
         "apps/web/src/domain/krw-deposit-proof-display-contract.ts",
@@ -2531,20 +1879,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/wallet-redeem-display-contract.ts",
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
@@ -2569,21 +1907,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert",
-        "error flag"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert", "error flag"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/krw-deposit-proof-display-contract.ts",
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
@@ -2608,21 +1935,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "role=alert",
-        "error flag"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "errorEvidence": ["role=alert", "error flag"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/wallet-withdrawal-off-display-contract.ts",
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
@@ -2647,24 +1963,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "QuadStreamLoading",
-        "loading"
-      ],
-      "emptyEvidence": [
-        "EmptyState",
-        "empty"
-      ],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["QuadStreamLoading", "loading"],
+      "emptyEvidence": ["EmptyState", "empty"],
+      "errorEvidence": ["errorKey", "role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/wallet-ledger-realtime-display-contract.ts",
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
@@ -2689,26 +1991,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
+      "errorEvidence": ["errorKey", "role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
         "apps/web/src/domain/wallet-capability-rails-display-contract.ts",
@@ -2735,22 +2021,10 @@
       "empty": "no",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
       "emptyEvidence": [],
-      "errorEvidence": [
-        "errorKey",
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "lg:",
-        "sm:"
-      ],
+      "errorEvidence": ["errorKey", "role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "lg:", "sm:"],
       "displayContracts": [
         "apps/web/src/domain/wallet-redeem-display-contract.ts",
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
@@ -2775,22 +2049,10 @@
       "empty": "yes",
       "error": "yes",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard"
-      ],
-      "errorEvidence": [
-        "role=alert",
-        "error testid"
-      ],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "loadingEvidence": ["Skeleton"],
+      "emptyEvidence": ["empty", "empty length guard"],
+      "errorEvidence": ["role=alert", "error testid"],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/wallet-transfer-display-contract.ts",
         "apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts",
@@ -2815,22 +2077,10 @@
       "empty": "yes",
       "error": "no",
       "responsive": "yes",
-      "loadingEvidence": [
-        "Skeleton",
-        "loading",
-        "loading testid"
-      ],
-      "emptyEvidence": [
-        "empty",
-        "empty length guard",
-        "empty testid"
-      ],
+      "loadingEvidence": ["Skeleton", "loading", "loading testid"],
+      "emptyEvidence": ["empty", "empty length guard", "empty testid"],
       "errorEvidence": [],
-      "responsiveEvidence": [
-        "md:",
-        "sm:",
-        "width constraint"
-      ],
+      "responsiveEvidence": ["md:", "sm:", "width constraint"],
       "displayContracts": [
         "apps/web/src/domain/wallet-withdrawal-off-display-contract.ts",
         "apps/web/src/domain/account-hub-display-contract.ts",

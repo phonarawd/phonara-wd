@@ -116,11 +116,7 @@
     "rpc_void_sports_bet",
     "rpc_void_sports_fixture_dead_heat"
   ],
-  "orphanCalls": [
-    "rpc_error",
-    "rpc_spot_market_buy",
-    "rpc_spot_market_sell"
-  ],
+  "orphanCalls": ["rpc_error", "rpc_spot_market_buy", "rpc_spot_market_sell"],
   "callSiteCount": 215,
   "byRpc": {
     "rpc_get_phon_balance_breakdown": [

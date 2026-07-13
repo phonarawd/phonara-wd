@@ -7,30 +7,30 @@
 
 ## Summary
 
-| Category | Count |
-|----------|------:|
-| Unused files | 3 |
-| Unused dependencies | 1 |
-| Unused devDependencies | 12 |
-| Unlisted binaries | 19 |
-| Unresolved imports | 3 |
-| Unused exports | 17 |
-| Unused exported types | 10 |
-| Duplicate exports | 7 |
-| Configuration hints | 7 |
+| Category               | Count |
+| ---------------------- | ----: |
+| Unused files           |     3 |
+| Unused dependencies    |     1 |
+| Unused devDependencies |    12 |
+| Unlisted binaries      |    19 |
+| Unresolved imports     |     3 |
+| Unused exports         |    17 |
+| Unused exported types  |    10 |
+| Duplicate exports      |     7 |
+| Configuration hints    |     7 |
 
 ## Unused files (high signal)
 
-| File | Notes |
-|------|-------|
-| `apps/admin/src/contracts/admin-desk-views.ts` | No import graph hit |
-| `apps/admin/src/contracts/controller-view-freeze.ts` | No import graph hit |
-| `apps/admin/src/lib/i18n.tsx` | Likely superseded by product i18n path |
+| File                                                 | Notes                                  |
+| ---------------------------------------------------- | -------------------------------------- |
+| `apps/admin/src/contracts/admin-desk-views.ts`       | No import graph hit                    |
+| `apps/admin/src/contracts/controller-view-freeze.ts` | No import graph hit                    |
+| `apps/admin/src/lib/i18n.tsx`                        | Likely superseded by product i18n path |
 
 ## Unused dependencies
 
-| Package | Location | Notes |
-|---------|----------|-------|
+| Package      | Location            | Notes                                                       |
+| ------------ | ------------------- | ----------------------------------------------------------- |
 | `decimal.js` | root `package.json` | Money path uses `@phonara/money` — root dep may be residual |
 
 ## Unused exports (sample — full list in raw)
@@ -39,11 +39,11 @@ See raw log for complete unused exports (game-engine slot helpers, sports-ingest
 
 ## Unresolved imports (stale script paths)
 
-| Import | Script |
-|--------|--------|
-| `../apps/web/src/lib/seo-config` | `scripts/generate-web-sitemap.ts` |
-| `../apps/web/src/i18n/ko` | `scripts/merge-presentation-i18n-wave1.ts` |
-| `../apps/web/src/i18n/en` | `scripts/merge-presentation-i18n-wave1.ts` |
+| Import                           | Script                                     |
+| -------------------------------- | ------------------------------------------ |
+| `../apps/web/src/lib/seo-config` | `scripts/generate-web-sitemap.ts`          |
+| `../apps/web/src/i18n/ko`        | `scripts/merge-presentation-i18n-wave1.ts` |
+| `../apps/web/src/i18n/en`        | `scripts/merge-presentation-i18n-wave1.ts` |
 
 ## Interpretation (inventory)
 
@@ -57,4 +57,3 @@ See raw log for complete unused exports (game-engine slot helpers, sports-ingest
 
 - Raw: [`knip-raw-output.txt`](./knip-raw-output.txt)
 - Master inventory §20 updated from this report
-

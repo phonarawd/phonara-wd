@@ -104,7 +104,10 @@ function scanRpcCalls(app: AppScope, srcRoot: string, constants: Map<string, str
     if (/callRpc|supabase\.rpc|\.rpc\s*\(/.test(content)) {
       for (const rpc of literalHits) {
         if (calls.some((c) => c.file === rel && c.rpc === rpc)) continue;
-        const idx = content.indexOf(`'${rpc}'`) >= 0 ? content.indexOf(`'${rpc}'`) : content.indexOf(`"${rpc}"`);
+        const idx =
+          content.indexOf(`'${rpc}'`) >= 0
+            ? content.indexOf(`'${rpc}'`)
+            : content.indexOf(`"${rpc}"`);
         if (idx < 0) continue;
         calls.push({ app, file: rel, line: lineNumber(content, idx), rpc });
       }
@@ -203,7 +206,9 @@ function main() {
 
   lines.push(``, `## Method`, ``);
   lines.push(`1. Parse \`Functions\` block in \`database.types.ts\` for keys matching \`rpc_*\`.`);
-  lines.push(`2. Walk \`apps/web/src\` + \`apps/admin/src\` for \`callRpc\` / \`.rpc(\` / RPC string constants.`);
+  lines.push(
+    `2. Walk \`apps/web/src\` + \`apps/admin/src\` for \`callRpc\` / \`.rpc(\` / RPC string constants.`,
+  );
   lines.push(`3. Resolve \`RPC_*\` exported constants to literal names.`);
   lines.push(``);
 
@@ -234,7 +239,9 @@ function main() {
     'utf8',
   );
 
-  console.log(`[rpc-matrix] types=${typesRpcs.length} used=${usedInTypes.length} unused=${unusedInApps.length} orphans=${orphanCalls.length}`);
+  console.log(
+    `[rpc-matrix] types=${typesRpcs.length} used=${usedInTypes.length} unused=${unusedInApps.length} orphans=${orphanCalls.length}`,
+  );
   console.log(`[rpc-matrix] wrote ${relative(ROOT, mdPath).replace(/\\/g, '/')}`);
 }
 

@@ -6,23 +6,23 @@
 
 ## 종합 점수 (영역당 100)
 
-| # | Pillar | 점수 | 밴드 | 문서 |
-|---|--------|-----:|------|------|
-| 1 | Repository | **86** | Strong | [`01_REPOSITORY.md`](01_REPOSITORY.md) |
-| 2 | Database | **82** | Strong | [`02_DATABASE.md`](02_DATABASE.md) |
-| 3 | Frontend | **78** | Strong 하단 | [`03_FRONTEND.md`](03_FRONTEND.md) |
-| 4 | Backend | **85** | Strong | [`04_BACKEND.md`](04_BACKEND.md) |
-| 5 | Security | **84** | Strong | [`05_SECURITY.md`](05_SECURITY.md) |
-| 6 | Performance | **58** | Material gaps | [`06_PERFORMANCE.md`](06_PERFORMANCE.md) |
-| 7 | Release Readiness | **38** | **BLOCKED** (≤40 규칙) | [`07_RELEASE_READINESS.md`](07_RELEASE_READINESS.md) |
+| #   | Pillar            |   점수 | 밴드                   | 문서                                                 |
+| --- | ----------------- | -----: | ---------------------- | ---------------------------------------------------- |
+| 1   | Repository        | **86** | Strong                 | [`01_REPOSITORY.md`](01_REPOSITORY.md)               |
+| 2   | Database          | **82** | Strong                 | [`02_DATABASE.md`](02_DATABASE.md)                   |
+| 3   | Frontend          | **78** | Strong 하단            | [`03_FRONTEND.md`](03_FRONTEND.md)                   |
+| 4   | Backend           | **85** | Strong                 | [`04_BACKEND.md`](04_BACKEND.md)                     |
+| 5   | Security          | **84** | Strong                 | [`05_SECURITY.md`](05_SECURITY.md)                   |
+| 6   | Performance       | **58** | Material gaps          | [`06_PERFORMANCE.md`](06_PERFORMANCE.md)             |
+| 7   | Release Readiness | **38** | **BLOCKED** (≤40 규칙) | [`07_RELEASE_READINESS.md`](07_RELEASE_READINESS.md) |
 
 ## 최종 판정
 
-| 단계 | 판정 |
-|------|------|
-| Soft Launch (withdrawal OFF · flip 0 soak) | **조건부 GO** — SA-01 정리 + soak-24h 개시 조건 |
-| Closed Beta | **NO-GO (근접)** — soak-24h + PPR 24h + 3-Owner 대기 (코드 blocker 없음) |
-| **Public Launch** | **NO-GO** — RC **BLOCKED** 유지 (R11 §24) |
+| 단계                                       | 판정                                                                     |
+| ------------------------------------------ | ------------------------------------------------------------------------ |
+| Soft Launch (withdrawal OFF · flip 0 soak) | **조건부 GO** — SA-01 정리 + soak-24h 개시 조건                          |
+| Closed Beta                                | **NO-GO (근접)** — soak-24h + PPR 24h + 3-Owner 대기 (코드 blocker 없음) |
+| **Public Launch**                          | **NO-GO** — RC **BLOCKED** 유지 (R11 §24)                                |
 
 ## Top blockers (우선순위 순)
 
@@ -41,14 +41,14 @@
 
 ## 신규 Finding 요약 ([`FINDINGS.yaml`](FINDINGS.yaml))
 
-| ID | 심각도 | Pillar | 한 줄 |
-|----|--------|--------|-------|
-| SA-01 | MEDIUM | Database/Release | migration 2건 원격 미적용 + Freeze 중 수정 |
-| SA-02 | LOW | Frontend | Empty/Error 정적 커버 공백 (39.2%) |
-| SA-03 | LOW | Repository | knip unused 3파일 · stale import 3 · root `decimal.js` |
-| SA-04 | LOW | Database | apps 미호출 RPC 112건 cross-use 미판정 |
-| SA-05 | LOW | Backend | 공개 Edge 함수 CORS gateway 기본값 의존 |
-| SA-06 | LOW | Performance | code-split/i18n lazy 미계측 (R9-PERF-JS 선행) |
+| ID    | 심각도 | Pillar           | 한 줄                                                  |
+| ----- | ------ | ---------------- | ------------------------------------------------------ |
+| SA-01 | MEDIUM | Database/Release | migration 2건 원격 미적용 + Freeze 중 수정             |
+| SA-02 | LOW    | Frontend         | Empty/Error 정적 커버 공백 (39.2%)                     |
+| SA-03 | LOW    | Repository       | knip unused 3파일 · stale import 3 · root `decimal.js` |
+| SA-04 | LOW    | Database         | apps 미호출 RPC 112건 cross-use 미판정                 |
+| SA-05 | LOW    | Backend          | 공개 Edge 함수 CORS gateway 기본값 의존                |
+| SA-06 | LOW    | Performance      | code-split/i18n lazy 미계측 (R9-PERF-JS 선행)          |
 
 기존 OPEN 링크: `R9-PERF-JS` (HIGH) · `H-09` (HIGH · BLOCKED_DEP — Supabase Pro+ 의존).
 

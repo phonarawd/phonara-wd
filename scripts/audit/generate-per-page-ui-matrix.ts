@@ -83,13 +83,16 @@ function stemFromPage(pageFile: string): string {
     .replace(/\.tsx$/, '');
 }
 
-function findRelated(contracts: string[], tests: string[], stem: string, domain: string): {
+function findRelated(
+  contracts: string[],
+  tests: string[],
+  stem: string,
+  domain: string,
+): {
   contracts: string[];
   tests: string[];
 } {
-  const tokens = new Set(
-    [stem, domain, ...stem.split('-')].filter((t) => t.length >= 3),
-  );
+  const tokens = new Set([stem, domain, ...stem.split('-')].filter((t) => t.length >= 3));
   const score = (path: string) => {
     const base = basename(path).toLowerCase();
     let s = 0;
@@ -108,8 +111,9 @@ function findRelated(contracts: string[], tests: string[], stem: string, domain:
   const pageTestDir = join(dirname(join(SURFACES, domain)), '__tests__');
   const localTests: string[] = [];
   // surface-local tests next to page
-  const surfaceTests = walk(join(SURFACES, domain), (n) =>
-    n.includes(stem) && /\.test\.(ts|tsx)$/.test(n),
+  const surfaceTests = walk(
+    join(SURFACES, domain),
+    (n) => n.includes(stem) && /\.test\.(ts|tsx)$/.test(n),
   );
   for (const t of surfaceTests) {
     localTests.push(relative(ROOT, t).replace(/\\/g, '/'));
@@ -199,7 +203,10 @@ function detectStates(
 
   const flag = (hits: string[]): StateFlag => {
     if (hits.length === 0) return 'no';
-    if (hits.length === 1 && (hits[0] === 'loading' || hits[0] === 'empty' || hits[0] === 'error flag')) {
+    if (
+      hits.length === 1 &&
+      (hits[0] === 'loading' || hits[0] === 'empty' || hits[0] === 'error flag')
+    ) {
       return 'partial';
     }
     return 'yes';
@@ -326,11 +333,17 @@ function main() {
   writeFileSync(mdPath, lines.join('\n'), 'utf8');
   writeFileSync(
     join(OUT_DIR, 'PER_PAGE_UI_MATRIX.json'),
-    JSON.stringify({ generatedAt, pageCount: rows.length, summary: { L, E, Er, R }, rows }, null, 2),
+    JSON.stringify(
+      { generatedAt, pageCount: rows.length, summary: { L, E, Er, R }, rows },
+      null,
+      2,
+    ),
     'utf8',
   );
 
-  console.log(`[per-page-ui] pages=${rows.length} loading yes=${L.yes} empty yes=${E.yes} error yes=${Er.yes} responsive yes=${R.yes}`);
+  console.log(
+    `[per-page-ui] pages=${rows.length} loading yes=${L.yes} empty yes=${E.yes} error yes=${Er.yes} responsive yes=${R.yes}`,
+  );
   console.log(`[per-page-ui] wrote ${relative(ROOT, mdPath).replace(/\\/g, '/')}`);
 }
 
