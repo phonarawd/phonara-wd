@@ -67,13 +67,13 @@ Wave 10(ZA-13)에서 보드에 [`shouldShowSportsIngestOfflineBanner`](../../app
 
 ## Phase 5 재검증 (2026-07-14 · Zero-Defect Critical Hardening)
 
-| 항목 | 결과 |
-| --- | --- |
-| dry-run 기본값 | **유지** — `SPORTS_INGEST_DRY_RUN !== 'false'` → dry-run (`worker.ts` / `ws-worker.ts`) |
-| ingest-offline 배너 | **유지** — `shouldShowSportsIngestOfflineBanner` · `sports-board-ingest-offline-banner` |
-| owner vitest | freshness contract + `sports-page` ZA-13 배너 케이스 **green** (Phase 5 세션) |
-| `LAUNCH_GATES.sportsBetting` / `sportsCashout` | **`false` 유지** — 본 Phase에서 flip **0** |
-| dry-run 해제 · Edge 배포 · 베팅 게이트 ON | **여전히 OPEN** — §전환 조건·§Betting/Cashout 전부 충족 + 별도 operator 승인 후에만 |
+| 항목                                           | 결과                                                                                    |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------- |
+| dry-run 기본값                                 | **유지** — `SPORTS_INGEST_DRY_RUN !== 'false'` → dry-run (`worker.ts` / `ws-worker.ts`) |
+| ingest-offline 배너                            | **유지** — `shouldShowSportsIngestOfflineBanner` · `sports-board-ingest-offline-banner` |
+| owner vitest                                   | freshness contract + `sports-page` ZA-13 배너 케이스 **green** (Phase 5 세션)           |
+| `LAUNCH_GATES.sportsBetting` / `sportsCashout` | **`false` 유지** — 본 Phase에서 flip **0**                                              |
+| dry-run 해제 · Edge 배포 · 베팅 게이트 ON      | **여전히 OPEN** — §전환 조건·§Betting/Cashout 전부 충족 + 별도 operator 승인 후에만     |
 
 정본 Plan: [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) Phase 5.
 
