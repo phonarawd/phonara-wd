@@ -18,6 +18,11 @@ import {
 export { TIER_BENEFITS_ROUTE } from './tier-benefits-display-contract';
 
 export const TIER_ME_ROUTE = '/tier/me' as const;
+/**
+ * Reserved for a future dedicated tier/decay history page backed by
+ * `tier_decay_events` — no route file exists yet (ZA-07). The page's
+ * History CTA uses `resolveTierMeHistoryLinkRoute()` below instead.
+ */
 export const TIER_ME_HISTORY_ROUTE = '/tier/me/history' as const;
 export const TIER_KEEP_STATUS_UI_ID = 'tier-keepStatus' as const;
 export const TIER_KEEP_STATUS_RPC = 'tier_keep_status' as const;
@@ -261,6 +266,16 @@ export function buildTierDecayPanelView(
 
 export function resolveTierKeepMissionHubRoute(): string {
   return '/home/missions?tab=tier';
+}
+
+/**
+ * `/tier/me` History CTA target (ZA-07). `TIER_ME_HISTORY_ROUTE` has no route
+ * file, so the CTA links to the existing reward ledger history page instead
+ * of a dead link. Swap this to `TIER_ME_HISTORY_ROUTE` once a dedicated
+ * tier/decay history page ships behind `tier_decay_events`.
+ */
+export function resolveTierMeHistoryLinkRoute(): string {
+  return '/rewards/history';
 }
 
 export function resolveTierDecayDepositRoute(): string {

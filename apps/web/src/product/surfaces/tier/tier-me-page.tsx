@@ -4,13 +4,13 @@ import { AlertTriangle, ChevronRight, Crown, History } from 'lucide-react';
 
 import {
   TIER_BENEFITS_ROUTE,
-  TIER_ME_HISTORY_ROUTE,
   TIER_ME_SEO_DESCRIPTION_KEY,
   TIER_ME_SEO_TITLE_KEY,
   resolveTierCssVar,
   resolveTierDecayDepositRoute,
   resolveTierDecayReferralRoute,
   resolveTierKeepMissionHubRoute,
+  resolveTierMeHistoryLinkRoute,
   buildTierMeBenefitsRows,
 } from '@/domain/tier-me-display-contract';
 import { useTierMePageController } from '@/features/earn/use-tier-me-page-controller';
@@ -283,13 +283,13 @@ export function TierMePage() {
             <h2 id="tier-me-benefits-heading" className="text-foreground m-0 text-lg font-semibold">
               {t('tier.me.benefitsTitle')}
             </h2>
-            <a
-              href={TIER_BENEFITS_ROUTE}
+            <Link
+              to={TIER_BENEFITS_ROUTE}
               className="text-accent text-sm font-medium underline-offset-4 hover:underline"
               data-testid="tier-me-benefits-link"
             >
               {t('tier.me.benefitsLink')}
-            </a>
+            </Link>
           </div>
           <Card data-testid="tier-me-benefits">
             <CardBody className="overflow-x-auto">
@@ -373,8 +373,8 @@ export function TierMePage() {
           </section>
         ) : null}
 
-        <a
-          href={TIER_ME_HISTORY_ROUTE}
+        <Link
+          to={resolveTierMeHistoryLinkRoute()}
           className={cn(
             buttonVariants({ variant: 'ghost', size: 'sm' }),
             'text-foreground-muted w-fit px-0',
@@ -384,7 +384,7 @@ export function TierMePage() {
           <History className="size-4" aria-hidden />
           {t('tier.me.historyLink')}
           <ChevronRight className="size-4" aria-hidden />
-        </a>
+        </Link>
       </div>
 
       {earnFiat.showDisclaimer ? <FiatHintDisclaimer className="md:col-span-2" /> : null}

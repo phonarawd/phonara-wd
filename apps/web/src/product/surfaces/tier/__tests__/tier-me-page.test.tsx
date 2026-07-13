@@ -1,9 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { FileRoutesByFullPath } from '@/routeTree.gen';
 import type { TierMePageControllerView } from '@/features/earn/use-tier-me-page-controller';
 import { I18nProvider } from '@/product/i18n';
 import { TierMePage } from '@/product/surfaces/tier/tier-me-page';
+
+/** TanStack Router full paths — compile-time route existence check (ZA-07). */
+type RegisteredFullPath = keyof FileRoutesByFullPath;
+
+function assertRegisteredFullPath(path: RegisteredFullPath): RegisteredFullPath {
+  return path;
+}
 
 const useTierMePageControllerMock = vi.hoisted(() => vi.fn());
 const useEarnFiatHintMock = vi.hoisted(() => vi.fn());
@@ -125,7 +133,12 @@ describe('TierMePage', () => {
     expect(screen.getByTestId('tier-me-decay-maintenance')).toBeInTheDocument();
     expect(screen.getByTestId('tier-me-limits')).toBeInTheDocument();
     expect(screen.getByTestId('tier-me-keep-mission')).toBeInTheDocument();
-    expect(screen.getByTestId('tier-me-history-link')).toHaveAttribute('href', '/tier/me/history');
+    const historyRoute = assertRegisteredFullPath('/rewards/history');
+    expect(screen.getByTestId('tier-me-history-link')).toHaveAttribute('href', historyRoute);
+    expect(screen.getByTestId('tier-me-benefits-link')).toHaveAttribute(
+      'href',
+      assertRegisteredFullPath('/tier/benefits'),
+    );
   });
 
   it('shows tier keep mission claim CTA when E1 engine is live', () => {

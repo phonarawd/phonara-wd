@@ -3846,7 +3846,7 @@ export const presentationEnMessages = {
   'tier.me.head.desc':
     'Track XP, daily limits, maintenance rules, and keep-status rewards in one place.',
   'tier.me.head.title': 'My tier — PHONARA',
-  'tier.me.historyLink': 'Tier upgrade history',
+  'tier.me.historyLink': 'Reward history',
   'tier.me.keepMissionTitle': 'Keep-status mission',
   'tier.me.limitsEmpty': 'Daily limits will appear after your first activity.',
   'tier.me.limitsTitle': "Today's limits",

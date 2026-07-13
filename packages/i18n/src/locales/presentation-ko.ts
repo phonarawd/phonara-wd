@@ -3788,7 +3788,7 @@ export const presentationKoMessages = {
   'tier.me.eyebrow': 'VIP 등급',
   'tier.me.head.desc': 'XP·일일 한도·유지 조건·등급 유지 미션을 한곳에서 확인하세요.',
   'tier.me.head.title': '내 등급 — PHONARA',
-  'tier.me.historyLink': '등급 승급 내역',
+  'tier.me.historyLink': '보상 내역 보기',
   'tier.me.keepMissionTitle': '등급 유지 미션',
   'tier.me.limitsEmpty': '첫 활동 후 오늘의 한도가 표시돼요.',
   'tier.me.limitsTitle': '오늘의 한도',
