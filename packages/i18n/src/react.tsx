@@ -7,7 +7,14 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { DEFAULT_LOCALE, translate, type Locale, type MessageKey } from './index';
+import {
+  DEFAULT_LOCALE,
+  ensureLocaleCatalog,
+  isLocaleCatalogLoaded,
+  translate,
+  type Locale,
+  type MessageKey,
+} from './index';
 
 export type TranslateFn = (key: MessageKey, vars?: Record<string, string | number>) => string;
 
@@ -40,17 +47,36 @@ export function createI18n({ storageKey, detectNavigatorLanguage = false }: Crea
 
   function I18nProvider({ children }: { children: ReactNode }) {
     const [locale, setLocaleState] = useState<Locale>(readInitialLocale);
+    const [catalogReady, setCatalogReady] = useState(() => isLocaleCatalogLoaded(readInitialLocale()));
 
     useEffect(() => {
       document.documentElement.lang = locale;
     }, [locale]);
 
-    const setLocale = useCallback((next: Locale) => {
-      setLocaleState(next);
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(storageKey, next);
-        document.documentElement.lang = next;
+    useEffect(() => {
+      let cancelled = false;
+      if (isLocaleCatalogLoaded(locale)) {
+        setCatalogReady(true);
+        return;
       }
+      setCatalogReady(false);
+      void ensureLocaleCatalog(locale).then(() => {
+        if (!cancelled) setCatalogReady(true);
+      });
+      return () => {
+        cancelled = true;
+      };
+    }, [locale]);
+
+    const setLocale = useCallback((next: Locale) => {
+      // Preload target catalog before flipping locale to avoid a blank frame.
+      void ensureLocaleCatalog(next).then(() => {
+        setLocaleState(next);
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem(storageKey, next);
+          document.documentElement.lang = next;
+        }
+      });
     }, []);
 
     const t = useCallback<TranslateFn>((key, vars) => translate(locale, key, vars), [locale]);
@@ -59,6 +85,10 @@ export function createI18n({ storageKey, detectNavigatorLanguage = false }: Crea
       () => ({ locale, setLocale, t }),
       [locale, setLocale, t],
     );
+
+    // Gate until the active locale catalog is present (ko is always ready).
+    // Vitest setup preloads en so this stays sync for unit tests.
+    if (!catalogReady) return null;
 
     return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
   }

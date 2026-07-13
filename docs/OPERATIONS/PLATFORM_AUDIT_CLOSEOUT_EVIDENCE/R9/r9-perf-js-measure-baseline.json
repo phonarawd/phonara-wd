@@ -1,0 +1,14 @@
+{
+  "measuredAt": "2026-07-13T00:00:00+09:00",
+  "source": "docs/audit/SYSTEM_AUDIT_2026-07-13/06_PERFORMANCE.md §6 Wave 1",
+  "method": "sourcemap sourcesContent sum + zlib.gzipSync level 9 · index.html modulepreload assets",
+  "sloGzipKb": 450,
+  "initialJsGzipKb": 519.31,
+  "underSlo": false,
+  "notes": "Post framer-motion removal · pre i18n lazy-load. Dominant chunk i18n ko+en eager 249.97 kB gzip.",
+  "topChunksGzipKb": {
+    "i18n": 249.97,
+    "index": 138.42,
+    "supabase": 66.48
+  }
+}

@@ -105,3 +105,15 @@ repo에 커밋하지 않은 1회성 분석(`tmp-analyze-chunk.mjs`/`tmp-sum-init
 **SLO 미달 (OPEN 유지, 허위 VERIFIED_FIXED 주장 안 함):** 519.31kB > 450kB. 프레이머모션 제거만으로는
 부족하며, i18n lazy-load(가장 큰 단일 레버, ~120kB 추가 절감 예상)가 유일한 현실적 잔여 경로다.
 Registry `R9-PERF-JS`는 `OPEN`으로 유지하고 이번 세션 증거만 추가한다(§7).
+
+### Phase 4 (2026-07-14) — i18n ko-eager / en-lazy
+
+`catalog-ko` eager · `catalog-en` dynamic import · vitest `preloadAllLocalesForTests`로 테스트 파일 대량
+수정 회피. 로컬 `build:web:production` + `scripts/measure-web-initial-js.mjs`:
+
+| 시점 | initial JS gzip | SLO |
+| --- | ---: | --- |
+| Wave 1 baseline | 519.31 kB | FAIL |
+| Phase 4 after | **394.00 kB** | **PASS** |
+
+Evidence: [`r9-perf-js-phase4-i18n-lazy.md`](../../OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-perf-js-phase4-i18n-lazy.md). Registry `R9-PERF-JS` → **VERIFIED_FIXED**.
