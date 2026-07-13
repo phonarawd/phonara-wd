@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T03:41:10.777Z",
+  "generatedAt": "2026-07-13T15:22:18.669Z",
   "typesCount": 256,
   "usedInTypes": 144,
   "unusedInApps": [
@@ -246,7 +246,7 @@
     "rpc_request_self_exclusion_release"
   ],
   "orphanCalls": ["rpc_error", "rpc_spot_market_buy", "rpc_spot_market_sell"],
-  "callSiteCount": 215,
+  "callSiteCount": 218,
   "byRpc": {
     "rpc_get_phon_balance_breakdown": [
       {
@@ -465,7 +465,7 @@
       {
         "app": "web",
         "file": "apps/web/src/features/notifications/web-push-subscription.ts",
-        "line": 58
+        "line": 59
       },
       {
         "app": "web",
@@ -702,47 +702,57 @@
       {
         "app": "web",
         "file": "apps/web/src/features/account/use-account-hub-controller.ts",
-        "line": 46
+        "line": 45
       },
       {
         "app": "web",
         "file": "apps/web/src/features/account/use-account-profile-controller.ts",
-        "line": 32
+        "line": 33
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-earn-cashback-page-controller.ts",
+        "line": 26
       },
       {
         "app": "web",
         "file": "apps/web/src/features/earn/use-earn-home-page-controller.ts",
-        "line": 60
-      },
-      {
-        "app": "web",
-        "file": "apps/web/src/features/earn/use-home-attendance-page-controller.ts",
-        "line": 58
-      },
-      {
-        "app": "web",
-        "file": "apps/web/src/features/earn/use-home-missions-invite-page-controller.ts",
-        "line": 53
-      },
-      {
-        "app": "web",
-        "file": "apps/web/src/features/earn/use-home-missions-referral-page-controller.ts",
         "line": 61
       },
       {
         "app": "web",
-        "file": "apps/web/src/features/earn/use-referral-invite-page-controller.ts",
+        "file": "apps/web/src/features/earn/use-earn-play-page-controller.ts",
+        "line": 31
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-home-attendance-page-controller.ts",
+        "line": 59
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-home-missions-invite-page-controller.ts",
         "line": 54
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-home-missions-referral-page-controller.ts",
+        "line": 62
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-referral-invite-page-controller.ts",
+        "line": 55
       },
       {
         "app": "web",
         "file": "apps/web/src/features/earn/use-referral-page-controller.ts",
-        "line": 54
+        "line": 55
       },
       {
         "app": "web",
         "file": "apps/web/src/features/earn/use-share-earnings-page-controller.ts",
-        "line": 50
+        "line": 51
       },
       {
         "app": "web",
@@ -771,6 +781,11 @@
       },
       {
         "app": "web",
+        "file": "apps/web/src/features/trading/use-trade-earn-vip-tier.ts",
+        "line": 13
+      },
+      {
+        "app": "web",
         "file": "apps/web/src/features/wallet/earn-hub-tier.ts",
         "line": 8
       }
@@ -779,7 +794,7 @@
       {
         "app": "web",
         "file": "apps/web/src/features/account/use-account-hub-controller.ts",
-        "line": 84
+        "line": 82
       }
     ],
     "rpc_open_game_round": [
@@ -870,14 +885,14 @@
       {
         "app": "web",
         "file": "apps/web/src/features/earn/use-earn-play-page-controller.ts",
-        "line": 83
+        "line": 82
       }
     ],
     "rpc_get_repeatable_mission_status": [
       {
         "app": "web",
         "file": "apps/web/src/features/earn/use-home-attendance-page-controller.ts",
-        "line": 64
+        "line": 65
       },
       {
         "app": "web",
@@ -889,12 +904,12 @@
       {
         "app": "web",
         "file": "apps/web/src/features/earn/use-home-attendance-page-controller.ts",
-        "line": 65
+        "line": 66
       },
       {
         "app": "web",
         "file": "apps/web/src/features/earn/use-referral-invite-page-controller.ts",
-        "line": 55
+        "line": 56
       },
       {
         "app": "web",
@@ -904,14 +919,14 @@
       {
         "app": "web",
         "file": "apps/web/src/features/onboarding/use-onboarding-missions-page-controller.ts",
-        "line": 47
+        "line": 48
       }
     ],
     "rpc_claim_daily_reward": [
       {
         "app": "web",
         "file": "apps/web/src/features/earn/use-home-attendance-page-controller.ts",
-        "line": 199
+        "line": 197
       }
     ],
     "rpc_claim_repeatable_mission": [
@@ -925,14 +940,14 @@
       {
         "app": "web",
         "file": "apps/web/src/features/earn/use-share-earnings-page-controller.ts",
-        "line": 51
+        "line": 52
       }
     ],
     "rpc_claim_viral_mission": [
       {
         "app": "web",
         "file": "apps/web/src/features/earn/use-viral-missions.ts",
-        "line": 76
+        "line": 75
       }
     ],
     "rpc_list_cms_content": [
@@ -1064,7 +1079,7 @@
       {
         "app": "web",
         "file": "apps/web/src/features/wallet/use-crypto-deposit.ts",
-        "line": 46
+        "line": 47
       }
     ],
     "rpc_create_crypto_deposit_request": [
@@ -1099,7 +1114,7 @@
       {
         "app": "web",
         "file": "apps/web/src/hooks/use-client-gate-prechecks.ts",
-        "line": 45
+        "line": 46
       },
       {
         "app": "web",

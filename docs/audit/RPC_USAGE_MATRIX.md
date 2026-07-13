@@ -1,8 +1,54 @@
 # RPC Usage Matrix
 
-> Generated: 2026-07-13T03:41:10.777Z  
+> Generated: 2026-07-13T15:22:18.669Z  
 > SOT: `packages/shared-types/src/database.types.ts` Functions `rpc_*`  
 > Call sites: `apps/web` · `apps/admin` (`callRpc` / `supabase.rpc` / string constants) · `supabase/functions/**` (edge) · `supabase/migrations|tests/**` (SQL cron/internal/test)
+
+## Domain groups (ZA-02 — was flat alphabetical only)
+
+Best-effort classification from name keywords + call-site folder (`features/*` · `surfaces/*`).
+Disagreement between the two signals is reported as **ambiguous**, not silently resolved —
+naming guide: avoid introducing new `rpc_*` names that reuse a keyword already ambiguous below
+(currently: `stake`, `roulette`) across more than one domain; prefer a
+domain-prefixed name (e.g. `rpc_casino_reveal_roulette_spin` vs `rpc_spin_roulette`) for new RPCs
+that share a keyword with an existing RPC in a different domain.
+
+| Domain                                                                    |  Count |
+| ------------------------------------------------------------------------- | -----: |
+| Admin                                                                     |     56 |
+| Platform/Service (internal)                                               |     20 |
+| Earn/Mission/Referral/Tier/Staking                                        |     31 |
+| Trading (Spot/Futures/Margin/Oracle)                                      |     17 |
+| Sports                                                                    |     27 |
+| Wallet/Ledger/Payments                                                    |     17 |
+| Casino (games/PF)                                                         |     11 |
+| Identity/Auth/Compliance/RG                                               |      8 |
+| Platform/Ops/Marketing/CMS                                                |     11 |
+| Unclassified (no strong signal)                                           |     58 |
+| **Ambiguous (name/call-site signal disagree or known-ambiguous keyword)** | **18** |
+
+<details><summary>Ambiguous RPC list</summary>
+
+- `rpc_ack_ops_alert` → Platform/Ops/Marketing/CMS
+- `rpc_approve_affiliate_commission` → Earn/Mission/Referral/Tier/Staking
+- `rpc_approve_withdrawal` → Wallet/Ledger/Payments
+- `rpc_get_ops_alerts` → Platform/Ops/Marketing/CMS
+- `rpc_get_ops_health` → Platform/Ops/Marketing/CMS
+- `rpc_get_user_tier_summary` → Earn/Mission/Referral/Tier/Staking
+- `rpc_mark_withdrawal_sent` → Wallet/Ledger/Payments
+- `rpc_reject_withdrawal` → Wallet/Ledger/Payments
+- `rpc_resolve_ops_alert` → Platform/Ops/Marketing/CMS
+- `rpc_resolve_sanctions_screening` → Identity/Auth/Compliance/RG
+- `rpc_reveal_roulette_spin` → Earn/Mission/Referral/Tier/Staking
+- `rpc_review_kyc_submission` → Identity/Auth/Compliance/RG
+- `rpc_spin_roulette` → Earn/Mission/Referral/Tier/Staking
+- `rpc_stake` → Earn/Mission/Referral/Tier/Staking
+- `rpc_stake_phon` → Earn/Mission/Referral/Tier/Staking
+- `rpc_sync_ops_alerts_from_health` → Platform/Ops/Marketing/CMS
+- `rpc_unstake_phon` → Earn/Mission/Referral/Tier/Staking
+- `rpc_void_sports_market` → Sports
+
+</details>
 
 ## Summary
 
@@ -14,7 +60,7 @@
 | — of which Edge/SQL cross-use (SA-04)                       |    99 |
 | — of which **genuinely unused** (no app/edge/SQL reference) |    13 |
 | App call sites not in types                                 |     3 |
-| Total call-site rows                                        |   215 |
+| Total call-site rows                                        |   218 |
 
 ## Matrix (types ∩ apps)
 
@@ -81,12 +127,12 @@
 | `rpc_cancel_spot_order`                             |   2 |     0 |          2 | apps/web/src/domain/trading-rpc-display-contract.ts:40                           |
 | `rpc_cashout_sports_bet`                            |   1 |     0 |          1 | apps/web/src/features/sports/use-sports-betting.ts:360                           |
 | `rpc_check_casino_rtp_drift`                        |   0 |     0 | **unused** | —                                                                                |
-| `rpc_check_onboarding_consent`                      |   2 |     0 |          2 | apps/web/src/hooks/use-client-gate-prechecks.ts:45                               |
+| `rpc_check_onboarding_consent`                      |   2 |     0 |          2 | apps/web/src/hooks/use-client-gate-prechecks.ts:46                               |
 | `rpc_check_reserve_ratio`                           |   0 |     0 | **unused** | —                                                                                |
-| `rpc_claim_daily_reward`                            |   1 |     0 |          1 | apps/web/src/features/earn/use-home-attendance-page-controller.ts:199            |
+| `rpc_claim_daily_reward`                            |   1 |     0 |          1 | apps/web/src/features/earn/use-home-attendance-page-controller.ts:197            |
 | `rpc_claim_repeatable_mission`                      |   1 |     0 |          1 | apps/web/src/features/earn/use-repeatable-missions.ts:64                         |
 | `rpc_claim_staking_reward`                          |   3 |     0 |          3 | apps/web/src/domain/trading-rpc-display-contract.ts:62                           |
-| `rpc_claim_viral_mission`                           |   1 |     0 |          1 | apps/web/src/features/earn/use-viral-missions.ts:76                              |
+| `rpc_claim_viral_mission`                           |   1 |     0 |          1 | apps/web/src/features/earn/use-viral-missions.ts:75                              |
 | `rpc_claim_welcome_bonus`                           |   1 |     0 |          1 | apps/web/src/features/onboarding/use-onboarding-missions-page-controller.ts:137  |
 | `rpc_claim_whale_mission`                           |   0 |     0 | **unused** | —                                                                                |
 | `rpc_clear_risk_flag`                               |   0 |     1 |          1 | apps/admin/src/domain/queues.ts:88                                               |
@@ -110,13 +156,13 @@
 | `rpc_get_co_bet_status`                             |   0 |     0 | **unused** | —                                                                                |
 | `rpc_get_co_mission_status`                         |   0 |     0 | **unused** | —                                                                                |
 | `rpc_get_compliance_status`                         |   1 |     0 |          1 | apps/web/src/hooks/use-compliance-status.ts:78                                   |
-| `rpc_get_crypto_deposit_address`                    |   1 |     0 |          1 | apps/web/src/features/wallet/use-crypto-deposit.ts:46                            |
+| `rpc_get_crypto_deposit_address`                    |   1 |     0 |          1 | apps/web/src/features/wallet/use-crypto-deposit.ts:47                            |
 | `rpc_get_dr_health_summary`                         |   0 |     0 | **unused** | —                                                                                |
 | `rpc_get_earn_activity_feed`                        |   0 |     0 | **unused** | —                                                                                |
-| `rpc_get_earn_hub_status`                           |  15 |     0 |         15 | apps/web/src/features/account/use-account-hub-controller.ts:46                   |
+| `rpc_get_earn_hub_status`                           |  18 |     0 |         18 | apps/web/src/features/account/use-account-hub-controller.ts:45                   |
 | `rpc_get_fixture_markets`                           |   1 |     1 |          2 | apps/web/src/features/sports/use-sports-betting.ts:163                           |
 | `rpc_get_game_pf_state`                             |   1 |     0 |          1 | apps/web/src/features/casino/use-game-pf-state.ts:32                             |
-| `rpc_get_golden_earth_status`                       |   1 |     0 |          1 | apps/web/src/features/earn/use-share-earnings-page-controller.ts:51              |
+| `rpc_get_golden_earth_status`                       |   1 |     0 |          1 | apps/web/src/features/earn/use-share-earnings-page-controller.ts:52              |
 | `rpc_get_live_fixture_state`                        |   2 |     0 |          2 | apps/web/src/features/sports/use-sports-betting.ts:252                           |
 | `rpc_get_mission_chain_status`                      |   0 |     0 | **unused** | —                                                                                |
 | `rpc_get_ops_alerts`                                |   0 |     2 |          2 | apps/admin/src/domain/ops.ts:52                                                  |
@@ -124,7 +170,7 @@
 | `rpc_get_phon_balance_breakdown`                    |   1 |     0 |          1 | apps/web/src/domain/phon-balance.ts:16                                           |
 | `rpc_get_position_mode`                             |   1 |     0 |          1 | apps/web/src/domain/trading-rpc-display-contract.ts:43                           |
 | `rpc_get_public_platform_status`                    |   1 |     0 |          1 | apps/web/src/features/marketing/use-system-status.ts:16                          |
-| `rpc_get_repeatable_mission_status`                 |   2 |     0 |          2 | apps/web/src/features/earn/use-home-attendance-page-controller.ts:64             |
+| `rpc_get_repeatable_mission_status`                 |   2 |     0 |          2 | apps/web/src/features/earn/use-home-attendance-page-controller.ts:65             |
 | `rpc_get_reward_config`                             |   0 |     0 | **unused** | —                                                                                |
 | `rpc_get_sports_bet`                                |   1 |     0 |          1 | apps/web/src/features/sports/use-sports-betting.ts:242                           |
 | `rpc_get_support_ticket`                            |   0 |     1 |          1 | apps/admin/src/hooks/admin/useAdminSupportDesk.ts:229                            |
@@ -132,7 +178,7 @@
 | `rpc_get_tier_decay_status`                         |   3 |     0 |          3 | apps/web/src/domain/**tests**/ew-e1-gate-decay-display-contract.test.ts:61       |
 | `rpc_get_tier_leaderboard`                          |   0 |     0 | **unused** | —                                                                                |
 | `rpc_get_user_tier_summary`                         |   1 |     0 |          1 | apps/web/src/product/surfaces/sports/sports-vip-stub-panel.tsx:46                |
-| `rpc_get_viral_mission_status`                      |   4 |     0 |          4 | apps/web/src/features/earn/use-home-attendance-page-controller.ts:65             |
+| `rpc_get_viral_mission_status`                      |   4 |     0 |          4 | apps/web/src/features/earn/use-home-attendance-page-controller.ts:66             |
 | `rpc_get_whale_mission_status`                      |   0 |     0 | **unused** | —                                                                                |
 | `rpc_golden_earth_tap`                              |   0 |     0 | **unused** | —                                                                                |
 | `rpc_ingest_sports_c1`                              |   0 |     0 | **unused** | —                                                                                |
@@ -195,7 +241,7 @@
 | `rpc_register_referral`                             |   1 |     0 |          1 | apps/web/src/lib/referral-register.ts:15                                         |
 | `rpc_reject_withdrawal`                             |   0 |     1 |          1 | apps/admin/src/domain/queues.ts:50                                               |
 | `rpc_remove_withdrawal_address`                     |   1 |     0 |          1 | apps/web/src/features/wallet/use-crypto-withdraw.ts:55                           |
-| `rpc_request_account_deletion`                      |   1 |     0 |          1 | apps/web/src/features/account/use-account-hub-controller.ts:84                   |
+| `rpc_request_account_deletion`                      |   1 |     0 |          1 | apps/web/src/features/account/use-account-hub-controller.ts:82                   |
 | `rpc_request_idem`                                  |   0 |     0 | **unused** | —                                                                                |
 | `rpc_request_self_exclusion_release`                |   0 |     0 | **unused** | —                                                                                |
 | `rpc_request_withdrawal`                            |   3 |     0 |          3 | apps/web/src/domain/wallet.ts:117                                                |
@@ -255,7 +301,7 @@
 | `rpc_settle_sports_fixture`                         |   0 |     0 | **unused** | —                                                                                |
 | `rpc_settle_sports_fixture_scores`                  |   0 |     0 | **unused** | —                                                                                |
 | `rpc_settle_sports_prop_outcomes`                   |   0 |     0 | **unused** | —                                                                                |
-| `rpc_spin_roulette`                                 |   1 |     0 |          1 | apps/web/src/features/earn/use-earn-play-page-controller.ts:83                   |
+| `rpc_spin_roulette`                                 |   1 |     0 |          1 | apps/web/src/features/earn/use-earn-play-page-controller.ts:82                   |
 | `rpc_stake`                                         |   2 |     0 |          2 | apps/web/src/domain/trading-rpc-display-contract.ts:60                           |
 | `rpc_stake_phon`                                    |   2 |     0 |          2 | apps/web/src/domain/trading-rpc-display-contract.ts:59                           |
 | `rpc_submit_kyc`                                    |   1 |     0 |          1 | apps/web/src/domain/wallet.ts:211                                                |

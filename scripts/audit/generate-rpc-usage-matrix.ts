@@ -203,6 +203,106 @@ function scanSqlCrossUse(rpcNames: string[]): {
   return { cronOrInternal, testOnly };
 }
 
+/**
+ * ZA-02 — domain grouping for the flat rpc_* list (previously alphabetical only).
+ * Two independent signals are combined:
+ *   1. Name-based keyword classification (fast, but ambiguous for cross-domain
+ *      words like "stake"/"roulette" — see AMBIGUOUS_NAME_HINTS below).
+ *   2. Call-site path classification (which app feature/surface folder actually
+ *      calls it) — a stronger signal when it disagrees with the name guess.
+ * When the two disagree, the RPC is reported under "ambiguous" rather than
+ * silently picked one way, so the doc keeps the ZA-02 uncertainty visible
+ * instead of hiding it behind a confident-looking bucket.
+ */
+type Domain =
+  | 'admin'
+  | 'service'
+  | 'earn'
+  | 'trading'
+  | 'sports'
+  | 'wallet'
+  | 'casino'
+  | 'identity'
+  | 'platform'
+  | 'unclassified';
+
+const DOMAIN_LABEL: Record<Domain, string> = {
+  admin: 'Admin',
+  service: 'Platform/Service (internal)',
+  earn: 'Earn/Mission/Referral/Tier/Staking',
+  trading: 'Trading (Spot/Futures/Margin/Oracle)',
+  sports: 'Sports',
+  wallet: 'Wallet/Ledger/Payments',
+  casino: 'Casino (games/PF)',
+  identity: 'Identity/Auth/Compliance/RG',
+  platform: 'Platform/Ops/Marketing/CMS',
+  unclassified: 'Unclassified (no strong signal)',
+};
+
+/**
+ * Known ambiguous name fragments (ZA-02 finding) — same keyword, different
+ * domains depending on which specific RPC/call-site it is. Listed so the
+ * generator's own naming-guide output stays honest about what it cannot
+ * resolve from the name alone.
+ */
+const AMBIGUOUS_NAME_HINTS = ['stake', 'roulette'];
+
+function classifyByName(rpc: string): Domain {
+  if (/^rpc_admin_/.test(rpc)) return 'admin';
+  if (/^rpc_service_/.test(rpc)) return 'service';
+  if (/(futures|spot|margin|oracle|liquidat|leverage|funding|order_book|candle)/.test(rpc))
+    return 'trading';
+  if (/(sports|fixture|odds_)/.test(rpc)) return 'sports';
+  if (/(withdraw|deposit|ledger|transfer_to_user|giftcard|krw_)/.test(rpc)) return 'wallet';
+  if (
+    /(game_bet|game_round|live_crash|reveal_game|blackjack|mines|hilo|plinko|dice_|crash_|paytable)/.test(
+      rpc,
+    )
+  )
+    return 'casino';
+  if (/(kyc|self_exclusion|consent|aal2|mfa|siwe|passkey|sanction)/.test(rpc)) return 'identity';
+  if (
+    /(mission|referral|tier|stake|attendance|earn_hub|viral|welcome_bonus|wagering|roulette)/.test(
+      rpc,
+    )
+  )
+    return 'earn';
+  if (/(cms|reconciliation|platform_status|ops_|health)/.test(rpc)) return 'platform';
+  return 'unclassified';
+}
+
+function classifyByCallSites(sites: CallSite[]): Domain | null {
+  const pathHints: Array<[RegExp, Domain]> = [
+    [/\/features\/earn\//, 'earn'],
+    [/\/features\/trading\//, 'trading'],
+    [/\/features\/sports\//, 'sports'],
+    [/\/surfaces\/trade\//, 'trading'],
+    [/\/surfaces\/sports\//, 'sports'],
+    [/\/surfaces\/(games|casino)\//, 'casino'],
+    [/\/surfaces\/wallet\//, 'wallet'],
+    [/\/surfaces\/staking\//, 'earn'],
+    [/^apps\/admin\//, 'admin'],
+  ];
+  for (const site of sites) {
+    for (const [re, domain] of pathHints) {
+      if (re.test(site.file)) return domain;
+    }
+  }
+  return null;
+}
+
+function resolveDomain(rpc: string, sites: CallSite[]): { domain: Domain; ambiguous: boolean } {
+  const byName = classifyByName(rpc);
+  const bySite = classifyByCallSites(sites);
+  if (bySite && bySite !== byName && byName !== 'unclassified') {
+    return { domain: byName, ambiguous: true };
+  }
+  if (byName === 'unclassified' && bySite) {
+    return { domain: bySite, ambiguous: false };
+  }
+  return { domain: byName, ambiguous: AMBIGUOUS_NAME_HINTS.some((h) => rpc.includes(h)) };
+}
+
 function existsDir(path: string): boolean {
   try {
     return statSync(path).isDirectory();
@@ -269,6 +369,17 @@ function main() {
   const trulyUnused = unusedInApps.filter((r) => crossUse.get(r) === 'none');
   const crossUseCount = unusedInApps.length - trulyUnused.length;
 
+  const domainByRpc = new Map<string, { domain: Domain; ambiguous: boolean }>();
+  for (const rpc of typesRpcs) {
+    domainByRpc.set(rpc, resolveDomain(rpc, byRpc.get(rpc) ?? []));
+  }
+  const domainCounts = new Map<Domain, number>();
+  const ambiguousRpcs: string[] = [];
+  for (const [rpc, { domain, ambiguous }] of domainByRpc) {
+    domainCounts.set(domain, (domainCounts.get(domain) ?? 0) + 1);
+    if (ambiguous) ambiguousRpcs.push(rpc);
+  }
+
   const generatedAt = new Date().toISOString();
   const lines: string[] = [
     `# RPC Usage Matrix`,
@@ -277,6 +388,34 @@ function main() {
     `> SOT: \`packages/shared-types/src/database.types.ts\` Functions \`rpc_*\`  `,
     `> Call sites: \`apps/web\` · \`apps/admin\` (\`callRpc\` / \`supabase.rpc\` / string constants) · \`supabase/functions/**\` (edge) · \`supabase/migrations|tests/**\` (SQL cron/internal/test)`,
     ``,
+    `## Domain groups (ZA-02 — was flat alphabetical only)`,
+    ``,
+    `Best-effort classification from name keywords + call-site folder (\`features/*\` · \`surfaces/*\`).`,
+    `Disagreement between the two signals is reported as **ambiguous**, not silently resolved —`,
+    `naming guide: avoid introducing new \`rpc_*\` names that reuse a keyword already ambiguous below`,
+    `(currently: \`${AMBIGUOUS_NAME_HINTS.join('`, `')}\`) across more than one domain; prefer a`,
+    `domain-prefixed name (e.g. \`rpc_casino_reveal_roulette_spin\` vs \`rpc_spin_roulette\`) for new RPCs`,
+    `that share a keyword with an existing RPC in a different domain.`,
+    ``,
+    `| Domain | Count |`,
+    `|---|---:|`,
+    ...(Object.keys(DOMAIN_LABEL) as Domain[])
+      .filter((d) => (domainCounts.get(d) ?? 0) > 0)
+      .map((d) => `| ${DOMAIN_LABEL[d]} | ${domainCounts.get(d) ?? 0} |`),
+    `| **Ambiguous (name/call-site signal disagree or known-ambiguous keyword)** | **${ambiguousRpcs.length}** |`,
+    ``,
+    ...(ambiguousRpcs.length
+      ? [
+          `<details><summary>Ambiguous RPC list</summary>`,
+          ``,
+          ...ambiguousRpcs
+            .sort()
+            .map((r) => `- \`${r}\` → ${DOMAIN_LABEL[domainByRpc.get(r)!.domain]}`),
+          ``,
+          `</details>`,
+          ``,
+        ]
+      : []),
     `## Summary`,
     ``,
     `| Metric | Count |`,
