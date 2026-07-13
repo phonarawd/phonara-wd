@@ -14,7 +14,7 @@ const strict = process.argv.includes('--strict');
 /** Caps from R7 closeout census — ratchet may only decrease these numbers. */
 const BASELINE = {
   rawButton: 43,
-  rawButtonFiles: 23,
+  rawButtonFiles: 22,
   rawInput: 15,
   rawInputFiles: 8,
   text11px: 0,

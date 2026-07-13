@@ -2,7 +2,7 @@
 
 > **감사일:** 2026-07-13 · **모드:** READ-ONLY (코드/migration 수정 0 — 순수 기록)
 > **작업 방식:** 기존 감사 자산 재사용(표본 스팟체크) + 코드 레벨 격차만 신규 검증 (operator 승인 방식)
-> **작성 순서:** PART 1 (1-A → 1-F) 항목별 완료 시 보고 → PART 2는 PART 1 전체 완료 후 착수
+> **작성 순서:** PART 1 (1-A → 1-F) 완료 후 → **1-G Trade · 1-H Casino · 1-I Sports 확장**(2026-07-13 동시) → PART 2는 PART 1 본편 완료 후 착수됨
 
 ## 0. 재사용 선언 — 이미 존재하는 Zero Assumption 감사 자산
 
@@ -420,7 +420,163 @@ IF FOUND THEN RETURN v_entry_id; END IF;
 
 ---
 
-**PART 1 전체 완료.** 신규 finding 총 11건: ZA-01(P2)·ZA-02(P3)·ZA-03(P2)·ZA-04(P3)·ZA-05(P0)·ZA-06(P2)·ZA-07(P1)·ZA-08(P2)·ZA-09(P3)·ZA-10(LOW)·ZA-11(P2). PART 2(업계 표준 벤치마크)는 이 결과를 근거로 착수한다.
+## 1-G. Trade (현물/선물/스테이킹) — 차트·RPC·오라클 직접 판독
+
+> **목적:** 종합 요약표 Trade 80%·신뢰도「낮음」을 Earn/Wallet과 동일 깊이의 코드 직접 판독으로 「높음」으로 전환. 차트 미표시 근본원인을 (A) 데이터 공백 / (B) 라이브러리 초기화 실패 / (C) CSS 0크기 중 하나로 특정.
+
+### 1-G.1 차트 미표시 — 세 가설 코드 판별
+
+데이터 경로: `TradeChartPanel` → `useExchangeLiveCandles` → (1차) `useDisplayKline`(Binance/Bybit REST+WS) → (2차) `useCandles`=`callRpc('rpc_get_candles')`.
+
+| 가설 | 판정 | 근거 |
+| --- | --- | --- |
+| **(A) 캔들 API/피드가 비어 차트 미마운트** | **✅ 1차 근본원인** | `trade-chart-panel.tsx:357-423` — `candles.length < 2`이면 loading/empty/error만 렌더하고 `<TradeChart>`는 **마운트하지 않음**. 마운트 게이트는 `TRADE_CHART_MOUNT_MIN_CANDLES = 2`(`trade-chart-mount-display-contract.ts:9`). |
+| **(B) lightweight-charts 초기화 실패** | ❌ 1차 원인 아님 | `use-lightweight-chart.ts:38-108`은 host가 있을 때 `createChart`+series 추가. 차트 컴포넌트는 **캔들 ≥2일 때만** Suspense로 로드되므로, 사용자가 보는 empty 상태에서는 라이브러리가 아예 실행되지 않음. |
+| **(C) CSS height/width 0** | ❌ 배제 | 패널 본문 `style={{ height: … clamp(280px, 40vh, 420px) }}`(`trade-chart-panel.tsx:353-355`) · 차트 host `min-h-[280px]` · `createChartOptions`에 `autoSize: true`(`chart-options.ts:42-44`). 0크기 레이아웃으로 숨기는 경로는 코드상 없음. |
+
+**심볼별 데이터 전략** (`resolveTradeChartFeedStrategy` · `use-display-kline.ts`):
+
+- **PHON\*** → `oracle-rpc-only` — 거래소 WS/REST **스킵**(`isPhonDisplaySymbol`), `rpc_get_candles`만. 오라클 캔들 <2면 empty + (있으면) `oracleMarkPrice` 텍스트만.
+- **`*_USDT` / `*-SIM`** → 거래소 1차, 라이브 캔들 <2일 때만 오라클 fallback(`use-exchange-live-candles.ts:21-28`의 `needOracle`).
+- E2E(`VITE_PHONARA_E2E_ENGINE=1`) → kline 피드 의도적 비활성 → empty 가능(테스트 전용).
+
+**Finding ZA-12 (P2 — UX):** Trade 차트 「안 보임」의 코드상 1차 원인은 **캔들 수 < 2로 인한 empty 브랜치**다. 라이브러리 미초기화·0높이 CSS가 아니다. PHON은 설계상 오라클 전용이라 `rpc_get_candles`가 2봉 미만이면 100% empty. 외부 페어는 Binance/Bybit가 막히면(네트워크·지역·CORS) 오라클 fallback으로 넘어가며, 그것도 비면 empty. **브라우저 Network 실측은 본 감사에서 미실시(NOT VERIFIED)** — 정적 경로만으로 「어느 심볼이 지금 empty인가」는 운영 환경에 좌우됨.
+
+### 1-G.2 R9-PERF-JS lazy loading이 차트 미표시 원인인가?
+
+`trade-chart-panel.tsx:32-47`: 프로덕션은 `lazy(() => import('./trade-chart'))`, E2E만 eager. **동시에** 동일 모듈을 static import(`TradeChartEager`)해 Rollup이 `lightweight-charts`를 **route-level trade-desk 청크에 접어 넣음** — 주석이 R9-PERF-JS와 E2E 안정성 절충을 명시. `06_PERFORMANCE.md`도 lightweight-charts가 Stage1 eager 그래프 **밖**임을 확인.
+
+**판정:** lazy 경로 오류·chunk 로드 실패가 empty UI의 원인이 **아니다**. empty는 lazy 이전에 `candles.length < 2`로 갈린다. chunk 실패 시에는 Suspense skeleton이 떠야 하며(`:406`), empty copy(`trade-chart-empty`)와 다르다.
+
+### 1-G.3 현물 / 선물 / 스테이킹 컨트롤러 RPC 판정 (1-E 방식)
+
+| 영역 | 훅 | RPC 연동 | 판정 |
+| --- | --- | --- | --- |
+| **현물** | `useSpotDeskWire` → `useSpotActions` / `useCancelSpotOrder` / `useSpotOpenOrders` (`hooks/use-trading.ts`) | `callRpc`: `rpc_spot_market_buy`·`sell`·`rpc_place_spot_limit_order`·`rpc_place_spot_stop_order`·`rpc_cancel_spot_order`. 능력 맵 `TRADE_SPOT_UI_CAPABILITIES` 전부 true | **정상** |
+| **선물** | `useFuturesDeskWire` → `useFuturesActions` | `callRpc`: `rpc_open_futures_position`·limit/stop·cancel·close·partial close·isolated margin·SLTP·trailing stop 등. `entryTpSlOnOpenOrders: false`(RPC 파라미터 부재 — 의도적 UI 잠금) | **정상**(진입 TP/SL on open은 의도적 부분) |
+| **스테이킹** | `useStakingPageController` → `useStakingActions` | stake/unstake/claim: `callRpc`(`rpc_stake_phon`·`rpc_stake`·`rpc_unstake_phon`·`rpc_claim_staking_reward`). 티어 조회만 raw `supabase.rpc('rpc_get_earn_hub_status')`(`use-staking-page-controller.ts:67`) — ZA-05 패턴 | **정상**(액션) / **부분**(티어 fetch만 callRpc 우회) |
+
+### 1-G.4 「오라클 전용 시세」 vs 실시간 피드 fallback
+
+정산/제출용 마진·마크는 오라클(`prices` / stale·frozen 게이트). **표시용**은 이중 경로:
+
+| 표시면 | 1차 | fallback | 「항상 fallback만」인가? |
+| --- | --- | --- | --- |
+| 캔들 차트 | 거래소 kline(PHON 제외) | `rpc_get_candles` when `live.candles.length < 2` | **아니오** — `needOracle`는 라이브 부족 시에만 |
+| 호가창 | `orderBookStore`(워커·거래소 depth) | `rpc_get_synthetic_book` via `useReferenceBook` when live empty/stale (`use-spot-desk-wire.ts:177-206`) | **아니오** — live levels 있으면 `bookDisplaySource='live'` |
+| 헤더 가격 | `useExchangeDisplayPrice` + 오라클 마크 오버레이 | — | 표시/정산 분리 설계 |
+
+**판정:** 「오라클 전용 시세」는 **정산 권위**에 가깝고, 차트·호가 **표시**는 거래소 우선 + 오라클/합성 참조 폴백이 설계대로 조건 분기한다. 폴백이 무조건 항상 켜지는 버그는 코드상 없음. PHON만 표시도 오라클 전용(의도).
+
+**1-G 완료.** 신규 finding: ZA-12.
+
+---
+
+## 1-H. Casino 12종 — 스테이지·RPC·PF·toFixed 전수
+
+> **방법:** 12개 stage + 공유 `use-casino-round` + live/progressive 훅 + `/casino/fairness` verifier 직접 열람. 「Complete」라벨 불신.
+
+### 1-H.1 공유 파이프라인 (12종 공통)
+
+`casino-game-shell.tsx` → `useCasinoRound` (`features/casino/use-casino-round.ts`):
+
+1. `callRpc('rpc_open_game_round')` → commitment/hash
+2. `callRpc('rpc_place_game_bet')` → stake·selection
+3. `callRpc('rpc_reveal_game_round')` → server_seed + result
+4. **`await verifyRound(...)`** (`packages/game-engine` SHA-256 + HMAC float + per-game recompute) — 장식 아님, 실패 시 에러 경로
+
+스테이지는 `casino-game-stage.tsx`가 gameCode별 비주얼만 분기. SQL 쪽 `extensions.hmac` / `digest(sha256)` + `casino_parity_test.sql` TS↔SQL 패리티 게이트 존재(기존 인벤토리와 교차).
+
+### 1-H.2 게임별 분류
+
+| # | 게임 | Stage | 추가 훅 | 분류 |
+| --: | --- | --- | --- | --- |
+| 1 | Crash | `crash-stage.tsx` | + `use-live-crash` (`rpc_live_crash_*`) | **(a)** RPC+PF |
+| 2 | Limbo | `limbo-stage.tsx` | — | **(a)** |
+| 3 | Dice | `dice-stage.tsx` | — | **(a)** |
+| 4 | Mines | `mines-stage.tsx` | + `use-progressive-round` | **(a)** |
+| 5 | HiLo | `hilo-stage.tsx` | + progressive | **(a)** |
+| 6 | Plinko | `plinko-stage.tsx` | — | **(a)** |
+| 7 | Mint Reels | `mint-reels-stage.tsx` | — | **(a)** |
+| 8 | Gold Rush | `gold-rush-stage.tsx` | — | **(a)** |
+| 9 | Roulette | `roulette-stage.tsx` | — | **(a)** (Earn `rpc_spin_roulette`과 **별개**) |
+| 10 | Blackjack | `blackjack-stage.tsx` | + progressive | **(a)** |
+| 11 | Deepshaft | `deepshaft-stage.tsx` | — | **(a)** |
+| 12 | Momentum | `momentum-stage.tsx` | — | **(a)** |
+
+**(b)/(c) 0건.** Live/progressive 4종(Crash·Mines·HiLo·Blackjack)은 cashout 경로에서 one-shot `PfStrip` 자동 배지가 비울 수 있으나, 시드 커밋/공개는 SQL에 있고 `/casino/fairness` 수동 검증 가능 — **스텁이 아님**.
+
+### 1-H.3 `.toFixed()` 전수 (1-B.6 표본 → 전수)
+
+`product/surfaces/games/**` · `casino/**` · `features/casino/**` 내 `.toFixed(` 전수 열람(28 call site).
+
+| 용도 | 판정 |
+| --- | --- |
+| stage outcome 필드(`crashMultiplier`·`totalMultiplier`·`roll` 등) | 서버 `result` 파서 후 **표시 포맷만** |
+| Dice/Mines 프리뷰 배수 | `@phonara/game-engine` 공유 공식 + Decimal — **정산 RPC 대체 아님** |
+| shell `profitDeltaFromBet` | 서버 stake/payout 문자열 파생 표시 |
+| auto-bet 다음 스테이크 | 다음 `p_stake` 입력 계산 — 서버 정산 아님 |
+
+**자금 안전성:** 클라이언트 독립 정산·잔액 재계산 **0건** (1-F 경계와 일치).
+
+### 1-H.4 「시드 검증하기」버튼
+
+| UI | 동작 | 실체 |
+| --- | --- | --- |
+| 로비 `casino.hub.pf.verify` | `<Link to={CASINO_FAIRNESS_ROUTE}>` | **네비게이션만** (`casino-lobby-page.tsx:193-200`) — 검증 실행 아님 |
+| `/casino/fairness` 「라운드 검증하기」 | `onClick → runVerify()` → `verifyRound` (Web Crypto) | **실동작** (`use-casino-fairness-verifier.ts` · `casino-fairness-page.tsx`) |
+| 인게임 `PfStrip` | one-shot 베팅 후 자동 `verificationEvidence` | 버튼 없이 자동 검증 결과 표시 |
+
+**Finding 없음(positive).** 로비 CTA 문구는 「검증 실행」이 아니라 fairness 페이지 진입 — 혼동 가능하나 죽은 버튼은 아님.
+
+**1-H 완료.** Casino 완성도 재산정 → 요약표. 브라우저 클릭 실측은 NOT VERIFIED(정적 코드 기준).
+
+---
+
+## 1-I. Sports — 배당 「—」·VIP 탭 직접 판독
+
+> **목적:** 1-D.3의 「— = 바람직한 fallback」(NOT VERIFIED)를 API 경로로 확정. VIP 빈 탭이 컨트롤러 부재인지 판별.
+
+### 1-I.1 배당 「—」파이프라인
+
+**표시 규율 (의도):** `resolveSportsOddsCellDisplay` (`sports-odds-freshness-display-contract.ts:63-89`) — odds 없거나 `captured_at`이 TTL(프리매치 300s / 라이브 15s) 밖이면 `display: '—'` · `selectable: false`. 보드·테스트가 stale 시 `—`를 명시 단언(`sports-page.test.tsx`).
+
+**읽기 경로 (실 RPC):** `useListSportsFixtures` → `callRpc('rpc_list_sports_fixtures')` → `match_1x2.{home,draw,away}.{odds,captured_at}`. 시각 fixture 모드는 `isVisualFixtureMode() === false`로 **하드 오프**.
+
+**쓰기/ingest 경로:**
+
+| 계층 | 상태 |
+| --- | --- |
+| DB RPC `rpc_ingest_sports_c1` / `_batch` | 구현됨 · `service_role` only |
+| Node 워커 `scripts/sports-odds-ingest/` | 벤더(TheOddsAPI 등) fetch + `persistIngestMessages` 구현 |
+| **기본 `dryRun`** | `SPORTS_INGEST_DRY_RUN !== 'false'` → **기본값 true** → `dry-run — PG upsert skipped` (`worker.ts:255-259`) |
+| Edge `supabase/functions/sports-odds-ingest` | **미구현**(contract 주석만, `sports-odds-source.ts:14-21`) |
+| 브라우저 LAUNCH_GATES | `sportsBetting: false` · `sportsCashout: false` — ingest health green 전 베팅 노출 차단 |
+
+**1-D.3 재판정:**
+
+1. UI가 「—」를 쓰는 것은 **의도된 fail-closed freshness 규율** — 1-D.3의 「바람직하다」는 **표시 계층에서 맞음**.
+2. 동시에, **연속 ingest가 dry-run 기본 + edge cron 부재**면 `captured_at`이 쉽게 stale → 보드 전 종목이 「—」로 보일 수 있음. 이는 「버그성 빈 문자열 노출」이 아니라 **ingest 운영 파이프라인이 꺼져 있거나 한 번만 시드된 뒤 갱신되지 않는 상태**와 UI 규율이 맞물린 결과.
+3. 「108경기」절대 개수는 본 감사에서 remote DB를 조회하지 않음 → **NOT VERIFIED**(RPC·시드 존재는 확인, 현재 prod 행 수는 미확인).
+
+**Finding ZA-13 (P2 — 운영/제품):** Sports 배당 「—」는 (a) freshness UI 규율 **정상** + (b) ingest 워커 **기본 dry-run으로 PG 미기록** + edge 미배포로 **실시간 갱신이 기본 경로에 없음**. 1-D.3의 「fallback만 타는 끊김」가설은 **부분 확정**: UI는 설계대로 stale을 숨기고, **fresh odds를 유지하는 운영 루프는 코드 기본값상 비활성**.
+
+### 1-I.2 VIP 탭 — 스텁인가?
+
+`/sports/vip` → `SportsVipStubPanel` (`sports-vip-stub-panel.tsx`):
+
+- 파일명에 Stub이 있으나 `SPORTS_VIP_PAGE_EXPOSURE = 'live'` · `LAUNCH_GATES.sportsVipSurface === true` → `canBrowseSportsVipMarkets()` true.
+- 티어: `callRpc(USER_TIER_SUMMARY_RPC)` → Platinum+만 보드.
+- 보드: **전용 VIP 마켓 RPC 없음** — 공유 `SportsFixtureBoard` + 동일 fixtures(주석: stake caps Option B 서버).
+- 비자격/게이트 off 시 EmptyState — 「컨트롤러 자체가 없는 빈 탭」이 아니라 **자격·게이트 분기 UI**.
+
+**판정:** VIP = **부분 실구현**(eligibility + shared board). 전용 VIP 마켓 카탈로그 RPC는 없음(의도). 「완전 빈 스텁」은 아님. Rules 탭은 i18n copy only(`sports-rules-panel.tsx`) — 컨트롤러 RPC 불필요.
+
+**1-I 완료.** 신규 finding: ZA-13.
+
+---
+
+**PART 1 확장(1-G~1-I) 완료.** 본편 finding 11건 + 확장 ZA-12·ZA-13 = **총 13건**. PART 2는 본편 1-A~1-F 결과를 근거로 이미 작성됨(아래).
 
 ---
 
@@ -482,25 +638,25 @@ IF FOUND THEN RETURN v_entry_id; END IF;
 | -------- | -----: | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | P0       |      1 | ZA-05 (Earn 도메인 `callRpc` 우회 25파일·72% Earn)                                                                                         |
 | P1       |      1 | ZA-07 (등급 페이지 죽은 링크 `/tier/me/history`)                                                                                           |
-| P2       |      5 | ZA-01(migration drift 확대)·ZA-03(admin "구현 금지" 표기 오류)·ZA-06(오펀 라우트 3개)·ZA-08(캐시백률 이중 소스)·ZA-11(Trade 전환 지점 0개) |
+| P2       |      7 | ZA-01·ZA-03·ZA-06·ZA-08·ZA-11·**ZA-12**(Trade 차트 empty=캔들 2봉 미만)·**ZA-13**(Sports ingest dry-run 기본) |
 | P3       |      3 | ZA-02(RPC 도메인 명명 경계 모호)·ZA-04(README 설명 부재)·ZA-09(breakpoint 토큰 중복 명명)                                                  |
 | LOW      |      1 | ZA-10(PWA 배너 셸 타입 미구분)                                                                                                             |
-| **합계** | **11** | —                                                                                                                                          |
+| **합계** | **13** | —                                                                                                                                          |
 
-기존 `SYSTEM_AUDIT_2026-07-13`(SA-01~06, 6건)과 합산하면 총 **17건**이 현재 문서화된 오늘 날짜 기준 열린 이슈다. Critical(P0급 money-safety 결함)은 0건 — ZA-05가 유일한 P0이나 이는 아키텍처 일관성 문제이며 1-F에서 확인한 실제 자금 이동 로직 자체는 안전하다.
+기존 `SYSTEM_AUDIT_2026-07-13`(SA-01~06, 6건)과 합산하면 총 **19건**이 현재 문서화된 오늘 날짜 기준 열린 이슈다. Critical(P0급 money-safety 결함)은 0건 — ZA-05가 유일한 P0이나 이는 아키텍처 일관성 문제이며 1-F에서 확인한 실제 자금 이동 로직 자체는 안전하다. Casino 1-H는 finding 0(positive).
 
-## 도메인별 완성도 (추정 — 신뢰도 명시)
+## 도메인별 완성도 (1-G~1-I 실측 후 갱신)
 
 | 도메인        | 완성도 추정 | 신뢰도                       | 근거                                                                                                                 |
 | ------------- | ----------: | ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | Earn          |     **82%** | **높음**(1-E 직접 코드 판독) | 8/8 페이지 실작동, 1건 죽은 링크, 3건 도달 불가, 구조적 API 경로 불일치                                              |
 | Wallet/Ledger |     **92%** | **높음**(1-F 직접 코드 판독) | 동시성·멱등성·Σ=0 로직 표본 확인 결과 최상위 수준                                                                    |
 | Admin         |     **85%** | 중간(1-A 표본 확인)          | "구현 금지" 표기 페이지가 실제로는 구현되어 있음 확인(ZA-03) — 문서 신뢰도 문제, 코드 자체는 양호                    |
-| Trade         |     **80%** | 낮음(기존 문서 인용 위주)    | 기존 SYSTEM_AUDIT의 R9-PERF-JS(HIGH·OPEN) 영향권 + Earn 연계 0(ZA-11) — 본 감사에서 Trade RPC 코드는 직접 판독 안 함 |
-| Sports        |     **80%** | 낮음(기존 문서 인용 위주)    | 기존 감사 "Complete" 인용 — 본 감사 독자 검증 미실시                                                                 |
-| Casino        |     **80%** | 낮음(기존 문서 인용 위주)    | 12종 게임 provably-fair 테스트 존재(기존 인용) — 본 감사 독자 검증 미실시                                            |
+| Trade         |     **86%** | **높음**(1-G 직접 코드 판독) | Spot/Futures/Staking RPC 정상·오라클/표시 이중 경로 설계대로. 차트 empty=ZA-12(데이터 게이트). R9 lazy≠원인. Earn 연계 0(ZA-11) 잔존 |
+| Sports        |     **78%** | **높음**(1-I 직접 코드 판독) | 보드·베팅 RPC·freshness 「—」규율 정상. VIP=자격 게이트+공유 보드(완전 스텁 아님). **ingest 기본 dry-run**(ZA-13)으로 배당 전면 「—」가능 · 베팅 게이트 OFF |
+| Casino        |     **93%** | **높음**(1-H 직접 코드 판독) | 12/12 (a) 실 RPC+PF. toFixed 전수 표시만. fairness 검증기 실동작. live 모드 인라인 PF 배지만 약함(수동 검증 가능) |
 
-**낮은 신뢰도 도메인(Trade/Sports/Casino)은 본 감사가 시간을 집중한 Earn/Wallet 대비 코드 직접 판독량이 적어 수치 정밀도가 낮다 — 추정치이지 확정치가 아니다.**
+**1-G~1-I 이전의 「낮음」신뢰도 표기는 폐기.** Trade/Sports/Casino는 본 확장에서 컨트롤러·RPC·표시 경로를 Earn/Wallet과 동일 방식으로 직접 판독했다. 잔여 NOT VERIFIED: Trade 차트 Network 실측 · Sports prod fixture 행 수(108) · Casino 브라우저 클릭 1회.
 
 ## Earn 도메인 세부 완성도 (1-E 근거)
 

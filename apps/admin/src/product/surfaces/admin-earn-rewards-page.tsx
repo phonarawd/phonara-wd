@@ -217,11 +217,12 @@ export function AdminEarnRewardsPage() {
                   const active = row.id === selectedUserId;
                   return (
                     <li key={row.id}>
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
                         onClick={() => setSelectedUserId(row.id)}
                         className={cn(
-                          'w-full rounded-md border px-4 py-3 text-left text-sm transition-colors',
+                          'h-auto w-full flex-col items-start rounded-md border px-4 py-3 text-left text-sm font-normal',
                           active
                             ? 'border-accent bg-accent/5'
                             : 'border-line bg-surface-raised hover:bg-surface',
@@ -231,7 +232,7 @@ export function AdminEarnRewardsPage() {
                         <p className="text-foreground-muted m-0 mt-1 text-xs">
                           {row.emailMasked} · {row.id}
                         </p>
-                      </button>
+                      </Button>
                     </li>
                   );
                 })}
