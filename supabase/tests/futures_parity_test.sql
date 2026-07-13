@@ -239,6 +239,12 @@ BEGIN
   UPDATE rpc_rate_limit_configs
      SET capacity = 100, refill_rate = 100
    WHERE rpc_name IN ('rpc_open_futures_position', 'rpc_liquidate_position');
+  -- E21 one_way mode requires closing before re-opening the opposite side (below), which
+  -- now realizes PnL on each close; keep the RG monthly loss cap out of this boundary
+  -- test's way (same pattern as supabase/tests/responsible_gambling_test.sql).
+  INSERT INTO app_config (key, value, description)
+  VALUES ('rg_operator_loss_cap_trading_usdt', '1000000.000000', 'RG operator trading cap')
+  ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
   INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
   SELECT v_uid, doc_type::consent_doc_type, 'test', TRUE
   FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']) AS doc_type
