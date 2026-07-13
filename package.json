@@ -104,7 +104,6 @@
     "auth:sync-email": "tsx scripts/sync-auth-email-config.ts",
     "auth:verify-email": "tsx scripts/verify-auth-email-config.ts",
     "cf:configure-production": "tsx scripts/configure-cloudflare-production.ts",
-    "generate:web-sitemap": "tsx scripts/generate-web-sitemap.ts",
     "generate:brand": "tsx scripts/generate-brand-icons.ts",
     "generate:ssot-freeze-manifest": "tsx scripts/generate-ssot-freeze-manifest.ts",
     "visual:freeze-diff": "tsx scripts/visual-freeze-diff.ts",
@@ -259,7 +258,6 @@
     "@phonara/sports-ingest": "workspace:*",
     "@supabase/supabase-js": "^2.108.1",
     "@tanstack/react-query": "^5.101.0",
-    "decimal.js": "^10.6.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
