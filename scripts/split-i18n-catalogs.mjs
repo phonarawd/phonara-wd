@@ -24,9 +24,7 @@ if (koStart < 0 || koAsConst < 0) {
 }
 const koEnd = koAsConst + '} as const;'.length;
 
-const enStart = src.indexOf(
-  'export const enMessages: Record<keyof typeof koMessages, string> = {',
-);
+const enStart = src.indexOf('export const enMessages: Record<keyof typeof koMessages, string> = {');
 const mergedMarker = 'const mergedKoMessages';
 const enEnd = src.indexOf(mergedMarker, enStart);
 if (enStart < 0 || enEnd < 0) {
@@ -63,9 +61,9 @@ writeFileSync(
 import { presentationEnMessages } from './locales/presentation-en';
 
 ${enBlock.replace(
-    'export const enMessages: Record<keyof typeof koMessages, string> = {',
-    'const enMessages: Record<MessageKey, string> = {',
-  )}
+  'export const enMessages: Record<keyof typeof koMessages, string> = {',
+  'const enMessages: Record<MessageKey, string> = {',
+)}
 
 export const catalogEn: Record<MessageKey, string> = {
   ...enMessages,

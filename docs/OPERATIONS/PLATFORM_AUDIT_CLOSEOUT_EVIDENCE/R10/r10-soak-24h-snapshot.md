@@ -7,21 +7,21 @@
 
 ## Phase 7 — 착수 가능 여부 (코드 전제)
 
-| 전제 | 상태 | 근거 |
-| --- | --- | --- |
-| Phase 2 (SA-01 · CI sql · push-remote · parity) | **`[x]` DONE** | [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../../../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) Phase 2 |
-| Phase 4 (R9-PERF-JS · Stage1 ≤450) | **`[x]` DONE** | registry `VERIFIED_FIXED` · local **394.00 kB** |
-| Freeze ACTIVE | 유지 | Critical Fix 외 · soak는 flip 0 Soft Launch 경로 |
-| soak 개시일 | **operator 확정 필요** | 아래 Window — AI가 날짜를 넣지 않음 |
+| 전제                                            | 상태                   | 근거                                                                                                |
+| ----------------------------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------- |
+| Phase 2 (SA-01 · CI sql · push-remote · parity) | **`[x]` DONE**         | [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../../../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) Phase 2 |
+| Phase 4 (R9-PERF-JS · Stage1 ≤450)              | **`[x]` DONE**         | registry `VERIFIED_FIXED` · local **394.00 kB**                                                     |
+| Freeze ACTIVE                                   | 유지                   | Critical Fix 외 · soak는 flip 0 Soft Launch 경로                                                    |
+| soak 개시일                                     | **operator 확정 필요** | 아래 Window — AI가 날짜를 넣지 않음                                                                 |
 
 ## Window
 
-| Field            | Value              |
-| ---------------- | ------------------ |
+| Field            | Value                         |
+| ---------------- | ----------------------------- |
 | `soak_start_at`  | _ISO8601 KST — operator fill_ |
 | `soak_end_at`    | _ISO8601 KST — operator fill_ |
-| `known_good_sha` | _40-hex — operator fill_ |
-| `deployment_id`  | _Pages ID or null_ |
+| `known_good_sha` | _40-hex — operator fill_      |
+| `deployment_id`  | _Pages ID or null_            |
 
 ## Checkpoint results
 

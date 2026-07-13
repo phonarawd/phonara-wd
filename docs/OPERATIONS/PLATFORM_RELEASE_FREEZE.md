@@ -24,12 +24,12 @@ RC(Release Candidate) SHA 선언 이후 **Critical Fix 외 변경 금지**.
 
 ## 현재 RC
 
-| 항목              | 값                                              |
-| ----------------- | ----------------------------------------------- |
-| RC SHA            | `dcfd8c7eab0374296ffeecdc5cd3f79433786ebe`      |
-| Known Good SHA    | `9c4bf29b40d31b2d2952bd6257f5690d691ecbc2`      |
-| Deploy parity     | remote green (R9)                               |
-| Freeze            | **ACTIVE**                                      |
+| 항목              | 값                                                                                         |
+| ----------------- | ------------------------------------------------------------------------------------------ |
+| RC SHA            | `dcfd8c7eab0374296ffeecdc5cd3f79433786ebe`                                                 |
+| Known Good SHA    | `9c4bf29b40d31b2d2952bd6257f5690d691ecbc2`                                                 |
+| Deploy parity     | remote green (R9)                                                                          |
+| Freeze            | **ACTIVE**                                                                                 |
 | Release candidate | **BLOCKED** (operator: soak-24h · 3-Owner · DR · R9-PERF-JS **VERIFIED_FIXED** 2026-07-14) |
 
 ## Standing Grant 축소

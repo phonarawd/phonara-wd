@@ -3,13 +3,24 @@ import { join, relative, basename } from 'path';
 
 const root = process.cwd();
 const SKIP_DIRS = new Set([
-  'node_modules', 'dist', '.git', 'coverage', 'test-results',
-  'playwright-report', '.tmp', '.vite', 'blob-report',
+  'node_modules',
+  'dist',
+  '.git',
+  'coverage',
+  'test-results',
+  'playwright-report',
+  '.tmp',
+  '.vite',
+  'blob-report',
 ]);
 
 function walkFiles(dir, out = []) {
   let entries;
-  try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return out; }
+  try {
+    entries = readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return out;
+  }
   for (const e of entries) {
     if (SKIP_DIRS.has(e.name)) continue;
     const p = join(dir, e.name);
@@ -21,9 +32,15 @@ function walkFiles(dir, out = []) {
 
 const allFiles = walkFiles(root);
 const rel = (p) => relative(root, p).replace(/\\/g, '/');
-const testTs = allFiles.map(rel).filter((f) => f.endsWith('.test.ts') || f.endsWith('.spec.ts')).sort();
+const testTs = allFiles
+  .map(rel)
+  .filter((f) => f.endsWith('.test.ts') || f.endsWith('.spec.ts'))
+  .sort();
 const isTestFile = (r) =>
-  r.endsWith('.test.ts') || r.endsWith('.spec.ts') || r.endsWith('.test.tsx') || r.endsWith('.spec.tsx');
+  r.endsWith('.test.ts') ||
+  r.endsWith('.spec.ts') ||
+  r.endsWith('.test.tsx') ||
+  r.endsWith('.spec.tsx');
 
 const codeExt = new Set(['.ts', '.tsx', '.js', '.mjs', '.cjs', '.json']);
 const codeFiles = allFiles.filter((p) => {
@@ -40,12 +57,18 @@ for (const p of codeFiles) {
     const text = readFileSync(p, 'utf8');
     if (text.length > 2_000_000) continue;
     codeContents.push({ path: rel(p), text });
-  } catch { /* skip */ }
+  } catch {
+    /* skip */
+  }
 }
 
 const testContents = [];
 for (const p of allFiles.filter((x) => isTestFile(rel(x)))) {
-  try { testContents.push({ path: rel(p), text: readFileSync(p, 'utf8') }); } catch { /* skip */ }
+  try {
+    testContents.push({ path: rel(p), text: readFileSync(p, 'utf8') });
+  } catch {
+    /* skip */
+  }
 }
 
 function runnerCoverage(f) {
@@ -82,13 +105,17 @@ const rows = [];
 for (const f of testTs) {
   const runner = runnerCoverage(f);
   const refs = findRefs(f);
-  const inSuite = ['vitest:packages','vitest:tests','vitest:web','vitest:admin','playwright'].includes(runner);
+  const inSuite = [
+    'vitest:packages',
+    'vitest:tests',
+    'vitest:web',
+    'vitest:admin',
+    'playwright',
+  ].includes(runner);
   let classification, reason;
   if (inSuite) {
     classification = 'Keep';
-    reason = refs.length
-      ? `runner + code ref`
-      : 'runner discovery (no direct import)';
+    reason = refs.length ? `runner + code ref` : 'runner discovery (no direct import)';
   } else if (refs.length) {
     classification = 'Keep';
     reason = 'code ref only';
@@ -107,10 +134,16 @@ for (const f of testTs) {
 }
 
 writeFileSync(join(root, 'scripts', 'audit-test-refs-data.json'), JSON.stringify(rows));
-console.log(JSON.stringify({
-  total: rows.length,
-  Keep: rows.filter(r => r.classification === 'Keep').length,
-  Safe: rows.filter(r => r.classification === 'Safe to delete').length,
-  withRef: rows.filter(r => r.hasCodeRef).length,
-  safe: rows.filter(r => r.classification === 'Safe to delete').map(r => r.file),
-}, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      total: rows.length,
+      Keep: rows.filter((r) => r.classification === 'Keep').length,
+      Safe: rows.filter((r) => r.classification === 'Safe to delete').length,
+      withRef: rows.filter((r) => r.hasCodeRef).length,
+      safe: rows.filter((r) => r.classification === 'Safe to delete').map((r) => r.file),
+    },
+    null,
+    2,
+  ),
+);

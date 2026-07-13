@@ -47,7 +47,9 @@ export function createI18n({ storageKey, detectNavigatorLanguage = false }: Crea
 
   function I18nProvider({ children }: { children: ReactNode }) {
     const [locale, setLocaleState] = useState<Locale>(readInitialLocale);
-    const [catalogReady, setCatalogReady] = useState(() => isLocaleCatalogLoaded(readInitialLocale()));
+    const [catalogReady, setCatalogReady] = useState(() =>
+      isLocaleCatalogLoaded(readInitialLocale()),
+    );
 
     useEffect(() => {
       document.documentElement.lang = locale;

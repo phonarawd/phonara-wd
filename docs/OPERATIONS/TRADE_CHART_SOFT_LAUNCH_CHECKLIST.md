@@ -45,12 +45,12 @@ R9 lazy-loading(코드 스플릿)은 empty 원인이 **아니다** — 1-G.2에�
 
 ## Phase 5 재검증 (2026-07-14 · Zero-Defect Critical Hardening)
 
-| 항목 | 결과 |
-| --- | --- |
-| 코드측 empty 원인 분기 | **유지** — `resolveTradeChartEmptyReason` · `TRADE_CHART_MOUNT_MIN_CANDLES=2` 미변경 |
-| owner vitest | `trade-chart-mount-display-contract` green (Phase 5 세션) |
-| Soft Launch Network 실측 | **여전히 OPEN** — 본 Phase에서 브라우저 실측·시드 트리거 **미실행** (운영자 Soft Launch 시 §PHON / §거래소 페어 절차) |
-| 본 Phase에서 하지 않은 것 | MIN_CANDLES 하향 · empty 카피 재작성 · 엔진/피드 코드 변경 **0** |
+| 항목                      | 결과                                                                                                                  |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| 코드측 empty 원인 분기    | **유지** — `resolveTradeChartEmptyReason` · `TRADE_CHART_MOUNT_MIN_CANDLES=2` 미변경                                  |
+| owner vitest              | `trade-chart-mount-display-contract` green (Phase 5 세션)                                                             |
+| Soft Launch Network 실측  | **여전히 OPEN** — 본 Phase에서 브라우저 실측·시드 트리거 **미실행** (운영자 Soft Launch 시 §PHON / §거래소 페어 절차) |
+| 본 Phase에서 하지 않은 것 | MIN_CANDLES 하향 · empty 카피 재작성 · 엔진/피드 코드 변경 **0**                                                      |
 
 정본 Plan: [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) Phase 5.
 
