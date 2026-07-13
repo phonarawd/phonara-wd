@@ -105,9 +105,37 @@ Edge/SQL cross-use 스캔에서 참조를 찾지 못한 13건은 대부분 **adm
 
 Wave 0 SA-01 정리 중 CI `sql` job에서 발견된 4개 pre-existing regression과 조치:
 
-| 발견                                                                                                                    | 근본 원인                                                                                                                                                                                                                 | 조치 migration/커밋                                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `futures_parity_test.sql` — `leverage_too_high` 대신 `position_mode_hedge_side_exists`/`position_mode_one_way_opposite` | E21 migration(`20260808000001`)이 hedge/one-way mode assert를 leverage bound 체크보다 먼저 주입                                                                                                                           | `20260824000001_platform_sql_ci_closeout3.sql` Fix A — assert를 leverage 체크 뒤로 재배치                                              |
-| `m20_r4b_rls_perf_initplan_test.sql` — "got 8" (bare auth.uid() 미해소)                                                 | `_advisor_wrap_rls_auth_expr()`의 "already wrapped" 판정이 `(select ` 리터럴 프리픽스에 고정 — RLS qual은 parsed expression tree이므로 `pg_get_expr()` 재-deparse 시 그 프리픽스가 그대로 보존되지 않음(false positive)   | `20260825000001_platform_sql_ci_closeout4.sql` — 판정을 "SELECT + whitespace + auth.\*() " 앵커로 완화, R4-b sweep 재실행              |
-| `futures_parity_test.sql` liquidation boundary 블록 — `position_mode_one_way_opposite`                                  | 이 테스트는 E21(2026-08-08) 이전에 작성되어 같은 시장에서 long을 닫지 않고 short를 여는 패턴 — leverage 순서 수정(Fix A) 후 one_way guard가 정상 작동하며 이 pre-E21 gap을 드러냄                                         | `supabase/tests/futures_parity_test.sql` — 각 시나리오 뒤에 명시적 `rpc_close_futures_position` 추가                                   |
-| `ew_e21_hedge_reduce_only_test.sql` / `ew_e22_sports_parity_test.sql` conservation 불일치                               | **미해결** — 광범위한 정적 분석으로도 근본 원인 미확정 (조사 기록: `_fill_house_order` reduce-only 분기·`rpc_partial_cashout_sports_bet` 모두 구조적으로 conserving함을 코드 추적으로 확인했으나 실측 불일치 원인 미발견) | CI push-fix loop 후속 사이클로 이연 — G13(로컬 heavy gate 금지)상 실 DB 실행 없이는 추가 진전 어려움. **operator/후속 세션 보고 필요** |
+| 발견                                                                                                                    | 근본 원인                                                                                                                                                                                                               | 조치 migration/커밋                                                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `futures_parity_test.sql` — `leverage_too_high` 대신 `position_mode_hedge_side_exists`/`position_mode_one_way_opposite` | E21 migration(`20260808000001`)이 hedge/one-way mode assert를 leverage bound 체크보다 먼저 주입                                                                                                                         | `20260824000001_platform_sql_ci_closeout3.sql` Fix A — assert를 leverage 체크 뒤로 재배치                                                                         |
+| `m20_r4b_rls_perf_initplan_test.sql` — "got 8" (bare auth.uid() 미해소)                                                 | `_advisor_wrap_rls_auth_expr()`의 "already wrapped" 판정이 `(select ` 리터럴 프리픽스에 고정 — RLS qual은 parsed expression tree이므로 `pg_get_expr()` 재-deparse 시 그 프리픽스가 그대로 보존되지 않음(false positive) | `20260825000001_platform_sql_ci_closeout4.sql` — 판정을 "SELECT + whitespace + auth.\*() " 앵커로 완화, R4-b sweep 재실행                                         |
+| `futures_parity_test.sql` liquidation boundary 블록 — `position_mode_one_way_opposite`                                  | 이 테스트는 E21(2026-08-08) 이전에 작성되어 같은 시장에서 long을 닫지 않고 short를 여는 패턴 — leverage 순서 수정(Fix A) 후 one_way guard가 정상 작동하며 이 pre-E21 gap을 드러냄                                       | `supabase/tests/futures_parity_test.sql` — 각 시나리오 뒤에 명시적 `rpc_close_futures_position` 추가                                                              |
+| `ew_e21_hedge_reduce_only_test.sql` / `ew_e22_sports_parity_test.sql` conservation 불일치                               | **미해결 — 2026-07-13 2차 조사로 가설 대폭 축소 (아래 상세)**                                                                                                                                                           | CI push-fix loop 후속 사이클로 이연 — G13(로컬 heavy gate 금지)상 실 DB 실행(`RAISE NOTICE` 계측) 없이는 추가 진전 어려움. **operator/후속 세션 live debug 필요** |
+
+#### `ew_e22_sports_parity_test.sql` — E22-2 partial cashout, `before=50000.000000 after=50036.000000` (+36 정확히)
+
+**손계산으로 재구성한 기대값** (odds=2.0 · stake=100 · portion=40 · `sports_cashout_margin=0.05`):
+
+- `_sports_cashout_offer`: `v_offer = trunc(100 * 2.0 * 0.95, 6) = 190` (potential_payout=200 cap 미적용)
+- `v_portion_offer = trunc(190 * 40/100, 6) = 76` → `v_client = 76`
+- `v_house = v_portion(40) - v_client(76) = -36` → **house 계정 36 debit 되어야 함**
+- 지갑 net: `unlock(+0) + debit(-40) + credit(+76) = +36`. house net(기대): `-36`. **합 = 0 → 수식상 정확히 균형**
+
+**기각한 가설 (근거 명시):**
+
+- currency 태그 불일치 — `sports_house_phon` seed(`20260616000101_wave_s3_sportsbook_place_bet.sql:20`)에 `currency='PHON'` 확인, 조회 필터와 일치. **기각**.
+- `_credit_wallet_internal`의 reward-issuance 분기(`phon_bonus_available`로 크레딧 + `reward_issuance_phon` debit) 오발동 — `_is_reward_issuance_reason('sports_cashout')`는 `false`(허용 목록에 `sports_%` 없음, 명시적 나열만). **기각**.
+- bonus/real 분기 desync — 테스트가 `UPDATE wallets SET phon_available=...`로 직접 세팅하지만 `trg_00_a_phon_track_compat` 트리거(`20260701000001_phon_bonus_real_wagering.sql:753-758`)가 `phon_real_available`로 정확히 backfill함을 트리거 본문으로 확인. **기각**.
+- `_debit_system_account`/`_credit_system_account` 구현 자체 버그 — 두 함수 모두 `code` 컬럼으로 정확히 조회·갱신·`system_account_ledger` 기록. **기각**.
+
+**신규로 확인한 별개 결함(이 conservation 버그의 직접 원인은 아니지만 수정 필요):** `_is_phon_wagering_bet_reason`(`20260701000001_phon_bonus_real_wagering.sql:97-99`)가 `LIKE 'sports_%'`로 `'sports_stake_cashout'`(부분 캐시아웃 stake debit)까지 "신규 베팅"으로 오분류 → `_apply_wagering_progress` 오발동. 이 테스트의 유저는 활성 `bonus_wagering_requirements`가 없어 no-op이라 **이 conservation 실패의 원인은 아님**이 확인됐지만, bonus wagering이 활성인 실사용자에게는 잘못된 wagering 진행 처리가 될 수 있는 **별도 버그** — SA/후속 티켓 후보.
+
+**남은 가설(미검증 — RAISE NOTICE 계측 필요):** `_sports_latest_odds`가 preview/execute 두 호출 사이 다른 값을 반환하는지(캐시아웃 실패로 이어지지 않았으므로 낮은 확률), 또는 `system_account_ledger` INSERT의 어떤 트리거/제약이 UPDATE 자체를 조용히 무효화하는지. **다음 세션 지시:** 로컬 `db reset` 후 `rpc_partial_cashout_sports_bet` 본문에 `v_full_offer`·`v_portion_offer`·`v_house`·`sports_house_phon.balance`(전/후) `RAISE NOTICE` 삽입 → 이 E22-2 스니펫만 `psql`로 재현.
+
+#### `ew_e21_hedge_reduce_only_test.sql` — E21-2, `before=70000.000000 after=19998.200033` (E21-1 유저의 50000 전액 소실 추정)
+
+- `before=70000`은 E21-1 유저(50000, USDT)+E21-2 유저(20000) 합과 정확히 일치 — **E21-1 종료 시점까지는 conservation 정상**.
+- E21-1은 `one_way` 전환 후 롱 포지션(`e21-ow-l`, 200 USDT margin)을 **연 채로 블록을 종료**(반대 숏 실패 검증 후 close 없이 종료) — 의도된 설계인지 미확인이나, 이 자체는 margin이 `usdt_locked`에 남을 뿐이라 합계는 불변이어야 함.
+- `rpc_run_open_order_fills()`(`20260722000003_trade_e_iceberg_fill_resume_drain.sql:4`)가 `trading_open_orders` 테이블을 **전체 유저 대상**으로 스윕하는 구조 확인 — 단, E21-1은 LIMIT/STOP 주문을 남기지 않아(전부 MARKET open) 이 스윕의 대상이 아님. **"배치 함수가 다른 유저 지갑을 오염시킨다"는 최초 가설은 이 경로로는 기각**.
+- `after=19998.200033 ≈ 20000 - 1.8`(E21-2 자신의 포지션 청산 수수료로 추정되는 소액) — **E21-1 유저의 50000 전체가 SUM에서 사라진 것으로 보이며, `usdt_available`/`usdt_locked` 중 하나가 NULL이 되면 `SUM()`이 조용히 무시하는 메커니즘과 정합적**이나 어느 연산이 NULL을 만드는지는 미확인.
+- **다음 세션 지시:** 로컬 재현 시 E21-1 종료 직후 E21-1 유저의 `wallets` 행을 `SELECT * FROM wallets WHERE user_id=<e21-1 uid>`로 직접 조회해 NULL/이상값 여부부터 확인.

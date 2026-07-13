@@ -27,7 +27,7 @@ linked_existing:
 findings:
   - id: 'SA-01'
     severity: 'MEDIUM'
-    status: 'OPEN'
+    status: 'OPEN (partial)'
     pillar: 'database'
     also: ['release']
     symptom: >-
@@ -37,9 +37,13 @@ findings:
       - 'check:engine-foundation-parity 출력 2026-07-13 — local 241 · remote 239 · missing 2'
       - 'git status: supabase/migrations/20260822000001_*.sql (M) · 20260823000001_*.sql (??)'
       - 'docs/OPERATIONS/PLATFORM_RELEASE_FREEZE.md — Freeze ACTIVE'
+      - '2026-07-13 push-fix loop: quality·e2e·advisors 3/4 GREEN (run 29228583623) — admin/web
+        cross-app alias 회귀(SA-03 부작용) + controller-view-freeze.ts 오삭제 + format:check 수정.
+        sql job만 RED — ew_e21/ew_e22 conservation 미해결(사전 존재, 02_DATABASE.md 상세 조사 기록).
+        stack:push-remote는 sql job green 전까지 보류(96-prod-apply-agent-deny 정본 순서 준수).'
     recommendation: >-
-      operator가 CI-fix Critical 적격 여부 판정 → commit + bun run stack:push-remote
-      (advisor 0 ERROR 확인) 또는 revert. Freeze 위반 판정 시 RC SHA 재산정.
+      ew_e21/ew_e22 conservation을 로컬 RAISE NOTICE 계측으로 근본 원인 확정(operator 「gate 실행」
+      또는 CI 후속 세션) → sql job green → bun run stack:push-remote → advisor 0 ERROR 확인.
     owner: 'db'
   - id: 'SA-02'
     severity: 'LOW'
