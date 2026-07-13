@@ -14,6 +14,7 @@ import {
 const WEB_SRC = resolve(import.meta.dirname, '../..');
 const REPO_ROOT = resolve(WEB_SRC, '../../..');
 const I18N_INDEX = resolve(REPO_ROOT, 'packages/i18n/src/index.ts');
+const I18N_CATALOG_EN = resolve(REPO_ROOT, 'packages/i18n/src/catalog-en.ts');
 const I18N_PRESENTATION_EN = resolve(REPO_ROOT, 'packages/i18n/src/locales/presentation-en.ts');
 
 const TRADE_KEY_LITERAL_RE = /'((?:trade|desk\.trade|seo\.trade)[^']+)'/g;
