@@ -56,7 +56,7 @@ export function LandingWalletPreview({ signupHref, className }: LandingWalletPre
             <p className="text-foreground-muted m-0 text-xs">{t('landing.wallet.withdrawHint')}</p>
             <a
               href={signupHref}
-              className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'shrink-0')}
+              className={cn(buttonVariants({ variant: 'ghost', size: 'md' }), 'shrink-0 px-3')}
               data-testid="landing-wallet-withdraw-cta"
               {...landingAnalyticsEventAttr('landing.signup.started')}
             >

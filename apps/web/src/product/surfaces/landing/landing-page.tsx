@@ -173,7 +173,7 @@ export function LandingPage() {
 
         <a
           href="/login"
-          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
+          className={cn(buttonVariants({ variant: 'ghost', size: 'md' }), 'px-3')}
           data-testid="landing-header-login"
         >
           {t('landing.header.login')}

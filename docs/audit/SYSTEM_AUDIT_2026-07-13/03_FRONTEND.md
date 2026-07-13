@@ -61,13 +61,17 @@
 - 완료 todo 재구현 신호 0 (`check:phase-r-guards` green).
 - 미커밋 display contract 수정 다수(R10–R12 계열)는 Platform Perfect Launch closeout 잔여 — Pillar 1 §3.1과 동일 맥락.
 
-## 6. Finding (Pillar 3)
+## 6. Finding (Pillar 3) — Wave 2 갱신 (2026-07-13)
 
-| ID    | 심각도 | 내용                                                                                                                                |
-| ----- | ------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| SA-02 | LOW    | 데이터 의존 surface 일부의 Empty/Error 정적 증거 공백 (Empty yes 39.2%) — 정적 스캔 한계 포함, 실측 분리는 후속 WORLD_CLASS_UX 트랙 |
+| ID        | 심각도 | 상태             | 내용                                                                                                                                                                                                           |
+| --------- | ------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SA-02     | LOW    | **impl partial** | 8 surfaces 코드 조사 완료 — 진성 gap 2건(casino-lobby-page Error · install-page Loading) 수정, false-positive 6건 확인(하위 컴포넌트에 이미 존재) · [`PER_PAGE_UI_MATRIX.md`](../PER_PAGE_UI_MATRIX.md) §SA-02 |
+| (R9 링크) | —      | **수정 완료**    | Landing touch target WARN(dense CTA row) — header 로그인 링크 + wallet-preview 인출 CTA `size=sm`(36px)→`md`(44px)                                                                                             |
+
+정적 스캔의 구조적 한계 발견: `generate-per-page-ui-matrix.ts`는 페이지 파일만 읽고 하위 컴포넌트(`*-form.tsx`, `trade-desk-fetch-error-banner.tsx` 등)로의 import를 따라가지 않아, 이 코드베이스의 "폼/에러/빈 상태를 하위 컴포넌트에 위임" 관례와 충돌해 다수의 false positive를 생성한다. 8개 표본 조사에서 진성 2 : false-positive 6 비율 확인 — 나머지 71개 surface 전수 재조사는 범위 밖(WORLD_CLASS_UX 트랙).
 
 ## 7. NOT VERIFIED
 
-- 실제 브라우저 렌더 · 애니메이션 품질 · axe 점수 (R9 functional matrix 24/24 PASS만 인용)
+- 실제 브라우저 렌더 · 애니메이션 품질 · axe 점수 (R9 functional matrix 24/24 PASS만 인용) — axe critical/serious 실측은 G13(로컬 heavy gate 금지)상 operator/CI Playwright 세션 필요
 - Admin 32 surfaces per-page state 매트릭스 (web만 생성됨)
+- 71개 미조사 surface의 Empty/Error 정적 재판정 (8개 표본만 이번 웨이브에서 조사)

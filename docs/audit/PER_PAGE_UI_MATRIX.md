@@ -5,6 +5,31 @@
 > Method: static scan of page TSX + related `-display-contract.ts` + vitest paths  
 > **NOT VERIFIED:** live browser render · axe · animation quality
 
+## SA-02 Wave 2 correction (2026-07-13)
+
+The static scan only reads each `-page.tsx` file directly — it does **not** follow imports into
+sibling components. This codebase's convention is to delegate form/error/empty rendering to
+sub-components (`*-form.tsx`, `trade-desk-fetch-error-banner.tsx`, `*-panel.tsx`), so many `no`
+rows below are **false positives**. Manual code review of 8 candidate surfaces (chosen for the
+clearest data-fetch dependency) found:
+
+| Surface                      | Row         | Static verdict | Manual finding                                                                             | Action                                                                           |
+| ---------------------------- | ----------- | -------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `casino-lobby-page.tsx`      | Error       | no             | **Genuine gap** — wallet balance fetch error was silently swallowed (fallback to "0")      | Fixed — inline error + retry in the balance widget                               |
+| `install-page.tsx`           | Loading     | no             | **Genuine gap** — native-install-prompt busy state had no visible feedback (disabled-only) | Fixed — `Button loading` prop (spinner + `aria-busy`)                            |
+| `spot-desk-page.tsx`         | Error       | no             | False positive — `<TradeDeskFetchErrorBanner>` (role=alert + retry) already wired          | None needed                                                                      |
+| `futures-desk-page.tsx`      | Error       | no             | False positive — same `<TradeDeskFetchErrorBanner>`                                        | None needed                                                                      |
+| `staking-positions-page.tsx` | Empty       | no             | False positive — `<StakingPositionsPanel emptyKey=…>` renders empty state                  | None needed (added `role="alert"` to its adjacent error banner as an a11y bonus) |
+| `signup-page.tsx`            | Error       | no             | False positive — `signup-form.tsx` has `role="alert"` inline + resend errors               | None needed                                                                      |
+| `verify-email-page.tsx`      | Error       | no             | False positive — `verify-email-form.tsx` has `role="alert"`                                | None needed                                                                      |
+| `reset-password-page.tsx`    | Error       | no             | False positive — `reset-password-form.tsx` has `role="alert"`                              | None needed                                                                      |
+| `onboarding-page.tsx`        | Empty/Error | no             | Correct — `ui_only` local-state stepper, no fetch/list                                     | None needed                                                                      |
+
+**Recommendation for the generator (`scripts/audit/generate-per-page-ui-matrix.ts`):** follow one
+level of relative imports (`./`, `../`) per page file before declaring `no`, to eliminate this
+class of false positive at the source. Deferred to the WORLD_CLASS_UX track — out of scope for a
+hygiene wave to rewrite the generator's AST-free regex scan into an import-following one.
+
 ## Summary
 
 | State                         | yes | partial |  no |

@@ -88,7 +88,12 @@ function CasinoGameTile({
 /** Canonical `/casino` lobby — category chips · featured · 12-game grid · balance · PF cue. */
 export function CasinoLobbyPage() {
   const t = useT();
-  const { wallet, loading: walletLoading } = useWallet();
+  const {
+    wallet,
+    loading: walletLoading,
+    error: walletError,
+    refetch: refetchWallet,
+  } = useWallet();
   const [category, setCategory] = useState<LobbyCategoryFilter>('all');
 
   useEffect(() => {
@@ -136,6 +141,22 @@ export function CasinoLobbyPage() {
             >
               …
             </p>
+          ) : walletError ? (
+            <div
+              className="flex flex-col items-start gap-1"
+              data-testid="casino-lobby-balance-error"
+              role="alert"
+            >
+              <p className="text-danger m-0 text-xs">{t(walletError)}</p>
+              <button
+                type="button"
+                className="text-accent min-h-6 text-xs font-medium underline-offset-4 hover:underline"
+                onClick={() => refetchWallet()}
+                data-testid="casino-lobby-balance-retry"
+              >
+                {t('state.error.retry')}
+              </button>
+            </div>
           ) : (
             <div className="flex flex-col gap-1">
               <MoneyDisplay
