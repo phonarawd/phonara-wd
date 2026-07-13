@@ -966,7 +966,7 @@ export const koMessages = {
   'wallet.withdraw.gate.fields': '출금 금액과 수령 주소를 입력하세요.',
   'wallet.withdraw.gate.bankFields': '출금 금액과 본인 명의 계좌번호를 입력하세요.',
   'wallet.phon.guide.balance':
-    'PHON은 USDT와 1:1로 가치가 맞춰져 있어요. 출금은 실머니 잔액만 사용할 수 있고, 보너스 PHON은 롤링 충족 후 실머니로 전환됩니다.',
+    'PHON의 USDT 가치는 실시간 환율에 따라 변동돼요. 출금은 실머니 잔액만 사용할 수 있고, 보너스 PHON은 롤링 충족 후 실머니로 전환됩니다.',
   'wallet.phon.guide.deposit':
     '원화를 입금하면 실시간 USDT 환율을 적용해 PHON으로 자동 전환돼요. 아래에서 받을 PHON 수량을 미리 확인할 수 있어요.',
   'wallet.phon.guide.withdraw':
@@ -1507,6 +1507,9 @@ export const koMessages = {
   'trade.houseCounterpartyAckCta': '체결 상대를 확인했습니다',
   'trade.houseCounterpartyConfirmNotice':
     '주문 체결 상대는 PHONARA입니다. 다른 이용자와 직접 매칭되지 않습니다.',
+  'trade.futures.phonMarginNotionalWarning.title': 'PHON 마진 표시 안내',
+  'trade.futures.phonMarginNotionalWarning.description':
+    'PHON 마진 포지션은 담보력·수량 표시가 정확하지 않을 수 있어요. 정확한 표시를 위해 USDT 마진 사용을 권장합니다.',
   'trade.futuresTitle': '선물 (Perpetual)',
   'trade.longUp': '롱 (상승)',
   'trade.shortDown': '숏 (하락)',
@@ -4108,7 +4111,7 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'wallet.withdraw.gate.bankFields':
     'Enter the withdrawal amount and your personal bank account number.',
   'wallet.phon.guide.balance':
-    'PHON is pegged 1:1 to USDT. Withdrawals use real balance only; bonus PHON converts after wagering is met.',
+    "PHON's USDT value follows the live exchange rate and can change. Withdrawals use real balance only; bonus PHON converts after wagering is met.",
   'wallet.phon.guide.deposit':
     'KRW deposits convert to PHON automatically using the live USDT rate. Preview your PHON amount below before you transfer.',
   'wallet.phon.guide.withdraw':
@@ -4668,6 +4671,9 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'trade.houseCounterpartyAckCta': 'I understand the counterparty',
   'trade.houseCounterpartyConfirmNotice':
     'PHONARA is your counterparty. Orders are not matched directly with other users.',
+  'trade.futures.phonMarginNotionalWarning.title': 'PHON margin display notice',
+  'trade.futures.phonMarginNotionalWarning.description':
+    'PHON-margin positions may show inaccurate collateral power and quantity. We recommend using USDT margin for accurate figures.',
   'trade.futuresTitle': 'Futures (Perpetual)',
   'trade.longUp': 'Long (Up)',
   'trade.shortDown': 'Short (Down)',
