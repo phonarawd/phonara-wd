@@ -79,15 +79,14 @@ export function TradeChart({
   const legend = useChartCrosshairLegend(handleRef);
 
   return (
-    // Outer must be a flex column: panel used to pass `min-h-0 flex-1` as the
-    // host className, which replaced `h-full` while the outer was not flex —
-    // autoSize then collapsed the canvas to a time-axis strip (blank chart).
-    <div className="relative flex h-full min-h-0 w-full flex-col">
+    // Host min-height is owned here — callers must NOT pass `min-h-0` via
+    // className (twMerge would drop min-h-[280px] and collapse the canvas).
+    <div className="relative flex h-full min-h-[280px] w-full flex-col">
       <TradeChartCrosshairLegend snapshot={legend} />
       <div
         ref={hostRef}
         data-testid="trade-lightweight-chart"
-        className={cn('min-h-[280px] w-full flex-1', className)}
+        className={cn('h-full min-h-[280px] w-full flex-1', className)}
       />
     </div>
   );

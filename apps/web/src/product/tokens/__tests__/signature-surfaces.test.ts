@@ -11,6 +11,8 @@ describe('signature-surfaces.css (§34.21–34.26)', () => {
     expect(existsSync(path)).toBe(true);
     const css = readFileSync(path, 'utf8');
     expect(css).toContain("data-signature='market-heat-volume-pulse'");
+    expect(css).toContain('padding-inline-start');
+    expect(css).toContain('inset 3px 0 0');
     expect(css).toContain('ds-volume-pulse');
     expect(css).toContain("data-signature='tile-float-glow'");
     expect(css).toContain('ds-casino-tile-float');

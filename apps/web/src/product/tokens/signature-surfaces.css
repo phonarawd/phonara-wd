@@ -4,12 +4,15 @@
  * L2 financial submit paths must not use decorative loops.
  */
 
-/* Trade — market heat edge (change24 tone · display-only) */
+/* Trade — market heat edge (change24 tone · display-only)
+ * Inset bar needs matching start padding or it paints over "24h 변동" glyphs. */
 [data-signature='market-heat-volume-pulse'][data-market-heat='up'] {
+  padding-inline-start: 0.75rem;
   box-shadow: inset 3px 0 0 color-mix(in oklch, var(--ds-market-up) 70%, transparent);
 }
 
 [data-signature='market-heat-volume-pulse'][data-market-heat='down'] {
+  padding-inline-start: 0.75rem;
   box-shadow: inset 3px 0 0 color-mix(in oklch, var(--ds-market-down) 70%, transparent);
 }
 

@@ -446,7 +446,6 @@ export function TradeChartPanel({
               drawings={drawings}
               drawingMode={drawingMode}
               onDrawingClick={handleDrawingClick}
-              className="min-h-0"
               onChartReady={(api) => {
                 chartApiRef.current = api;
               }}

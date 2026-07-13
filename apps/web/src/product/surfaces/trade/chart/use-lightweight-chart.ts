@@ -10,6 +10,7 @@ import {
   readChartTheme,
 } from './chart-theme';
 import {
+  CHART_LAYOUT_MIN_HEIGHT_PX,
   CHART_RSI_SCALE_MARGINS,
   CHART_VOLUME_SCALE_MARGINS,
   isChartHostSized,
@@ -50,7 +51,14 @@ export function useLightweightChart(
     if (!host) return;
 
     const theme = readChartTheme();
-    const chart = createChart(host, createChartOptions(theme));
+    const initial = readChartHostSize(host);
+    const chart = createChart(host, {
+      ...createChartOptions(theme),
+      // Seed size immediately — TabsContent remount often paints one frame at
+      // 0×0; waiting only on rAF leaves a blank canvas until fullscreen/resize.
+      width: Math.max(initial.width, 1),
+      height: Math.max(initial.height, CHART_LAYOUT_MIN_HEIGHT_PX),
+    });
 
     const candles = chart.addSeries(CandlestickSeries, candleSeriesOptions(theme));
     const line = chart.addSeries(LineSeries, {
