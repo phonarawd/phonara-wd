@@ -35,7 +35,6 @@ for (const m of html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g))
   assetRefs.add(m[1]);
 }
 
-const assetsDir = join(distDir, 'assets');
 const rows = [];
 let jsGzip = 0;
 let cssGzip = 0;

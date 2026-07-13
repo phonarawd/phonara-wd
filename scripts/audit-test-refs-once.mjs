@@ -106,7 +106,6 @@ for (const f of testTs) {
   });
 }
 
-const out = join(process.env.USERPROFILE || '', '.cursor', 'projects', 'c-Users-PC-Desktop-phonara-gb', 'canvases', '_test-audit-data.json');
 writeFileSync(join(root, 'scripts', 'audit-test-refs-data.json'), JSON.stringify(rows));
 console.log(JSON.stringify({
   total: rows.length,
