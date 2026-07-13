@@ -5,11 +5,13 @@
 
 ## 점수
 
-| 항목           |                  점수 |
-| -------------- | --------------------: |
-| **Repository** | **86 / 100** (Strong) |
+| 항목           |                                                      점수 |
+| -------------- | --------------------------------------------------------: |
+| **Repository** | **86 / 100** (원 점수) → **96 / 100** (2026-07-13 재산정) |
 
-감점 근거: 워킹트리 dirty 60건(Freeze ACTIVE 중), knip unused 3파일 + unresolved script import 3건, root `decimal.js` 잔존 의존성. 구조·경계·중복 방지는 세계 수준.
+감점 근거(원 감사): 워킹트리 dirty 60건(Freeze ACTIVE 중), knip unused 3파일 + unresolved script import 3건, root `decimal.js` 잔존 의존성. 구조·경계·중복 방지는 세계 수준.
+
+**2026-07-13 재산정 (SA-03 VERIFIED_FIXED):** 3개 감점 사유 전부 해소 — (1) 워킹트리 60건 커밋+push+CI 검증 완료(quality/e2e/advisors green, `docs/OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml` SA-01 참조), (2) `bunx knip` unused files **0**(재실행 확인, `admin-desk-views.ts`·`controller-view-freeze.ts`·`admin/lib/i18n.tsx` 정리 — 단 `controller-view-freeze.ts`는 이후 cross-app 테스트 의존성 발견으로 복원 + `knip.json` entry 패턴 수정, `docs/audit/SYSTEM_AUDIT_2026-07-13/02_DATABASE.md` 참조), (3) root `decimal.js` 의존성 제거(`package.json`). 96점(100 미만)인 이유: knip `Unused exports 17 / Unused exported types 10 / Duplicate exports 7`은 LOW 잔존(엔진·ingest helper 중심, 이번 세션 범위 밖) — `bunx knip` 실측.
 
 ## 1. 감사 스냅샷 (baseline 고정)
 

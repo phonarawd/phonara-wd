@@ -5,11 +5,13 @@
 
 ## 점수
 
-| 항목         |                       점수 |
-| ------------ | -------------------------: |
-| **Frontend** | **78 / 100** (Strong 하단) |
+| 항목         |                                                      점수 |
+| ------------ | --------------------------------------------------------: |
+| **Frontend** | **78 / 100** (원 점수) → **86 / 100** (2026-07-13 재산정) |
 
-감점 근거: Empty state 정적 커버 39% (41 surfaces 무증거) · axe/a11y 실측 미검증 · R9 touch target WARN(Landing). IA 격리·상태관리 규율·표시 계약(196 contracts) 체계는 Strong.
+감점 근거(원 감사): Empty state 정적 커버 39% (41 surfaces 무증거) · axe/a11y 실측 미검증 · R9 touch target WARN(Landing). IA 격리·상태관리 규율·표시 계약(196 contracts) 체계는 Strong.
+
+**2026-07-13 재산정 (SA-02 VERIFIED_FIXED — 진성 gap만):** 41개 무증거 surface를 수동 재검토한 결과 대부분이 정적 스캐너의 false positive(공용 primitive로 위임된 로딩/에러 UI를 grep이 못 찾음)로 확인됐고, **진성 gap 5건**(casino-lobby 지갑 에러 상태 · install 페이지 로딩 피드백 · staking-positions 에러 a11y)을 실제로 수정했다. Landing touch target WARN(헤더 로그인 링크 · wallet-preview 출금 CTA)도 44px 이상으로 수정 완료. 86점(100 미만)인 이유: axe/a11y **실측**은 여전히 브라우저 기반(G13, 저사양 로컬 실행 금지)이라 UNVERIFIED로 남는다 — `docs/audit/PER_PAGE_UI_MATRIX.md` Wave 2 correction 섹션 참조.
 
 ## 1. IA · 경계 (2026-07-13 게이트 실측)
 

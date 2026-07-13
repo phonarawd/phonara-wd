@@ -5,11 +5,13 @@
 
 ## 점수
 
-| 항목        |                  점수 |
-| ----------- | --------------------: |
-| **Backend** | **85 / 100** (Strong) |
+| 항목        |                                                      점수 |
+| ----------- | --------------------------------------------------------: |
+| **Backend** | **85 / 100** (원 점수) → **89 / 100** (2026-07-13 재산정) |
 
-감점 근거: 시장 데이터 공급(provider missing_config · odds ingest 중단)이라는 운영 gap이 backend 표면 뒤에 남아 있음(코드 결함 아님 — H-03/H-05 UI fail-closed로 마감, 공급 복구는 운영 큐). 인증·관측·에러 계약 패턴 자체는 세계 수준.
+감점 근거(원 감사): 시장 데이터 공급(provider missing_config · odds ingest 중단)이라는 운영 gap이 backend 표면 뒤에 남아 있음(코드 결함 아님 — H-03/H-05 UI fail-closed로 마감, 공급 복구는 운영 큐). SA-05(공개 Edge 함수 CORS gateway 기본값 의존)는 이번 감사 신규 발견. 인증·관측·에러 계약 패턴 자체는 세계 수준.
+
+**2026-07-13 재산정 (SA-05 VERIFIED_FIXED):** `siwe-auth`·`product-analytics`에 `supabase/functions/_shared/cors.ts` 명시적 CORS 헤더 + OPTIONS preflight 응답 추가(정적 코드 검토로 검증 — 로컬 edge function 배포 도구 부재로 실배포 실측은 UNVERIFIED). 89점(100 미만)인 이유: 시장 데이터 공급 운영 gap은 operator/외부 API 키 의존이라 코드로 해소 불가 — 원 점수 그대로 유지되는 부분.
 
 ## 1. Edge Functions — 11개 (2026-07-13 디스크 실측)
 

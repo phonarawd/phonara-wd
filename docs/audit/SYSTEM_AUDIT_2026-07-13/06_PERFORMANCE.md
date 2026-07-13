@@ -5,11 +5,13 @@
 
 ## 점수
 
-| 항목            |                         점수 |
-| --------------- | ---------------------------: |
-| **Performance** | **58 / 100** (Material gaps) |
+| 항목            |                                                      점수 |
+| --------------- | --------------------------------------------------------: |
+| **Performance** | **58 / 100** (원 점수) → **63 / 100** (2026-07-13 재산정) |
 
-감점 근거: **R9-PERF-JS OPEN (HIGH)** — Web initial JS 539kb(원격 preview 실측) > SLO 450kb, web 21/21 state FAIL. LCP·console·overflow는 전 상태 PASS이고 Admin은 SLO 충족(402kb)이므로 50 미만은 아님. **2026-07-13 Wave 1 갱신:** 로컬 빌드 재계측(gzip) 557.66→519.31kB(-38.35kB, framer-motion 제거) — SLO는 여전히 미달, 점수 미조정(§6 근거).
+감점 근거(원 감사): **R9-PERF-JS OPEN (HIGH)** — Web initial JS 539kb(원격 preview 실측) > SLO 450kb, web 21/21 state FAIL. LCP·console·overflow는 전 상태 PASS이고 Admin은 SLO 충족(402kb)이므로 50 미만은 아님.
+
+**2026-07-13 재산정 (SA-06 VERIFIED_FIXED · R9-PERF-JS partial):** SA-06(계측 부재)은 완전히 마감 — sourcemap 직접 분석으로 정확한 청크 구성을 확보했고 route-level 코드스플릿이 이미 대부분 적용됨(pixi/lightweight-charts 모두 eager 그래프 밖)을 확인했다. R9-PERF-JS 자체는 실제 코드 수정(framer-motion 제거)으로 로컬 재계측 557.66→519.31kB(-38.35kB, -6.9%) 진짜 개선을 냈으나 **SLO 450kb는 여전히 미달** — 5점만 반영한 이유는 HIGH 심각도 blocker가 OPEN으로 남아 있고 Release Gate FAIL 원인이 해소되지 않았기 때문(§6 상세).
 
 ## 1. Primary blocker — `R9-PERF-JS` (OPEN)
 

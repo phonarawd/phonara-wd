@@ -6,11 +6,13 @@
 
 ## 점수
 
-| 항목         |                                                                                                             점수 |
-| ------------ | ---------------------------------------------------------------------------------------------------------------: |
-| **Database** | **82 / 100** (Strong) — 감사 원점수. Wave 0/5 조치 반영 재산정은 closeout 문서(`00_EXECUTIVE_SCORECARD.md`) 참조 |
+| 항목         |                                                      점수 |
+| ------------ | --------------------------------------------------------: |
+| **Database** | **82 / 100** (원 점수) → **85 / 100** (2026-07-13 재산정) |
 
 감점 근거(원 감사 시점): 로컬 migration 2건 원격 미적용(SA-01) · advisor WARN 215 잔존(수용된 표면이나 authenticated definer 206은 지속 감시 필요) · unused index 167. RLS 137/137 · advisor ERROR 0 · 보존 Σ=0 이력은 세계 수준.
+
+**2026-07-13 재산정 (SA-01 partial · SA-04 VERIFIED_FIXED):** SA-04(Edge/SQL RPC cross-use 미판정)는 `scripts/audit/generate-rpc-usage-matrix.ts`에 Edge Function·SQL call-site 스캔을 추가해 완전히 마감(§7 accepted waiver). SA-01은 migration 코드 측(commit·push·CI quality/e2e/advisors green)은 완료했으나, `sql` job 자체는 **여전히 RED** — 이번 세션에서 발견/조사한 사전 존재 conservation 버그 2건(`ew_e21_hedge_reduce_only_test.sql`·`ew_e22_sports_parity_test.sql`, 근본 원인 가설 대폭 축소했으나 미확정 — 위 표 참조)이 남아 있어 `stack:push-remote`는 아직 실행하지 않았다(96-prod-apply-agent-deny 정본 순서 준수). +3점만 반영한 이유: 이 두 conservation 버그는 **머니 코드**이며 sql job green 없이는 SA-01을 완전히 마감할 수 없다.
 
 ## 1. Migration parity (2026-07-13 실측)
 

@@ -5,11 +5,13 @@
 
 ## 점수
 
-| 항목         |                  점수 |
-| ------------ | --------------------: |
-| **Security** | **84 / 100** (Strong) |
+| 항목         |                                         점수 |
+| ------------ | -------------------------------------------: |
+| **Security** | **84 / 100** (변동 없음 — 2026-07-13 재확인) |
 
 감점 근거: H-09 leaked-password protection **BLOCKED_DEP** (Supabase Pro+ 요금제 의존 — 402 evidence) · authenticated definer WARN 206 상시 표면 · DR drill 미실시(§43 — Release pillar와 공유). Critical/High 코드 결함은 잔존 0.
+
+**2026-07-13 재확인 (Wave 6):** `bun run stack:auth-hibp-enable` 재실행 — 결과 불변(`PRO_PLAN_REQUIRED` 402, `docs/audit/SYSTEM_AUDIT_2026-07-13/07_RELEASE_READINESS.md` §6 증거). 코드/스크립트는 완전히 준비됐고 **operator의 Supabase Pro+ 결제만** 남은 유일한 블로커라 에이전트가 조정 가능한 점수 변동 없음.
 
 ## 1. Finding Registry 교차 (2026-07-13 기준 38건)
 
