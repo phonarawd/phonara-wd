@@ -181,18 +181,29 @@ export async function provisionTradeDeskE2EFixture(): Promise<TradeDeskE2EFixtur
 const TRADE_DESK_PATH_RE = /\/trade(?:\/|$|\?)/;
 
 const RETRIABLE_TRADE_NAV_RE =
-  /NS_BINDING_ABORTED|NS_ERROR_FAILURE|Frame load interrupted|interrupted by another navigation/i;
+  /NS_BINDING_ABORTED|NS_ERROR_FAILURE|Frame load interrupted|interrupted by another navigation|Navigation interrupted/i;
 
+const GOTO_TRADE_MAX_ATTEMPTS = 5;
+
+/** Firefox/Juggler often throws NS_ERROR_FAILURE on hard goto after login SPA settle. */
 async function gotoTradeRoute(page: Page, path: '/trade' | '/trade/futures'): Promise<void> {
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
+  for (let attempt = 1; attempt <= GOTO_TRADE_MAX_ATTEMPTS; attempt += 1) {
     try {
-      await page.goto(path, { waitUntil: 'domcontentloaded', timeout: 60_000 });
+      // Later attempts use `commit` — Firefox can fail before domcontentloaded fires.
+      const waitUntil = attempt <= 2 ? 'domcontentloaded' : 'commit';
+      await page.goto(path, { waitUntil, timeout: 60_000 });
       await page.waitForURL(TRADE_DESK_PATH_RE, { timeout: 15_000 });
       return;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      if (!RETRIABLE_TRADE_NAV_RE.test(message) || attempt === 3) throw error;
-      await page.waitForLoadState('domcontentloaded').catch(() => undefined);
+      if (!RETRIABLE_TRADE_NAV_RE.test(message) || attempt === GOTO_TRADE_MAX_ATTEMPTS) {
+        throw error;
+      }
+      // Reset navigation state before retry (cookies/localStorage for origin survive).
+      await page
+        .goto('about:blank', { waitUntil: 'commit', timeout: 10_000 })
+        .catch(() => undefined);
+      await new Promise((resolve) => setTimeout(resolve, 250 * attempt));
     }
   }
 }
@@ -226,6 +237,8 @@ export async function prepareTradeDeskSession(
     },
     { userId: fixture.userId },
   );
+  // Let post-login client redirects finish before hard goto (Firefox NS_ERROR_FAILURE).
+  await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => undefined);
   await gotoTradeRoute(page, '/trade');
   await dismissTradeEducationIfVisible(page);
   await page
@@ -278,6 +291,27 @@ export async function openMobileTradePanelIfNeeded(page: Page): Promise<void> {
     await mobileTab.click();
     await expect(page.getByTestId('trade-desk-mobile-panel-trade')).toBeVisible({
       timeout: 20_000,
+    });
+    await expandMobileTicketFoldIfNeeded(page);
+  }
+}
+
+/** DA W3 Fold3 — mobile order ticket starts collapsed; expand before ticket interactions. */
+export async function expandMobileTicketFoldIfNeeded(page: Page): Promise<void> {
+  const spotTicket = page.getByTestId('spot-order-ticket');
+  const futuresTicket = page.getByTestId('futures-order-ticket');
+  if (
+    (await spotTicket.isVisible().catch(() => false)) ||
+    (await futuresTicket.isVisible().catch(() => false))
+  ) {
+    return;
+  }
+
+  const foldToggle = page.getByTestId('trade-mobile-ticket-fold-toggle');
+  if (await foldToggle.isVisible().catch(() => false)) {
+    await foldToggle.click();
+    await expect(page.getByTestId('trade-mobile-ticket-fold-panel')).toBeVisible({
+      timeout: 15_000,
     });
   }
 }

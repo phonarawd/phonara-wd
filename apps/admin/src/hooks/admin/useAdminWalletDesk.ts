@@ -14,17 +14,23 @@ import type {
   AdminWithdrawRow,
   DepositFilters,
   DepositMethod,
+  DepositProofStatus,
   DepositStatus,
   WithdrawFilters,
   WithdrawStatus,
 } from './useAdminWalletDeskMock';
 import { callRpc } from '../../lib/rpc';
+import {
+  ADMIN_KRW_PROOF_REVIEW_RPC,
+  ADMIN_KRW_PROOF_STORAGE_BUCKET,
+} from '@/domain/admin-krw-proof-review-display-contract';
 
 export type {
   AdminDepositReconRow,
   AdminWithdrawRow,
   DepositFilters,
   DepositMethod,
+  DepositProofStatus,
   DepositStatus,
   WithdrawFilters,
   WithdrawMethod,
@@ -81,6 +87,11 @@ function mapDepositRow(row: CryptoDepositRow): AdminDepositReconRow {
   };
 }
 
+function mapProofStatus(status: string | null | undefined): DepositProofStatus {
+  if (status === 'pending' || status === 'approved' || status === 'rejected') return status;
+  return 'none';
+}
+
 function mapKrwDepositRow(row: KrwDepositRow): AdminDepositReconRow {
   return {
     id: row.id,
@@ -90,6 +101,8 @@ function mapKrwDepositRow(row: KrwDepositRow): AdminDepositReconRow {
     status: mapDepositStatus(row.status),
     createdAt: row.created_at,
     reference: row.reference_code,
+    proofStatus: mapProofStatus(row.proof_status),
+    proofPath: row.proof_path ?? null,
   };
 }
 
@@ -313,21 +326,13 @@ export function useAdminWalletDesk() {
       if (!row) return false;
       try {
         if (row.method === 'giftcard') {
-          await (
-            supabase as {
-              rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
-            }
-          ).rpc('rpc_admin_approve_giftcard_deposit', {
+          await callRpc('rpc_admin_approve_giftcard_deposit', {
             p_deposit_id: id,
             p_reason: reason.trim(),
           });
         } else if (row.method === 'krw') {
           const transferId = `admin-${id.slice(0, 8)}-${Date.now()}`;
-          await (
-            supabase as {
-              rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
-            }
-          ).rpc('rpc_admin_match_krw_deposit', {
+          await callRpc('rpc_admin_match_krw_deposit', {
             p_deposit_id: id,
             p_transfer_id: transferId,
             p_reason: reason.trim(),
@@ -384,11 +389,7 @@ export function useAdminWalletDesk() {
     flagDeposit: async (id: string, reason: string): Promise<boolean> => {
       if (reason.trim().length < MIN_REASON) return false;
       try {
-        await (
-          supabase as {
-            rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
-          }
-        ).rpc('rpc_admin_flag_deposit', {
+        await callRpc('rpc_admin_flag_deposit', {
           p_deposit_id: id,
           p_reason: reason.trim(),
         });
@@ -405,6 +406,42 @@ export function useAdminWalletDesk() {
       } catch {
         return false;
       }
+    },
+    reviewKrwDepositProof: async (
+      id: string,
+      decision: 'approved' | 'rejected',
+      reason: string,
+    ): Promise<boolean> => {
+      if (reason.trim().length < MIN_REASON) return false;
+      const row = deposits.find((d) => d.id === id);
+      if (!row || row.method !== 'krw') return false;
+      try {
+        await callRpc(ADMIN_KRW_PROOF_REVIEW_RPC, {
+          p_deposit_id: id,
+          p_decision: decision,
+          p_reason: reason.trim(),
+        });
+        appendAudit({
+          id: `dep-proof-${decision}-${id}-${Date.now()}`,
+          at: new Date().toISOString(),
+          actorKey: 'admin.primitive.audit.actor.system',
+          actionKey: 'admin.deposits.audit.proofReview',
+          subject: id,
+          reason: reason.trim(),
+        });
+        await invalidate();
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    getKrwDepositProofUrl: async (proofPath: string): Promise<string | null> => {
+      if (!proofPath.trim()) return null;
+      const { data, error } = await supabase.storage
+        .from(ADMIN_KRW_PROOF_STORAGE_BUCKET)
+        .createSignedUrl(proofPath, 300);
+      if (error) return null;
+      return data.signedUrl;
     },
     resetForTest: () => {
       setWithdrawFilters({ search: '', status: [], method: [] });

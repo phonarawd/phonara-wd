@@ -7,8 +7,8 @@ export const TRADE_FUTURES_UI_CAPABILITIES = {
   partialClose: true,
   /** `rpc_adjust_isolated_margin` — isolated positions only */
   isolatedMarginAdjust: true,
-  /** No reduce-only order RPC — hide reduce-only toggle */
-  reduceOnlyOrders: false,
+  /** `p_reduce_only` on `rpc_place_limit_order` / `rpc_place_stop_order` — E21 UI unlock. */
+  reduceOnlyOrders: true,
   /** `rpc_update_futures_position_sltp` — post-open TP/SL edit */
   positionTpSlEdit: true,
   /**

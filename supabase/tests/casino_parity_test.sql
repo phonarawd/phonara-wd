@@ -205,4 +205,69 @@ BEGIN
 END;
 $$;
 
+-- ============================================================
+-- E23 GROWTH — progressive · live crash · PF seed controls pin
+-- One-shot _game_result paths above remain the 12-game authority.
+-- Money/Σ=0 paths: ew_e23_casino_live_test.sql (GATE).
+-- ============================================================
+DO $$
+BEGIN
+  ASSERT to_regprocedure(
+    'public.rpc_progressive_start(text, text, text, jsonb, text, text, boolean)'
+  ) IS NOT NULL,
+    'E23 GROWTH: rpc_progressive_start missing';
+  ASSERT to_regprocedure(
+    'public.rpc_progressive_step(uuid, jsonb, text)'
+  ) IS NOT NULL,
+    'E23 GROWTH: rpc_progressive_step missing';
+  ASSERT to_regprocedure(
+    'public.rpc_progressive_cashout(uuid, text)'
+  ) IS NOT NULL,
+    'E23 GROWTH: rpc_progressive_cashout missing';
+  ASSERT to_regprocedure(
+    'public.rpc_live_crash_place_bet(text, text, text, text, text, boolean)'
+  ) IS NOT NULL,
+    'E23 GROWTH: rpc_live_crash_place_bet missing';
+  ASSERT to_regprocedure(
+    'public.rpc_live_crash_cashout(uuid, text)'
+  ) IS NOT NULL,
+    'E23 GROWTH: rpc_live_crash_cashout missing';
+  ASSERT to_regprocedure('public.rpc_live_crash_get_current()') IS NOT NULL,
+    'E23 GROWTH: rpc_live_crash_get_current missing';
+  ASSERT to_regprocedure('public.rpc_get_game_pf_state()') IS NOT NULL,
+    'E23 GROWTH: rpc_get_game_pf_state missing';
+  ASSERT to_regprocedure('public.rpc_set_game_client_seed(text)') IS NOT NULL,
+    'E23 GROWTH: rpc_set_game_client_seed missing';
+  ASSERT to_regprocedure('public.rpc_rotate_game_server_seed(text)') IS NOT NULL,
+    'E23 GROWTH: rpc_rotate_game_server_seed missing';
+
+  ASSERT EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'user_game_pf_state'
+  ), 'E23 GROWTH: user_game_pf_state missing';
+  ASSERT EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'game_progressive_sessions'
+  ), 'E23 GROWTH: game_progressive_sessions missing';
+  ASSERT EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'live_crash_rounds'
+  ), 'E23 GROWTH: live_crash_rounds missing';
+  ASSERT EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'live_crash_bets'
+  ), 'E23 GROWTH: live_crash_bets missing';
+
+  -- Server autobet must stay absent (parity growth must not introduce it).
+  ASSERT NOT EXISTS (
+    SELECT 1 FROM pg_proc p
+    JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public'
+      AND p.proname ILIKE '%autobet%'
+  ), 'E23 GROWTH: server autobet RPC must not exist';
+
+  RAISE NOTICE 'E23 GROWTH OK — progressive · live crash · PF RPCs pinned · one-shot parity suite intact';
+END;
+$$;
+
 ROLLBACK;

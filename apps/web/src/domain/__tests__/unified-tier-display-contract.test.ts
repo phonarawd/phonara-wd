@@ -35,7 +35,14 @@ describe('unified-tier-display-contract', () => {
   });
 
   it('locks Earn VIP enum order and XP next-tier thresholds from engine', () => {
-    expect(EARN_VIP_TIER_ORDER).toEqual(['bronze', 'silver', 'gold', 'platinum', 'diamond']);
+    expect(EARN_VIP_TIER_ORDER).toEqual([
+      'bronze',
+      'silver',
+      'gold',
+      'platinum',
+      'diamond',
+      'prime_elite',
+    ]);
     expect(EARN_VIP_XP_NEXT_TIER.bronze).toBe(5000);
     expect(EARN_VIP_XP_NEXT_TIER.platinum).toBe(500000);
   });
@@ -79,21 +86,21 @@ describe('unified-tier-display-contract', () => {
     expect(liveRows.some((row) => row.hook.includes('TierProgressPanel'))).toBe(true);
   });
 
-  it('flags /tier guide as static mock (must wire engine before Phase 7 DONE)', () => {
-    expect(isTierGuideSurfaceMockOnly()).toBe(true);
+  it('wires /tier guide to earn VIP engine (P12 marketing hub)', () => {
+    expect(isTierGuideSurfaceMockOnly()).toBe(false);
     const tierRow = UNIFIED_TIER_SURFACE_PLACEMENT.find((row) => row.route === '/tier');
-    expect(tierRow?.vipDisplaySource).toBe('static_mock');
-    expect(tierRow?.wireStatus).toBe('missing');
+    expect(tierRow?.vipDisplaySource).toBe('earn_vip_engine');
+    expect(tierRow?.wireStatus).toBe('live');
   });
 
-  it('marks platform-wide tier gating domains as engine MISSING (Option B backlog)', () => {
-    expect(TIER_GATING_BY_DOMAIN.sports_bet_policy.engine).toBe('missing');
-    expect(TIER_GATING_BY_DOMAIN.trade_leverage_cap.engine).toBe('missing');
-    expect(TIER_GATING_BY_DOMAIN.casino_stake_cap.engine).toBe('missing');
+  it('marks Option B trade/sports/casino gating domains as engine EXISTS (E4)', () => {
+    expect(TIER_GATING_BY_DOMAIN.sports_bet_policy.engine).toBe('exists');
+    expect(TIER_GATING_BY_DOMAIN.trade_leverage_cap.engine).toBe('exists');
+    expect(TIER_GATING_BY_DOMAIN.casino_stake_cap.engine).toBe('exists');
     const missing = listTierGatingMissingEngine();
-    expect(missing).toContain('sports_bet_policy');
-    expect(missing).toContain('trade_leverage_cap');
-    expect(missing).toContain('casino_stake_cap');
+    expect(missing).not.toContain('sports_bet_policy');
+    expect(missing).not.toContain('trade_leverage_cap');
+    expect(missing).not.toContain('casino_stake_cap');
   });
 
   it('documents EXISTS earn gating (limits, golden earth, missions)', () => {

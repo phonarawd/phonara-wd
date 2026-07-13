@@ -6,6 +6,7 @@
 
 import type { MessageKey } from '@phonara/i18n';
 
+import { LAUNCH_GATES } from '../lib/launch-gates';
 import { HOME_MISSIONS_ROUTE } from './home-missions-display-contract';
 import { TIER_BENEFITS_NARRATIVE_KEY_PREFIX } from './platform-narrative-display-contract';
 import { REFERRAL_HUB_ROUTE } from './referral-hub-display-contract';
@@ -44,7 +45,7 @@ export const TIER_BENEFIT_COLUMNS: readonly TierBenefitColumnDef[] = [
   { id: 'support', engine: 'exists', labelKey: 'tier.guide.table.support' },
 ] as const;
 
-/** Engine-gap perks — hidden until E4/E-Wave (§3.5 · §17.3 · PLATFORM_NARRATIVE_CANON). */
+/** Engine-gap perks — hidden until GATE unlocks fee display / elite surfaces. */
 export const TIER_BENEFIT_GAP_FEATURES = [
   'trade_fee_discount',
   'sports_fee_discount',
@@ -128,6 +129,12 @@ export function listVisibleTierBenefitColumns(): readonly TierBenefitColumnDef[]
 }
 
 export function shouldExposeTierBenefitGap(feature: TierBenefitGapFeature): boolean {
+  if (feature === 'trade_fee_discount' || feature === 'sports_fee_discount') {
+    return LAUNCH_GATES.tierFeeDisplayTruth;
+  }
+  if (feature === 'prime_elite_tier') {
+    return LAUNCH_GATES.tierEliteSurface === true;
+  }
   void feature;
   return false;
 }
@@ -159,7 +166,8 @@ export function buildTierDecayPolicyRows(): TierDecayPolicyRow[] {
     tier,
     tierLabelKey: `earn.tier.${tier}` as MessageKey,
     conditionKey: `tier.guide.decay.${tier}.condition` as MessageKey,
-    maintenanceWindowDays: tier === 'bronze' ? null : tier === 'diamond' ? 60 : 45,
+    maintenanceWindowDays:
+      tier === 'bronze' || tier === 'prime_elite' ? null : tier === 'diamond' ? 60 : 45,
   }));
 }
 

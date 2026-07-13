@@ -73,6 +73,15 @@ function makeEngine(overrides: Partial<KrwDepositControllerView> = {}): KrwDepos
     copyReference: vi.fn(),
     copyState: 'idle',
     refreshRates: vi.fn(),
+    proofLive: true,
+    showProofUpload: false,
+    proofStatus: null,
+    proofStatusKey: null,
+    proofFileName: null,
+    proofBusy: false,
+    proofErrorKey: null,
+    canAttachProof: false,
+    handleProofSelect: vi.fn(),
     ...overrides,
   };
 }
@@ -103,12 +112,53 @@ describe('KrwDepositPage', () => {
     expect(screen.getByText('USDT/KRW 환율')).toBeInTheDocument();
   });
 
-  it('does not render proof upload controls (P1 excluded)', () => {
-    renderPage(makeEngine());
+  it('does not render proof upload controls before deposit success', () => {
+    renderPage(makeEngine({ showProofUpload: false }));
 
-    expect(screen.queryByLabelText(/upload/i)).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /증빙|upload|파일/i })).not.toBeInTheDocument();
     expect(screen.queryByTestId('krw-deposit-proof-upload')).not.toBeInTheDocument();
+  });
+
+  it('renders M-21 proof upload on success when gate live', () => {
+    renderPage(
+      makeEngine({
+        submitted: true,
+        submitResult: {
+          ok: true,
+          deposit_id: 'dep-1',
+          reference_code: 'REF1234567',
+          expected_phon: '36.231884',
+          sla_hours: '24',
+        },
+        showProofUpload: true,
+        canAttachProof: true,
+      }),
+    );
+
+    expect(screen.getByTestId('krw-deposit-proof-upload')).toBeInTheDocument();
+    expect(screen.getByTestId('krw-deposit-proof-ledger-notice')).toBeInTheDocument();
+    expect(screen.getByTestId('krw-deposit-proof-choose')).toBeEnabled();
+  });
+
+  it('shows pending proof status without choose control when already attached', () => {
+    renderPage(
+      makeEngine({
+        submitted: true,
+        submitResult: {
+          ok: true,
+          deposit_id: 'dep-1',
+          reference_code: 'REF1234567',
+          expected_phon: '36.231884',
+          sla_hours: '24',
+        },
+        showProofUpload: true,
+        proofStatus: 'pending',
+        proofStatusKey: 'wallet.deposit.krw.proof.status.pending',
+        canAttachProof: false,
+      }),
+    );
+
+    expect(screen.getByTestId('krw-deposit-proof-status')).toBeInTheDocument();
+    expect(screen.queryByTestId('krw-deposit-proof-choose')).not.toBeInTheDocument();
   });
 
   it('opens confirm dialog from submit and shows expected PHON from RPC result', () => {

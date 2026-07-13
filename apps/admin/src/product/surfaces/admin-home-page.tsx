@@ -12,6 +12,7 @@ import {
   queueTypeLabelKey,
 } from '@/product/bridge/ops-health-labels';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
@@ -216,76 +217,71 @@ export function AdminHomePage() {
           </h3>
           <p className="text-foreground-muted m-0 text-sm">{t('admin.alerts.description')}</p>
         </div>
-        {isLoading ? (
-          <Skeleton className="h-40 rounded-(--ds-radius-lg)" />
-        ) : activeAlerts.length === 0 ? (
-          <EmptyState
-            title={t('admin.alerts.empty')}
-            description={t('admin.overview.empty.description')}
-            actionLabel={t('admin.overview.empty.cta')}
-            onAction={scrollToHealth}
-          />
-        ) : (
-          <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-            <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-              <thead className="bg-surface-raised text-foreground-muted">
-                <tr>
-                  <th className="px-4 py-3 font-medium">{t('admin.alerts.col.summary')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.alerts.col.severity')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.alerts.col.status')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.alerts.col.lastSeen')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.alerts.col.action')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {activeAlerts.map((alert) => (
-                  <tr key={alert.id} className="border-line border-t">
-                    <td className="text-foreground px-4 py-3">{alert.summary}</td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={healthStatusClass(
-                          alert.severity === 'critical' ? 'critical' : 'warning',
-                        )}
-                      >
-                        {t(
-                          alert.severity === 'critical'
-                            ? 'admin.alerts.severity.critical'
-                            : 'admin.alerts.severity.warning',
-                        )}
-                      </span>
-                    </td>
-                    <td className="text-foreground-muted px-4 py-3">
-                      {alert.status === 'open' ? t('ux.status.pending') : t('ux.status.reviewing')}
-                    </td>
-                    <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                      {formatWhen(alert.lastSeenAt, locale)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-2">
-                        {alert.status === 'open' ? (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openDialog('ack', alert)}
-                          >
-                            {t('admin.overview.action.alertAck')}
-                          </Button>
-                        ) : null}
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => openDialog('resolve', alert)}
-                        >
-                          {t('admin.overview.action.alertResolve')}
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <AdminTable
+          columns={[
+            {
+              id: 'summary',
+              header: t('admin.alerts.col.summary'),
+              cell: ({ row }) => row.summary,
+            },
+            {
+              id: 'severity',
+              header: t('admin.alerts.col.severity'),
+              cell: ({ row }) => (
+                <span
+                  className={healthStatusClass(
+                    row.severity === 'critical' ? 'critical' : 'warning',
+                  )}
+                >
+                  {t(
+                    row.severity === 'critical'
+                      ? 'admin.alerts.severity.critical'
+                      : 'admin.alerts.severity.warning',
+                  )}
+                </span>
+              ),
+            },
+            {
+              id: 'status',
+              header: t('admin.alerts.col.status'),
+              cell: ({ row }) =>
+                row.status === 'open' ? t('ux.status.pending') : t('ux.status.reviewing'),
+              meta: { className: 'text-foreground-muted' },
+            },
+            {
+              id: 'lastSeen',
+              header: t('admin.alerts.col.lastSeen'),
+              cell: ({ row }) => formatWhen(row.lastSeenAt, locale),
+              meta: { className: 'text-foreground-muted tabular-nums' },
+            },
+          ]}
+          rows={activeAlerts}
+          getRowId={(row) => row.id}
+          loading={isLoading}
+          loadingRowCount={4}
+          minWidth={640}
+          empty={
+            <EmptyState
+              title={t('admin.alerts.empty')}
+              description={t('admin.overview.empty.description')}
+              actionLabel={t('admin.overview.empty.cta')}
+              onAction={scrollToHealth}
+            />
+          }
+          rowActionsHeader={t('admin.alerts.col.action')}
+          rowActions={(alert) => (
+            <>
+              {alert.status === 'open' ? (
+                <Button variant="outline" size="sm" onClick={() => openDialog('ack', alert)}>
+                  {t('admin.overview.action.alertAck')}
+                </Button>
+              ) : null}
+              <Button variant="primary" size="sm" onClick={() => openDialog('resolve', alert)}>
+                {t('admin.overview.action.alertResolve')}
+              </Button>
+            </>
+          )}
+        />
       </section>
 
       <section ref={healthSectionRef} aria-labelledby="admin-health-heading">

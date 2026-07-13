@@ -43,4 +43,10 @@ describe('normalizeVendorOddsPatch', () => {
       capturedAt: '2026-06-16T00:00:00.000Z',
     });
   });
+
+  it('rejects number odds at the string-only boundary', () => {
+    expect(() =>
+      normalizeVendorOddsPatch('outcome-1', 2.05 as unknown as string, '2026-06-16T00:00:00.000Z'),
+    ).toThrow(/requires string/);
+  });
 });

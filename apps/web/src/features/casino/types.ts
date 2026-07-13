@@ -66,5 +66,5 @@ export interface RecentBet {
 /** Manual `requestBet()` — no silent return. */
 export type ManualBetResult = 'placed' | 'confirm_opened' | 'blocked' | 'skipped';
 
-/** Auto `autoBet()` — confirm pref bypassed. */
+/** Auto `autoBet(stakeOverride?)` — confirm pref bypassed; returns settled bet or null. */
 export type AutoBetResult = 'placed' | 'blocked';

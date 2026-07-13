@@ -24,6 +24,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitiv
 import { EmptyState } from '@/product/primitives/empty-state';
 import { Input } from '@/product/primitives/input';
 import { cn } from '@/product/primitives/lib/cn';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 import { healthStatusClass } from '@/product/surfaces/admin-alert-action-dialog';
 import { ADMIN_RBAC_DENIED_KEY, adminRbacActionProps } from '@/product/surfaces/admin-rbac-action';
@@ -295,52 +296,51 @@ export function AdminOpsPage() {
             onAction={handleRefresh}
           />
         ) : (
-          <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-            <table className="w-full min-w-[880px] border-collapse text-left text-sm">
-              <thead className="bg-surface-raised text-foreground-muted">
-                <tr>
-                  <th className="px-4 py-3 font-medium">
-                    {t('admin.operations.health.col.checkKey')}
-                  </th>
-                  <th className="px-4 py-3 font-medium">
-                    {t('admin.operations.health.col.category')}
-                  </th>
-                  <th className="px-4 py-3 font-medium">
-                    {t('admin.operations.health.col.status')}
-                  </th>
-                  <th className="px-4 py-3 font-medium">
-                    {t('admin.operations.health.col.summary')}
-                  </th>
-                  <th className="px-4 py-3 font-medium">
-                    {t('admin.operations.health.col.lastRun')}
-                  </th>
-                  <th className="px-4 py-3 font-medium">{t('admin.operations.health.col.lag')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredHealth.map((row) => (
-                  <tr key={row.id} className="border-line border-t">
-                    <td className="text-foreground px-4 py-3 font-mono text-xs">{row.checkKey}</td>
-                    <td className="text-foreground-muted px-4 py-3">
-                      {t(HEALTH_CATEGORY_KEYS[row.category])}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={healthStatusClass(row.status)}>
-                        {t(HEALTH_STATUS_KEYS[row.status])}
-                      </span>
-                    </td>
-                    <td className="text-foreground px-4 py-3">{row.summary}</td>
-                    <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                      {formatWhen(row.lastRunAt, locale)}
-                    </td>
-                    <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                      {row.lagSeconds ?? '—'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <AdminTable
+            columns={[
+              {
+                id: 'checkKey',
+                header: t('admin.operations.health.col.checkKey'),
+                cell: ({ row }) => row.checkKey,
+                meta: { className: 'font-mono text-xs' },
+              },
+              {
+                id: 'category',
+                header: t('admin.operations.health.col.category'),
+                cell: ({ row }) => t(HEALTH_CATEGORY_KEYS[row.category]),
+                meta: { className: 'text-foreground-muted' },
+              },
+              {
+                id: 'status',
+                header: t('admin.operations.health.col.status'),
+                cell: ({ row }) => (
+                  <span className={healthStatusClass(row.status)}>
+                    {t(HEALTH_STATUS_KEYS[row.status])}
+                  </span>
+                ),
+              },
+              {
+                id: 'summary',
+                header: t('admin.operations.health.col.summary'),
+                cell: ({ row }) => row.summary,
+              },
+              {
+                id: 'lastRun',
+                header: t('admin.operations.health.col.lastRun'),
+                cell: ({ row }) => formatWhen(row.lastRunAt, locale),
+                meta: { className: 'text-foreground-muted tabular-nums' },
+              },
+              {
+                id: 'lag',
+                header: t('admin.operations.health.col.lag'),
+                cell: ({ row }) => row.lagSeconds ?? '—',
+                meta: { className: 'text-foreground-muted tabular-nums' },
+              },
+            ]}
+            rows={filteredHealth}
+            getRowId={(row) => row.id}
+            minWidth={880}
+          />
         )}
       </section>
 
@@ -398,62 +398,59 @@ export function AdminOpsPage() {
             onAction={handleRefresh}
           />
         ) : (
-          <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-            <table className="w-full min-w-[880px] border-collapse text-left text-sm">
-              <thead className="bg-surface-raised text-foreground-muted">
-                <tr>
-                  <th className="px-4 py-3 font-medium">{t('admin.operations.kill.col.label')}</th>
-                  <th className="px-4 py-3 font-medium">
-                    {t('admin.operations.kill.col.category')}
-                  </th>
-                  <th className="px-4 py-3 font-medium">{t('admin.operations.kill.col.status')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.operations.kill.col.action')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredKillSwitches.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="border-line border-t"
-                    data-testid={`admin-kill-${row.id}`}
-                  >
-                    <td className="text-foreground px-4 py-3">
-                      <p className="m-0 font-medium">{t(row.labelKey as MessageKey)}</p>
-                      <p className="text-foreground-muted m-0 font-mono text-xs">{row.switchKey}</p>
-                    </td>
-                    <td className="text-foreground-muted px-4 py-3">
-                      {t(KILL_CATEGORY_KEYS[row.category])}
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge
-                        state={row.enabled ? 'settled' : 'halted'}
-                        label={
-                          row.enabled
-                            ? t('admin.operations.kill.status.on')
-                            : t('admin.operations.kill.status.off')
-                        }
-                      />
-                    </td>
-                    <td className="px-4 py-3">
-                      <Button
-                        size="sm"
-                        variant={row.enabled ? 'outline' : 'primary'}
-                        {...adminRbacActionProps(canKillSwitch, rbacDenied)}
-                        onClick={() => {
-                          if (!canKillSwitch) return;
-                          setKillAction({ row, enabled: !row.enabled });
-                        }}
-                      >
-                        {row.enabled
-                          ? t('admin.operations.kill.action.disable')
-                          : t('admin.operations.kill.action.enable')}
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <AdminTable
+            columns={[
+              {
+                id: 'label',
+                header: t('admin.operations.kill.col.label'),
+                cell: ({ row }) => (
+                  <>
+                    <p className="m-0 font-medium">{t(row.labelKey as MessageKey)}</p>
+                    <p className="text-foreground-muted m-0 font-mono text-xs">{row.switchKey}</p>
+                  </>
+                ),
+              },
+              {
+                id: 'category',
+                header: t('admin.operations.kill.col.category'),
+                cell: ({ row }) => t(KILL_CATEGORY_KEYS[row.category]),
+                meta: { className: 'text-foreground-muted' },
+              },
+              {
+                id: 'status',
+                header: t('admin.operations.kill.col.status'),
+                cell: ({ row }) => (
+                  <StatusBadge
+                    state={row.enabled ? 'settled' : 'halted'}
+                    label={
+                      row.enabled
+                        ? t('admin.operations.kill.status.on')
+                        : t('admin.operations.kill.status.off')
+                    }
+                  />
+                ),
+              },
+            ]}
+            rows={filteredKillSwitches}
+            getRowId={(row) => row.id}
+            getRowTestId={(row) => `admin-kill-${row.id}`}
+            minWidth={880}
+            rowActionsHeader={t('admin.operations.kill.col.action')}
+            rowActions={(row) => (
+              <Button
+                size="sm"
+                variant={row.enabled ? 'outline' : 'primary'}
+                {...adminRbacActionProps(canKillSwitch, rbacDenied)}
+                onClick={() => {
+                  if (canKillSwitch) setKillAction({ row, enabled: !row.enabled });
+                }}
+              >
+                {row.enabled
+                  ? t('admin.operations.kill.action.disable')
+                  : t('admin.operations.kill.action.enable')}
+              </Button>
+            )}
+          />
         )}
       </section>
 
@@ -476,71 +473,69 @@ export function AdminOpsPage() {
             onAction={handleRefresh}
           />
         ) : (
-          <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-            <table className="w-full min-w-[880px] border-collapse text-left text-sm">
-              <thead className="bg-surface-raised text-foreground-muted">
-                <tr>
-                  <th className="px-4 py-3 font-medium">{t('admin.ops.markets.col.symbol')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.ops.markets.col.status')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.ops.markets.col.oracle')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.ops.markets.col.reason')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.ops.markets.col.haltedAt')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.ops.markets.col.action')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tradeMarkets.map((row) => (
-                  <tr key={row.symbol} className="border-line border-t">
-                    <td className="text-foreground px-4 py-3 font-mono text-xs">{row.symbol}</td>
-                    <td className="px-4 py-3">
-                      <StatusBadge
-                        state={marketStatusState(row.isHalted)}
-                        label={
-                          row.isHalted
-                            ? t('admin.ops.markets.status.halted')
-                            : t('admin.ops.markets.status.active')
-                        }
-                      />
-                    </td>
-                    <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                      {row.oraclePrice ?? '—'}
-                    </td>
-                    <td className="text-foreground-muted px-4 py-3">{row.haltReason ?? '—'}</td>
-                    <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                      {formatWhen(row.haltedAt, locale)}
-                    </td>
-                    <td className="px-4 py-3">
-                      {row.isHalted ? (
-                        <Button
-                          size="sm"
-                          variant="primary"
-                          {...adminRbacActionProps(canKillSwitch, rbacDenied)}
-                          onClick={() => {
-                            if (!canKillSwitch) return;
-                            setMarketAction({ kind: 'resume', row });
-                          }}
-                        >
-                          {t('admin.ops.markets.action.resume')}
-                        </Button>
-                      ) : (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          {...adminRbacActionProps(canKillSwitch, rbacDenied)}
-                          onClick={() => {
-                            if (!canKillSwitch) return;
-                            setMarketAction({ kind: 'halt', row });
-                          }}
-                        >
-                          {t('admin.ops.markets.action.halt')}
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <AdminTable
+            columns={[
+              {
+                id: 'symbol',
+                header: t('admin.ops.markets.col.symbol'),
+                cell: ({ row }) => row.symbol,
+                meta: { className: 'font-mono text-xs' },
+              },
+              {
+                id: 'status',
+                header: t('admin.ops.markets.col.status'),
+                cell: ({ row }) => (
+                  <StatusBadge
+                    state={marketStatusState(row.isHalted)}
+                    label={
+                      row.isHalted
+                        ? t('admin.ops.markets.status.halted')
+                        : t('admin.ops.markets.status.active')
+                    }
+                  />
+                ),
+              },
+              {
+                id: 'oracle',
+                header: t('admin.ops.markets.col.oracle'),
+                cell: ({ row }) => row.oraclePrice ?? '—',
+                meta: { className: 'text-foreground-muted tabular-nums' },
+              },
+              {
+                id: 'reason',
+                header: t('admin.ops.markets.col.reason'),
+                cell: ({ row }) => row.haltReason ?? '—',
+                meta: { className: 'text-foreground-muted' },
+              },
+              {
+                id: 'haltedAt',
+                header: t('admin.ops.markets.col.haltedAt'),
+                cell: ({ row }) => formatWhen(row.haltedAt, locale),
+                meta: { className: 'text-foreground-muted tabular-nums' },
+              },
+            ]}
+            rows={tradeMarkets}
+            getRowId={(row) => row.symbol}
+            minWidth={880}
+            rowActionsHeader={t('admin.ops.markets.col.action')}
+            rowActions={(row) => (
+              <Button
+                size="sm"
+                variant={row.isHalted ? 'primary' : 'outline'}
+                {...adminRbacActionProps(canKillSwitch, rbacDenied)}
+                onClick={() => {
+                  if (canKillSwitch)
+                    setMarketAction({ kind: row.isHalted ? 'resume' : 'halt', row });
+                }}
+              >
+                {t(
+                  row.isHalted
+                    ? 'admin.ops.markets.action.resume'
+                    : 'admin.ops.markets.action.halt',
+                )}
+              </Button>
+            )}
+          />
         )}
 
         {haltedMarketCount > 0 ? (
@@ -568,48 +563,53 @@ export function AdminOpsPage() {
             }}
           />
         ) : (
-          <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-            <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-              <thead className="bg-surface-raised text-foreground-muted">
-                <tr>
-                  <th className="px-4 py-3 font-medium">{t('admin.alerts.col.summary')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.alerts.col.severity')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.alerts.col.status')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.alerts.col.occurrences')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.alerts.col.lastSeen')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {alerts.map((alert) => (
-                  <tr key={alert.id} className="border-line border-t">
-                    <td className="text-foreground px-4 py-3">{alert.summary}</td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={healthStatusClass(
-                          alert.severity === 'critical' ? 'critical' : 'warning',
-                        )}
-                      >
-                        {t(
-                          alert.severity === 'critical'
-                            ? 'admin.alerts.severity.critical'
-                            : 'admin.alerts.severity.warning',
-                        )}
-                      </span>
-                    </td>
-                    <td className="text-foreground-muted px-4 py-3">
-                      {t(alertStatusKey(alert.status))}
-                    </td>
-                    <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                      {String(alert.occurrenceCount)}
-                    </td>
-                    <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                      {formatWhen(alert.lastSeenAt, locale)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <AdminTable
+            columns={[
+              {
+                id: 'summary',
+                header: t('admin.alerts.col.summary'),
+                cell: ({ row }) => row.summary,
+              },
+              {
+                id: 'severity',
+                header: t('admin.alerts.col.severity'),
+                cell: ({ row }) => (
+                  <span
+                    className={healthStatusClass(
+                      row.severity === 'critical' ? 'critical' : 'warning',
+                    )}
+                  >
+                    {t(
+                      row.severity === 'critical'
+                        ? 'admin.alerts.severity.critical'
+                        : 'admin.alerts.severity.warning',
+                    )}
+                  </span>
+                ),
+              },
+              {
+                id: 'status',
+                header: t('admin.alerts.col.status'),
+                cell: ({ row }) => t(alertStatusKey(row.status)),
+                meta: { className: 'text-foreground-muted' },
+              },
+              {
+                id: 'occurrences',
+                header: t('admin.alerts.col.occurrences'),
+                cell: ({ row }) => String(row.occurrenceCount),
+                meta: { className: 'text-foreground-muted tabular-nums' },
+              },
+              {
+                id: 'lastSeen',
+                header: t('admin.alerts.col.lastSeen'),
+                cell: ({ row }) => formatWhen(row.lastSeenAt, locale),
+                meta: { className: 'text-foreground-muted tabular-nums' },
+              },
+            ]}
+            rows={alerts}
+            getRowId={(row) => row.id}
+            minWidth={720}
+          />
         )}
       </section>
 

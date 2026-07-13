@@ -154,8 +154,8 @@ export function useTradeRealtimeFeedback(enabled: boolean): void {
     ? [tradingKeys.openOrders(userId), tradingKeys.orderFills(userId)]
     : undefined;
   const positionsInvalidate = userId ? [tradingKeys.futuresPositions(userId)] : undefined;
-  const spotFillsInvalidate = userId ? [tradingKeys.spotOrderFills(userId)] : undefined;
-  const futuresFillsInvalidate = userId ? [tradingKeys.orderFills(userId)] : undefined;
+  // PIR E2: fill tables dropped from publication — open_orders invalidate
+  // already includes spotOrderFills / orderFills (see spotInvalidate / futuresInvalidate).
 
   useRealtime({
     table: 'spot_open_orders',
@@ -176,19 +176,5 @@ export function useTradeRealtimeFeedback(enabled: boolean): void {
     filter,
     enabled: enabled && !!userId,
     invalidate: positionsInvalidate,
-  });
-
-  useRealtime({
-    table: 'spot_order_fills',
-    event: 'INSERT',
-    enabled: enabled && !!userId,
-    invalidate: spotFillsInvalidate,
-  });
-
-  useRealtime({
-    table: 'trading_order_fills',
-    event: 'INSERT',
-    enabled: enabled && !!userId,
-    invalidate: futuresFillsInvalidate,
   });
 }

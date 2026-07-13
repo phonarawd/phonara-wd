@@ -1,0 +1,3151 @@
+# PHONARA Repository Tree Appendix
+# Generated: 2026-07-13T00:43:26.445Z
+# Root: C:\Users\PC\Desktop\phonara-gb
+# Max depth: 6
+# Excluded: node_modules, dist, .git, coverage, test-results, playwright-report, …
+# Counts: dirs=310 files=2833
+
+phonara-gb/
+├── .cursor/
+│   ├── .phonara-render-fix-at
+│   ├── agents/
+│   │   ├── gate-runner.md
+│   │   ├── security-auditor.md
+│   │   ├── test-autopilot.md
+│   │   └── verifier.md
+│   ├── hooks/
+│   │   ├── agent-heavy-gate-deny.ts
+│   │   ├── e2e-raw-deny.ts
+│   │   ├── main-push-deny.ts
+│   │   ├── prod-apply-deny.ts
+│   │   ├── secrets-read-deny.ts
+│   │   └── subagent-guard.ts
+│   ├── hooks.json
+│   ├── mcp.json
+│   ├── perf/
+│   │   ├── diagnosis-2026-07-10T12-05-58.906Z.json
+│   │   ├── diagnosis-2026-07-10T12-06-13.002Z.json
+│   │   ├── max-context-evidence.json
+│   │   ├── remediation-2026-07-10T12-10-14.821Z.json
+│   │   ├── remediation-2026-07-10T12-10-15.452Z.json
+│   │   ├── remediation-2026-07-10T12-48-06.832Z.json
+│   │   ├── remediation-2026-07-10T12-48-07.440Z.json
+│   │   ├── remediation-2026-07-10T12-51-44.930Z.json
+│   │   ├── remediation-2026-07-10T12-51-45.495Z.json
+│   │   ├── remediation-2026-07-10T12-55-59.027Z.json
+│   │   ├── remediation-2026-07-10T12-55-59.493Z.json
+│   │   ├── remediation-2026-07-10T17-18-02.953Z.json
+│   │   ├── remediation-2026-07-10T17-18-06.324Z.json
+│   │   ├── remediation-2026-07-11T23-43-57.681Z.json
+│   │   ├── remediation-2026-07-11T23-43-59.121Z.json
+│   │   ├── tmp-no-ssot/
+│   │   │   └── supabase/
+│   │   │       ├── migrations/
+│   │   │       └── migrations.lock.json
+│   │   └── tsserver-observe.jsonl
+│   ├── permissions.json
+│   ├── rules/
+│   │   ├── 00-core.mdc
+│   │   ├── 00-phase-d-demolition.mdc
+│   │   ├── 00-post-closeout-active-ssot.mdc
+│   │   ├── 10-quality-gates.mdc
+│   │   ├── 20-supabase-safety.mdc
+│   │   ├── 25-postgres-plpgsql.mdc
+│   │   ├── 30-audit-discipline.mdc
+│   │   ├── 30-money-ledger.mdc
+│   │   ├── 40-testing.mdc
+│   │   ├── 50-admin-automation.mdc
+│   │   ├── 60-i18n-ux.mdc
+│   │   ├── 61-script-locale-hygiene.mdc
+│   │   ├── 70-autonomy-and-delivery.mdc
+│   │   ├── 75-workspace-hygiene.mdc
+│   │   ├── 76-cursor-performance.mdc
+│   │   ├── 77-e2e-lifecycle.mdc
+│   │   ├── 78-cursor-auto-hygiene.mdc
+│   │   ├── 79-low-spec-pc.mdc
+│   │   ├── 80-absolute-gate-prohibitions.mdc
+│   │   ├── 80-release-readiness.mdc
+│   │   ├── 81-efficient-gate-execution.mdc
+│   │   ├── 82-work-doc-closeout-sync.mdc
+│   │   ├── 83-session-purge-contract.mdc
+│   │   ├── 84-docker-on-demand.mdc
+│   │   ├── 85-architecture-and-components.mdc
+│   │   ├── 87-cursor-agents-hub.mdc
+│   │   ├── 88-ui-consolidation-wave.mdc
+│   │   ├── 89-beginner-autopilot.mdc
+│   │   ├── 90-ui-ux-presentation.mdc
+│   │   ├── 91-uiux-worldclass-methodology.mdc
+│   │   ├── 93-uiux-full-rebuild-v2-execution.mdc
+│   │   ├── 94-ci-push-fix-loop.mdc
+│   │   ├── 95-presentation-import-absorption.mdc
+│   │   ├── 96-prod-apply-agent-deny.mdc
+│   │   ├── 97-phase-r-surface-domain-guard.mdc
+│   │   ├── 98-platform-audit-reference.mdc
+│   │   └── 99-plan-todo-auto-closeout.mdc
+│   ├── sandbox.json
+│   ├── settings.json
+│   └── skills/
+│       ├── ci-push-fix-loop/
+│       │   └── SKILL.md
+│       ├── gate-ladder/
+│       │   └── SKILL.md
+│       ├── local-test-autopilot/
+│       │   └── SKILL.md
+│       ├── session-cleanup/
+│       │   └── SKILL.md
+│       ├── session-hygiene/
+│       │   └── SKILL.md
+│       └── supabase-apply/
+│           └── SKILL.md
+├── .cursorignore
+├── .cursorrules
+├── .env
+├── .env.example
+├── .env.local
+├── .env.local.bak
+├── .env.production
+├── .gitattributes
+├── .github/
+│   └── workflows/
+│       ├── actions-hygiene.yml
+│       └── ci.yml
+├── .gitignore
+├── .local-admin-dev.credentials.json
+├── .local-trade-dev.credentials.json
+├── .prettierignore
+├── .prettierrc
+├── .tmp-e5-section.md
+├── .tmp-merge-debug.json
+├── .vscode/
+│   ├── extensions.json
+│   └── settings.json
+├── 1000
+├── AGENTS.md
+├── apps/
+│   ├── admin/
+│   │   ├── AGENTS.md
+│   │   ├── index.html
+│   │   ├── package.json
+│   │   ├── public/
+│   │   │   ├── _headers
+│   │   │   ├── .gitkeep
+│   │   │   ├── favicon.ico
+│   │   │   ├── favicon.svg
+│   │   │   ├── fonts/
+│   │   │   │   └── PretendardVariable.woff2
+│   │   │   └── sw.js
+│   │   ├── src/
+│   │   │   ├── contexts/
+│   │   │   │   └── auth-context.tsx
+│   │   │   ├── contracts/
+│   │   │   │   ├── admin-desk-views.ts
+│   │   │   │   └── controller-view-freeze.ts
+│   │   │   ├── domain/
+│   │   │   │   ├── __tests__/
+│   │   │   │   │   ├── admin-beginner-language-display-contract.test.ts
+│   │   │   │   │   ├── admin-cms-promotions-display-contract.test.ts
+│   │   │   │   │   ├── admin-krw-proof-review-display-contract.test.ts
+│   │   │   │   │   ├── admin-mission-catalog-display-contract.test.ts
+│   │   │   │   │   ├── admin-ops-push-display-contract.test.ts
+│   │   │   │   │   ├── admin-post-auth.test.ts
+│   │   │   │   │   ├── admin-rbac.test.ts
+│   │   │   │   │   ├── admin-security-display-contract.test.ts
+│   │   │   │   │   ├── admin-support-desk-display-contract.test.ts
+│   │   │   │   │   ├── admin-table-dedup-display-contract.test.ts
+│   │   │   │   │   ├── admin-team-desk-display-contract.test.ts
+│   │   │   │   │   ├── admin-tier-option-b-display-contract.test.ts
+│   │   │   │   │   ├── ew-e6-admin-desks-display-contract.test.ts
+│   │   │   │   │   ├── ew-e6-gate-admin-desks-display-contract.test.ts
+│   │   │   │   │   ├── p13-ops-prod-preflight-display-contract.test.ts
+│   │   │   │   │   ├── p13-soft-launch-admin-spotcheck.test.ts
+│   │   │   │   │   ├── p13-t1-live-ramp-display-contract.test.ts
+│   │   │   │   │   └── p13-t2-scale-triggers-display-contract.test.ts
+│   │   │   │   ├── admin-auth.ts
+│   │   │   │   ├── admin-beginner-language-display-contract.ts
+│   │   │   │   ├── admin-cms-promotions-display-contract.ts
+│   │   │   │   ├── admin-krw-proof-review-display-contract.ts
+│   │   │   │   ├── admin-mission-catalog-display-contract.ts
+│   │   │   │   ├── admin-ops-push-display-contract.ts
+│   │   │   │   ├── admin-post-auth.ts
+│   │   │   │   ├── admin-rbac.ts
+│   │   │   │   ├── admin-security-display-contract.ts
+│   │   │   │   ├── admin-support-desk-display-contract.ts
+│   │   │   │   ├── admin-table-dedup-display-contract.ts
+│   │   │   │   ├── admin-team-desk-display-contract.ts
+│   │   │   │   ├── admin-tier-option-b-display-contract.ts
+│   │   │   │   ├── ew-e6-admin-desks-display-contract.ts
+│   │   │   │   ├── ew-e6-gate-admin-desks-display-contract.ts
+│   │   │   │   ├── ops.ts
+│   │   │   │   ├── p13-ops-prod-preflight-display-contract.ts
+│   │   │   │   ├── p13-t1-live-ramp-display-contract.ts
+│   │   │   │   ├── p13-t2-scale-triggers-display-contract.ts
+│   │   │   │   └── queues.ts
+│   │   │   ├── features/
+│   │   │   │   └── ops-push/
+│   │   │   │       ├── __tests__/
+│   │   │   │       │   └── admin-ops-web-push.test.ts
+│   │   │   │       └── admin-ops-web-push.ts
+│   │   │   ├── hooks/
+│   │   │   │   ├── __tests__/
+│   │   │   │   │   ├── use-admin-login-page-controller.test.ts
+│   │   │   │   │   ├── use-admin-mfa-challenge-page-controller.test.ts
+│   │   │   │   │   ├── use-admin-mfa-enroll-page-controller.test.ts
+│   │   │   │   │   └── use-admin-route-gate.test.ts
+│   │   │   │   ├── admin/
+│   │   │   │   │   ├── admin-sports-types.ts
+│   │   │   │   │   ├── createAdminMockHook.ts
+│   │   │   │   │   ├── useAdminAuditAlerts.ts
+│   │   │   │   │   ├── useAdminAuditAlertsMock.ts
+│   │   │   │   │   ├── useAdminAuditDesk.ts
+│   │   │   │   │   ├── useAdminCasinoDesk.ts
+│   │   │   │   │   ├── useAdminCasinoDeskMock.ts
+│   │   │   │   │   ├── useAdminCmsDesk.ts
+│   │   │   │   │   ├── useAdminCmsDeskMock.ts
+│   │   │   │   │   ├── useAdminCompliance.ts
+│   │   │   │   │   ├── useAdminComplianceMock.ts
+│   │   │   │   │   ├── useAdminEarnActivityDesk.ts
+│   │   │   │   │   ├── useAdminEarnDesk.ts
+│   │   │   │   │   ├── useAdminEarnDeskMock.ts
+│   │   │   │   │   ├── useAdminExceptionQueueSummary.ts
+│   │   │   │   │   ├── useAdminMfaPolicyDesk.ts
+│   │   │   │   │   ├── useAdminMissionsDesk.ts
+│   │   │   │   │   ├── useAdminMissionsDeskMock.ts
+│   │   │   │   │   ├── useAdminOperations.ts
+│   │   │   │   │   ├── useAdminOperationsMock.ts
+│   │   │   │   │   ├── useAdminOperatorRbac.ts
+│   │   │   │   │   ├── useAdminOpsPush.ts
+│   │   │   │   │   ├── useAdminOverview.ts
+│   │   │   │   │   ├── useAdminReferralsDesk.ts
+│   │   │   │   │   ├── useAdminReferralsDeskMock.ts
+│   │   │   │   │   ├── useAdminReviewQueue.ts
+│   │   │   │   │   ├── useAdminRewardsDesk.ts
+│   │   │   │   │   ├── useAdminRewardsDeskMock.ts
+│   │   │   │   │   ├── useAdminSettingsDesk.ts
+│   │   │   │   │   ├── useAdminSports.ts
+│   │   │   │   │   ├── useAdminStakingDesk.ts
+│   │   │   │   │   ├── useAdminStakingDeskMock.ts
+│   │   │   │   │   ├── useAdminSupportDesk.ts
+│   │   │   │   │   ├── useAdminTeamDesk.ts
+│   │   │   │   │   ├── useAdminTierBenefitsDesk.ts
+│   │   │   │   │   ├── useAdminTiersDesk.ts
+│   │   │   │   │   ├── useAdminTiersDeskMock.ts
+│   │   │   │   │   ├── useAdminUsersDesk.ts
+│   │   │   │   │   ├── useAdminUsersDeskMock.ts
+│   │   │   │   │   ├── useAdminUserTierDesk.ts
+│   │   │   │   │   ├── useAdminViralStatsDesk.ts
+│   │   │   │   │   ├── useAdminViralStatsDeskMock.ts
+│   │   │   │   │   ├── useAdminWalletDesk.ts
+│   │   │   │   │   └── useAdminWalletDeskMock.ts
+│   │   │   │   ├── use-admin-login-page-controller.ts
+│   │   │   │   ├── use-admin-mfa-challenge-page-controller.ts
+│   │   │   │   ├── use-admin-mfa-enroll-page-controller.ts
+│   │   │   │   ├── use-admin-mfa-ready.ts
+│   │   │   │   ├── use-admin-route-gate.ts
+│   │   │   │   ├── use-app-config.ts
+│   │   │   │   └── use-audit-logs.ts
+│   │   │   ├── lib/
+│   │   │   │   ├── __tests__/
+│   │   │   │   │   └── format-admin-money.test.ts
+│   │   │   │   ├── admin-time.ts
+│   │   │   │   ├── auth-error-key.ts
+│   │   │   │   ├── auth.ts
+│   │   │   │   ├── env.ts
+│   │   │   │   ├── format-admin-money.ts
+│   │   │   │   ├── i18n.tsx
+│   │   │   │   ├── rpc.ts
+│   │   │   │   ├── supabase.ts
+│   │   │   │   ├── translate-error.ts
+│   │   │   │   └── use-admin-route-navigate.ts
+│   │   │   ├── main.tsx
+│   │   │   ├── product/
+│   │   │   │   ├── bridge/
+│   │   │   │   │   ├── __tests__/
+│   │   │   │   │   │   ├── parse-admin-missions-config.test.ts
+│   │   │   │   │   │   ├── parse-admin-settings-config.test.ts
+│   │   │   │   │   │   ├── parse-admin-tiers-desk.test.ts
+│   │   │   │   │   │   ├── parse-admin-viral-stats.test.ts
+│   │   │   │   │   │   └── parse-ops-dashboard.test.ts
+│   │   │   │   │   ├── ops-health-labels.ts
+│   │   │   │   │   ├── parse-admin-missions-config.ts
+│   │   │   │   │   ├── parse-admin-settings-config.ts
+│   │   │   │   │   ├── parse-admin-tiers-desk.ts
+│   │   │   │   │   ├── parse-admin-viral-stats.ts
+│   │   │   │   │   └── parse-ops-dashboard.ts
+│   │   │   │   ├── i18n/
+│   │   │   │   │   ├── constants.ts
+│   │   │   │   │   ├── i18n-shell.tsx
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── instance.ts
+│   │   │   │   ├── layout/
+│   │   │   │   │   ├── __tests__/
+│   │   │   │   │   │   ├── admin-nav-filter.test.ts
+│   │   │   │   │   │   └── admin-nav.test.tsx
+│   │   │   │   │   ├── admin-nav-filter.ts
+│   │   │   │   │   ├── admin-nav.tsx
+│   │   │   │   │   ├── admin-shell.tsx
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── primitives/
+│   │   │   │   │   ├── __tests__/
+│   │   │   │   │   │   └── admin-table.test.tsx
+│   │   │   │   │   └── admin-table.tsx
+│   │   │   │   └── surfaces/
+│   │   │   │       ├── __tests__/
+│   │   │   │       │   ├── admin-audit-page.test.tsx
+│   │   │   │       │   ├── admin-casino-page.test.tsx
+│   │   │   │       │   ├── admin-cms-page.test.tsx
+│   │   │   │       │   ├── admin-deposits-page.test.tsx
+│   │   │   │       │   ├── admin-earn-activity-page.test.tsx
+│   │   │   │       │   ├── admin-earn-missions-page.test.tsx
+│   │   │   │       │   ├── admin-earn-page.test.tsx
+│   │   │   │       │   ├── admin-earn-referrals-page.test.tsx
+│   │   │   │       │   ├── admin-earn-rewards-page.test.tsx
+│   │   │   │       │   ├── admin-home-page.test.tsx
+│   │   │   │       │   ├── admin-login-page.test.tsx
+│   │   │   │       │   ├── admin-mfa-challenge-page.test.tsx
+│   │   │   │       │   ├── admin-mfa-enroll-page.test.tsx
+│   │   │   │       │   ├── admin-mfa-policy-page.test.tsx
+│   │   │   │       │   ├── admin-ops-page.test.tsx
+│   │   │   │       │   ├── admin-promotions-page.test.tsx
+│   │   │   │       │   ├── admin-queues-page.test.tsx
+│   │   │   │       │   ├── admin-risk-page.test.tsx
+│   │   │   │       │   ├── admin-settings-page.test.tsx
+│   │   │   │       │   ├── admin-sports-page.test.tsx
+│   │   │   │       │   ├── admin-staking-page.test.tsx
+│   │   │   │       │   ├── admin-support-page.test.tsx
+│   │   │   │       │   ├── admin-team-page.test.tsx
+│   │   │   │       │   ├── admin-tier-benefits-page.test.tsx
+│   │   │   │       │   ├── admin-tiers-page.test.tsx
+│   │   │   │       │   ├── admin-user-tier-page.test.tsx
+│   │   │   │       │   ├── admin-users-page.test.tsx
+│   │   │   │       │   ├── admin-viral-stats-page.test.tsx
+│   │   │   │       │   └── admin-withdrawals-page.test.tsx
+│   │   │   │       ├── admin-alert-action-dialog.tsx
+│   │   │   │       ├── admin-audit-page.tsx
+│   │   │   │       ├── admin-casino-page.tsx
+│   │   │   │       ├── admin-cms-page.tsx
+│   │   │   │       ├── admin-deposits-page.tsx
+│   │   │   │       ├── admin-earn-activity-page.tsx
+│   │   │   │       ├── admin-earn-missions-page.tsx
+│   │   │   │       ├── admin-earn-page.tsx
+│   │   │   │       ├── admin-earn-referrals-page.tsx
+│   │   │   │       ├── admin-earn-rewards-page.tsx
+│   │   │   │       ├── admin-forbidden-shell.tsx
+│   │   │   │       ├── admin-home-page.tsx
+│   │   │   │       ├── admin-login-page.tsx
+│   │   │   │       ├── admin-mfa-challenge-page.tsx
+│   │   │   │       ├── admin-mfa-enroll-page.tsx
+│   │   │   │       ├── admin-mfa-policy-page.tsx
+│   │   │   │       ├── admin-ops-page.tsx
+│   │   │   │       ├── admin-promotions-page.tsx
+│   │   │   │       ├── admin-queue-action-dialog.tsx
+│   │   │   │       ├── admin-queues-page.tsx
+│   │   │   │       ├── admin-rbac-action.ts
+│   │   │   │       ├── admin-risk-page.tsx
+│   │   │   │       ├── admin-settings-page.tsx
+│   │   │   │       ├── admin-sports-page.tsx
+│   │   │   │       ├── admin-sports-settle-dialog.tsx
+│   │   │   │       ├── admin-staking-page.tsx
+│   │   │   │       ├── admin-support-page.tsx
+│   │   │   │       ├── admin-team-page.tsx
+│   │   │   │       ├── admin-tier-benefits-page.tsx
+│   │   │   │       ├── admin-tiers-page.tsx
+│   │   │   │       ├── admin-user-tier-page.tsx
+│   │   │   │       ├── admin-users-page.tsx
+│   │   │   │       ├── admin-viral-stats-page.tsx
+│   │   │   │       └── admin-withdrawals-page.tsx
+│   │   │   ├── router.ts
+│   │   │   ├── routes/
+│   │   │   │   ├── __root.tsx
+│   │   │   │   ├── audit-logs.tsx
+│   │   │   │   ├── audit.tsx
+│   │   │   │   ├── casino.tsx
+│   │   │   │   ├── cms.tsx
+│   │   │   │   ├── config.tsx
+│   │   │   │   ├── deposits.tsx
+│   │   │   │   ├── earn/
+│   │   │   │   │   ├── activity.tsx
+│   │   │   │   │   ├── index.tsx
+│   │   │   │   │   ├── missions.tsx
+│   │   │   │   │   ├── referrals.tsx
+│   │   │   │   │   └── rewards.tsx
+│   │   │   │   ├── earn.tsx
+│   │   │   │   ├── index.tsx
+│   │   │   │   ├── login.tsx
+│   │   │   │   ├── mfa/
+│   │   │   │   │   ├── challenge.tsx
+│   │   │   │   │   ├── enroll.tsx
+│   │   │   │   │   └── policy.tsx
+│   │   │   │   ├── ops.tsx
+│   │   │   │   ├── promotions.tsx
+│   │   │   │   ├── queues.tsx
+│   │   │   │   ├── rewards.tsx
+│   │   │   │   ├── risk.tsx
+│   │   │   │   ├── settings.tsx
+│   │   │   │   ├── sports.tsx
+│   │   │   │   ├── staking.tsx
+│   │   │   │   ├── support.tsx
+│   │   │   │   ├── team.tsx
+│   │   │   │   ├── tier-benefits.tsx
+│   │   │   │   ├── tiers.tsx
+│   │   │   │   ├── users/
+│   │   │   │   │   └── $userId/
+│   │   │   │   │       └── tier.tsx
+│   │   │   │   ├── users.tsx
+│   │   │   │   ├── viral-stats.tsx
+│   │   │   │   └── withdrawals.tsx
+│   │   │   ├── routeTree.gen.ts
+│   │   │   ├── shared-types/
+│   │   │   │   ├── admin-audit.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── styles/
+│   │   │   │   └── admin.css
+│   │   │   ├── types/
+│   │   │   │   └── web-product-shims.d.ts
+│   │   │   └── vite-env.d.ts
+│   │   ├── tsconfig.json
+│   │   └── vite.config.ts
+│   └── web/
+│       ├── AGENTS.md
+│       ├── components.json
+│       ├── index.html
+│       ├── package.json
+│       ├── public/
+│       │   ├── _headers
+│       │   ├── _redirects
+│       │   ├── apple-splash-landscape-1334x750.png
+│       │   ├── apple-splash-landscape-2266x1488.png
+│       │   ├── apple-splash-landscape-2360x1640.png
+│       │   ├── apple-splash-landscape-2532x1170.png
+│       │   ├── apple-splash-landscape-2556x1179.png
+│       │   ├── apple-splash-landscape-2622x1206.png
+│       │   ├── apple-splash-landscape-2732x2048.png
+│       │   ├── apple-splash-landscape-2868x1320.png
+│       │   ├── apple-splash-portrait-1170x2532.png
+│       │   ├── apple-splash-portrait-1179x2556.png
+│       │   ├── apple-splash-portrait-1206x2622.png
+│       │   ├── apple-splash-portrait-1320x2868.png
+│       │   ├── apple-splash-portrait-1488x2266.png
+│       │   ├── apple-splash-portrait-1640x2360.png
+│       │   ├── apple-splash-portrait-2048x2732.png
+│       │   ├── apple-splash-portrait-750x1334.png
+│       │   ├── apple-touch-icon-180x180.png
+│       │   ├── brand/
+│       │   │   ├── APPROVED.md
+│       │   │   ├── concepts/
+│       │   │   │   ├── concept-a-orbit.svg
+│       │   │   │   ├── concept-b-wave.svg
+│       │   │   │   ├── concept-c-growth.svg
+│       │   │   │   ├── concept-d-resonance.svg
+│       │   │   │   ├── concept-e-signal.svg
+│       │   │   │   ├── concept-f-ph-knot.svg
+│       │   │   │   ├── concept-g-hub-orbit.svg
+│       │   │   │   ├── concept-h-phon-wave.svg
+│       │   │   │   ├── concept-i-pulse-pill.svg
+│       │   │   │   ├── concept-j-phon-tap.svg
+│       │   │   │   ├── concept-k-prism-wave.svg
+│       │   │   │   └── concept-l-signal-carve.svg
+│       │   │   ├── concepts-v2/
+│       │   │   │   ├── concept-a-resonance-chamber-dark-preview.svg
+│       │   │   │   ├── concept-a-resonance-chamber.svg
+│       │   │   │   ├── concept-b-quad-prism-dark-preview.svg
+│       │   │   │   ├── concept-b-quad-prism.svg
+│       │   │   │   ├── concept-c-phon-convergence-dark-preview.svg
+│       │   │   │   ├── concept-c-phon-convergence.svg
+│       │   │   │   ├── simulation-favicon.svg
+│       │   │   │   ├── simulation-header-app-icon.svg
+│       │   │   │   ├── simulation-og-card.svg
+│       │   │   │   └── simulation-splash.svg
+│       │   │   ├── favicon.ico
+│       │   │   ├── favicon.svg
+│       │   │   ├── logo-flat.svg
+│       │   │   ├── logo-lockup.svg
+│       │   │   ├── logo-mono.svg
+│       │   │   ├── logo.svg
+│       │   │   ├── splash-mark.svg
+│       │   │   └── wordmark.svg
+│       │   ├── favicon.ico
+│       │   ├── favicon.svg
+│       │   ├── fonts/
+│       │   │   ├── JetBrainsMono[wght].woff2
+│       │   │   ├── PretendardVariable.woff2
+│       │   │   └── SpaceGrotesk[wght].woff2
+│       │   ├── manifest.webmanifest
+│       │   ├── maskable-icon-512x512.png
+│       │   ├── monochrome-512.png
+│       │   ├── offline.html
+│       │   ├── offline.js
+│       │   ├── og-card.png
+│       │   ├── pwa-192x192.png
+│       │   ├── pwa-512x512.png
+│       │   ├── pwa-64x64.png
+│       │   ├── robots.txt
+│       │   ├── schema.webapplication.json
+│       │   ├── screenshots/
+│       │   │   ├── home-narrow.png
+│       │   │   ├── trade-wide.png
+│       │   │   └── wallet-narrow.png
+│       │   └── sitemap.xml
+│       ├── pwa-assets.config.ts
+│       ├── pwa-manifest.ts
+│       ├── src/
+│       │   ├── components/
+│       │   ├── contexts/
+│       │   │   └── auth-context.tsx
+│       │   ├── contracts/
+│       │   ├── data/
+│       │   │   ├── __tests__/
+│       │   │   │   └── casino-search-index.test.ts
+│       │   │   ├── casino-feed.ts
+│       │   │   ├── casino-game-meta.ts
+│       │   │   ├── casino-search-index.ts
+│       │   │   ├── casino-tournaments.ts
+│       │   │   └── earn-static-missions.ts
+│       │   ├── domain/
+│       │   │   ├── __tests__/
+│       │   │   │   ├── account-hub-display-contract.test.ts
+│       │   │   │   ├── account-profile-display-contract.test.ts
+│       │   │   │   ├── ads-attribution-display-contract.test.ts
+│       │   │   │   ├── affiliate-partner-display-contract.test.ts
+│       │   │   │   ├── aml-risk-display-contract.test.ts
+│       │   │   │   ├── announcements-display-contract.test.ts
+│       │   │   │   ├── app-install-mission-display-contract.test.ts
+│       │   │   │   ├── appshell-visual-signoff-display-contract.test.ts
+│       │   │   │   ├── auth-landing-visual-signoff-display-contract.test.ts
+│       │   │   │   ├── brand-display-contract.test.ts
+│       │   │   │   ├── casino-fairness-display-contract.test.ts
+│       │   │   │   ├── casino-fiat-hint-session-lock-display-contract.test.ts
+│       │   │   │   ├── casino-games-batch-a-display-contract.test.ts
+│       │   │   │   ├── casino-games-batch-b-display-contract.test.ts
+│       │   │   │   ├── casino-games-batch-c-display-contract.test.ts
+│       │   │   │   ├── casino-games-batch-d-display-contract.test.ts
+│       │   │   │   ├── casino-lobby-display-contract.test.ts
+│       │   │   │   ├── casino-outcome-replay-contract.test.ts
+│       │   │   │   ├── client-gate-contract.test.ts
+│       │   │   │   ├── cms-banners-display-contract.test.ts
+│       │   │   │   ├── crypto-edge-display-contract.test.ts
+│       │   │   │   ├── currency-precision-display-audit-lib.ts
+│       │   │   │   ├── currency-precision-display-contract.test.ts
+│       │   │   │   ├── da-w3-gate-ia-progressive-display-contract.test.ts
+│       │   │   │   ├── da-w4-gate-motion-display-contract.test.ts
+│       │   │   │   ├── da-w4-motion-system-display-contract.test.ts
+│       │   │   │   ├── da-w5-cards-domain-variants-display-contract.test.ts
+│       │   │   │   ├── da-w5-gate-domain-cards-display-contract.test.ts
+│       │   │   │   ├── da-w6-brand-elevation-display-contract.test.ts
+│       │   │   │   ├── da-w6-gate-brand-elevation-display-contract.test.ts
+│       │   │   │   ├── da-w7-enforcement-strict-tokens-display-contract.test.ts
+│       │   │   │   ├── da-w7-operator-visual-dae-signoff-display-contract.test.ts
+│       │   │   │   ├── da-w8-gate-signature-experience-display-contract.test.ts
+│       │   │   │   ├── da-w8-signature-surfaces-display-contract.test.ts
+│       │   │   │   ├── da-w8-sound-design-display-contract.test.ts
+│       │   │   │   ├── dead-controls-display-contract.test.ts
+│       │   │   │   ├── earn-cashback-display-contract.test.ts
+│       │   │   │   ├── earn-home-display-contract.test.ts
+│       │   │   │   ├── earn-play-display-contract.test.ts
+│       │   │   │   ├── earn-side-surfaces-display-contract.test.ts
+│       │   │   │   ├── edge-ops-outcome-display-contract.test.ts
+│       │   │   │   ├── engine-gap-adr-display-contract.test.ts
+│       │   │   │   ├── events-hub-display-contract.test.ts
+│       │   │   │   ├── ew-e1-gate-decay-display-contract.test.ts
+│       │   │   │   ├── ew-e10-gate-platform-world-class-display-contract.test.ts
+│       │   │   │   ├── ew-e10-growth-ui-display-contract.test.ts
+│       │   │   │   ├── ew-e10-platform-engine-display-contract.test.ts
+│       │   │   │   ├── ew-e10-trust-support-ui-display-contract.test.ts
+│       │   │   │   ├── ew-e10-wallet-settings-ui-display-contract.test.ts
+│       │   │   │   ├── ew-e2-gate-missions-display-contract.test.ts
+│       │   │   │   ├── ew-e21-gate-trade-engine-parity-display-contract.test.ts
+│       │   │   │   ├── ew-e21-trade-parity-display-contract.test.ts
+│       │   │   │   ├── ew-e21-ui-trade-engine-unlocks-display-contract.test.ts
+│       │   │   │   ├── ew-e22-gate-sports-parity-display-contract.test.ts
+│       │   │   │   ├── ew-e22-sports-parity-display-contract.test.ts
+│       │   │   │   ├── ew-e22-ui-sports-parity-unlocks-display-contract.test.ts
+│       │   │   │   ├── ew-e23-casino-live-display-contract.test.ts
+│       │   │   │   ├── ew-e23-gate-casino-live-display-contract.test.ts
+│       │   │   │   ├── ew-e23-ui-casino-live-unlocks-display-contract.test.ts
+│       │   │   │   ├── ew-e3-gate-cms-promotions-display-contract.test.ts
+│       │   │   │   ├── ew-e4-gate-tier-option-b-display-contract.test.ts
+│       │   │   │   ├── ew-e5-gap-surfaces-display-contract.test.ts
+│       │   │   │   ├── ew-e5-gate-gap-surfaces-display-contract.test.ts
+│       │   │   │   ├── ew-e7-gate-engine-wave-display-contract.test.ts
+│       │   │   │   ├── ew-e8-financial-display-contract.test.ts
+│       │   │   │   ├── ew-e8-gate-financial-display-contract.test.ts
+│       │   │   │   ├── ew-e9-gate-identity-support-display-contract.test.ts
+│       │   │   │   ├── ew-e9-identity-support-display-contract.test.ts
+│       │   │   │   ├── features-hub-display-contract.test.ts
+│       │   │   │   ├── feedback-display-contract.test.ts
+│       │   │   │   ├── fees-page-display-contract.test.ts
+│       │   │   │   ├── fiat-hint-display-contract.test.ts
+│       │   │   │   ├── fiat-reference-display-audit-lib.ts
+│       │   │   │   ├── fiat-reference-display-contract.test.ts
+│       │   │   │   ├── funding-history-display-contract.test.ts
+│       │   │   │   ├── golden-earth-display-contract.test.ts
+│       │   │   │   ├── home-attendance-display-contract.test.ts
+│       │   │   │   ├── home-missions-display-contract.test.ts
+│       │   │   │   ├── home-missions-invite-display-contract.test.ts
+│       │   │   │   ├── home-missions-referral-display-contract.test.ts
+│       │   │   │   ├── kakao-share-display-contract.test.ts
+│       │   │   │   ├── krw-deposit-proof-display-contract.test.ts
+│       │   │   │   ├── landing-ab-display-contract.test.ts
+│       │   │   │   ├── landing-analytics-display-contract.test.ts
+│       │   │   │   ├── landing-brand-memory-display-contract.test.ts
+│       │   │   │   ├── landing-design-release-display-contract.test.ts
+│       │   │   │   ├── landing-display-contract.test.ts
+│       │   │   │   ├── landing-kpi-baseline-display-contract.test.ts
+│       │   │   │   ├── landing-live-display-contract.test.ts
+│       │   │   │   ├── landing-member-bot.test.ts
+│       │   │   │   ├── legal-display-contract.test.ts
+│       │   │   │   ├── margin-position-mode-display-contract.test.ts
+│       │   │   │   ├── marketing-shell-display-contract.test.ts
+│       │   │   │   ├── mission-catalog-display-contract.test.ts
+│       │   │   │   ├── notifications-center-display-contract.test.ts
+│       │   │   │   ├── notifications-pwa-display-contract.test.ts
+│       │   │   │   ├── onboarding-handoff-display-contract.test.ts
+│       │   │   │   ├── onboarding-journey-display-contract.test.ts
+│       │   │   │   ├── onboarding-missions-display-contract.test.ts
+│       │   │   │   ├── operator-trust-pages-display-contract.test.ts
+│       │   │   │   ├── p10-betting-visual-signoff-display-contract.test.ts
+│       │   │   │   ├── p10-gate-betting-display-contract.test.ts
+│       │   │   │   ├── p10-sports-hub-pages-gate-contract.test.ts
+│       │   │   │   ├── p11-gate-side-income-display-contract.test.ts
+│       │   │   │   ├── p12-community-support-hub-display-contract.test.ts
+│       │   │   │   ├── p12-gate-marketing-display-contract.test.ts
+│       │   │   │   ├── p12-legal-pages-display-contract.test.ts
+│       │   │   │   ├── p12-trust-marketing-hub-display-contract.test.ts
+│       │   │   │   ├── p13-closeout-display-contract.test.ts
+│       │   │   │   ├── p13-soft-launch-display-contract.test.ts
+│       │   │   │   ├── p4-gate-fiat-reference-world-class-display-contract.test.ts
+│       │   │   │   ├── p4-money-visual-signoff-display-contract.test.ts
+│       │   │   │   ├── p7-growth-gate-contract.test.ts
+│       │   │   │   ├── p8-core-gate-contract.test.ts
+│       │   │   │   ├── p8-core-visual-signoff-display-contract.test.ts
+│       │   │   │   ├── p9-gate-trade-contract.test.ts
+│       │   │   │   ├── p9-gate-trade-world-class-display-contract.test.ts
+│       │   │   │   ├── p9-trade-visual-signoff-display-contract.test.ts
+│       │   │   │   ├── phon-bonus-display-contract.test.ts
+│       │   │   │   ├── platform-gate-contract.test.ts
+│       │   │   │   ├── platform-narrative-display-contract.test.ts
+│       │   │   │   ├── platform-r10-rollout-display-contract.test.ts
+│       │   │   │   ├── platform-r11-closeout-display-contract.test.ts
+│       │   │   │   ├── platform-r12-post-release-display-contract.test.ts
+│       │   │   │   ├── pwa-advanced-capability-display-contract.test.ts
+│       │   │   │   ├── r6-trade-capability-honesty.test.ts
+│       │   │   │   ├── r7-type-ui-hygiene.test.ts
+│       │   │   │   ├── referral-hub-display-contract.test.ts
+│       │   │   │   ├── referral-invite-display-contract.test.ts
+│       │   │   │   ├── referral-leaderboard-display-contract.test.ts
+│       │   │   │   ├── settings-account-display-contract.test.ts
+│       │   │   │   ├── settings-api-keys-display-contract.test.ts
+│       │   │   │   ├── settings-hub-display-contract.test.ts
+│       │   │   │   ├── settings-notifications-display-contract.test.ts
+│       │   │   │   ├── settings-preferences-display-contract.test.ts
+│       │   │   │   ├── settings-referral-display-contract.test.ts
+│       │   │   │   ├── share-earnings-display-contract.test.ts
+│       │   │   │   ├── social-co-mission-display-contract.test.ts
+│       │   │   │   ├── sports-cashout-combo-display-contract.test.ts
+│       │   │   │   ├── sports-debit-bucket-display.test.ts
+│       │   │   │   ├── sports-exchange-parity-display-contract.test.ts
+│       │   │   │   ├── sports-fiat-hint-wire-display-contract.test.ts
+│       │   │   │   ├── sports-hub-pages-display-contract.test.ts
+│       │   │   │   ├── sports-live-surface-display-contract.test.ts
+│       │   │   │   ├── sports-odds-freshness-display-contract.test.ts
+│       │   │   │   ├── sports-page-display-contract.test.ts
+│       │   │   │   ├── sports-rules-and-vip-display-contract.test.ts
+│       │   │   │   ├── spot-base-quantity-display-contract.test.ts
+│       │   │   │   ├── spot-stake-display-contract.test.ts
+│       │   │   │   ├── staking-display-contract.test.ts
+│       │   │   │   ├── support-hub-display-contract.test.ts
+│       │   │   │   ├── support-ticket-display-contract.test.ts
+│       │   │   │   ├── surface-domain-boundary.test.ts
+│       │   │   │   ├── system-status-display-contract.test.ts
+│       │   │   │   ├── tier-benefits-display-contract.test.ts
+│       │   │   │   ├── tier-decay-display-contract.test.ts
+│       │   │   │   ├── tier-fee-display-contract.test.ts
+│       │   │   │   ├── tier-guide-display-contract.test.ts
+│       │   │   │   ├── tier-leaderboard-display-contract.test.ts
+│       │   │   │   ├── tier-me-display-contract.test.ts
+│       │   │   │   ├── tier-option-b-display-contract.test.ts
+│       │   │   │   ├── tournaments-pf-admin-display-contract.test.ts
+│       │   │   │   ├── trade-action-path-contract.test.ts
+│       │   │   │   ├── trade-beginner-language-display-contract.test.ts
+│       │   │   │   ├── trade-chart-mount-display-contract.test.ts
+│       │   │   │   ├── trade-desk-a11y-display-contract.test.ts
+│       │   │   │   ├── trade-desk-browser-matrix-display-contract.test.ts
+│       │   │   │   ├── trade-desk-critical5-phase0-repro.test.ts
+│       │   │   │   ├── trade-desk-failure-recovery-display-contract.test.ts
+│       │   │   │   ├── trade-desk-fetch-error-display-contract.test.ts
+│       │   │   │   ├── trade-desk-fiat-hint-wire-display-contract.test.ts
+│       │   │   │   ├── trade-desk-launch-rc-display-contract.test.ts
+│       │   │   │   ├── trade-desk-layout-display-contract.test.ts
+│       │   │   │   ├── trade-desk-load-realtime-display-contract.test.ts
+│       │   │   │   ├── trade-desk-migration-verify-display-contract.test.ts
+│       │   │   │   ├── trade-desk-observability-display-contract.test.ts
+│       │   │   │   ├── trade-desk-perf-display-contract.test.ts
+│       │   │   │   ├── trade-desk-release-rollback-display-contract.test.ts
+│       │   │   │   ├── trade-desk-security-display-contract.test.ts
+│       │   │   │   ├── trade-display-type-dedup.test.ts
+│       │   │   │   ├── trade-exchange-parity-display-contract.test.ts
+│       │   │   │   ├── trade-fiat-hint-consistency-display-contract.test.ts
+│       │   │   │   ├── trade-fill-realtime-display-contract.test.ts
+│       │   │   │   ├── trade-i18n-surface-audit-lib.ts
+│       │   │   │   ├── trade-i18n-surface-display-contract.test.ts
+│       │   │   │   ├── trade-layout-dedup-contract.test.ts
+│       │   │   │   ├── trade-market-status-display-contract.test.ts
+│       │   │   │   ├── trade-mobile-layout-display-contract.test.ts
+│       │   │   │   ├── trade-order-states-display-contract.test.ts
+│       │   │   │   ├── trade-price-alert-display-contract.test.ts
+│       │   │   │   ├── trade-settings-prefs-display-contract.test.ts
+│       │   │   │   ├── trade-submit-display-contract.test.ts
+│       │   │   │   ├── trade-synthetic-book-disclosure-display-contract.test.ts
+│       │   │   │   ├── trade-toast-display-contract.test.ts
+│       │   │   │   ├── trade-ultra-layout-display-contract.test.ts
+│       │   │   │   ├── trading-rpc-display-contract.test.ts
+│       │   │   │   ├── trust-hub-display-contract.test.ts
+│       │   │   │   ├── unified-tier-display-contract.test.ts
+│       │   │   │   ├── viral-cms-display-contract.test.ts
+│       │   │   │   ├── viral-missions-display-contract.test.ts
+│       │   │   │   ├── wallet-capability-rails-display-contract.test.ts
+│       │   │   │   ├── wallet-ledger-realtime-display-contract.test.ts
+│       │   │   │   ├── wallet-money-policy-display.test.ts
+│       │   │   │   ├── wallet-redeem-display-contract.test.ts
+│       │   │   │   ├── wallet-transfer-display-contract.test.ts
+│       │   │   │   └── wallet-withdrawal-off-display-contract.test.ts
+│       │   │   ├── account-hub-display-contract.ts
+│       │   │   ├── account-profile-display-contract.ts
+│       │   │   ├── ads-attribution-display-contract.ts
+│       │   │   ├── affiliate-partner-display-contract.ts
+│       │   │   ├── aml-risk-display-contract.ts
+│       │   │   ├── announcements-display-contract.ts
+│       │   │   ├── app-install-mission-display-contract.ts
+│       │   │   ├── appshell-visual-signoff-display-contract.ts
+│       │   │   ├── auth-landing-visual-signoff-display-contract.ts
+│       │   │   ├── brand-display-contract.ts
+│       │   │   ├── casino-fairness-display-contract.ts
+│       │   │   ├── casino-fiat-hint-session-lock-display-contract.ts
+│       │   │   ├── casino-games-batch-a-display-contract.ts
+│       │   │   ├── casino-games-batch-b-display-contract.ts
+│       │   │   ├── casino-games-batch-c-display-contract.ts
+│       │   │   ├── casino-games-batch-d-display-contract.ts
+│       │   │   ├── casino-lobby-display-contract.ts
+│       │   │   ├── casino-outcome-replay-contract.ts
+│       │   │   ├── client-gate-contract.ts
+│       │   │   ├── cms-banners-display-contract.ts
+│       │   │   ├── crypto-edge-display-contract.ts
+│       │   │   ├── currency-precision-display-contract.ts
+│       │   │   ├── da-w3-gate-ia-progressive-display-contract.ts
+│       │   │   ├── da-w4-gate-motion-display-contract.ts
+│       │   │   ├── da-w4-motion-system-display-contract.ts
+│       │   │   ├── da-w5-cards-domain-variants-display-contract.ts
+│       │   │   ├── da-w5-gate-domain-cards-display-contract.ts
+│       │   │   ├── da-w6-brand-elevation-display-contract.ts
+│       │   │   ├── da-w6-gate-brand-elevation-display-contract.ts
+│       │   │   ├── da-w7-enforcement-strict-tokens-display-contract.ts
+│       │   │   ├── da-w7-operator-visual-dae-signoff-display-contract.ts
+│       │   │   ├── da-w8-gate-signature-experience-display-contract.ts
+│       │   │   ├── da-w8-signature-surfaces-display-contract.ts
+│       │   │   ├── da-w8-sound-design-display-contract.ts
+│       │   │   ├── dead-controls-display-contract.ts
+│       │   │   ├── earn-cashback-display-contract.ts
+│       │   │   ├── earn-home-display-contract.ts
+│       │   │   ├── earn-play-display-contract.ts
+│       │   │   ├── earn-side-surfaces-display-contract.ts
+│       │   │   ├── edge-ops-outcome-display-contract.ts
+│       │   │   ├── engine-gap-adr-display-contract.ts
+│       │   │   ├── events-hub-display-contract.ts
+│       │   │   ├── ew-e1-gate-decay-display-contract.ts
+│       │   │   ├── ew-e10-gate-platform-world-class-display-contract.ts
+│       │   │   ├── ew-e10-growth-ui-display-contract.ts
+│       │   │   ├── ew-e10-platform-engine-display-contract.ts
+│       │   │   ├── ew-e10-trust-support-ui-display-contract.ts
+│       │   │   ├── ew-e10-wallet-settings-ui-display-contract.ts
+│       │   │   ├── ew-e2-gate-missions-display-contract.ts
+│       │   │   ├── ew-e21-gate-trade-engine-parity-display-contract.ts
+│       │   │   ├── ew-e21-trade-parity-display-contract.ts
+│       │   │   ├── ew-e21-ui-trade-engine-unlocks-display-contract.ts
+│       │   │   ├── ew-e22-gate-sports-parity-display-contract.ts
+│       │   │   ├── ew-e22-sports-parity-display-contract.ts
+│       │   │   ├── ew-e22-ui-sports-parity-unlocks-display-contract.ts
+│       │   │   ├── ew-e23-casino-live-display-contract.ts
+│       │   │   ├── ew-e23-gate-casino-live-display-contract.ts
+│       │   │   ├── ew-e23-ui-casino-live-unlocks-display-contract.ts
+│       │   │   ├── ew-e3-gate-cms-promotions-display-contract.ts
+│       │   │   ├── ew-e4-gate-tier-option-b-display-contract.ts
+│       │   │   ├── ew-e5-gap-surfaces-display-contract.ts
+│       │   │   ├── ew-e5-gate-gap-surfaces-display-contract.ts
+│       │   │   ├── ew-e7-gate-engine-wave-display-contract.ts
+│       │   │   ├── ew-e8-financial-display-contract.ts
+│       │   │   ├── ew-e8-gate-financial-display-contract.ts
+│       │   │   ├── ew-e9-gate-identity-support-display-contract.ts
+│       │   │   ├── ew-e9-identity-support-display-contract.ts
+│       │   │   ├── features-hub-display-contract.ts
+│       │   │   ├── feedback-display-contract.ts
+│       │   │   ├── fees-page-display-contract.ts
+│       │   │   ├── fiat-reference-display-contract.ts
+│       │   │   ├── funding-history-display-contract.ts
+│       │   │   ├── golden-earth-display-contract.ts
+│       │   │   ├── home-attendance-display-contract.ts
+│       │   │   ├── home-missions-display-contract.ts
+│       │   │   ├── home-missions-invite-display-contract.ts
+│       │   │   ├── home-missions-referral-display-contract.ts
+│       │   │   ├── kakao-share-display-contract.ts
+│       │   │   ├── krw-deposit-proof-display-contract.ts
+│       │   │   ├── krw-deposit-proof-storage.ts
+│       │   │   ├── kyc-storage.ts
+│       │   │   ├── landing-ab-display-contract.ts
+│       │   │   ├── landing-analytics-display-contract.ts
+│       │   │   ├── landing-brand-memory-display-contract.ts
+│       │   │   ├── landing-design-release-display-contract.ts
+│       │   │   ├── landing-display-contract.ts
+│       │   │   ├── landing-kpi-baseline-display-contract.ts
+│       │   │   ├── landing-live-display-contract.ts
+│       │   │   ├── landing-member-bot.ts
+│       │   │   ├── landing-proof-resolver.ts
+│       │   │   ├── legacy-residue-display-contract.ts
+│       │   │   ├── legal-display-contract.ts
+│       │   │   ├── margin-position-mode-display-contract.ts
+│       │   │   ├── marketing-shell-display-contract.ts
+│       │   │   ├── mission-catalog-display-contract.ts
+│       │   │   ├── money-rollout-display-contract.ts
+│       │   │   ├── notifications-center-display-contract.ts
+│       │   │   ├── notifications-pwa-display-contract.ts
+│       │   │   ├── onboarding-handoff-display-contract.ts
+│       │   │   ├── onboarding-journey-display-contract.ts
+│       │   │   ├── onboarding-missions-display-contract.ts
+│       │   │   ├── operator-trust-pages-display-contract.ts
+│       │   │   ├── p10-betting-visual-signoff-display-contract.ts
+│       │   │   ├── p10-gate-betting-display-contract.ts
+│       │   │   ├── p11-gate-side-income-display-contract.ts
+│       │   │   ├── p12-community-support-hub-display-contract.ts
+│       │   │   ├── p12-gate-marketing-display-contract.ts
+│       │   │   ├── p12-legal-pages-display-contract.ts
+│       │   │   ├── p12-trust-marketing-hub-display-contract.ts
+│       │   │   ├── p13-closeout-display-contract.ts
+│       │   │   ├── p13-soft-launch-display-contract.ts
+│       │   │   ├── p4-gate-fiat-reference-world-class-display-contract.ts
+│       │   │   ├── p4-money-visual-signoff-display-contract.ts
+│       │   │   ├── p8-core-visual-signoff-display-contract.ts
+│       │   │   ├── p9-gate-trade-world-class-display-contract.ts
+│       │   │   ├── p9-trade-visual-signoff-display-contract.ts
+│       │   │   ├── phon-balance.ts
+│       │   │   ├── phon-bonus-display-contract.ts
+│       │   │   ├── platform-gate-contract.ts
+│       │   │   ├── platform-narrative-display-contract.ts
+│       │   │   ├── platform-r10-rollout-display-contract.ts
+│       │   │   ├── platform-r11-closeout-display-contract.ts
+│       │   │   ├── platform-r12-post-release-display-contract.ts
+│       │   │   ├── pwa-advanced-capability-display-contract.ts
+│       │   │   ├── referral-hub-display-contract.ts
+│       │   │   ├── referral-invite-display-contract.ts
+│       │   │   ├── referral-leaderboard-display-contract.ts
+│       │   │   ├── responsible-gaming.ts
+│       │   │   ├── settings-account-display-contract.ts
+│       │   │   ├── settings-api-keys-display-contract.ts
+│       │   │   ├── settings-hub-display-contract.ts
+│       │   │   ├── settings-notifications-display-contract.ts
+│       │   │   ├── settings-preferences-display-contract.ts
+│       │   │   ├── settings-referral-display-contract.ts
+│       │   │   ├── share-earnings-display-contract.ts
+│       │   │   ├── social-co-mission-display-contract.ts
+│       │   │   ├── sports-cashout-combo-display-contract.ts
+│       │   │   ├── sports-debit-bucket-display.ts
+│       │   │   ├── sports-exchange-parity-display-contract.ts
+│       │   │   ├── sports-fiat-hint-wire-display-contract.ts
+│       │   │   ├── sports-hub-pages-display-contract.ts
+│       │   │   ├── sports-live-surface-display-contract.ts
+│       │   │   ├── sports-odds-freshness-display-contract.ts
+│       │   │   ├── sports-page-display-contract.ts
+│       │   │   ├── sports-rules-and-vip-display-contract.ts
+│       │   │   ├── spot-base-quantity-display-contract.ts
+│       │   │   ├── spot-stake-display-contract.ts
+│       │   │   ├── staking-display-contract.ts
+│       │   │   ├── support-hub-display-contract.ts
+│       │   │   ├── support-ticket-display-contract.ts
+│       │   │   ├── system-status-display-contract.ts
+│       │   │   ├── tier-benefits-display-contract.ts
+│       │   │   ├── tier-decay-display-contract.ts
+│       │   │   ├── tier-fee-display-contract.ts
+│       │   │   ├── tier-guide-display-contract.ts
+│       │   │   ├── tier-leaderboard-display-contract.ts
+│       │   │   ├── tier-me-display-contract.ts
+│       │   │   ├── tier-option-b-display-contract.ts
+│       │   │   ├── tournaments-pf-admin-display-contract.ts
+│       │   │   ├── trade-beginner-language-display-contract.ts
+│       │   │   ├── trade-chart-mount-display-contract.ts
+│       │   │   ├── trade-desk-a11y-contrast-spot-check.ts
+│       │   │   ├── trade-desk-a11y-display-contract.ts
+│       │   │   ├── trade-desk-browser-matrix-display-contract.ts
+│       │   │   ├── trade-desk-failure-recovery-display-contract.ts
+│       │   │   ├── trade-desk-fetch-error-display-contract.ts
+│       │   │   ├── trade-desk-fiat-hint-wire-display-contract.ts
+│       │   │   ├── trade-desk-launch-rc-display-contract.ts
+│       │   │   ├── trade-desk-layout-display-contract.ts
+│       │   │   ├── trade-desk-load-realtime-display-contract.ts
+│       │   │   ├── trade-desk-migration-verify-display-contract.ts
+│       │   │   ├── trade-desk-observability-display-contract.ts
+│       │   │   ├── trade-desk-perf-display-contract.ts
+│       │   │   ├── trade-desk-release-rollback-display-contract.ts
+│       │   │   ├── trade-desk-security-display-contract.ts
+│       │   │   ├── trade-exchange-parity-display-contract.ts
+│       │   │   ├── trade-fiat-hint-consistency-display-contract.ts
+│       │   │   ├── trade-fill-realtime-display-contract.ts
+│       │   │   ├── trade-i18n-surface-audit-display-contract.ts
+│       │   │   ├── trade-i18n-surface-display-contract.ts
+│       │   │   ├── trade-layout-dedup-display-contract.ts
+│       │   │   ├── trade-market-status-display-contract.ts
+│       │   │   ├── trade-mobile-layout-display-contract.ts
+│       │   │   ├── trade-order-states-display-contract.ts
+│       │   │   ├── trade-price-alert-display-contract.ts
+│       │   │   ├── trade-settings-prefs-display-contract.ts
+│       │   │   ├── trade-submit-display-contract.ts
+│       │   │   ├── trade-synthetic-book-disclosure-display-contract.ts
+│       │   │   ├── trade-toast-display-contract.ts
+│       │   │   ├── trade-ultra-layout-display-contract.ts
+│       │   │   ├── trading-api-keys.ts
+│       │   │   ├── trading-rpc-display-contract.ts
+│       │   │   ├── trust-hub-display-contract.ts
+│       │   │   ├── unified-tier-display-contract.ts
+│       │   │   ├── user-auth-security.ts
+│       │   │   ├── viral-cms-display-contract.ts
+│       │   │   ├── viral-missions-display-contract.ts
+│       │   │   ├── wallet-capability-rails-display-contract.ts
+│       │   │   ├── wallet-ledger-realtime-display-contract.ts
+│       │   │   ├── wallet-money-policy-display.ts
+│       │   │   ├── wallet-redeem-display-contract.ts
+│       │   │   ├── wallet-transfer-display-contract.ts
+│       │   │   ├── wallet-withdrawal-off-display-contract.ts
+│       │   │   └── wallet.ts
+│       │   ├── features/
+│       │   │   ├── account/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── kyc-display.test.ts
+│       │   │   │   │   ├── rg-display.test.ts
+│       │   │   │   │   ├── use-account-hub-controller.test.ts
+│       │   │   │   │   ├── use-account-kyc-controller.test.ts
+│       │   │   │   │   ├── use-account-profile-controller.test.ts
+│       │   │   │   │   └── use-account-rg-controller.test.ts
+│       │   │   │   ├── kyc-display.ts
+│       │   │   │   ├── rg-display.ts
+│       │   │   │   ├── use-account-hub-controller.ts
+│       │   │   │   ├── use-account-kyc-controller.ts
+│       │   │   │   ├── use-account-profile-controller.ts
+│       │   │   │   └── use-account-rg-controller.ts
+│       │   │   ├── auth/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── use-auth-callback-page-controller.test.ts
+│       │   │   │   │   ├── use-login-page-controller.test.ts
+│       │   │   │   │   ├── use-reset-password-page-controller.test.ts
+│       │   │   │   │   ├── use-settings-security-controller.test.ts
+│       │   │   │   │   ├── use-signup-page-controller.test.ts
+│       │   │   │   │   └── use-verify-email-page-controller.test.ts
+│       │   │   │   ├── use-auth-callback-page-controller.ts
+│       │   │   │   ├── use-login-page-controller.ts
+│       │   │   │   ├── use-reset-password-page-controller.ts
+│       │   │   │   ├── use-settings-security-controller.ts
+│       │   │   │   ├── use-signup-page-controller.ts
+│       │   │   │   └── use-verify-email-page-controller.ts
+│       │   │   ├── casino/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── casino-fiat-hint-display.test.ts
+│       │   │   │   │   ├── casino-fiat-rate-session.test.ts
+│       │   │   │   │   ├── casino-history-realtime-notify.test.ts
+│       │   │   │   │   ├── use-auto-bet-queue.test.ts
+│       │   │   │   │   ├── use-casino-fairness-verifier.test.ts
+│       │   │   │   │   └── use-casino-fiat-hint.test.ts
+│       │   │   │   ├── casino-e2e-testids.ts
+│       │   │   │   ├── casino-fiat-hint-display.ts
+│       │   │   │   ├── casino-fiat-rate-session.ts
+│       │   │   │   ├── casino-history-realtime-notify.ts
+│       │   │   │   ├── game-config.ts
+│       │   │   │   ├── helpers.ts
+│       │   │   │   ├── recent-bets.ts
+│       │   │   │   ├── reset-accumulated-selection.test.ts
+│       │   │   │   ├── reset-accumulated-selection.ts
+│       │   │   │   ├── types.ts
+│       │   │   │   ├── use-auto-bet-queue.ts
+│       │   │   │   ├── use-casino-fairness-verifier.ts
+│       │   │   │   ├── use-casino-fiat-hint.ts
+│       │   │   │   ├── use-casino-round.ts
+│       │   │   │   ├── use-game-pf-state.ts
+│       │   │   │   ├── use-live-crash.ts
+│       │   │   │   └── use-progressive-round.ts
+│       │   │   ├── earn/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── earn-fiat-hint-display.test.ts
+│       │   │   │   │   ├── rewards-history-page-display.test.ts
+│       │   │   │   │   ├── use-app-install-mission-action.test.ts
+│       │   │   │   │   ├── use-earn-fiat-hint.test.ts
+│       │   │   │   │   ├── use-earn-home-page-controller.test.ts
+│       │   │   │   │   ├── use-home-attendance-page-controller.test.ts
+│       │   │   │   │   ├── use-home-missions-invite-page-controller.test.ts
+│       │   │   │   │   ├── use-home-missions-page-controller.test.ts
+│       │   │   │   │   ├── use-home-missions-referral-page-controller.test.ts
+│       │   │   │   │   ├── use-referral-invite-page-controller.test.ts
+│       │   │   │   │   ├── use-referral-leaderboard-controller.test.ts
+│       │   │   │   │   ├── use-referral-page-controller.test.ts
+│       │   │   │   │   ├── use-share-earnings-page-controller.test.ts
+│       │   │   │   │   ├── use-staking-page-controller.test.ts
+│       │   │   │   │   ├── use-tier-benefits-page-controller.test.ts
+│       │   │   │   │   ├── use-tier-leaderboard-controller.test.ts
+│       │   │   │   │   └── use-tier-me-page-controller.test.ts
+│       │   │   │   ├── earn-fiat-hint-display.ts
+│       │   │   │   ├── rewards-history-page-display.ts
+│       │   │   │   ├── use-app-install-mission-action.ts
+│       │   │   │   ├── use-earn-cashback-page-controller.ts
+│       │   │   │   ├── use-earn-fiat-hint.ts
+│       │   │   │   ├── use-earn-home-page-controller.ts
+│       │   │   │   ├── use-earn-play-page-controller.ts
+│       │   │   │   ├── use-events-hub-page-controller.ts
+│       │   │   │   ├── use-home-attendance-page-controller.ts
+│       │   │   │   ├── use-home-missions-invite-page-controller.ts
+│       │   │   │   ├── use-home-missions-page-controller.ts
+│       │   │   │   ├── use-home-missions-referral-page-controller.ts
+│       │   │   │   ├── use-referral-invite-page-controller.ts
+│       │   │   │   ├── use-referral-leaderboard-controller.ts
+│       │   │   │   ├── use-referral-page-controller.ts
+│       │   │   │   ├── use-repeatable-missions.ts
+│       │   │   │   ├── use-rewards-history-controller.ts
+│       │   │   │   ├── use-share-earnings-page-controller.ts
+│       │   │   │   ├── use-staking-page-controller.ts
+│       │   │   │   ├── use-staking-positions-page-controller.ts
+│       │   │   │   ├── use-tier-benefits-page-controller.ts
+│       │   │   │   ├── use-tier-guide-page-controller.ts
+│       │   │   │   ├── use-tier-leaderboard-controller.ts
+│       │   │   │   ├── use-tier-me-page-controller.ts
+│       │   │   │   └── use-viral-missions.ts
+│       │   │   ├── landing/
+│       │   │   │   ├── landing-analytics-section.tsx
+│       │   │   │   ├── use-landing-analytics.ts
+│       │   │   │   └── use-landing-live-proof.ts
+│       │   │   ├── marketing/
+│       │   │   │   └── use-system-status.ts
+│       │   │   ├── money/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── fiat-reference-rates-lib.test.ts
+│       │   │   │   │   └── use-fiat-reference-rates.test.ts
+│       │   │   │   ├── fiat-reference-rates-lib.ts
+│       │   │   │   └── use-fiat-reference-rates.ts
+│       │   │   ├── notifications/
+│       │   │   │   ├── notifications-inbox-read.ts
+│       │   │   │   ├── notifications-read-state.ts
+│       │   │   │   ├── use-notifications-page-controller.ts
+│       │   │   │   └── web-push-subscription.ts
+│       │   │   ├── onboarding/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── use-onboarding-missions-page-controller.test.ts
+│       │   │   │   │   └── use-onboarding-page-controller.test.ts
+│       │   │   │   ├── use-onboarding-missions-page-controller.ts
+│       │   │   │   └── use-onboarding-page-controller.ts
+│       │   │   ├── pwa/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── pwa-install.test.ts
+│       │   │   │   │   └── pwa-sw-update.test.ts
+│       │   │   │   ├── install-prompt-context.tsx
+│       │   │   │   ├── pwa-install.ts
+│       │   │   │   └── pwa-sw-update.ts
+│       │   │   ├── responsible-gaming/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   └── bet-first-visit-education.test.ts
+│       │   │   │   ├── bet-first-visit-education.ts
+│       │   │   │   ├── rg-snapshot.ts
+│       │   │   │   ├── use-bet-first-visit-education.ts
+│       │   │   │   └── use-rg-gate-policy.ts
+│       │   │   ├── settings/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── bank-accounts-settings-display.test.ts
+│       │   │   │   │   ├── use-fiat-hint-preference.test.ts
+│       │   │   │   │   ├── use-settings-account-controller.test.ts
+│       │   │   │   │   ├── use-settings-api-keys-controller.test.ts
+│       │   │   │   │   ├── use-settings-bank-accounts-controller.test.ts
+│       │   │   │   │   ├── use-settings-hub-controller.test.ts
+│       │   │   │   │   ├── use-settings-notifications-controller.test.ts
+│       │   │   │   │   ├── use-settings-preferences-controller.test.ts
+│       │   │   │   │   └── use-settings-referral-controller.test.ts
+│       │   │   │   ├── bank-accounts-settings-display.ts
+│       │   │   │   ├── use-fiat-hint-preference.ts
+│       │   │   │   ├── use-settings-account-controller.ts
+│       │   │   │   ├── use-settings-api-keys-controller.ts
+│       │   │   │   ├── use-settings-bank-accounts-controller.ts
+│       │   │   │   ├── use-settings-hub-controller.ts
+│       │   │   │   ├── use-settings-notifications-controller.ts
+│       │   │   │   ├── use-settings-preferences-controller.ts
+│       │   │   │   └── use-settings-referral-controller.ts
+│       │   │   ├── sports/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── sports-fiat-hint-display.test.ts
+│       │   │   │   │   ├── sports-odds-insert-debounce.test.ts
+│       │   │   │   │   ├── sports-odds-source.test.ts
+│       │   │   │   │   ├── sports-realtime-cache.test.ts
+│       │   │   │   │   ├── use-sports-fiat-hint.test.ts
+│       │   │   │   │   └── use-sports-page-controller.test.ts
+│       │   │   │   ├── sports-fiat-hint-display.ts
+│       │   │   │   ├── sports-odds-insert-debounce.ts
+│       │   │   │   ├── sports-odds-source.ts
+│       │   │   │   ├── sports-realtime-cache.ts
+│       │   │   │   ├── sports-slip-display.ts
+│       │   │   │   ├── use-sports-bet-slip-state.ts
+│       │   │   │   ├── use-sports-betting.ts
+│       │   │   │   ├── use-sports-fiat-hint.ts
+│       │   │   │   └── use-sports-page-controller.ts
+│       │   │   ├── support/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   └── use-support-ticket-controller.test.ts
+│       │   │   │   └── use-support-ticket-controller.ts
+│       │   │   ├── trade/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   └── trade-first-visit-education.test.ts
+│       │   │   │   ├── trade-first-visit-education.ts
+│       │   │   │   └── use-trade-first-visit-education.ts
+│       │   │   ├── trading/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── bet-hub-casino-embed.test.ts
+│       │   │   │   │   ├── bet-hub-section.test.ts
+│       │   │   │   │   ├── order-book-display.test.ts
+│       │   │   │   │   ├── trade-desk-hook-fixtures.ts
+│       │   │   │   │   ├── trade-feedback-display.test.ts
+│       │   │   │   │   ├── trade-fiat-hint-display.test.ts
+│       │   │   │   │   ├── trade-realtime-feedback-display.test.ts
+│       │   │   │   │   ├── trade-rpc-capabilities.test.ts
+│       │   │   │   │   ├── use-futures-desk-wire.test.ts
+│       │   │   │   │   ├── use-spot-desk-wire.test.ts
+│       │   │   │   │   ├── use-trade-desk-mobile-chart-trade-swipe.test.ts
+│       │   │   │   │   ├── use-trade-desk-viewport.test.ts
+│       │   │   │   │   ├── use-trade-fiat-hint.test.ts
+│       │   │   │   │   ├── use-trade-oracle-realtime-disconnected.test.ts
+│       │   │   │   │   └── use-trade-page-controller.test.ts
+│       │   │   │   ├── bet-hub-casino-embed.ts
+│       │   │   │   ├── bet-hub-section.ts
+│       │   │   │   ├── display-chart/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── display-feed-contract.ts
+│       │   │   │   │   ├── display-feed-stale.ts
+│       │   │   │   │   ├── display-kline-reconnect.ts
+│       │   │   │   │   ├── index.ts
+│       │   │   │   │   ├── resolve-exchange-symbol.ts
+│       │   │   │   │   ├── use-display-kline.ts
+│       │   │   │   │   ├── use-exchange-display-price.ts
+│       │   │   │   │   └── use-exchange-live-candles.ts
+│       │   │   │   ├── format-oracle-price-display.ts
+│       │   │   │   ├── market-store/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── display-feed-stale-watch.ts
+│       │   │   │   │   ├── format-ticker-display.ts
+│       │   │   │   │   ├── market-data-bridge.tsx
+│       │   │   │   │   ├── order-book-store.ts
+│       │   │   │   │   ├── ticker-store.ts
+│       │   │   │   │   ├── use-display-feed-stale.ts
+│       │   │   │   │   ├── use-market-ticker-display.ts
+│       │   │   │   │   ├── use-market-ticker.ts
+│       │   │   │   │   └── use-order-book.ts
+│       │   │   │   ├── order-book-display.ts
+│       │   │   │   ├── order-ticket/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── apply-balance-percent.ts
+│       │   │   │   │   ├── compute-position-display-metrics.ts
+│       │   │   │   │   ├── leverage-control-display.ts
+│       │   │   │   │   ├── leverage-control.tsx
+│       │   │   │   │   ├── margin-mode-display.ts
+│       │   │   │   │   ├── margin-mode-segment.tsx
+│       │   │   │   │   ├── order-ticket-balance-chips.tsx
+│       │   │   │   │   ├── order-ticket-display.ts
+│       │   │   │   │   ├── order-ticket-keyboard.ts
+│       │   │   │   │   ├── order-ticket-types.ts
+│       │   │   │   │   ├── position-mode-fixed-label.tsx
+│       │   │   │   │   ├── position-mode-segment.tsx
+│       │   │   │   │   └── trade-tier-fee-badge.tsx
+│       │   │   │   ├── trade-beginner-help/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── trade-help-tip.tsx
+│       │   │   │   │   └── trade-how-it-works-panel.tsx
+│       │   │   │   ├── trade-feedback-display.ts
+│       │   │   │   ├── trade-fiat-hint-display.ts
+│       │   │   │   ├── trade-house-counterparty-ack-button.tsx
+│       │   │   │   ├── trade-realtime-feedback-display.ts
+│       │   │   │   ├── trade-rpc-capabilities.ts
+│       │   │   │   ├── trade-rpc-error-display.ts
+│       │   │   │   ├── use-bet-hub-section.ts
+│       │   │   │   ├── use-futures-desk-wire.ts
+│       │   │   │   ├── use-futures-orders-page-controller.ts
+│       │   │   │   ├── use-futures-positions-page-controller.ts
+│       │   │   │   ├── use-house-counterparty-acknowledgement.ts
+│       │   │   │   ├── use-price-alert-monitor.ts
+│       │   │   │   ├── use-spot-desk-wire.ts
+│       │   │   │   ├── use-trade-desk-mobile-chart-trade-swipe.ts
+│       │   │   │   ├── use-trade-desk-viewport.ts
+│       │   │   │   ├── use-trade-earn-vip-tier.ts
+│       │   │   │   ├── use-trade-fiat-hint.ts
+│       │   │   │   ├── use-trade-oracle-realtime-disconnected.ts
+│       │   │   │   ├── use-trade-page-controller.ts
+│       │   │   │   └── use-trade-realtime-feedback.ts
+│       │   │   └── wallet/
+│       │   │       ├── __tests__/
+│       │   │       │   ├── crypto-deposit-page-display.test.ts
+│       │   │       │   ├── crypto-deposit-status.test.ts
+│       │   │       │   ├── crypto-withdraw-page-display.test.ts
+│       │   │       │   ├── crypto-withdraw-status.test.ts
+│       │   │       │   ├── deposit-hub-display.test.ts
+│       │   │       │   ├── deposit-realtime-notify.test.ts
+│       │   │       │   ├── giftcard-deposit-page-display.test.ts
+│       │   │       │   ├── giftcard-deposit-status.test.ts
+│       │   │       │   ├── krw-deposit-display.test.ts
+│       │   │       │   ├── krw-deposit-page-display.test.ts
+│       │   │       │   ├── krw-withdraw-page-display.test.ts
+│       │   │       │   ├── ledger-entry-filters.test.ts
+│       │   │       │   ├── ledger-page-display.test.ts
+│       │   │       │   ├── ledger-realtime-notify.test.ts
+│       │   │       │   ├── staking-position-display.test.ts
+│       │   │       │   ├── use-wallet-fiat-hint.test.ts
+│       │   │       │   ├── wallet-fiat-hint-display.test.ts
+│       │   │       │   ├── wallet-ledger-display.test.ts
+│       │   │       │   └── withdraw-hub-display.test.ts
+│       │   │       ├── crypto-deposit-page-display.ts
+│       │   │       ├── crypto-deposit-status.ts
+│       │   │       ├── crypto-withdraw-page-display.ts
+│       │   │       ├── crypto-withdraw-status.ts
+│       │   │       ├── deposit-hub-display.ts
+│       │   │       ├── deposit-notify-pref.ts
+│       │   │       ├── deposit-realtime-notify.ts
+│       │   │       ├── earn-hub-tier.ts
+│       │   │       ├── giftcard-deposit-page-display.ts
+│       │   │       ├── giftcard-deposit-status.ts
+│       │   │       ├── krw-deposit-display.ts
+│       │   │       ├── krw-deposit-page-display.ts
+│       │   │       ├── krw-withdraw-page-display.ts
+│       │   │       ├── ledger-entry-filters.ts
+│       │   │       ├── ledger-labels.ts
+│       │   │       ├── ledger-page-display.ts
+│       │   │       ├── ledger-realtime-notify.ts
+│       │   │       ├── staking-position-display.ts
+│       │   │       ├── use-crypto-deposit-controller.ts
+│       │   │       ├── use-crypto-deposit.ts
+│       │   │       ├── use-crypto-withdraw-controller.ts
+│       │   │       ├── use-crypto-withdraw.ts
+│       │   │       ├── use-deposit-hub-controller.ts
+│       │   │       ├── use-giftcard-deposit-controller.ts
+│       │   │       ├── use-giftcard-fee-market.ts
+│       │   │       ├── use-giftcard-redeem-controller.ts
+│       │   │       ├── use-krw-deposit-controller.ts
+│       │   │       ├── use-krw-withdraw-controller.ts
+│       │   │       ├── use-ledger-page-controller.ts
+│       │   │       ├── use-phon-balance-breakdown.ts
+│       │   │       ├── use-wallet-data.ts
+│       │   │       ├── use-wallet-fiat-hint.ts
+│       │   │       ├── use-wallet-page-controller.ts
+│       │   │       ├── use-wallet-redeem-controller.ts
+│       │   │       ├── use-wallet-transfer-controller.ts
+│       │   │       ├── use-withdraw-hub-controller.ts
+│       │   │       ├── use-withdraw-tier-limits.ts
+│       │   │       ├── wallet-fiat-hint-display.ts
+│       │   │       ├── wallet-ledger-display.ts
+│       │   │       └── withdraw-hub-display.ts
+│       │   ├── hooks/
+│       │   │   ├── use-ads-attribution-chunk.ts
+│       │   │   ├── use-client-gate-prechecks.ts
+│       │   │   ├── use-cms-content.ts
+│       │   │   ├── use-compliance-status.ts
+│       │   │   ├── use-confirm-snapshot.ts
+│       │   │   ├── use-deposit-realtime-notify.ts
+│       │   │   ├── use-money.ts
+│       │   │   ├── use-platform-gates.ts
+│       │   │   ├── use-prefers-reduced-motion.ts
+│       │   │   ├── use-profile.ts
+│       │   │   ├── use-realtime.ts
+│       │   │   ├── use-rpc.ts
+│       │   │   ├── use-sports-realtime.ts
+│       │   │   ├── use-trade-launch-flags.ts
+│       │   │   ├── use-trading.ts
+│       │   │   ├── use-wallet.ts
+│       │   │   └── useOddsTick.ts
+│       │   ├── lib/
+│       │   │   ├── __tests__/
+│       │   │   │   ├── ads-attribution-consent.test.ts
+│       │   │   │   ├── ads-attribution-pixels.test.ts
+│       │   │   │   ├── landing-analytics.test.ts
+│       │   │   │   ├── landing-route-guard.test.ts
+│       │   │   │   └── translate-error.test.ts
+│       │   │   ├── ads-attribution-consent.ts
+│       │   │   ├── ads-attribution-pixels.ts
+│       │   │   ├── ads-attribution.ts
+│       │   │   ├── auth-account-marker.ts
+│       │   │   ├── auth-error-key.ts
+│       │   │   ├── auth-redirect.ts
+│       │   │   ├── auth.ts
+│       │   │   ├── display-odds-multiply.ts
+│       │   │   ├── env.ts
+│       │   │   ├── format-funding-rate-display.ts
+│       │   │   ├── format-liquidation-distance.ts
+│       │   │   ├── format.ts
+│       │   │   ├── geo-block.ts
+│       │   │   ├── i18n.tsx
+│       │   │   ├── kakao-share-sdk.ts
+│       │   │   ├── landing-analytics.ts
+│       │   │   ├── landing-route-guard.ts
+│       │   │   ├── launch-gates.ts
+│       │   │   ├── money-display.ts
+│       │   │   ├── money-input.ts
+│       │   │   ├── onboarding-consent.ts
+│       │   │   ├── onboarding-funnel.ts
+│       │   │   ├── phon-krw-rate-stale.ts
+│       │   │   ├── production-security-shell.ts
+│       │   │   ├── production-site-origin.ts
+│       │   │   ├── pwa-auth-nudge.ts
+│       │   │   ├── pwa-register-dev-stub.ts
+│       │   │   ├── query.ts
+│       │   │   ├── referral-pending.ts
+│       │   │   ├── referral-register.ts
+│       │   │   ├── rpc.ts
+│       │   │   ├── signup-email-policy.ts
+│       │   │   ├── supabase.ts
+│       │   │   └── translate-error.ts
+│       │   ├── main.tsx
+│       │   ├── product/
+│       │   │   ├── i18n/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   └── i18n-shell.test.ts
+│       │   │   │   ├── constants.ts
+│       │   │   │   ├── i18n-shell.tsx
+│       │   │   │   ├── index.ts
+│       │   │   │   └── instance.ts
+│       │   │   ├── layout/
+│       │   │   │   ├── content-shell.tsx
+│       │   │   │   └── index.ts
+│       │   │   ├── primitives/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── brand-mark.test.tsx
+│       │   │   │   │   ├── button-variants.test.ts
+│       │   │   │   │   ├── card-variants.test.ts
+│       │   │   │   │   ├── cn.test.ts
+│       │   │   │   │   ├── collapsible-section.test.tsx
+│       │   │   │   │   ├── confirm-dialog.test.tsx
+│       │   │   │   │   ├── domain-empty-mark.test.tsx
+│       │   │   │   │   ├── mission-card.test.tsx
+│       │   │   │   │   ├── money-display-with-fiat-hint.test.tsx
+│       │   │   │   │   ├── money-display.test.tsx
+│       │   │   │   │   ├── motion-presets.test.ts
+│       │   │   │   │   ├── progress-ring.test.tsx
+│       │   │   │   │   ├── quad-stream-loading.test.tsx
+│       │   │   │   │   ├── resilience-grammar.test.tsx
+│       │   │   │   │   ├── spend-currency-selector.test.tsx
+│       │   │   │   │   ├── text-variants.test.ts
+│       │   │   │   │   ├── use-count-up.test.ts
+│       │   │   │   │   ├── use-prefers-reduced-motion.test.ts
+│       │   │   │   │   └── ux-grammar.test.tsx
+│       │   │   │   ├── brand-mark.tsx
+│       │   │   │   ├── button.tsx
+│       │   │   │   ├── card.tsx
+│       │   │   │   ├── collapsible-section.tsx
+│       │   │   │   ├── confirm-dialog.tsx
+│       │   │   │   ├── dialog.tsx
+│       │   │   │   ├── domain-empty-mark.tsx
+│       │   │   │   ├── dropdown-menu.tsx
+│       │   │   │   ├── empty-state.tsx
+│       │   │   │   ├── error-panel.tsx
+│       │   │   │   ├── field.tsx
+│       │   │   │   ├── help-tip.tsx
+│       │   │   │   ├── how-it-works.tsx
+│       │   │   │   ├── icon-button.tsx
+│       │   │   │   ├── index.ts
+│       │   │   │   ├── input.tsx
+│       │   │   │   ├── lib/
+│       │   │   │   │   ├── cn.ts
+│       │   │   │   │   ├── fiat-hint-display.ts
+│       │   │   │   │   ├── how-it-works-keys.ts
+│       │   │   │   │   ├── money-display-parts.ts
+│       │   │   │   │   ├── motion-presets.ts
+│       │   │   │   │   ├── motion-tier.ts
+│       │   │   │   │   ├── use-count-up.ts
+│       │   │   │   │   └── use-prefers-reduced-motion.ts
+│       │   │   │   ├── mission-card.tsx
+│       │   │   │   ├── money-display-with-fiat-hint.tsx
+│       │   │   │   ├── money-display.tsx
+│       │   │   │   ├── popover.tsx
+│       │   │   │   ├── progress-ring.tsx
+│       │   │   │   ├── quad-stream-loading.tsx
+│       │   │   │   ├── routine-card.tsx
+│       │   │   │   ├── select.tsx
+│       │   │   │   ├── sheet.tsx
+│       │   │   │   ├── skeleton.tsx
+│       │   │   │   ├── slider.tsx
+│       │   │   │   ├── spend-currency-selector.tsx
+│       │   │   │   ├── status-badge.tsx
+│       │   │   │   ├── switch.tsx
+│       │   │   │   ├── tabs.tsx
+│       │   │   │   ├── text.tsx
+│       │   │   │   ├── toast-zone.tsx
+│       │   │   │   ├── tooltip.tsx
+│       │   │   │   ├── trade-confirm-settings-link.tsx
+│       │   │   │   └── zero-balance-state.tsx
+│       │   │   ├── routing/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   └── resolve-route-redirect.test.ts
+│       │   │   │   ├── index.ts
+│       │   │   │   ├── resolve-route-redirect.ts
+│       │   │   │   └── route-redirect-registry.ts
+│       │   │   ├── shell/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── appshell-visual-signoff.test.tsx
+│       │   │   │   │   ├── appshell.test.tsx
+│       │   │   │   │   ├── bet-first-visit-education-gate.test.tsx
+│       │   │   │   │   ├── bet-first-visit-education-sheet.test.tsx
+│       │   │   │   │   ├── marketing-shell.test.tsx
+│       │   │   │   │   ├── pwa-install-banner.test.tsx
+│       │   │   │   │   ├── pwa-shell.test.tsx
+│       │   │   │   │   ├── shell-elevation.test.tsx
+│       │   │   │   │   ├── shell-route-matchers.test.ts
+│       │   │   │   │   └── subnav-route-manifest.test.ts
+│       │   │   │   ├── appshell.tsx
+│       │   │   │   ├── aurora-backdrop-policy.ts
+│       │   │   │   ├── aurora-background.css
+│       │   │   │   ├── aurora-background.tsx
+│       │   │   │   ├── bet-first-visit-education-gate.tsx
+│       │   │   │   ├── bet-first-visit-education-sheet.tsx
+│       │   │   │   ├── bottom-nav.tsx
+│       │   │   │   ├── casino-subnav.ts
+│       │   │   │   ├── domain-subnav.tsx
+│       │   │   │   ├── earn-shell.tsx
+│       │   │   │   ├── earn-subnav.ts
+│       │   │   │   ├── index.ts
+│       │   │   │   ├── marketing-shell.css
+│       │   │   │   ├── marketing-shell.tsx
+│       │   │   │   ├── pwa-install-banner.tsx
+│       │   │   │   ├── pwa-shell.tsx
+│       │   │   │   ├── shell-chrome.css
+│       │   │   │   ├── shell-route-matchers.ts
+│       │   │   │   ├── shell.css
+│       │   │   │   ├── skip-link.tsx
+│       │   │   │   ├── sports-subnav.ts
+│       │   │   │   ├── subnav-route-manifest.ts
+│       │   │   │   ├── surface-domain-boundary.ts
+│       │   │   │   ├── top-bar.tsx
+│       │   │   │   ├── trade-first-visit-education-gate.tsx
+│       │   │   │   ├── trade-realtime-feedback-gate.tsx
+│       │   │   │   ├── trade-subnav.ts
+│       │   │   │   └── wallet-subnav.ts
+│       │   │   ├── surfaces/
+│       │   │   │   ├── __tests__/
+│       │   │   │   │   ├── da-w3-gate-ia-progressive.test.tsx
+│       │   │   │   │   ├── da-w5-gate-domain-cards.test.tsx
+│       │   │   │   │   ├── da-w6-gate-brand-elevation.test.tsx
+│       │   │   │   │   ├── da-w7-operator-visual-dae-signoff.test.tsx
+│       │   │   │   │   ├── da-w8-gate-signature-experience.test.tsx
+│       │   │   │   │   ├── p10-betting-visual-signoff.test.tsx
+│       │   │   │   │   ├── p13-soft-launch-qa.test.tsx
+│       │   │   │   │   ├── p4-money-visual-signoff.test.tsx
+│       │   │   │   │   ├── p8-core-visual-signoff.test.tsx
+│       │   │   │   │   └── p9-trade-visual-signoff.test.tsx
+│       │   │   │   ├── account/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── account-hub-page.tsx
+│       │   │   │   │   ├── account-kyc-page.tsx
+│       │   │   │   │   ├── account-profile-page.tsx
+│       │   │   │   │   └── account-responsible-gaming-page.tsx
+│       │   │   │   ├── auth/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   └── auth-callback-page.tsx
+│       │   │   │   ├── casino/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── casino-fairness-page.tsx
+│       │   │   │   │   └── casino-lobby-page.tsx
+│       │   │   │   ├── earn/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── earn-cashback-page.tsx
+│       │   │   │   │   └── earn-play-page.tsx
+│       │   │   │   ├── events/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   └── events-hub-page.tsx
+│       │   │   │   ├── games/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── auto-bet-panel.tsx
+│       │   │   │   │   ├── bet-mode-tabs.tsx
+│       │   │   │   │   ├── blackjack-stage.tsx
+│       │   │   │   │   ├── casino-game-shell.tsx
+│       │   │   │   │   ├── casino-game-stage-placeholder.tsx
+│       │   │   │   │   ├── casino-game-stage.tsx
+│       │   │   │   │   ├── casino-money-with-fiat-hint.tsx
+│       │   │   │   │   ├── casino-sound.ts
+│       │   │   │   │   ├── casino-stage-types.ts
+│       │   │   │   │   ├── crash-stage.tsx
+│       │   │   │   │   ├── deepshaft-stage.tsx
+│       │   │   │   │   ├── dice-stage.tsx
+│       │   │   │   │   ├── game-outcome-layer.tsx
+│       │   │   │   │   ├── game-selection-fields.tsx
+│       │   │   │   │   ├── gold-rush-stage.tsx
+│       │   │   │   │   ├── hilo-stage.tsx
+│       │   │   │   │   ├── limbo-stage.tsx
+│       │   │   │   │   ├── mines-stage.tsx
+│       │   │   │   │   ├── mint-reels-stage.tsx
+│       │   │   │   │   ├── momentum-stage.tsx
+│       │   │   │   │   ├── pf-strip.tsx
+│       │   │   │   │   ├── plinko-stage.tsx
+│       │   │   │   │   ├── roulette-stage.tsx
+│       │   │   │   │   ├── use-pixi-stage.ts
+│       │   │   │   │   └── win-tier-overlay.tsx
+│       │   │   │   ├── home/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── earn-home-page.tsx
+│       │   │   │   │   ├── earn-mission-reward.tsx
+│       │   │   │   │   ├── earn-money-with-fiat-hint.tsx
+│       │   │   │   │   ├── home-attendance-page.tsx
+│       │   │   │   │   ├── home-missions-invite-page.tsx
+│       │   │   │   │   ├── home-missions-page.tsx
+│       │   │   │   │   └── home-missions-referral-page.tsx
+│       │   │   │   ├── install/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── install-guide-sheet.tsx
+│       │   │   │   │   └── install-page.tsx
+│       │   │   │   ├── landing/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── ads-consent-sheet.tsx
+│       │   │   │   │   ├── ambient-activity.ts
+│       │   │   │   │   ├── auth-attribution-chunk.tsx
+│       │   │   │   │   ├── landing-cumulative-stats.tsx
+│       │   │   │   │   ├── landing-differentiators.tsx
+│       │   │   │   │   ├── landing-faq-section.tsx
+│       │   │   │   │   ├── landing-final-cta.tsx
+│       │   │   │   │   ├── landing-footer.tsx
+│       │   │   │   │   ├── landing-mission-preview-card.tsx
+│       │   │   │   │   ├── landing-mission-preview-row.tsx
+│       │   │   │   │   ├── landing-page.tsx
+│       │   │   │   │   ├── landing-signup-momentum.tsx
+│       │   │   │   │   ├── landing-testimonials.tsx
+│       │   │   │   │   ├── landing-wallet-preview.tsx
+│       │   │   │   │   ├── landing-why-strip.tsx
+│       │   │   │   │   ├── landing-withdrawal-momentum.tsx
+│       │   │   │   │   ├── landing-withdrawal-proof.tsx
+│       │   │   │   │   └── live-activity-ticker.tsx
+│       │   │   │   ├── legal/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── affiliate-document-body.tsx
+│       │   │   │   │   ├── affiliate-page.tsx
+│       │   │   │   │   ├── cookies-document-body.tsx
+│       │   │   │   │   ├── cookies-page.tsx
+│       │   │   │   │   ├── legal-document-layout.tsx
+│       │   │   │   │   ├── legal-nav.tsx
+│       │   │   │   │   ├── legal-section.tsx
+│       │   │   │   │   ├── privacy-document-body.tsx
+│       │   │   │   │   ├── privacy-page.tsx
+│       │   │   │   │   ├── responsible-gaming-page.tsx
+│       │   │   │   │   ├── rg-document-body.tsx
+│       │   │   │   │   ├── risk-disclosure-page.tsx
+│       │   │   │   │   ├── risk-document-body.tsx
+│       │   │   │   │   ├── terms-document-body.tsx
+│       │   │   │   │   └── terms-page.tsx
+│       │   │   │   ├── login/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── auth-entry-layout.tsx
+│       │   │   │   │   ├── login-form.tsx
+│       │   │   │   │   └── login-page.tsx
+│       │   │   │   ├── marketing/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── announcements-page.tsx
+│       │   │   │   │   ├── features-earn-page.tsx
+│       │   │   │   │   ├── features-hub-page.tsx
+│       │   │   │   │   ├── features-vip-page.tsx
+│       │   │   │   │   ├── feedback-page.tsx
+│       │   │   │   │   ├── fees-page.tsx
+│       │   │   │   │   ├── marketing-page-layout.tsx
+│       │   │   │   │   ├── support-faq-page.tsx
+│       │   │   │   │   ├── support-hub-page.tsx
+│       │   │   │   │   ├── support-ticket-page.tsx
+│       │   │   │   │   ├── system-status-page.tsx
+│       │   │   │   │   ├── tier-guide-page.tsx
+│       │   │   │   │   └── trust-security-page.tsx
+│       │   │   │   ├── notifications/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   └── notifications-page.tsx
+│       │   │   │   ├── onboarding/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── onboarding-missions-page.tsx
+│       │   │   │   │   └── onboarding-page.tsx
+│       │   │   │   ├── referral/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── referral-invite-page.tsx
+│       │   │   │   │   ├── referral-leaderboard-page.tsx
+│       │   │   │   │   └── referral-page.tsx
+│       │   │   │   ├── reset-password/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── reset-password-form.tsx
+│       │   │   │   │   └── reset-password-page.tsx
+│       │   │   │   ├── rewards/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   └── rewards-history-page.tsx
+│       │   │   │   ├── settings/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── account-settings-page.tsx
+│       │   │   │   │   ├── api-keys-settings-page.tsx
+│       │   │   │   │   ├── bank-accounts-settings-page.tsx
+│       │   │   │   │   ├── notifications-settings-page.tsx
+│       │   │   │   │   ├── preferences-settings-page.tsx
+│       │   │   │   │   ├── referral-settings-page.tsx
+│       │   │   │   │   ├── security-settings-page.tsx
+│       │   │   │   │   └── settings-hub-page.tsx
+│       │   │   │   ├── share/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   └── share-earnings-page.tsx
+│       │   │   │   ├── shell/
+│       │   │   │   │   └── __tests__/
+│       │   │   │   ├── signup/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── signup-consent-panel.tsx
+│       │   │   │   │   ├── signup-form.tsx
+│       │   │   │   │   └── signup-page.tsx
+│       │   │   │   ├── sports/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── sports-bet-slip-panel.tsx
+│       │   │   │   │   ├── sports-cashout-card.tsx
+│       │   │   │   │   ├── sports-fixture-board.tsx
+│       │   │   │   │   ├── sports-fixture-markets-panel.tsx
+│       │   │   │   │   ├── sports-kickoff-countdown.tsx
+│       │   │   │   │   ├── sports-live-inplay-banner.tsx
+│       │   │   │   │   ├── sports-money-with-fiat-hint.tsx
+│       │   │   │   │   ├── sports-my-bets-panel.tsx
+│       │   │   │   │   ├── sports-page.tsx
+│       │   │   │   │   ├── sports-rules-panel.tsx
+│       │   │   │   │   └── sports-vip-stub-panel.tsx
+│       │   │   │   ├── staking/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── staking-hub-page.tsx
+│       │   │   │   │   ├── staking-positions-page.tsx
+│       │   │   │   │   └── staking-positions-panel.tsx
+│       │   │   │   ├── tier/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── tier-benefits-page.tsx
+│       │   │   │   │   ├── tier-leaderboard-page.tsx
+│       │   │   │   │   └── tier-me-page.tsx
+│       │   │   │   ├── trade/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── chart/
+│       │   │   │   │   ├── futures-desk-page.tsx
+│       │   │   │   │   ├── futures-market-header.tsx
+│       │   │   │   │   ├── futures-order-ticket.tsx
+│       │   │   │   │   ├── futures-orders-page.tsx
+│       │   │   │   │   ├── futures-positions-page.tsx
+│       │   │   │   │   ├── futures-positions-panel.tsx
+│       │   │   │   │   ├── open-orders-panel.tsx
+│       │   │   │   │   ├── order-book-depth-chart.tsx
+│       │   │   │   │   ├── spot-desk-page.tsx
+│       │   │   │   │   ├── spot-market-header.tsx
+│       │   │   │   │   ├── spot-order-book-panel.tsx
+│       │   │   │   │   ├── spot-order-ticket.tsx
+│       │   │   │   │   ├── trade-confirm-settings-link.tsx
+│       │   │   │   │   ├── trade-desk-bottom-dock.tsx
+│       │   │   │   │   ├── trade-desk-fetch-error-banner.tsx
+│       │   │   │   │   ├── trade-desk-layout.css
+│       │   │   │   │   ├── trade-desk-mobile-sticky-cta.tsx
+│       │   │   │   │   ├── trade-desk-mobile-tabs.tsx
+│       │   │   │   │   ├── trade-desk-page-shell.tsx
+│       │   │   │   │   ├── trade-desk-tablet-layout.tsx
+│       │   │   │   │   ├── trade-display-feed-stale-badge.tsx
+│       │   │   │   │   ├── trade-fills-history-panel.tsx
+│       │   │   │   │   ├── trade-first-visit-education-sheet.tsx
+│       │   │   │   │   ├── trade-funding-history-panel.tsx
+│       │   │   │   │   ├── trade-market-status-banner.tsx
+│       │   │   │   │   ├── trade-market-ticker-stats-wire.tsx
+│       │   │   │   │   ├── trade-market-ticker-stats.tsx
+│       │   │   │   │   ├── trade-money-with-fiat-hint.tsx
+│       │   │   │   │   ├── trade-phon-balance-breakdown.tsx
+│       │   │   │   │   ├── trade-price-alert-control.tsx
+│       │   │   │   │   ├── trade-price-dir-ticker.tsx
+│       │   │   │   │   ├── trade-price-with-fiat-hint.tsx
+│       │   │   │   │   └── trade-recent-trades-rail.tsx
+│       │   │   │   ├── verify-email/
+│       │   │   │   │   ├── __tests__/
+│       │   │   │   │   ├── verify-email-form.tsx
+│       │   │   │   │   └── verify-email-page.tsx
+│       │   │   │   └── wallet/
+│       │   │   │       ├── __tests__/
+│       │   │   │       ├── crypto-deposit-page.tsx
+│       │   │   │       ├── crypto-withdraw-page.tsx
+│       │   │   │       ├── deposit-hub-page.tsx
+│       │   │   │       ├── deposit-payment-method-card.tsx
+│       │   │   │       ├── giftcard-deposit-page.tsx
+│       │   │   │       ├── giftcard-redeem-page.tsx
+│       │   │   │       ├── krw-deposit-page.tsx
+│       │   │   │       ├── krw-withdraw-page.tsx
+│       │   │   │       ├── ledger-page.tsx
+│       │   │   │       ├── wallet-balance-hero.tsx
+│       │   │   │       ├── wallet-compliance-strip.tsx
+│       │   │   │       ├── wallet-money-with-fiat-hint.tsx
+│       │   │   │       ├── wallet-page.tsx
+│       │   │   │       ├── wallet-redeem-page.tsx
+│       │   │   │       ├── wallet-transfer-page.tsx
+│       │   │   │       ├── wallet-withdraw-tier-limits-card.tsx
+│       │   │   │       └── withdraw-hub-page.tsx
+│       │   │   ├── theme/
+│       │   │   │   └── theme-shell.tsx
+│       │   │   └── tokens/
+│       │   │       ├── __tests__/
+│       │   │       │   ├── brand-elevation.test.ts
+│       │   │       │   ├── da-w7-strict-tokens.test.ts
+│       │   │       │   ├── domain-card-personalities.test.ts
+│       │   │       │   ├── elevation-tokens.test.ts
+│       │   │       │   ├── layout-orbit-grid.test.ts
+│       │   │       │   ├── signature-surfaces.test.ts
+│       │   │       │   └── viewport-contract.test.ts
+│       │   │       ├── brand-elevation.css
+│       │   │       ├── colors.css
+│       │   │       ├── domain-card-personalities.css
+│       │   │       ├── elevation.css
+│       │   │       ├── fonts.css
+│       │   │       ├── index.css
+│       │   │       ├── index.ts
+│       │   │       ├── layout.css
+│       │   │       ├── motion.css
+│       │   │       ├── motion.ts
+│       │   │       ├── signature-surfaces.css
+│       │   │       ├── spacing.css
+│       │   │       ├── theme.css
+│       │   │       └── viewport-contract.ts
+│       │   ├── router.ts
+│       │   ├── routes/
+│       │   │   ├── __root.tsx
+│       │   │   ├── account.index.tsx
+│       │   │   ├── account.kyc.tsx
+│       │   │   ├── account.profile.tsx
+│       │   │   ├── account.responsible-gaming.tsx
+│       │   │   ├── announcements.tsx
+│       │   │   ├── auth/
+│       │   │   │   └── callback.tsx
+│       │   │   ├── casino.fairness.tsx
+│       │   │   ├── casino.index.tsx
+│       │   │   ├── casino.tsx
+│       │   │   ├── earn.cashback.tsx
+│       │   │   ├── earn.play.tsx
+│       │   │   ├── events.tsx
+│       │   │   ├── features.earn.tsx
+│       │   │   ├── features.index.tsx
+│       │   │   ├── features.vip.tsx
+│       │   │   ├── feedback.tsx
+│       │   │   ├── fees.tsx
+│       │   │   ├── games.$gameCode.tsx
+│       │   │   ├── home.attendance.tsx
+│       │   │   ├── home.missions.invite.tsx
+│       │   │   ├── home.missions.referral.tsx
+│       │   │   ├── home.missions.tsx
+│       │   │   ├── home.tsx
+│       │   │   ├── index.tsx
+│       │   │   ├── install.tsx
+│       │   │   ├── ledger.tsx
+│       │   │   ├── legal/
+│       │   │   │   ├── affiliate.tsx
+│       │   │   │   ├── cookies.tsx
+│       │   │   │   ├── privacy.tsx
+│       │   │   │   ├── responsible-gaming.tsx
+│       │   │   │   ├── risk-disclosure.tsx
+│       │   │   │   └── terms.tsx
+│       │   │   ├── login.tsx
+│       │   │   ├── notifications.tsx
+│       │   │   ├── onboarding.index.tsx
+│       │   │   ├── onboarding.missions.tsx
+│       │   │   ├── onboarding.tsx
+│       │   │   ├── r/
+│       │   │   │   └── $code.tsx
+│       │   │   ├── referral.invite.tsx
+│       │   │   ├── referral.leaderboard.tsx
+│       │   │   ├── referral.tsx
+│       │   │   ├── reset-password.tsx
+│       │   │   ├── rewards.history.tsx
+│       │   │   ├── security.tsx
+│       │   │   ├── settings.account.tsx
+│       │   │   ├── settings.api-keys.tsx
+│       │   │   ├── settings.bank-accounts.tsx
+│       │   │   ├── settings.notifications.tsx
+│       │   │   ├── settings.preferences.tsx
+│       │   │   ├── settings.referral.tsx
+│       │   │   ├── settings.security.tsx
+│       │   │   ├── settings.tsx
+│       │   │   ├── share.earnings.tsx
+│       │   │   ├── signup.tsx
+│       │   │   ├── sports.fixture.$fixtureId.tsx
+│       │   │   ├── sports.index.tsx
+│       │   │   ├── sports.live.tsx
+│       │   │   ├── sports.my-bets.tsx
+│       │   │   ├── sports.prematch.tsx
+│       │   │   ├── sports.rules.tsx
+│       │   │   ├── sports.tsx
+│       │   │   ├── sports.vip.tsx
+│       │   │   ├── staking.positions.tsx
+│       │   │   ├── staking.tsx
+│       │   │   ├── status.tsx
+│       │   │   ├── support.faq.tsx
+│       │   │   ├── support.index.tsx
+│       │   │   ├── support.ticket.tsx
+│       │   │   ├── tier.benefits.tsx
+│       │   │   ├── tier.index.tsx
+│       │   │   ├── tier.leaderboard.tsx
+│       │   │   ├── tier.me.tsx
+│       │   │   ├── trade.futures.tsx
+│       │   │   ├── trade.index.tsx
+│       │   │   ├── trade.orders.tsx
+│       │   │   ├── trade.positions.tsx
+│       │   │   ├── trade.tsx
+│       │   │   ├── verify-email.tsx
+│       │   │   ├── wallet.deposit.crypto.tsx
+│       │   │   ├── wallet.deposit.giftcard.tsx
+│       │   │   ├── wallet.deposit.index.tsx
+│       │   │   ├── wallet.deposit.krw.tsx
+│       │   │   ├── wallet.deposit.tsx
+│       │   │   ├── wallet.index.tsx
+│       │   │   ├── wallet.redeem.giftcard.tsx
+│       │   │   ├── wallet.redeem.tsx
+│       │   │   ├── wallet.transfer.tsx
+│       │   │   ├── wallet.tsx
+│       │   │   ├── wallet.withdraw.crypto.tsx
+│       │   │   ├── wallet.withdraw.index.tsx
+│       │   │   ├── wallet.withdraw.krw.tsx
+│       │   │   └── wallet.withdraw.tsx
+│       │   ├── routeTree.gen.ts
+│       │   ├── stores/
+│       │   │   ├── notifications.ts
+│       │   │   └── realtime.ts
+│       │   ├── sw.ts
+│       │   ├── vite-env.d.ts
+│       │   ├── vitest-env.d.ts
+│       │   └── workers/
+│       │       ├── __tests__/
+│       │       │   ├── market-data-emit-scheduler.test.ts
+│       │       │   ├── market-data-heartbeat.test.ts
+│       │       │   └── market-data-reconnect.test.ts
+│       │       ├── market-data-emit-scheduler.ts
+│       │       ├── market-data-heartbeat.ts
+│       │       ├── market-data-reconnect.ts
+│       │       └── market-data.worker.ts
+│       ├── tsconfig.json
+│       ├── tsconfig.vitest.json
+│       ├── vite-dev-performance.ts
+│       └── vite.config.ts
+├── backups/
+├── bun.lock
+├── bunfig.toml
+├── docs/
+│   ├── ADR/
+│   │   ├── 0001-quality-gates.md
+│   │   ├── 0002-engine-freeze.md
+│   │   ├── 0003-route-lock.md
+│   │   ├── 0004-single-design-system.md
+│   │   ├── 0005-no-v2-policy.md
+│   │   └── 0006-wallet-sigma-rule.md
+│   ├── audit/
+│   │   ├── ENGINE_UI_FULL_AUDIT_2026-07-08.md
+│   │   ├── MASTER_INVENTORY_AUDIT_2026-07-13.md
+│   │   ├── PLATFORM_AUDIT_A_DB_GUARDS_2026-07-08.md
+│   │   ├── PLATFORM_AUDIT_B_RPC_CONTRACT_2026-07-08.md
+│   │   ├── PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md
+│   │   ├── PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md
+│   │   ├── PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md
+│   │   ├── PLATFORM_AUDIT_REFERENCE.md
+│   │   └── visual-ux-2026-07-11/
+│   │       ├── capture-manifest.json
+│   │       ├── DESIGN_SYSTEM_AUDIT.md
+│   │       ├── README.md
+│   │       ├── RESPONSIVE_AUDIT.md
+│   │       ├── SCREENSHOT_INDEX.md
+│   │       ├── UX_AUDIT.md
+│   │       └── VISUAL_AUDIT.md
+│   ├── CASINO_SLO.md
+│   ├── CURRENT_STATUS.md
+│   ├── DOCS_INDEX.md
+│   ├── ENGINE_APEX_CLOSEOUT.md
+│   ├── ENGINE_CLOSED_BETA_SCENARIO_MATRIX.md
+│   ├── ENVIRONMENT_SETUP.md
+│   ├── LEGAL_BASIS.md
+│   ├── OBSERVABILITY_PRIVACY.md
+│   ├── OPERATIONS/
+│   │   ├── ENGINE_GAP_E0_APPROVAL.md
+│   │   ├── ENGINE_GAP_E1_GATE_DECAY.md
+│   │   ├── ENGINE_GAP_E1_TIER_DECAY.md
+│   │   ├── ENGINE_GAP_E10_ADMIN_KRW_PROOF.md
+│   │   ├── ENGINE_GAP_E10_GATE_PLATFORM_WORLD_CLASS.md
+│   │   ├── ENGINE_GAP_E10_GROWTH_UI.md
+│   │   ├── ENGINE_GAP_E10_PLATFORM.md
+│   │   ├── ENGINE_GAP_E10_TRUST_SUPPORT_UI.md
+│   │   ├── ENGINE_GAP_E10_WALLET_SETTINGS_UI.md
+│   │   ├── ENGINE_GAP_E2_GATE_MISSIONS.md
+│   │   ├── ENGINE_GAP_E2_MISSIONS.md
+│   │   ├── ENGINE_GAP_E21_GATE_TRADE_ENGINE_PARITY.md
+│   │   ├── ENGINE_GAP_E21_TRADE_PARITY.md
+│   │   ├── ENGINE_GAP_E21_UI_TRADE_ENGINE_UNLOCKS.md
+│   │   ├── ENGINE_GAP_E22_GATE_SPORTS_PARITY.md
+│   │   ├── ENGINE_GAP_E22_SPORTS_PARITY.md
+│   │   ├── ENGINE_GAP_E22_UI_SPORTS_PARITY_UNLOCKS.md
+│   │   ├── ENGINE_GAP_E23_CASINO_LIVE.md
+│   │   ├── ENGINE_GAP_E23_GATE_CASINO_LIVE.md
+│   │   ├── ENGINE_GAP_E23_UI_CASINO_LIVE_UNLOCKS.md
+│   │   ├── ENGINE_GAP_E3_GATE_CMS_PROMOTIONS.md
+│   │   ├── ENGINE_GAP_E3_VIRAL_CMS.md
+│   │   ├── ENGINE_GAP_E4_GATE_TIER_OPTION_B.md
+│   │   ├── ENGINE_GAP_E4_TIER_OPTION_B.md
+│   │   ├── ENGINE_GAP_E5_GAP_SURFACES.md
+│   │   ├── ENGINE_GAP_E5_GATE_GAP_SURFACES.md
+│   │   ├── ENGINE_GAP_E6_ADMIN_DESKS.md
+│   │   ├── ENGINE_GAP_E6_GATE_ADMIN_DESKS.md
+│   │   ├── ENGINE_GAP_E7_GATE_ENGINE_WAVE.md
+│   │   ├── ENGINE_GAP_E7_SOCIAL.md
+│   │   ├── ENGINE_GAP_E8_FINANCIAL.md
+│   │   ├── ENGINE_GAP_E8_GATE_FINANCIAL.md
+│   │   ├── ENGINE_GAP_E9_ADMIN_SUPPORT.md
+│   │   ├── ENGINE_GAP_E9_GATE_IDENTITY_SUPPORT.md
+│   │   ├── ENGINE_GAP_E9_IDENTITY_SUPPORT.md
+│   │   ├── FUNDING_RAILS_SOP.md
+│   │   ├── P13_LAUNCH_CLOSEOUT_BUNDLE.md
+│   │   ├── P13_SOFT_LAUNCH_BUNDLE.md
+│   │   ├── P13_T0A_PROD_PREFLIGHT.md
+│   │   ├── P13_T1_LIVE_RAMP_FEATURE_GATES.md
+│   │   ├── P13_T2_SCALE_TRIGGERS.md
+│   │   ├── PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/
+│   │   │   ├── binaries/
+│   │   │   │   └── .gitkeep
+│   │   │   ├── R0/
+│   │   │   │   ├── browser-mcp-probe.md
+│   │   │   │   ├── bun-audit-2026-07-13.md
+│   │   │   │   ├── control-plane-baseline.md
+│   │   │   │   ├── evidence-bucket-provisioned.md
+│   │   │   │   ├── probe5-preview-landing-390.png
+│   │   │   │   └── probe5-snapshot-390.yml
+│   │   │   ├── R1/
+│   │   │   │   ├── r1-stage1-browser.md
+│   │   │   │   ├── r1-trust-truth-implement.md
+│   │   │   │   └── r1-trust-truth-investigate.md
+│   │   │   ├── R10/
+│   │   │   │   ├── r10-rollback-dry-run-template.md
+│   │   │   │   ├── r10-rollout-soak-implement.md
+│   │   │   │   └── r10-soak-24h-snapshot.md
+│   │   │   ├── R11/
+│   │   │   │   ├── r11-3-owner-signoff-template.md
+│   │   │   │   ├── r11-closeout-implement.md
+│   │   │   │   ├── r11-evidence-retention-spotcheck.md
+│   │   │   │   └── r11-release-gate-checklist.md
+│   │   │   ├── R12/
+│   │   │   │   ├── r12-dr-drill-checklist.md
+│   │   │   │   ├── r12-post-release-implement.md
+│   │   │   │   ├── r12-ppr-24h-template.md
+│   │   │   │   ├── r12-ppr-72h-template.md
+│   │   │   │   ├── r12-ppr-7d-template.md
+│   │   │   │   └── r12-secrets-rotation-spotcheck.md
+│   │   │   ├── R2/
+│   │   │   │   ├── r2-capability-rails-investigate.md
+│   │   │   │   ├── r2a-crypto-giftcard-implement.md
+│   │   │   │   ├── r2a-stage1-browser.md
+│   │   │   │   ├── r2b-stage1-browser.md
+│   │   │   │   ├── r2b-withdrawal-copy-implement.md
+│   │   │   │   ├── r2c-sports-odds-implement.md
+│   │   │   │   ├── r2c-stage1-browser.md
+│   │   │   │   ├── r2d-krw-proof-implement.md
+│   │   │   │   └── r2d-stage1-browser.md
+│   │   │   ├── R3/
+│   │   │   │   ├── r3a-wallet-mutator-live-crash-implement.md
+│   │   │   │   ├── r3b-service-write-grants-implement.md
+│   │   │   │   ├── r3c-search-path-sweep-implement.md
+│   │   │   │   ├── r3d-siwe-analytics-implement.md
+│   │   │   │   └── r3e-auth-hibp-feature-flag-implement.md
+│   │   │   ├── R4/
+│   │   │   │   └── r4-market-ops-implement.md
+│   │   │   ├── R5/
+│   │   │   │   ├── r5-admin-safety-implement.md
+│   │   │   │   └── r5-stage1-browser.md
+│   │   │   ├── R6/
+│   │   │   │   ├── r6-product-consistency-implement.md
+│   │   │   │   └── r6-stage1-browser.md
+│   │   │   ├── R7/
+│   │   │   │   └── r7-type-ui-hygiene-implement.md
+│   │   │   ├── R8/
+│   │   │   │   ├── bun-audit-2026-07-13.md
+│   │   │   │   └── r8-deploy-parity-implement.md
+│   │   │   ├── R9/
+│   │   │   │   ├── r9-preflight.md
+│   │   │   │   ├── r9-runtime-implement.md
+│   │   │   │   ├── r9-stage1-matrix-template.md
+│   │   │   │   ├── r9-stage1-matrix.md
+│   │   │   │   └── r9-stage2-matrix.md
+│   │   │   └── README.md
+│   │   ├── PLATFORM_AUDIT_DECISION_LOG.md
+│   │   ├── PLATFORM_AUDIT_FINDING_REGISTRY.md
+│   │   ├── PLATFORM_AUDIT_FINDING_REGISTRY.yaml
+│   │   ├── PLATFORM_AUDIT_KPI_DASHBOARD.md
+│   │   ├── PLATFORM_AUDIT_OWNER_MATRIX.md
+│   │   ├── PLATFORM_AUDIT_RACI.md
+│   │   ├── PLATFORM_AUDIT_RISK_REGISTER.md
+│   │   ├── PLATFORM_AUDIT_RISK_REGISTER.yaml
+│   │   ├── PLATFORM_AUDIT_TODO_HANDOFF.md
+│   │   ├── PLATFORM_AUTH_TEST_ACCOUNT_TRIAGE.md
+│   │   ├── PLATFORM_DISASTER_RECOVERY.md
+│   │   ├── PLATFORM_DRILL_CALENDAR.md
+│   │   ├── PLATFORM_EVIDENCE_RETENTION.md
+│   │   ├── PLATFORM_EXCEPTION_PROCESS.md
+│   │   ├── PLATFORM_INCIDENT_RESPONSE.md
+│   │   ├── PLATFORM_INTEGRITY_EVIDENCE/
+│   │   │   ├── E1/
+│   │   │   │   └── system-lock-order.md
+│   │   │   ├── E2/
+│   │   │   │   └── realtime-narrow.md
+│   │   │   ├── E3/
+│   │   │   │   └── golden-earth.md
+│   │   │   ├── E4/
+│   │   │   │   └── sweep-chunk.md
+│   │   │   ├── E5/
+│   │   │   │   └── idempotency-handlers.md
+│   │   │   ├── GATE/
+│   │   │   │   ├── platform-integrity.md
+│   │   │   │   └── unblock-205.md
+│   │   │   ├── P0/
+│   │   │   │   ├── autobet-gate.md
+│   │   │   │   └── autobet-session.md
+│   │   │   ├── P1/
+│   │   │   │   ├── admin-rbac.md
+│   │   │   │   └── sports-odds-debounce.md
+│   │   │   ├── P2/
+│   │   │   │   ├── pf-golden-vectors.md
+│   │   │   │   └── quantize-odds.md
+│   │   │   ├── README.md
+│   │   │   └── W0/
+│   │   │       └── ssot-bootstrap.md
+│   │   ├── PLATFORM_PLAYBOOK_VERSION.yaml
+│   │   ├── PLATFORM_POST_RELEASE_REVIEW.md
+│   │   ├── PLATFORM_POST_RELEASE_REVIEW.yaml
+│   │   ├── PLATFORM_R10_ROLLOUT_SOAK.md
+│   │   ├── PLATFORM_R10_ROLLOUT_SOAK.yaml
+│   │   ├── PLATFORM_RELEASE_FREEZE.md
+│   │   ├── PLATFORM_RELEASE_FREEZE.yaml
+│   │   ├── PLATFORM_RUNTIME_URL_MATRIX.json
+│   │   ├── PLATFORM_SECRETS_ROTATION.md
+│   │   ├── PLATFORM_SECRETS_ROTATION.yaml
+│   │   ├── PLATFORM_SLO_SLA.md
+│   │   ├── PLATFORM_SLO_SLA.yaml
+│   │   ├── PLATFORM_STAGE_SCHEDULE.md
+│   │   ├── PLATFORM_STANDING_GRANT.md
+│   │   ├── PLATFORM_WITHDRAWAL_REENABLE_GATE.md
+│   │   ├── PRE_LAUNCH_CHECKLIST_BEGINNER.md
+│   │   ├── TRADE_DESK_FAILURE_RECOVERY_MATRIX.md
+│   │   ├── TRADE_DESK_LAUNCH_RC_SIGNOFF.md
+│   │   ├── TRADE_DESK_LOAD_REALTIME_SOAK.md
+│   │   ├── TRADE_DESK_MIGRATION_VERIFICATION.md
+│   │   ├── TRADE_DESK_OBSERVABILITY.md
+│   │   ├── TRADE_DESK_OPERATOR_INCIDENT_1PAGE.md
+│   │   ├── TRADE_DESK_P0_CHECKLIST_1PAGE.md
+│   │   ├── TRADE_DESK_PERF_BASELINE.md
+│   │   ├── TRADE_DESK_RELEASE_CHECKLIST_1PAGE.md
+│   │   ├── TRADE_DESK_RELEASE_ROLLBACK_RUNBOOK.md
+│   │   ├── TRADE_DESK_REMEDIATION_PHASE0_SIGNOFF.md
+│   │   ├── TRADE_DESK_T0_ORACLE_OPS_RUNBOOK.md
+│   │   └── TRADE_DESK_ZERO_DEFECT_EVIDENCE/
+│   │       ├── L9/
+│   │       │   └── release-approval-record.md
+│   │       ├── ops-window/
+│   │       │   ├── month1.md
+│   │       │   ├── month3.md
+│   │       │   ├── README.md
+│   │       │   └── week1.md
+│   │       ├── P0-0/
+│   │       │   ├── 0-A-quality-signoff.md
+│   │       │   ├── 0-A-read-checklist.md
+│   │       │   └── money-formula-merge.md
+│   │       ├── P3-A/
+│   │       │   └── perf-baseline-snapshot.md
+│   │       ├── P3-B/
+│   │       │   └── security-residual-closeout.md
+│   │       ├── P3-C/
+│   │       │   └── load-realtime-soak-snapshot.md
+│   │       ├── P3-D/
+│   │       │   └── browser-matrix-snapshot.md
+│   │       ├── P4/
+│   │       │   ├── failure-recovery-matrix.md
+│   │       │   ├── migration-operator-signoff.md
+│   │       │   ├── migration-security-auditor-review.md
+│   │       │   ├── migration-verify-ladder.md
+│   │       │   ├── observability-kpi-baseline.md
+│   │       │   └── rollback-dry-run-2026-07-08.md
+│   │       ├── README.md
+│   │       └── S0/
+│   │           └── security-auditor-delta.md
+│   ├── PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md
+│   ├── PRODUCT/
+│   │   ├── ADR/
+│   │   │   ├── 000-v5-demolition-first.md
+│   │   │   ├── 001-pg-less-funding-rails.md
+│   │   │   ├── 002-crypto-custody-signing.md
+│   │   │   ├── 003-landing-timeless-conversion.md
+│   │   │   ├── 004-trade-desk-sentry-defer.md
+│   │   │   ├── 005-engine-wave-clob-defer.md
+│   │   │   ├── 006-engine-wave-tier-accrual-defer.md
+│   │   │   ├── 007-engine-wave-accounting-invariant-defer.md
+│   │   │   ├── 008-engine-wave-db-tx-race-defer.md
+│   │   │   ├── 009-digital-aurora-brand-dna.md
+│   │   │   ├── 010-tier-decay.md
+│   │   │   ├── 011-mission-catalog.md
+│   │   │   ├── 012-viral-cms.md
+│   │   │   ├── 013-tier-option-b.md
+│   │   │   ├── 014-social-co-mission.md
+│   │   │   ├── 015-trade-parity-hedge-reduce-only.md
+│   │   │   ├── 016-sports-parity-partial-cashout.md
+│   │   │   ├── 017-casino-live-progressive-pf.md
+│   │   │   ├── 018-financial-connectivity.md
+│   │   │   ├── 019-identity-support-analytics.md
+│   │   │   ├── 020-platform-engine.md
+│   │   │   ├── 021-platform-observability-stack.md
+│   │   │   └── ENGINE_GAP_ADR.md
+│   │   ├── DEMOLITION_PLAN.md
+│   │   ├── DESIGN_CHARTER.md
+│   │   ├── LANDING_PRODUCT_SPEC.md
+│   │   ├── PRODUCT_OPERATING_SYSTEM.md
+│   │   ├── REBUILD_PLAN_TBD.md
+│   │   ├── REBUILD_PLAN_v1.md
+│   │   ├── SCOPE_TRACK3_DECISION.md
+│   │   └── SUCCESS_METRICS.md
+│   ├── QUALITY_GATES.md
+│   ├── rebuild/
+│   │   ├── E2E-LOWSPEC-RUNBOOK.md
+│   │   ├── LOWSPEC_RULES.md
+│   │   ├── PHASE-D-GATE-RUNBOOK.md
+│   │   └── PHASE-R-GATE-RUNBOOK.md
+│   ├── RUNBOOK.md
+│   ├── SSOT/
+│   │   ├── ACTIVE_WORK_SSOT.md
+│   │   ├── ADMIN_BEGINNER_LANGUAGE_CANON.md
+│   │   ├── ADMIN_TEAM_RBAC_CANON.md
+│   │   ├── ADMIN_UX_CANON.md
+│   │   ├── AUTH_UX_CANON.md
+│   │   ├── CASINO_UX_CANON.md
+│   │   ├── CI_GATE_AUTHORITY.md
+│   │   ├── COPYWRITING_CANON.md
+│   │   ├── CURSOR_AUTOPILOT.md
+│   │   ├── DEPRECATED_DOC_DENYLIST.md
+│   │   ├── DESIGN_PRINCIPLES.md
+│   │   ├── EARN_UX_CANON.md
+│   │   ├── ENGINE_BOUNDARY.md
+│   │   ├── GLOBAL_EXPANSION.md
+│   │   ├── HOME_UX_CANON.md
+│   │   ├── I18N_FIRST.md
+│   │   ├── MONEY_CONSERVATION_FORMULA.md
+│   │   ├── ONBOARDING_JOURNEY_CANON.md
+│   │   ├── OPERATOR_GATES.md
+│   │   ├── PAYMENT_ARCHITECTURE_CANON.md
+│   │   ├── PLATFORM_NARRATIVE_CANON.md
+│   │   ├── PRODUCT_EXPERIENCE_CANON.md
+│   │   ├── PRODUCT_PRINCIPLES.md
+│   │   ├── SOUND_DESIGN_CANON.md
+│   │   ├── SPORTS_UX_CANON.md
+│   │   ├── SURFACE_BLUEPRINTS.md
+│   │   ├── TRADE_BEGINNER_LANGUAGE_CANON.md
+│   │   ├── TRADE_UX_CANON.md
+│   │   ├── UNIFIED_UX_CANON.md
+│   │   ├── UX_REFERENCE_CANON.md
+│   │   └── WALLET_UX_CANON.md
+│   ├── SUPABASE_ACCESS_MATRIX.md
+│   └── THREAT_MODEL.md
+├── eslint.config.js
+├── knip.json
+├── package.json
+├── packages/
+│   ├── game-engine/
+│   │   ├── package.json
+│   │   ├── src/
+│   │   │   ├── casino-parity.test.ts
+│   │   │   ├── conservation.test.ts
+│   │   │   ├── fairness/
+│   │   │   │   ├── __tests__/
+│   │   │   │   │   └── verifier-contract.test.ts
+│   │   │   │   ├── float.ts
+│   │   │   │   ├── hmac.ts
+│   │   │   │   ├── pf-golden-vectors.test.ts
+│   │   │   │   ├── pf-golden-vectors.ts
+│   │   │   │   ├── seed.ts
+│   │   │   │   └── verifier.ts
+│   │   │   ├── fairness.test.ts
+│   │   │   ├── games/
+│   │   │   │   ├── blackjack.test.ts
+│   │   │   │   ├── blackjack.ts
+│   │   │   │   ├── crash.ts
+│   │   │   │   ├── deepshaft.test.ts
+│   │   │   │   ├── deepshaft.ts
+│   │   │   │   ├── dice.ts
+│   │   │   │   ├── games.test.ts
+│   │   │   │   ├── gold-rush.test.ts
+│   │   │   │   ├── gold-rush.ts
+│   │   │   │   ├── hilo.ts
+│   │   │   │   ├── limbo.ts
+│   │   │   │   ├── mines.ts
+│   │   │   │   ├── mint-reels.test.ts
+│   │   │   │   ├── mint-reels.ts
+│   │   │   │   ├── momentum.test.ts
+│   │   │   │   ├── momentum.ts
+│   │   │   │   ├── plinko.ts
+│   │   │   │   ├── roulette.test.ts
+│   │   │   │   └── roulette.ts
+│   │   │   ├── index.ts
+│   │   │   ├── lib/
+│   │   │   │   ├── mc-rtp-harness.ts
+│   │   │   │   ├── quantize.test.ts
+│   │   │   │   ├── quantize.ts
+│   │   │   │   ├── require-float.ts
+│   │   │   │   ├── rtp-harness.test.ts
+│   │   │   │   ├── rtp-harness.ts
+│   │   │   │   └── slot-engine.ts
+│   │   │   └── registry.ts
+│   │   └── tsconfig.json
+│   ├── i18n/
+│   │   ├── package.json
+│   │   ├── src/
+│   │   │   ├── index.ts
+│   │   │   ├── locales/
+│   │   │   │   ├── presentation-en.ts
+│   │   │   │   └── presentation-ko.ts
+│   │   │   ├── react.tsx
+│   │   │   └── translate-error.ts
+│   │   └── tsconfig.json
+│   ├── market-display/
+│   │   ├── package.json
+│   │   ├── src/
+│   │   │   ├── __tests__/
+│   │   │   │   ├── depth-bucket.test.ts
+│   │   │   │   └── sequence-guard.test.ts
+│   │   │   ├── depth-bucket.ts
+│   │   │   ├── index.ts
+│   │   │   ├── order-book-types.ts
+│   │   │   └── sequence-guard.ts
+│   │   └── tsconfig.json
+│   ├── money/
+│   │   ├── package.json
+│   │   ├── src/
+│   │   │   ├── configure-decimal.ts
+│   │   │   ├── index.test.ts
+│   │   │   └── index.ts
+│   │   └── tsconfig.json
+│   ├── shared-types/
+│   │   ├── package.json
+│   │   ├── src/
+│   │   │   ├── __tests__/
+│   │   │   │   └── database-types-contract.test.ts
+│   │   │   ├── casino-display.ts
+│   │   │   ├── database-types-contract.ts
+│   │   │   ├── database.types.ts
+│   │   │   ├── earn-display.ts
+│   │   │   ├── index.test.ts
+│   │   │   ├── index.ts
+│   │   │   └── supabase-row-selects.ts
+│   │   └── tsconfig.json
+│   ├── sports-ingest/
+│   │   ├── package.json
+│   │   ├── src/
+│   │   │   ├── decimal-odds.test.ts
+│   │   │   ├── decimal-odds.ts
+│   │   │   ├── football-data-org.ts
+│   │   │   ├── index.ts
+│   │   │   ├── ingest-orchestrator-types.ts
+│   │   │   ├── ingest-orchestrator.test.ts
+│   │   │   ├── ingest-orchestrator.ts
+│   │   │   ├── normalizer.test.ts
+│   │   │   ├── normalizer.ts
+│   │   │   ├── odds-api-io-leagues.ts
+│   │   │   ├── odds-api-io-shared.ts
+│   │   │   ├── odds-api-io-ws.test.ts
+│   │   │   ├── odds-api-io-ws.ts
+│   │   │   ├── odds-api-io.test.ts
+│   │   │   ├── odds-api-io.ts
+│   │   │   ├── score-event-bootstrap.ts
+│   │   │   ├── settle-score-match.test.ts
+│   │   │   ├── settle-score-match.ts
+│   │   │   ├── sportsgameodds.ts
+│   │   │   ├── the-odds-api-scores.test.ts
+│   │   │   ├── the-odds-api-scores.ts
+│   │   │   ├── the-odds-api.test.ts
+│   │   │   ├── the-odds-api.ts
+│   │   │   ├── vendor-chain.test.ts
+│   │   │   ├── vendor-chain.ts
+│   │   │   ├── ws-stall-detector.test.ts
+│   │   │   └── ws-stall-detector.ts
+│   │   └── tsconfig.json
+│   ├── sportsbook-engine/
+│   │   ├── package.json
+│   │   ├── src/
+│   │   │   ├── authority-boundary.test.ts
+│   │   │   ├── combo-odds.test.ts
+│   │   │   ├── combo-odds.ts
+│   │   │   ├── constants.ts
+│   │   │   ├── index.ts
+│   │   │   ├── market-types.test.ts
+│   │   │   ├── market-types.ts
+│   │   │   ├── payout-preview.test.ts
+│   │   │   ├── payout-preview.ts
+│   │   │   ├── types.ts
+│   │   │   ├── validate-legs.test.ts
+│   │   │   └── validate-legs.ts
+│   │   └── tsconfig.json
+│   ├── trading-engine/
+│   │   ├── package.json
+│   │   ├── src/
+│   │   │   ├── conservation.test.ts
+│   │   │   ├── funding.test.ts
+│   │   │   ├── funding.ts
+│   │   │   ├── futures.test.ts
+│   │   │   ├── futures.ts
+│   │   │   ├── hardening.test.ts
+│   │   │   ├── index.ts
+│   │   │   ├── markets.test.ts
+│   │   │   ├── markets.ts
+│   │   │   ├── shared.ts
+│   │   │   ├── spot-limit.test.ts
+│   │   │   ├── spot.test.ts
+│   │   │   ├── spot.ts
+│   │   │   ├── sql-parity.test.ts
+│   │   │   ├── staking.test.ts
+│   │   │   ├── staking.ts
+│   │   │   ├── stop-trigger.test.ts
+│   │   │   └── stop-trigger.ts
+│   │   └── tsconfig.json
+│   └── wallet-ledger/
+│       ├── package.json
+│       ├── README.md
+│       ├── src/
+│       │   ├── index.test.ts
+│       │   └── index.ts
+│       └── tsconfig.json
+├── playwright.browser-matrix.config.ts
+├── playwright.casino.config.ts
+├── playwright.config.ts
+├── playwright.shared.ts
+├── README.md
+├── screenshots/
+│   ├── admin/
+│   │   └── .gitkeep
+│   ├── desktop/
+│   │   └── .gitkeep
+│   ├── dialogs/
+│   │   └── .gitkeep
+│   ├── hover/
+│   │   ├── .gitkeep
+│   │   ├── landing_after_mousemove_01.png
+│   │   └── landing_cta_region_01.png
+│   ├── mobile/
+│   │   └── .gitkeep
+│   ├── states/
+│   │   └── .gitkeep
+│   └── tablet/
+│       └── .gitkeep
+├── scripts/
+│   ├── __tests__/
+│   ├── _da-w7-doc-sync-rest.ts
+│   ├── _da-w7-doc-sync.ts
+│   ├── _patch-e8-active-work.ts
+│   ├── apply-plan-todo-merge-50.ts
+│   ├── apply-plan-todo-merge-51.ts
+│   ├── apply-plan-todo-merge-52.ts
+│   ├── apply-r0-forensic-ssot-honesty.ts
+│   ├── audit/
+│   │   ├── audit-a-db-guards.ts
+│   │   ├── audit-b-rpc-contract.ts
+│   │   ├── audit-c-surface-controls.ts
+│   │   ├── audit-d-config-state.ts
+│   │   ├── generate-per-page-ui-matrix.ts
+│   │   ├── generate-repo-tree-appendix.ts
+│   │   ├── generate-rpc-usage-matrix.ts
+│   │   ├── last-b-rpc-contract-report.json
+│   │   ├── last-c-surface-controls-report.json
+│   │   ├── last-d-config-state-report.json
+│   │   └── replay-grants-inventory.ts
+│   ├── aurora-typo-sweep.ts
+│   ├── backup-rehearsal.ts
+│   ├── check/
+│   │   ├── guard-coverage-allowlist.ts
+│   │   ├── guard-coverage-detect.ts
+│   │   ├── guard-coverage-report.ts
+│   │   └── guard-coverage.ts
+│   ├── check-advisors.ts
+│   ├── check-ai-reference-legacy.ts
+│   ├── check-c2-ds.ts
+│   ├── check-deploy-parity.ts
+│   ├── check-design-tokens.ts
+│   ├── check-determinism.ts
+│   ├── check-env.ts
+│   ├── check-game-registration.ts
+│   ├── check-i18n-coverage.ts
+│   ├── check-interaction-integrity.ts
+│   ├── check-migrations.ts
+│   ├── check-money-formula-citations.ts
+│   ├── check-perf-contract.ts
+│   ├── check-phase-r-guards.ts
+│   ├── check-plan-doc-sync.ts
+│   ├── check-plan-yaml.ts
+│   ├── check-primitive-ratchet.ts
+│   ├── check-prod-apply-boundary.ts
+│   ├── check-pwa.ts
+│   ├── check-reconciliation-launch.ts
+│   ├── check-release.ts
+│   ├── check-remote-migration-parity.ts
+│   ├── check-rpc-type-hygiene.ts
+│   ├── check-rtp-harness.ts
+│   ├── check-ui-architecture.ts
+│   ├── check-wallet-mutator-privileges.ts
+│   ├── check-workspace-hygiene.ts
+│   ├── ci-prune-actions-runs.ts
+│   ├── ci-status-hint.ts
+│   ├── ci-watch.ts
+│   ├── clean-artifacts.ts
+│   ├── closeout-plan-todo.ts
+│   ├── configure-antivirus-exclusions.ps1
+│   ├── configure-cloudflare-production.ts
+│   ├── configure-docker-on-demand.ps1
+│   ├── cursor-autopilot-apply-settings.ts
+│   ├── cursor-autopilot-setup.ps1
+│   ├── cursor-clean-metadata.ps1
+│   ├── cursor-clean-stale-workspaces.ts
+│   ├── cursor-cold-start-fix.ts
+│   ├── cursor-compact-after-quit.ps1
+│   ├── cursor-compact-global-state.ts
+│   ├── cursor-emergency-reset.ts
+│   ├── cursor-env-doctor.ts
+│   ├── cursor-gate-diagnosis.ts
+│   ├── cursor-gate-phase0.ts
+│   ├── cursor-high-remediation.ts
+│   ├── cursor-hook.ts
+│   ├── cursor-kill-orphans.ts
+│   ├── cursor-perf-rollout.ts
+│   ├── cursor-preflight.ps1
+│   ├── cursor-prune-vscdb-backups.ts
+│   ├── cursor-purge.ts
+│   ├── cursor-render-fix.ts
+│   ├── cursor-session-hygiene.ts
+│   ├── cursor-standby-test.ts
+│   ├── cursor-status.ts
+│   ├── cursor-tsserver-observe-finalize.ts
+│   ├── cursor-tsserver-observe-prune-manual.ts
+│   ├── cursor-tsserver-observe.ts
+│   ├── deploy-pages.ts
+│   ├── dev-admin-local.ts
+│   ├── dev-web-local.ts
+│   ├── docs-consolidate.ts
+│   ├── e2e-dev-server.ts
+│   ├── e2e-kill.ts
+│   ├── e2e-posttest.ts
+│   ├── e2e-pretest.ts
+│   ├── e2e-preview-server.ts
+│   ├── enable-auth-hibp.ts
+│   ├── engine-state-dump.ts
+│   ├── ensure-dev-stack.ts
+│   ├── ensure-e2e-packages.ts
+│   ├── ensure-platform-audit-evidence-bucket.ts
+│   ├── extract-sports-i18n.ts
+│   ├── fix-cursor-mcp.ps1
+│   ├── game-day/
+│   │   ├── gameday-drill.ts
+│   │   ├── halt-reject-spotcheck.ts
+│   │   ├── last-gameday-report.json
+│   │   └── lib/
+│   │       ├── inventory.ts
+│   │       ├── levers.ts
+│   │       ├── probes.ts
+│   │       ├── report.ts
+│   │       ├── restore-drill.ts
+│   │       ├── snapshot.ts
+│   │       └── sql-claims.ts
+│   ├── generate-brand-icons.ts
+│   ├── generate-database-types.ts
+│   ├── generate-functions-mirror.ts
+│   ├── generate-ssot-freeze-manifest.ts
+│   ├── generate-web-sitemap.ts
+│   ├── git-pre-push-guard.ts
+│   ├── git-push-feature.ts
+│   ├── git-wip-branch.ts
+│   ├── git-wip-checkpoint.ts
+│   ├── git-wip-status.ts
+│   ├── guard-audit/
+│   │   ├── cancel-probe.ts
+│   │   ├── guard-audit.ts
+│   │   ├── last-guard-audit-report.json
+│   │   ├── lib/
+│   │   │   └── sports-probe-fixture.ts
+│   │   └── supplemental-probes.ts
+│   ├── guard-audit-live-matrix.json
+│   ├── install-git-hooks.ts
+│   ├── lib/
+│   │   ├── agent-heavy-gate-guard.ts
+│   │   ├── auth-production-config.ts
+│   │   ├── claude-desktop-processes.ts
+│   │   ├── crypto-hd-derive.ts
+│   │   ├── cursor-argv.ts
+│   │   ├── cursor-cold-start-settings.ts
+│   │   ├── cursor-dev-processes.ts
+│   │   ├── cursor-gate-diagnosis-stats.ps1
+│   │   ├── cursor-metadata-sizes.ts
+│   │   ├── cursor-runtime-stats.ps1
+│   │   ├── cursor-stale-workspaces.ts
+│   │   ├── cursor-vscdb-backup-prune.ts
+│   │   ├── database-types-gen.ts
+│   │   ├── db-connect.ts
+│   │   ├── docker-clean.ts
+│   │   ├── docker-daemon.ts
+│   │   ├── docker-desktop-lifecycle.ts
+│   │   ├── docker-idle-stop.ts
+│   │   ├── docker-ready.ts
+│   │   ├── dominant-ram-consumer.ts
+│   │   ├── e2e-lifecycle.ts
+│   │   ├── e2e-shell-guard.ts
+│   │   ├── empty-standby-core.ts
+│   │   ├── ensure-packages-built.ts
+│   │   ├── gate-diagnosis-core.ts
+│   │   ├── gate-manifest.ts
+│   │   ├── gate-phase0-core.ts
+│   │   ├── git-wip.ts
+│   │   ├── high-remediation-core.ts
+│   │   ├── Invoke-PhonaraBun.ps1
+│   │   ├── load-repo-env.ts
+│   │   ├── local-test-report.ts
+│   │   ├── locked-supabase-project.ts
+│   │   ├── main-push-guard.ts
+│   │   ├── max-context-evidence.ts
+│   │   ├── money-formula-citations.ts
+│   │   ├── ops-pager-env.ts
+│   │   ├── ops-telegram-env.ts
+│   │   ├── parse-migrations-lock.ts
+│   │   ├── parse-plan-yaml-todos.ts
+│   │   ├── perf-rollout-core.ts
+│   │   ├── phase-d-manifest.ts
+│   │   ├── plan-todo-closeout.ts
+│   │   ├── prod-apply-guard.ts
+│   │   ├── ram-guard.ts
+│   │   ├── release-manifest.ts
+│   │   ├── remote-prod-layer.ts
+│   │   ├── schedule-observe-core.ts
+│   │   ├── schtasks-lifecycle.ts
+│   │   ├── spawn-safe.ts
+│   │   ├── sports-engine-client.ts
+│   │   ├── sports-feature-gate.ts
+│   │   ├── sports-ingest-cursor.ts
+│   │   ├── sports-ingest-health.ts
+│   │   ├── sports-ingest-persist.ts
+│   │   ├── supabase-auth.ts
+│   │   ├── supabase-local.ts
+│   │   ├── tsserver-observe-core.ts
+│   │   ├── win-process-cache.ts
+│   │   └── workspace-artifacts.ts
+│   ├── lighthouse-once.ts
+│   ├── load-smoke.ts
+│   ├── mark-da-w0-foundation-completed.ts
+│   ├── mark-da-w1-ds-foundation-completed.ts
+│   ├── mark-da-w1-gate-ds-2-completed.ts
+│   ├── mark-da-w2-shell-elevation-completed.ts
+│   ├── mark-da-w5-cards-domain-variants-completed.ts
+│   ├── mark-da-w5-gate-domain-cards-completed.ts
+│   ├── mark-p10-page-casino-completed.ts
+│   ├── mark-p10-sports-fiat-hint-wire-completed.ts
+│   ├── mark-p10-sports-hub-pages-completed.ts
+│   ├── mark-p10-sports-live-surface-wire-completed.ts
+│   ├── mark-p10-sports-parity-contract-and-board-completed.ts
+│   ├── mark-p10-sports-rules-and-vip-stub-completed.ts
+│   ├── mark-r0-admin-rbac-completed.ts
+│   ├── mark-r0-forensic-completed.ts
+│   ├── mark-r0-gate-forensic-completed.ts
+│   ├── mark-r0-sports-launch-completed.ts
+│   ├── mark-r0-staking-domain-completed.ts
+│   ├── measure-spot-rpc-p95.ts
+│   ├── merge-presentation-i18n-wave1.ts
+│   ├── merge-sports-i18n.ts
+│   ├── operator-check-full.ps1
+│   ├── ops-alert-dry-fire.ts
+│   ├── p13-ops-prod-preflight-spotcheck.sql
+│   ├── p13-t1-live-ramp-spotcheck.sql
+│   ├── p13-t2-scale-triggers-spotcheck.sql
+│   ├── pentest/
+│   │   ├── futures-engine-dynamic.ts
+│   │   ├── last-futures-report.json
+│   │   ├── last-law1-report.json
+│   │   ├── last-report.json
+│   │   ├── law1-game-integrity-dynamic.ts
+│   │   ├── lib/
+│   │   │   ├── attacks-futures-funding.ts
+│   │   │   ├── attacks-futures-limits.ts
+│   │   │   ├── attacks-futures-liquidation.ts
+│   │   │   ├── attacks-futures-margin.ts
+│   │   │   ├── attacks-futures-oracle.ts
+│   │   │   ├── attacks-futures-orders.ts
+│   │   │   ├── attacks-input-integrity.ts
+│   │   │   ├── attacks-law1-authority.ts
+│   │   │   ├── attacks-law1-autobet.ts
+│   │   │   ├── attacks-law1-crash.ts
+│   │   │   ├── attacks-law1-leak.ts
+│   │   │   ├── attacks-law1-provably-fair.ts
+│   │   │   ├── attacks-law1-settlement.ts
+│   │   │   ├── attacks.ts
+│   │   │   ├── concurrent-rpc.ts
+│   │   │   ├── config.ts
+│   │   │   ├── deposit-path.ts
+│   │   │   ├── fixture.ts
+│   │   │   ├── futures-fixture.ts
+│   │   │   ├── futures-oracle.ts
+│   │   │   ├── futures-report.ts
+│   │   │   ├── game-fixture.ts
+│   │   │   ├── law1-report.ts
+│   │   │   ├── report.ts
+│   │   │   ├── sql-rpc.ts
+│   │   │   ├── target-guard.ts
+│   │   │   └── verify.ts
+│   │   └── p0-money-path-dynamic.ts
+│   ├── phonara-terminal.ps1
+│   ├── platform-audit-r5-auth-test-like-spotcheck.sql
+│   ├── platform-r10-rollout-spotcheck.sql
+│   ├── playwright-mcp-8gb.json
+│   ├── print-platform-audit-todo.ts
+│   ├── print-platform-r10-rollout.ts
+│   ├── print-platform-r11-closeout.ts
+│   ├── print-platform-r12-post-release.ts
+│   ├── print-runtime-url-matrix.ts
+│   ├── push-pending-remote-migrations.ts
+│   ├── repair-plan-encoding.ts
+│   ├── replay-roadmap-from-transcript.ts
+│   ├── restore-docs-from-transcript.ts
+│   ├── run-ai-impl-gate.ts
+│   ├── run-e2e.ts
+│   ├── run-full-gate.ts
+│   ├── run-gen-types-remote.ts
+│   ├── run-local-test-autopilot.ts
+│   ├── run-phase-d-gate.ts
+│   ├── run-phase-r-gate.ts
+│   ├── run-playwright-mcp.cmd
+│   ├── run-sql-tests.ts
+│   ├── run-supabase-mcp.cmd
+│   ├── run-supabase-mcp.ps1
+│   ├── seed-local-admin-dev.ts
+│   ├── seed-local-trade-dev.ts
+│   ├── setup-dev-environment.ts
+│   ├── setup-ops-ntfy.ts
+│   ├── smoke-pg-webhook-hmac.ts
+│   ├── sports-odds-ingest/
+│   │   ├── run.ts
+│   │   ├── tsconfig.json
+│   │   ├── worker.ts
+│   │   ├── ws-run.ts
+│   │   └── ws-worker.ts
+│   ├── sports-orchestrator/
+│   │   ├── orchestrator.ts
+│   │   └── run.ts
+│   ├── sports-settle/
+│   │   ├── run.ts
+│   │   └── worker.ts
+│   ├── sql-pretest.ts
+│   ├── stack-docker-clean.ts
+│   ├── stack-docker-recover.ts
+│   ├── stack-stop.ts
+│   ├── start-dev-session.ps1
+│   ├── sync-auth-email-config.ts
+│   ├── sync-cursor-archival-excludes.ts
+│   ├── sync-database-types-remote.ts
+│   ├── sync-jetbrains-mono-font.ts
+│   ├── sync-ops-pager-secrets.ts
+│   ├── sync-ops-telegram-secrets.ts
+│   ├── sync-plan-doc-mirror.ts
+│   ├── sync-pretendard-font.ts
+│   ├── sync-space-grotesk-font.ts
+│   ├── sync-supabase-pat.ps1
+│   ├── templates/
+│   │   └── wslconfig.phonara.txt
+│   ├── test-cursor-hooks.ts
+│   ├── test-ops-pager-notify.ts
+│   ├── test-ops-telegram-notify.ts
+│   ├── test-supabase-mcp-smoke.ps1
+│   ├── tmp-r0-emit-registry.ts
+│   ├── trade-desk-launch-rc-soak-remediate.sql
+│   ├── trade-desk-launch-rc-soak-spotcheck.sql
+│   ├── trade-desk-phase0b-rpc-spotcheck.sql
+│   ├── trade-desk-realtime-load-soak.ts
+│   ├── trade-desk-t0e-oracle-ops-spotcheck.sql
+│   ├── tsconfig.json
+│   ├── validate-sports-zip.ts
+│   ├── verify-auth-email-config.ts
+│   ├── verify-domain-stack.ts
+│   ├── verify-supabase-mcp.ps1
+│   ├── verify-worldno1-edge-functions.ts
+│   ├── visual-audit-capture-cdp.ts
+│   ├── visual-audit-capture.ts
+│   ├── visual-freeze-diff.ts
+│   ├── write-games-polish-plan.ts
+│   └── write-release-manifest.ts
+├── setup/
+│   ├── .env.secrets.example
+│   ├── MANUAL_TASKS.md
+│   └── SECRETS_TEMPLATE.md
+├── src/
+├── supabase/
+│   ├── AGENTS.md
+│   ├── config.toml
+│   ├── functions/
+│   │   ├── _shared/
+│   │   │   ├── crypto-hd.ts
+│   │   │   ├── edge-observability.test.ts
+│   │   │   ├── edge-observability.ts
+│   │   │   ├── ops-ntfy-dispatch.test.ts
+│   │   │   ├── ops-ntfy-dispatch.ts
+│   │   │   ├── ops-telegram-dispatch.test.ts
+│   │   │   ├── ops-telegram-dispatch.ts
+│   │   │   ├── ops-web-push-dispatch.test.ts
+│   │   │   ├── ops-web-push-dispatch.ts
+│   │   │   ├── outbound-dispatch-auth.test.ts
+│   │   │   ├── outbound-dispatch-auth.ts
+│   │   │   ├── pg-bank-transfer.ts
+│   │   │   ├── pg-webhook-auth.ts
+│   │   │   ├── service-auth.ts
+│   │   │   ├── service-ingress.ts
+│   │   │   ├── upbit-rate-parse.test.ts
+│   │   │   └── upbit-rate-parse.ts
+│   │   ├── crypto-chain-watcher/
+│   │   │   └── index.ts
+│   │   ├── crypto-sign/
+│   │   │   └── index.ts
+│   │   ├── crypto-withdraw-broadcast/
+│   │   │   └── index.ts
+│   │   ├── derive-crypto-address/
+│   │   │   └── index.ts
+│   │   ├── notification-dispatch/
+│   │   │   └── index.ts
+│   │   ├── ops-notify/
+│   │   │   └── index.ts
+│   │   ├── pg-bank-webhook/
+│   │   │   └── index.ts
+│   │   ├── price-feed/
+│   │   │   └── index.ts
+│   │   ├── product-analytics/
+│   │   │   └── index.ts
+│   │   ├── siwe-auth/
+│   │   │   └── index.ts
+│   │   └── usdt-krw-feed/
+│   │       └── index.ts
+│   ├── migrations/
+│   │   ├── 20260609000001_phase1_auth_wallet_ledger.sql
+│   │   ├── 20260609000002_phase1_rls_policies.sql
+│   │   ├── 20260609000003_phase1_atomic_rpc.sql
+│   │   ├── 20260609000004_phase2_retention_schema.sql
+│   │   ├── 20260609000005_phase2_retention_rpcs.sql
+│   │   ├── 20260609000006_phase3_trading_schema.sql
+│   │   ├── 20260609000007_phase3_trading_rpcs.sql
+│   │   ├── 20260609000008_p0_hardening_schema.sql
+│   │   ├── 20260609000009_p0_auto_liquidation.sql
+│   │   ├── 20260609000010_p0_lockdown_internal_funcs.sql
+│   │   ├── 20260609000011_p1_reward_conservation_fix.sql
+│   │   ├── 20260609000012_p1_anon_lockdown_oracle_liquidate.sql
+│   │   ├── 20260609000013_p1_advisor_cleanup_anon_searchpath.sql
+│   │   ├── 20260609000014_p1_reward_issuance_explicit_flag.sql
+│   │   ├── 20260609000015_p0_liquidation_cron_runner.sql
+│   │   ├── 20260609000016_p1_entry_rpc_numeric_input_guard.sql
+│   │   ├── 20260609000017_p1_hashchain_payload_v2.sql
+│   │   ├── 20260609000018_p0_system_live_guard.sql
+│   │   ├── 20260609000019_p0_feature_kill_switches.sql
+│   │   ├── 20260609000020_p1_position_oi_caps.sql
+│   │   ├── 20260609000021_p0_request_idempotency.sql
+│   │   ├── 20260609000022_p1_liquidation_guard_and_history_closeout.sql
+│   │   ├── 20260609000023_p0_fix_signup_trigger_searchpath.sql
+│   │   ├── 20260609000024_admin_audit_rls.sql
+│   │   ├── 20260609000025_s1_seal_mission_hole.sql
+│   │   ├── 20260609000026_s1_solvency_reconciliation.sql
+│   │   ├── 20260609000027_s1_multisource_oracle.sql
+│   │   ├── 20260609000028_s3_casino_schema.sql
+│   │   ├── 20260609000029_s3_casino_atomic_settlement.sql
+│   │   ├── 20260609000030_s4_live_surface_hardening.sql
+│   │   ├── 20260609000031_s4_client_game_rounds.sql
+│   │   ├── 20260609000032_s2_security_mission_triggers.sql
+│   │   ├── 20260609000033_s1_phase5_deposits_withdrawals.sql
+│   │   ├── 20260609000034_s1_withdrawal_kill_until_approve_flow.sql
+│   │   ├── 20260609000035_s1_withdrawal_lock_lifecycle.sql
+│   │   ├── 20260609000036_s1_admin_exception_queue_actions.sql
+│   │   ├── 20260609000037_s1_kyc_submission_flow.sql
+│   │   ├── 20260609000038_stage2_market_metadata.sql
+│   │   ├── 20260609000039_stage2_risk_limits.sql
+│   │   ├── 20260609000040_stage2_candles.sql
+│   │   ├── 20260609000041_stage2_synthetic_orderbook.sql
+│   │   ├── 20260609000042_stage2_market_sources.sql
+│   │   ├── 20260609000043_stage2_push_subscriptions.sql
+│   │   ├── 20260609000044_zero_defect_sql_hardening.sql
+│   │   ├── 20260609000045_e_foundation_system_account_hardening.sql
+│   │   ├── 20260609000046_e_foundation_system_account_hash_chain.sql
+│   │   ├── 20260609000047_e_foundation_reconciliation_integrity.sql
+│   │   ├── 20260609000048_e_foundation_unify_solvency_gate.sql
+│   │   ├── 20260609000049_e_foundation_treasury_read_scope.sql
+│   │   ├── 20260609000050_e_insurance_contribute_capital.sql
+│   │   ├── 20260609000051_krw_deposit_require_rate.sql
+│   │   ├── 20260609000052_casino_double_float_domain.sql
+│   │   ├── 20260609000053_part_e_public_scope_hardening.sql
+│   │   ├── 20260609000054_is_admin_security_definer.sql
+│   │   ├── 20260611000054_fix_table_grants_for_rls.sql
+│   │   ├── 20260611000055_profiles_wallets_table_grants.sql
+│   │   ├── 20260611000056_reconciliation_internal_refactor.sql
+│   │   ├── 20260611000057_audit_logs_append_only_triggers.sql
+│   │   ├── 20260611000058_ops_health_rpc.sql
+│   │   ├── 20260611000059_ops_health_practical_summaries.sql
+│   │   ├── 20260611000060_ops_health_operational_signals.sql
+│   │   ├── 20260611000061_ops_alert_queue.sql
+│   │   ├── 20260611000062_wallet_ledger_write_guard.sql
+│   │   ├── 20260611000063_withdrawal_admin_guard_and_deposit_lock.sql
+│   │   ├── 20260611000064_trading_min_notional_and_oracle_alert.sql
+│   │   ├── 20260611000065_oracle_per_symbol_min_sources.sql
+│   │   ├── 20260611000066_casino_seed_reveal_idempotency.sql
+│   │   ├── 20260611000067_wallet_internal_amount_guards.sql
+│   │   ├── 20260611000068_price_change_audit_append_only.sql
+│   │   ├── 20260611000069_wallet_insert_guard.sql
+│   │   ├── 20260611000070_house_exposure_alert.sql
+│   │   ├── 20260611000071_two_tick_liquidation_buffer.sql
+│   │   ├── 20260611000072_kyc_deposit_screening_guards.sql
+│   │   ├── 20260611000073_responsible_gambling.sql
+│   │   ├── 20260611000074_affiliate_relationships_depth.sql
+│   │   ├── 20260611000075_affiliate_tier_snapshots.sql
+│   │   ├── 20260611000076_affiliate_commission_daily_aggregates.sql
+│   │   ├── 20260611000077_affiliate_settlements.sql
+│   │   ├── 20260611000078_affiliate_commission_approvals.sql
+│   │   ├── 20260611000079_client_table_grant_closeout.sql
+│   │   ├── 20260613000080_oracle_feed_market_sources.sql
+│   │   ├── 20260613000081_price_feed_pg_net_vault.sql
+│   │   ├── 20260613000082_price_feed_cron.sql
+│   │   ├── 20260613000083_oracle_feed_remove_legacy_sources.sql
+│   │   ├── 20260613000084_admin_mfa_aal2_guard.sql
+│   │   ├── 20260613000085_withdrawal_daily_cap.sql
+│   │   ├── 20260613000086_sanctions_screening_resolution.sql
+│   │   ├── 20260613000087_invariant_checks_monitoring.sql
+│   │   ├── 20260614000088_game_code_enum_new_games.sql
+│   │   ├── 20260614000089_casino_new_games_engine.sql
+│   │   ├── 20260614000090_casino_metrics_slo.sql
+│   │   ├── 20260614000091_casino_slot_paytable_calibration.sql
+│   │   ├── 20260614000092_blackjack_shuffle_float_fix.sql
+│   │   ├── 20260614000093_slot_paytable_jsonb_fix.sql
+│   │   ├── 20260614000094_slot_reel_strip_extraction_fix.sql
+│   │   ├── 20260614000095_slot_reel_strip_length_fix.sql
+│   │   ├── 20260614000096_blackjack_natural_payout_fix.sql
+│   │   ├── 20260615000097_engine100_crypto_rails.sql
+│   │   ├── 20260615000098_engine100_viral_missions.sql
+│   │   ├── 20260616000099_wave_s1_sportsbook_schema.sql
+│   │   ├── 20260616000100_wave_s2_sportsbook_ingest.sql
+│   │   ├── 20260616000101_wave_s3_sportsbook_place_bet.sql
+│   │   ├── 20260616000102_wave_s4_sportsbook_settle.sql
+│   │   ├── 20260616000103_wave_s5_sports_rg_domain.sql
+│   │   ├── 20260616000104_wave_s6_sportsbook_major_hardening.sql
+│   │   ├── 20260616000105_wave_s7_sportsbook_inplay_engine.sql
+│   │   ├── 20260616000106_wave_s8_sports_rg_schema.sql
+│   │   ├── 20260616000107_wave_s11_sports_ingest_ops.sql
+│   │   ├── 20260616000108_wave_s13_sportsbook_anti_arb_defense.sql
+│   │   ├── 20260616000109_wave_s14_sportsbook_multi_account_defense.sql
+│   │   ├── 20260616000110_wave_s15_sportsbook_world_markets.sql
+│   │   ├── 20260616000111_wave_s16_s22_sportsbook_world_engine.sql
+│   │   ├── 20260617000120_game_code_enum_deepshaft_momentum.sql
+│   │   ├── 20260617000121_deepshaft_momentum_engine.sql
+│   │   ├── 20260619000122_advisor_security_sportsbook_wave_cleanup.sql
+│   │   ├── 20260619000123_advisor_rls_auth_initplan_wrap.sql
+│   │   ├── 20260619000124_advisor_unindexed_foreign_keys.sql
+│   │   ├── 20260619000125_advisor_unindexed_foreign_keys_residual.sql
+│   │   ├── 20260619000126_advisor_pg_net_extensions_schema.sql
+│   │   ├── 20260619000127_advisor_rls_policy_consolidation.sql
+│   │   ├── 20260620000128_trade_majors_tier1_futures.sql
+│   │   ├── 20260620000129_trade_majors_spot_holdings.sql
+│   │   ├── 20260620000130_trade_majors_staking.sql
+│   │   ├── 20260620000131_trade_e1_funding_sltp.sql
+│   │   ├── 20260620000132_trade_spot_grants_min_notional.sql
+│   │   ├── 20260620000133_trade_e2_open_orders.sql
+│   │   ├── 20260620000134_trade_e3_cross_margin.sql
+│   │   ├── 20260620000135_assert_amount_text_positive.sql
+│   │   ├── 20260620000136_mines_client_result_leak_fix.sql
+│   │   ├── 20260620000137_game_bets_client_result_view.sql
+│   │   ├── 20260620000138_gameday_halt_aal2_guard_symmetry.sql
+│   │   ├── 20260620000139_guard_symmetry_aal2_systemlive_sweep.sql
+│   │   ├── 20260620000140_trade_launch_funding_cross_gates.sql
+│   │   ├── 20260622000001_welcome_bonus_base_10000.sql
+│   │   ├── 20260623000001_golden_earth_engine.sql
+│   │   ├── 20260623000002_aml_free_defense.sql
+│   │   ├── 20260623000003_kyc_documents_storage_passkey.sql
+│   │   ├── 20260623000004_launch_grant_closeout_golden_earth_aml.sql
+│   │   ├── 20260623000005_rls_consolidation_and_welcome_bonus_guard.sql
+│   │   ├── 20260623000006_v_game_bets_client_security_invoker.sql
+│   │   ├── 20260623000007_withdrawal_mfa_step_up.sql
+│   │   ├── 20260624000001_earn_hub_tier_limits_and_missions.sql
+│   │   ├── 20260625000001_rpc_complete_mission_search_path.sql
+│   │   ├── 20260625000002_guard_symmetry_welcome_bonus_kyc.sql
+│   │   ├── 20260625000003_fix_sql_test_regressions.sql
+│   │   ├── 20260625000004_repeatable_progress_schema_fix.sql
+│   │   ├── 20260626000001_phon_krw_rate_refresh.sql
+│   │   ├── 20260626000002_phon_krw_deposit_guard_restore.sql
+│   │   ├── 20260626000003_admin_casino_desk_rpc.sql
+│   │   ├── 20260626000004_step5_sports_quorum_admin.sql
+│   │   ├── 20260626000005_fix_repeatable_mission_social_like.sql
+│   │   ├── 20260626000006_guard_aal2_step5_admin_rpcs.sql
+│   │   ├── 20260626000007_admin_users_desk_rpc.sql
+│   │   ├── 20260626000008_guard_aal2_users_trade_exposure.sql
+│   │   ├── 20260626000010_launch_rc_money_fixes.sql
+│   │   ├── 20260626000011_launch_rc_hardening.sql
+│   │   ├── 20260627000001_worldno1_money_ops_rails.sql
+│   │   ├── 20260628000001_worldno1_edge_cron_admin_fixes.sql
+│   │   ├── 20260629000001_worldno1_vertical_hardening.sql
+│   │   ├── 20260630000001_synthetic_book_anon_grant.sql
+│   │   ├── 20260630000002_admin_access_rbac_mfa.sql
+│   │   ├── 20260630000003_launch_rc_admin_match_hotfix.sql
+│   │   ├── 20260630000004_launch_rc_dr_health_admin_guard.sql
+│   │   ├── 20260701000001_phon_bonus_real_wagering.sql
+│   │   ├── 20260702000001_platform_gate_client_read.sql
+│   │   ├── 20260702222517_p1b_admin_ops_visibility.sql
+│   │   ├── 20260703000001_guard_coverage_closeout_sweep.sql
+│   │   ├── 20260703072352_sports_finalize_zero_house_guard.sql
+│   │   ├── 20260704000001_krw_phon_withdrawal_rate_snapshot.sql
+│   │   ├── 20260705000000_giftcard_kind_enum_expand.sql
+│   │   ├── 20260705000001_giftcard_fee_market.sql
+│   │   ├── 20260705000002_giftcard_fee_market_admin_list_aal2.sql
+│   │   ├── 20260706000001_sports_realtime_publication.sql
+│   │   ├── 20260707000001_sports_fixture_rpc_sport_code_add_only.sql
+│   │   ├── 20260708000001_crypto_hd_deposit_e4.sql
+│   │   ├── 20260708000002_crypto_rls_advisor_consolidation.sql
+│   │   ├── 20260708000003_sports_rls_advisor_consolidation.sql
+│   │   ├── 20260709000001_giftcard_fee_market_q3_default_inactive.sql
+│   │   ├── 20260710000001_deposit_notify_e6.sql
+│   │   ├── 20260711000001_bank_pg_webhook_e1b.sql
+│   │   ├── 20260712000001_security_revoke_anon_admin_compliance_funcs.sql
+│   │   ├── 20260712000002_perf_add_covering_indexes_for_foreign_keys.sql
+│   │   ├── 20260712000003_perf_wrap_auth_calls_in_rls_initplan.sql
+│   │   ├── 20260712000004_internal_helper_anon_execute_revoke.sql
+│   │   ├── 20260712000005_fix_is_admin_anon_rls_execute_grant.sql
+│   │   ├── 20260713000001_p0_edge_contracts_claim_webhook.sql
+│   │   ├── 20260713000002_db_security_inventory.sql
+│   │   ├── 20260714000001_p1b_admin_ops_visibility.sql
+│   │   ├── 20260714000002_revoke_authenticated_internal_helper_execute.sql
+│   │   ├── 20260715000001_p6_edge_observability.sql
+│   │   ├── 20260716000001_engine_post_apex_p1_p2_hardening.sql
+│   │   ├── 20260717000001_admin_ops_visibility_aal2_guard.sql
+│   │   ├── 20260718000001_rpc_admin_resume_sports_market.sql
+│   │   ├── 20260719000001_liquidation_notify_e1.sql
+│   │   ├── 20260720000001_admin_halt_market_e2.sql
+│   │   ├── 20260721000001_ops_notify_e3.sql
+│   │   ├── 20260721000002_trade_t0a_spot_market_sources.sql
+│   │   ├── 20260721000003_trade_t0b_phon_internal_oracle.sql
+│   │   ├── 20260721000004_trade_t0c_price_ticks_bootstrap.sql
+│   │   ├── 20260721000005_trade_t0d_candles_display_safety.sql
+│   │   ├── 20260721000006_trade_t1_spot_open_orders.sql
+│   │   ├── 20260721000007_trade_t2_futures_completion.sql
+│   │   ├── 20260721000008_trade_t3_staking_majors_rewards.sql
+│   │   ├── 20260721000009_trade_t0b_oracle_aal2_guard.sql
+│   │   ├── 20260722000001_trade_e_phase_e_advanced_orders.sql
+│   │   ├── 20260722000002_trade_e_iceberg_fill_slice_loop.sql
+│   │   ├── 20260722000003_trade_e_iceberg_fill_resume_drain.sql
+│   │   ├── 20260723000001_client_gate_precheck_read.sql
+│   │   ├── 20260723000002_spot_major_buy_fee_conservation_fix.sql
+│   │   ├── 20260724000001_trade_wallet_realtime_publication.sql
+│   │   ├── 20260725000001_synthetic_book_definer_fmt6_fix.sql
+│   │   ├── 20260726000001_pir_system_account_lock_order.sql
+│   │   ├── 20260727000001_pir_realtime_narrow.sql
+│   │   ├── 20260728000001_pir_golden_earth.sql
+│   │   ├── 20260729000001_pir_sweep_chunk.sql
+│   │   ├── 20260730000001_pir_idempotency_handlers.sql
+│   │   ├── 20260731000001_pir_affiliate_settlements_aal2.sql
+│   │   ├── 20260732000001_pir_place_game_bet_rg_restore.sql
+│   │   ├── 20260801000001_ew_e1_tier_decay.sql
+│   │   ├── 20260802000001_ew_e2_mission_catalog.sql
+│   │   ├── 20260803000001_ew_e3_viral_cms.sql
+│   │   ├── 20260804000001_ew_e4_prime_elite_enum.sql
+│   │   ├── 20260804000002_ew_e4_tier_option_b.sql
+│   │   ├── 20260807000001_ew_e7_social_co_mission.sql
+│   │   ├── 20260808000001_ew_e21_trade_parity_hedge_reduce_only.sql
+│   │   ├── 20260809000001_ew_e22_sports_parity.sql
+│   │   ├── 20260810000001_ew_e23_casino_live.sql
+│   │   ├── 20260811000001_ew_e8_financial.sql
+│   │   ├── 20260812000001_ew_e9_app_install_enum.sql
+│   │   ├── 20260812000002_ew_e9_identity_support.sql
+│   │   ├── 20260813000001_ew_e10_platform_engine.sql
+│   │   ├── 20260814000001_h02_r3a_wallet_mutator_live_crash.sql
+│   │   ├── 20260815000001_m06_r3b_service_write_grants.sql
+│   │   ├── 20260816000001_m05_r3c_search_path_sweep.sql
+│   │   ├── 20260817000001_m04_r3d_siwe_analytics_ingress.sql
+│   │   ├── 20260818000001_h09_r3e_feature_flag_allowlist.sql
+│   │   ├── 20260819000001_h04_r4a_edge_ops_public_status_rebase.sql
+│   │   ├── 20260820000001_m20_r4b_rls_perf_initplan.sql
+│   │   ├── 20260821000001_m20_r4c_rls_permissive_consolidate.sql
+│   │   ├── 20260822000001_platform_sql_ci_closeout.sql
+│   │   └── 20260823000001_platform_sql_ci_closeout2.sql
+│   ├── migrations.lock.json
+│   ├── snippets/
+│   └── tests/
+│       ├── admin_access_test.sql
+│       ├── admin_authz_test.sql
+│       ├── admin_casino_desk_test.sql
+│       ├── admin_halt_market_e2_test.sql
+│       ├── admin_krw_match_test.sql
+│       ├── admin_mfa_aal2_test.sql
+│       ├── admin_ops_visibility_test.sql
+│       ├── advisor_rls_policy_consolidation_test.sql
+│       ├── advisor_sportsbook_security_test.sql
+│       ├── affiliate_commission_aggregates_test.sql
+│       ├── affiliate_commission_approvals_test.sql
+│       ├── affiliate_relationships_test.sql
+│       ├── affiliate_settlements_test.sql
+│       ├── affiliate_tier_snapshots_test.sql
+│       ├── aml_free_defense_test.sql
+│       ├── anon_lockdown_test.sql
+│       ├── audit_logs_append_only_test.sql
+│       ├── bank_pg_webhook_e1b_test.sql
+│       ├── bonus_real_wagering_test.sql
+│       ├── candles_volume_test.sql
+│       ├── casino_parity_test.sql
+│       ├── casino_schema_test.sql
+│       ├── casino_security_test.sql
+│       ├── circuit_breaker_state_test.sql
+│       ├── client_gate_precheck_read_test.sql
+│       ├── closed_beta_readiness_test.sql
+│       ├── concurrent_wallet_race_test.sql
+│       ├── conservation_test.sql
+│       ├── crypto_hd_deposit_test.sql
+│       ├── deposit_notify_e6_test.sql
+│       ├── earn_halt_guard_test.sql
+│       ├── earn_hub_tier_limits_test.sql
+│       ├── earn_repeatable_mission_conservation_test.sql
+│       ├── edge_observability_test.sql
+│       ├── engine_foundation_baseline_test.sql
+│       ├── ew_e1_tier_decay_test.sql
+│       ├── ew_e10_platform_engine_test.sql
+│       ├── ew_e2_mission_catalog_test.sql
+│       ├── ew_e21_hedge_reduce_only_test.sql
+│       ├── ew_e22_sports_parity_test.sql
+│       ├── ew_e23_casino_live_test.sql
+│       ├── ew_e3_viral_cms_test.sql
+│       ├── ew_e4_tier_option_b_test.sql
+│       ├── ew_e7_social_co_mission_test.sql
+│       ├── ew_e8_financial_test.sql
+│       ├── ew_e9_identity_support_test.sql
+│       ├── futures_parity_test.sql
+│       ├── game_bets_client_result_leak_test.sql
+│       ├── giftcard_fee_market_test.sql
+│       ├── golden_earth_conservation_test.sql
+│       ├── grants_rls_inventory_test.sql
+│       ├── h02_r3a_wallet_mutator_live_crash_test.sql
+│       ├── h04_r4a_edge_ops_public_status_rebase_test.sql
+│       ├── h09_r3e_feature_flag_allowlist_test.sql
+│       ├── hardening_test.sql
+│       ├── insurance_contribute_capital_test.sql
+│       ├── invariant_checks_test.sql
+│       ├── krw_phon_withdrawal_test.sql
+│       ├── liquidation_notify_e1_test.sql
+│       ├── live_surface_hardening_test.sql
+│       ├── m04_r3d_siwe_analytics_ingress_test.sql
+│       ├── m05_r3c_search_path_sweep_test.sql
+│       ├── m06_r3b_service_write_grants_test.sql
+│       ├── m20_r4b_rls_perf_initplan_test.sql
+│       ├── m20_r4c_rls_permissive_consolidate_test.sql
+│       ├── mines_client_result_leak_test.sql
+│       ├── mission_security_test.sql
+│       ├── notification_provider_capabilities_test.sql
+│       ├── oi_cap_race_test.sql
+│       ├── ops_alerts_test.sql
+│       ├── ops_health_test.sql
+│       ├── ops_notify_e3_test.sql
+│       ├── oracle_feed_test.sql
+│       ├── p0_edge_contracts_test.sql
+│       ├── phase5_deposit_test.sql
+│       ├── phase5_gates_test.sql
+│       ├── phase5_kyc_test.sql
+│       ├── phase5_withdrawal_test.sql
+│       ├── phon_krw_rate_refresh_test.sql
+│       ├── pir_golden_earth_test.sql
+│       ├── pir_idempotency_handlers_test.sql
+│       ├── pir_pf_golden_vectors_test.sql
+│       ├── pir_realtime_narrow_test.sql
+│       ├── pir_spot_buy_sell_deadlock_test.sql
+│       ├── pir_sweep_chunk_test.sql
+│       ├── platform_gate_client_read_test.sql
+│       ├── public_scope_hardening_test.sql
+│       ├── referral_qualified_reward_test.sql
+│       ├── repeatable_mission_status_test.sql
+│       ├── responsible_gambling_test.sql
+│       ├── reward_conservation_test.sql
+│       ├── sanctions_resolution_test.sql
+│       ├── security_definer_inventory_test.sql
+│       ├── settlement_race_test.sql
+│       ├── solvency_reconciliation_test.sql
+│       ├── sportsbook_anti_arb_test.sql
+│       ├── sportsbook_combo_conservation_test.sql
+│       ├── sportsbook_exposure_cap_test.sql
+│       ├── sportsbook_ingest_health_test.sql
+│       ├── sportsbook_inplay_suspend_test.sql
+│       ├── sportsbook_kill_switch_test.sql
+│       ├── sportsbook_major_hardening_test.sql
+│       ├── sportsbook_multi_account_test.sql
+│       ├── sportsbook_place_conservation_test.sql
+│       ├── sportsbook_place_negative_test.sql
+│       ├── sportsbook_quorum_override_test.sql
+│       ├── sportsbook_rg_loss_test.sql
+│       ├── sportsbook_rls_read_test.sql
+│       ├── sportsbook_s7_status_ingest_test.sql
+│       ├── sportsbook_settle_conservation_test.sql
+│       ├── sportsbook_void_conservation_test.sql
+│       ├── sportsbook_world_markets_test.sql
+│       ├── spot_open_orders_test.sql
+│       ├── stage2_trading_data_test.sql
+│       ├── staking_conservation_test.sql
+│       ├── system_account_hardening_test.sql
+│       ├── system_account_hash_chain_test.sql
+│       ├── system_account_reconciliation_test.sql
+│       ├── trade_cross_margin_test.sql
+│       ├── trade_cross_user_reject_test.sql
+│       ├── trade_e_phase_e_advanced_orders_test.sql
+│       ├── trade_funding_conservation_test.sql
+│       ├── trade_launch_gates_test.sql
+│       ├── trade_open_orders_conservation_test.sql
+│       ├── trade_open_orders_edge_test.sql
+│       ├── trade_sltp_trigger_test.sql
+│       ├── trade_t0a_spot_market_sources_test.sql
+│       ├── trade_t0b_phon_internal_oracle_test.sql
+│       ├── trade_t0c_price_ticks_bootstrap_test.sql
+│       ├── trade_t0d_candles_display_safety_test.sql
+│       ├── trade_t0e_oracle_ops_test.sql
+│       ├── trade_t2_funding_settlement_test.sql
+│       ├── trade_t2_futures_cron_test.sql
+│       ├── trade_t2_futures_sltp_test.sql
+│       ├── trade_t3_staking_majors_test.sql
+│       ├── trade_wallet_realtime_publication_test.sql
+│       ├── treasury_reserves_read_scope_test.sql
+│       ├── usdt_betting_proof_e7_test.sql
+│       ├── wallet_ledger_write_guard_test.sql
+│       ├── withdrawal_mfa_step_up_test.sql
+│       ├── worldno1_hardening_test.sql
+│       └── worldno1_rails_test.sql
+├── tests/
+│   ├── crypto-hd-derive.test.ts
+│   ├── e2e/
+│   │   ├── admin.spec.ts
+│   │   ├── fixtures/
+│   │   │   ├── admin-auth.ts
+│   │   │   ├── trade-console-collector.ts
+│   │   │   ├── trade-desk-money.ts
+│   │   │   ├── trade-desk-perf.ts
+│   │   │   └── wallet-money.ts
+│   │   ├── p0-trade-browser-verify.spec.ts
+│   │   ├── trade-console-allowlist.json
+│   │   ├── trade-desk-perf.spec.ts
+│   │   ├── trade-desk-smoke.spec.ts
+│   │   └── wallet-d3.spec.ts
+│   ├── integration/
+│   │   └── casino-sql-parity.test.ts
+│   ├── pg-bank-transfer-payload.test.ts
+│   ├── plan-todo-closeout.test.ts
+│   ├── scripts/
+│   │   ├── agent-heavy-gate-guard.test.ts
+│   │   ├── check-deploy-parity.test.ts
+│   │   ├── check-money-formula-citations.test.ts
+│   │   ├── claude-desktop-processes.test.ts
+│   │   ├── cursor-dev-processes.test.ts
+│   │   ├── docker-desktop-lifecycle.test.ts
+│   │   ├── dominant-ram-consumer.test.ts
+│   │   ├── e2e-shell-guard.test.ts
+│   │   ├── gate-diagnosis.test.ts
+│   │   ├── gate-phase0.test.ts
+│   │   ├── high-remediation.test.ts
+│   │   ├── main-push-guard.test.ts
+│   │   ├── parse-migrations-lock.test.ts
+│   │   ├── perf-rollout.test.ts
+│   │   ├── platform-r10-rollout.test.ts
+│   │   ├── platform-r11-closeout.test.ts
+│   │   ├── platform-r12-post-release.test.ts
+│   │   ├── release-manifest.test.ts
+│   │   ├── runtime-url-matrix.test.ts
+│   │   ├── schedule-observe-core.test.ts
+│   │   ├── schtasks-lifecycle.test.ts
+│   │   ├── standby-failure-cases.test.ts
+│   │   ├── trade-console-allowlist.test.ts
+│   │   └── tsserver-observe-core.test.ts
+│   ├── smoke/
+│   │   └── web.spec.ts
+│   └── unit/
+│       ├── database-types-parse.test.ts
+│       ├── gate-manifest.test.ts
+│       └── phase-d-manifest.test.ts
+├── tsconfig.base.json
+├── tsconfig.json
+├── vite-env.d.ts
+├── vitest.admin.setup.ts
+├── vitest.config.ts
+├── vitest.web.setup.ts
+├── wrangler.admin.toml
+└── wrangler.toml

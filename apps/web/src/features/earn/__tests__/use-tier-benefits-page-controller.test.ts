@@ -69,10 +69,10 @@ describe('useTierBenefitsPageController', () => {
       expect.objectContaining({ tier: 'platinum', xp: 120000 }),
     );
     expect(result.current.narrativeSteps).toHaveLength(3);
-    expect(result.current.benefitRows).toHaveLength(5);
+    expect(result.current.benefitRows).toHaveLength(6);
     expect(result.current.benefitRows.find((row) => row.current)?.tier).toBe('platinum');
     expect(result.current.visibleColumns).toHaveLength(5);
-    expect(result.current.decayPolicies).toHaveLength(5);
+    expect(result.current.decayPolicies).toHaveLength(6);
   });
 
   it('redirects guests to login', async () => {

@@ -54,7 +54,6 @@ docs/analysis/**
 docs/PRODUCT_VISION.md
 docs/FOLDER_STRUCTURE.md
 docs/REBUILD_ENGINE_FINDINGS.md
-docs/PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md
 docs/RELEASE_ROADMAP.md              # 2026-07-04 삭제 — 구 로드맵 (현행 = Phase R 플랜)
 docs/rebuild/NEXT_STEP.md            # 2026-07-04 삭제 — 실행 큐 = ACTIVE_WORK_SSOT
 docs/rebuild/DEMOLITION_CLOSEOUT_PLAN.md   # 2026-07-04 삭제 — Demolition DONE
@@ -72,6 +71,12 @@ docs/archive/PRE_DEMOLITION_INVENTORY.md   # 2026-07-04 삭제 — tag ui-v3-fin
 `RELEASE_ROADMAP.md` — Phase A~R **이력** · live tracker **아님**  
 `docs/rebuild/*` — low-spec/gate runbook만 KEEP · UI execution plan **아님**  
 UX canon (`*_UX_CANON.md`) — Phase R **의도 참조** · 구현 큐 **아님** (Plan 승인 전)
+
+## Active Admin operator SSOT (denylist 아님 · P13 DOC)
+
+- [`docs/PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md`](../PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md) — 유저↔Admin 1:1 · `p13-prep-admin-canonical-docs` **`[x]`**
+- [`docs/SSOT/ADMIN_BEGINNER_LANGUAGE_CANON.md`](ADMIN_BEGINNER_LANGUAGE_CANON.md) — §29.5 초등어
+- [`docs/SSOT/ADMIN_TEAM_RBAC_CANON.md`](ADMIN_TEAM_RBAC_CANON.md) — 역할 5종
 
 ## Cursor index
 

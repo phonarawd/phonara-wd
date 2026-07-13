@@ -13,13 +13,13 @@ import {
 } from '@/hooks/admin/useAdminUsersDesk';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { Input } from '@/product/primitives/input';
 import { cn } from '@/product/primitives/lib/cn';
-import { Skeleton } from '@/product/primitives/skeleton';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 import { AdminQueueActionDialog } from '@/product/surfaces/admin-queue-action-dialog';
 
@@ -81,20 +81,6 @@ function formatUserSummary(row: AdminUserRow, t: ReturnType<typeof useT>): strin
     'admin.users.balance.summary',
     parts,
   )}`;
-}
-
-function LoadingTable({ rows, cols }: { rows: number; cols: number }) {
-  return (
-    <div className="space-y-2" aria-busy="true">
-      {Array.from({ length: rows }, (_, rowIndex) => (
-        <div key={rowIndex} className="flex gap-3">
-          {Array.from({ length: cols }, (_, colIndex) => (
-            <Skeleton key={colIndex} className="h-10 flex-1" />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
 }
 
 /** Admin users desk (`/users`) — list · suspend/unsuspend · self-exclusion release (§29.2). */
@@ -243,188 +229,198 @@ export function AdminUsersPage() {
             />
           </section>
 
-          {loading ? (
-            <LoadingTable rows={6} cols={5} />
-          ) : users.length === 0 ? (
-            <EmptyState
-              title={t('admin.overview.empty.title')}
-              description={t('admin.users.empty.desc')}
-              actionLabel={t('admin.users.empty.cta')}
-              onAction={() => {
-                goTo('/queues');
-              }}
-            />
-          ) : (
-            <section className="space-y-4">
-              <div className="flex flex-col gap-3">
-                <Input
-                  value={filters.search}
-                  onChange={(event) =>
-                    setFilters((prev) => ({ ...prev, search: event.target.value }))
+          <section className="space-y-4">
+            {!loading && users.length === 0 ? (
+              <EmptyState
+                title={t('admin.overview.empty.title')}
+                description={t('admin.users.empty.desc')}
+                actionLabel={t('admin.users.empty.cta')}
+                onAction={() => {
+                  goTo('/queues');
+                }}
+              />
+            ) : (
+              <>
+                <div className="flex flex-col gap-3">
+                  <Input
+                    value={filters.search}
+                    onChange={(event) =>
+                      setFilters((prev) => ({ ...prev, search: event.target.value }))
+                    }
+                    placeholder={t('admin.users.search.placeholder')}
+                    aria-label={t('admin.users.search.placeholder')}
+                    className="max-w-md"
+                  />
+
+                  <div className="flex flex-wrap gap-2">
+                    {(Object.keys(STATUS_FILTER_KEYS) as UserStatus[]).map((status) => (
+                      <Button
+                        key={status}
+                        size="sm"
+                        variant={filters.status.includes(status) ? 'primary' : 'outline'}
+                        onClick={() =>
+                          setFilters((prev) => ({
+                            ...prev,
+                            status: toggleFilter(prev.status, status),
+                          }))
+                        }
+                      >
+                        {t(STATUS_FILTER_KEYS[status])}
+                      </Button>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {(Object.keys(KYC_FILTER_KEYS) as KycTier[]).map((tier) => (
+                      <Button
+                        key={tier}
+                        size="sm"
+                        variant={filters.kyc.includes(tier) ? 'primary' : 'outline'}
+                        onClick={() =>
+                          setFilters((prev) => ({
+                            ...prev,
+                            kyc: toggleFilter(prev.kyc, tier),
+                          }))
+                        }
+                      >
+                        {t(KYC_FILTER_KEYS[tier])}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                <AdminTable
+                  columns={[
+                    {
+                      id: 'name',
+                      header: t('admin.users.col.name'),
+                      cell: ({ row }) => (
+                        <>
+                          <div className="font-medium">{row.displayName}</div>
+                          <div className="text-foreground-muted text-xs">{row.id}</div>
+                        </>
+                      ),
+                    },
+                    {
+                      id: 'email',
+                      header: t('admin.users.col.email'),
+                      cell: ({ row }) => row.emailMasked,
+                    },
+                    {
+                      id: 'status',
+                      header: t('admin.users.col.status'),
+                      cell: ({ row }) => (
+                        <StatusBadge
+                          state={userStatusState(row.status)}
+                          label={t(STATUS_FILTER_KEYS[row.status])}
+                        />
+                      ),
+                    },
+                    {
+                      id: 'kyc',
+                      header: t('admin.users.col.kyc'),
+                      cell: ({ row }) => t(KYC_FILTER_KEYS[row.kycTier]),
+                    },
+                    {
+                      id: 'balance',
+                      header: t('admin.users.col.balance'),
+                      cell: ({ row }) =>
+                        t('admin.users.balance.summary', userBalanceSummaryParts(row)),
+                      meta: { className: 'tabular-nums' },
+                    },
+                    {
+                      id: 'session',
+                      header: t('admin.users.col.session'),
+                      cell: ({ row }) => formatWhen(row.lastSessionAt, locale),
+                      meta: { className: 'text-foreground-muted' },
+                    },
+                  ]}
+                  rows={filteredUsers}
+                  getRowId={(row) => row.id}
+                  loading={loading}
+                  loadingRowCount={6}
+                  minWidth={960}
+                  empty={
+                    <EmptyState
+                      title={t('admin.users.empty.title')}
+                      description={t('admin.users.empty.desc')}
+                      actionLabel={t('admin.referrals.empty.clearSearch')}
+                      onAction={() => setFilters({ search: '', status: [], kyc: [] })}
+                    />
                   }
-                  placeholder={t('admin.users.search.placeholder')}
-                  aria-label={t('admin.users.search.placeholder')}
-                  className="max-w-md"
+                  rowActionsHeader={t('admin.users.col.action')}
+                  rowActions={(row) => {
+                    const exclusion = selfExclusionByUserId.get(row.id);
+                    return (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => goTo(`/users/${row.id}/tier`)}
+                        >
+                          {t('admin.users.action.viewTier')}
+                        </Button>
+                        {row.status === 'active' ? (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() =>
+                              setActionTarget({
+                                kind: 'suspend',
+                                userId: row.id,
+                                titleKey: 'admin.users.dialog.suspend',
+                                confirmKey: 'admin.users.action.suspend',
+                                destructive: true,
+                                summary: `${formatUserSummary(row, t)}\n${t('admin.users.dialog.suspend.desc')}`,
+                              })
+                            }
+                          >
+                            {t('admin.users.action.suspend')}
+                          </Button>
+                        ) : null}
+                        {row.status === 'suspended' ? (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() =>
+                              setActionTarget({
+                                kind: 'unsuspend',
+                                userId: row.id,
+                                titleKey: 'admin.users.dialog.unsuspend',
+                                confirmKey: 'admin.users.action.unsuspend',
+                                summary: `${formatUserSummary(row, t)}\n${t('admin.users.dialog.unsuspend.desc')}`,
+                              })
+                            }
+                          >
+                            {t('admin.users.action.unsuspend')}
+                          </Button>
+                        ) : null}
+                        {exclusion ? (
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={() =>
+                              setActionTarget({
+                                kind: 'releaseSelfExclusion',
+                                userId: row.id,
+                                exclusionId: exclusion.id,
+                                titleKey: 'admin.users.dialog.releaseSelfExclusion',
+                                confirmKey: 'admin.users.action.releaseSelfExclusion',
+                                destructive: true,
+                                summary: `${formatUserSummary(row, t)}\n${t('admin.users.dialog.releaseSelfExclusion.desc')}`,
+                              })
+                            }
+                          >
+                            {t('admin.users.action.releaseSelfExclusion')}
+                          </Button>
+                        ) : null}
+                      </>
+                    );
+                  }}
                 />
-
-                <div className="flex flex-wrap gap-2">
-                  {(Object.keys(STATUS_FILTER_KEYS) as UserStatus[]).map((status) => (
-                    <Button
-                      key={status}
-                      size="sm"
-                      variant={filters.status.includes(status) ? 'primary' : 'outline'}
-                      onClick={() =>
-                        setFilters((prev) => ({
-                          ...prev,
-                          status: toggleFilter(prev.status, status),
-                        }))
-                      }
-                    >
-                      {t(STATUS_FILTER_KEYS[status])}
-                    </Button>
-                  ))}
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {(Object.keys(KYC_FILTER_KEYS) as KycTier[]).map((tier) => (
-                    <Button
-                      key={tier}
-                      size="sm"
-                      variant={filters.kyc.includes(tier) ? 'primary' : 'outline'}
-                      onClick={() =>
-                        setFilters((prev) => ({
-                          ...prev,
-                          kyc: toggleFilter(prev.kyc, tier),
-                        }))
-                      }
-                    >
-                      {t(KYC_FILTER_KEYS[tier])}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              {filteredUsers.length === 0 ? (
-                <EmptyState
-                  title={t('admin.users.empty.title')}
-                  description={t('admin.users.empty.desc')}
-                  actionLabel={t('admin.referrals.empty.clearSearch')}
-                  onAction={() => setFilters({ search: '', status: [], kyc: [] })}
-                />
-              ) : (
-                <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                  <table className="w-full min-w-[960px] border-collapse text-left text-sm">
-                    <thead className="bg-surface-raised text-foreground-muted">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">{t('admin.users.col.name')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.users.col.email')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.users.col.status')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.users.col.kyc')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.users.col.balance')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.users.col.session')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.users.col.action')}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredUsers.map((row) => {
-                        const exclusion = selfExclusionByUserId.get(row.id);
-                        const balance = userBalanceSummaryParts(row);
-                        return (
-                          <tr key={row.id} className="border-line border-t align-top">
-                            <td className="text-foreground px-4 py-3">
-                              <div className="font-medium">{row.displayName}</div>
-                              <div className="text-foreground-muted text-xs">{row.id}</div>
-                            </td>
-                            <td className="text-foreground px-4 py-3">{row.emailMasked}</td>
-                            <td className="px-4 py-3">
-                              <StatusBadge
-                                state={userStatusState(row.status)}
-                                label={t(STATUS_FILTER_KEYS[row.status])}
-                              />
-                            </td>
-                            <td className="text-foreground px-4 py-3">
-                              {t(KYC_FILTER_KEYS[row.kycTier])}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {t('admin.users.balance.summary', balance)}
-                            </td>
-                            <td className="text-foreground-muted px-4 py-3">
-                              {formatWhen(row.lastSessionAt, locale)}
-                            </td>
-                            <td className="px-4 py-3">
-                              <div className="flex flex-wrap gap-2">
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => goTo(`/users/${row.id}/tier`)}
-                                >
-                                  {t('admin.users.action.viewTier')}
-                                </Button>
-                                {row.status === 'active' ? (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() =>
-                                      setActionTarget({
-                                        kind: 'suspend',
-                                        userId: row.id,
-                                        titleKey: 'admin.users.dialog.suspend',
-                                        confirmKey: 'admin.users.action.suspend',
-                                        destructive: true,
-                                        summary: `${formatUserSummary(row, t)}\n${t('admin.users.dialog.suspend.desc')}`,
-                                      })
-                                    }
-                                  >
-                                    {t('admin.users.action.suspend')}
-                                  </Button>
-                                ) : null}
-                                {row.status === 'suspended' ? (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() =>
-                                      setActionTarget({
-                                        kind: 'unsuspend',
-                                        userId: row.id,
-                                        titleKey: 'admin.users.dialog.unsuspend',
-                                        confirmKey: 'admin.users.action.unsuspend',
-                                        summary: `${formatUserSummary(row, t)}\n${t('admin.users.dialog.unsuspend.desc')}`,
-                                      })
-                                    }
-                                  >
-                                    {t('admin.users.action.unsuspend')}
-                                  </Button>
-                                ) : null}
-                                {exclusion ? (
-                                  <Button
-                                    size="sm"
-                                    variant="primary"
-                                    onClick={() =>
-                                      setActionTarget({
-                                        kind: 'releaseSelfExclusion',
-                                        userId: row.id,
-                                        exclusionId: exclusion.id,
-                                        titleKey: 'admin.users.dialog.releaseSelfExclusion',
-                                        confirmKey: 'admin.users.action.releaseSelfExclusion',
-                                        destructive: true,
-                                        summary: `${formatUserSummary(row, t)}\n${t('admin.users.dialog.releaseSelfExclusion.desc')}`,
-                                      })
-                                    }
-                                  >
-                                    {t('admin.users.action.releaseSelfExclusion')}
-                                  </Button>
-                                ) : null}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </section>
-          )}
+              </>
+            )}
+          </section>
 
           <section className="space-y-3" aria-labelledby="admin-users-audit-heading">
             <h3
@@ -433,36 +429,34 @@ export function AdminUsersPage() {
             >
               {t('admin.users.audit.title')}
             </h3>
-            {audit.length === 0 ? (
-              <p className="text-foreground-muted m-0 text-sm">{t('admin.users.audit.empty')}</p>
-            ) : (
-              <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-                  <thead className="bg-surface-raised text-foreground-muted">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">{t('admin.audit.col.time')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.audit.col.action')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.users.col.name')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.audit.col.reason')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {audit.slice(0, 20).map((entry) => (
-                      <tr key={entry.id} className="border-line border-t">
-                        <td className="text-foreground-muted px-4 py-3">
-                          {formatWhen(entry.at, locale)}
-                        </td>
-                        <td className="text-foreground px-4 py-3">
-                          {t(auditActionKey(entry.actionKey))}
-                        </td>
-                        <td className="text-foreground px-4 py-3">{entry.subject}</td>
-                        <td className="text-foreground-muted px-4 py-3">{entry.reason || '—'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <AdminTable
+              columns={[
+                {
+                  id: 'time',
+                  header: t('admin.audit.col.time'),
+                  cell: ({ row }) => formatWhen(row.at, locale),
+                  meta: { className: 'text-foreground-muted' },
+                },
+                {
+                  id: 'action',
+                  header: t('admin.audit.col.action'),
+                  cell: ({ row }) => t(auditActionKey(row.actionKey)),
+                },
+                { id: 'name', header: t('admin.users.col.name'), cell: ({ row }) => row.subject },
+                {
+                  id: 'reason',
+                  header: t('admin.audit.col.reason'),
+                  cell: ({ row }) => row.reason || '—',
+                  meta: { className: 'text-foreground-muted' },
+                },
+              ]}
+              rows={audit.slice(0, 20)}
+              getRowId={(row) => row.id}
+              minWidth={640}
+              empty={
+                <p className="text-foreground-muted m-0 text-sm">{t('admin.users.audit.empty')}</p>
+              }
+            />
           </section>
         </>
       )}

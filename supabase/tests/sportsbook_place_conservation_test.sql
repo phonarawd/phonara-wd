@@ -2,6 +2,8 @@
 -- Sportsbook place bet conservation (Wave-S3)
 --
 -- Authoritative stake lock: `rpc_place_sports_bet` only.
+-- Currency under test: PHON (hardcoded in this file).
+-- USDT sportsbook place/settle Σ=0: usdt_betting_proof_e7_test.sql (ZA-19 discoverability)
 -- Negative guards (odds_changed · stale · duplicate_fixture · cancelled fixture):
 --   sportsbook_place_negative_test.sql
 -- Exposure cap · RG limits: sportsbook_exposure_cap_test.sql · sportsbook_rg_loss_test.sql

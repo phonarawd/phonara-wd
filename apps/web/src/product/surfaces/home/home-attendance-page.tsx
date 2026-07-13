@@ -135,13 +135,13 @@ export function HomeAttendancePage() {
               key={day.day}
               data-testid={`home-attendance-cycle-day-${day.day}`}
               className={cn(
-                'flex flex-col items-center gap-1 rounded-(--ds-radius-md) border px-1 py-2 text-center',
+                'flex flex-col items-center gap-1 rounded-md border px-1 py-2 text-center',
                 day.state === 'completed' && 'border-success/40 bg-success/10',
                 day.state === 'current' && 'border-accent bg-accent/10 ring-accent/40 ring-2',
                 day.state === 'upcoming' && 'border-border bg-surface-elevated',
               )}
             >
-              <span className="text-foreground-muted text-[10px] font-medium uppercase">
+              <span className="text-foreground-muted text-tiny font-medium uppercase">
                 {t('earn.attendance.day', { n: day.day })}
               </span>
               <span className="text-foreground text-xs font-semibold tabular-nums">

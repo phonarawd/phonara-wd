@@ -4,35 +4,31 @@ import { RefreshCw } from 'lucide-react';
 
 import type { MessageKey } from '@phonara/i18n';
 
-import {
-  useAdminEarnDesk,
-  type AgentTier,
-  type SettlementState,
-} from '@/hooks/admin/useAdminEarnDesk';
+import { useAdminEarnDesk, type SettlementState } from '@/hooks/admin/useAdminEarnDesk';
+import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
 import { formatAmountString } from '@/hooks/admin/useAdminWalletDesk';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { Input } from '@/product/primitives/input';
 import { cn } from '@/product/primitives/lib/cn';
-import { Skeleton } from '@/product/primitives/skeleton';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/product/primitives/tabs';
-
-const AGENT_TIER_KEYS: Record<AgentTier, MessageKey> = {
-  bronze: 'admin.earn.agents.tier.bronze',
-  silver: 'admin.earn.agents.tier.silver',
-  gold: 'admin.earn.agents.tier.gold',
-  platinum: 'admin.earn.agents.tier.platinum',
-};
+import { AdminQueueActionDialog } from '@/product/surfaces/admin-queue-action-dialog';
+import { ADMIN_RBAC_DENIED_KEY, adminRbacActionProps } from '@/product/surfaces/admin-rbac-action';
 
 const SETTLEMENT_STATE_KEYS: Record<SettlementState, MessageKey> = {
   pending: 'admin.earn.settlements.state.pending',
   approved: 'admin.earn.settlements.state.approved',
   paid: 'admin.earn.settlements.state.paid',
+};
+
+type SettlementActionTarget = {
+  id: string;
+  summary: string;
 };
 
 function formatWhen(iso: string | null | undefined, locale: string): string {
@@ -53,31 +49,16 @@ function settlementStatusState(state: SettlementState): MoneyStatusState {
   return 'pending';
 }
 
-function LoadingTable({ rows, cols }: { rows: number; cols: number }) {
-  return (
-    <div className="space-y-2" aria-busy="true">
-      {Array.from({ length: rows }, (_, rowIndex) => (
-        <div key={rowIndex} className="flex gap-3">
-          {Array.from({ length: cols }, (_, colIndex) => (
-            <Skeleton key={colIndex} className="h-10 flex-1" />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/** Admin earn desk (`/earn`) — settlements read + approve · agents Tier C deferred (§29.2). */
+/** Admin earn desk (`/earn`) — settlements read + reason/RBAC approve · agents Tier C deferred (§29.2 · H-08/M-13). */
 export function AdminEarnPage() {
   const t = useT();
   const goTo = useAdminRouteNavigate();
   const locale = typeof document !== 'undefined' ? document.documentElement.lang || 'ko' : 'ko';
+  const { can } = useAdminOperatorRbac();
+  const canApproveSettlement = can('earn.settlement.approve');
+  const rbacDenied = t(ADMIN_RBAC_DENIED_KEY);
 
   const {
-    agents,
-    filteredAgents,
-    agentFilters,
-    setAgentFilters,
     settlements,
     filteredSettlements,
     settlementFilters,
@@ -91,7 +72,8 @@ export function AdminEarnPage() {
   } = useAdminEarnDesk();
 
   const [refreshing, setRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'settlements' | 'agents'>('settlements');
+  const [actionTarget, setActionTarget] = useState<SettlementActionTarget | null>(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const settlementMetrics = useMemo(() => {
     const counts = { total: settlements.length, pending: 0, approved: 0, paid: 0 };
@@ -107,6 +89,18 @@ export function AdminEarnPage() {
       await refresh();
     } finally {
       setRefreshing(false);
+    }
+  };
+
+  const handleActionSubmit = async (reason: string): Promise<boolean> => {
+    if (!actionTarget || !canApproveSettlement) return false;
+    setActionLoading(true);
+    try {
+      const ok = await approveSettlement(actionTarget.id, reason);
+      if (ok) setActionTarget(null);
+      return ok;
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -216,6 +210,13 @@ export function AdminEarnPage() {
         </Card>
       </section>
 
+      <Card>
+        <CardHeader className="gap-2">
+          <CardTitle className="text-base">{t('admin.earn.agents.section.title')}</CardTitle>
+          <CardDescription>{t('admin.earn.deferred.agents')}</CardDescription>
+        </CardHeader>
+      </Card>
+
       {isError ? (
         <EmptyState
           title={t('admin.earn.error.title')}
@@ -224,265 +225,159 @@ export function AdminEarnPage() {
           onAction={() => void handleRefresh()}
         />
       ) : (
-        <Tabs
-          value={activeTab}
-          onValueChange={(value: string) => setActiveTab(value as 'settlements' | 'agents')}
-          className="gap-4"
-        >
-          <TabsList aria-label={t('admin.earn.section.tabs')}>
-            <TabsTrigger value="settlements">
-              {t('admin.earn.section.settlements')} ({settlementMetrics.pending})
-            </TabsTrigger>
-            <TabsTrigger value="agents">{t('admin.earn.section.agents')}</TabsTrigger>
-          </TabsList>
+        <div className="space-y-4">
+          <Card>
+            <CardHeader className="gap-2">
+              <CardTitle className="text-base">
+                {t('admin.earn.settlements.section.title')}
+              </CardTitle>
+              <CardDescription>{t('admin.earn.deferred.settlementsPayout')}</CardDescription>
+            </CardHeader>
+          </Card>
 
-          <TabsContent value="settlements" className="space-y-4">
-            <Card>
-              <CardHeader className="gap-2">
-                <CardTitle className="text-base">
-                  {t('admin.earn.settlements.section.title')}
-                </CardTitle>
-                <CardDescription>{t('admin.earn.deferred.settlementsPayout')}</CardDescription>
-              </CardHeader>
-            </Card>
+          <section
+            aria-labelledby="admin-earn-settlement-metrics-heading"
+            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+          >
+            <h3 id="admin-earn-settlement-metrics-heading" className="sr-only">
+              {t('admin.earn.section.settlements')}
+            </h3>
+            <MetricCard
+              label={t('admin.earn.settlements.metric.total')}
+              value={String(settlementMetrics.total)}
+            />
+            <MetricCard
+              label={t('admin.earn.settlements.metric.pending')}
+              value={String(settlementMetrics.pending)}
+              emphasis={settlementMetrics.pending > 0}
+            />
+            <MetricCard
+              label={t('admin.earn.settlements.metric.approved')}
+              value={String(settlementMetrics.approved)}
+            />
+            <MetricCard
+              label={t('admin.earn.settlements.metric.paid')}
+              value={String(settlementMetrics.paid)}
+            />
+          </section>
 
-            <section
-              aria-labelledby="admin-earn-settlement-metrics-heading"
-              className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
-            >
-              <h3 id="admin-earn-settlement-metrics-heading" className="sr-only">
-                {t('admin.earn.section.settlements')}
-              </h3>
-              <MetricCard
-                label={t('admin.earn.settlements.metric.total')}
-                value={String(settlementMetrics.total)}
-              />
-              <MetricCard
-                label={t('admin.earn.settlements.metric.pending')}
-                value={String(settlementMetrics.pending)}
-                emphasis={settlementMetrics.pending > 0}
-              />
-              <MetricCard
-                label={t('admin.earn.settlements.metric.approved')}
-                value={String(settlementMetrics.approved)}
-              />
-              <MetricCard
-                label={t('admin.earn.settlements.metric.paid')}
-                value={String(settlementMetrics.paid)}
-              />
-            </section>
-
-            {loading ? (
-              <LoadingTable rows={5} cols={6} />
-            ) : settlements.length === 0 ? (
-              <EmptyState
-                title={t('admin.overview.empty.title')}
-                description={t('admin.earn.settlements.empty')}
-                actionLabel={t('admin.earn.shortcut.open')}
-                onAction={() => {
-                  goTo('/earn/referrals');
-                }}
-              />
-            ) : (
-              <section className="space-y-3">
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                  <Input
-                    value={settlementFilters.search}
-                    onChange={(event) =>
-                      setSettlementFilters((prev) => ({ ...prev, search: event.target.value }))
-                    }
-                    placeholder={t('admin.earn.settlements.search.placeholder')}
-                    aria-label={t('admin.earn.settlements.search.placeholder')}
-                    className="max-w-md"
+          {!loading && settlements.length === 0 ? (
+            <EmptyState
+              title={t('admin.overview.empty.title')}
+              description={t('admin.earn.settlements.empty')}
+              actionLabel={t('admin.earn.shortcut.open')}
+              onAction={() => {
+                goTo('/earn/referrals');
+              }}
+            />
+          ) : (
+            <section className="space-y-3">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <Input
+                  value={settlementFilters.search}
+                  onChange={(event) =>
+                    setSettlementFilters((prev) => ({ ...prev, search: event.target.value }))
+                  }
+                  placeholder={t('admin.earn.settlements.search.placeholder')}
+                  aria-label={t('admin.earn.settlements.search.placeholder')}
+                  className="max-w-md"
+                />
+                <div className="flex flex-wrap gap-2">
+                  <FilterChip
+                    active={settlementFilters.state === 'all'}
+                    label={t('admin.earn.settlements.state.all')}
+                    onClick={() => setSettlementFilters((prev) => ({ ...prev, state: 'all' }))}
                   />
-                  <div className="flex flex-wrap gap-2">
+                  {settlementStates.map((state) => (
                     <FilterChip
-                      active={settlementFilters.state === 'all'}
-                      label={t('admin.earn.settlements.state.all')}
-                      onClick={() => setSettlementFilters((prev) => ({ ...prev, state: 'all' }))}
+                      key={state}
+                      active={settlementFilters.state === state}
+                      label={t(SETTLEMENT_STATE_KEYS[state])}
+                      onClick={() => setSettlementFilters((prev) => ({ ...prev, state }))}
                     />
-                    {settlementStates.map((state) => (
-                      <FilterChip
-                        key={state}
-                        active={settlementFilters.state === state}
-                        label={t(SETTLEMENT_STATE_KEYS[state])}
-                        onClick={() => setSettlementFilters((prev) => ({ ...prev, state }))}
-                      />
-                    ))}
-                  </div>
+                  ))}
                 </div>
+              </div>
 
-                {filteredSettlements.length === 0 ? (
+              <AdminTable
+                columns={[
+                  {
+                    id: 'agent',
+                    header: t('admin.earn.settlements.col.agent'),
+                    cell: ({ row }) => (
+                      <>
+                        <div className="font-medium">{row.agentCode}</div>
+                        <div className="text-foreground-muted text-xs">{row.agentDisplayName}</div>
+                      </>
+                    ),
+                  },
+                  {
+                    id: 'period',
+                    header: t('admin.earn.settlements.col.period'),
+                    cell: ({ row }) => row.periodKey,
+                    meta: { className: 'text-foreground-muted tabular-nums' },
+                  },
+                  {
+                    id: 'amount',
+                    header: t('admin.earn.settlements.col.amount'),
+                    cell: ({ row }) => formatAmountString(row.amount, row.currency),
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'state',
+                    header: t('admin.earn.settlements.col.state'),
+                    cell: ({ row }) => (
+                      <StatusBadge
+                        state={settlementStatusState(row.state)}
+                        label={t(SETTLEMENT_STATE_KEYS[row.state])}
+                      />
+                    ),
+                  },
+                  {
+                    id: 'createdAt',
+                    header: t('admin.earn.settlements.col.createdAt'),
+                    cell: ({ row }) => formatWhen(row.createdAt, locale),
+                    meta: { className: 'text-foreground-muted tabular-nums' },
+                  },
+                ]}
+                rows={filteredSettlements}
+                getRowId={(row) => row.id}
+                loading={loading}
+                loadingRowCount={5}
+                minWidth={880}
+                empty={
                   <EmptyState
                     title={t('admin.overview.empty.title')}
                     description={t('admin.earn.settlements.empty')}
                     actionLabel={t('admin.referrals.empty.clearSearch')}
                     onAction={() => setSettlementFilters({ search: '', state: 'all' })}
                   />
-                ) : (
-                  <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                    <table className="w-full min-w-[880px] border-collapse text-left text-sm">
-                      <thead className="bg-surface-raised text-foreground-muted">
-                        <tr>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.settlements.col.agent')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.settlements.col.period')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.settlements.col.amount')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.settlements.col.state')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.settlements.col.createdAt')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.settlements.col.action')}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredSettlements.map((row) => (
-                          <tr key={row.id} className="border-line border-t">
-                            <td className="text-foreground px-4 py-3">
-                              <div className="font-medium">{row.agentCode}</div>
-                              <div className="text-foreground-muted text-xs">
-                                {row.agentDisplayName}
-                              </div>
-                            </td>
-                            <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                              {row.periodKey}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {formatAmountString(row.amount, row.currency)}
-                            </td>
-                            <td className="px-4 py-3">
-                              <StatusBadge
-                                state={settlementStatusState(row.state)}
-                                label={t(SETTLEMENT_STATE_KEYS[row.state])}
-                              />
-                            </td>
-                            <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                              {formatWhen(row.createdAt, locale)}
-                            </td>
-                            <td className="px-4 py-3">
-                              {row.state === 'pending' ? (
-                                <Button
-                                  variant="primary"
-                                  size="sm"
-                                  onClick={() => approveSettlement(row.id)}
-                                >
-                                  {t('admin.earn.settlements.action.approve')}
-                                </Button>
-                              ) : (
-                                <span className="text-foreground-muted text-xs">—</span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </section>
-            )}
-          </TabsContent>
-
-          <TabsContent value="agents" className="space-y-4">
-            <Card>
-              <CardHeader className="gap-2">
-                <CardTitle className="text-base">{t('admin.earn.agents.section.title')}</CardTitle>
-                <CardDescription>{t('admin.earn.deferred.agents')}</CardDescription>
-              </CardHeader>
-            </Card>
-
-            {agents.length === 0 ? (
-              <EmptyState
-                title={t('admin.overview.empty.title')}
-                description={t('admin.earn.agents.empty')}
-                actionLabel={t('admin.earn.shortcut.open')}
-                onAction={() => {
-                  goTo('/earn/referrals');
-                }}
+                }
+                rowActionsHeader={t('admin.earn.settlements.col.action')}
+                rowActions={(row) =>
+                  row.state === 'pending' ? (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      data-testid={`admin-earn-approve-${row.id}`}
+                      {...adminRbacActionProps(canApproveSettlement, rbacDenied)}
+                      onClick={() =>
+                        setActionTarget({
+                          id: row.id,
+                          summary: `${row.agentCode} · ${formatAmountString(row.amount, row.currency)} · ${row.periodKey}`,
+                        })
+                      }
+                    >
+                      {t('admin.earn.settlements.action.approve')}
+                    </Button>
+                  ) : (
+                    <span className="text-foreground-muted text-xs">—</span>
+                  )
+                }
               />
-            ) : (
-              <section className="space-y-3">
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                  <Input
-                    value={agentFilters.search}
-                    onChange={(event) =>
-                      setAgentFilters((prev) => ({ ...prev, search: event.target.value }))
-                    }
-                    placeholder={t('admin.earn.agents.search.placeholder')}
-                    aria-label={t('admin.earn.agents.search.placeholder')}
-                    className="max-w-md"
-                  />
-                </div>
-
-                {filteredAgents.length === 0 ? (
-                  <EmptyState
-                    title={t('admin.overview.empty.title')}
-                    description={t('admin.earn.agents.empty')}
-                    actionLabel={t('admin.referrals.empty.clearSearch')}
-                    onAction={() => setAgentFilters({ search: '', tier: 'all', status: 'all' })}
-                  />
-                ) : (
-                  <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                    <table className="w-full min-w-[920px] border-collapse text-left text-sm">
-                      <thead className="bg-surface-raised text-foreground-muted">
-                        <tr>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.agents.col.agent')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.agents.col.tier')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.agents.col.referrals')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.agents.col.pendingPayout')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.earn.agents.col.status')}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredAgents.map((row) => (
-                          <tr key={row.id} className="border-line border-t">
-                            <td className="text-foreground px-4 py-3">
-                              <div className="font-medium">{row.agentCode}</div>
-                              <div className="text-foreground-muted text-xs">{row.displayName}</div>
-                            </td>
-                            <td className="text-foreground px-4 py-3">
-                              {t(AGENT_TIER_KEYS[row.tier])}
-                            </td>
-                            <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                              {row.referralCount}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {row.pendingPayout}
-                            </td>
-                            <td className="px-4 py-3">
-                              <StatusBadge
-                                state={row.status === 'active' ? 'settled' : 'pending'}
-                                label={t(`admin.earn.agents.status.${row.status}` as MessageKey)}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </section>
-            )}
-          </TabsContent>
-        </Tabs>
+            </section>
+          )}
+        </div>
       )}
 
       {audit.length > 0 ? (
@@ -508,6 +403,18 @@ export function AdminEarnPage() {
           </ul>
         </section>
       ) : null}
+
+      <AdminQueueActionDialog
+        open={actionTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setActionTarget(null);
+        }}
+        titleKey="admin.earn.settlements.dialog.approve.title"
+        confirmKey="admin.earn.settlements.action.approve"
+        summary={actionTarget?.summary}
+        loading={actionLoading}
+        onSubmit={handleActionSubmit}
+      />
     </div>
   );
 }

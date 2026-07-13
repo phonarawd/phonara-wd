@@ -61,6 +61,22 @@ describe('useSettingsHubController', () => {
     });
   });
 
+  it('writes casino sound effects pref (default off) and shows toast', () => {
+    const { result } = renderHook(() => useSettingsHubController());
+    expect(result.current.casinoSoundEffects).toBe(false);
+
+    act(() => {
+      result.current.setCasinoSoundEffects(true);
+    });
+
+    expect(result.current.casinoSoundEffects).toBe(true);
+    expect(window.localStorage.getItem('phonara.settings.casino.soundEffects')).toBe('1');
+    expect(productToastShowMock).toHaveBeenCalledWith({
+      zone: 'warm',
+      key: 'settings.casino.toast.soundOn',
+    });
+  });
+
   it('writes trade one-click pref and clears confirm dialog', () => {
     const { result } = renderHook(() => useSettingsHubController());
 

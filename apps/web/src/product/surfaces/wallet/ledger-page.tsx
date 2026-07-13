@@ -18,6 +18,7 @@ import { useLedgerPageController } from '@/features/wallet/use-ledger-page-contr
 import { useWalletFiatHint } from '@/features/wallet/use-wallet-fiat-hint';
 import { useI18n, useT } from '@/product/i18n';
 import { Button } from '@/product/primitives/button';
+import { EmptyState } from '@/product/primitives/empty-state';
 import { FiatHintDisclaimer } from '@/product/primitives/money-display-with-fiat-hint';
 import { MoneyDisplay } from '@/product/primitives/money-display';
 import {
@@ -27,19 +28,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/product/primitives/select';
-import { Skeleton } from '@/product/primitives/skeleton';
+import { QuadStreamLoading } from '@/product/primitives/quad-stream-loading';
 import { cn } from '@/product/primitives/lib/cn';
 
 import { WalletMoneyWithFiatHint } from './wallet-money-with-fiat-hint';
 
 function LedgerLoadingShell() {
-  return (
-    <div className="flex flex-col gap-4 py-4" data-testid="ledger-loading">
-      <Skeleton className="h-8 w-1/3" />
-      <Skeleton className="h-11 w-full" />
-      <Skeleton className="h-64 w-full" />
-    </div>
-  );
+  return <QuadStreamLoading testId="ledger-loading" />;
 }
 
 /** Canonical `/ledger` — wallet_ledger read · filters · tabular nums (P4·W3). */
@@ -92,7 +87,7 @@ export function LedgerPage() {
   if (engine.errorKey) {
     return (
       <div
-        className="border-danger/30 bg-surface flex flex-col items-start gap-3 rounded-(--ds-radius-lg) border p-4"
+        className="border-danger/30 bg-surface flex flex-col items-start gap-3 rounded-lg border p-4"
         data-testid="ledger-error"
         role="alert"
       >
@@ -121,6 +116,13 @@ export function LedgerPage() {
           </h1>
           <p className="text-foreground-muted m-0 text-sm">{t('wallet.ledger.subtitle')}</p>
         </div>
+        <a
+          href="/rewards/history"
+          className="text-accent inline-flex items-center text-sm font-medium underline-offset-4 hover:underline"
+          data-testid="ledger-rewards-history-link"
+        >
+          {t('wallet.ledger.rewardsHistoryLink')}
+        </a>
       </header>
 
       <section aria-labelledby="ledger-filters-heading" className="flex flex-col gap-3">
@@ -219,13 +221,27 @@ export function LedgerPage() {
       </section>
 
       {engine.empty ? (
-        <p className="text-foreground-muted m-0 text-sm" data-testid="ledger-empty">
-          {t('wallet.ledger.empty')}
-        </p>
+        <EmptyState
+          domain="wallet"
+          title={t('state.empty.title')}
+          description={t('wallet.ledger.empty')}
+          actionLabel={t('wallet.cta.depositKrw')}
+          onAction={() => {
+            void navigate({ to: '/wallet/deposit' });
+          }}
+          testId="ledger-empty"
+        />
       ) : engine.filterEmpty ? (
-        <p className="text-foreground-muted m-0 text-sm" data-testid="ledger-filter-empty">
-          {t('wallet.ledger.filterEmpty')}
-        </p>
+        <EmptyState
+          domain="wallet"
+          title={t('state.empty.title')}
+          description={t('wallet.ledger.filterEmpty')}
+          actionLabel={t('state.empty.action.retry')}
+          onAction={() => {
+            updateSearch({ filter: undefined, currency: undefined, period: undefined }, true);
+          }}
+          testId="ledger-filter-empty"
+        />
       ) : (
         <>
           <div className="hidden overflow-x-auto md:block">
@@ -297,7 +313,7 @@ export function LedgerPage() {
           </div>
 
           <ul
-            className="border-line divide-line m-0 list-none divide-y rounded-(--ds-radius-md) border p-0 md:hidden"
+            className="border-line divide-line m-0 list-none divide-y rounded-md border p-0 md:hidden"
             data-testid="ledger-list"
           >
             {engine.rows.map((row) => (

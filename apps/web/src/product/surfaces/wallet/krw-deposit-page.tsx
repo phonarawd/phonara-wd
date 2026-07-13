@@ -1,6 +1,21 @@
-import { useEffect } from 'react';
-import { AlertTriangle, ArrowLeft, Banknote, CheckCircle2, Circle, RefreshCw } from 'lucide-react';
+import { useEffect, useId } from 'react';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  Banknote,
+  CheckCircle2,
+  Circle,
+  RefreshCw,
+  Upload,
+} from 'lucide-react';
 
+import {
+  KRW_DEPOSIT_PROOF_CHOOSE_KEY,
+  KRW_DEPOSIT_PROOF_DESC_KEY,
+  KRW_DEPOSIT_PROOF_LEDGER_NOTICE_KEY,
+  KRW_DEPOSIT_PROOF_TITLE_KEY,
+  KRW_DEPOSIT_PROOF_UPLOADING_KEY,
+} from '@/domain/krw-deposit-proof-display-contract';
 import { useKrwDepositController } from '@/features/wallet/use-krw-deposit-controller';
 import { KRW_DEPOSIT_CHIP_KEYS } from '@/features/wallet/krw-deposit-page-display';
 import { useI18n, useT } from '@/product/i18n';
@@ -102,6 +117,7 @@ export function KrwDepositPage() {
   const t = useT();
   const { locale } = useI18n();
   const engine = useKrwDepositController(locale);
+  const proofInputId = useId();
 
   useEffect(() => {
     document.title = t('seo.walletDepositKrw.title');
@@ -114,7 +130,7 @@ export function KrwDepositPage() {
   const normalizedAmount = engine.amountKrw;
 
   return (
-    <div className="flex flex-col gap-6 py-4 md:py-6" data-testid="krw-deposit-page">
+    <div className="flex flex-col gap-6 py-4 pb-28 md:py-6 md:pb-6" data-testid="krw-deposit-page">
       <header className="space-y-3">
         <a
           href="/wallet/deposit"
@@ -225,6 +241,68 @@ export function KrwDepositPage() {
               <p className="text-foreground-muted m-0 text-xs">{t('wallet.deposit.bankWarning')}</p>
             </CardBody>
           </Card>
+
+          {engine.showProofUpload ? (
+            <Card data-testid="krw-deposit-proof-upload">
+              <CardHeader>
+                <CardTitle>{t(KRW_DEPOSIT_PROOF_TITLE_KEY)}</CardTitle>
+              </CardHeader>
+              <CardBody className="flex flex-col gap-3 pt-0">
+                <p className="text-foreground-muted m-0 text-sm">{t(KRW_DEPOSIT_PROOF_DESC_KEY)}</p>
+                <p
+                  className="text-foreground-muted m-0 text-xs"
+                  data-testid="krw-deposit-proof-ledger-notice"
+                >
+                  {t(KRW_DEPOSIT_PROOF_LEDGER_NOTICE_KEY)}
+                </p>
+                {engine.proofStatusKey ? (
+                  <p
+                    className="text-foreground m-0 text-sm font-medium"
+                    data-testid="krw-deposit-proof-status"
+                    role="status"
+                  >
+                    {t(engine.proofStatusKey)}
+                  </p>
+                ) : null}
+                {engine.proofFileName ? (
+                  <p className="text-foreground-muted m-0 truncate text-xs">
+                    {engine.proofFileName}
+                  </p>
+                ) : null}
+                {engine.proofErrorKey ? (
+                  <p className="text-danger m-0 text-sm" role="alert">
+                    {t(engine.proofErrorKey)}
+                  </p>
+                ) : null}
+                {engine.canAttachProof ? (
+                  <div className="flex flex-col gap-2">
+                    <input
+                      id={proofInputId}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      className="sr-only"
+                      disabled={engine.proofBusy}
+                      onChange={(event) => void engine.handleProofSelect(event)}
+                      data-testid="krw-deposit-proof-input"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full sm:w-auto"
+                      disabled={engine.proofBusy}
+                      onClick={() => document.getElementById(proofInputId)?.click()}
+                      data-testid="krw-deposit-proof-choose"
+                    >
+                      <Upload className="size-4" aria-hidden />
+                      {engine.proofBusy
+                        ? t(KRW_DEPOSIT_PROOF_UPLOADING_KEY)
+                        : t(KRW_DEPOSIT_PROOF_CHOOSE_KEY)}
+                    </Button>
+                  </div>
+                ) : null}
+              </CardBody>
+            </Card>
+          ) : null}
 
           <Card>
             <CardHeader>

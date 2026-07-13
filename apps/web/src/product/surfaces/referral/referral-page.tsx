@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
-import { Copy, Share2, Users } from 'lucide-react';
+import { Copy, Share2, Trophy, Users } from 'lucide-react';
 
 import { useReferralPageController } from '@/features/earn/use-referral-page-controller';
 import { useEarnFiatHint } from '@/features/earn/use-earn-fiat-hint';
+import { LEGAL_AFFILIATE_ROUTE } from '@/domain/legal-display-contract';
 import {
   REFERRAL_INVITE_ROUTE,
   resolveReferralTreeStateLabelKey,
 } from '@/domain/referral-hub-display-contract';
+import { REFERRAL_LEADERBOARD_ROUTE } from '@/domain/referral-leaderboard-display-contract';
 import { formatPhonRewardDisplay } from '@/domain/viral-missions-display-contract';
 import { Button, buttonVariants } from '@/product/primitives/button';
 import { Card, CardBody, CardHeader, CardTitle } from '@/product/primitives/card';
@@ -112,6 +114,13 @@ export function ReferralPage() {
           <p className="text-foreground-muted m-0 text-xs leading-relaxed">
             {t('earn.referral.disclosure')}
           </p>
+          <a
+            href={LEGAL_AFFILIATE_ROUTE}
+            className="text-accent m-0 w-fit text-xs font-medium underline-offset-4 hover:underline"
+            data-testid="referral-affiliate-terms-link"
+          >
+            {t('legal.nav.affiliate')}
+          </a>
 
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button
@@ -147,6 +156,14 @@ export function ReferralPage() {
           >
             <Share2 className="size-4" aria-hidden />
             {t('referral.btn.share')}
+          </a>
+          <a
+            href={REFERRAL_LEADERBOARD_ROUTE}
+            className={cn(buttonVariants({ variant: 'outline', size: 'md' }), 'w-full')}
+            data-testid="referral-leaderboard-cta"
+          >
+            <Trophy className="size-4" aria-hidden />
+            {t('referral.leaderboard.head.title')}
           </a>
         </CardBody>
       </Card>
@@ -237,7 +254,7 @@ export function ReferralPage() {
           </Card>
         ) : (
           <ul
-            className="border-line divide-line m-0 list-none divide-y rounded-(--ds-radius-md) border p-0"
+            className="border-line divide-line m-0 list-none divide-y rounded-md border p-0"
             data-testid="referral-tree-list"
           >
             {treeRows.map((row) => (

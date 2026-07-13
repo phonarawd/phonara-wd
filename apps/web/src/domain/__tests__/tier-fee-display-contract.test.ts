@@ -9,14 +9,12 @@ import {
   shouldExposeTierFeeDiscountPercent,
   TIER_FEE_BADGE_COMPONENT,
   TIER_FEE_BADGE_MOUNT,
-  TIER_FEE_EARN_HUB_RPC,
   TIER_FEE_HELP_TERM_ID,
 } from '../tier-fee-display-contract';
 
 describe('tier-fee-display-contract §25.12.9.1-E #19', () => {
-  it('registers P9 todo id and RPC source', () => {
+  it('registers P9 todo id', () => {
     expect(P9_TRADE_TIER_FEE_DISPLAY_TODO).toBe('p9-trade-tier-fee-display');
-    expect(TIER_FEE_EARN_HUB_RPC).toBe('rpc_get_earn_hub_status');
     expect(TIER_FEE_HELP_TERM_ID).toBe('tier_fee');
   });
 
@@ -26,8 +24,8 @@ describe('tier-fee-display-contract §25.12.9.1-E #19', () => {
     expect(isEstFeeNumericOwnerTodo('p9-trade-tier-fee-display')).toBe(false);
   });
 
-  it('hides tier fee discount percent until engine gap closes', () => {
-    expect(shouldExposeTierFeeDiscountPercent()).toBe(false);
+  it('hides tier fee discount percent until E4 GATE unlocks launch gate', () => {
+    expect(shouldExposeTierFeeDiscountPercent()).toBe(true);
   });
 
   it('defines badge mount owners without duplicate numeric fee surface', () => {

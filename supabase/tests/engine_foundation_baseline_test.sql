@@ -304,8 +304,11 @@ DECLARE
     '_is_admin()',
     'rpc_get_fixture_markets(uuid)',
     'rpc_get_golden_earth_status()',
+    'rpc_get_public_platform_status()',
     'rpc_get_synthetic_book(text,integer)',
-    'rpc_list_sports_fixtures(date,text,text)'
+    'rpc_list_sports_catalog()',
+    'rpc_list_sports_fixtures(date,text,text)',
+    'rpc_live_crash_get_current()'
   ];
   v_sig TEXT;
   v_anon_definer_count INT;

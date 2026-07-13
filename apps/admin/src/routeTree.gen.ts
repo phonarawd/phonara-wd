@@ -13,17 +13,23 @@ import { Route as WithdrawalsRouteImport } from './routes/withdrawals';
 import { Route as ViralStatsRouteImport } from './routes/viral-stats';
 import { Route as UsersRouteImport } from './routes/users';
 import { Route as TiersRouteImport } from './routes/tiers';
+import { Route as TierBenefitsRouteImport } from './routes/tier-benefits';
+import { Route as TeamRouteImport } from './routes/team';
+import { Route as SupportRouteImport } from './routes/support';
 import { Route as StakingRouteImport } from './routes/staking';
 import { Route as SportsRouteImport } from './routes/sports';
 import { Route as SettingsRouteImport } from './routes/settings';
 import { Route as RiskRouteImport } from './routes/risk';
 import { Route as RewardsRouteImport } from './routes/rewards';
 import { Route as QueuesRouteImport } from './routes/queues';
+import { Route as PromotionsRouteImport } from './routes/promotions';
 import { Route as OpsRouteImport } from './routes/ops';
 import { Route as LoginRouteImport } from './routes/login';
 import { Route as EarnRouteImport } from './routes/earn';
 import { Route as DepositsRouteImport } from './routes/deposits';
 import { Route as ConfigRouteImport } from './routes/config';
+import { Route as CmsRouteImport } from './routes/cms';
+import { Route as CasinoRouteImport } from './routes/casino';
 import { Route as AuditLogsRouteImport } from './routes/audit-logs';
 import { Route as AuditRouteImport } from './routes/audit';
 import { Route as IndexRouteImport } from './routes/index';
@@ -34,6 +40,7 @@ import { Route as MfaChallengeRouteImport } from './routes/mfa/challenge';
 import { Route as EarnRewardsRouteImport } from './routes/earn/rewards';
 import { Route as EarnReferralsRouteImport } from './routes/earn/referrals';
 import { Route as EarnMissionsRouteImport } from './routes/earn/missions';
+import { Route as EarnActivityRouteImport } from './routes/earn/activity';
 import { Route as UsersUserIdTierRouteImport } from './routes/users/$userId/tier';
 
 const WithdrawalsRoute = WithdrawalsRouteImport.update({
@@ -54,6 +61,21 @@ const UsersRoute = UsersRouteImport.update({
 const TiersRoute = TiersRouteImport.update({
   id: '/tiers',
   path: '/tiers',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const TierBenefitsRoute = TierBenefitsRouteImport.update({
+  id: '/tier-benefits',
+  path: '/tier-benefits',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const TeamRoute = TeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any);
 const StakingRoute = StakingRouteImport.update({
@@ -86,6 +108,11 @@ const QueuesRoute = QueuesRouteImport.update({
   path: '/queues',
   getParentRoute: () => rootRouteImport,
 } as any);
+const PromotionsRoute = PromotionsRouteImport.update({
+  id: '/promotions',
+  path: '/promotions',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const OpsRoute = OpsRouteImport.update({
   id: '/ops',
   path: '/ops',
@@ -109,6 +136,16 @@ const DepositsRoute = DepositsRouteImport.update({
 const ConfigRoute = ConfigRouteImport.update({
   id: '/config',
   path: '/config',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const CmsRoute = CmsRouteImport.update({
+  id: '/cms',
+  path: '/cms',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const CasinoRoute = CasinoRouteImport.update({
+  id: '/casino',
+  path: '/casino',
   getParentRoute: () => rootRouteImport,
 } as any);
 const AuditLogsRoute = AuditLogsRouteImport.update({
@@ -161,6 +198,11 @@ const EarnMissionsRoute = EarnMissionsRouteImport.update({
   path: '/missions',
   getParentRoute: () => EarnRoute,
 } as any);
+const EarnActivityRoute = EarnActivityRouteImport.update({
+  id: '/activity',
+  path: '/activity',
+  getParentRoute: () => EarnRoute,
+} as any);
 const UsersUserIdTierRoute = UsersUserIdTierRouteImport.update({
   id: '/$userId/tier',
   path: '/$userId/tier',
@@ -171,21 +213,28 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
   '/audit': typeof AuditRoute;
   '/audit-logs': typeof AuditLogsRoute;
+  '/casino': typeof CasinoRoute;
+  '/cms': typeof CmsRoute;
   '/config': typeof ConfigRoute;
   '/deposits': typeof DepositsRoute;
   '/earn': typeof EarnRouteWithChildren;
   '/login': typeof LoginRoute;
   '/ops': typeof OpsRoute;
+  '/promotions': typeof PromotionsRoute;
   '/queues': typeof QueuesRoute;
   '/rewards': typeof RewardsRoute;
   '/risk': typeof RiskRoute;
   '/settings': typeof SettingsRoute;
   '/sports': typeof SportsRoute;
   '/staking': typeof StakingRoute;
+  '/support': typeof SupportRoute;
+  '/team': typeof TeamRoute;
+  '/tier-benefits': typeof TierBenefitsRoute;
   '/tiers': typeof TiersRoute;
   '/users': typeof UsersRouteWithChildren;
   '/viral-stats': typeof ViralStatsRoute;
   '/withdrawals': typeof WithdrawalsRoute;
+  '/earn/activity': typeof EarnActivityRoute;
   '/earn/missions': typeof EarnMissionsRoute;
   '/earn/referrals': typeof EarnReferralsRoute;
   '/earn/rewards': typeof EarnRewardsRoute;
@@ -199,20 +248,27 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute;
   '/audit': typeof AuditRoute;
   '/audit-logs': typeof AuditLogsRoute;
+  '/casino': typeof CasinoRoute;
+  '/cms': typeof CmsRoute;
   '/config': typeof ConfigRoute;
   '/deposits': typeof DepositsRoute;
   '/login': typeof LoginRoute;
   '/ops': typeof OpsRoute;
+  '/promotions': typeof PromotionsRoute;
   '/queues': typeof QueuesRoute;
   '/rewards': typeof RewardsRoute;
   '/risk': typeof RiskRoute;
   '/settings': typeof SettingsRoute;
   '/sports': typeof SportsRoute;
   '/staking': typeof StakingRoute;
+  '/support': typeof SupportRoute;
+  '/team': typeof TeamRoute;
+  '/tier-benefits': typeof TierBenefitsRoute;
   '/tiers': typeof TiersRoute;
   '/users': typeof UsersRouteWithChildren;
   '/viral-stats': typeof ViralStatsRoute;
   '/withdrawals': typeof WithdrawalsRoute;
+  '/earn/activity': typeof EarnActivityRoute;
   '/earn/missions': typeof EarnMissionsRoute;
   '/earn/referrals': typeof EarnReferralsRoute;
   '/earn/rewards': typeof EarnRewardsRoute;
@@ -227,21 +283,28 @@ export interface FileRoutesById {
   '/': typeof IndexRoute;
   '/audit': typeof AuditRoute;
   '/audit-logs': typeof AuditLogsRoute;
+  '/casino': typeof CasinoRoute;
+  '/cms': typeof CmsRoute;
   '/config': typeof ConfigRoute;
   '/deposits': typeof DepositsRoute;
   '/earn': typeof EarnRouteWithChildren;
   '/login': typeof LoginRoute;
   '/ops': typeof OpsRoute;
+  '/promotions': typeof PromotionsRoute;
   '/queues': typeof QueuesRoute;
   '/rewards': typeof RewardsRoute;
   '/risk': typeof RiskRoute;
   '/settings': typeof SettingsRoute;
   '/sports': typeof SportsRoute;
   '/staking': typeof StakingRoute;
+  '/support': typeof SupportRoute;
+  '/team': typeof TeamRoute;
+  '/tier-benefits': typeof TierBenefitsRoute;
   '/tiers': typeof TiersRoute;
   '/users': typeof UsersRouteWithChildren;
   '/viral-stats': typeof ViralStatsRoute;
   '/withdrawals': typeof WithdrawalsRoute;
+  '/earn/activity': typeof EarnActivityRoute;
   '/earn/missions': typeof EarnMissionsRoute;
   '/earn/referrals': typeof EarnReferralsRoute;
   '/earn/rewards': typeof EarnRewardsRoute;
@@ -257,21 +320,28 @@ export interface FileRouteTypes {
     | '/'
     | '/audit'
     | '/audit-logs'
+    | '/casino'
+    | '/cms'
     | '/config'
     | '/deposits'
     | '/earn'
     | '/login'
     | '/ops'
+    | '/promotions'
     | '/queues'
     | '/rewards'
     | '/risk'
     | '/settings'
     | '/sports'
     | '/staking'
+    | '/support'
+    | '/team'
+    | '/tier-benefits'
     | '/tiers'
     | '/users'
     | '/viral-stats'
     | '/withdrawals'
+    | '/earn/activity'
     | '/earn/missions'
     | '/earn/referrals'
     | '/earn/rewards'
@@ -285,20 +355,27 @@ export interface FileRouteTypes {
     | '/'
     | '/audit'
     | '/audit-logs'
+    | '/casino'
+    | '/cms'
     | '/config'
     | '/deposits'
     | '/login'
     | '/ops'
+    | '/promotions'
     | '/queues'
     | '/rewards'
     | '/risk'
     | '/settings'
     | '/sports'
     | '/staking'
+    | '/support'
+    | '/team'
+    | '/tier-benefits'
     | '/tiers'
     | '/users'
     | '/viral-stats'
     | '/withdrawals'
+    | '/earn/activity'
     | '/earn/missions'
     | '/earn/referrals'
     | '/earn/rewards'
@@ -312,21 +389,28 @@ export interface FileRouteTypes {
     | '/'
     | '/audit'
     | '/audit-logs'
+    | '/casino'
+    | '/cms'
     | '/config'
     | '/deposits'
     | '/earn'
     | '/login'
     | '/ops'
+    | '/promotions'
     | '/queues'
     | '/rewards'
     | '/risk'
     | '/settings'
     | '/sports'
     | '/staking'
+    | '/support'
+    | '/team'
+    | '/tier-benefits'
     | '/tiers'
     | '/users'
     | '/viral-stats'
     | '/withdrawals'
+    | '/earn/activity'
     | '/earn/missions'
     | '/earn/referrals'
     | '/earn/rewards'
@@ -341,17 +425,23 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   AuditRoute: typeof AuditRoute;
   AuditLogsRoute: typeof AuditLogsRoute;
+  CasinoRoute: typeof CasinoRoute;
+  CmsRoute: typeof CmsRoute;
   ConfigRoute: typeof ConfigRoute;
   DepositsRoute: typeof DepositsRoute;
   EarnRoute: typeof EarnRouteWithChildren;
   LoginRoute: typeof LoginRoute;
   OpsRoute: typeof OpsRoute;
+  PromotionsRoute: typeof PromotionsRoute;
   QueuesRoute: typeof QueuesRoute;
   RewardsRoute: typeof RewardsRoute;
   RiskRoute: typeof RiskRoute;
   SettingsRoute: typeof SettingsRoute;
   SportsRoute: typeof SportsRoute;
   StakingRoute: typeof StakingRoute;
+  SupportRoute: typeof SupportRoute;
+  TeamRoute: typeof TeamRoute;
+  TierBenefitsRoute: typeof TierBenefitsRoute;
   TiersRoute: typeof TiersRoute;
   UsersRoute: typeof UsersRouteWithChildren;
   ViralStatsRoute: typeof ViralStatsRoute;
@@ -389,6 +479,27 @@ declare module '@tanstack/react-router' {
       path: '/tiers';
       fullPath: '/tiers';
       preLoaderRoute: typeof TiersRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/tier-benefits': {
+      id: '/tier-benefits';
+      path: '/tier-benefits';
+      fullPath: '/tier-benefits';
+      preLoaderRoute: typeof TierBenefitsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/team': {
+      id: '/team';
+      path: '/team';
+      fullPath: '/team';
+      preLoaderRoute: typeof TeamRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/support': {
+      id: '/support';
+      path: '/support';
+      fullPath: '/support';
+      preLoaderRoute: typeof SupportRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/staking': {
@@ -433,6 +544,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QueuesRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/promotions': {
+      id: '/promotions';
+      path: '/promotions';
+      fullPath: '/promotions';
+      preLoaderRoute: typeof PromotionsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/ops': {
       id: '/ops';
       path: '/ops';
@@ -466,6 +584,20 @@ declare module '@tanstack/react-router' {
       path: '/config';
       fullPath: '/config';
       preLoaderRoute: typeof ConfigRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/cms': {
+      id: '/cms';
+      path: '/cms';
+      fullPath: '/cms';
+      preLoaderRoute: typeof CmsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/casino': {
+      id: '/casino';
+      path: '/casino';
+      fullPath: '/casino';
+      preLoaderRoute: typeof CasinoRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/audit-logs': {
@@ -538,6 +670,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EarnMissionsRouteImport;
       parentRoute: typeof EarnRoute;
     };
+    '/earn/activity': {
+      id: '/earn/activity';
+      path: '/activity';
+      fullPath: '/earn/activity';
+      preLoaderRoute: typeof EarnActivityRouteImport;
+      parentRoute: typeof EarnRoute;
+    };
     '/users/$userId/tier': {
       id: '/users/$userId/tier';
       path: '/$userId/tier';
@@ -549,6 +688,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface EarnRouteChildren {
+  EarnActivityRoute: typeof EarnActivityRoute;
   EarnMissionsRoute: typeof EarnMissionsRoute;
   EarnReferralsRoute: typeof EarnReferralsRoute;
   EarnRewardsRoute: typeof EarnRewardsRoute;
@@ -556,6 +696,7 @@ interface EarnRouteChildren {
 }
 
 const EarnRouteChildren: EarnRouteChildren = {
+  EarnActivityRoute: EarnActivityRoute,
   EarnMissionsRoute: EarnMissionsRoute,
   EarnReferralsRoute: EarnReferralsRoute,
   EarnRewardsRoute: EarnRewardsRoute,
@@ -578,17 +719,23 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuditRoute: AuditRoute,
   AuditLogsRoute: AuditLogsRoute,
+  CasinoRoute: CasinoRoute,
+  CmsRoute: CmsRoute,
   ConfigRoute: ConfigRoute,
   DepositsRoute: DepositsRoute,
   EarnRoute: EarnRouteWithChildren,
   LoginRoute: LoginRoute,
   OpsRoute: OpsRoute,
+  PromotionsRoute: PromotionsRoute,
   QueuesRoute: QueuesRoute,
   RewardsRoute: RewardsRoute,
   RiskRoute: RiskRoute,
   SettingsRoute: SettingsRoute,
   SportsRoute: SportsRoute,
   StakingRoute: StakingRoute,
+  SupportRoute: SupportRoute,
+  TeamRoute: TeamRoute,
+  TierBenefitsRoute: TierBenefitsRoute,
   TiersRoute: TiersRoute,
   UsersRoute: UsersRouteWithChildren,
   ViralStatsRoute: ViralStatsRoute,

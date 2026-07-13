@@ -15,6 +15,7 @@ import { userBalanceSummaryParts } from '@/hooks/admin/useAdminUsersDesk';
 import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
@@ -198,7 +199,11 @@ export function AdminEarnRewardsPage() {
             />
 
             {loading ? (
-              <LoadingTable rows={4} cols={2} />
+              <div className="space-y-2" aria-busy="true">
+                {Array.from({ length: 4 }, (_, index) => (
+                  <Skeleton key={index} className="h-16" />
+                ))}
+              </div>
             ) : filteredUsers.length === 0 ? (
               <EmptyState
                 title={t('admin.overview.empty.title')}
@@ -212,13 +217,14 @@ export function AdminEarnRewardsPage() {
                   const active = row.id === selectedUserId;
                   return (
                     <li key={row.id}>
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
                         onClick={() => setSelectedUserId(row.id)}
                         className={cn(
-                          'w-full rounded-(--ds-radius-md) border px-4 py-3 text-left text-sm transition-colors',
+                          'h-auto w-full flex-col items-start rounded-md border px-4 py-3 text-left text-sm font-normal',
                           active
-                            ? 'border-primary bg-primary/5'
+                            ? 'border-accent bg-accent/5'
                             : 'border-line bg-surface-raised hover:bg-surface',
                         )}
                       >
@@ -226,7 +232,7 @@ export function AdminEarnRewardsPage() {
                         <p className="text-foreground-muted m-0 mt-1 text-xs">
                           {row.emailMasked} · {row.id}
                         </p>
-                      </button>
+                      </Button>
                     </li>
                   );
                 })}
@@ -252,7 +258,7 @@ export function AdminEarnRewardsPage() {
                 }}
               />
             ) : (
-              <div className="space-y-4 rounded-(--ds-radius-lg) border border-line p-4">
+              <div className="space-y-4 rounded-lg border border-line p-4">
                 <p className="text-foreground-muted m-0 text-sm">
                   {formatAdjustSummary(selectedUser, currency, amount || '0', direction, t)}
                 </p>
@@ -333,52 +339,56 @@ export function AdminEarnRewardsPage() {
         <h3 className="text-foreground m-0 text-base font-semibold">
           {t('admin.rewards.section.history')}
         </h3>
-        {recentAdjustments.length === 0 ? (
-          <EmptyState
-            title={t('admin.overview.empty.title')}
-            description={t('admin.rewards.empty.history')}
-            actionLabel={t('admin.rewards.empty.cta')}
-            onAction={() => {
-              goTo('/audit');
-            }}
-          />
-        ) : (
-          <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-            <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-              <thead className="bg-surface-raised text-foreground-muted">
-                <tr>
-                  <th className="px-4 py-3 font-medium">{t('admin.rewards.col.member')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.rewards.col.direction')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.rewards.col.amount')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.rewards.col.reason')}</th>
-                  <th className="px-4 py-3 font-medium">{t('admin.rewards.col.at')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentAdjustments.map((row) => (
-                  <tr key={row.id} className="border-line border-t">
-                    <td className="text-foreground px-4 py-3">{row.userMask}</td>
-                    <td className="px-4 py-3">
-                      <StatusBadge
-                        state={row.direction === 'credit' ? 'settled' : 'rejected'}
-                        label={t(DIRECTION_KEYS[row.direction])}
-                      />
-                    </td>
-                    <td className="text-foreground px-4 py-3 tabular-nums">
-                      {formatAmountString(row.amount, row.currency)}
-                    </td>
-                    <td className="text-foreground-muted max-w-[240px] truncate px-4 py-3">
-                      {row.reason}
-                    </td>
-                    <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                      {formatWhen(row.at, locale)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <AdminTable
+          columns={[
+            {
+              id: 'member',
+              header: t('admin.rewards.col.member'),
+              cell: ({ row }) => row.userMask,
+            },
+            {
+              id: 'direction',
+              header: t('admin.rewards.col.direction'),
+              cell: ({ row }) => (
+                <StatusBadge
+                  state={row.direction === 'credit' ? 'settled' : 'rejected'}
+                  label={t(DIRECTION_KEYS[row.direction])}
+                />
+              ),
+            },
+            {
+              id: 'amount',
+              header: t('admin.rewards.col.amount'),
+              cell: ({ row }) => formatAmountString(row.amount, row.currency),
+              meta: { className: 'tabular-nums' },
+            },
+            {
+              id: 'reason',
+              header: t('admin.rewards.col.reason'),
+              cell: ({ row }) => row.reason,
+              meta: { className: 'text-foreground-muted max-w-[240px] truncate' },
+            },
+            {
+              id: 'at',
+              header: t('admin.rewards.col.at'),
+              cell: ({ row }) => formatWhen(row.at, locale),
+              meta: { className: 'text-foreground-muted tabular-nums' },
+            },
+          ]}
+          rows={recentAdjustments}
+          getRowId={(row) => row.id}
+          loading={loading}
+          loadingRowCount={4}
+          minWidth={720}
+          empty={
+            <EmptyState
+              title={t('admin.overview.empty.title')}
+              description={t('admin.rewards.empty.history')}
+              actionLabel={t('admin.rewards.empty.cta')}
+              onAction={() => goTo('/audit')}
+            />
+          }
+        />
       </section>
 
       {selectedUser && canSubmit ? (
@@ -401,20 +411,6 @@ export function AdminEarnRewardsPage() {
           }}
         />
       ) : null}
-    </div>
-  );
-}
-
-function LoadingTable({ rows, cols }: { rows: number; cols: number }) {
-  return (
-    <div className="space-y-2" aria-busy="true">
-      {Array.from({ length: rows }, (_, rowIndex) => (
-        <div key={rowIndex} className="flex gap-3">
-          {Array.from({ length: cols }, (_, colIndex) => (
-            <Skeleton key={colIndex} className="h-10 flex-1" />
-          ))}
-        </div>
-      ))}
     </div>
   );
 }

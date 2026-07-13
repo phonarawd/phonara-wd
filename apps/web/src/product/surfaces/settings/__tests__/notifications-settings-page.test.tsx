@@ -30,7 +30,7 @@ function makeEngine(
     t: (key: string) => key,
     prefsByGroup: {
       money: ['deposit', 'priceAlert'],
-      growth: ['mission', 'referral', 'tierUpgrade'],
+      growth: ['mission', 'referral', 'tierUpgrade', 'tierDecayWarning'],
       marketing: ['marketing'],
     },
     notificationPrefs: {
@@ -68,8 +68,8 @@ describe('NotificationsSettingsPage', () => {
     expect(screen.getByTestId('settings-notifications-group-growth')).toBeInTheDocument();
     expect(screen.getByTestId('settings-notifications-toggle-tierUpgrade')).toBeInTheDocument();
     expect(
-      screen.queryByTestId('settings-notifications-toggle-tierDecayWarning'),
-    ).not.toBeInTheDocument();
+      screen.getByTestId('settings-notifications-toggle-tierDecayWarning'),
+    ).toBeInTheDocument();
     expect(screen.getByTestId('settings-notifications-partial-mission')).toBeInTheDocument();
   });
 

@@ -49,6 +49,8 @@ describe('appshell-visual-signoff-display-contract §20.12', () => {
     expect(css).toContain('scroll-snap-type: x mandatory');
     expect(css).toContain('width: 4px');
     expect(css).toContain('width: 24px');
-    expect(css.match(/\.ds-shell-topbar[\s\S]*backdrop-filter/)).toBeNull();
+    const topbarBlock = css.match(/\.ds-shell-topbar\s*\{[^}]*\}/)?.[0] ?? '';
+    expect(topbarBlock.length).toBeGreaterThan(0);
+    expect(topbarBlock).not.toContain('backdrop-filter');
   });
 });

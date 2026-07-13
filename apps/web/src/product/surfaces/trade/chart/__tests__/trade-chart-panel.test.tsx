@@ -130,6 +130,50 @@ describe('TradeChartPanel', () => {
     expect(screen.getByText('서버 오라클 기준 현재가 라인입니다.')).toBeInTheDocument();
   });
 
+  it('ZA-12: PHON empty copy names oracle-seed-wait, not a generic feed message', () => {
+    mockUseExchangeLiveCandles.mockReturnValue({
+      candles: [],
+      loading: false,
+      error: false,
+      refetch: vi.fn(),
+      connected: false,
+    });
+
+    render(
+      <I18nProvider>
+        <TradeChartPanel marketSymbol="PHON_USDT" />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('trade-chart-empty')).toHaveAttribute(
+      'data-empty-reason',
+      'oracle-awaiting-seed',
+    );
+    expect(screen.getByText('오라클 캔들 대기 중')).toBeInTheDocument();
+  });
+
+  it('ZA-12: exchange-pair empty copy names the feed outage, distinct from PHON copy', () => {
+    mockUseExchangeLiveCandles.mockReturnValue({
+      candles: [],
+      loading: false,
+      error: false,
+      refetch: vi.fn(),
+      connected: false,
+    });
+
+    render(
+      <I18nProvider>
+        <TradeChartPanel marketSymbol="BTC_USDT" />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('trade-chart-empty')).toHaveAttribute(
+      'data-empty-reason',
+      'feed-unavailable',
+    );
+    expect(screen.getByText('시세 피드가 일시적으로 안 보여요')).toBeInTheDocument();
+  });
+
   it('calls fitContent when reset layout is clicked', () => {
     render(
       <I18nProvider>

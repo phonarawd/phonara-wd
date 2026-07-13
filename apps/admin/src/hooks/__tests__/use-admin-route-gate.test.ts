@@ -41,6 +41,15 @@ vi.mock('@/domain/admin-post-auth', async (importOriginal) => {
   };
 });
 
+vi.mock('@/hooks/admin/useAdminOperatorRbac', () => ({
+  useAdminOperatorRbac: () => ({
+    role: 'owner',
+    can: () => true,
+    setPreviewRole: vi.fn(),
+    roleLabelKey: 'admin.access.role.owner.label',
+  }),
+}));
+
 beforeEach(() => {
   navigateMock.mockReset();
   signOutLocalMock.mockReset();

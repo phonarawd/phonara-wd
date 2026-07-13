@@ -27,6 +27,31 @@ export async function createKrwDepositRequest(
   return data as unknown as KrwDepositResult;
 }
 
+/** Result of attaching a KRW deposit proof (ledger credit 0 — pending review only). */
+export interface AttachKrwDepositProofResult {
+  ok: boolean;
+  deposit_id: string;
+  proof_status: string;
+  idempotent?: boolean;
+}
+
+export interface AttachKrwDepositProofInput {
+  depositId: string;
+  proofPath: string;
+  clientRequestId: string;
+}
+
+export async function attachKrwDepositProof(
+  input: AttachKrwDepositProofInput,
+): Promise<AttachKrwDepositProofResult> {
+  const data = await callRpc('rpc_attach_krw_deposit_proof', {
+    p_deposit_id: input.depositId,
+    p_proof_path: input.proofPath,
+    p_client_request_id: input.clientRequestId,
+  });
+  return data as unknown as AttachKrwDepositProofResult;
+}
+
 export type WithdrawDestinationPayload =
   | string
   | {
@@ -264,4 +289,102 @@ export async function createGiftcardDepositRequest(
     p_client_request_id: input.clientRequestId,
   });
   return data as unknown as GiftcardDepositSnapshot;
+}
+
+// ─── E8 / E10 — P2P transfer · giftcard redeem reverse ───────────────────────
+
+export interface P2pTransferRow {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  amount: string;
+  fee_amount: string;
+  net_amount: string;
+  memo: string | null;
+  status: string;
+  created_at: string;
+}
+
+export interface TransferToUserResult {
+  ok: boolean;
+  transfer_id: string;
+  amount: string;
+  fee_amount: string;
+  net_amount: string;
+  recipient_id: string;
+  idempotent?: boolean;
+}
+
+export interface TransferToUserInput {
+  recipient: string;
+  amount: string;
+  memo?: string;
+  clientRequestId: string;
+}
+
+export async function transferToUser(input: TransferToUserInput): Promise<TransferToUserResult> {
+  const data = await callRpc('rpc_transfer_to_user', {
+    p_recipient: input.recipient,
+    p_amount: input.amount,
+    p_memo: input.memo,
+    p_client_request_id: input.clientRequestId,
+  });
+  return data as unknown as TransferToUserResult;
+}
+
+export async function listP2pTransfers(limit = 50): Promise<P2pTransferRow[]> {
+  const data = await callRpc('rpc_list_p2p_transfers', { p_limit: limit });
+  const payload = data as unknown as { ok?: boolean; transfers?: P2pTransferRow[] };
+  return payload.transfers ?? [];
+}
+
+export interface GiftcardRedeemQuote {
+  ok: boolean;
+  kind: GiftcardKind;
+  face_value_krw: string;
+  phon_gross: string;
+  fee_phon: string;
+  phon_cost: string;
+  fee_rate_bps: number;
+  rate_snapshot_id: string;
+  fee_market_id: string;
+}
+
+export interface GiftcardRedeemRequestResult {
+  ok: boolean;
+  redeem_id: string;
+  kind: GiftcardKind;
+  face_value_krw: string;
+  phon_cost: string;
+  fee_phon: string;
+  phon_gross: string;
+  status: string;
+}
+
+export interface CreateGiftcardRedeemInput {
+  kind: GiftcardKind;
+  faceValueKrw: string;
+  clientRequestId: string;
+}
+
+export async function previewGiftcardRedeem(
+  kind: GiftcardKind,
+  faceValueKrw: string,
+): Promise<GiftcardRedeemQuote> {
+  const data = await callRpc('rpc_preview_giftcard_redeem', {
+    p_kind: kind,
+    p_face_value_krw: faceValueKrw,
+  });
+  return data as unknown as GiftcardRedeemQuote;
+}
+
+export async function createGiftcardRedeemRequest(
+  input: CreateGiftcardRedeemInput,
+): Promise<GiftcardRedeemRequestResult> {
+  const data = await callRpc('rpc_create_giftcard_redeem_request', {
+    p_kind: input.kind,
+    p_face_value_krw: input.faceValueKrw,
+    p_client_request_id: input.clientRequestId,
+  });
+  return data as unknown as GiftcardRedeemRequestResult;
 }

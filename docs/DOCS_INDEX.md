@@ -23,26 +23,47 @@
 
 ## Engine · Gates · Ops (boundary / operator)
 
-| Doc                                                                                          | Role                     |
-| -------------------------------------------------------------------------------------------- | ------------------------ |
-| [`QUALITY_GATES.md`](QUALITY_GATES.md)                                                       | Quality gate ladder      |
-| [`SSOT/OPERATOR_GATES.md`](SSOT/OPERATOR_GATES.md)                                           | Operator gate entrypoint |
-| [`SSOT/ENGINE_BOUNDARY.md`](SSOT/ENGINE_BOUNDARY.md)                                         | Engine vs presentation   |
-| [`SSOT/PAYMENT_ARCHITECTURE_CANON.md`](SSOT/PAYMENT_ARCHITECTURE_CANON.md)                   | Payment rails canon      |
-| [`SSOT/CURSOR_AUTOPILOT.md`](SSOT/CURSOR_AUTOPILOT.md)                                       | Cursor setup             |
-| [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md)                                               | Dev environment          |
-| [`RUNBOOK.md`](RUNBOOK.md)                                                                   | Operations               |
-| [`OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md) | Pre-launch (operator)    |
+| Doc                                                                                                                  | Role                                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| [`QUALITY_GATES.md`](QUALITY_GATES.md)                                                                               | Quality gate ladder                                                                                          |
+| [`SSOT/OPERATOR_GATES.md`](SSOT/OPERATOR_GATES.md)                                                                   | Operator gate entrypoint                                                                                     |
+| [`SSOT/ENGINE_BOUNDARY.md`](SSOT/ENGINE_BOUNDARY.md)                                                                 | Engine vs presentation                                                                                       |
+| [`SSOT/PAYMENT_ARCHITECTURE_CANON.md`](SSOT/PAYMENT_ARCHITECTURE_CANON.md)                                           | Payment rails canon                                                                                          |
+| [`SSOT/CURSOR_AUTOPILOT.md`](SSOT/CURSOR_AUTOPILOT.md)                                                               | Cursor setup                                                                                                 |
+| [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md)                                                                       | Dev environment                                                                                              |
+| [`RUNBOOK.md`](RUNBOOK.md)                                                                                           | Operations                                                                                                   |
+| [`OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md)                         | Pre-launch (operator)                                                                                        |
+| [`OPERATIONS/P13_T0A_PROD_PREFLIGHT.md`](OPERATIONS/P13_T0A_PROD_PREFLIGHT.md)                                       | P13 T0-A prod checklist · `#232` **`[x]`**                                                                   |
+| [`OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md`](OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md)               | PIR evidence **`[x]` DONE** · `#205` unblocked                                                               |
+| [`OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml)                 | Perfect Launch Finding registry (+`dod_profile`)                                                             |
+| [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md)                                   | 잔여 hardening 정본(Phase 0–7) — Phase 0–7 AI 트랙 `[x]` · NEXT=operator soak 개시 · **재착수 실행 큐 아님** |
+| [`OPERATIONS/PLATFORM_WITHDRAWAL_REENABLE_GATE.md`](OPERATIONS/PLATFORM_WITHDRAWAL_REENABLE_GATE.md)                 | H-10 withdrawal OFF · Feature Flag 5조건 재개                                                                |
+| [`OPERATIONS/PLATFORM_AUDIT_RACI.md`](OPERATIONS/PLATFORM_AUDIT_RACI.md)                                             | 1인 겸임 RACI                                                                                                |
+| [`OPERATIONS/TRADE_CHART_SOFT_LAUNCH_CHECKLIST.md`](OPERATIONS/TRADE_CHART_SOFT_LAUNCH_CHECKLIST.md)                 | ZA-12 — 차트 empty 원인 판별(PHON 오라클 시드 vs 거래소 피드)                                                |
+| [`OPERATIONS/SPORTS_ODDS_INGEST_RUNBOOK.md`](OPERATIONS/SPORTS_ODDS_INGEST_RUNBOOK.md)                               | ZA-13 — dry-run 전환 조건 · health 확인 · betting 게이트 ON 조건                                             |
+| [`PRODUCT/ADR/021-platform-observability-stack.md`](PRODUCT/ADR/021-platform-observability-stack.md)                 | 관측/알림 스택 ADR (R0)                                                                                      |
+| [`OPERATIONS/PLATFORM_EVIDENCE_RETENTION.md`](OPERATIONS/PLATFORM_EVIDENCE_RETENTION.md)                             | Evidence bucket · 90일                                                                                       |
+| [`OPERATIONS/PLATFORM_RELEASE_FREEZE.md`](OPERATIONS/PLATFORM_RELEASE_FREEZE.md)                                     | RC Freeze · Release candidate blocked                                                                        |
+| [`OPERATIONS/PLATFORM_SLO_SLA.yaml`](OPERATIONS/PLATFORM_SLO_SLA.yaml)                                               | SLO/Trigger 수치 (draft→Owner)                                                                               |
+| [`audit/PLATFORM_AUDIT_REFERENCE.md`](audit/PLATFORM_AUDIT_REFERENCE.md)                                             | Zero-assumption audit **참고** 정본                                                                          |
+| [`audit/MASTER_INVENTORY_AUDIT_2026-07-13.md`](audit/MASTER_INVENTORY_AUDIT_2026-07-13.md)                           | Master Inventory Audit (Phase 1 · §1–§25)                                                                    |
+| [`audit/REPO_TREE_APPENDIX.txt`](audit/REPO_TREE_APPENDIX.txt)                                                       | Machine-readable repo tree 부록                                                                              |
+| [`audit/KNIP_DEADCODE_REPORT.md`](audit/KNIP_DEADCODE_REPORT.md)                                                     | Knip dead-code 실측                                                                                          |
+| [`audit/RPC_USAGE_MATRIX.md`](audit/RPC_USAGE_MATRIX.md)                                                             | types `rpc_*` ↔ apps 호출 매트릭스                                                                           |
+| [`audit/PER_PAGE_UI_MATRIX.md`](audit/PER_PAGE_UI_MATRIX.md)                                                         | Web 79 surfaces loading/empty/error/responsive                                                               |
+| [`audit/SYSTEM_AUDIT_2026-07-13/00_EXECUTIVE_SCORECARD.md`](audit/SYSTEM_AUDIT_2026-07-13/00_EXECUTIVE_SCORECARD.md) | 7-Pillar 재점수 + SA-01~06                                                                                   |
+| [`audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)                   | Zero Assumption 감사 ZA-01~19 + 1-J 듀얼통화 · remediation Closeout 2026-07-14                               |
 
 ## Audit reports (PQA §33 · read-only)
 
-| Doc                                                                                                              | Role                             |
-| ---------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| [`audit/PLATFORM_AUDIT_A_DB_GUARDS_2026-07-08.md`](audit/PLATFORM_AUDIT_A_DB_GUARDS_2026-07-08.md)               | Section A — guard/GRANT          |
-| [`audit/PLATFORM_AUDIT_B_RPC_CONTRACT_2026-07-08.md`](audit/PLATFORM_AUDIT_B_RPC_CONTRACT_2026-07-08.md)         | Section B — RPC/error/realtime   |
-| [`audit/PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md`](audit/PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md) | Section C — surface/dead control |
-| [`audit/PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md`](audit/PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md)         | Section D — app_config/ops       |
-| [`audit/PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md`](audit/PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md)   | **Section E — P0–P3 결함 대장**  |
+| Doc                                                                                                              | Role                                         |
+| ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| [`audit/PLATFORM_AUDIT_A_DB_GUARDS_2026-07-08.md`](audit/PLATFORM_AUDIT_A_DB_GUARDS_2026-07-08.md)               | Section A — guard/GRANT                      |
+| [`audit/PLATFORM_AUDIT_B_RPC_CONTRACT_2026-07-08.md`](audit/PLATFORM_AUDIT_B_RPC_CONTRACT_2026-07-08.md)         | Section B — RPC/error/realtime               |
+| [`audit/PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md`](audit/PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md) | Section C — surface/dead control             |
+| [`audit/PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md`](audit/PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md)         | Section D — app_config/ops                   |
+| [`audit/PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md`](audit/PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md)   | **Section E — P0–P3 결함 대장**              |
+| [`audit/visual-ux-2026-07-11/README.md`](audit/visual-ux-2026-07-11/README.md)                                   | Visual/UX Director 입력 팩 · 스크린샷 스키마 |
 
 재현: `bun run audit:pqa-c` · `bun run audit:pqa-d` · `bun run check:engine-foundation-parity`
 
@@ -60,15 +81,32 @@
 
 ## ADR
 
-| Doc                                                                                                                   |
-| --------------------------------------------------------------------------------------------------------------------- |
-| [`ADR/0002-engine-freeze.md`](ADR/0002-engine-freeze.md) — **Accepted** (Engine Apex closed)                          |
-| [`PRODUCT/ADR/001-pg-less-funding-rails.md`](PRODUCT/ADR/001-pg-less-funding-rails.md)                                |
-| [`PRODUCT/ADR/002-crypto-custody-signing.md`](PRODUCT/ADR/002-crypto-custody-signing.md)                              |
-| [`PRODUCT/ADR/003-landing-timeless-conversion.md`](PRODUCT/ADR/003-landing-timeless-conversion.md) — Landing CVR pass |
-| [`PRODUCT/ADR/009-digital-aurora-brand-dna.md`](PRODUCT/ADR/009-digital-aurora-brand-dna.md) — Digital Aurora DA W0   |
-| [`PRODUCT/ADR/ENGINE_GAP_ADR.md`](PRODUCT/ADR/ENGINE_GAP_ADR.md) — Track B E0–E10 gap index (draft · E0 승인 대기)    |
-| [`ADR/0001-quality-gates.md`](ADR/0001-quality-gates.md) … [`0006`](ADR/0006-wallet-sigma-rule.md)                    |
+| Doc                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`ADR/0002-engine-freeze.md`](ADR/0002-engine-freeze.md) — **Accepted** (Engine Apex closed)                                                             |
+| [`PRODUCT/ADR/001-pg-less-funding-rails.md`](PRODUCT/ADR/001-pg-less-funding-rails.md)                                                                   |
+| [`PRODUCT/ADR/002-crypto-custody-signing.md`](PRODUCT/ADR/002-crypto-custody-signing.md)                                                                 |
+| [`PRODUCT/ADR/003-landing-timeless-conversion.md`](PRODUCT/ADR/003-landing-timeless-conversion.md) — Landing CVR pass                                    |
+| [`PRODUCT/ADR/009-digital-aurora-brand-dna.md`](PRODUCT/ADR/009-digital-aurora-brand-dna.md) — Digital Aurora DA W0                                      |
+| [`PRODUCT/ADR/ENGINE_GAP_ADR.md`](PRODUCT/ADR/ENGINE_GAP_ADR.md) — Track B E0–E10 gap index (**Accepted** 2026-07-11 · `#239`)                           |
+| [`PRODUCT/ADR/010-tier-decay.md`](PRODUCT/ADR/010-tier-decay.md) — E1 Tier Decay (**Accepted** · `#240`)                                                 |
+| [`PRODUCT/ADR/011-mission-catalog.md`](PRODUCT/ADR/011-mission-catalog.md) — E2 Mission Catalog CRUD (**Accepted** · `#242`)                             |
+| [`PRODUCT/ADR/012-viral-cms.md`](PRODUCT/ADR/012-viral-cms.md) — E3 Viral leaderboard + CMS/promotions (**Accepted** · `#244`)                           |
+| [`PRODUCT/ADR/013-tier-option-b.md`](PRODUCT/ADR/013-tier-option-b.md) — E4 Option B · Prime Elite (**Accepted** · `#246`)                               |
+| [`PRODUCT/ADR/014-social-co-mission.md`](PRODUCT/ADR/014-social-co-mission.md) — E7 Social co-mission + whale (**Accepted** · `#252`)                    |
+| [`OPERATIONS/ENGINE_GAP_E0_APPROVAL.md`](OPERATIONS/ENGINE_GAP_E0_APPROVAL.md) — E0 approval record · RED STOP · 광고·설문 영구 제외                     |
+| [`OPERATIONS/ENGINE_GAP_E2_MISSIONS.md`](OPERATIONS/ENGINE_GAP_E2_MISSIONS.md) — E2 WAVE closeout · list/upsert RPC · GATE 후행                          |
+| [`OPERATIONS/ENGINE_GAP_E3_VIRAL_CMS.md`](OPERATIONS/ENGINE_GAP_E3_VIRAL_CMS.md) — E3 WAVE closeout · leaderboard · CMS targeting                        |
+| [`OPERATIONS/ENGINE_GAP_E3_GATE_CMS_PROMOTIONS.md`](OPERATIONS/ENGINE_GAP_E3_GATE_CMS_PROMOTIONS.md) — E3 GATE · remote apply · surface unlock           |
+| [`OPERATIONS/ENGINE_GAP_E4_TIER_OPTION_B.md`](OPERATIONS/ENGINE_GAP_E4_TIER_OPTION_B.md) — E4 WAVE · Option B · Prime Elite                              |
+| [`OPERATIONS/ENGINE_GAP_E4_GATE_TIER_OPTION_B.md`](OPERATIONS/ENGINE_GAP_E4_GATE_TIER_OPTION_B.md) — E4 GATE · fee % · VIP/elite unlock · remote apply   |
+| [`OPERATIONS/ENGINE_GAP_E5_GAP_SURFACES.md`](OPERATIONS/ENGINE_GAP_E5_GAP_SURFACES.md) — E5 WIRE · decay · leaderboard · sports VIP live                 |
+| [`OPERATIONS/ENGINE_GAP_E5_GATE_GAP_SURFACES.md`](OPERATIONS/ENGINE_GAP_E5_GATE_GAP_SURFACES.md) — E5 GATE · STUB→live unlock · gate:ai-impl             |
+| [`OPERATIONS/ENGINE_GAP_E6_ADMIN_DESKS.md`](OPERATIONS/ENGINE_GAP_E6_ADMIN_DESKS.md) — E6 WAVE · Admin gap desks · audit CSV                             |
+| [`OPERATIONS/ENGINE_GAP_E6_GATE_ADMIN_DESKS.md`](OPERATIONS/ENGINE_GAP_E6_GATE_ADMIN_DESKS.md) — E6 GATE · §29.5 · AdminTable · gate:ai-impl             |
+| [`OPERATIONS/ENGINE_GAP_E7_SOCIAL.md`](OPERATIONS/ENGINE_GAP_E7_SOCIAL.md) — E7 WAVE · co-mission · whale threshold                                      |
+| [`OPERATIONS/ENGINE_GAP_E7_GATE_ENGINE_WAVE.md`](OPERATIONS/ENGINE_GAP_E7_GATE_ENGINE_WAVE.md) — E7 GATE · social unlock · stack:push-remote · advisor 0 |
+| [`ADR/0001-quality-gates.md`](ADR/0001-quality-gates.md) … [`0006`](ADR/0006-wallet-sigma-rule.md)                                                       |
 
 ## Rebuild runbooks (gates · low-spec)
 
@@ -83,11 +121,15 @@
 
 ## UX canon (Phase R · Digital Aurora)
 
-| Doc                                                                    | Role                                                                     |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| [`SSOT/PRODUCT_EXPERIENCE_CANON.md`](SSOT/PRODUCT_EXPERIENCE_CANON.md) | **DA W0** Emotion · Brand Memory · elevation · motion · §35.1 Tech Stack |
-| [`SSOT/UNIFIED_UX_CANON.md`](SSOT/UNIFIED_UX_CANON.md)                 | Interaction Grammar · high-risk confirm                                  |
-| [`SSOT/DESIGN_PRINCIPLES.md`](SSOT/DESIGN_PRINCIPLES.md)               | D0 + §7 Accessibility Elevation                                          |
+| Doc                                                                                          | Role                                                                                |
+| -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [`SSOT/PRODUCT_EXPERIENCE_CANON.md`](SSOT/PRODUCT_EXPERIENCE_CANON.md)                       | **DA W0** Emotion · Brand Memory · elevation · motion · §35.1 Tech Stack            |
+| [`SSOT/SOUND_DESIGN_CANON.md`](SSOT/SOUND_DESIGN_CANON.md)                                   | **DA W8 DOC** §34.27 mission·wallet·trade·vip 4톤 · 구현=E-Wave · GATE `#228` `[x]` |
+| [`SSOT/UNIFIED_UX_CANON.md`](SSOT/UNIFIED_UX_CANON.md)                                       | Interaction Grammar · high-risk confirm                                             |
+| [`SSOT/DESIGN_PRINCIPLES.md`](SSOT/DESIGN_PRINCIPLES.md)                                     | D0 + §7 Accessibility Elevation                                                     |
+| [`SSOT/ADMIN_BEGINNER_LANGUAGE_CANON.md`](SSOT/ADMIN_BEGINNER_LANGUAGE_CANON.md)             | **P13 DOC** §29.1·§29.5 초등어 · `#229` `[x]`                                       |
+| [`SSOT/ADMIN_TEAM_RBAC_CANON.md`](SSOT/ADMIN_TEAM_RBAC_CANON.md)                             | **P13 DOC** 역할 5종 · `/admin/team` 계약 · `#229` `[x]`                            |
+| [`PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md`](PHONARA_USER_ADMIN_CORRESPONDENCE_MATRIX.md) | **P13 DOC** 유저↔Admin 1:1 · §12.14 sync · `#229` `[x]`                             |
 
 `SSOT/*_UX_CANON.md` · `UX_REFERENCE_CANON.md` · `SURFACE_BLUEPRINTS.md` · `PRODUCT_PRINCIPLES.md` · `COPYWRITING_CANON.md` · `I18N_FIRST.md`
 

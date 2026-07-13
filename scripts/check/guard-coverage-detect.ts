@@ -136,14 +136,20 @@ export function resolveCalleeDef(callee: string, ctx: DetectionContext): string 
   return ctx.helperByName.get(callee) ?? null;
 }
 
-export function isBalanceMoving(def: string, ctx?: DetectionContext): boolean {
+export function isBalanceMoving(
+  def: string,
+  ctx?: DetectionContext,
+  visited: Set<string> = new Set(),
+): boolean {
   if (hasDirectBalanceSignal(def)) return true;
 
   const body = extractFunctionBody(def);
   for (const callee of extractRpcCalls(body)) {
+    if (visited.has(callee)) continue;
+    visited.add(callee);
     const calleeDefs = ctx?.rpcByName.get(callee);
     if (!calleeDefs?.length) continue;
-    if (calleeDefs.some((cdef) => isBalanceMoving(cdef, ctx))) return true;
+    if (calleeDefs.some((cdef) => isBalanceMoving(cdef, ctx, visited))) return true;
   }
 
   return false;

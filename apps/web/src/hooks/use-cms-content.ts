@@ -10,10 +10,7 @@ import {
   type CmsBannerRpcRow,
   type CmsBannerSurface,
 } from '../domain/cms-banners-display-contract';
-import { supabase } from '../lib/supabase';
-
-type RpcCall = (name: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
-const rpc = supabase.rpc.bind(supabase) as RpcCall;
+import { callRpc } from '../lib/rpc';
 
 /** @deprecated Prefer `CmsBannerDisplayRow` from cms-banners-display-contract. */
 export type CmsBanner = CmsBannerDisplayRow;
@@ -22,13 +19,12 @@ export function useCmsBanners(surface: CmsBannerSurface, locale = 'ko') {
   return useQuery({
     queryKey: ['cms-banners', surface, locale],
     queryFn: async () => {
-      const { data, error } = await rpc(CMS_LIST_RPC, {
+      const data = await callRpc(CMS_LIST_RPC, {
         p_kind: CMS_BANNER_KIND,
         p_surface: surface,
         p_locale: locale,
       });
-      if (error) throw error;
-      return ((data ?? []) as CmsBannerRpcRow[]).map(mapRpcBannerRow);
+      return (data as CmsBannerRpcRow[]).map(mapRpcBannerRow);
     },
     staleTime: 60_000,
   });
@@ -61,13 +57,10 @@ export function useCmsNotices(locale = 'ko') {
   return useQuery({
     queryKey: ['cms-notices', locale],
     queryFn: async () => {
-      const { data, error } = await rpc('rpc_list_cms_content', {
+      return callRpc('rpc_list_cms_content', {
         p_kind: 'notice',
-        p_surface: null,
         p_locale: locale,
       });
-      if (error) throw error;
-      return data ?? [];
     },
     staleTime: 60_000,
   });

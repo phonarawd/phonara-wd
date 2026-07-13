@@ -5,7 +5,7 @@ import { PLATFORM_EWAVE_HIDDEN_ROUTES } from '../platform-narrative-display-cont
 import { resolveSettingsHubNavItems } from '../settings-hub-display-contract';
 
 import {
-  assertSettingsApiKeysHiddenFromIa,
+  assertSettingsApiKeysIaExposure,
   canManageTradingApiKeys,
   resolveSettingsApiKeysBranchExposure,
   resolveSettingsApiKeysHubExposure,
@@ -19,39 +19,37 @@ import {
 } from '../settings-api-keys-display-contract';
 
 describe('settings-api-keys-display-contract', () => {
-  it('locks canonical route and E-Wave IA hidden ownership', () => {
+  it('locks canonical route and E10 live IA exposure', () => {
     expect(SETTINGS_API_KEYS_ROUTE).toBe('/settings/api-keys');
 
     expect(resolveSettingsApiKeysRoute()).toBe('/settings/api-keys');
 
-    expect(PLATFORM_EWAVE_HIDDEN_ROUTES).toContain('/settings/api-keys');
+    expect(PLATFORM_EWAVE_HIDDEN_ROUTES).not.toContain('/settings/api-keys');
 
-    expect(() => assertSettingsApiKeysHiddenFromIa()).not.toThrow();
+    expect(() => assertSettingsApiKeysIaExposure()).not.toThrow();
   });
 
-  it('keeps hub nav hidden while page route stays live (Strict Perfect · E10 STUB)', () => {
+  it('exposes hub nav and CRUD when financialConnectivityLive', () => {
     expect(resolveSettingsApiKeysPageExposure()).toBe('live');
 
-    expect(resolveSettingsApiKeysHubExposure()).toBe('built_hidden');
+    expect(resolveSettingsApiKeysHubExposure()).toBe('live');
 
-    expect(shouldExposeSettingsApiKeysInHubNav()).toBe(false);
+    expect(shouldExposeSettingsApiKeysInHubNav()).toBe(true);
 
-    expect(resolveSettingsHubNavItems().map((row) => row.route)).not.toContain(
-      SETTINGS_API_KEYS_ROUTE,
-    );
+    expect(resolveSettingsHubNavItems().map((row) => row.route)).toContain(SETTINGS_API_KEYS_ROUTE);
   });
 
-  it('documents E8 engine gap and defers all CRUD branches', () => {
-    expect(SETTINGS_API_KEYS_ENGINE_TODO).toBe('ew-e8-engine-api-keys');
+  it('documents E8 engine ready and E10 live manage', () => {
+    expect(SETTINGS_API_KEYS_ENGINE_TODO).toBe('ew-e8-financial-wave');
 
-    expect(SETTINGS_API_KEYS_UI_UNLOCK_TODO).toBe('ew-e10-ui-settings-api-keys');
+    expect(SETTINGS_API_KEYS_UI_UNLOCK_TODO).toBe('ew-e10-wallet-settings-ui');
 
-    expect(canManageTradingApiKeys()).toBe(false);
+    expect(canManageTradingApiKeys()).toBe(true);
 
-    expect(SETTINGS_API_KEYS_ENGINE_BRANCHES.list_keys.engine).toBe('missing');
+    expect(SETTINGS_API_KEYS_ENGINE_BRANCHES.list_keys.engine).toBe('ready');
 
-    expect(resolveSettingsApiKeysBranchExposure('create_key')).toBe('defer_stub');
+    expect(resolveSettingsApiKeysBranchExposure('create_key')).toBe('live');
 
-    expect(resolveSettingsApiKeysBranchExposure('revoke_key')).toBe('defer_stub');
+    expect(resolveSettingsApiKeysBranchExposure('revoke_key')).toBe('live');
   });
 });

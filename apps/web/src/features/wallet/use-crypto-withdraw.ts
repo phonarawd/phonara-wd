@@ -4,13 +4,12 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import type { MessageKey } from '@phonara/i18n';
 
+import { callRpc } from '../../lib/rpc';
 import { supabase } from '../../lib/supabase';
 
 import { useAuth } from '../../contexts/auth-context';
 
 import { translateError } from '../../lib/translate-error';
-
-/** Row shape from `withdrawal_address_whitelist` (not yet in generated client types). */
 
 export interface WithdrawalWhitelistEntry {
   id: string;
@@ -35,13 +34,7 @@ export const cryptoWithdrawKeys = {
 };
 
 async function listWithdrawalAddresses(): Promise<WithdrawalWhitelistEntry[]> {
-  const { data, error } = await supabase.rpc(
-    'rpc_list_withdrawal_addresses' as 'rpc_get_compliance_status',
-  );
-
-  if (error) throw error;
-
-  return (data ?? []) as unknown as WithdrawalWhitelistEntry[];
+  return (await callRpc('rpc_list_withdrawal_addresses')) as WithdrawalWhitelistEntry[];
 }
 
 async function addWithdrawalAddress(params: {
@@ -51,29 +44,15 @@ async function addWithdrawalAddress(params: {
 
   label?: string;
 }): Promise<void> {
-  const { error } = await supabase.rpc(
-    'rpc_add_withdrawal_address' as 'rpc_get_compliance_status',
-
-    {
-      p_chain: params.chain,
-
-      p_address: params.address,
-
-      p_label: params.label ?? null,
-    } as never,
-  );
-
-  if (error) throw error;
+  await callRpc('rpc_add_withdrawal_address', {
+    p_chain: params.chain,
+    p_address: params.address,
+    p_label: params.label,
+  });
 }
 
 async function removeWithdrawalAddress(id: string): Promise<void> {
-  const { error } = await supabase.rpc(
-    'rpc_remove_withdrawal_address' as 'rpc_get_compliance_status',
-
-    { p_id: id } as never,
-  );
-
-  if (error) throw error;
+  await callRpc('rpc_remove_withdrawal_address', { p_id: id });
 }
 
 export function useWithdrawalWhitelist() {

@@ -14,10 +14,11 @@ describe('parse-admin-tiers-desk', () => {
       { tier: 'gold', xp: 50000, updated_at: '2026-07-03T00:00:00.000Z' },
     ]);
 
-    expect(rows).toHaveLength(5);
+    expect(rows).toHaveLength(6);
     expect(rows.find((row) => row.tier === 'bronze')?.count).toBe(2);
     expect(rows.find((row) => row.tier === 'gold')?.count).toBe(1);
     expect(rows.find((row) => row.tier === 'diamond')?.count).toBe(0);
+    expect(rows.find((row) => row.tier === 'prime_elite')?.count).toBe(0);
   });
 
   it('maps golden earth app_config keys per tier', () => {
@@ -32,11 +33,12 @@ describe('parse-admin-tiers-desk', () => {
       phonPerTap: '3.000000',
     });
     expect(rows[4].dailyTapCap).toBe('—');
+    expect(rows[5].tier).toBe('prime_elite');
   });
 
   it('exposes decay policy rows for all earn vip tiers', () => {
     const rows = parseDecayPolicyRows();
-    expect(rows).toHaveLength(5);
+    expect(rows).toHaveLength(6);
     expect(rows[0].downgradeTargetKey).toBeNull();
     expect(rows[1].downgradeTargetKey).toBe('admin.tiers.decay.target.bronze');
   });

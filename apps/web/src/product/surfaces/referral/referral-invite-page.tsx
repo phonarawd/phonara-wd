@@ -33,6 +33,9 @@ export function ReferralInvitePage() {
     copyInviteLink,
     shareInvite,
     claimShareReward,
+    kakaoShareAvailable,
+    kakaoShareBusy,
+    shareViaKakao,
   } = engine;
 
   useEffect(() => {
@@ -103,7 +106,7 @@ export function ReferralInvitePage() {
             </div>
           </div>
 
-          <div className="bg-surface/80 border-line flex flex-col gap-2 rounded-(--ds-radius-md) border p-4">
+          <div className="bg-surface/80 border-line flex flex-col gap-2 rounded-md border p-4">
             <p className="text-foreground-muted m-0 text-xs font-medium uppercase tracking-wide">
               {t('referral.share.card.codeLabel')}
             </p>
@@ -166,6 +169,20 @@ export function ReferralInvitePage() {
             onClick={() => void claimShareReward()}
           >
             {t('referral.invite.claimShareReward')}
+          </Button>
+        ) : null}
+
+        {kakaoShareAvailable ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="md"
+            className="w-full"
+            disabled={!referralCode || kakaoShareBusy}
+            data-testid="referral-invite-kakao"
+            onClick={() => void shareViaKakao()}
+          >
+            {t('earn.referral.kakao')}
           </Button>
         ) : null}
 

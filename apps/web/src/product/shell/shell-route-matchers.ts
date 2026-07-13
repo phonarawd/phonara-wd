@@ -10,8 +10,10 @@ export const EARN_SURFACE_PREFIXES = [
   '/referral',
   '/tier',
   '/earn',
+  '/events',
   '/share/earnings',
   '/staking',
+  '/onboarding',
 ] as const;
 
 const PUBLIC_AUTH_ROUTES = new Set(['/login', '/signup', '/reset-password', '/verify-email']);
@@ -31,6 +33,8 @@ export function normalizeShellPath(pathname: string): string {
 
 export function earnSurfaceRouteMatcher(pathname: string): boolean {
   const current = normalizeShellPath(pathname);
+  // Exact `/tier` is P12 public marketing — not Earn AppShell chrome.
+  if (current === '/tier') return false;
   return EARN_SURFACE_PREFIXES.some(
     (prefix) => current === prefix || current.startsWith(`${prefix}/`),
   );
@@ -57,13 +61,23 @@ export function resolveBottomNavTab(pathname: string): BottomNavTabId | null {
   return null;
 }
 
-/** §12.19.5 marketing zone — standalone shell (landing + auth funnel). */
+/** §12.19.5 marketing zone — standalone shell (landing + auth + P12 public trust). */
 export function shouldMountMarketingShell(pathname: string): boolean {
   const current = normalizeShellPath(pathname);
 
   if (current === '/') return true;
   if (PUBLIC_AUTH_ROUTES.has(current)) return true;
   if (current.startsWith('/auth')) return true;
+  // P12 trust+marketing hub — public · AppShell chrome 0
+  if (current === '/tier') return true;
+  if (current === '/features' || current.startsWith('/features/')) return true;
+  if (current === '/fees') return true;
+  if (current === '/security') return true;
+  // P12 community+support hub — public · AppShell chrome 0
+  if (current === '/announcements') return true;
+  if (current === '/status') return true;
+  if (current === '/support' || current.startsWith('/support/')) return true;
+  if (current === '/feedback') return true;
 
   return false;
 }

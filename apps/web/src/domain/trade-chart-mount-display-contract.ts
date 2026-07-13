@@ -51,6 +51,23 @@ export function resolveTradeChartFeedStrategy(symbol: string | null): TradeChart
   return 'unsupported';
 }
 
+/**
+ * ZA-12 — empty-state copy reason (1-G.1/1-G.4): the chart empty state used
+ * one generic "waiting for oracle price" copy for every symbol, which mislabels
+ * exchange-pair feed outages as if they were the PHON-only oracle-seed-wait
+ * case. Differentiates the two so the empty UI names the actual cause instead
+ * of a silent/misleading empty.
+ */
+export type TradeChartEmptyReason = 'oracle-awaiting-seed' | 'feed-unavailable' | 'unsupported';
+
+/** Mirrors TradeChartPanel empty-state branch (candleCount < TRADE_CHART_MOUNT_MIN_CANDLES). */
+export function resolveTradeChartEmptyReason(symbol: string | null): TradeChartEmptyReason {
+  const strategy = resolveTradeChartFeedStrategy(symbol);
+  if (strategy === 'oracle-rpc-only') return 'oracle-awaiting-seed';
+  if (strategy === 'exchange-ws-with-oracle-fallback') return 'feed-unavailable';
+  return 'unsupported';
+}
+
 /** True when oracle mark age exceeds staleness threshold (submit block path). */
 export function resolveOraclePriceStale(
   updatedAtMs: number,

@@ -5,12 +5,13 @@ import { WITHDRAWAL_REQUESTS_ROW } from '@phonara/shared-types';
 import { useAuth } from '@/contexts/auth-context';
 import { useComplianceStatus } from '@/hooks/use-compliance-status';
 import { usePlatformGates } from '@/hooks/use-platform-gates';
+import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { supabase } from '@/lib/supabase';
 
 import type { WithdrawalRequest } from './crypto-withdraw-status';
 import {
   mergeWithdrawHistoryRows,
-  WITHDRAW_HUB_RAILS,
+  resolveWithdrawHubRails,
   type WithdrawHistoryRowView,
   type WithdrawHubRailView,
 } from './withdraw-hub-display';
@@ -61,7 +62,10 @@ export function useWithdrawHubController(activeTab: WithdrawHubTab): WithdrawHub
     staleTime: 30_000,
   });
 
-  const rails = useMemo(() => WITHDRAW_HUB_RAILS, []);
+  const rails = useMemo(
+    () => resolveWithdrawHubRails({ cryptoRails: LAUNCH_GATES.cryptoRails }),
+    [],
+  );
 
   return {
     loading: authLoading || gatesLoading || complianceLoading,

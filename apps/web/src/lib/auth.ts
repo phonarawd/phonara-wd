@@ -24,7 +24,7 @@ export async function getSession() {
 /** Fail-open session probe for route guards — mirrors AuthProvider bootstrap timeout. */
 export async function getSessionWithTimeout(timeoutMs = 10_000): Promise<Session | null> {
   return Promise.race([
-    getSession(),
+    getSession().catch(() => null),
     new Promise<null>((resolve) => {
       window.setTimeout(() => resolve(null), timeoutMs);
     }),

@@ -114,12 +114,13 @@ Secondary but usable:
 
 ## 9. Completion signals (U7 Admin)
 
+- [x] Beginner language + RBAC + correspondence matrix DOC (`p13-prep-admin-canonical-docs` 2026-07-11)
 - [ ] “오늘 해야 할 일” queue is admin landing primary
 - [ ] Withdrawal · deposit review · risk exception rows drill-down in ≤3 clicks
 - [ ] Every manual action: reason + audit evidence (E2E or SQL test operator/CI)
 - [ ] High-risk: confirmation + negative auth path
-- [ ] Operator language table applied to nav/queue labels
-- [ ] Correspondence matrix rows have matching admin surface
+- [x] Operator language table applied to nav/queue labels (i18n `admin.nav.*` · display contract)
+- [x] Correspondence matrix rows have matching admin surface (DOC pin · planned desks tracked)
 
 ---
 

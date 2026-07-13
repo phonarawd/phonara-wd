@@ -135,7 +135,7 @@ describe('useHomeAttendancePageController', () => {
     const { result } = renderHook(() => useHomeAttendancePageController(), { wrapper });
     await waitFor(() => expect(result.current.loading).toBe(false));
     await result.current.claimAttendance();
-    expect(rpcMock).toHaveBeenCalledWith('rpc_claim_daily_reward');
+    expect(rpcMock).toHaveBeenCalledWith('rpc_claim_daily_reward', {});
     expect(productToastShowMock).toHaveBeenCalledWith(
       expect.objectContaining({ zone: 'warm', key: 'earn.attendance.claimedToast' }),
     );

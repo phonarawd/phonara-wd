@@ -226,6 +226,22 @@ BEGIN
 END;
 $$;
 
+-- ── Test 1e: H-02 — surviving rpc_lock_wallet is not client-callable ────────
+DO $$
+DECLARE
+  v_sig TEXT := 'public.rpc_lock_wallet(currency,text,text,text,uuid)';
+BEGIN
+  ASSERT to_regprocedure(v_sig) IS NOT NULL,
+    'rpc_lock_wallet must remain for SECURITY DEFINER callers';
+  ASSERT NOT has_function_privilege('anon', v_sig, 'EXECUTE'),
+    'anon must NOT EXECUTE rpc_lock_wallet';
+  ASSERT NOT has_function_privilege('authenticated', v_sig, 'EXECUTE'),
+    'authenticated must NOT EXECUTE rpc_lock_wallet (H-02)';
+
+  RAISE NOTICE 'H-02 LOCK WALLET CLIENT REVOKE OK';
+END;
+$$;
+
 -- ── Test 2: runtime denial — NULL-uid in-body guard (rpc_liquidate_position) ──
 -- NOTE: SET LOCAL ROLE anon + SECURITY DEFINER call pattern crashes the
 -- PostgreSQL backend in the Supabase local Docker image (pre-existing platform

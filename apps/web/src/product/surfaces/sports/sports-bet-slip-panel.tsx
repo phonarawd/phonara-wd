@@ -1,17 +1,23 @@
 import type { SportsBetSlipState } from '@/features/sports/use-sports-bet-slip-state';
 import type { SportsStakeCurrency } from '@/domain/sports-page-display-contract';
+import { EW_E22_ODDS_ACCEPTANCE_POLICIES } from '@/domain/ew-e22-sports-parity-display-contract';
 import {
   isSportsBalancePercentPresetActive,
   SPORTS_BALANCE_PERCENT_PRESETS,
   sportsStakeFromBalancePercent,
 } from '@/features/sports/sports-slip-display';
+import { useSportsFiatHint } from '@/features/sports/use-sports-fiat-hint';
+import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { Button } from '@/product/primitives/button';
 import { ConfirmDialog } from '@/product/primitives/confirm-dialog';
 import { Input } from '@/product/primitives/input';
 import { MoneyDisplay } from '@/product/primitives/money-display';
+import { FiatHintDisclaimer } from '@/product/primitives/money-display-with-fiat-hint';
 import { SpendCurrencySelector } from '@/product/primitives/spend-currency-selector';
 import { cn } from '@/product/primitives/lib/cn';
 import type { MessageKey } from '@phonara/i18n';
+
+import { SportsMoneyWithFiatHint } from './sports-money-with-fiat-hint';
 
 type SportsBetSlipPanelProps = {
   slip: SportsBetSlipState;
@@ -27,7 +33,14 @@ type SportsBetSlipPanelProps = {
   onConfirmPlaceBet: () => Promise<void>;
   t: (key: MessageKey, params?: Record<string, string | number>) => string;
   className?: string;
+  sportsParityLive?: boolean;
 };
+
+function oddsAcceptanceLabelKey(policy: SportsBetSlipState['oddsAcceptance']): MessageKey {
+  if (policy === 'accept_any') return 'sports.slip.odds_acceptance.accept_any';
+  if (policy === 'accept_better') return 'sports.slip.odds_acceptance.accept_better';
+  return 'sports.slip.odds_acceptance.strict';
+}
 
 export function SportsBetSlipPanel({
   slip,
@@ -43,8 +56,11 @@ export function SportsBetSlipPanel({
   onConfirmPlaceBet,
   t,
   className,
+  sportsParityLive = LAUNCH_GATES.sportsParityLive,
 }: SportsBetSlipPanelProps) {
+  const { showDisclaimer } = useSportsFiatHint();
   const avail = slip.stakeCurrency === 'PHON' ? phonAvail : usdtAvail;
+  const stakeRaw = slip.stake.replace(/,/g, '').trim();
 
   return (
     <>
@@ -78,7 +94,7 @@ export function SportsBetSlipPanel({
               {slip.selections.map((row) => (
                 <li
                   key={row.outcomeId}
-                  className="border-line flex items-start justify-between gap-2 rounded-(--ds-radius-md) border px-2 py-2 text-sm"
+                  className="border-line flex items-start justify-between gap-2 rounded-md border px-2 py-2 text-sm"
                 >
                   <div className="min-w-0">
                     <p className="text-foreground m-0 truncate font-medium">
@@ -111,8 +127,43 @@ export function SportsBetSlipPanel({
             disabled={sportsBlocked}
           />
 
+          {sportsParityLive ? (
+            <div
+              className="flex flex-col gap-2"
+              data-testid="sports-odds-acceptance-selector"
+              role="group"
+              aria-label={t('sports.slip.odds_acceptance.label')}
+            >
+              <span className="text-foreground-muted text-xs">
+                {t('sports.slip.odds_acceptance.label')}
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {(slip.oddsAcceptancePolicies ?? EW_E22_ODDS_ACCEPTANCE_POLICIES).map((policy) => {
+                  const active = slip.oddsAcceptance === policy;
+                  return (
+                    <Button
+                      key={policy}
+                      type="button"
+                      size="sm"
+                      variant={active ? 'primary' : 'outline'}
+                      data-testid={`sports-odds-acceptance-${policy}`}
+                      aria-pressed={active}
+                      disabled={sportsBlocked}
+                      onClick={() => slip.setOddsAcceptance(policy)}
+                    >
+                      {t(oddsAcceptanceLabelKey(policy))}
+                    </Button>
+                  );
+                })}
+              </div>
+              <p className="text-foreground-muted m-0 text-xs">
+                {t('sports.slip.odds_acceptance.hint')}
+              </p>
+            </div>
+          ) : null}
+
           <div
-            className="border-line grid gap-2 rounded-(--ds-radius-md) border px-2 py-2"
+            className="border-line grid gap-2 rounded-md border px-2 py-2"
             data-testid="sports-slip-balances"
           >
             <div className="flex items-baseline justify-between gap-2">
@@ -174,14 +225,29 @@ export function SportsBetSlipPanel({
             <div className="flex items-baseline justify-between gap-2">
               <dt className="text-foreground-muted">{t('trade.order.avail')}</dt>
               <dd className="m-0" data-testid="sports-slip-avail">
-                <MoneyDisplay
+                <SportsMoneyWithFiatHint
                   amount={avail}
                   currency={slip.stakeCurrency}
                   showCurrency
+                  role="stake"
                   className="text-foreground text-sm font-medium"
                 />
               </dd>
             </div>
+            {stakeRaw ? (
+              <div className="flex items-baseline justify-between gap-2">
+                <dt className="text-foreground-muted">{t('sports.slip.stake')}</dt>
+                <dd className="m-0" data-testid="sports-slip-stake-hint">
+                  <SportsMoneyWithFiatHint
+                    amount={stakeRaw}
+                    currency={slip.stakeCurrency}
+                    showCurrency
+                    role="stake"
+                    className="text-foreground text-sm font-medium"
+                  />
+                </dd>
+              </div>
+            ) : null}
             {slip.combinedOddsDisplay ? (
               <div className="flex items-baseline justify-between gap-2">
                 <dt className="text-foreground-muted">{t('sports.slip.combined')}</dt>
@@ -192,10 +258,11 @@ export function SportsBetSlipPanel({
               <div className="flex items-baseline justify-between gap-2">
                 <dt className="text-foreground-muted">{t('sports.slip.payout')}</dt>
                 <dd className="m-0" data-testid="sports-slip-potential-payout">
-                  <MoneyDisplay
+                  <SportsMoneyWithFiatHint
                     amount={slip.potentialPayoutDisplay}
                     currency={slip.stakeCurrency}
                     showCurrency
+                    role="potential_return"
                     className="text-foreground text-sm font-medium"
                   />
                 </dd>
@@ -206,6 +273,8 @@ export function SportsBetSlipPanel({
               <dd className="text-foreground-muted m-0 text-xs">{t(slip.debitBucketKey)}</dd>
             </div>
           </dl>
+
+          {showDisclaimer ? <FiatHintDisclaimer /> : null}
 
           <Button
             type="button"
@@ -223,9 +292,36 @@ export function SportsBetSlipPanel({
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={onConfirmOpenChange}
+        contentTestId="sports-slip-confirm-dialog"
         title={t('sports.slip.confirm.title')}
         description={t('sports.slip.confirm.body')}
         confirmLabel={t('sports.slip.confirm')}
+        summary={
+          stakeRaw ? (
+            <dl className="m-0 grid gap-2" data-testid="sports-slip-confirm-summary">
+              <div className="flex items-baseline justify-between gap-3">
+                <dt className="text-foreground-muted">{t('sports.slip.stake')}</dt>
+                <dd className="m-0" data-testid="sports-slip-confirm-stake">
+                  <MoneyDisplay
+                    amount={stakeRaw}
+                    currency={slip.stakeCurrency}
+                    showCurrency
+                    className="text-foreground text-sm font-medium tabular-nums"
+                  />
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-3">
+                <dt className="text-foreground-muted">{t('sports.slip.currency')}</dt>
+                <dd
+                  className="text-foreground m-0 text-sm font-medium tabular-nums"
+                  data-testid="sports-slip-confirm-currency"
+                >
+                  {slip.stakeCurrency}
+                </dd>
+              </div>
+            </dl>
+          ) : null
+        }
         onConfirm={() => {
           void onConfirmPlaceBet();
         }}

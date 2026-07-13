@@ -98,4 +98,15 @@ describe('MoneyDisplay', () => {
     expect(root).toHaveClass('font-display');
     expect(root).toHaveClass('text-market-up');
   });
+
+  it('marks Signal Pulse count-up when enabled (§34.15)', () => {
+    const { container } = renderWithI18n(
+      <MoneyDisplay amount="12345.000000" currency="PHON" showCurrency countUp />,
+    );
+    expect(container.querySelector('[data-money-display]')).toHaveAttribute(
+      'data-count-up',
+      'true',
+    );
+    expect(screen.getByText('12,345')).toBeInTheDocument();
+  });
 });

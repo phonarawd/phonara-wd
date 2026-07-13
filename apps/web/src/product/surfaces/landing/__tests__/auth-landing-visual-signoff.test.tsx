@@ -26,15 +26,33 @@ vi.mock('@/features/landing/use-landing-live-proof', () => ({
   useLandingLiveProof: () => ({
     proofMode: 'presentation',
     proof: {
-      testimonials: 'presentation',
-      stats: 'presentation',
+      testimonials: 'hidden',
+      stats: 'hidden',
       walletPreview: 'presentation',
       withdrawalMomentum: 'hidden',
+      withdrawalProof: 'hidden',
+      ambientSocial: 'hidden',
     },
     withdrawalMomentumCount: null,
     liveMemberCount: null,
     isLoading: false,
     isLive: false,
+  }),
+}));
+
+vi.mock('@/features/earn/use-earn-fiat-hint', () => ({
+  useEarnFiatHint: () => ({
+    targetFiat: 'KRW',
+    hintFor: () => ({
+      displayOnly: true,
+      disabled: true,
+      formattedHint: '',
+      targetFiat: 'KRW',
+      asOf: '',
+      stale: false,
+      sourceCurrency: 'PHON',
+    }),
+    showDisclaimer: false,
   }),
 }));
 

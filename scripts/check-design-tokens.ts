@@ -1,8 +1,8 @@
 /**
- * Phase R design token gate (§25.8.1).
+ * Phase R design token gate (§25.8.1 · §34.28).
  *
- * P4 default: `--advisory` — token SOT hard-fail; style/legacy issues warn · exit 0.
- * P13 closeout: `--strict` — all violations fail.
+ * Default: `--advisory` — token SOT hard-fail; style/legacy/spacing notes warn · exit 0.
+ * da-w7+: `--strict` — hex/legacy/text-[10px]/unknown-motion hard-fail; spacing-ratchet stays advisory.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -11,17 +11,27 @@ import { spawnSync } from 'node:child_process';
 const root = resolveRoot();
 const args = process.argv.slice(2);
 const strict = args.includes('--strict') || args.includes('--strict-style');
-const advisory = !strict;
 
 const COLORS_CSS = join(root, 'apps/web/src/product/tokens/colors.css');
 const THEME_CSS = join(root, 'apps/web/src/product/tokens/theme.css');
+const FONTS_CSS = join(root, 'apps/web/src/product/tokens/fonts.css');
 const MOTION_CSS = join(root, 'apps/web/src/product/tokens/motion.css');
 const ELEVATION_CSS = join(root, 'apps/web/src/product/tokens/elevation.css');
+const LAYOUT_CSS = join(root, 'apps/web/src/product/tokens/layout.css');
 const INDEX_CSS = join(root, 'apps/web/src/product/tokens/index.css');
+const AURORA_TSX = join(root, 'apps/web/src/product/shell/aurora-background.tsx');
+const AURORA_CSS = join(root, 'apps/web/src/product/shell/aurora-background.css');
 
 const SURFACE_DIRS = ['apps/web/src/product/surfaces', 'apps/admin/src/product/surfaces'] as const;
 
 const PRODUCT_SCAN_DIRS = ['apps/web/src/product', 'apps/admin/src/product'] as const;
+
+/** Legacy + text-[10px] scan — includes routes (P3 __root residue). */
+const LEGACY_SCAN_DIRS = [
+  'apps/web/src/product',
+  'apps/admin/src/product',
+  'apps/web/src/routes',
+] as const;
 
 const SKIP_DIRS = new Set(['node_modules', 'dist', '.turbo', '__tests__']);
 
@@ -30,29 +40,14 @@ const RGB_IN_JSX = /\b(?:rgb|rgba|hsl|hsla)\s*\(/g;
 const TAILWIND_HEX = /(?:text|bg|border|from|to|via|fill|stroke)-\[#[0-9a-fA-F]{3,8}\]/g;
 const LEGACY_CLASS =
   /\b(?:text-primary|text-muted-foreground|bg-primary(?:\/[\d]+)?|border-primary(?:\/[\d]+)?)\b/g;
+const TEXT_10PX = /\btext-\[10px\]\b/g;
 const MOTION_REF = /(?:duration|transition(?:-[\w-]+)?)-\(--ds-motion-([a-z-]+)\)/g;
 const SURFACE_HOVER_UTILITY = /\b(?:hover:)?bg-surface-hover\b/;
-/** §34.9 8pt spacing ratchet — page stacks should prefer gap-ds-8+; raw gap-6 is advisory. */
+/** §34.9 8pt spacing ratchet — page stacks should prefer gap-ds-8+; raw gap-6 stays advisory. */
 const RAW_GAP_6 = /\bgap-6\b/;
 
-/** P3 baseline — legacy shadcn classes absorbed until P13 purge (§25.8.1). */
-const P3_LEGACY_ALLOWLIST = new Set([
-  'apps/web/src/product/surfaces/auth/auth-callback-page.tsx',
-  'apps/web/src/product/surfaces/landing/ads-consent-sheet.tsx',
-  'apps/web/src/product/surfaces/landing/landing-footer.tsx',
-  'apps/web/src/product/surfaces/landing/landing-page.tsx',
-  'apps/web/src/product/surfaces/legal/risk-document-body.tsx',
-  'apps/web/src/product/surfaces/login/auth-entry-layout.tsx',
-  'apps/web/src/product/surfaces/login/login-form.tsx',
-  'apps/web/src/product/surfaces/reset-password/reset-password-form.tsx',
-  'apps/web/src/product/surfaces/signup/signup-consent-panel.tsx',
-  'apps/web/src/product/surfaces/signup/signup-form.tsx',
-  'apps/web/src/product/surfaces/verify-email/verify-email-form.tsx',
-  'apps/web/src/routes/__root.tsx',
-  'apps/admin/src/product/layout/admin-nav.tsx',
-  'apps/admin/src/product/surfaces/admin-earn-rewards-page.tsx',
-  'apps/admin/src/product/surfaces/admin-user-tier-page.tsx',
-]);
+/** Purged at da-w7 — keep empty; any residue is a hard fail in --strict. */
+const P3_LEGACY_ALLOWLIST = new Set<string>();
 
 type Finding = { id: string; message: string; hard: boolean };
 
@@ -136,8 +131,41 @@ function checkTokenSot(): Finding[] {
     }
   }
 
+  if (!existsSync(LAYOUT_CSS)) {
+    out.push({
+      id: 'missing-layout-css',
+      message: 'Missing apps/web/src/product/tokens/layout.css (§34.10 Orbit Grid)',
+      hard: true,
+    });
+  } else {
+    const layout = read(LAYOUT_CSS);
+    if (!layout.includes('repeat(12, minmax(0, 1fr))')) {
+      out.push({
+        id: 'missing-orbit-12col',
+        message: 'layout.css missing desktop 12-col Orbit Grid (§34.10–34.11)',
+        hard: true,
+      });
+    }
+    if (!layout.includes('.ds-shell-col-span-8') || !layout.includes('.ds-shell-col-span-4')) {
+      out.push({
+        id: 'missing-orbit-col-span',
+        message: 'layout.css missing .ds-shell-col-span-8/4 helpers (§34.10–34.11)',
+        hard: true,
+      });
+    }
+  }
+
+  if (!existsSync(AURORA_TSX) || !existsSync(AURORA_CSS)) {
+    out.push({
+      id: 'missing-aurora-background',
+      message: 'Missing aurora-background.tsx+css under product/shell (§34.10 Shell elevation)',
+      hard: true,
+    });
+  }
+
   const colors = read(COLORS_CSS);
   const theme = read(THEME_CSS);
+  const fonts = existsSync(FONTS_CSS) ? read(FONTS_CSS) : '';
 
   if (!/--ds-surface-hover\s*:/.test(colors)) {
     out.push({
@@ -147,10 +175,24 @@ function checkTokenSot(): Finding[] {
     });
   }
 
+  if (!/--ds-text-tiny\s*:/.test(fonts)) {
+    out.push({
+      id: 'missing-ds-text-tiny',
+      message: 'fonts.css missing --ds-text-tiny (da-w7 · text-[10px] absorption)',
+      hard: true,
+    });
+  }
+
+  if (!/--text-tiny\s*:/.test(theme)) {
+    out.push({
+      id: 'missing-theme-text-tiny',
+      message: 'theme.css missing --text-tiny bridge (da-w7 text-tiny utility)',
+      hard: true,
+    });
+  }
+
   const requiredThemeBridges: Array<{ token: string; note?: string }> = [
     { token: '--color-surface-hover' },
-    { token: '--color-primary', note: 'legacy bridge (P3 only)' },
-    { token: '--color-muted-foreground', note: 'legacy bridge (P3 only)' },
     { token: '--shadow-1', note: 'elevation ladder (§34.6)' },
     { token: '--shadow-2', note: 'elevation ladder (§34.6)' },
     { token: '--z-index-toast', note: 'elevation z ladder (§34.6)' },
@@ -161,6 +203,17 @@ function checkTokenSot(): Finding[] {
       out.push({
         id: `missing-theme-bridge:${token}`,
         message: `theme.css missing ${token}${note ? ` — ${note}` : ''}`,
+        hard: true,
+      });
+    }
+  }
+
+  /** da-w7 legacy token purge — P3 shadcn bridges must be gone. */
+  for (const token of ['--color-primary', '--color-muted-foreground']) {
+    if (new RegExp(`${token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*:`).test(theme)) {
+      out.push({
+        id: `legacy-bridge-present:${token}`,
+        message: `theme.css still defines ${token} — da-w7 purge required (use --color-accent / --color-foreground-muted)`,
         hard: true,
       });
     }
@@ -244,10 +297,29 @@ function checkSurfaces(findings: Finding[]): void {
   }
 }
 
+function checkText10pxEscape(findings: Finding[]): void {
+  for (const dir of LEGACY_SCAN_DIRS) {
+    for (const file of collectFiles(dir, '.tsx')) {
+      const path = rel(file);
+      const lines = read(file).split('\n');
+      lines.forEach((line, index) => {
+        if (line.includes('design-token-allow:')) return;
+        if (!TEXT_10PX.test(line)) return;
+        TEXT_10PX.lastIndex = 0;
+        findings.push({
+          id: 'text-10px-escape',
+          message: `${path}:${index + 1}  [text-tiny] text-[10px] forbidden — use text-tiny (da-w7 · §34.28)`,
+          hard: true,
+        });
+      });
+    }
+  }
+}
+
 function checkLegacyClasses(findings: Finding[]): void {
   const diffAdded = collectGitDiffAddedLines();
 
-  for (const dir of PRODUCT_SCAN_DIRS) {
+  for (const dir of LEGACY_SCAN_DIRS) {
     for (const file of collectFiles(dir, '.tsx')) {
       const path = rel(file);
       const content = read(file);
@@ -283,7 +355,7 @@ function checkLegacyClasses(findings: Finding[]): void {
         LEGACY_CLASS.lastIndex = 0;
         findings.push({
           id: 'legacy-class-p13',
-          message: `${path}  [legacy-class] P13 purge required - legacy class still present`,
+          message: `${path}  [legacy-class] da-w7 purge required - legacy class still present`,
           hard: true,
         });
       }
@@ -377,6 +449,7 @@ function main(): void {
 
   checkSurfaces(findings);
   checkLegacyClasses(findings);
+  checkText10pxEscape(findings);
   checkUnknownMotionRefs(findings, parseKnownMotionTokens());
   checkSpacingRatchet(findings);
 
@@ -387,26 +460,17 @@ function main(): void {
     console.error(`check:design-tokens FAIL (${strict ? 'strict' : 'token-sot'})\n`);
     if (strict) {
       console.error(
-        '  strict mode is P13 closeout only - P4 preflight uses default advisory (exit 0).\n',
+        '  strict mode (da-w7+) — hex/legacy/text-[10px]/token SOT hard-fail; spacing-ratchet stays advisory.\n',
       );
     }
     for (const f of hard) console.error(`  - ${f.message}`);
     process.exit(1);
   }
 
-  if (soft.length > 0) {
-    const label = advisory ? 'advisory' : 'warn';
-    if (!advisory) {
-      console.error(`check:design-tokens FAIL (${label}): ${soft.length} note(s)\n`);
-      for (const f of soft.slice(0, 30)) console.error(`  - ${f.message}`);
-      if (soft.length > 30) console.error(`  - ... and ${soft.length - 30} more`);
-      process.exit(1);
-    }
-  }
-
+  // Spacing-ratchet and other soft notes never fail the gate (advisory always).
   const mode = strict ? 'strict' : 'advisory';
   console.log(
-    `check:design-tokens OK - token SOT, elevation, surface-hover bridge, legacy diff, motion, spacing ratchet (${mode})`,
+    `check:design-tokens OK - token SOT, elevation, text-tiny, legacy purge, motion, spacing ratchet (${mode})`,
   );
 
   if (soft.length > 0) {

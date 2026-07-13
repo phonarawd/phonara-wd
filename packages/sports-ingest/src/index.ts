@@ -1,4 +1,9 @@
-export { parseOddsDecimal, oddsUpsertMessage, eventRemoveMessage } from './decimal-odds';
+export {
+  parseOddsDecimal,
+  vendorPriceToOddsString,
+  oddsUpsertMessage,
+  eventRemoveMessage,
+} from './decimal-odds';
 export {
   expandEventWithOdds,
   normalizeVendorEventUpsert,

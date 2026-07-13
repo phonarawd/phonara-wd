@@ -26,6 +26,7 @@ export interface AdminWithdrawRow {
 
 export type DepositMethod = 'crypto' | 'krw' | 'giftcard';
 export type DepositStatus = 'pending' | 'confirming' | 'pending_review' | 'complete' | 'failed';
+export type DepositProofStatus = 'none' | 'pending' | 'approved' | 'rejected';
 
 export interface AdminDepositReconRow {
   id: string;
@@ -35,6 +36,9 @@ export interface AdminDepositReconRow {
   status: DepositStatus;
   createdAt: string;
   reference?: string;
+  /** KRW proof only — E10 `rpc_admin_review_krw_deposit_proof`. */
+  proofStatus?: DepositProofStatus;
+  proofPath?: string | null;
 }
 
 export interface WithdrawFilters {
@@ -186,6 +190,8 @@ const DEPOSIT_SEED: AdminDepositReconRow[] = [
     status: 'pending',
     createdAt: '2026-06-17T06:48:00.000Z',
     reference: '이체 홍길동',
+    proofStatus: 'pending',
+    proofPath: '00000000-0000-4000-8000-000000000001/proof.jpg',
   },
   {
     id: 'DP-2026-0616-180',
@@ -267,6 +273,12 @@ export interface UseAdminWalletDesk {
   markSent: (id: string, reason: string) => void;
   matchDeposit: (id: string, reason: string) => Promise<boolean>;
   flagDeposit: (id: string, reason: string) => Promise<boolean>;
+  reviewKrwDepositProof: (
+    id: string,
+    decision: 'approved' | 'rejected',
+    reason: string,
+  ) => Promise<boolean>;
+  getKrwDepositProofUrl: (proofPath: string) => Promise<string | null>;
 
   resetForTest: () => void;
 }
@@ -391,6 +403,34 @@ export function useAdminWalletDeskMock(): UseAdminWalletDesk {
     [d],
   );
 
+  const reviewKrwDepositProof = useCallback(
+    async (id: string, decision: 'approved' | 'rejected', reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
+      const row = d.allRows.find((r) => r.id === id);
+      if (!row || row.method !== 'krw' || row.proofStatus !== 'pending') return false;
+      d.patchRow(
+        id,
+        (r) => r.id,
+        (r) => ({ ...r, proofStatus: decision }),
+      );
+      d.appendAudit({
+        id: `${id}-proof-${decision}-${nowIso()}`,
+        at: nowIso(),
+        actorKey: 'admin.primitive.audit.actor.system',
+        actionKey: 'admin.deposits.audit.proofReview',
+        subject: id,
+        reason: reason.trim(),
+      });
+      return true;
+    },
+    [d],
+  );
+
+  const getKrwDepositProofUrl = useCallback(async (proofPath: string): Promise<string | null> => {
+    if (!proofPath.trim()) return null;
+    return `https://example.invalid/krw-deposit-proofs/${encodeURIComponent(proofPath)}`;
+  }, []);
+
   const resetForTest = useCallback(() => {
     w.resetForTest();
     d.resetForTest();
@@ -416,19 +456,14 @@ export function useAdminWalletDeskMock(): UseAdminWalletDesk {
     markSent,
     matchDeposit,
     flagDeposit,
+    reviewKrwDepositProof,
+    getKrwDepositProofUrl,
     resetForTest,
   };
 }
 
 // ── display helpers ───────────────────────────────────────────────────
-export function formatAmountString(amount: string, currency: string): string {
-  if (currency === 'KRW') {
-    const neg = amount.startsWith('-');
-    const body = neg ? amount.slice(1) : amount;
-    return `${neg ? '-' : ''}₩${body.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
-  }
-  return `${amount} ${currency}`;
-}
+export { formatAdminMoney as formatAmountString } from '@/lib/format-admin-money';
 
 export function isOverdueSla(slaDueAt: string, now: number = Date.now()): boolean {
   return new Date(slaDueAt).getTime() < now;

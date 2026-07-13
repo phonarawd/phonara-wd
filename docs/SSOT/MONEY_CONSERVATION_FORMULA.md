@@ -124,7 +124,7 @@ Engine Wave 착수 시 [`ENGINE_BOUNDARY.md`](ENGINE_BOUNDARY.md) §Engine Wave 
 <!-- money-formula-citations:v1
 citation: supabase/tests/conservation_test.sql:64-69:phon_available,phon_locked,system_accounts
 citation: supabase/tests/conservation_test.sql:91-97:ASSERT,conserved
-citation: tests/e2e/fixtures/wallet-money.ts:320-344:wallets,system_accounts,currencyTotals
+citation: tests/e2e/fixtures/wallet-money.ts:336-360:wallets,system_accounts,currencyTotals
 citation: tests/e2e/trade-desk-smoke.spec.ts:128-150:currencyTotals,before,after
 citation: tests/e2e/trade-desk-smoke.spec.ts:206-246:currencyTotals,before,after
 citation: tests/e2e/trade-desk-smoke.spec.ts:297-346:currencyTotals,before,after
@@ -134,7 +134,7 @@ citation: tests/e2e/trade-desk-smoke.spec.ts:297-346:currencyTotals,before,after
 | ----------- | -------------------------------------- | ------- | ---------------------------------------------- |
 | SQL-before  | `supabase/tests/conservation_test.sql` | 64–69   | `phon_available`, `system_accounts`            |
 | SQL-assert  | `supabase/tests/conservation_test.sql` | 91–97   | `ASSERT`, `conserved`                          |
-| E2E-totals  | `tests/e2e/fixtures/wallet-money.ts`   | 320–344 | `wallets`, `system_accounts`, `currencyTotals` |
+| E2E-totals  | `tests/e2e/fixtures/wallet-money.ts`   | 336–360 | `wallets`, `system_accounts`, `currencyTotals` |
 | E2E-spot    | `tests/e2e/trade-desk-smoke.spec.ts`   | 128–150 | `currencyTotals`, `before`, `after`            |
 | E2E-futures | `tests/e2e/trade-desk-smoke.spec.ts`   | 206–246 | `currencyTotals`, `before`, `after`            |
 | E2E-stake   | `tests/e2e/trade-desk-smoke.spec.ts`   | 297–346 | `currencyTotals`, `before`, `after`            |

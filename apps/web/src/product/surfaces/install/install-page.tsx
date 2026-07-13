@@ -107,7 +107,7 @@ export function InstallPage() {
         <CardBody className="flex flex-col gap-3 pt-0">
           {BENEFIT_ROWS.map(({ key, icon: Icon }) => (
             <div key={key} className="flex items-center gap-3 text-sm">
-              <span className="bg-accent/10 text-accent flex size-9 shrink-0 items-center justify-center rounded-(--ds-radius-md)">
+              <span className="bg-accent/10 text-accent flex size-9 shrink-0 items-center justify-center rounded-md">
                 <Icon className="size-4" aria-hidden />
               </span>
               <span>{t(key)}</span>
@@ -143,7 +143,7 @@ export function InstallPage() {
               variant="primary"
               className="w-full"
               data-testid="install-primary-cta"
-              disabled={promptBusy}
+              loading={promptBusy}
               onClick={() => void handleNativeInstall()}
             >
               {canPrompt ? t('pwa.install.cta.prompt') : t(PLATFORM_CTA[platform])}

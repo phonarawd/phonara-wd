@@ -36,11 +36,13 @@ beforeEach(() => {
 });
 
 describe('AdsConsentSheet', () => {
-  it('renders consent actions and privacy link', () => {
+  it('renders consent actions and cookies/privacy links', () => {
     const { onAccept, onDecline } = renderSheet();
 
     expect(screen.getByTestId('ads-consent-sheet')).toBeInTheDocument();
-    expect(screen.getByRole('link')).toHaveAttribute('href', '/legal/privacy');
+    const links = screen.getAllByRole('link');
+    expect(links[0]).toHaveAttribute('href', '/legal/cookies');
+    expect(links[1]).toHaveAttribute('href', '/legal/privacy');
 
     fireEvent.click(screen.getByTestId('ads-consent-accept'));
     expect(onAccept).toHaveBeenCalledTimes(1);

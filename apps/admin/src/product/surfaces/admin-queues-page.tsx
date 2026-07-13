@@ -1,4 +1,11 @@
-import { Children, useMemo, useState, type ReactNode } from 'react';
+import {
+  Children,
+  isValidElement,
+  useMemo,
+  useState,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 
 import { RefreshCw } from 'lucide-react';
 
@@ -42,7 +49,7 @@ import { EmptyState } from '@/product/primitives/empty-state';
 
 import { Input } from '@/product/primitives/input';
 
-import { Skeleton } from '@/product/primitives/skeleton';
+import { AdminTable } from '@/product/primitives/admin-table';
 
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 
@@ -65,6 +72,11 @@ type QueueActionKind =
   | 'dismissStr'
   | 'clearRisk'
   | 'resolveReview';
+
+type QueueTableRow = {
+  id: string;
+  cells: ReactNode[];
+};
 
 interface QueueActionTarget {
   kind: QueueActionKind;
@@ -370,7 +382,8 @@ export function AdminQueuesPage() {
     tabCounts.kyc === 0 &&
     tabCounts.str === 0 &&
     tabCounts.risk === 0 &&
-    tabCounts.review === 0;
+    tabCounts.review === 0 &&
+    Number(summary.supportOpen ?? 0) === 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -435,6 +448,32 @@ export function AdminQueuesPage() {
           <MetricCard label={t('admin.ops.exception.autoOk')} value={summary.autoOk} />
         </div>
       </section>
+
+      {Number(summary.supportOpen ?? 0) > 0 ? (
+        <section
+          className="border-line bg-surface-raised flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between"
+          data-testid="admin-queues-support-convergence"
+        >
+          <div className="space-y-1">
+            <p className="text-foreground m-0 text-sm font-semibold">
+              {t('admin.queues.support.title')}
+            </p>
+            <p className="text-foreground-muted m-0 text-sm">
+              {t('admin.queues.support.pending', { count: summary.supportOpen })}
+            </p>
+          </div>
+          <Button
+            size="md"
+            variant="outline"
+            onClick={() => {
+              goTo('/support');
+            }}
+            data-testid="admin-queues-to-support"
+          >
+            {t('admin.queues.support.cta')}
+          </Button>
+        </section>
+      ) : null}
 
       {showGlobalEmpty ? (
         <EmptyState
@@ -965,7 +1004,14 @@ function QueueSection({
 }) {
   const t = useT();
   const goTo = useAdminRouteNavigate();
-  const hasRows = Children.count(children) > 0;
+  const rows: QueueTableRow[] = Children.toArray(children)
+    .filter((child): child is ReactElement<{ children?: ReactNode }> =>
+      isValidElement<{ children?: ReactNode }>(child),
+    )
+    .map((child, rowIndex) => ({
+      id: String(child.key ?? rowIndex),
+      cells: Children.toArray(child.props.children),
+    }));
 
   return (
     <section className="space-y-3">
@@ -979,33 +1025,31 @@ function QueueSection({
           className="max-w-md"
         />
       ) : null}
-      {isLoading ? (
-        <Skeleton className="h-40 rounded-(--ds-radius-lg)" />
-      ) : !hasRows ? (
-        <EmptyState
-          title={emptyTitle}
-          description={emptyDescription}
-          actionLabel={t('admin.queues.empty.cta')}
-          onAction={() => {
-            goTo('/');
-          }}
-        />
-      ) : (
-        <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-          <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-            <thead className="bg-surface-raised text-foreground-muted">
-              <tr>
-                {columns.map((key) => (
-                  <th key={key} className="px-4 py-3 font-medium">
-                    {t(key)}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>{children}</tbody>
-          </table>
-        </div>
-      )}
+      <AdminTable<QueueTableRow>
+        columns={columns.map((key, columnIndex) => ({
+          id: key,
+          header: t(key),
+          cell: ({ row }) => {
+            const cell = row.cells[columnIndex];
+            return isValidElement<{ children?: ReactNode }>(cell) ? cell.props.children : cell;
+          },
+        }))}
+        rows={rows}
+        getRowId={(row) => row.id}
+        loading={isLoading}
+        loadingRowCount={5}
+        minWidth={640}
+        empty={
+          <EmptyState
+            title={emptyTitle}
+            description={emptyDescription}
+            actionLabel={t('admin.queues.empty.cta')}
+            onAction={() => {
+              goTo('/');
+            }}
+          />
+        }
+      />
     </section>
   );
 }

@@ -39,3 +39,24 @@ export function isSportsBalancePercentPresetActive(
 ): boolean {
   return computeActiveBalancePercent(avail, amount) === preset;
 }
+
+/**
+ * Partial cashout stake portion from bet stake % — must stay strictly below full stake
+ * (full cashout uses EXISTS `rpc_cashout_sports_bet`).
+ */
+export function sportsPartialCashoutPortionFromPercent(
+  stake: string,
+  percent: 25 | 50 | 75,
+): string | null {
+  try {
+    const stakeDec = toDecimal(stake);
+    if (stakeDec.isNegative() || stakeDec.isZero()) return null;
+    const portion = stakeDec
+      .mul(toDecimal(String(percent)).div(100))
+      .toDecimalPlaces(6, Decimal.ROUND_DOWN);
+    if (portion.isNegative() || portion.isZero() || portion.gte(stakeDec)) return null;
+    return portion.toFixed();
+  } catch {
+    return null;
+  }
+}

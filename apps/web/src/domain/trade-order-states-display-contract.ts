@@ -7,6 +7,7 @@
  */
 
 import { TRADE_FUTURES_UI_CAPABILITIES } from '../features/trading/trade-rpc-capabilities';
+import { LAUNCH_GATES } from '../lib/launch-gates';
 
 export const TRADE_TERMINAL_PRIMARY_ROUTE = '/trade?section=trade' as const;
 
@@ -144,10 +145,10 @@ export const TRADE_ORDER_ENGINE_BRANCHES: Readonly<
     table: 'spot_holdings',
   },
   hedge_position_mode: {
-    engine: 'missing',
-    rpc: null,
+    engine: 'exists',
+    rpc: 'rpc_set_position_mode',
     moneyPath: false,
-    table: null,
+    table: 'margin_accounts',
   },
 };
 
@@ -346,8 +347,8 @@ export const TRADE_ORDER_UI_WIRE_STATUS: Readonly<
   futures_margin_isolated: 'live',
   futures_margin_cross: 'built_disabled',
   spot_limit_tab: 'live',
-  hedge_mode_toggle: 'built_hidden',
-  reduce_only_toggle: 'built_disabled',
+  hedge_mode_toggle: 'live',
+  reduce_only_toggle: 'live',
   position_tpsl_edit: 'live',
   futures_entry_tpsl_limit_stop: 'built_disabled',
 };
@@ -356,7 +357,9 @@ export function resolveTradeOrderBranchExposure(
   branch: TradeOrderEngineBranch,
   crossMarginEnabled = false,
 ): TradeOrderExposureMode {
-  if (branch === 'hedge_position_mode') return 'built_hidden';
+  if (branch === 'hedge_position_mode') {
+    return LAUNCH_GATES.tradeParityLive ? 'live' : 'built_hidden';
+  }
   if (branch === 'futures_cross_margin') {
     return crossMarginEnabled ? 'live' : 'built_disabled';
   }
@@ -376,9 +379,9 @@ export function shouldDisableCrossMarginMode(crossMarginEnabled: boolean): boole
   return !crossMarginEnabled;
 }
 
-/** E21 — OKX hedge / dual-side position mode has no RPC; UI must not render hedge toggle. */
+/** E21 UI — hedge toggle hidden until `LAUNCH_GATES.tradeParityLive`. */
 export function shouldHideHedgePositionMode(): boolean {
-  return true;
+  return !LAUNCH_GATES.tradeParityLive;
 }
 
 /** Spot limit/stop/open-order RPCs wired (T1 · `spot_open_orders`). */

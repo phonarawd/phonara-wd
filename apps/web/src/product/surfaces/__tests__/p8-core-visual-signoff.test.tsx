@@ -443,12 +443,16 @@ describe('p8-core visual sign-off §20.12 · §22.2 Earn+Home', () => {
 
     const nextAction = screen.getByTestId('earn-home-next-action');
     expect(nextAction.className).toContain('border-accent');
+    expect(screen.getByTestId('earn-home-fold1')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-tier-card')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-fold2')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-catalog-sum')).toHaveClass('tabular-nums');
+    expect(screen.queryByTestId('earn-home-insights-fold-panel')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('earn-home-insights-fold-toggle'));
     expect(screen.getByTestId('earn-home-activity-ticker')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-mission-daily-quiz')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-entry-missions')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-entry-bet')).toBeInTheDocument();
-    expect(screen.getByTestId('earn-home-catalog-sum')).toHaveClass('tabular-nums');
   });
 
   it('EarnHomePage dead controls wire navigation targets (dead control 0)', () => {

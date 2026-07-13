@@ -50,8 +50,9 @@ if (Test-Path $projectPermsPath) {
   Write-Host '  [warn] .cursor/permissions.json missing — skip global sync'
 }
 
-# 4) Session preflight
-Write-Host '[4/7] Session preflight...'
+# 4) Session preflight + git hooks
+Write-Host '[4/8] Session preflight + git hooks...'
+Invoke-PhonaraBun run git:hooks:install
 & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'cursor-preflight.ps1')
 
 # 5) Env doctor

@@ -48,7 +48,13 @@ export const WORKSPACE_ROOTS = ['apps', 'packages'] as const;
 export const EPHEMERAL_AUTH_PATHS = ['tests/e2e/.auth.json', 'tests/e2e/.admin-auth.json'] as const;
 
 /** Repo-local Cursor/MCP ephemeral files — never commit. */
-export const CURSOR_EPHEMERAL_PATHS = ['.cursor/mcp-smoke-stderr.txt'] as const;
+export const CURSOR_EPHEMERAL_PATHS = [
+  '.cursor/mcp-smoke-stderr.txt',
+  '.cursor/.phonara-render-fix-at',
+] as const;
+
+/** Local perf rollout artifacts (gate-diagnosis · evidence · remediation). */
+export const CURSOR_PERF_DIR = '.cursor/perf' as const;
 
 /**
  * Archival / legacy paths excluded from Cursor index (P8 — Final UI Reset).
@@ -106,6 +112,7 @@ export const CURSORIGNORE_REQUIRED_PATTERNS = [
   'docs/archive/',
   'tests/visual/mockups/',
   'tests/visual/m0-baselines/',
+  '.cursor/perf/',
 ] as const;
 
 /**

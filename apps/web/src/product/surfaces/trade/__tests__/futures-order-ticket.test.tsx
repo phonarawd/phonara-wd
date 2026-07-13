@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { FuturesDeskWire } from '@/features/trading/use-futures-desk-wire';
 import { MarginModeSegment } from '@/features/trading/order-ticket/margin-mode-segment';
 import { PositionModeFixedLabel } from '@/features/trading/order-ticket/position-mode-fixed-label';
+import { PositionModeSegment } from '@/features/trading/order-ticket/position-mode-segment';
 import { I18nProvider } from '@/product/i18n';
 import { FuturesOrderTicket } from '@/product/surfaces/trade/futures-order-ticket';
 
@@ -80,6 +81,11 @@ function makeWire(overrides: Partial<FuturesDeskWire> = {}): FuturesDeskWire {
     marginMode: 'isolated',
     setMarginMode: vi.fn(),
     marginModeBusy: false,
+    positionMode: 'one_way',
+    setPositionMode: vi.fn(),
+    positionModeBusy: false,
+    reduceOnly: false,
+    setReduceOnly: vi.fn(),
     crossMarginEnabled: false,
     earnVipTier: 'silver',
     t: (key) => String(key),
@@ -326,23 +332,34 @@ describe('FuturesOrderTicket density · §13.1.1', () => {
 });
 
 describe('FuturesOrderTicket position mode · margin mode · §13.1 · E21', () => {
-  it('shows honest one-way fixed position mode label with HelpTip', () => {
-    renderTicket();
-
-    expect(screen.getByTestId('position-mode-fixed-label')).toBeInTheDocument();
-    expect(screen.getByTestId('position-mode-value')).toHaveTextContent(
-      'trade.order.positionMode.oneWayFixed',
+  it('shows hedge / dual-side position mode toggle with HelpTip', () => {
+    const setPositionMode = vi.fn();
+    renderTicket(
+      makeWire({
+        positionMode: 'one_way',
+        setPositionMode,
+        positionModeBusy: false,
+      }),
     );
+
+    expect(screen.getByTestId('hedge-position-mode-toggle')).toBeInTheDocument();
+    expect(screen.getByTestId('position-mode-one-way')).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByTestId('trade-help-tip-position_mode')).toBeInTheDocument();
+    expect(screen.queryByTestId('position-mode-fixed-label')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('position-mode-hedge'));
+    expect(setPositionMode).toHaveBeenCalledWith('hedge');
   });
 
-  it('never renders hedge / dual-side position mode toggle', () => {
-    renderTicket();
+  it('shows reduce-only checkbox for limit orders in advanced panel', () => {
+    const setReduceOnly = vi.fn();
+    renderTicket(makeWire({ orderType: 'limit', reduceOnly: false, setReduceOnly }));
 
     fireEvent.click(screen.getByText('trade.order.advanced'));
 
-    expect(screen.queryByTestId('hedge-position-mode-toggle')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /hedge/i })).not.toBeInTheDocument();
+    expect(screen.getByTestId('futures-reduce-only-toggle')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('futures-reduce-only-checkbox'));
+    expect(setReduceOnly).toHaveBeenCalledWith(true);
   });
 
   it('shows account-scoped margin mode segment in advanced panel', () => {
@@ -402,15 +419,33 @@ describe('FuturesOrderTicket position mode · margin mode · §13.1 · E21', () 
   });
 });
 
-describe('PositionModeFixedLabel · MarginModeSegment units', () => {
-  it('PositionModeFixedLabel renders only when contract allows one-way label', () => {
+describe('PositionModeFixedLabel · PositionModeSegment · MarginModeSegment units', () => {
+  it('PositionModeFixedLabel hides when tradeParityLive unlocks hedge toggle', () => {
     render(
       <I18nProvider>
         <PositionModeFixedLabel t={(key) => String(key)} />
       </I18nProvider>,
     );
 
-    expect(screen.getByTestId('position-mode-fixed-label')).toBeInTheDocument();
+    expect(screen.queryByTestId('position-mode-fixed-label')).not.toBeInTheDocument();
+  });
+
+  it('PositionModeSegment renders hedge toggle when tradeParityLive', () => {
+    const setPositionMode = vi.fn();
+    render(
+      <I18nProvider>
+        <PositionModeSegment
+          positionMode="one_way"
+          setPositionMode={setPositionMode}
+          positionModeBusy={false}
+          t={(key) => String(key)}
+        />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('hedge-position-mode-toggle')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('position-mode-hedge'));
+    expect(setPositionMode).toHaveBeenCalledWith('hedge');
   });
 
   it('MarginModeSegment wires isolated selector and account hint', () => {

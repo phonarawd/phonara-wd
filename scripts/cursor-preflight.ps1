@@ -19,8 +19,9 @@ Invoke-PhonaraBun run e2e:kill
 Write-Host '[2/8] Cleaning session artifacts...'
 Invoke-PhonaraBun run clean:artifacts
 
-# 3) Sync archival doc watcher excludes + config gate
-Write-Host '[3/8] Syncing Cursor excludes + hygiene gate...'
+# 3) Git hooks (block main push) + Cursor excludes + hygiene gate
+Write-Host '[3/8] Git hooks + Cursor excludes + hygiene gate...'
+Invoke-PhonaraBun run git:hooks:install
 Invoke-PhonaraBun x tsx scripts/sync-cursor-archival-excludes.ts
 Invoke-PhonaraBun run check:hygiene
 

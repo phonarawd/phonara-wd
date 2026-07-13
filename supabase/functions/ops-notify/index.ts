@@ -9,6 +9,10 @@ import {
   dispatchOpsTelegramAlert,
   type OpsTelegramDispatchPayload,
 } from '../_shared/ops-telegram-dispatch.ts';
+import {
+  dispatchOpsWebPushAlert,
+  loadAdminOpsPushSubscriptions,
+} from '../_shared/ops-web-push-dispatch.ts';
 import { authorizeServiceRole, env } from '../_shared/service-auth.ts';
 
 const WORKER_ID = 'ops-notify';
@@ -106,6 +110,10 @@ Deno.serve(async (req) => {
     let providerOk = 0;
     let providerFail = 0;
     let missingConfig = 0;
+    let webPushSent = 0;
+    let webPushFail = 0;
+
+    const adminPush = await loadAdminOpsPushSubscriptions(supabase);
 
     for (const row of rows) {
       const idempotencyKey =
@@ -163,6 +171,17 @@ Deno.serve(async (req) => {
       else if (result.providerAttempted === false) missingConfig += 1;
       else providerFail += 1;
 
+      // Best-effort operator Web Push (Gap A-4) — does not fail pager outcome.
+      if (adminPush.subscriptions.length > 0) {
+        const pushResult = await dispatchOpsWebPushAlert(
+          payload,
+          adminPush.subscriptions,
+          `${idempotencyKey}:web_push`,
+        );
+        if (pushResult.ok && (pushResult.sent ?? 0) > 0) webPushSent += pushResult.sent ?? 0;
+        else if (pushResult.providerAttempted) webPushFail += 1;
+      }
+
       let outcome: 'sent' | 'retryable_failed' | 'failed' | 'manual_review';
       if (result.ok) {
         outcome = 'sent';
@@ -205,6 +224,17 @@ Deno.serve(async (req) => {
       metadata: { ok: providerOk, fail: providerFail, missing: missingConfig },
     });
 
+    if (webPushSent > 0 || webPushFail > 0) {
+      await recordProviderHealth(supabase, ctx, {
+        provider: 'web_push',
+        domain: 'ops',
+        channel: 'web_push',
+        status: webPushFail > 0 ? (webPushSent > 0 ? 'degraded' : 'unavailable') : 'healthy',
+        errorCode: webPushFail > 0 ? 'dispatch_failures' : null,
+        metadata: { ok: webPushSent, fail: webPushFail },
+      });
+    }
+
     ctx.log('ops.telegram.dispatch.completed', {
       batch_count: claim.claimed ?? rows.length,
       skipped_count: manual.length,
@@ -219,6 +249,8 @@ Deno.serve(async (req) => {
         sent: sent.length,
         failed: failed.length,
         digest: digestMode,
+        web_push_sent: webPushSent,
+        web_push_fail: webPushFail,
       },
     });
 
@@ -229,6 +261,7 @@ Deno.serve(async (req) => {
       failed: failed.length,
       manual_review: manual.length,
       digest: digestMode,
+      web_push_sent: webPushSent,
     });
   } catch (e) {
     ctx.logError('ops.telegram.dispatch.failed', 'internal_error', { internal: e });

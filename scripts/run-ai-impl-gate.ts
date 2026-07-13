@@ -7,6 +7,7 @@
  *   bun run gate:ai-impl -- --test apps/web/src/components/trade apps/web/src/features/trading
  */
 import { spawnSyncSafe } from './lib/spawn-safe';
+import { findPlanPathForTodo, markPlanTodoCompleted } from './lib/plan-todo-closeout';
 
 interface GateStep {
   readonly name: string;
@@ -14,11 +15,21 @@ interface GateStep {
   readonly args: readonly string[];
 }
 
-function parseArgs(): { testPaths: string[]; skipUiArch: boolean; skipVitest: boolean } {
+function parseArgs(): {
+  testPaths: string[];
+  skipUiArch: boolean;
+  skipVitest: boolean;
+  closeoutId?: string;
+  evidence?: string;
+  planPath?: string;
+} {
   const argv = process.argv.slice(2);
   const testPaths: string[] = [];
   let skipUiArch = false;
   let skipVitest = false;
+  let closeoutId: string | undefined;
+  let evidence: string | undefined;
+  let planPath: string | undefined;
 
   for (let i = 0; i < argv.length; i++) {
     const token = argv[i];
@@ -34,10 +45,22 @@ function parseArgs(): { testPaths: string[]; skipUiArch: boolean; skipVitest: bo
     }
     if (token === '--skip-vitest') {
       skipVitest = true;
+      continue;
+    }
+    if (token === '--closeout') {
+      closeoutId = argv[++i];
+      continue;
+    }
+    if (token === '--evidence') {
+      evidence = argv[++i];
+      continue;
+    }
+    if (token === '--plan') {
+      planPath = argv[++i];
     }
   }
 
-  return { testPaths, skipUiArch, skipVitest };
+  return { testPaths, skipUiArch, skipVitest, closeoutId, evidence, planPath };
 }
 
 function runStep(step: GateStep): boolean {
@@ -55,7 +78,7 @@ function runStep(step: GateStep): boolean {
 }
 
 function main(): void {
-  const { testPaths, skipUiArch, skipVitest } = parseArgs();
+  const { testPaths, skipUiArch, skipVitest, closeoutId, evidence, planPath } = parseArgs();
   const started = Date.now();
 
   const steps: GateStep[] = [
@@ -74,6 +97,16 @@ function main(): void {
         name: 'L0 check:phase-r-guards',
         command: 'bun',
         args: ['run', 'check:phase-r-guards', '--', '--strict'],
+      },
+      {
+        name: 'L0 check:rpc-type-hygiene',
+        command: 'bun',
+        args: ['run', 'check:rpc-type-hygiene'],
+      },
+      {
+        name: 'L0 check:primitive-ratchet',
+        command: 'bun',
+        args: ['run', 'check:primitive-ratchet', '--', '--strict'],
       },
     );
   }
@@ -109,6 +142,16 @@ function main(): void {
   console.log(
     `\n[gate:ai-impl] ✓ Implemented (L0~L4) green in ${seconds}s — operator/CI L5~L8 pending (80 G13)`,
   );
+
+  if (closeoutId) {
+    const resolvedPlan = findPlanPathForTodo(closeoutId, planPath);
+    const result = markPlanTodoCompleted(resolvedPlan, closeoutId);
+    const verb = result.changed ? 'marked completed' : 'already completed';
+    console.log(`[gate:ai-impl] ✓ Plan todo ${closeoutId} ${verb} (${result.planPath})`);
+    if (evidence) {
+      console.log(`[gate:ai-impl] evidence: ${evidence}`);
+    }
+  }
 }
 
 main();

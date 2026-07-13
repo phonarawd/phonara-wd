@@ -83,8 +83,10 @@ export function StakingPositionsPage() {
 
       {positionsError ? (
         <div
-          className="border-line bg-surface rounded-(--ds-radius-lg) flex flex-col gap-3 border p-4"
+          className="border-line bg-surface rounded-lg flex flex-col gap-3 border p-4"
           data-testid="staking-positions-error"
+          role="alert"
+          aria-live="polite"
         >
           <p className="text-foreground m-0 text-sm">{t('staking.positions.loadError')}</p>
           <Button type="button" variant="outline" size="sm" onClick={refresh}>

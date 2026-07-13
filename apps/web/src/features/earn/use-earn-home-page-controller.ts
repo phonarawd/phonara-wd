@@ -41,6 +41,7 @@ import {
 } from '@/domain/viral-missions-display-contract';
 import { useRepeatableMissionStatus } from '@/features/earn/use-repeatable-missions';
 import { useViralMissionStatus } from '@/features/earn/use-viral-missions';
+import { callRpc } from '@/lib/rpc';
 import { supabase } from '@/lib/supabase';
 import { translateError } from '@/lib/translate-error';
 import { useT } from '@/product/i18n';
@@ -56,16 +57,15 @@ type EarnHomeHubSnapshot = {
 };
 
 async function fetchEarnHomeHubSnapshot(userId: string): Promise<EarnHomeHubSnapshot> {
-  const [hubRes, missionsRes] = await Promise.all([
-    supabase.rpc(EARN_HUB_STATUS_RPC),
+  const [hubData, missionsRes] = await Promise.all([
+    callRpc(EARN_HUB_STATUS_RPC),
     supabase.from('missions').select('mission, completed_at').eq('user_id', userId),
   ]);
 
-  if (hubRes.error) throw hubRes.error;
   if (missionsRes.error) throw missionsRes.error;
 
   return {
-    hubPayload: (hubRes.data ?? {}) as Record<string, unknown>,
+    hubPayload: (hubData ?? {}) as Record<string, unknown>,
     engineMissions: (missionsRes.data ?? []).map((row) => ({
       mission: row.mission,
       completed_at: row.completed_at,

@@ -9,7 +9,7 @@ const navigateMock = vi.hoisted(() => vi.fn());
 const useAuthMock = vi.hoisted(() => vi.fn());
 const useRepeatableMissionStatusMock = vi.hoisted(() => vi.fn());
 const useRepeatableMissionClaimMock = vi.hoisted(() => vi.fn());
-const rpcMock = vi.hoisted(() => vi.fn());
+const callRpcMock = vi.hoisted(() => vi.fn());
 const productToastShowMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@tanstack/react-router', async (importOriginal) => {
@@ -40,10 +40,8 @@ vi.mock('@/product/primitives/toast-zone', () => ({
   productToast: { show: productToastShowMock },
 }));
 
-vi.mock('@/lib/supabase', () => ({
-  supabase: {
-    rpc: (...args: unknown[]) => rpcMock(...args),
-  },
+vi.mock('@/lib/rpc', () => ({
+  callRpc: (...args: unknown[]) => callRpcMock(...args),
 }));
 
 function wrapper({ children }: { children: ReactNode }) {
@@ -81,39 +79,49 @@ beforeEach(() => {
     loading: false,
   });
 
-  rpcMock.mockImplementation((name: string) => {
+  callRpcMock.mockImplementation((name: string) => {
     if (name === 'rpc_get_earn_hub_status') {
       return Promise.resolve({
-        data: {
-          tier: 'silver',
-          xp: 12000,
-          next_tier_xp: 25000,
-          referral: {
-            total_invited: 3,
-            qualified_total: 1,
-            pending_review: 0,
-            payout_today: { used: 0, max: 5, remaining: 5 },
-            per_friend_bonus_multiplier: '1.10',
-          },
-          limits_today: [
-            {
-              action: 'attendance',
-              label_key: 'earn.limits.action.attendance',
-              used: 1,
-              max: 2,
-              remaining: 1,
-            },
-          ],
+        tier: 'silver',
+        xp: 12000,
+        next_tier_xp: 25000,
+        referral: {
+          total_invited: 3,
+          qualified_total: 1,
+          pending_review: 0,
+          payout_today: { used: 0, max: 5, remaining: 5 },
+          per_friend_bonus_multiplier: '1.10',
         },
-        error: null,
+        limits_today: [
+          {
+            action: 'attendance',
+            label_key: 'earn.limits.action.attendance',
+            used: 1,
+            max: 2,
+            remaining: 1,
+          },
+        ],
       });
     }
-    return Promise.resolve({ data: null, error: null });
+    if (name === 'rpc_get_tier_decay_status') {
+      return Promise.resolve({
+        tier: 'silver',
+        eligible: true,
+        grace_days: 45,
+        days_left: 18,
+        meets_maintenance: false,
+        lower_tier: 'bronze',
+        last_qualifying_at: '2026-06-20T00:00:00Z',
+        last_decay_at: null,
+        warnings_sent: [],
+      });
+    }
+    return Promise.resolve(null);
   });
 });
 
 describe('useTierMePageController', () => {
-  it('loads tier progress, limits, and decay panel for silver', async () => {
+  it('loads tier progress, limits, and live decay panel for silver', async () => {
     const { result } = renderHook(() => useTierMePageController(), { wrapper });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
@@ -126,14 +134,16 @@ describe('useTierMePageController', () => {
     });
     expect(result.current.limitsToday).toHaveLength(1);
     expect(result.current.decayPanel.eligible).toBe(true);
-    expect(result.current.keepMission?.canClaim).toBe(false);
-    expect(result.current.keepMission?.unavailableReasonKey).toBe(
-      'earn.mission.unavailable.tierKeepStatus',
-    );
+    expect(result.current.decayPanel.engineLive).toBe(true);
+    expect(result.current.decayPanel.daysLeft).toBe(18);
+    expect(result.current.decayPanel.meetsMaintenance).toBe(false);
+    expect(result.current.keepMission?.canClaim).toBe(true);
+    expect(result.current.keepMission?.unavailableReasonKey).toBeNull();
     expect(result.current.qualifiedReferrals).toBe(1);
+    expect(callRpcMock).toHaveBeenCalledWith('rpc_get_tier_decay_status');
   });
 
-  it('does not claim tier_keep_status while E1 engine is pending', async () => {
+  it('claims tier_keep_status when E1 engine is live and mission is claimable', async () => {
     const claimMission = vi.fn().mockResolvedValue({ ok: true, phon_awarded: '4000.000000' });
     useRepeatableMissionClaimMock.mockReturnValue({ claimMission, loading: false });
 
@@ -142,7 +152,10 @@ describe('useTierMePageController', () => {
 
     await result.current.claimKeepMission();
 
-    expect(claimMission).not.toHaveBeenCalled();
+    expect(claimMission).toHaveBeenCalledWith(
+      'tier_keep_status',
+      expect.stringContaining('tier-me:'),
+    );
   });
 
   it('redirects guests to login', async () => {

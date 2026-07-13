@@ -3,6 +3,11 @@
 -- ============================================================
 -- Proves USDT stake lock → atomic release/settle (casino) and
 -- lock → settle (sports) conserve Σ=0 before live USDT bet exposure.
+--
+-- ZA-19: This is the USDT sportsbook conservation companion to
+-- sportsbook_*_conservation_test.sql (those files cover PHON only).
+-- Search either "sportsbook" + "conservation" OR "usdt_betting_proof"
+-- when auditing dual-currency Σ=0 coverage.
 -- ============================================================
 
 -- ── 1. Casino USDT: atomic place+settle releases lock, Σ=0, house leg ────────

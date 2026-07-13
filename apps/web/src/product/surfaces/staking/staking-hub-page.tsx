@@ -5,6 +5,7 @@ import { Crown, Lock } from 'lucide-react';
 import {
   formatStakingAprDisplay,
   resolveStakingTermLabelKey,
+  STAKING_POSITIONS_ROUTE,
   STAKING_WIZARD_STEP_LABEL_KEYS,
   STAKING_WIZARD_STEPS,
   type StakingStakeCurrency,
@@ -571,9 +572,20 @@ export function StakingHubPage() {
       ) : null}
 
       <section aria-labelledby="staking-positions-heading" className="flex flex-col gap-3">
-        <h2 id="staking-positions-heading" className="text-foreground m-0 text-lg font-semibold">
-          {t('staking.myStaking')}
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 id="staking-positions-heading" className="text-foreground m-0 text-lg font-semibold">
+            {t('staking.myStaking')}
+          </h2>
+          {activePositions.length > 0 ? (
+            <Link
+              to={STAKING_POSITIONS_ROUTE}
+              className="text-accent text-sm font-medium underline-offset-4 hover:underline"
+              data-testid="staking-hub-positions-link"
+            >
+              {t('staking.positionsLink')}
+            </Link>
+          ) : null}
+        </div>
 
         {positionsError ? (
           <div

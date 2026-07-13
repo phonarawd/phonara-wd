@@ -9,6 +9,17 @@
 export const CMS_LIST_RPC = 'rpc_list_cms_content' as const;
 export const CMS_ADMIN_LIST_RPC = 'rpc_admin_list_cms_content' as const;
 export const CMS_ADMIN_UPSERT_RPC = 'rpc_admin_upsert_cms_content' as const;
+export const CMS_PUBLISH_SCHEDULED_RPC = 'rpc_run_cms_publish_scheduled' as const;
+
+/** E3 targeting — audience + tier range + schedule publish. */
+export const CMS_TARGETING_COLUMNS = [
+  'audience',
+  'min_tier',
+  'max_tier',
+  'schedule_publish_at',
+] as const;
+
+export const CMS_AUDIENCE_VALUES = ['all', 'authenticated', 'referrer', 'new_user'] as const;
 
 export const CMS_BANNER_KIND = 'banner' as const;
 
@@ -29,7 +40,8 @@ export type CmsBannerEngineBranch =
   | 'client_list_banners'
   | 'admin_list_content'
   | 'admin_upsert_content'
-  | 'landing_surface_admin';
+  | 'landing_surface_admin'
+  | 'publish_scheduled';
 
 export type CmsBannerEngineStatus = 'exists' | 'partial' | 'missing';
 
@@ -51,6 +63,10 @@ export type CmsBannerRpcRow = {
   starts_at: string | null;
   ends_at: string | null;
   published_at: string | null;
+  audience?: string | null;
+  min_tier?: string | null;
+  max_tier?: string | null;
+  schedule_publish_at?: string | null;
 };
 
 export type CmsBannerDisplayRow = {
@@ -74,6 +90,7 @@ export const CMS_BANNER_ENGINE_BRANCHES: Readonly<
   admin_list_content: { engine: 'exists', rpc: CMS_ADMIN_LIST_RPC, moneyPath: false },
   admin_upsert_content: { engine: 'exists', rpc: CMS_ADMIN_UPSERT_RPC, moneyPath: false },
   landing_surface_admin: { engine: 'partial', rpc: null, moneyPath: false },
+  publish_scheduled: { engine: 'exists', rpc: CMS_PUBLISH_SCHEDULED_RPC, moneyPath: false },
 };
 
 export type CmsBannerSurfacePlacement = {

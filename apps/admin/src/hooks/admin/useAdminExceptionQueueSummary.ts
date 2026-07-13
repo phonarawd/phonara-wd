@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { useAdminWalletDesk } from '@/hooks/admin/useAdminWalletDesk';
 import { useAdminCompliance } from '@/hooks/admin/useAdminCompliance';
 import { useAdminOverview } from '@/hooks/admin/useAdminOverview';
+import { useAdminSupportDesk } from '@/hooks/admin/useAdminSupportDesk';
+import { ADMIN_SUPPORT_QUEUES_CONVERGENCE } from '@/domain/admin-support-desk-display-contract';
 
 export type ExceptionDisposition = 'auto_ok' | 'manual_required' | 'retry_failed' | 'on_hold';
 
@@ -11,13 +13,16 @@ export interface AdminExceptionQueueSummary {
   retryFailed: string;
   onHold: string;
   totalExceptions: string;
+  /** Open support tickets converging into queues (E9 · §29.5). */
+  supportOpen: string;
 }
 
-/** Aggregates exception-queue automation posture across wallet · compliance · alerts. */
+/** Aggregates exception-queue automation posture across wallet · compliance · alerts · support. */
 export function useAdminExceptionQueueSummary(): AdminExceptionQueueSummary {
   const { withdrawals, deposits } = useAdminWalletDesk();
   const { kyc, str } = useAdminCompliance();
   const { unresolvedAlerts } = useAdminOverview();
+  const { openCount: supportOpenCount } = useAdminSupportDesk();
 
   return useMemo(() => {
     let autoOk = 0;
@@ -54,6 +59,9 @@ export function useAdminExceptionQueueSummary(): AdminExceptionQueueSummary {
 
     manualRequired += unresolvedAlerts;
 
+    const supportOpen = ADMIN_SUPPORT_QUEUES_CONVERGENCE ? supportOpenCount : 0;
+    manualRequired += supportOpen;
+
     const totalExceptions = manualRequired + retryFailed + onHold;
 
     return {
@@ -62,6 +70,7 @@ export function useAdminExceptionQueueSummary(): AdminExceptionQueueSummary {
       retryFailed: String(retryFailed),
       onHold: String(onHold),
       totalExceptions: String(totalExceptions),
+      supportOpen: String(supportOpen),
     };
-  }, [withdrawals, deposits, kyc, str, unresolvedAlerts]);
+  }, [withdrawals, deposits, kyc, str, unresolvedAlerts, supportOpenCount]);
 }

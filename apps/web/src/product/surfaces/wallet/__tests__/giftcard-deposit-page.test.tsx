@@ -11,6 +11,12 @@ vi.mock('@/features/wallet/use-giftcard-deposit-controller', () => ({
   useGiftcardDepositController: useGiftcardDepositControllerMock,
 }));
 
+vi.mock('@tanstack/react-router', () => ({
+  Navigate: ({ to }: { to: string; replace?: boolean }) => (
+    <div data-testid="giftcard-deposit-redirect" data-to={to} />
+  ),
+}));
+
 const SAMPLE_PREVIEW = {
   ok: true,
   kind: 'culture' as const,
@@ -118,6 +124,16 @@ describe('GiftcardDepositPage', () => {
     expect(screen.getByTestId('giftcard-deposit-fee-market')).toBeInTheDocument();
     expect(screen.getByTestId('giftcard-fee-row-culture')).toBeInTheDocument();
     expect(screen.getByTestId('giftcard-deposit-no-limit')).toBeInTheDocument();
+  });
+
+  it('redirects to deposit hub when giftcard market is empty (H-11)', () => {
+    renderPage(makeEngine({ marketEmpty: true, marketRows: [], kinds: [] }));
+
+    expect(screen.getByTestId('giftcard-deposit-redirect')).toHaveAttribute(
+      'data-to',
+      '/wallet/deposit',
+    );
+    expect(screen.queryByTestId('giftcard-deposit-page')).not.toBeInTheDocument();
   });
 
   it('keeps PIN input locked until preview is confirmed', () => {

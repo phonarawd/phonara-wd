@@ -13,9 +13,14 @@ import {
   NOTIFICATIONS_SETTINGS_ROUTE,
   type NotificationLocalPrefKey,
   readNotificationLocalPref,
+  resolveNotificationsCenterVisible,
   writeNotificationLocalPref,
 } from './notifications-pwa-display-contract';
 import { NOTIFICATIONS_PREFS_ROUTE } from './notifications-center-display-contract';
+import {
+  SETTINGS_API_KEYS_ROUTE,
+  shouldExposeSettingsApiKeysInHubNav,
+} from './settings-api-keys-display-contract';
 
 export const SETTINGS_HUB_ROUTE = NOTIFICATIONS_SETTINGS_ROUTE;
 
@@ -27,6 +32,9 @@ export const SETTINGS_PREFERENCES_ROUTE = '/settings/preferences' as const;
 export const SETTINGS_REFERRAL_ROUTE = '/settings/referral' as const;
 
 export const SETTINGS_CASINO_CONFIRM_PREF_KEY = 'phonara.settings.casino.confirmDialog' as const;
+
+/** §23.8 — casino win SFX opt-in (default off). */
+export const SETTINGS_CASINO_SOUND_PREF_KEY = 'phonara.settings.casino.soundEffects' as const;
 
 export type SettingsHubNavGroup = 'account' | 'alerts' | 'display';
 
@@ -87,6 +95,13 @@ export const SETTINGS_HUB_NAV_ITEMS: readonly SettingsHubNavItem[] = [
     hintKey: 'settings.display.sectionHint',
     group: 'display',
   },
+  {
+    id: 'api-keys',
+    route: SETTINGS_API_KEYS_ROUTE,
+    labelKey: 'settings.hub.link.apiKeys',
+    hintKey: 'settings.hub.link.apiKeysHint',
+    group: 'account',
+  },
 ] as const;
 
 /** Quick toggles on hub — full topic list lives on `/settings/notifications`. */
@@ -108,7 +123,19 @@ export function resolveSettingsHubNavItems(
   hiddenRoutes: readonly string[] = PLATFORM_EWAVE_HIDDEN_ROUTES,
 ): SettingsHubNavItem[] {
   const hidden = new Set(hiddenRoutes);
-  return SETTINGS_HUB_NAV_ITEMS.filter((item) => !hidden.has(item.route));
+  const notificationsCenterVisible = resolveNotificationsCenterVisible();
+  return SETTINGS_HUB_NAV_ITEMS.filter((item) => {
+    if (hidden.has(item.route)) return false;
+    // M-07 — inbox (`/notifications`) follows the same launch gate as TopBar/Account.
+    // Preference route `/settings/notifications` stays visible.
+    if (item.route === NOTIFICATIONS_CENTER_ROUTE && !notificationsCenterVisible) {
+      return false;
+    }
+    if (item.route === SETTINGS_API_KEYS_ROUTE) {
+      return shouldExposeSettingsApiKeysInHubNav();
+    }
+    return true;
+  });
 }
 
 export function resolveSettingsHubGroupLabelKey(group: SettingsHubNavGroup): MessageKey {
@@ -151,6 +178,27 @@ export function writeCasinoConfirmPref(enabled: boolean): void {
   if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(SETTINGS_CASINO_CONFIRM_PREF_KEY, enabled ? '1' : '0');
+  } catch {
+    // ignore
+  }
+}
+
+/** Default off — user must opt in (§23.8). */
+export function readCasinoSoundEffectsPref(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const value = window.localStorage.getItem(SETTINGS_CASINO_SOUND_PREF_KEY);
+    if (value === '1' || value === 'true') return true;
+  } catch {
+    // privacy mode / SSR
+  }
+  return false;
+}
+
+export function writeCasinoSoundEffectsPref(enabled: boolean): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(SETTINGS_CASINO_SOUND_PREF_KEY, enabled ? '1' : '0');
   } catch {
     // ignore
   }

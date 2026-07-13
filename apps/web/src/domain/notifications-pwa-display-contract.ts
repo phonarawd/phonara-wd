@@ -333,6 +333,22 @@ export function resolvePwaInstallBannerVisible(params: {
   return true;
 }
 
+export type PwaInstallBannerPosition = 'above-bottom-nav' | 'floating-bottom';
+
+/**
+ * ZA-10 — `PwaInstallBanner` mounts globally (inside `PwaShell`, above the
+ * per-route shell branch in `__root.tsx`), so it renders on routes where
+ * `shouldMountAppShell(pathname)` is false (e.g. `/tier`, `/features`,
+ * `/security`, `/support`, `/feedback`, marketing/auth pages) and no
+ * BottomNav is mounted to clear. Callers must pass the same
+ * `shouldMountAppShell(pathname)` result the root route already computes —
+ * this function only maps that boolean to a banner position, it does not
+ * re-derive shell membership.
+ */
+export function resolvePwaInstallBannerPosition(hasAppShell: boolean): PwaInstallBannerPosition {
+  return hasAppShell ? 'above-bottom-nav' : 'floating-bottom';
+}
+
 export function shouldDeferPwaAdvancedCapabilities(): boolean {
   return NOTIFICATIONS_PWA_ENGINE_BRANCHES.pwa_advanced_capabilities.engine === 'missing';
 }

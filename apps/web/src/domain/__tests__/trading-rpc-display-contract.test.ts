@@ -21,9 +21,9 @@ function readSrc(relativePath: string): string {
 }
 
 describe('trading-rpc-display-contract · Phase C1', () => {
-  it('registers 23 unique client trade RPC names (§3.1 audit · Phase E +2 trailing)', () => {
-    expect(TRADING_CLIENT_RPC_NAMES).toHaveLength(23);
-    expect(new Set(TRADING_CLIENT_RPC_NAMES).size).toBe(23);
+  it('registers 25 unique client trade RPC names (§3.1 audit · Phase E + staking)', () => {
+    expect(TRADING_CLIENT_RPC_NAMES).toHaveLength(25);
+    expect(new Set(TRADING_CLIENT_RPC_NAMES).size).toBe(25);
     expect(TRADING_CLIENT_RPC_NAMES).toContain('rpc_get_candles');
     expect(TRADING_CLIENT_RPC_NAMES).toContain('rpc_set_trailing_stop');
     expect(TRADING_CLIENT_RPC_NAMES).toContain('rpc_clear_trailing_stop');

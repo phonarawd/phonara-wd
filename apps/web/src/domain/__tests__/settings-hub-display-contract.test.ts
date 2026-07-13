@@ -7,10 +7,12 @@ import {
 } from '../notifications-pwa-display-contract';
 import {
   readCasinoConfirmPref,
+  readCasinoSoundEffectsPref,
   resolveNotificationPrefToastKey,
   resolveSettingsHubNavItems,
   SETTINGS_BANK_ACCOUNTS_ROUTE,
   SETTINGS_CASINO_CONFIRM_PREF_KEY,
+  SETTINGS_CASINO_SOUND_PREF_KEY,
   SETTINGS_HUB_NAV_ITEMS,
   SETTINGS_HUB_NOTIFICATION_PREF_KEYS,
   SETTINGS_HUB_ROUTE,
@@ -19,6 +21,7 @@ import {
   SETTINGS_PREFERENCES_ROUTE,
   SETTINGS_SECURITY_ROUTE,
   writeCasinoConfirmPref,
+  writeCasinoSoundEffectsPref,
   writeSettingsHubNotificationPref,
 } from '../settings-hub-display-contract';
 
@@ -28,16 +31,24 @@ describe('settings-hub-display-contract', () => {
     expect(SETTINGS_HUB_ROUTE).toBe('/settings');
   });
 
-  it('lists canonical sub-routes without E-Wave hidden api-keys', () => {
+  it('lists canonical sub-routes including live api-keys after E10', () => {
     const routes = resolveSettingsHubNavItems().map((row) => row.route);
     expect(routes).toContain(SETTINGS_SECURITY_ROUTE);
     expect(routes).toContain(SETTINGS_BANK_ACCOUNTS_ROUTE);
     expect(routes).toContain(SETTINGS_ACCOUNT_ROUTE);
     expect(routes).toContain(SETTINGS_PREFERENCES_ROUTE);
     expect(routes).toContain(SETTINGS_NOTIFICATIONS_ROUTE);
-    expect(routes).toContain(NOTIFICATIONS_CENTER_ROUTE);
-    expect(routes).not.toContain('/settings/api-keys');
-    expect(PLATFORM_EWAVE_HIDDEN_ROUTES).toContain('/settings/api-keys');
+    // M-07 — inbox hidden while notificationsCenter launch gate is false
+    expect(routes).not.toContain(NOTIFICATIONS_CENTER_ROUTE);
+    expect(routes).toContain('/settings/api-keys');
+    expect(PLATFORM_EWAVE_HIDDEN_ROUTES).not.toContain('/settings/api-keys');
+  });
+
+  it('keeps notification preference route while inbox follows launch gate', () => {
+    const routes = resolveSettingsHubNavItems().map((row) => row.route);
+    expect(routes).toContain(SETTINGS_NOTIFICATIONS_ROUTE);
+    expect(SETTINGS_NOTIFICATIONS_ROUTE).toBe('/settings/notifications');
+    expect(routes).not.toContain(NOTIFICATIONS_CENTER_ROUTE);
   });
 
   it('exposes five quick notification pref keys on hub', () => {
@@ -68,6 +79,16 @@ describe('settings-hub-display-contract', () => {
     expect(readCasinoConfirmPref()).toBe(true);
     writeCasinoConfirmPref(false);
     expect(readCasinoConfirmPref()).toBe(false);
+  });
+
+  it('reads and writes casino sound effects pref (default off)', () => {
+    window.localStorage.removeItem(SETTINGS_CASINO_SOUND_PREF_KEY);
+    expect(readCasinoSoundEffectsPref()).toBe(false);
+    writeCasinoSoundEffectsPref(true);
+    expect(window.localStorage.getItem(SETTINGS_CASINO_SOUND_PREF_KEY)).toBe('1');
+    expect(readCasinoSoundEffectsPref()).toBe(true);
+    writeCasinoSoundEffectsPref(false);
+    expect(readCasinoSoundEffectsPref()).toBe(false);
   });
 
   it('persists hub notification prefs through shared storage keys', () => {

@@ -10,6 +10,7 @@ export { ANON_KEY, E2E_USER_PASSWORD, serviceClient, SUPABASE_URL };
 export async function seedWebE2EStorage(page: Page): Promise<void> {
   await page.addInitScript(() => {
     window.localStorage.setItem('phonara.ads.analytics_consent', 'denied');
+    window.localStorage.removeItem('pf.hasAccount');
   });
 }
 
@@ -213,6 +214,22 @@ export async function waitForKrwDepositFormReady(page: Page): Promise<void> {
   await expect(page.getByTestId('krw-deposit-form')).toBeVisible({ timeout: 20_000 });
   await expect(page.getByTestId('krw-deposit-paused')).toHaveCount(0, { timeout: 30_000 });
   await expect(page.getByTestId('krw-deposit-amount-input')).toBeEnabled({ timeout: 30_000 });
+}
+
+/** Scroll wallet primary CTA above floating BottomNav before click (§34.10 chrome). */
+export async function clickWalletPrimaryAction(page: Page, testId: string): Promise<void> {
+  const action = page.getByTestId(testId);
+  await expect(action).toBeVisible({ timeout: 30_000 });
+  await expect(action).toBeEnabled({ timeout: 30_000 });
+  await action.evaluate((el) => {
+    const clearancePx = 112;
+    const rect = el.getBoundingClientRect();
+    const targetTop = window.scrollY + rect.top - (window.innerHeight - rect.height - clearancePx);
+    window.scrollTo({ top: Math.max(0, targetTop), behavior: 'instant' });
+  });
+  await action.evaluate((el) => {
+    (el as HTMLElement).click();
+  });
 }
 
 export async function waitForKrwWithdrawFormReady(page: Page): Promise<void> {

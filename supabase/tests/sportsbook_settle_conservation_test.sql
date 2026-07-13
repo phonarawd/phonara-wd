@@ -3,6 +3,7 @@
 --
 -- Authoritative settlement: SQL RPC only (`rpc_settle_sports_fixture*`,
 -- `_finalize_sports_bet`). Package preview must not be used here.
+-- Currency under test: PHON. USDT sportsbook Σ=0: usdt_betting_proof_e7_test.sql (ZA-19)
 --
 -- Matrix covered in this file:
 --   won · lost · push (totals exact line → void leg → stake refund)

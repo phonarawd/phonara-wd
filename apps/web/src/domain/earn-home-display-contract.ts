@@ -16,6 +16,8 @@ import { EARN_STATIC_MISSIONS } from '@/data/earn-static-missions';
 
 import { HOME_MISSIONS_ROUTE } from './home-missions-display-contract';
 
+import { EARN_PLAY_ROUTE } from './earn-play-display-contract';
+import { EVENTS_HUB_ROUTE } from './events-hub-display-contract';
 import { HOME_ATTENDANCE_ROUTE } from './home-attendance-display-contract';
 
 import { REFERRAL_HUB_ROUTE } from './referral-hub-display-contract';
@@ -116,7 +118,9 @@ export const EARN_HOME_P7_SUBNAV_MANIFEST_ROUTES = [
 
 export const EARN_HOME_REDIRECT_ALIASES = ['/earn', '/dashboard'] as const;
 
-/** Hub mission preview rows — LIVE catalog subset (§25.12.8 card grid). */
+/** Hub mission preview rows — Fold4 max 3 (§34.12 · §25.12.8). */
+
+export const EARN_HOME_HUB_MISSION_PREVIEW_MAX = 3 as const;
 
 export const EARN_HOME_HUB_MISSION_PREVIEW_IDS = [
   'daily-todaySpin',
@@ -124,13 +128,11 @@ export const EARN_HOME_HUB_MISSION_PREVIEW_IDS = [
   'daily-quiz',
 
   'viral-shareLink',
-
-  'growth-completeProfile',
 ] as const;
 
 export type EarnHomeHubMissionPreviewId = (typeof EARN_HOME_HUB_MISSION_PREVIEW_IDS)[number];
 
-export type EarnHomeEntryCardId = 'missions' | 'events' | 'wallet' | 'bet';
+export type EarnHomeEntryCardId = 'missions' | 'events' | 'wallet' | 'bet' | 'trade';
 
 export type EarnHomeEntryCardDefinition = {
   id: EarnHomeEntryCardId;
@@ -166,7 +168,7 @@ export const EARN_HOME_ENTRY_CARDS: readonly EarnHomeEntryCardDefinition[] = [
 
     ctaKey: 'earn.home.entry.events.cta',
 
-    route: HOME_ATTENDANCE_ROUTE,
+    route: EVENTS_HUB_ROUTE,
   },
 
   {
@@ -191,6 +193,18 @@ export const EARN_HOME_ENTRY_CARDS: readonly EarnHomeEntryCardDefinition[] = [
     ctaKey: 'earn.home.entry.bet.cta',
 
     route: '/sports',
+  },
+
+  {
+    id: 'trade',
+
+    titleKey: 'earn.home.entry.trade.title',
+
+    bodyKey: 'earn.home.entry.trade.body',
+
+    ctaKey: 'earn.home.entry.trade.cta',
+
+    route: '/trade',
   },
 ] as const;
 
@@ -407,7 +421,7 @@ export function resolveEarnHomeNextAction(params: {
 
       ctaKey: 'earn.home.entry.events.cta',
 
-      route: HOME_ATTENDANCE_ROUTE,
+      route: EARN_PLAY_ROUTE,
     };
   }
 

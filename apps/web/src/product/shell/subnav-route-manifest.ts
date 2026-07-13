@@ -40,6 +40,40 @@ export const P8_CORE_REGISTERED_ROUTES = [
 ] as const;
 
 /**
+ * P10 Sports hub child routes — Sports#0 `p10-sports-hub-pages` (§12.19.6).
+ * Fixture detail `/sports/fixture/$fixtureId` is deep-link only (not a subnav chip).
+ */
+export const P10_SPORTS_HUB_REGISTERED_ROUTES = [
+  '/sports/prematch',
+  '/sports/live',
+  '/sports/my-bets',
+  '/sports/rules',
+  '/sports/vip',
+] as const;
+
+/** P10 Casino fairness — `p10-page-casino-fairness` (§12.19.6 · YAML #212). */
+export const P10_CASINO_FAIRNESS_REGISTERED_ROUTES = ['/casino/fairness'] as const;
+
+/**
+ * P11 Earn side-income routes — `p11-earn-side-surfaces` (§12.19.6 · YAML #219).
+ */
+export const P11_SIDE_INCOME_REGISTERED_ROUTES = [
+  '/events',
+  '/earn/play',
+  '/earn/cashback',
+  '/referral/leaderboard',
+] as const;
+
+/** P11 wallet redeem — `p11-page-wallet-redeem` (§12.19.6 · YAML #220). */
+export const P11_WALLET_REDEEM_REGISTERED_ROUTES = [
+  '/wallet/redeem',
+  '/wallet/redeem/giftcard',
+] as const;
+
+/** E10 wallet transfer — `ew-e10-wallet-settings-ui`. */
+export const E10_WALLET_TRANSFER_REGISTERED_ROUTES = ['/wallet/transfer'] as const;
+
+/**
  * §12.19.6 — Routes that may appear in domain subnav chips.
  * Extend only in the Part GATE todo that registers the matching TanStack route.
  * Unlisted targets stay hidden (dead link 0 · Strict Perfect).
@@ -54,12 +88,17 @@ export const SHELL_SUBNAV_REGISTERED_ROUTES: ReadonlySet<string> = new Set([
   ...P7_EARN_STAKING_ROUTES,
   ...P9_TRADE_REGISTERED_ROUTES,
   '/sports',
+  ...P10_SPORTS_HUB_REGISTERED_ROUTES,
   '/casino',
+  ...P10_CASINO_FAIRNESS_REGISTERED_ROUTES,
   '/install',
   '/onboarding',
   '/onboarding/missions',
   ...P7_GROWTH_REGISTERED_ROUTES,
   ...P8_CORE_REGISTERED_ROUTES,
+  ...P11_SIDE_INCOME_REGISTERED_ROUTES,
+  ...P11_WALLET_REDEEM_REGISTERED_ROUTES,
+  ...E10_WALLET_TRANSFER_REGISTERED_ROUTES,
 ]);
 
 /** Filter subnav items to registered routes only (§12.19.6). */

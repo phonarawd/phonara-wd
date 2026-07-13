@@ -53,6 +53,21 @@ vi.mock('@/hooks/admin/useAdminSettingsDesk', () => ({
   }),
 }));
 
+vi.mock('@/hooks/admin/useAdminOpsPush', () => ({
+  useAdminOpsPush: () => ({
+    status: 'off',
+    supported: true,
+    busy: false,
+    enable: vi.fn(),
+    disable: vi.fn(),
+    refresh: vi.fn(),
+  }),
+}));
+
+vi.mock('@/lib/use-admin-route-navigate', () => ({
+  useAdminRouteNavigate: () => vi.fn(),
+}));
+
 describe('AdminSettingsPage', () => {
   it('renders read-only app_config desk with tabs and no write controls (§29.2 R0)', () => {
     render(
@@ -75,5 +90,28 @@ describe('AdminSettingsPage', () => {
 
     expect(screen.queryByRole('button', { name: /저장|save/i })).toBeNull();
     expect(screen.queryByRole('button', { name: /끄기|disable/i })).toBeNull();
+    expect(screen.getByTestId('admin-settings-team-link')).toHaveTextContent(
+      /직원 권한 관리로 가기|Go to staff access/i,
+    );
+  });
+
+  it('renders ops Web Push CTA that deep-links to 처리 대기함 (§32.6 A-4)', () => {
+    render(
+      <I18nProvider>
+        <AdminSettingsPage />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('admin-settings-ops-push')).toBeTruthy();
+    expect(screen.getByTestId('admin-settings-ops-push-enable')).toHaveTextContent(
+      /알림 받기 켜기|Turn on alerts/i,
+    );
+    expect(screen.getByTestId('admin-settings-ops-push-status')).toHaveTextContent(
+      /알림 꺼짐|Alerts off/i,
+    );
+    expect(screen.getByTestId('admin-settings-ops-push-queues')).toBeTruthy();
+    expect(
+      screen.getByText(/알림을 누르면 처리 대기함|Tapping an alert opens the work queue/i),
+    ).toBeTruthy();
   });
 });

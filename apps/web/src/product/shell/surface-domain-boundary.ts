@@ -50,6 +50,7 @@ export const NEUTRAL_SURFACE_FOLDERS = [
   'shell',
   'legal',
   'landing',
+  'marketing',
   'login',
   'signup',
   'reset-password',
@@ -69,11 +70,21 @@ export const SURFACE_DOMAIN_SPECS: readonly SurfaceDomainSpec[] = [
       '/referral',
       '/tier',
       '/earn',
+      '/events',
       '/share/earnings',
       '/onboarding',
       '/staking',
     ],
-    surfaceFolders: ['home', 'referral', 'tier', 'share', 'onboarding', 'staking'],
+    surfaceFolders: [
+      'home',
+      'referral',
+      'tier',
+      'earn',
+      'events',
+      'share',
+      'onboarding',
+      'staking',
+    ],
     featureFolders: ['earn', 'onboarding'],
     subnavStem: 'earn',
     descriptionKey: 'nav.earn',
@@ -171,6 +182,21 @@ function normalizeRoutePath(pathname: string): string {
 
 export function resolveDomainForRoute(pathname: string): SurfaceDomainId | null {
   const current = normalizeRoutePath(pathname);
+  // P12 public marketing — exact `/tier` only ( `/tier/me` · `/tier/benefits` stay Earn ).
+  if (
+    current === '/tier' ||
+    current === '/features' ||
+    current.startsWith('/features/') ||
+    current === '/fees' ||
+    current === '/security' ||
+    current === '/announcements' ||
+    current === '/status' ||
+    current === '/support' ||
+    current.startsWith('/support/') ||
+    current === '/feedback'
+  ) {
+    return 'landing';
+  }
   for (const spec of SURFACE_DOMAIN_SPECS) {
     for (const prefix of spec.routePrefixes) {
       if (current === prefix || current.startsWith(`${prefix}/`)) {

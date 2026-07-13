@@ -24,9 +24,12 @@ export function normalizeEarnVipTier(raw: string | null | undefined): EarnVipTie
 }
 
 export function nextEarnVipTier(tier: EarnVipTier): EarnVipTier | null {
+  if (tier === 'diamond' || tier === 'prime_elite') return null;
   const index = EARN_VIP_TIER_ORDER.indexOf(tier);
-  if (index < 0 || index >= EARN_VIP_TIER_ORDER.length - 1) return null;
-  return EARN_VIP_TIER_ORDER[index + 1] ?? null;
+  if (index < 0) return null;
+  const next = EARN_VIP_TIER_ORDER[index + 1];
+  if (!next || next === 'prime_elite') return null;
+  return next;
 }
 
 export function earnVipTierLabelKey(tier: EarnVipTier): MessageKey {

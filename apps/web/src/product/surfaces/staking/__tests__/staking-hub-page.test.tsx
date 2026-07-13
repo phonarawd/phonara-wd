@@ -226,6 +226,10 @@ describe('StakingHubPage', () => {
 
     const row = screen.getByTestId('staking-position-pos-1');
     expect(within(row).getByText('BTC · USDT')).toBeInTheDocument();
+    expect(screen.getByTestId('staking-hub-positions-link')).toHaveAttribute(
+      'href',
+      '/staking/positions',
+    );
 
     fireEvent.click(screen.getByTestId('staking-claim-pos-1'));
     expect(claimReward).toHaveBeenCalledWith('pos-1');
@@ -239,6 +243,7 @@ describe('StakingHubPage', () => {
 
     expect(screen.getByTestId('staking-empty-positions')).toBeInTheDocument();
     expect(screen.getByText('staking.noneActive')).toBeInTheDocument();
+    expect(screen.queryByTestId('staking-hub-positions-link')).not.toBeInTheDocument();
   });
 
   it('shows outer empty pools only when no reference assets exist (P1-D)', () => {

@@ -40,6 +40,11 @@ jobs:
       - run: bun run typecheck
       - run: bun run lint
       - run: bun run format:check
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Deno edge-shared unit tests
+        run: bun run test:deno:edge-shared
       - name: Set Supabase env for unit tests
         run: |
           # Non-sensitive dummy values used only for unit tests and client build in CI.

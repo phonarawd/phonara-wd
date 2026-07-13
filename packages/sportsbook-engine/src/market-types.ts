@@ -10,6 +10,7 @@ export const SPORTS_MARKET_TYPES = [
   'both_teams_score',
   'prop_over_under',
   'prop_yes_no',
+  'correct_score',
 ] as const;
 
 export type RegisteredMarketType = (typeof SPORTS_MARKET_TYPES)[number];

@@ -28,7 +28,7 @@ export function EarnSubnavMobile() {
   );
 }
 
-/** Desktop EarnSideNav — 240px expanded (§12.19.5). */
+/** Desktop EarnSideNav — 240px expanded floating rail (§12.19.5 · §34.11). */
 export function EarnSideNavDesktop() {
   const active = useEarnSurfaceActive();
   if (!active) return null;
@@ -42,12 +42,26 @@ export function EarnSideNavDesktop() {
   );
 }
 
+/**
+ * Earn lg+ complementary side rail — visual balance for Orbit Grid (§34.11).
+ * Decorative chrome only (aria-hidden) — nav lives in EarnSideNavDesktop.
+ */
+export function EarnSideRailDesktop() {
+  const active = useEarnSurfaceActive();
+  if (!active) return null;
+
+  return (
+    <aside className="ds-shell-earn-side-rail" data-testid="earn-side-rail-desktop" aria-hidden />
+  );
+}
+
 /** @deprecated Use EarnSubnavMobile + EarnSideNavDesktop from AppShell layout. */
 export function EarnShell() {
   return (
     <>
       <EarnSubnavMobile />
       <EarnSideNavDesktop />
+      <EarnSideRailDesktop />
     </>
   );
 }

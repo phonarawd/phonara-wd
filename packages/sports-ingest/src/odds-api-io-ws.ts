@@ -1,5 +1,5 @@
 import type { IngestMessage } from '@phonara/sportsbook-engine';
-import { eventRemoveMessage, oddsUpsertMessage } from './decimal-odds';
+import { eventRemoveMessage, oddsUpsertMessage, vendorPriceToOddsString } from './decimal-odds';
 import {
   expandEventWithOdds,
   normalizeVendorEventUpsert,
@@ -194,7 +194,7 @@ function mapMarketsToMessages(
 
   if (upsert.type !== 'event_upsert') return [upsert];
 
-  const prices: Record<string, string | number> = {};
+  const prices: Record<string, string> = {};
   for (const market of upsert.markets) {
     const sourceMarket = vendorMarkets.find((m) => m.key === market.marketType);
     if (!sourceMarket?.outcomes) continue;
@@ -202,7 +202,7 @@ function mapMarketsToMessages(
       const outcome = market.outcomes[i];
       const sourceOutcome = sourceMarket.outcomes[i];
       if (!outcome || sourceOutcome?.price === undefined) continue;
-      prices[outcome.outcomeId] = sourceOutcome.price;
+      prices[outcome.outcomeId] = vendorPriceToOddsString(sourceOutcome.price);
     }
   }
 
@@ -260,7 +260,9 @@ export function mapOddsApiIoWsOddsPatchOnly(
     for (const outcome of market.outcomes ?? []) {
       const outcomeId = `${marketId}:${String(outcome.id ?? outcome.name)}`;
       if (outcome.price === undefined) continue;
-      messages.push(oddsUpsertMessage(outcomeId, outcome.price, capturedAt));
+      messages.push(
+        oddsUpsertMessage(outcomeId, vendorPriceToOddsString(outcome.price), capturedAt),
+      );
     }
   }
 

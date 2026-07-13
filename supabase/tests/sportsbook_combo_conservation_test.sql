@@ -1,5 +1,6 @@
 -- ============================================================
 -- Sportsbook combo conservation (2-leg parlay win)
+-- Currency under test: PHON. USDT sportsbook Σ=0: usdt_betting_proof_e7_test.sql (ZA-19)
 -- ============================================================
 
 BEGIN;

@@ -7,7 +7,10 @@ export type ChartTheme = {
   background: string;
 };
 
-/** Dark-theme rgb fallbacks — LWC cannot parse oklch/light-dark (§25.4). */
+/**
+ * Dark-theme rgb fallbacks — LWC cannot parse oklch/light-dark (§25.4).
+ * primitive-allow: chart-adapter-rgb-fallback · owner trade/chart · M-15 signed exception
+ */
 const CHART_RGB_FALLBACKS = {
   textMuted: 'rgb(163, 163, 175)',
   line: 'rgb(67, 67, 76)',
@@ -27,6 +30,7 @@ function toChartRgb(color: string): string {
     const ctx = canvas.getContext('2d');
     if (!ctx) return color;
 
+    // primitive-allow: canvas-color-probe · owner trade/chart · LWC token normalize
     ctx.fillStyle = '#000000';
     ctx.fillStyle = color;
     const normalized = ctx.fillStyle;

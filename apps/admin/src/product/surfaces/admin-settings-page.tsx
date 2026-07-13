@@ -4,31 +4,27 @@ import { RefreshCw } from 'lucide-react';
 
 import type { MessageKey } from '@phonara/i18n';
 
+import type { AdminOpsPushStatus } from '@/domain/admin-ops-push-display-contract';
+import { useAdminOpsPush } from '@/hooks/admin/useAdminOpsPush';
 import { useAdminSettingsDesk } from '@/hooks/admin/useAdminSettingsDesk';
 import type { AdminSettingsRow } from '@/product/bridge/parse-admin-settings-config';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { Input } from '@/product/primitives/input';
 import { cn } from '@/product/primitives/lib/cn';
-import { Skeleton } from '@/product/primitives/skeleton';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/product/primitives/tabs';
 
-function LoadingTable({ rows, cols }: { rows: number; cols: number }) {
-  return (
-    <div className="space-y-2" aria-busy="true">
-      {Array.from({ length: rows }, (_, rowIndex) => (
-        <div key={rowIndex} className="flex gap-3">
-          {Array.from({ length: cols }, (_, colIndex) => (
-            <Skeleton key={colIndex} className="h-10 flex-1" />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
+function pushStatusLabelKey(status: AdminOpsPushStatus): MessageKey {
+  if (status === 'on') return 'admin.settings.push.status.on';
+  if (status === 'denied') return 'admin.settings.push.status.denied';
+  if (status === 'unsupported') return 'admin.settings.push.status.unsupported';
+  if (status === 'error') return 'admin.settings.push.status.error';
+  return 'admin.settings.push.status.off';
 }
 
 function booleanStatus(value: string): MoneyStatusState {
@@ -57,6 +53,7 @@ export function AdminSettingsPage() {
   const goTo = useAdminRouteNavigate();
   const { sections, entryCount, search, setSearch, isLoading, isError, isFetching, refresh } =
     useAdminSettingsDesk();
+  const opsPush = useAdminOpsPush();
   const [refreshing, setRefreshing] = useState(false);
 
   const defaultTab = sections[0]?.id ?? 'system';
@@ -65,6 +62,7 @@ export function AdminSettingsPage() {
     setRefreshing(true);
     try {
       await refresh();
+      await opsPush.refresh();
     } finally {
       setRefreshing(false);
     }
@@ -84,6 +82,15 @@ export function AdminSettingsPage() {
           </p>
           <p className="text-foreground-muted m-0 text-sm">{t('admin.settings.description')}</p>
           <p className="text-foreground-muted m-0 text-sm">{t('admin.settings.readOnly')}</p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-1 w-fit"
+            data-testid="admin-settings-team-link"
+            onClick={() => goTo('/team')}
+          >
+            {t('admin.settings.teamLink')}
+          </Button>
         </div>
         <Button
           variant="outline"
@@ -110,6 +117,64 @@ export function AdminSettingsPage() {
         ]}
       />
 
+      <section
+        aria-labelledby="admin-settings-push-heading"
+        className="border-border bg-surface-1 space-y-3 rounded-xl border p-4"
+        data-testid="admin-settings-ops-push"
+      >
+        <div className="space-y-1">
+          <h3
+            id="admin-settings-push-heading"
+            className="text-foreground m-0 text-base font-semibold"
+          >
+            {t('admin.settings.push.title')}
+          </h3>
+          <p className="text-foreground-muted m-0 text-sm leading-relaxed">
+            {t('admin.settings.push.body')}
+          </p>
+          <p className="text-foreground-muted m-0 text-sm">{t('admin.settings.push.queuesHint')}</p>
+          <p className="text-foreground m-0 text-sm" data-testid="admin-settings-ops-push-status">
+            {t(pushStatusLabelKey(opsPush.status))}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {opsPush.status === 'on' ? (
+            <Button
+              variant="outline"
+              size="sm"
+              loading={opsPush.busy}
+              data-testid="admin-settings-ops-push-disable"
+              onClick={() => void opsPush.disable()}
+            >
+              {t('admin.settings.push.disable')}
+            </Button>
+          ) : (
+            <Button
+              variant="primary"
+              size="sm"
+              loading={opsPush.busy || opsPush.status === 'loading'}
+              disabled={
+                opsPush.status === 'denied' ||
+                opsPush.status === 'unsupported' ||
+                !opsPush.supported
+              }
+              data-testid="admin-settings-ops-push-enable"
+              onClick={() => void opsPush.enable()}
+            >
+              {t('admin.settings.push.enable')}
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            data-testid="admin-settings-ops-push-queues"
+            onClick={() => goTo('/queues')}
+          >
+            {t('admin.nav.queues')}
+          </Button>
+        </div>
+      </section>
+
       {isError ? (
         <EmptyState
           title={t('admin.settings.error.title')}
@@ -118,7 +183,16 @@ export function AdminSettingsPage() {
           onAction={() => void handleRefresh()}
         />
       ) : isLoading ? (
-        <LoadingTable rows={6} cols={2} />
+        <AdminTable
+          columns={[
+            { id: 'setting', header: t('admin.settings.col.setting') },
+            { id: 'value', header: t('admin.settings.col.value') },
+          ]}
+          rows={[]}
+          loading
+          loadingRowCount={6}
+          minWidth={640}
+        />
       ) : entryCount === 0 ? (
         <EmptyState
           title={t('admin.settings.empty.title')}
@@ -158,37 +232,33 @@ export function AdminSettingsPage() {
               {sections.map((section) => (
                 <TabsContent key={section.id} value={section.id} className="space-y-3">
                   <p className="text-foreground-muted m-0 text-sm">{t(section.descKey)}</p>
-                  <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                    <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-                      <thead className="bg-surface-raised text-foreground-muted">
-                        <tr>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.settings.col.setting')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">{t('admin.settings.col.value')}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {section.rows.map((row) => (
-                          <tr key={row.key} className="border-line border-t align-top">
-                            <td className="text-foreground px-4 py-3">{rowLabel(row, t)}</td>
-                            <td className="px-4 py-3">
-                              {row.kind === 'boolean' ? (
-                                <StatusBadge
-                                  state={booleanStatus(row.displayValue)}
-                                  label={formatValue(row, t)}
-                                />
-                              ) : (
-                                <span className="text-foreground tabular-nums">
-                                  {formatValue(row, t)}
-                                </span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <AdminTable
+                    columns={[
+                      {
+                        id: 'setting',
+                        header: t('admin.settings.col.setting'),
+                        cell: ({ row }) => rowLabel(row, t),
+                      },
+                      {
+                        id: 'value',
+                        header: t('admin.settings.col.value'),
+                        cell: ({ row }) =>
+                          row.kind === 'boolean' ? (
+                            <StatusBadge
+                              state={booleanStatus(row.displayValue)}
+                              label={formatValue(row, t)}
+                            />
+                          ) : (
+                            <span className="text-foreground tabular-nums">
+                              {formatValue(row, t)}
+                            </span>
+                          ),
+                      },
+                    ]}
+                    rows={section.rows}
+                    getRowId={(row) => row.key}
+                    minWidth={640}
+                  />
                 </TabsContent>
               ))}
             </Tabs>

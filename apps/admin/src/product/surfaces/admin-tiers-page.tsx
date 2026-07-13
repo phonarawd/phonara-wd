@@ -5,29 +5,16 @@ import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { RefreshCw } from 'lucide-react';
 
 import { useAdminTiersDesk } from '@/hooks/admin/useAdminTiersDesk';
+import { formatAdminMoney } from '@/lib/format-admin-money';
 import { useT } from '@/product/i18n';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { cn } from '@/product/primitives/lib/cn';
-import { Skeleton } from '@/product/primitives/skeleton';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { StatusBadge } from '@/product/primitives/status-badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/product/primitives/tabs';
-
-function LoadingTable({ rows, cols }: { rows: number; cols: number }) {
-  return (
-    <div className="space-y-2" aria-busy="true">
-      {Array.from({ length: rows }, (_, rowIndex) => (
-        <div key={rowIndex} className="flex gap-3">
-          {Array.from({ length: cols }, (_, colIndex) => (
-            <Skeleton key={colIndex} className="h-10 flex-1" />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 /** Admin tiers desk (`/tiers`) — `user_earn_vip` read · decay monitor deferred E1 (§29.2 R0). */
 export function AdminTiersPage() {
@@ -105,135 +92,123 @@ export function AdminTiersPage() {
           </TabsList>
 
           <TabsContent value="distribution" className="space-y-3">
-            {isLoading ? (
-              <LoadingTable rows={5} cols={2} />
-            ) : totalMembers === 0 ? (
-              <EmptyState
-                title={t('admin.overview.empty.title')}
-                description={t('admin.tiers.empty.distribution')}
-                actionLabel={t('admin.tiers.empty.cta')}
-                onAction={() => {
-                  void navigate('/ops');
-                }}
-              />
-            ) : (
-              <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                <table className="w-full min-w-[480px] border-collapse text-left text-sm">
-                  <thead className="bg-surface-raised text-foreground-muted">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">{t('admin.tiers.col.tier')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.tiers.col.members')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {distribution.map((row) => (
-                      <tr key={row.tier} className="border-line border-t">
-                        <td className="text-foreground px-4 py-3">{t(row.labelKey)}</td>
-                        <td className="text-foreground px-4 py-3 tabular-nums">{row.count}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <AdminTable
+              columns={[
+                {
+                  id: 'tier',
+                  header: t('admin.tiers.col.tier'),
+                  cell: ({ row }) => t(row.labelKey),
+                },
+                {
+                  id: 'members',
+                  header: t('admin.tiers.col.members'),
+                  cell: ({ row }) => row.count,
+                  meta: { className: 'tabular-nums' },
+                },
+              ]}
+              rows={distribution}
+              getRowId={(row) => row.tier}
+              loading={isLoading}
+              loadingRowCount={5}
+              minWidth={480}
+              empty={
+                <EmptyState
+                  title={t('admin.overview.empty.title')}
+                  description={t('admin.tiers.empty.distribution')}
+                  actionLabel={t('admin.tiers.empty.cta')}
+                  onAction={() => void navigate('/ops')}
+                />
+              }
+            />
           </TabsContent>
 
           <TabsContent value="limits" className="space-y-6">
-            {isLoading ? (
-              <LoadingTable rows={5} cols={4} />
-            ) : (
-              <>
-                <section className="space-y-3">
-                  <h3 className="text-foreground m-0 text-base font-semibold">
-                    {t('admin.tiers.limits.goldenEarth.title')}
-                  </h3>
-                  <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                    <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-                      <thead className="bg-surface-raised text-foreground-muted">
-                        <tr>
-                          <th className="px-4 py-3 font-medium">{t('admin.tiers.col.tier')}</th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.tiers.col.dailyTapCap')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.tiers.col.phonPerTap')}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {goldenEarthLimits.map((row) => (
-                          <tr key={row.tier} className="border-line border-t">
-                            <td className="text-foreground px-4 py-3">{t(row.labelKey)}</td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {row.dailyTapCap}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {row.phonPerTap} PHON
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </section>
-
-                <section className="space-y-3">
-                  <h3 className="text-foreground m-0 text-base font-semibold">
-                    {t('admin.tiers.limits.missions.title')}
-                  </h3>
-                  <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                    <table className="w-full min-w-[920px] border-collapse text-left text-sm">
-                      <thead className="bg-surface-raised text-foreground-muted">
-                        <tr>
-                          <th className="px-4 py-3 font-medium">{t('admin.tiers.col.tier')}</th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.tiers.col.attendance')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">{t('admin.tiers.col.roulette')}</th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.tiers.col.referralPayout')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.tiers.col.viralShare')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.tiers.col.dailyQuiz')}
-                          </th>
-                          <th className="px-4 py-3 font-medium">
-                            {t('admin.tiers.col.referralMultiplier')}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {earnMissionLimits.map((row) => (
-                          <tr key={row.tier} className="border-line border-t">
-                            <td className="text-foreground px-4 py-3">{t(row.labelKey)}</td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {row.attendance}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {row.roulette}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {row.referralPayout}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {row.viralShare}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {row.dailyQuiz}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {row.referralMultiplier}×
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </section>
-              </>
-            )}
+            <section className="space-y-3">
+              <h3 className="text-foreground m-0 text-base font-semibold">
+                {t('admin.tiers.limits.goldenEarth.title')}
+              </h3>
+              <AdminTable
+                columns={[
+                  {
+                    id: 'tier',
+                    header: t('admin.tiers.col.tier'),
+                    cell: ({ row }) => t(row.labelKey),
+                  },
+                  {
+                    id: 'dailyTapCap',
+                    header: t('admin.tiers.col.dailyTapCap'),
+                    cell: ({ row }) => row.dailyTapCap,
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'phonPerTap',
+                    header: t('admin.tiers.col.phonPerTap'),
+                    cell: ({ row }) => formatAdminMoney(row.phonPerTap, 'PHON'),
+                    meta: { className: 'tabular-nums' },
+                  },
+                ]}
+                rows={goldenEarthLimits}
+                getRowId={(row) => row.tier}
+                loading={isLoading}
+                loadingRowCount={5}
+                minWidth={640}
+              />
+            </section>
+            <section className="space-y-3">
+              <h3 className="text-foreground m-0 text-base font-semibold">
+                {t('admin.tiers.limits.missions.title')}
+              </h3>
+              <AdminTable
+                columns={[
+                  {
+                    id: 'tier',
+                    header: t('admin.tiers.col.tier'),
+                    cell: ({ row }) => t(row.labelKey),
+                  },
+                  {
+                    id: 'attendance',
+                    header: t('admin.tiers.col.attendance'),
+                    cell: ({ row }) => row.attendance,
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'roulette',
+                    header: t('admin.tiers.col.roulette'),
+                    cell: ({ row }) => row.roulette,
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'referralPayout',
+                    header: t('admin.tiers.col.referralPayout'),
+                    cell: ({ row }) => row.referralPayout,
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'viralShare',
+                    header: t('admin.tiers.col.viralShare'),
+                    cell: ({ row }) => row.viralShare,
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'dailyQuiz',
+                    header: t('admin.tiers.col.dailyQuiz'),
+                    cell: ({ row }) => row.dailyQuiz,
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'referralMultiplier',
+                    header: t('admin.tiers.col.referralMultiplier'),
+                    cell: ({ row }) => `${row.referralMultiplier}×`,
+                    meta: { className: 'tabular-nums' },
+                  },
+                ]}
+                rows={earnMissionLimits}
+                getRowId={(row) => row.tier}
+                loading={isLoading}
+                loadingRowCount={5}
+                minWidth={920}
+              />
+            </section>
           </TabsContent>
 
           <TabsContent value="decay" className="space-y-4">
@@ -256,30 +231,32 @@ export function AdminTiersPage() {
               </CardHeader>
             </Card>
 
-            <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-              <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-                <thead className="bg-surface-raised text-foreground-muted">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">{t('admin.tiers.col.tier')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.tiers.col.keepCondition')}</th>
-                    <th className="px-4 py-3 font-medium">
-                      {t('admin.tiers.col.downgradeTarget')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {decayPolicy.map((row) => (
-                    <tr key={row.tier} className="border-line border-t">
-                      <td className="text-foreground px-4 py-3">{t(row.labelKey)}</td>
-                      <td className="text-foreground-muted px-4 py-3">{t(row.keepConditionKey)}</td>
-                      <td className="text-foreground-muted px-4 py-3">
-                        {row.downgradeTargetKey ? t(row.downgradeTargetKey) : '—'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <AdminTable
+              columns={[
+                {
+                  id: 'tier',
+                  header: t('admin.tiers.col.tier'),
+                  cell: ({ row }) => t(row.labelKey),
+                },
+                {
+                  id: 'keepCondition',
+                  header: t('admin.tiers.col.keepCondition'),
+                  cell: ({ row }) => t(row.keepConditionKey),
+                  meta: { className: 'text-foreground-muted' },
+                },
+                {
+                  id: 'downgradeTarget',
+                  header: t('admin.tiers.col.downgradeTarget'),
+                  cell: ({ row }) => (row.downgradeTargetKey ? t(row.downgradeTargetKey) : '—'),
+                  meta: { className: 'text-foreground-muted' },
+                },
+              ]}
+              rows={decayPolicy}
+              getRowId={(row) => row.tier}
+              loading={isLoading}
+              loadingRowCount={5}
+              minWidth={720}
+            />
 
             <p className="text-foreground-muted m-0 text-sm">{t('admin.tiers.decay.footnote')}</p>
           </TabsContent>

@@ -79,6 +79,10 @@ describe('LedgerPage', () => {
     expect(screen.getByTestId('ledger-page')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '원장' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '지갑으로' })).toHaveAttribute('href', '/wallet');
+    expect(screen.getByTestId('ledger-rewards-history-link')).toHaveAttribute(
+      'href',
+      '/rewards/history',
+    );
   });
 
   it('renders ledger rows with tabular money display', () => {

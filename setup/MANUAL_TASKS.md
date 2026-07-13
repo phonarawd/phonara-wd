@@ -60,14 +60,18 @@ SELECT * FROM liquidation_run_log ORDER BY ran_at DESC LIMIT 20;
 
 ### 3-1. Admin MFA 강제 (`admin-mfa-hibp` 작업 시 필요)
 
+> **DEFER (2026-07-11 · operator):** MFA **유료 결제** 필요 → **나중으로 보류**.  
+> 정본 기록: [`docs/OPERATIONS/P13_T0A_PROD_PREFLIGHT.md`](../docs/OPERATIONS/P13_T0A_PROD_PREFLIGHT.md) §3.1 D1.  
+> Soft Launch UI/QA는 MFA 없이 진행 가능 · **실거래 GO / 실돈 CB 직전**에 재개.
+
 앱은 프로덕션 Admin route에서 Supabase AAL2(MFA 완료 세션)를 요구합니다.
 Dashboard에서 아래 설정이 끝나야 운영자가 접근할 수 있습니다.
 
 Supabase Dashboard → Authentication → **MFA (Multi-Factor Auth)**:
 
 - [x] TOTP 활성화 (Google Authenticator / Authy 등) — AI가 원격 Auth config push로 적용
-- [ ] 관리자 계정에 MFA 등록
-- [ ] 프로덕션 Admin 로그인 후 MFA challenge 완료 상태로 `/overview` 접근 확인
+- [ ] 관리자 계정에 MFA 등록 — **DEFER (유료)**
+- [ ] 프로덕션 Admin 로그인 후 MFA challenge 완료 상태로 `/overview` 접근 확인 — **DEFER (유료)**
 
 AI가 함께 적용한 Auth 기본 보안 설정:
 
@@ -83,13 +87,18 @@ AI가 함께 적용한 Auth 기본 보안 설정:
 
 ### 3-2. HIBP 비밀번호 유출 감지
 
-Supabase Dashboard → Authentication → **Password Policies / Attack Protection**:
+Supabase Auth leaked-password protection (HaveIBeenPwned) — **Management API 정본**:
 
-- [ ] "Check for compromised passwords (HIBP)" 활성화
-- [ ] Auth logs에서 유출 비밀번호 거부 이벤트가 기록되는지 확인
+```powershell
+bun run stack:auth-hibp-enable
+```
 
-> 현재 Dashboard에서 HIBP는 email provider/플랜 조건에 묶여 있어 AI가 안전하게 강제 적용하지
-> 않았습니다. Pro/SMTP 준비 후 Dashboard에서 직접 활성화하세요.
+- [ ] **`[ ]` DEFER (유료)** — 2026-07-13 PATCH `password_hibp_enabled` → **402 Pro+ required**
+- [ ] Pro 업그레이드 후 `bun run stack:auth-hibp-enable` → advisor `auth_leaked_password_protection` WARN **0**
+- [ ] Auth logs에서 유출 비밀번호 거부 이벤트 스모크 (선택)
+
+> Dashboard 수동 토글 대신 `stack:auth-hibp-enable`만 사용. Soft-launch blocker 아님 (P13 MFA DEFER와 동급).
+> Evidence: `docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R3/r3e-auth-hibp-feature-flag-implement.md`
 
 ### 3-3. 프로덕션 사이트 URL 설정
 
@@ -275,7 +284,8 @@ SELECT count(*) AS open_ops_alerts
 
 ## 10-B. Ops pager (Launch E3 · `ops-notify`)
 
-**정본:** ntfy 무료 푸시 1순위 · Telegram/HMAC webhook 선택 · critical `ops_alerts` → cron 1분 → Edge → ntfy
+**정본:** ntfy 무료 푸시 1순위 · Telegram/HMAC webhook 선택 · critical `ops_alerts` → cron 1분 → Edge → ntfy  
+**P13 Web Push (`p13-admin-ops-push`):** Admin `/settings` 「알림 받기」 → `push_subscriptions` · edge fan-out `WEB_PUSH_DISPATCH_URL` · 탭 시 `/queues` · (선택) `OPS_ADMIN_PUBLIC_URL` = ntfy Click
 
 ### A. ntfy (권장 · chat id 불필요)
 
@@ -349,6 +359,43 @@ bun run stack:verify-worldno1-edge
 
 ---
 
+## 11b. T1 Live Ramp Daily Loop (공식 GO 이후 · §20.14.6)
+
+> **정본:** [`docs/OPERATIONS/P13_T1_LIVE_RAMP_FEATURE_GATES.md`](../docs/OPERATIONS/P13_T1_LIVE_RAMP_FEATURE_GATES.md) · todo `#237`
+
+| 시각 (KST) | 할 일                                                                                |
+| ---------- | ------------------------------------------------------------------------------------ |
+| **09:00**  | `/admin/ops` alerts · `/admin/queues` · `/admin/deposits` · `/admin/withdrawals`     |
+| **12:00**  | Telegram critical pager only                                                         |
+| **18:00**  | insurance · OI utilization · ledger drift (`scripts/p13-t1-live-ramp-spotcheck.sql`) |
+| **22:00**  | Telegram critical pager only                                                         |
+
+주간(월요일): spot · futures · casino · sports rails ON · cross/funding/withdrawal OFF · OI **40%** (majors `200000` · PHON `40000`) · lev **5**.
+
+- [ ] 09:00 4 desk 루프
+- [ ] OI 40% · launch gates OFF 유지
+- [ ] 월요일 주간 feature-gate 리뷰
+
+---
+
+## 11c. T2 Scale Trigger Matrix (T1 이후 · DAU/접속)
+
+> **정본:** [`docs/OPERATIONS/P13_T2_SCALE_TRIGGERS.md`](../docs/OPERATIONS/P13_T2_SCALE_TRIGGERS.md) · todo `#238`
+
+| Band            | DAU         | Per-user notional      | OI  | Infra            | Hedge       |
+| --------------- | ----------- | ---------------------- | --- | ---------------- | ----------- |
+| **S1** `500~2K` | 500–1_999   | KRW 100만 / USDT 200   | 50% | primary only     | B-book 유지 |
+| **S2** `2K~10K` | 2_000–9_999 | KRW 200만 / USDT 500   | 60% | **read replica** | ADR kickoff |
+| **S3** `10K+`   | ≥10_000     | KRW 500만 / USDT 2_000 | 80% | replica HA       | GO/NO-GO    |
+
+월요일: T1 rails 리뷰 → `scripts/p13-t2-scale-triggers-spotcheck.sql`로 band 분류 → 표에 맞는 cap/replica/hedge만 operator 적용 (자동 적용 금지).
+
+- [ ] DAU spotcheck · band 기록
+- [ ] S2+ read replica 계획 (money write path 제외)
+- [ ] 외부 venue hedge ≠ E21 UI hedge 혼동 0
+
+---
+
 ## 11. Launch-Ops 당일 운영 루프
 
 AI가 read-only로 확인한 최신 원격 상태:
@@ -371,13 +418,14 @@ AI가 read-only로 확인한 최신 원격 상태:
 
 Launch-Ops 전환 전 필수 수동 확인:
 
-- [ ] 운영자 Admin 계정 + MFA + no-mutation authenticated smoke 완료.
+- [ ] 운영자 Admin 계정 + MFA + no-mutation authenticated smoke 완료. — **MFA = DEFER (유료 · 2026-07-11)** · 계정 smoke만 soft-launch 가능
 - [ ] 첫 reconciliation을 실행하거나 scheduled `phonara_daily_reconciliation` 후 결과 확인.
 - [ ] `reconciliation_log` 최신 5개 check가 모두 `is_match = true`.
 - [ ] `system_halt=false`, `system_readonly=false` 유지.
 - [ ] `feature_withdrawal_enabled=false` 유지(출금은 별도 운영 승인 전까지 닫힘).
 - [ ] open ops alerts, pending queues, active risk flags, open STR cases가 모두 0 또는 운영자가 사유를 확인함.
 - [ ] 출시 후 24시간 high-risk freeze: feature flag 변경, withdrawal enable, reserve edit, manual balance/ledger correction, admin high-risk RPC는 원칙적으로 금지. 예외 시 reason + audit row 확인.
+- [ ] **실입금 · insurance/treasury 시드 자본** — **DEFER (2026-07-11)** · 실돈 CB/GO 직전 ([`P13_T0A_PROD_PREFLIGHT.md`](../docs/OPERATIONS/P13_T0A_PROD_PREFLIGHT.md) §3.1 D2)
 
 확인 SQL:
 
@@ -466,10 +514,12 @@ bun run build
   ✅ 완료 — pg_cron 마이그레이션으로 자동화됨 (수동 작업 없음)
 
 나중에 (AI가 코드 완성 후 / 출시 직전)
-  3. [ ] MFA + HIBP Auth 설정
+  3. [ ] MFA + HIBP Auth 설정 — **MFA = DEFER 2026-07-11 (유료)** · **HIBP = DEFER 2026-07-13 (402 Pro+ · `stack:auth-hibp-enable`)**
   4. [ ] 프로덕션 배포 환경 변수
   5. [ ] GitHub Secrets (CI/CD)
   6. [ ] VAPID 키 (PWA)
-  7. [ ] 운영자 Admin 계정 + 무변경 authenticated smoke
+  7. [ ] 운영자 Admin 계정 + 무변경 authenticated smoke (MFA 제외 가능)
   8. [ ] Launch-Ops 첫 reconciliation green 확인
+  9. [ ] 실입금 · insurance/treasury 시드 — **DEFER 2026-07-11** (실돈 CB/GO 직전)
+       정본: docs/OPERATIONS/P13_T0A_PROD_PREFLIGHT.md §3.1
 ```

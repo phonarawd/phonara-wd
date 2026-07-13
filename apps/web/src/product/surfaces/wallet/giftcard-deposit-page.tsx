@@ -1,6 +1,12 @@
 import { useEffect } from 'react';
 import { ArrowLeft, CheckCircle2, Circle, Gift, RefreshCw } from 'lucide-react';
+import { Navigate } from '@tanstack/react-router';
 
+import {
+  hasAvailableGiftcardMarket,
+  shouldRedirectGiftcardDepositRoute,
+  WALLET_DEPOSIT_HUB_ROUTE,
+} from '@/domain/wallet-capability-rails-display-contract';
 import { useGiftcardDepositController } from '@/features/wallet/use-giftcard-deposit-controller';
 import { formatBpsAsPercent } from '@/features/wallet/giftcard-deposit-page-display';
 import { useT } from '@/product/i18n';
@@ -89,6 +95,11 @@ export function GiftcardDepositPage() {
 
   if (engine.loading) {
     return <GiftcardDepositLoadingShell />;
+  }
+
+  const giftcardMarketAvailable = hasAvailableGiftcardMarket(engine.marketRows.length);
+  if (shouldRedirectGiftcardDepositRoute(giftcardMarketAvailable) || engine.marketEmpty) {
+    return <Navigate to={WALLET_DEPOSIT_HUB_ROUTE} replace />;
   }
 
   const preview = engine.submitResult ?? engine.previewSnapshot;

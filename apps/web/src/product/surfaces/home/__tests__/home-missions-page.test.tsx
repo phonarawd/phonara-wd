@@ -59,6 +59,13 @@ function makeEngine(
     openMission: vi.fn(),
     closeMission: vi.fn(),
     claimMission: vi.fn(),
+    appInstallAction: {
+      canAct: true,
+      busy: false,
+      errorKey: null,
+      ctaKey: 'mission.growth.appInstall.cta',
+      recordOrInstall: vi.fn(),
+    },
     ...overrides,
   };
 }

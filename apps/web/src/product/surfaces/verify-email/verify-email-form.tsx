@@ -39,7 +39,7 @@ export function VerifyEmailForm({ engine, onSubmit }: VerifyEmailFormProps) {
     return (
       <div className="flex flex-col gap-4" data-testid="verify-email-sent">
         <div
-          className="border-line bg-surface-raised flex flex-col gap-2 rounded-(--ds-radius-lg) border p-4"
+          className="border-line bg-surface-raised flex flex-col gap-2 rounded-lg border p-4"
           role="status"
         >
           <p className="text-foreground m-0 text-sm font-medium">
@@ -67,7 +67,7 @@ export function VerifyEmailForm({ engine, onSubmit }: VerifyEmailFormProps) {
           <button
             type="button"
             data-testid="verify-email-resend"
-            className="text-primary font-medium underline-offset-4 hover:underline disabled:opacity-50"
+            className="text-accent font-medium underline-offset-4 hover:underline disabled:opacity-50"
             disabled={engine.resendBusy}
             onClick={() => void engine.resendVerificationEmail()}
           >
@@ -79,7 +79,7 @@ export function VerifyEmailForm({ engine, onSubmit }: VerifyEmailFormProps) {
 
         <AuthRouteLink
           href="/login"
-          className="text-primary inline-flex items-center justify-center gap-1 text-sm font-medium underline-offset-4 hover:underline"
+          className="text-accent inline-flex items-center justify-center gap-1 text-sm font-medium underline-offset-4 hover:underline"
         >
           <ArrowLeft className="size-3.5" aria-hidden />
           {t('auth.entry.reset.backToLogin')}
@@ -135,7 +135,7 @@ export function VerifyEmailForm({ engine, onSubmit }: VerifyEmailFormProps) {
         {t('auth.entry.signup.haveAccount')}{' '}
         <AuthRouteLink
           href="/login"
-          className="text-primary font-medium underline-offset-4 hover:underline"
+          className="text-accent font-medium underline-offset-4 hover:underline"
         >
           {t('auth.entry.signup.toLogin')}
         </AuthRouteLink>

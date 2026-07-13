@@ -4,9 +4,13 @@
  * route ownership, defer rules, and §7 Canary triggers when payout paths go user-facing live.
  *
  * Authority: `docs/ENGINE_APEX_CLOSEOUT.md` (frozen) · `docs/SSOT/ENGINE_BOUNDARY.md` §E11
+ * E3: `rpc_get_affiliate_rank_leaderboard` exists — live UI gated by `LAUNCH_GATES.referralLeaderboardLive`.
  */
 
+import { LAUNCH_GATES } from '../lib/launch-gates';
+
 export const REFERRAL_REGISTER_RPC = 'rpc_register_referral' as const;
+export const AFFILIATE_RANK_LEADERBOARD_RPC = 'rpc_get_affiliate_rank_leaderboard' as const;
 export const AFFILIATE_RELATIONSHIP_RPC = 'rpc_register_affiliate_relationship' as const;
 export const AFFILIATE_SETTLEMENTS_RUN_RPC = 'rpc_run_affiliate_settlements' as const;
 export const AFFILIATE_APPROVAL_RPC = 'rpc_approve_affiliate_commission' as const;
@@ -69,7 +73,11 @@ export const AFFILIATE_PARTNER_ENGINE_BRANCHES: Readonly<
     rpc: AFFILIATE_APPROVAL_RPC,
     moneyPath: true,
   },
-  affiliate_rank_leaderboard: { engine: 'missing', rpc: null, moneyPath: false },
+  affiliate_rank_leaderboard: {
+    engine: 'exists',
+    rpc: AFFILIATE_RANK_LEADERBOARD_RPC,
+    moneyPath: false,
+  },
   affiliate_daily_aggregates_read: { engine: 'partial', rpc: null, moneyPath: false },
 };
 
@@ -132,9 +140,11 @@ export function resolveAffiliatePartnerBranchExposure(
   branch: AffiliatePartnerEngineBranch,
 ): AffiliatePartnerExposureMode {
   const row = AFFILIATE_PARTNER_ENGINE_BRANCHES[branch];
+  if (branch === 'affiliate_rank_leaderboard') {
+    return LAUNCH_GATES.referralLeaderboardLive ? 'live' : 'defer_stub';
+  }
   if (row.engine === 'missing') return 'defer_stub';
   if (row.engine === 'partial') return 'built_hidden';
-  if (branch === 'affiliate_rank_leaderboard') return 'defer_stub';
   if (branch === 'affiliate_settlements_read') return 'built_hidden';
   return 'live';
 }
@@ -158,9 +168,12 @@ export function resolvePartnerPageGated(searchPartner: unknown): boolean {
   return s !== '1' && s !== 'true';
 }
 
-/** Static `PARTNER_RANK_SNAPSHOT` on partner page — presentation only until engine leaderboard RPC. */
+/**
+ * Partner/referral rank snapshot — deferred until GATE unlock
+ * (`LAUNCH_GATES.referralLeaderboardLive`). E5 wires the live list UI.
+ */
 export function shouldDeferPartnerRankSnapshot(): boolean {
-  return AFFILIATE_PARTNER_ENGINE_BRANCHES.affiliate_rank_leaderboard.engine !== 'exists';
+  return !LAUNCH_GATES.referralLeaderboardLive;
 }
 
 /**

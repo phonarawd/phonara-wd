@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Casino game metadata — search/embed engine glue (posters stripped in Phase D).
  */
 
@@ -81,7 +81,7 @@ const ALL: Record<CasinoGameId, CasinoGameMeta> = {
     maxWin24hKrw: 42_180_000,
     avgMultiplier: 2.14,
     tone: 'from-rose-500/25 to-transparent',
-    to: '/casino/crash',
+    to: '/games/crash',
     accentHex: '#f43f5e',
     topWin24h: { user: 'pilot_42', amountKrw: 42180000, multiplier: 412.5 },
     howToPlayKeys: [
@@ -106,7 +106,7 @@ const ALL: Record<CasinoGameId, CasinoGameMeta> = {
     maxWin24hKrw: 18_420_000,
     avgMultiplier: 1.42,
     tone: 'from-emerald-500/25 to-transparent',
-    to: '/casino/plinko',
+    to: '/games/plinko',
     accentHex: '#10b981',
     topWin24h: { user: 'drop.king', amountKrw: 18420000, multiplier: 184.2 },
     howToPlayKeys: [
@@ -131,7 +131,7 @@ const ALL: Record<CasinoGameId, CasinoGameMeta> = {
     maxWin24hKrw: 24_700_000,
     avgMultiplier: 1.86,
     tone: 'from-amber-500/25 to-transparent',
-    to: '/casino/mines',
+    to: '/games/mines',
     accentHex: '#f59e0b',
     topWin24h: { user: 'sap.7', amountKrw: 24700000, multiplier: 247.0 },
     howToPlayKeys: [
@@ -156,7 +156,7 @@ const ALL: Record<CasinoGameId, CasinoGameMeta> = {
     maxWin24hKrw: 9_840_000,
     avgMultiplier: 1.18,
     tone: 'from-sky-500/25 to-transparent',
-    to: '/casino/dice',
+    to: '/games/dice',
     accentHex: '#0ea5e9',
     topWin24h: { user: 'd6.lord', amountKrw: 9840000, multiplier: 98.4 },
     howToPlayKeys: [
@@ -181,7 +181,7 @@ const ALL: Record<CasinoGameId, CasinoGameMeta> = {
     maxWin24hKrw: 31_500_000,
     avgMultiplier: 2.42,
     tone: 'from-violet-500/25 to-transparent',
-    to: '/casino/limbo',
+    to: '/games/limbo',
     accentHex: '#8b5cf6',
     topWin24h: { user: 'void.x', amountKrw: 31500000, multiplier: 315.0 },
     howToPlayKeys: [
@@ -206,7 +206,7 @@ const ALL: Record<CasinoGameId, CasinoGameMeta> = {
     maxWin24hKrw: 6_240_000,
     avgMultiplier: 1.34,
     tone: 'from-teal-500/25 to-transparent',
-    to: '/casino/hilo',
+    to: '/games/hilo',
     accentHex: '#14b8a6',
     topWin24h: { user: 'card.qz', amountKrw: 6240000, multiplier: 62.4 },
     howToPlayKeys: [
@@ -231,7 +231,7 @@ const ALL: Record<CasinoGameId, CasinoGameMeta> = {
     maxWin24hKrw: 8_400_000,
     avgMultiplier: 1.92,
     tone: 'from-emerald-600/25 to-transparent',
-    to: '/casino/blackjack',
+    to: '/games/blackjack',
     accentHex: '#059669',
     topWin24h: { user: 'split.21', amountKrw: 8400000, multiplier: 16.8 },
     howToPlayKeys: [
@@ -256,7 +256,7 @@ const ALL: Record<CasinoGameId, CasinoGameMeta> = {
     maxWin24hKrw: 12_600_000,
     avgMultiplier: 2.18,
     tone: 'from-rose-600/25 to-transparent',
-    to: '/casino/roulette',
+    to: '/games/roulette',
     accentHex: '#e11d48',
     topWin24h: { user: 'red.36', amountKrw: 12600000, multiplier: 35.0 },
     howToPlayKeys: [
@@ -281,7 +281,7 @@ const ALL: Record<CasinoGameId, CasinoGameMeta> = {
     maxWin24hKrw: 28_700_000,
     avgMultiplier: 2.04,
     tone: 'from-amber-600/25 to-transparent',
-    to: '/casino/gold-rush',
+    to: '/games/gold-rush',
     accentHex: '#d97706',
     topWin24h: { user: 'nugget', amountKrw: 28700000, multiplier: 287.0 },
     howToPlayKeys: [
@@ -306,7 +306,7 @@ const ALL: Record<CasinoGameId, CasinoGameMeta> = {
     maxWin24hKrw: 16_840_000,
     avgMultiplier: 1.74,
     tone: 'from-emerald-400/25 to-transparent',
-    to: '/casino/mint-reels',
+    to: '/games/mint-reels',
     accentHex: '#34d399',
     topWin24h: { user: 'mint.fr', amountKrw: 16840000, multiplier: 168.4 },
     howToPlayKeys: [
@@ -331,7 +331,7 @@ const ALL: Record<CasinoGameId, CasinoGameMeta> = {
     maxWin24hKrw: 19_320_000,
     avgMultiplier: 1.96,
     tone: 'from-amber-700/25 to-transparent',
-    to: '/casino/deepshaft',
+    to: '/games/deepshaft',
     accentHex: '#b45309',
     topWin24h: { user: 'shaft.7', amountKrw: 19320000, multiplier: 193.2 },
     howToPlayKeys: [
@@ -356,7 +356,7 @@ const ALL: Record<CasinoGameId, CasinoGameMeta> = {
     maxWin24hKrw: 22_140_000,
     avgMultiplier: 2.28,
     tone: 'from-violet-500/25 to-transparent',
-    to: '/casino/momentum',
+    to: '/games/momentum',
     accentHex: '#8b5cf6',
     topWin24h: { user: 'chain.x9', amountKrw: 22140000, multiplier: 221.4 },
     howToPlayKeys: [

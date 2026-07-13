@@ -53,8 +53,8 @@ describe('trade-exchange-parity-display-contract §22.2.1', () => {
     expect(findTradeParityRow('bottom-dock')?.tier).toBe('DONE');
     expect(findTradeParityRow('spot-market')?.tier).toBe('DONE');
     expect(findTradeParityRow('chart-overlays')?.phonara).toBe('yes');
-    expect(findTradeParityRow('hedge-position')?.tier).toBe('B');
-    expect(findTradeParityRow('okx-parity-flag')?.phonara).toBe('no');
+    expect(findTradeParityRow('hedge-position')?.tier).toBe('DONE');
+    expect(findTradeParityRow('okx-parity-flag')?.phonara).toBe('yes');
   });
 
   it('maps all three exchanges as reference on every matrix row', () => {
@@ -204,10 +204,9 @@ describe('trade-exchange-parity-display-contract §13.1.1 TRADE_DUAL_CURRENCY_MA
 
   it('maps sports and casino stake currency to P10 todos', () => {
     expect(findTradeDualCurrencyRow('sports-slip-currency')?.ownerTodo).toBeNull();
-    expect(findTradeDualCurrencyRow('casino-stake-currency')?.ownerTodo).toBe(
-      'p10-casino-replay-and-infra',
-    );
+    expect(findTradeDualCurrencyRow('casino-stake-currency')?.ownerTodo).toBeNull();
     expect(findTradeDualCurrencyRow('sports-slip-currency')?.phonara).toBe('yes');
+    expect(findTradeDualCurrencyRow('casino-stake-currency')?.phonara).toBe('yes');
   });
 });
 
@@ -264,10 +263,10 @@ describe('trade-exchange-parity-display-contract §32.7 TRADE_USER_COMPLAINT_RIS
     expect(findTradeComplaintRisk('pnl-dash')?.mitigatedBy).toBe('live');
   });
 
-  it('assigns hedge built_hidden, spot-limit live, reduce-only disabled, position-tpsl live', () => {
-    expect(findTradeComplaintRisk('hedge-visible')?.mitigatedBy).toBe('built_hidden');
+  it('assigns hedge live, spot-limit live, reduce-only live, position-tpsl live', () => {
+    expect(findTradeComplaintRisk('hedge-visible')?.mitigatedBy).toBe('live');
     expect(findTradeComplaintRisk('spot-limit-visible')?.mitigatedBy).toBe('live');
-    expect(findTradeComplaintRisk('reduce-only-visible')?.mitigatedBy).toBe('disabled');
+    expect(findTradeComplaintRisk('reduce-only-visible')?.mitigatedBy).toBe('live');
     expect(findTradeComplaintRisk('position-tpsl-edit')?.mitigatedBy).toBe('live');
     expect(findTradeComplaintRisk('position-tpsl-edit')?.rpcPath).toBe(FUTURES_UPDATE_SLTP_RPC);
   });
@@ -325,13 +324,13 @@ describe('trade-exchange-parity-display-contract §13.1.2 platform settlement ·
 });
 
 describe('trade-exchange-parity-display-contract sync · margin-position-mode · trade-order-states', () => {
-  it('keeps OKX parity flag false and hedge hidden across contracts', () => {
-    expect(OKX_MARGIN_POSITION_PARITY_ACHIEVED).toBe(false);
+  it('keeps OKX parity flag true and hedge live across contracts', () => {
+    expect(OKX_MARGIN_POSITION_PARITY_ACHIEVED).toBe(true);
     expect(() => assertTradeParityContractSync()).not.toThrow();
   });
 
   it('aligns order-states wire status with complaint risk mitigations', () => {
-    expect(TRADE_ORDER_UI_WIRE_STATUS.hedge_mode_toggle).toBe('built_hidden');
+    expect(TRADE_ORDER_UI_WIRE_STATUS.hedge_mode_toggle).toBe('live');
     expect(TRADE_ORDER_UI_WIRE_STATUS.spot_limit_tab).toBe('live');
     expect(TRADE_ORDER_UI_WIRE_STATUS.futures_margin_cross).toBe('built_disabled');
   });

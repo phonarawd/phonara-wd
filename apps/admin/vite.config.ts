@@ -5,7 +5,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 const adminSrc = fileURLToPath(new URL('./src', import.meta.url));
-const webProduct = fileURLToPath(new URL('../web/src/product', import.meta.url));
+const webSrc = fileURLToPath(new URL('../web/src', import.meta.url));
+const webProduct = `${webSrc}/product`;
 const i18nReactSrc = fileURLToPath(new URL('../../packages/i18n/src/react.tsx', import.meta.url));
 const i18nSrc = fileURLToPath(new URL('../../packages/i18n/src/index.ts', import.meta.url));
 
@@ -25,6 +26,11 @@ export default defineConfig({
   resolve: {
     dedupe: ['react', 'react-dom'],
     alias: [
+      // Admin-only primitives (§29.6) — must resolve before shared web primitives alias.
+      {
+        find: '@/product/primitives/admin-table',
+        replacement: `${adminSrc}/product/primitives/admin-table.tsx`,
+      },
       { find: '@/product/primitives', replacement: `${webProduct}/primitives` },
       { find: '@/product/tokens', replacement: `${webProduct}/tokens` },
       {
@@ -32,7 +38,10 @@ export default defineConfig({
         replacement: `${webProduct}/layout/content-shell.tsx`,
       },
       { find: '@/product/i18n', replacement: `${adminSrc}/product/i18n` },
-      { find: '@/lib/i18n', replacement: `${adminSrc}/lib/i18n.tsx` },
+      // Shared web primitives above (field/status-badge/confirm-dialog/money-display)
+      // import these `@/lib/*` submodules — admin has no equivalent, so route to web's.
+      { find: '@/lib/i18n', replacement: `${webSrc}/lib/i18n.tsx` },
+      { find: '@/lib/money-display', replacement: `${webSrc}/lib/money-display.ts` },
       { find: '@', replacement: adminSrc },
       { find: '@phonara/i18n/react', replacement: i18nReactSrc },
       { find: '@phonara/i18n', replacement: i18nSrc },
@@ -46,6 +55,7 @@ export default defineConfig({
       'react/jsx-runtime',
       '@tanstack/react-router',
       '@tanstack/react-query',
+      '@tanstack/react-table',
       '@supabase/supabase-js',
       'zod',
       'lucide-react',

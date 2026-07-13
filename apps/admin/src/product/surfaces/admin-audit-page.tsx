@@ -8,13 +8,13 @@ import { useAdminAuditDesk } from '@/hooks/admin/useAdminAuditDesk';
 import type { AuditDomain, AuditFilters } from '@/hooks/admin/useAdminAuditAlertsMock';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { Input } from '@/product/primitives/input';
 import { cn } from '@/product/primitives/lib/cn';
-import { Skeleton } from '@/product/primitives/skeleton';
 
 type DatePreset = AuditFilters['datePreset'];
 
@@ -70,6 +70,7 @@ export function AdminAuditPage() {
     auditFilters,
     setAuditFilters,
     refreshAuditFeed,
+    exportAuditCsv,
     auditDomains,
     isLoading,
     isError,
@@ -87,6 +88,43 @@ export function AdminAuditPage() {
     setAuditFilters({ search: '', domains: [], datePreset: 'all' });
     setSelectedId(null);
   };
+  const auditColumns = [
+    {
+      id: 'at',
+      header: t('admin.audit.feed.col.at'),
+      cell: ({ row }: { row: (typeof filteredAuditFeed)[number] }) => formatWhen(row.at, locale),
+      meta: { className: 'text-foreground-muted tabular-nums' },
+    },
+    {
+      id: 'domain',
+      header: t('admin.audit.feed.col.domain'),
+      cell: ({ row }: { row: (typeof filteredAuditFeed)[number] }) => t(DOMAIN_KEYS[row.domain]),
+    },
+    {
+      id: 'action',
+      header: t('admin.audit.feed.col.action'),
+      cell: ({ row }: { row: (typeof filteredAuditFeed)[number] }) =>
+        formatActionLabel(row.actionKey, t),
+    },
+    {
+      id: 'actor',
+      header: t('admin.audit.feed.col.actor'),
+      cell: ({ row }: { row: (typeof filteredAuditFeed)[number] }) => t(row.actorKey as MessageKey),
+      meta: { className: 'text-foreground-muted' },
+    },
+    {
+      id: 'subject',
+      header: t('admin.audit.feed.col.subject'),
+      cell: ({ row }: { row: (typeof filteredAuditFeed)[number] }) => row.subject ?? '—',
+      meta: { className: 'text-foreground-muted' },
+    },
+    {
+      id: 'reason',
+      header: t('admin.audit.feed.col.reason'),
+      cell: ({ row }: { row: (typeof filteredAuditFeed)[number] }) => row.reason || '—',
+      meta: { className: 'text-foreground-muted' },
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-6">
@@ -102,16 +140,15 @@ export function AdminAuditPage() {
           </p>
           <p className="text-foreground-muted m-0 text-sm">{t('admin.audit.description')}</p>
         </div>
-        <Button
-          variant="outline"
-          size="md"
-          loading={isFetching}
-          onClick={refreshAuditFeed}
-          className="shrink-0"
-        >
-          <RefreshCw className={cn('size-4', isFetching && 'animate-spin')} aria-hidden />
-          {t('admin.audit.feed.refresh')}
-        </Button>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <Button variant="outline" size="md" onClick={exportAuditCsv}>
+            {t('admin.audit.feed.exportCsv')}
+          </Button>
+          <Button variant="outline" size="md" loading={isFetching} onClick={refreshAuditFeed}>
+            <RefreshCw className={cn('size-4', isFetching && 'animate-spin')} aria-hidden />
+            {t('admin.audit.feed.refresh')}
+          </Button>
+        </div>
       </section>
 
       <HowItWorks
@@ -130,10 +167,7 @@ export function AdminAuditPage() {
       ) : null}
 
       {isLoading ? (
-        <div className="space-y-3" aria-busy="true">
-          <Skeleton className="h-10 max-w-md rounded-(--ds-radius-md)" />
-          <Skeleton className="h-64 rounded-(--ds-radius-lg)" />
-        </div>
+        <AdminTable columns={auditColumns} rows={[]} loading loadingRowCount={6} minWidth={960} />
       ) : auditFeed.length === 0 ? (
         <EmptyState
           title={t('admin.audit.empty.title')}
@@ -199,59 +233,24 @@ export function AdminAuditPage() {
               </div>
             </div>
 
-            {filteredAuditFeed.length === 0 ? (
-              <EmptyState
-                title={t('admin.audit.feed.empty')}
-                description={t('admin.audit.empty.desc')}
-                actionLabel={t('admin.audit.clearFilters')}
-                onAction={clearFilters}
-              />
-            ) : (
-              <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                <table className="w-full min-w-[960px] border-collapse text-left text-sm">
-                  <thead className="bg-surface-raised text-foreground-muted">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">{t('admin.audit.feed.col.at')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.audit.feed.col.domain')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.audit.feed.col.action')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.audit.feed.col.actor')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.audit.feed.col.subject')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.audit.feed.col.reason')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredAuditFeed.map((row) => {
-                      const selected = row.id === selectedId;
-                      return (
-                        <tr
-                          key={row.id}
-                          className={cn(
-                            'border-line cursor-pointer border-t align-top',
-                            selected && 'bg-surface-raised',
-                          )}
-                          onClick={() => setSelectedId(selected ? null : row.id)}
-                        >
-                          <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                            {formatWhen(row.at, locale)}
-                          </td>
-                          <td className="text-foreground px-4 py-3">
-                            {t(DOMAIN_KEYS[row.domain])}
-                          </td>
-                          <td className="text-foreground px-4 py-3">
-                            {formatActionLabel(row.actionKey, t)}
-                          </td>
-                          <td className="text-foreground-muted px-4 py-3">
-                            {t(row.actorKey as MessageKey)}
-                          </td>
-                          <td className="text-foreground-muted px-4 py-3">{row.subject ?? '—'}</td>
-                          <td className="text-foreground-muted px-4 py-3">{row.reason || '—'}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <AdminTable
+              columns={auditColumns}
+              rows={filteredAuditFeed}
+              getRowId={(row) => row.id}
+              minWidth={960}
+              empty={
+                <EmptyState
+                  title={t('admin.audit.feed.empty')}
+                  description={t('admin.audit.empty.desc')}
+                  actionLabel={t('admin.audit.clearFilters')}
+                  onAction={clearFilters}
+                />
+              }
+              onRowClick={(row) => setSelectedId((current) => (current === row.id ? null : row.id))}
+              getRowClassName={(row) =>
+                cn('align-top', row.id === selectedId && 'bg-surface-raised')
+              }
+            />
           </section>
 
           {selectedRow ? (

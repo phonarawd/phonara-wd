@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  LEGAL_AFFILIATE_ROUTE,
+  LEGAL_AFFILIATE_SECTION_IDS,
+  LEGAL_AFFILIATE_SURFACE,
+  LEGAL_COOKIES_ROUTE,
+  LEGAL_COOKIES_SECTION_IDS,
+  LEGAL_COOKIES_SURFACE,
   LEGAL_DOC_EFFECTIVE_DATE,
   LEGAL_PRIVACY_ROUTE,
   LEGAL_PRIVACY_SECTION_IDS,
@@ -15,6 +21,8 @@ import {
   LEGAL_TERMS_ROUTE,
   LEGAL_TERMS_SECTION_IDS,
   LEGAL_TERMS_SURFACE,
+  legalAffiliateSectionKey,
+  legalCookiesSectionKey,
   legalPrivacySectionKey,
   legalRgSectionKey,
   legalRiskCardKey,
@@ -70,6 +78,22 @@ describe('legal-display-contract', () => {
     expect(legalRiskRgItemKey('support')).toBe('legal.risk.rg.item.support');
   });
 
+  it('pins canonical affiliate and cookies routes (P12)', () => {
+    expect(LEGAL_AFFILIATE_ROUTE).toBe('/legal/affiliate');
+    expect(LEGAL_AFFILIATE_SURFACE).toContain('affiliate-page.tsx');
+    expect(LEGAL_COOKIES_ROUTE).toBe('/legal/cookies');
+    expect(LEGAL_COOKIES_SURFACE).toContain('cookies-page.tsx');
+  });
+
+  it('lists six affiliate and six cookies sections', () => {
+    expect(LEGAL_AFFILIATE_SECTION_IDS).toHaveLength(6);
+    expect(legalAffiliateSectionKey('s1', 'title')).toBe('legal.affiliate.s1.title');
+    expect(legalAffiliateSectionKey('s6', 'body')).toBe('legal.affiliate.s6.body');
+    expect(LEGAL_COOKIES_SECTION_IDS).toHaveLength(6);
+    expect(legalCookiesSectionKey('s1', 'title')).toBe('legal.cookies.s1.title');
+    expect(legalCookiesSectionKey('s4', 'body')).toBe('legal.cookies.s4.body');
+  });
+
   it('aligns effective date with onboarding consent doc version', () => {
     expect(LEGAL_DOC_EFFECTIVE_DATE).toBe('2026-06-11');
   });
@@ -79,5 +103,7 @@ describe('legal-display-contract', () => {
     expect(resolveLegalDocRoute('privacy')).toBe('/legal/privacy');
     expect(resolveLegalDocRoute('rg')).toBe('/legal/responsible-gaming');
     expect(resolveLegalDocRoute('risk')).toBe('/legal/risk-disclosure');
+    expect(resolveLegalDocRoute('affiliate')).toBe('/legal/affiliate');
+    expect(resolveLegalDocRoute('cookies')).toBe('/legal/cookies');
   });
 });

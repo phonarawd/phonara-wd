@@ -1,0 +1,178 @@
+/**
+ * DA W6 Brand elevation — §34.18–34.20 · BrandMark aurora · domain empty · Quad Stream loading.
+ * Axis colors = brand-display-contract BRAND_AXIS_COLORS (Quad Stream only).
+ */
+
+:root {
+  --ds-brand-axis-earn: #2ec4a0;
+  --ds-brand-axis-trading: #4b8fe8;
+  --ds-brand-axis-sports: #e07a52;
+  --ds-brand-axis-casino: #d456a0;
+}
+
+/* §34.18 BrandMark aurora — geometric recall + Quad Stream glow */
+.ds-brand-mark-aurora {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+}
+
+.ds-brand-mark-aurora__glow {
+  position: absolute;
+  inset: -12%;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 18% 28%,
+      color-mix(in oklch, var(--ds-brand-axis-earn) 42%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 82% 22%,
+      color-mix(in oklch, var(--ds-brand-axis-trading) 38%, transparent),
+      transparent 52%
+    ),
+    radial-gradient(
+      circle at 22% 78%,
+      color-mix(in oklch, var(--ds-brand-axis-sports) 36%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 78% 82%,
+      color-mix(in oklch, var(--ds-brand-axis-casino) 36%, transparent),
+      transparent 55%
+    );
+  opacity: 0.85;
+  filter: blur(10px);
+  animation: ds-brand-aurora-breathe 6s var(--ds-ease-standard) infinite alternate;
+}
+
+.ds-brand-mark-aurora__mark {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+@keyframes ds-brand-aurora-breathe {
+  from {
+    opacity: 0.7;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 0.95;
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-brand-mark-aurora__glow {
+    animation: none;
+    transform: none;
+    opacity: 0.8;
+  }
+}
+
+.ds-brand-mark-aurora[data-static='true'] .ds-brand-mark-aurora__glow {
+  animation: none;
+  transform: none;
+}
+
+/* §34.19 Domain empty marks */
+.ds-domain-empty-mark {
+  display: inline-flex;
+  width: 3.5rem;
+  height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--ds-foreground-muted, currentColor);
+}
+
+.ds-domain-empty-mark[data-domain='casino'] {
+  color: var(--ds-brand-axis-casino);
+}
+
+.ds-domain-empty-mark[data-domain='trade'] {
+  color: var(--ds-brand-axis-trading);
+}
+
+.ds-domain-empty-mark[data-domain='wallet'] {
+  color: var(--ds-brand-axis-earn);
+}
+
+.ds-domain-empty-mark[data-domain='sports'] {
+  color: var(--ds-brand-axis-sports);
+}
+
+.ds-domain-empty-mark svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* §34.20 Quad Stream loading signature */
+.ds-quad-stream-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.ds-quad-stream-loading__axis {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0.35;
+  animation: ds-quad-stream-pulse 1.2s var(--ds-ease-standard) infinite;
+}
+
+.ds-quad-stream-loading__axis[data-axis='earn'] {
+  color: var(--ds-brand-axis-earn);
+  animation-delay: 0ms;
+}
+
+.ds-quad-stream-loading__axis[data-axis='trading'] {
+  color: var(--ds-brand-axis-trading);
+  animation-delay: 150ms;
+}
+
+.ds-quad-stream-loading__axis[data-axis='sports'] {
+  color: var(--ds-brand-axis-sports);
+  animation-delay: 300ms;
+}
+
+.ds-quad-stream-loading__axis[data-axis='casino'] {
+  color: var(--ds-brand-axis-casino);
+  animation-delay: 450ms;
+}
+
+@keyframes ds-quad-stream-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-quad-stream-loading__axis {
+    animation: none;
+    opacity: 0.85;
+    transform: none;
+  }
+}
+
+.ds-quad-stream-loading[data-static='true'] .ds-quad-stream-loading__axis {
+  animation: none;
+  opacity: 0.85;
+  transform: none;
+}

@@ -70,6 +70,10 @@ export default defineConfig({
         resolve: {
           alias: [
             {
+              find: '@/product/primitives/admin-table',
+              replacement: path.resolve(root, 'apps/admin/src/product/primitives/admin-table.tsx'),
+            },
+            {
               find: '@/product/primitives',
               replacement: path.resolve(root, 'apps/web/src/product/primitives'),
             },
@@ -89,9 +93,15 @@ export default defineConfig({
               find: '@/product/i18n',
               replacement: path.resolve(root, 'apps/admin/src/product/i18n'),
             },
+            // Shared web primitives above (field/status-badge/confirm-dialog/money-display)
+            // import these `@/lib/*` submodules — admin has no equivalent, so route to web's.
             {
               find: '@/lib/i18n',
-              replacement: path.resolve(root, 'apps/admin/src/lib/i18n.tsx'),
+              replacement: path.resolve(root, 'apps/web/src/lib/i18n.tsx'),
+            },
+            {
+              find: '@/lib/money-display',
+              replacement: path.resolve(root, 'apps/web/src/lib/money-display.ts'),
             },
             { find: '@', replacement: path.resolve(root, 'apps/admin/src') },
             ...Object.entries(packageAliases).map(([find, replacement]) => ({

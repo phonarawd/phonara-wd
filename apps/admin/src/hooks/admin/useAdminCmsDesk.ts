@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AdminAuditEvent } from '@/shared-types';
-import { supabase } from '../../lib/supabase';
+import { callRpc } from '../../lib/rpc';
 import type {
   AdminCmsPageRow,
   AdminCmsPromoRow,
@@ -110,13 +110,8 @@ function mapPromoRow(row: CmsEngineRow): AdminCmsPromoRow {
 }
 
 async function listEngineRows(): Promise<CmsEngineRow[]> {
-  const { data, error } = await (
-    supabase as {
-      rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
-    }
-  ).rpc('rpc_admin_list_cms_content', {});
-  if (error) throw error;
-  return ((data ?? []) as Record<string, unknown>[]).map((raw) => ({
+  const data = await callRpc('rpc_admin_list_cms_content');
+  return (data as Record<string, unknown>[]).map((raw) => ({
     id: String(raw['id'] ?? ''),
     content_key: String(raw['content_key'] ?? ''),
     kind: String(raw['kind'] ?? ''),
@@ -137,27 +132,27 @@ async function upsertEngineRow(
   row: CmsEngineRow,
   patch: Partial<Pick<CmsEngineRow, 'status' | 'starts_at' | 'ends_at'>>,
 ): Promise<boolean> {
-  const { error } = await (
-    supabase as {
-      rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
-    }
-  ).rpc('rpc_admin_upsert_cms_content', {
-    p_payload: {
-      id: row.id,
-      content_key: row.content_key,
-      kind: row.kind,
-      locale: row.locale,
-      surface: row.surface,
-      status: patch.status ?? row.status,
-      title: row.title,
-      body: row.body,
-      headline: row.headline,
-      priority: row.priority,
-      starts_at: patch.starts_at ?? row.starts_at,
-      ends_at: patch.ends_at ?? row.ends_at,
-    },
-  });
-  return !error;
+  try {
+    await callRpc('rpc_admin_upsert_cms_content', {
+      p_payload: {
+        id: row.id,
+        content_key: row.content_key,
+        kind: row.kind,
+        locale: row.locale,
+        surface: row.surface,
+        status: patch.status ?? row.status,
+        title: row.title,
+        body: row.body,
+        headline: row.headline,
+        priority: row.priority,
+        starts_at: patch.starts_at ?? row.starts_at,
+        ends_at: patch.ends_at ?? row.ends_at,
+      },
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** Engine-backed CMS desk — `rpc_admin_list_cms_content` / `rpc_admin_upsert_cms_content`. */
@@ -386,6 +381,7 @@ export function useAdminCmsDesk(): UseAdminCmsDesk {
     promoSurfaces: PROMO_SURFACES,
     promoStatuses: PROMO_STATUSES,
     audit,
+    refresh: invalidate,
     resetForTest: () => undefined,
   };
 }

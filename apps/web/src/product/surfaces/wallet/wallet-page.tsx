@@ -7,7 +7,6 @@ import { ledgerReasonLabelKey } from '@/features/wallet/ledger-labels';
 import { isPositiveAmount } from '@/lib/money-display';
 import { useI18n, useT } from '@/product/i18n';
 import { Button, buttonVariants } from '@/product/primitives/button';
-import { Card, CardBody, CardHeader, CardTitle } from '@/product/primitives/card';
 import { FiatHintDisclaimer } from '@/product/primitives/money-display-with-fiat-hint';
 import { Skeleton } from '@/product/primitives/skeleton';
 import { cn } from '@/product/primitives/lib/cn';
@@ -70,7 +69,7 @@ export function WalletPage() {
   if (engine.errorKey) {
     return (
       <div
-        className="border-danger/30 bg-surface flex flex-col items-start gap-3 rounded-(--ds-radius-lg) border p-4"
+        className="border-danger/30 bg-surface flex flex-col items-start gap-3 rounded-lg border p-4"
         data-testid="wallet-error"
         role="alert"
       >
@@ -107,69 +106,69 @@ export function WalletPage() {
         label={t('wallet.assets')}
         amount={engine.phonAvailableDisplay}
         fiatHint={hintFor(engine.phonAvailableDisplay, 'PHON')}
-      />
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">{t('wallet.currency.phon')}</CardTitle>
-          </CardHeader>
-          <CardBody className="space-y-2 pt-0">
-            <BalanceRow
-              label={t('wallet.available')}
-              amount={engine.phonAvailableDisplay}
-              currency="PHON"
-              hintFor={hintFor}
-            />
-            {showPhonLocked ? (
+        detailsTitle={t('wallet.hero.details')}
+        detailsSummary={t('wallet.hero.detailsSummary')}
+        expandLabel={t('wallet.hero.expand')}
+        collapseLabel={t('wallet.hero.collapse')}
+        details={
+          <div className="grid gap-4 sm:grid-cols-2" data-testid="wallet-hero-breakdown">
+            <div className="space-y-2">
+              <p className="text-foreground m-0 text-sm font-semibold">
+                {t('wallet.currency.phon')}
+              </p>
               <BalanceRow
-                label={t('wallet.lockedShort')}
-                amount={engine.phonLockedDisplay}
+                label={t('wallet.available')}
+                amount={engine.phonAvailableDisplay}
                 currency="PHON"
                 hintFor={hintFor}
               />
-            ) : null}
-            {showPhonSplit ? (
-              <>
+              {showPhonLocked ? (
                 <BalanceRow
-                  label={t('wallet.phon.realLabel')}
-                  amount={engine.phonRealAvailableDisplay!}
+                  label={t('wallet.lockedShort')}
+                  amount={engine.phonLockedDisplay}
                   currency="PHON"
                   hintFor={hintFor}
                 />
-                <BalanceRow
-                  label={t('wallet.phon.bonusLabel')}
-                  amount={engine.phonBonusAvailableDisplay!}
-                  currency="PHON"
-                  hintFor={hintFor}
-                />
-              </>
-            ) : null}
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">{t('wallet.currency.usdt')}</CardTitle>
-          </CardHeader>
-          <CardBody className="space-y-2 pt-0">
-            <BalanceRow
-              label={t('desk.wallet.available')}
-              amount={engine.usdtAvailableDisplay}
-              currency="USDT"
-              hintFor={hintFor}
-            />
-            {showUsdtLocked ? (
+              ) : null}
+              {showPhonSplit ? (
+                <>
+                  <BalanceRow
+                    label={t('wallet.phon.realLabel')}
+                    amount={engine.phonRealAvailableDisplay!}
+                    currency="PHON"
+                    hintFor={hintFor}
+                  />
+                  <BalanceRow
+                    label={t('wallet.phon.bonusLabel')}
+                    amount={engine.phonBonusAvailableDisplay!}
+                    currency="PHON"
+                    hintFor={hintFor}
+                  />
+                </>
+              ) : null}
+            </div>
+            <div className="space-y-2">
+              <p className="text-foreground m-0 text-sm font-semibold">
+                {t('wallet.currency.usdt')}
+              </p>
               <BalanceRow
-                label={t('wallet.lockedShort')}
-                amount={engine.usdtLockedDisplay}
+                label={t('desk.wallet.available')}
+                amount={engine.usdtAvailableDisplay}
                 currency="USDT"
                 hintFor={hintFor}
               />
-            ) : null}
-          </CardBody>
-        </Card>
-      </div>
+              {showUsdtLocked ? (
+                <BalanceRow
+                  label={t('wallet.lockedShort')}
+                  amount={engine.usdtLockedDisplay}
+                  currency="USDT"
+                  hintFor={hintFor}
+                />
+              ) : null}
+            </div>
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3" data-testid="wallet-cta-row">
         {engine.depositBlocked ? (
@@ -179,12 +178,14 @@ export function WalletPage() {
             className="col-span-2 md:col-span-1"
             disabled
             title={t('wallet.deposit.gate.paused')}
+            data-testid="wallet-cta-deposit"
           >
             {t('desk.wallet.bottomDeposit')}
           </Button>
         ) : (
           <a
             href="/wallet/deposit"
+            data-testid="wallet-cta-deposit"
             className={cn(
               buttonVariants({ variant: 'primary', size: 'lg' }),
               'col-span-2 md:col-span-1',
@@ -198,6 +199,7 @@ export function WalletPage() {
             variant="secondary"
             size="lg"
             disabled
+            data-testid="wallet-cta-withdraw"
             title={
               engine.withdrawalBlocked
                 ? t('wallet.withdraw.gate.paused')
@@ -209,6 +211,7 @@ export function WalletPage() {
         ) : (
           <a
             href="/wallet/withdraw"
+            data-testid="wallet-cta-withdraw"
             className={buttonVariants({ variant: 'secondary', size: 'lg' })}
           >
             {t('desk.wallet.bottomWithdraw')}
@@ -216,6 +219,7 @@ export function WalletPage() {
         )}
         <a
           href="/ledger"
+          data-testid="wallet-cta-ledger"
           className={cn(
             buttonVariants({ variant: 'outline', size: 'lg' }),
             'col-span-2 md:col-span-1',
@@ -251,7 +255,7 @@ export function WalletPage() {
             {t('wallet.activity.empty')}
           </p>
         ) : (
-          <ul className="border-line divide-line m-0 list-none divide-y rounded-(--ds-radius-md) border p-0">
+          <ul className="border-line divide-line m-0 list-none divide-y rounded-md border p-0">
             {engine.recentActivity.map((row) => (
               <li
                 key={row.id}

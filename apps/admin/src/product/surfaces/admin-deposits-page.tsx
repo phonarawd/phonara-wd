@@ -5,17 +5,30 @@ import { RefreshCw } from 'lucide-react';
 import type { MessageKey } from '@phonara/i18n';
 
 import {
+  isAdminKrwProofPending,
+  isAdminKrwProofViewable,
+} from '@/domain/admin-krw-proof-review-display-contract';
+import {
   useAdminWalletDesk,
   formatAmountString,
   type AdminDepositReconRow,
   type DepositMethod,
+  type DepositProofStatus,
   type DepositStatus,
 } from '@/hooks/admin/useAdminWalletDesk';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/product/primitives/dialog';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { Input } from '@/product/primitives/input';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
@@ -25,7 +38,7 @@ import { AdminQueueActionDialog } from '@/product/surfaces/admin-queue-action-di
 
 type MethodTab = 'all' | DepositMethod;
 
-type DepositActionKind = 'matchKrw' | 'matchCrypto' | 'approveGiftcard' | 'flag';
+type DepositActionKind = 'matchKrw' | 'matchCrypto' | 'approveGiftcard' | 'flag' | 'approveProof';
 
 interface DepositActionTarget {
   kind: DepositActionKind;
@@ -63,6 +76,13 @@ const MATCH_ACTION_KEYS: Record<
   },
 };
 
+const PROOF_STATUS_LABEL_KEYS: Record<DepositProofStatus, MessageKey> = {
+  none: 'admin.deposits.proofStatus.none',
+  pending: 'admin.deposits.proofStatus.pending',
+  approved: 'admin.deposits.proofStatus.approved',
+  rejected: 'admin.deposits.proofStatus.rejected',
+};
+
 function formatWhen(iso: string | null | undefined, locale: string): string {
   if (!iso) return '—';
   try {
@@ -86,6 +106,13 @@ function depositStatusState(status: DepositStatus): MoneyStatusState {
   return 'pending';
 }
 
+function proofStatusState(status: DepositProofStatus): MoneyStatusState {
+  if (status === 'pending') return 'reviewing';
+  if (status === 'approved') return 'settled';
+  if (status === 'rejected') return 'rejected';
+  return 'pending';
+}
+
 function isActionableDeposit(status: DepositStatus): boolean {
   return status === 'pending' || status === 'confirming' || status === 'pending_review';
 }
@@ -94,7 +121,7 @@ function pendingDeposits(rows: AdminDepositReconRow[]): AdminDepositReconRow[] {
   return rows.filter((row) => isActionableDeposit(row.status));
 }
 
-/** Admin deposit recon desk (`/deposits`) — `useAdminWalletDesk` match/flag actions (§29.2). */
+/** Admin deposit recon desk (`/deposits`) — match/flag + E10 KRW proof review (§29.2). */
 export function AdminDepositsPage() {
   const t = useT();
   const goTo = useAdminRouteNavigate();
@@ -107,14 +134,23 @@ export function AdminDepositsPage() {
     setDepositFilters,
     matchDeposit,
     flagDeposit,
+    reviewKrwDepositProof,
+    getKrwDepositProofUrl,
   } = useAdminWalletDesk();
 
   const [methodTab, setMethodTab] = useState<MethodTab>('all');
   const [refreshing, setRefreshing] = useState(false);
   const [actionTarget, setActionTarget] = useState<DepositActionTarget | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [proofPreviewUrl, setProofPreviewUrl] = useState<string | null>(null);
+  const [proofPreviewOpen, setProofPreviewOpen] = useState(false);
+  const [proofPreviewLoading, setProofPreviewLoading] = useState(false);
 
   const pendingRows = useMemo(() => pendingDeposits(deposits), [deposits]);
+  const pendingProofCount = useMemo(
+    () => pendingRows.filter((row) => isAdminKrwProofPending(row.proofStatus)).length,
+    [pendingRows],
+  );
 
   const methodCounts = useMemo(() => {
     const counts: Record<MethodTab, number> = {
@@ -146,9 +182,24 @@ export function AdminDepositsPage() {
       if (actionTarget.kind === 'flag') {
         return await flagDeposit(actionTarget.id, reason);
       }
+      if (actionTarget.kind === 'approveProof') {
+        return await reviewKrwDepositProof(actionTarget.id, 'approved', reason);
+      }
       return await matchDeposit(actionTarget.id, reason);
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handleViewProof = async (row: AdminDepositReconRow) => {
+    if (!row.proofPath) return;
+    setProofPreviewLoading(true);
+    setProofPreviewOpen(true);
+    try {
+      const url = await getKrwDepositProofUrl(row.proofPath);
+      setProofPreviewUrl(url);
+    } finally {
+      setProofPreviewLoading(false);
     }
   };
 
@@ -172,6 +223,11 @@ export function AdminDepositsPage() {
               ? t('admin.deposits.summary.pending', { count: pendingRows.length })
               : t('admin.overview.empty.title')}
           </p>
+          {pendingProofCount > 0 ? (
+            <p className="text-foreground-muted m-0 text-sm">
+              {t('admin.deposits.summary.proofPending', { count: pendingProofCount })}
+            </p>
+          ) : null}
           <p className="text-foreground-muted m-0 text-sm">{t('admin.deposits.description')}</p>
         </div>
         <Button
@@ -262,96 +318,147 @@ export function AdminDepositsPage() {
                 className="max-w-md"
               />
 
-              {visibleRows.length === 0 ? (
-                <EmptyState
-                  title={t('admin.overview.empty.title')}
-                  description={t('admin.wallet.depositRecon.empty')}
-                  actionLabel={t('admin.deposits.empty.cta')}
-                  onAction={() => {
-                    goTo('/queues');
-                  }}
-                />
-              ) : (
-                <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                  <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-                    <thead className="bg-surface-raised text-foreground-muted">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">{t('admin.queues.col.details')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.queues.col.amount')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.deposits.col.method')}</th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.wallet.depositRecon.col.reference')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">{t('admin.queues.col.status')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.queues.col.created')}</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.queues.col.action')}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {visibleRows.map((row) => {
-                        const matchConfig = MATCH_ACTION_KEYS[row.method];
+              <AdminTable
+                columns={[
+                  {
+                    id: 'details',
+                    header: t('admin.queues.col.details'),
+                    cell: ({ row }) => row.userId,
+                    meta: { className: 'text-foreground-muted tabular-nums' },
+                  },
+                  {
+                    id: 'amount',
+                    header: t('admin.queues.col.amount'),
+                    cell: ({ row }) => formatAmountString(row.amount, depositCurrency(row.method)),
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'method',
+                    header: t('admin.deposits.col.method'),
+                    cell: ({ row }) => t(METHOD_FILTER_KEYS[row.method]),
+                    meta: { className: 'text-foreground-muted' },
+                  },
+                  {
+                    id: 'reference',
+                    header: t('admin.wallet.depositRecon.col.reference'),
+                    cell: ({ row }) => row.reference ?? '—',
+                    meta: { className: 'text-foreground-muted max-w-48 truncate' },
+                  },
+                  {
+                    id: 'proof',
+                    header: t('admin.deposits.col.proof'),
+                    cell: ({ row }) => {
+                      if (row.method !== 'krw') return '—';
+                      const status = row.proofStatus ?? 'none';
+                      if (status === 'none') {
                         return (
-                          <tr key={row.id} className="border-line border-t">
-                            <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                              {row.userId}
-                            </td>
-                            <td className="text-foreground px-4 py-3 tabular-nums">
-                              {formatAmountString(row.amount, depositCurrency(row.method))}
-                            </td>
-                            <td className="text-foreground-muted px-4 py-3">
-                              {t(METHOD_FILTER_KEYS[row.method])}
-                            </td>
-                            <td className="text-foreground-muted max-w-48 truncate px-4 py-3">
-                              {row.reference ?? '—'}
-                            </td>
-                            <td className="px-4 py-3">
-                              <StatusBadge state={depositStatusState(row.status)} />
-                            </td>
-                            <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                              {formatWhen(row.createdAt, locale)}
-                            </td>
-                            <td className="px-4 py-3">
-                              <div className="flex flex-wrap gap-2">
-                                <Button
-                                  variant="primary"
-                                  size="sm"
-                                  onClick={() =>
-                                    openAction({
-                                      kind: matchConfig.kind,
-                                      id: row.id,
-                                      titleKey: matchConfig.dialog,
-                                      confirmKey: matchConfig.action,
-                                      summary: formatRowSummary(row),
-                                    })
-                                  }
-                                >
-                                  {t(matchConfig.action)}
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() =>
-                                    openAction({
-                                      kind: 'flag',
-                                      id: row.id,
-                                      titleKey: 'admin.deposits.dialog.flag',
-                                      confirmKey: 'admin.deposits.action.flag',
-                                      destructive: true,
-                                      summary: formatRowSummary(row),
-                                    })
-                                  }
-                                >
-                                  {t('admin.deposits.action.flag')}
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
+                          <span className="text-foreground-muted">
+                            {t(PROOF_STATUS_LABEL_KEYS.none)}
+                          </span>
                         );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+                      }
+                      return <StatusBadge state={proofStatusState(status)} />;
+                    },
+                  },
+                  {
+                    id: 'status',
+                    header: t('admin.queues.col.status'),
+                    cell: ({ row }) => <StatusBadge state={depositStatusState(row.status)} />,
+                  },
+                  {
+                    id: 'created',
+                    header: t('admin.queues.col.created'),
+                    cell: ({ row }) => formatWhen(row.createdAt, locale),
+                    meta: { className: 'text-foreground-muted tabular-nums' },
+                  },
+                ]}
+                rows={visibleRows}
+                getRowId={(row) => row.id}
+                minWidth={860}
+                empty={
+                  <EmptyState
+                    title={t('admin.overview.empty.title')}
+                    description={t('admin.wallet.depositRecon.empty')}
+                    actionLabel={t('admin.deposits.empty.cta')}
+                    onAction={() => {
+                      goTo('/queues');
+                    }}
+                  />
+                }
+                rowActionsHeader={t('admin.queues.col.action')}
+                rowActions={(row) => {
+                  const matchConfig = MATCH_ACTION_KEYS[row.method];
+                  const canViewProof = isAdminKrwProofViewable(row.proofStatus, row.proofPath);
+                  const canReviewProof = isAdminKrwProofPending(row.proofStatus);
+                  return (
+                    <>
+                      {canViewProof ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          loading={proofPreviewLoading}
+                          onClick={() => {
+                            void handleViewProof(row);
+                          }}
+                        >
+                          {t('admin.deposits.action.viewProof')}
+                        </Button>
+                      ) : null}
+                      {canReviewProof ? (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() =>
+                            openAction({
+                              kind: 'approveProof',
+                              id: row.id,
+                              titleKey: 'admin.deposits.dialog.approveProof',
+                              confirmKey: 'admin.deposits.action.approveProof',
+                              summary: [
+                                formatRowSummary(row),
+                                t('admin.deposits.proof.noCreditNotice'),
+                              ].join('\n'),
+                            })
+                          }
+                        >
+                          {t('admin.deposits.action.approveProof')}
+                        </Button>
+                      ) : null}
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() =>
+                          openAction({
+                            kind: matchConfig.kind,
+                            id: row.id,
+                            titleKey: matchConfig.dialog,
+                            confirmKey: matchConfig.action,
+                            summary: formatRowSummary(row),
+                          })
+                        }
+                      >
+                        {t(matchConfig.action)}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          openAction({
+                            kind: 'flag',
+                            id: row.id,
+                            titleKey: 'admin.deposits.dialog.flag',
+                            confirmKey: 'admin.deposits.action.flag',
+                            destructive: true,
+                            summary: formatRowSummary(row),
+                          })
+                        }
+                      >
+                        {t('admin.deposits.action.flag')}
+                      </Button>
+                    </>
+                  );
+                }}
+              />
             </section>
           </TabsContent>
         </Tabs>
@@ -359,16 +466,46 @@ export function AdminDepositsPage() {
 
       <AdminQueueActionDialog
         open={actionTarget !== null}
-        onOpenChange={(open) => {
+        onOpenChange={(open: boolean) => {
           if (!open) setActionTarget(null);
         }}
         titleKey={actionTarget?.titleKey ?? 'admin.deposits.dialog.flag'}
         confirmKey={actionTarget?.confirmKey ?? 'admin.deposits.action.flag'}
         destructive={actionTarget?.destructive}
         loading={actionLoading}
-        summary={actionTarget ? <p className="m-0">{actionTarget.summary}</p> : undefined}
+        summary={
+          actionTarget ? (
+            <p className="m-0 whitespace-pre-line">{actionTarget.summary}</p>
+          ) : undefined
+        }
         onSubmit={handleActionSubmit}
       />
+
+      <Dialog
+        open={proofPreviewOpen}
+        onOpenChange={(open: boolean) => {
+          setProofPreviewOpen(open);
+          if (!open) setProofPreviewUrl(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('admin.deposits.dialog.viewProof')}</DialogTitle>
+            <DialogDescription>{t('admin.deposits.proof.previewHelp')}</DialogDescription>
+          </DialogHeader>
+          {proofPreviewLoading ? (
+            <p className="text-foreground-muted m-0 text-sm">{t('admin.deposits.proof.loading')}</p>
+          ) : proofPreviewUrl ? (
+            <img
+              src={proofPreviewUrl}
+              alt={t('admin.deposits.action.viewProof')}
+              className="max-h-[70vh] w-full rounded-md object-contain"
+            />
+          ) : (
+            <p className="text-foreground-muted m-0 text-sm">{t('admin.deposits.proof.missing')}</p>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

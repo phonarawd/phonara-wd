@@ -52,8 +52,13 @@ Cursor Plan YAML **`status: completed`만**으로 완료 판정 **금지** — �
 4. **`docs/SSOT/NEXT_STEP.md`** — Phase R only (Batch 11 deleted)
 6. **자기검증**
    ```bash
-   rg "source of truth|single active tactical|Always read.*PHONARA_ACTIVE" .cursorrules AGENTS.md .cursor/rules/00-core.mdc  # active execution ref 0
+   bun run closeout:todo -- <plan-todo-id> --evidence "..."
+   rg "source of truth|single active tactical|Always read.*PHONARA_ACTIVE" .cursorrules AGENTS.md .cursor/rules/00-core.mdc
    ```
+
+## Plan YAML auto-closeout (99)
+
+Cursor Plan frontmatter `status: completed`는 **에이전트가 직접** 갱신한다 (`bun run closeout:todo` 또는 `gate:ai-impl --closeout`). operator 수동 체크에만 의존 = FAIL.
 
 ## Shell / IA / Nova — DONE vs partial (non-waivable)
 

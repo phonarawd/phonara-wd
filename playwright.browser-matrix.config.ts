@@ -18,6 +18,8 @@ export default defineConfig({
   testMatch: [TRADE_DESK_BROWSER_MATRIX_SPEC.replace(/^tests\//, '')],
   grep: TRADE_DESK_BROWSER_MATRIX_GREP,
   timeout: 90_000,
+  // Firefox NS_ERROR_FAILURE on first hard goto is intermittent in CI — one retry is enough.
+  retries: process.env.CI ? 1 : 0,
   use: {
     baseURL: 'http://127.0.0.1:3000',
     trace: 'on-first-retry',

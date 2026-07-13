@@ -1,18 +1,19 @@
 import { useEffect } from 'react';
 import { Link } from '@tanstack/react-router';
-import { AlertTriangle, ChevronRight, Crown, History } from 'lucide-react';
+import { AlertTriangle, ChevronRight, Crown, History, Trophy } from 'lucide-react';
 
 import {
   TIER_BENEFITS_ROUTE,
-  TIER_ME_HISTORY_ROUTE,
   TIER_ME_SEO_DESCRIPTION_KEY,
   TIER_ME_SEO_TITLE_KEY,
   resolveTierCssVar,
   resolveTierDecayDepositRoute,
   resolveTierDecayReferralRoute,
   resolveTierKeepMissionHubRoute,
+  resolveTierMeHistoryLinkRoute,
   buildTierMeBenefitsRows,
 } from '@/domain/tier-me-display-contract';
+import { TIER_LEADERBOARD_ROUTE } from '@/domain/tier-leaderboard-display-contract';
 import { useTierMePageController } from '@/features/earn/use-tier-me-page-controller';
 import { useEarnFiatHint } from '@/features/earn/use-earn-fiat-hint';
 import { buttonVariants } from '@/product/primitives/button';
@@ -22,9 +23,10 @@ import { MissionCard } from '@/product/primitives/mission-card';
 import { ProgressRing } from '@/product/primitives/progress-ring';
 import { Skeleton } from '@/product/primitives/skeleton';
 import { cn } from '@/product/primitives/lib/cn';
+import { formatCountUpGrouped, useCountUp } from '@/product/primitives/lib/use-count-up';
 import { EarnMissionReward } from '@/product/surfaces/home/earn-mission-reward';
 
-/** Canonical `/tier/me` — VIP tier hero · decay UX until E1 · `tier_keep_status` (P7). */
+/** Canonical `/tier/me` — VIP tier hero · E1 decay engine · `tier_keep_status`. */
 export function TierMePage() {
   const engine = useTierMePageController();
   const {
@@ -41,6 +43,9 @@ export function TierMePage() {
     claimKeepMission,
   } = engine;
   const earnFiat = useEarnFiatHint();
+  const xpTarget = tierProgress ? String(tierProgress.xp) : '0';
+  const xpDisplay = useCountUp(xpTarget, { enabled: Boolean(tierProgress), tier: 'L1' });
+  const xpLabel = formatCountUpGrouped(xpDisplay);
 
   useEffect(() => {
     document.title = t(TIER_ME_SEO_TITLE_KEY);
@@ -105,13 +110,20 @@ export function TierMePage() {
           </p>
         </header>
 
-        <Card data-testid="tier-me-progress-card">
+        <Card
+          variant="vip"
+          data-testid="tier-me-progress-card"
+          data-signature="xp-fill"
+          data-xp-fill="true"
+          style={{ ['--ds-card-tier' as string]: `var(${tierColorVar})` }}
+        >
           <CardBody className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <ProgressRing
               value={tierProgress.progressPercent}
               size={88}
               strokeWidth={6}
               tone="accent"
+              fillOnMount
               aria-label={t('tier.me.xpProgressAria', { pct: tierProgress.progressPercent })}
             />
             <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -119,8 +131,9 @@ export function TierMePage() {
               <p
                 className="text-foreground m-0 text-2xl font-semibold tabular-nums"
                 data-testid="tier-me-xp"
+                data-count-up="true"
               >
-                {tierProgress.xp.toLocaleString()} XP
+                {xpLabel} XP
               </p>
               {tierProgress.atMaxTier ? (
                 <p className="text-accent m-0 text-sm font-medium">{t('tier.me.maxTier')}</p>
@@ -159,17 +172,45 @@ export function TierMePage() {
               <p className="text-foreground-muted m-0 text-sm">
                 {t('tier.me.decay.policyWindow', { days: decayPanel.maintenanceWindowDays })}
               </p>
+              {decayPanel.engineLive && decayPanel.daysLeft != null ? (
+                <p
+                  className="text-foreground m-0 text-sm font-medium tabular-nums"
+                  data-testid="tier-me-decay-countdown"
+                >
+                  {t('tier.me.decay.countdown', { days: decayPanel.daysLeft })}
+                </p>
+              ) : null}
+              {decayPanel.engineLive && decayPanel.meetsMaintenance != null ? (
+                <p
+                  className={
+                    decayPanel.meetsMaintenance
+                      ? 'text-success m-0 text-sm'
+                      : 'text-warning m-0 text-sm font-medium'
+                  }
+                  data-testid="tier-me-decay-maintenance"
+                >
+                  {t(
+                    decayPanel.meetsMaintenance
+                      ? 'tier.me.decay.maintained'
+                      : 'tier.me.decay.atRisk',
+                  )}
+                </p>
+              ) : null}
               {decayPanel.lowerTier && decayPanel.lowerTierLabelKey ? (
                 <p className="text-warning m-0 text-sm font-medium">
                   {t('tier.me.decay.banner', {
                     tier: t(`earn.tier.${tierProgress.tier}`),
                     lower: t(decayPanel.lowerTierLabelKey),
-                    days: decayPanel.maintenanceWindowDays,
+                    days: decayPanel.daysLeft ?? decayPanel.maintenanceWindowDays,
                   })}
                 </p>
               ) : null}
               <p className="text-foreground-muted m-0 text-xs leading-relaxed">
-                {t('tier.me.decay.disclaimer')}
+                {t(
+                  decayPanel.engineLive
+                    ? 'tier.me.decay.disclaimerLive'
+                    : 'tier.me.decay.disclaimer',
+                )}
               </p>
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Link
@@ -243,13 +284,13 @@ export function TierMePage() {
             <h2 id="tier-me-benefits-heading" className="text-foreground m-0 text-lg font-semibold">
               {t('tier.me.benefitsTitle')}
             </h2>
-            <a
-              href={TIER_BENEFITS_ROUTE}
+            <Link
+              to={TIER_BENEFITS_ROUTE}
               className="text-accent text-sm font-medium underline-offset-4 hover:underline"
               data-testid="tier-me-benefits-link"
             >
               {t('tier.me.benefitsLink')}
-            </a>
+            </Link>
           </div>
           <Card data-testid="tier-me-benefits">
             <CardBody className="overflow-x-auto">
@@ -333,18 +374,32 @@ export function TierMePage() {
           </section>
         ) : null}
 
-        <a
-          href={TIER_ME_HISTORY_ROUTE}
-          className={cn(
-            buttonVariants({ variant: 'ghost', size: 'sm' }),
-            'text-foreground-muted w-fit px-0',
-          )}
-          data-testid="tier-me-history-link"
-        >
-          <History className="size-4" aria-hidden />
-          {t('tier.me.historyLink')}
-          <ChevronRight className="size-4" aria-hidden />
-        </a>
+        <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-3">
+          <Link
+            to={resolveTierMeHistoryLinkRoute()}
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'sm' }),
+              'text-foreground-muted w-fit px-0',
+            )}
+            data-testid="tier-me-history-link"
+          >
+            <History className="size-4" aria-hidden />
+            {t('tier.me.historyLink')}
+            <ChevronRight className="size-4" aria-hidden />
+          </Link>
+          <Link
+            to={TIER_LEADERBOARD_ROUTE}
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'sm' }),
+              'text-foreground-muted w-fit px-0',
+            )}
+            data-testid="tier-me-leaderboard-link"
+          >
+            <Trophy className="size-4" aria-hidden />
+            {t('tier.me.leaderboardLink')}
+            <ChevronRight className="size-4" aria-hidden />
+          </Link>
+        </div>
       </div>
 
       {earnFiat.showDisclaimer ? <FiatHintDisclaimer className="md:col-span-2" /> : null}

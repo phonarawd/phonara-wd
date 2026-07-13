@@ -7,7 +7,7 @@ export interface DailyCheckInDay {
 }
 
 /** FOMO tier badge — display-only union. */
-export type Tier = 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
+export type Tier = 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond' | 'prime_elite';
 
 export type MissionStatus = 'todo' | 'claimable' | 'done';
 

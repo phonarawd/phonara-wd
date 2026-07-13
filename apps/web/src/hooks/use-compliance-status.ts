@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { callRpc } from '@/lib/rpc';
 import { useAuth } from '@/contexts/auth-context';
 
 export type ComplianceBlock = {
@@ -75,8 +75,7 @@ export function useComplianceStatus() {
     queryKey: complianceKeys.status(userId),
     enabled: Boolean(userId),
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('rpc_get_compliance_status');
-      if (error) throw error;
+      const data = await callRpc('rpc_get_compliance_status');
       return parseCompliance(data);
     },
     staleTime: 15_000,

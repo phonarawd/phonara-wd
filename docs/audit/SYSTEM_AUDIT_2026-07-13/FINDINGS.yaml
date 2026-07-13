@@ -1,0 +1,103 @@
+schema_version: 1
+audit: 'SYSTEM_AUDIT_2026-07-13 (7-Pillar)'
+audit_date: '2026-07-13'
+mode: 'READ-ONLY'
+branch: 'phase-r/platform-integrity-2026-07-11'
+head_sha: '4d661e83'
+rc_sha: 'dcfd8c7eab0374296ffeecdc5cd3f79433786ebe'
+notes: >-
+  신규 Finding만 SA-* id로 기록. 기존 OPEN/BLOCKED_DEP는 링크만 유지
+  (정본: docs/OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml).
+  본 감사는 코드/migration 수정 0 · Plan todo 완료 주장 없음.
+
+linked_existing:
+  - id: 'R9-PERF-JS'
+    severity: 'HIGH'
+    status: 'VERIFIED_FIXED'
+    pillar: 'performance'
+    registry: 'docs/OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml'
+    summary: 'Web Stage1 initial JS — Phase 4 i18n lazy (2026-07-14): local gzip 519.31→394.00 kB ≤450 SLO. Evidence docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-perf-js-phase4-i18n-lazy.md'
+  - id: 'H-09'
+    severity: 'HIGH'
+    status: 'BLOCKED_DEP'
+    pillar: 'security'
+    registry: 'docs/OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml'
+    summary: 'Supabase leaked-password protection 비활성 — Pro+ entitlement 의존 (코드 준비 완료)'
+
+findings:
+  - id: 'SA-01'
+    severity: 'MEDIUM'
+    status: 'VERIFIED_FIXED'
+    pillar: 'database'
+    also: ['release']
+    symptom: >-
+      로컬 migration 2건(platform_sql_ci_closeout · platform_sql_ci_closeout2)이
+      원격 미적용 상태이며, Freeze ACTIVE 중 워킹트리에서 수정/추가됨.
+      후속 CI sql RED로 ew_e21/ew_e22 conservation 오탐이 겹침.
+    evidence:
+      - 'check:engine-foundation-parity 출력 2026-07-13 — local 241 · remote 239 · missing 2 (당시)'
+      - '2026-07-14 Phase 2 closeout: check:engine-foundation-parity local 244 · remote 244 · missing 0'
+      - 'CI run 29271360173 — quality·sql·e2e·advisors 4/4 success'
+      - 'fd9290be — E21/E22 conservation Σ 직전 RESET ROLE (RLS false-drift 제거)'
+      - '8fa65cc9 — E22-3 correct_score place via rpc_place_sports_bet (stake lock)'
+      - '2026-07-14 stack:push-remote — pending 0 · security advisor ERROR 0'
+    recommendation: >-
+      완료. money RPC 약화 없이 테스트 하네스만 수정. 후속 Release Gate는 Phase 7.
+    owner: 'db'
+  - id: 'SA-02'
+    severity: 'LOW'
+    status: 'impl partial (VERIFIED_FIXED for investigated set)'
+    pillar: 'frontend'
+    symptom: '데이터 의존 surface 일부의 Empty/Error 정적 증거 공백 (Empty yes 31/79 = 39.2%)'
+    evidence:
+      - 'docs/audit/PER_PAGE_UI_MATRIX.md Summary (2026-07-13) — 8 surfaces 원본 코드 조사'
+      - 'casino-lobby-page.tsx Error=no → 실제 gap 확인·수정(wallet fetch error+retry) · install-page.tsx Loading=no → 실제 gap 확인·수정(Button loading prop)'
+      - '정적 스캔 false-positive 6건 발견: spot-desk-page·futures-desk-page(TradeDeskFetchErrorBanner 하위 컴포넌트) · staking-positions-page(StakingPositionsPanel emptyKey) · signup/verify-email/reset-password-page(*-form.tsx errorKey) — 페이지 파일만 스캔하는 매트릭스 생성기의 구조적 한계, 실제 코드는 정상'
+      - 'Landing touch target: header login CTA + wallet-preview withdraw CTA size=sm(36px)→md(44px, px-3 유지)'
+      - 'staking-positions-page.tsx 에러 배너에 role="alert" aria-live 추가 (a11y)'
+    recommendation: '조사한 8 surfaces는 완료. 나머지 71개 surface의 전수 재조사는 후속 WORLD_CLASS_UX 트랙(생성기에 1-depth 하위 컴포넌트 스캔 추가 권장)'
+    owner: 'product'
+  - id: 'SA-03'
+    severity: 'LOW'
+    status: 'VERIFIED_FIXED'
+    pillar: 'repository'
+    symptom: 'knip unused 3파일 + stale script import 3건 + root decimal.js 잔존 의존성'
+    evidence:
+      - 'docs/audit/KNIP_DEADCODE_REPORT.md (2026-07-13 SA-03 cleanup section) — bunx knip --no-progress: unused files 0 · unused dependency 0 · unresolved imports 0'
+      - '삭제: apps/admin/src/contracts/admin-desk-views.ts · controller-view-freeze.ts · apps/admin/src/lib/i18n.tsx · scripts/generate-web-sitemap.ts · scripts/merge-presentation-i18n-wave1.ts'
+      - 'package.json root decimal.js dependency + generate:web-sitemap script 제거'
+    recommendation: 'Freeze lift 후 operator 확인 하에 hygiene 삭제 (Freeze 중 금지) — 7-pillar 플랜 승인으로 완료'
+    owner: 'platform'
+  - id: 'SA-04'
+    severity: 'LOW'
+    status: 'VERIFIED_FIXED'
+    pillar: 'database'
+    symptom: 'types rpc_* 256 중 112건 apps 미호출 — Edge/SQL/cron cross-use 전수 판정 미실시'
+    evidence:
+      - 'docs/audit/RPC_USAGE_MATRIX.md §SA-04 (2026-07-13 Wave 5) — 112건을 edge 22 · sql_cron_or_internal 36 · sql_test_only 41 · none(genuinely unused) 13으로 분리'
+      - 'scripts/audit/generate-rpc-usage-matrix.ts — Edge(supabase/functions/**)·SQL(supabase/migrations|tests/**) 스캔 추가'
+      - 'docs/audit/SYSTEM_AUDIT_2026-07-13/02_DATABASE.md §7.1 — genuinely-unused 13건 waiver 고정'
+    recommendation: 'Edge/SQL 호출 스캔을 matrix generator에 추가해 진성 dead RPC만 분리 (삭제는 엔진 freeze상 금지) — 완료'
+    owner: 'db'
+  - id: 'SA-05'
+    severity: 'LOW'
+    status: 'impl partial (VERIFIED pending live deploy)'
+    pillar: 'backend'
+    symptom: '브라우저 직접 호출 Edge 함수(siwe-auth · product-analytics)의 CORS가 gateway 기본값 의존 — 커스텀 헤더 시나리오 미검증'
+    evidence:
+      - 'supabase/functions/_shared/cors.ts 신규 — CORS_HEADERS + handleCorsPreflight(), siwe-auth·product-analytics에 OPTIONS 단락 처리 적용'
+      - 'supabase/functions/_shared/edge-observability.ts jsonOk/jsonErr가 CORS_HEADERS를 모든 응답에 포함'
+      - 'bun run typecheck · lint green (2026-07-13)'
+    recommendation: '코드 변경 완료. 실제 배포 후 preflight(OPTIONS) 실측은 edge function deploy 권한이 있는 operator/CI 트랙 필요 (MCP에 deploy_edge_function 툴 없음)'
+    owner: 'sre'
+  - id: 'SA-06'
+    severity: 'LOW'
+    status: 'VERIFIED_FIXED'
+    pillar: 'performance'
+    symptom: 'route-level code-split 커버리지·i18n 카탈로그 lazy 여부 미계측 — R9-PERF-JS 수정 설계 선행 계측 부재'
+    evidence:
+      - 'docs/audit/MASTER_INVENTORY_AUDIT_2026-07-13.md §15 (NOT VERIFIED per-route)'
+      - 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-stage1-matrix.md JS 539kb 전 상태 동일'
+      - '2026-07-13: rollup-plugin-visualizer가 Rolldown-Vite 8과 비호환(output 미생성) 확인 후 제거. sourcemap sources/sourcesContent 직접 합산 + dist/index.html modulepreload 대조로 계측 완료 — docs/audit/SYSTEM_AUDIT_2026-07-13/06_PERFORMANCE.md §6. route-level 코드스플릿은 autoCodeSplitting:true로 이미 대부분 적용(pixi.js·lightweight-charts 모두 eager 그래프 밖 확인), i18n만 dual-locale eager 확인'
+    recommendation: '계측 완료 — 다음 단계는 i18n lazy-load 구현(별도 Plan, 06_PERFORMANCE.md §6 권장 후속 작업 참조)'
+    owner: 'sre'

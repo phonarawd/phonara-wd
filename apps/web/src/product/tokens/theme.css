@@ -45,9 +45,7 @@
   --color-surface-hover: var(--ds-surface-hover);
   --color-surface-overlay: var(--ds-surface-overlay);
 
-  /* Legacy shadcn bridge — P3 existing JSX only · removed at P13 strict */
-  --color-primary: var(--ds-accent);
-  --color-muted-foreground: var(--ds-foreground-muted);
+  /* da-w7: P3 shadcn bridges (--color-primary / --color-muted-foreground) purged */
   --color-line: var(--ds-line);
 
   --color-accent: var(--ds-accent);
@@ -77,6 +75,7 @@
   --font-display: var(--ds-font-display);
   --font-mono: var(--ds-font-mono);
 
+  --text-tiny: var(--ds-text-tiny);
   --text-xs: var(--ds-text-xs);
   --text-sm: var(--ds-text-sm);
   --text-base: var(--ds-text-base);
@@ -118,6 +117,24 @@
   /*
    * Breakpoints MUST be literal lengths — lightningcss minify rejects var() in @media.
    * Keep in sync with layout.css --ds-bp-* and viewport-contract.ts VIEWPORT_BREAKPOINTS.
+   *
+   * Usage rule (ZA-09 — two naming systems exist on purpose, do not merge them):
+   *   --breakpoint-{sm,md,lg,xl,2xl}       Tailwind v4 theme convention. Tailwind CSS
+   *                                         reads these to generate `sm:`/`md:`/`lg:`/`xl:`/
+   *                                         `2xl:` variants automatically — use these ONLY
+   *                                         via Tailwind utility classes in JSX/CSS
+   *                                         (e.g. `md:flex-row`), never reference the
+   *                                         custom property directly.
+   *   --breakpoint-{mobile-narrow,mobile,  Semantic Phase R viewport tiers, mirrored 1:1 by
+   *     tablet,desktop,wide,ultra,         `VIEWPORT_BREAKPOINTS` in viewport-contract.ts —
+   *     superwide}                        use these for non-Tailwind consumers: JS/TS
+   *                                         runtime tier logic (`resolveViewportTier`,
+   *                                         `isAtLeastBreakpoint`), multi-viewport smoke
+   *                                         widths, and CSS that needs a named tier rather
+   *                                         than a raw Tailwind row (e.g. shell chrome).
+   * Values happen to coincide 1:1 at md/tablet=768 and lg/desktop=1024 — this is
+   * intentional (one physical breakpoint, two naming lenses for two different
+   * consumers), not duplication to clean up.
    */
   --breakpoint-sm: 480px;
   --breakpoint-md: 768px;

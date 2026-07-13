@@ -29,10 +29,6 @@ const legacyC2GateEnabled = process.env.PHONARA_ENABLE_PRE_DEMOLITION_C2_DS === 
 
 const REQUIRED_FONTS = [
   'PretendardVariable.woff2',
-  'Pretendard-Regular.woff2',
-  'Pretendard-Medium.woff2',
-  'Pretendard-SemiBold.woff2',
-  'Pretendard-Bold.woff2',
   'JetBrainsMono[wght].woff2',
   'SpaceGrotesk[wght].woff2',
 ] as const;

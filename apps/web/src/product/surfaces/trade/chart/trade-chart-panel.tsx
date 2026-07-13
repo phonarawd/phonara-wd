@@ -14,6 +14,7 @@ import {
   type OracleDisplayInterval,
 } from '@/features/trading/display-chart/display-feed-contract';
 import { useExchangeLiveCandles } from '@/features/trading/display-chart/use-exchange-live-candles';
+import { resolveTradeChartEmptyReason } from '@/domain/trade-chart-mount-display-contract';
 import { useT } from '@/product/i18n';
 import { Button } from '@/product/primitives/button';
 import { Skeleton } from '@/product/primitives/skeleton';
@@ -33,7 +34,16 @@ const TradeChartLazy = lazy(() =>
   import('./trade-chart').then((mod) => ({ default: mod.TradeChart })),
 );
 
-/** E2E uses eager import — Firefox/WebKit dev dynamic import of chart deps is flaky. */
+/**
+ * E2E uses eager import — Firefox/WebKit dev dynamic import of chart deps is
+ * flaky. This intentionally co-located static+dynamic import of `./trade-chart`
+ * makes Rollup/Rolldown fold `lightweight-charts` into the same (already-lazy,
+ * route-level) trade-desk chunk instead of a further-isolated sub-chunk —
+ * confirmed via `apps/web/dist/index.html` modulepreload list that this chunk
+ * is NOT eagerly loaded, so it doesn't affect the Stage1 initial-JS budget
+ * (R9-PERF-JS). Not worth the E2E-stability risk of a CJS/require workaround
+ * to fully isolate it — see docs/audit/SYSTEM_AUDIT_2026-07-13/06_PERFORMANCE.md.
+ */
 const TradeChart: ComponentType<TradeChartProps> =
   import.meta.env['VITE_PHONARA_E2E_ENGINE'] === '1' ? TradeChartEager : TradeChartLazy;
 
@@ -70,6 +80,21 @@ export function TradeChartPanel({
   );
 
   const feedKey = useMemo(() => `${marketSymbol ?? 'none'}:${interval}`, [interval, marketSymbol]);
+
+  /** ZA-12 — empty copy names the actual cause (oracle-seed-wait vs exchange feed outage). */
+  const emptyReason = useMemo(() => resolveTradeChartEmptyReason(marketSymbol), [marketSymbol]);
+  const emptyTitleKey =
+    emptyReason === 'oracle-awaiting-seed'
+      ? 'trade.chart.empty.oracleAwaiting.title'
+      : emptyReason === 'feed-unavailable'
+        ? 'trade.chart.empty.feedUnavailable.title'
+        : 'trade.chart.emptyTitle';
+  const emptyDescriptionKey =
+    emptyReason === 'oracle-awaiting-seed'
+      ? 'trade.chart.empty.oracleAwaiting.description'
+      : emptyReason === 'feed-unavailable'
+        ? 'trade.chart.empty.feedUnavailable.description'
+        : 'trade.chart.emptyDescription';
 
   useEffect(() => {
     const onFullscreenChange = () => {
@@ -140,7 +165,7 @@ export function TradeChartPanel({
       ref={panelRef}
       data-testid="trade-chart-panel"
       className={cn(
-        'border-line bg-surface flex min-h-0 flex-col overflow-hidden rounded-(--ds-radius-lg) border',
+        'border-line bg-surface flex min-h-0 flex-col overflow-hidden rounded-lg border',
         isFullscreen && 'h-screen w-screen rounded-none',
         className,
       )}
@@ -353,9 +378,10 @@ export function TradeChartPanel({
           <div
             className="text-foreground-muted flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center text-sm"
             data-testid="trade-chart-empty"
+            data-empty-reason={emptyReason}
           >
-            <p className="text-foreground m-0 font-medium">{t('trade.chart.emptyTitle')}</p>
-            <p className="m-0">{t('trade.chart.emptyDescription')}</p>
+            <p className="text-foreground m-0 font-medium">{t(emptyTitleKey)}</p>
+            <p className="m-0">{t(emptyDescriptionKey)}</p>
             {oracleMarkPrice ? (
               <p
                 className="text-foreground m-0 tabular-nums"

@@ -14,10 +14,9 @@ import { landingAnalyticsEventAttr } from '@/domain/landing-analytics-display-co
 
 import {
   buildLandingSignupHref,
-  formatLandingPhonAmount,
   LANDING_MISSION_TEASERS,
   LANDING_TESTIMONIAL_POOL,
-  sumLandingAvailableRewardsPhon,
+  sumLandingAvailableRewardsPhonString,
 } from '@/domain/landing-display-contract';
 
 import {
@@ -44,6 +43,8 @@ import { Card, CardBody, CardHeader, CardTitle } from '@/product/primitives/card
 
 import { cn } from '@/product/primitives/lib/cn';
 
+import { MoneyDisplay } from '@/product/primitives/money-display';
+
 import { LandingCumulativeStats } from './landing-cumulative-stats';
 
 import { LandingDifferentiators } from './landing-differentiators';
@@ -59,8 +60,6 @@ import { LandingMissionPreviewRow } from './landing-mission-preview-row';
 import { LandingTestimonials } from './landing-testimonials';
 
 import { LandingWalletPreview } from './landing-wallet-preview';
-
-import { LandingSignupMomentum } from './landing-signup-momentum';
 
 import { LandingWhyStrip } from './landing-why-strip';
 
@@ -128,7 +127,7 @@ export function LandingPage() {
 
   const { proof, withdrawalMomentumCount } = useLandingLiveProof();
 
-  const availableRewards = sumLandingAvailableRewardsPhon();
+  const availableRewardsPhon = sumLandingAvailableRewardsPhonString();
 
   const activeMissionCount = LANDING_MISSION_TEASERS.length;
 
@@ -167,14 +166,14 @@ export function LandingPage() {
     >
       <header className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2.5">
-          <BrandMark size={24} className="text-[#7B6FE8]" testId="landing-header-brand-mark" />
+          <BrandMark size={24} className="text-accent" testId="landing-header-brand-mark" />
 
           <BrandWordmark className="text-foreground text-lg" testId="landing-header-wordmark" />
         </div>
 
         <a
           href="/login"
-          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
+          className={cn(buttonVariants({ variant: 'ghost', size: 'md' }), 'px-3')}
           data-testid="landing-header-login"
         >
           {t('landing.header.login')}
@@ -191,7 +190,7 @@ export function LandingPage() {
             {t(PLATFORM_POSITIONING_KEYS.eyebrow)}
           </p>
 
-          <h1 className="text-foreground font-display text-balance m-0 text-3xl font-bold tracking-tight [word-break:keep-all] md:text-4xl">
+          <h1 className="text-foreground font-display text-balance m-0 text-3xl font-bold tracking-tight break-keep md:text-4xl">
             {t(brandLineKey)}
           </h1>
 
@@ -211,7 +210,7 @@ export function LandingPage() {
         </div>
 
         <BrandMark
-          variant={abVariant === 'b' ? 'shape' : 'hero-3d'}
+          variant={abVariant === 'b' ? 'aurora' : 'hero-3d'}
           className="mx-auto w-full max-w-sm"
           testId="landing-hero-brand"
         />
@@ -233,11 +232,12 @@ export function LandingPage() {
             </CardHeader>
 
             <CardBody>
-              <p className="text-accent m-0 text-2xl font-semibold tabular-nums">
-                {t('landing.proof.availableRewardsValue', {
-                  amount: formatLandingPhonAmount(availableRewards),
-                })}
-              </p>
+              <MoneyDisplay
+                amount={availableRewardsPhon}
+                currency="PHON"
+                showCurrency
+                className="text-accent text-2xl font-semibold"
+              />
             </CardBody>
           </Card>
 
@@ -257,13 +257,13 @@ export function LandingPage() {
         {proof.withdrawalMomentum === 'live' ? (
           <LandingWithdrawalMomentum
             count={withdrawalMomentumCount}
-            className="border-line bg-surface-raised rounded-(--ds-radius-lg) border px-4 py-3"
+            className="border-line bg-surface-raised rounded-lg border px-4 py-3"
           />
-        ) : (
-          <LandingSignupMomentum className="border-line bg-surface-raised rounded-(--ds-radius-lg) border px-4 py-3" />
-        )}
+        ) : null}
 
-        <LiveActivityTicker className="border-line bg-surface rounded-(--ds-radius-lg) border px-4 py-3" />
+        {proof.ambientSocial !== 'hidden' ? (
+          <LiveActivityTicker className="border-line bg-surface rounded-lg border px-4 py-3" />
+        ) : null}
       </section>
 
       <section className="flex flex-col gap-6" data-testid="landing-how">
@@ -282,10 +282,7 @@ export function LandingPage() {
             const pillar = PLATFORM_PILLAR_CONTENT[pillarId];
 
             return (
-              <li
-                key={pillarId}
-                className="border-line bg-surface rounded-(--ds-radius-lg) border p-4"
-              >
+              <li key={pillarId} className="border-line bg-surface rounded-lg border p-4">
                 <p className="text-foreground m-0 font-semibold">{t(pillar.titleKey)}</p>
 
                 <p className="text-foreground-muted m-0 mt-2 text-sm">{t(pillar.descKey)}</p>
@@ -323,7 +320,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <LandingWithdrawalProof />
+      {proof.withdrawalProof !== 'hidden' ? <LandingWithdrawalProof /> : null}
 
       {visibleTestimonials.length > 0 ? (
         <LandingTestimonials entries={visibleTestimonials} />

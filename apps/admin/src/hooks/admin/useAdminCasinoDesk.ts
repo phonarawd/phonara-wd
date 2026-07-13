@@ -412,6 +412,7 @@ export function useAdminCasinoDesk(): UseAdminCasinoDesk {
     rtpStatuses: RTP_STATUSES,
 
     audit,
+    refresh: invalidate,
     resetForTest,
   };
 }

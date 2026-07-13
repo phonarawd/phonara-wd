@@ -2,6 +2,7 @@ import type { MessageKey } from '@phonara/i18n';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
+import { resolveMarketHeatTone } from '@/domain/da-w8-signature-surfaces-display-contract';
 import type { MarketTickerDisplay } from '@/features/trading/market-store/use-market-ticker-display';
 import { cn } from '@/product/primitives/lib/cn';
 
@@ -19,17 +20,20 @@ function StatCell({
   value,
   testId,
   tone,
+  volumePulse,
 }: {
   label: string;
   value: string;
   testId: string;
   tone?: 'up' | 'down' | 'neutral';
+  volumePulse?: boolean;
 }) {
   return (
-    <div className="min-w-[4.5rem] shrink-0">
+    <div className="min-w-18 shrink-0">
       <p className="text-foreground-muted m-0 text-xs">{label}</p>
       <p
         data-testid={testId}
+        data-volume-pulse={volumePulse ? 'true' : undefined}
         className={cn(
           'text-foreground m-0 text-sm tabular-nums',
           tone === 'up' && 'text-market-up',
@@ -52,12 +56,13 @@ function AdvancedStats({
   const volumeLabel = mode === 'futures' ? t('trade.openInterest') : t('trade.vol24');
   const volumeValue = mode === 'futures' ? display.openInterest : display.vol24;
   const volumeTestId = mode === 'futures' ? 'trade-ticker-open-interest' : 'trade-ticker-vol24';
+  const pulse = display.hasFeed && volumeValue !== '—';
 
   return (
     <div data-testid={dataTestId} className={cn('flex flex-wrap items-end gap-4', className)}>
       <StatCell label={t('trade.high24')} value={display.high24} testId="trade-ticker-high24" />
       <StatCell label={t('trade.low24')} value={display.low24} testId="trade-ticker-low24" />
-      <StatCell label={volumeLabel} value={volumeValue} testId={volumeTestId} />
+      <StatCell label={volumeLabel} value={volumeValue} testId={volumeTestId} volumePulse={pulse} />
     </div>
   );
 }
@@ -70,9 +75,15 @@ export function TradeMarketTickerStats({
   className,
 }: TradeMarketTickerStatsProps) {
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const heat = resolveMarketHeatTone(display.change24.tone);
 
   return (
-    <div className={cn('flex min-w-0 flex-col gap-2', className)}>
+    <div
+      className={cn('flex min-w-0 flex-col gap-2', className)}
+      data-signature="market-heat-volume-pulse"
+      data-market-heat={heat}
+      data-testid="trade-ticker-signature"
+    >
       <div className="flex flex-wrap items-end gap-4">
         <StatCell
           label={t('trade.change24')}
@@ -89,7 +100,7 @@ export function TradeMarketTickerStats({
           data-testid="trade-ticker-advanced-toggle"
           className={cn(
             'text-accent flex items-center gap-1 text-xs font-medium',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus) rounded-(--ds-radius-sm)',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus rounded-sm',
           )}
           aria-expanded={advancedOpen}
           onClick={() => setAdvancedOpen((open) => !open)}

@@ -148,12 +148,12 @@ BEGIN;
 DO $$
 BEGIN
   ASSERT to_regprocedure(
-    'public.rpc_place_game_bet(uuid, text, text, jsonb, text, text, jsonb)'
+    'public.rpc_place_game_bet(uuid, text, text, jsonb, text, text, jsonb, boolean)'
   ) IS NOT NULL,
     'rpc_place_game_bet must exist for beta scenario 3 (casino settle authority)';
 
   ASSERT to_regprocedure(
-    'public.rpc_place_sports_bet(jsonb, text, text, text, text, text, text)'
+    'public.rpc_place_sports_bet(jsonb, text, text, text, text, text, text, text)'
   ) IS NOT NULL,
     'rpc_place_sports_bet must exist for beta scenario 4 (sports settle authority)';
 

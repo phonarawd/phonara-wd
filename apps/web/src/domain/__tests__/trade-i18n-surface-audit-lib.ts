@@ -14,6 +14,7 @@ import {
 const WEB_SRC = resolve(import.meta.dirname, '../..');
 const REPO_ROOT = resolve(WEB_SRC, '../../..');
 const I18N_INDEX = resolve(REPO_ROOT, 'packages/i18n/src/index.ts');
+const I18N_CATALOG_EN = resolve(REPO_ROOT, 'packages/i18n/src/catalog-en.ts');
 const I18N_PRESENTATION_EN = resolve(REPO_ROOT, 'packages/i18n/src/locales/presentation-en.ts');
 
 const TRADE_KEY_LITERAL_RE = /'((?:trade|desk\.trade|seo\.trade)[^']+)'/g;
@@ -34,7 +35,7 @@ function collectSourceFiles(dir: string, acc: string[] = []): string[] {
 
 export function extractTradeCatalogKeys(): string[] {
   const keys = new Set<string>();
-  for (const file of [I18N_INDEX, I18N_PRESENTATION_EN]) {
+  for (const file of [I18N_INDEX, I18N_CATALOG_EN, I18N_PRESENTATION_EN]) {
     const content = readFileSync(file, 'utf8');
     for (const match of content.matchAll(TRADE_KEY_LITERAL_RE)) {
       keys.add(match[1]!);

@@ -145,6 +145,7 @@ export function useFuturesDeskWire(engine: TradePageControllerView) {
   const [stopPrice, setStopPrice] = useState('');
   const [timeInForce, setTimeInForce] = useState<FuturesTimeInForce>('gtc');
   const [displayQuantity, setDisplayQuantity] = useState('');
+  const [reduceOnly, setReduceOnly] = useState(false);
 
   const {
     market,
@@ -245,6 +246,13 @@ export function useFuturesDeskWire(engine: TradePageControllerView) {
     [crossMarginEnabled, marginAccount],
   );
 
+  const setPositionMode = useCallback(
+    async (mode: 'one_way' | 'hedge') => {
+      return marginAccount.setPositionMode(mode);
+    },
+    [marginAccount],
+  );
+
   const onMarketChange = useCallback(
     (symbol: string) => {
       setSelectedFuturesSymbol(symbol);
@@ -296,6 +304,7 @@ export function useFuturesDeskWire(engine: TradePageControllerView) {
         timeInForce: TRADE_FUTURES_UI_CAPABILITIES.timeInForce ? timeInForce : 'gtc',
         displayQuantity:
           TRADE_FUTURES_UI_CAPABILITIES.icebergOrders && displayQuantity ? displayQuantity : null,
+        reduceOnly: TRADE_FUTURES_UI_CAPABILITIES.reduceOnlyOrders ? reduceOnly : false,
       });
       if (result) showTradeFeedback({ eventId: 'futures.limit.placed' });
       return;
@@ -303,7 +312,12 @@ export function useFuturesDeskWire(engine: TradePageControllerView) {
 
     if (orderType === 'stop_market') {
       if (!isPositiveAmount(stopPrice)) return;
-      const result = await placeStopOrder({ ...base, stopPrice, orderType: 'stop_market' });
+      const result = await placeStopOrder({
+        ...base,
+        stopPrice,
+        orderType: 'stop_market',
+        reduceOnly: TRADE_FUTURES_UI_CAPABILITIES.reduceOnlyOrders ? reduceOnly : false,
+      });
       if (result) showTradeFeedback({ eventId: 'futures.limit.placed' });
       return;
     }
@@ -315,6 +329,7 @@ export function useFuturesDeskWire(engine: TradePageControllerView) {
         stopPrice,
         orderType: 'stop_limit',
         limitPrice,
+        reduceOnly: TRADE_FUTURES_UI_CAPABILITIES.reduceOnlyOrders ? reduceOnly : false,
       });
       if (result) showTradeFeedback({ eventId: 'futures.limit.placed' });
       return;
@@ -345,6 +360,7 @@ export function useFuturesDeskWire(engine: TradePageControllerView) {
     tpPrice,
     timeInForce,
     displayQuantity,
+    reduceOnly,
   ]);
 
   const requestSubmitOpen = useCallback(() => {
@@ -578,9 +594,14 @@ export function useFuturesDeskWire(engine: TradePageControllerView) {
     setTimeInForce,
     displayQuantity,
     setDisplayQuantity: (value: string) => setDisplayQuantity(normalizeDecimalInput(value)),
+    reduceOnly,
+    setReduceOnly,
     marginMode,
     setMarginMode,
     marginModeBusy: marginAccount.busy,
+    positionMode: marginAccount.positionMode,
+    setPositionMode,
+    positionModeBusy: marginAccount.busy,
     crossMarginEnabled,
     earnVipTier,
     t,

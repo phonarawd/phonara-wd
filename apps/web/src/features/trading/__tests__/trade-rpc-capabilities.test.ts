@@ -11,7 +11,7 @@ describe('TRADE_FUTURES_UI_CAPABILITIES', () => {
   });
 
   it('hides reduce-only and post-open position TP-SL without RPC', () => {
-    expect(TRADE_FUTURES_UI_CAPABILITIES.reduceOnlyOrders).toBe(false);
+    expect(TRADE_FUTURES_UI_CAPABILITIES.reduceOnlyOrders).toBe(true);
     expect(TRADE_FUTURES_UI_CAPABILITIES.positionTpSlEdit).toBe(true);
   });
 });

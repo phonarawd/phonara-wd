@@ -144,14 +144,16 @@ describe('viral-missions-display-contract', () => {
     ).toBe('completed');
   });
 
-  it('blocks claim for guest, defer_stub, and tier keep until E1', () => {
+  it('blocks claim for guest and defer_stub; tier keep claim live after E1', () => {
     expect(resolveMissionClaimBlocked({ authenticated: false, uiId: 'viral-shareLink' })).toBe(
       true,
     );
 
     expect(resolveMissionClaimBlocked({ authenticated: true, uiId: 'viral-invite1' })).toBe(true);
 
-    expect(resolveMissionClaimBlocked({ authenticated: true, uiId: 'tier-keepStatus' })).toBe(true);
+    expect(resolveMissionClaimBlocked({ authenticated: true, uiId: 'tier-keepStatus' })).toBe(
+      false,
+    );
 
     expect(resolveMissionClaimBlocked({ authenticated: true, uiId: 'viral-shareLink' })).toBe(
       false,

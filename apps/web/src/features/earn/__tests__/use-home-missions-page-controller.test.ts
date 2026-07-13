@@ -49,6 +49,16 @@ vi.mock('@/lib/supabase', () => ({
   },
 }));
 
+vi.mock('@/features/earn/use-app-install-mission-action', () => ({
+  useAppInstallMissionAction: () => ({
+    canAct: true,
+    busy: false,
+    errorKey: null,
+    ctaKey: 'mission.growth.appInstall.cta',
+    recordOrInstall: vi.fn(),
+  }),
+}));
+
 function wrapper({ children }: { children: ReactNode }) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return createElement(QueryClientProvider, { client }, children);

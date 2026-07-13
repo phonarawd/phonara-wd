@@ -5,6 +5,7 @@
  * 정본: docs/SSOT/CI_GATE_AUTHORITY.md
  */
 import { spawnSync } from 'node:child_process';
+import { gitRemoteRepoOrExit } from './lib/git-remote-repo';
 
 const WORKFLOW = 'ci.yml';
 const REQUIRED_JOBS = ['quality', 'sql', 'e2e', 'advisors'] as const;
@@ -32,12 +33,7 @@ function gitBranch(): string {
   return (r.stdout ?? '').trim() || 'main';
 }
 
-function gitRemoteRepo(): string {
-  const r = spawnSync('git', ['remote', 'get-url', 'origin'], { encoding: 'utf8' });
-  const url = (r.stdout ?? '').trim();
-  const m = url.match(/github\.com[:/]([^/]+\/[^/.]+)/i);
-  return m?.[1]?.replace(/\.git$/, '') ?? 'phonaralv/phonara-gb';
-}
+const gitRemoteRepo = gitRemoteRepoOrExit;
 
 function ghAvailable(): boolean {
   const r = spawnSync('gh', ['--version'], { encoding: 'utf8' });
@@ -104,7 +100,8 @@ function normalizeJobName(name: string): string {
   if (lower.includes('typecheck') || lower.includes('quality')) return 'quality';
   if (lower.includes('sql')) return 'sql';
   if (lower.includes('e2e') && !lower.includes('browser')) return 'e2e';
-  if (lower.includes('advisor')) return 'advisors';
+  // Do not match "advisory" (e.g. browser-matrix advisory) as required advisors.
+  if (lower.includes('advisor') && !lower.includes('advisory')) return 'advisors';
   return lower;
 }
 

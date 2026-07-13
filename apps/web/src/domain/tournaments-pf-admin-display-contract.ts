@@ -118,7 +118,7 @@ export const TOURNAMENTS_PF_ADMIN_ENGINE_BRANCHES: Readonly<
   },
   pf_user_client_verify: {
     engine: 'exists',
-    source: '@phonara/game-engine verifyRound · FairnessSheet',
+    source: '@phonara/game-engine verifyRound · CasinoFairnessPage',
     moneyPath: false,
     domain: 'pf_user',
   },
@@ -195,13 +195,13 @@ export const TOURNAMENTS_PF_ADMIN_PLACEMENT: Readonly<TournamentsPfAdminSurfaceP
   {
     route: CASINO_HUB_ROUTE,
     role: 'tournaments_hub_preview',
-    hook: 'TournamentsSection · casino-page.tsx',
+    hook: 'CasinoLobbyPage · casino-lobby-page.tsx',
     canonicalTarget: TOURNAMENTS_ROUTE_CANONICAL,
   },
   {
     route: PF_FAIRNESS_ROUTE_LEGACY,
     role: 'pf_fairness_hub',
-    hook: 'ImportedGamesFairnessPage · loadFairnessHistory',
+    hook: 'CasinoFairnessPage · useCasinoFairnessVerifier',
     canonicalTarget: PF_FAIRNESS_ROUTE_CANONICAL,
   },
   {
@@ -233,7 +233,7 @@ export const TOURNAMENTS_PF_ADMIN_UI_WIRE_STATUS: Readonly<
 > = {
   '/games/tournaments': 'mock_only',
   '/games/fairness': 'wired',
-  '/casino': 'mock_only',
+  '/casino': 'partial',
   '/admin/casino': 'partial',
 };
 

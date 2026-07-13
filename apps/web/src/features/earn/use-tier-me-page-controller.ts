@@ -10,6 +10,7 @@ import {
   buildTierProgressView,
   parseEarnHubLimitsToday,
   parseEarnHubTierSnapshot,
+  parseTierDecayStatusSnapshot,
   TIER_KEEP_STATUS_RPC,
   TIER_KEEP_STATUS_UI_ID,
   type EarnHubLimitTodayRow,
@@ -29,7 +30,7 @@ import {
   useRepeatableMissionStatus,
   repeatableMissionKeys,
 } from '@/features/earn/use-repeatable-missions';
-import { supabase } from '@/lib/supabase';
+import { callRpc } from '@/lib/rpc';
 import { translateError } from '@/lib/translate-error';
 import { productToast } from '@/product/primitives/toast-zone';
 import { useT } from '@/product/i18n';
@@ -44,26 +45,34 @@ type TierMeSnapshot = {
   limitsToday: EarnHubLimitTodayRow[];
   qualifiedReferrals: number;
   totalInvited: number;
+  decayPanel: TierDecayPanelView;
 };
 
 async function fetchTierMeSnapshot(): Promise<TierMeSnapshot> {
-  const { data, error } = await supabase.rpc('rpc_get_earn_hub_status');
-  if (error) throw error;
+  const [hubData, decayData] = await Promise.all([
+    callRpc('rpc_get_earn_hub_status'),
+    callRpc('rpc_get_tier_decay_status'),
+  ]);
 
-  const hubPayload = (data ?? {}) as Record<string, unknown>;
+  const hubPayload = (hubData ?? {}) as Record<string, unknown>;
   const tierSnapshot = parseEarnHubTierSnapshot(hubPayload);
   if (!tierSnapshot) {
     throw new Error('TIER_SNAPSHOT_MISSING');
   }
 
   const referral = parseEarnHubReferralSnapshot(hubPayload);
+  const tierProgress = buildTierProgressView(tierSnapshot);
+  const decayStatus = parseTierDecayStatusSnapshot(
+    (decayData ?? null) as Record<string, unknown> | null,
+  );
 
   return {
     hubPayload,
-    tierProgress: buildTierProgressView(tierSnapshot),
+    tierProgress,
     limitsToday: parseEarnHubLimitsToday(hubPayload),
     qualifiedReferrals: referral?.qualifiedTotal ?? 0,
     totalInvited: referral?.totalInvited ?? 0,
+    decayPanel: buildTierDecayPanelView(tierProgress.tier, decayStatus),
   };
 }
 
@@ -115,8 +124,10 @@ export function useTierMePageController(): TierMePageControllerView {
   });
 
   const decayPanel = useMemo(
-    () => buildTierDecayPanelView(snapshot?.tierProgress.tier ?? 'bronze'),
-    [snapshot?.tierProgress.tier],
+    () =>
+      snapshot?.decayPanel ??
+      buildTierDecayPanelView(snapshot?.tierProgress.tier ?? 'bronze', null),
+    [snapshot?.decayPanel, snapshot?.tierProgress.tier],
   );
 
   const keepMission = useMemo((): TierKeepMissionView | null => {

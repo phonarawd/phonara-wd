@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import type {
   AdminEarnLimitRow,
+  AdminMissionCatalogUpsertInput,
   AdminViralMissionRow,
 } from '@/product/bridge/parse-admin-missions-config';
 import { parseEarnLimits, parseViralMissions } from '@/product/bridge/parse-admin-missions-config';
@@ -31,21 +32,30 @@ export interface UseAdminMissionsDesk {
   viralMissions: AdminViralMissionRow[];
   isLoading: boolean;
   isError: boolean;
+  isSaving: boolean;
+  writeUiUnlocked: boolean;
   refresh: () => Promise<void>;
+  upsertMission: (input: AdminMissionCatalogUpsertInput) => Promise<void>;
 }
 
-/** Mock missions desk — `app_config` seed for tests and offline preview. */
+/** Mock missions desk — seed for tests and offline preview (write UI unlocked after GATE). */
 export function useAdminMissionsDeskMock(): UseAdminMissionsDesk {
   const earnLimits = useMemo(() => parseEarnLimits(SEED_CONFIG), []);
   const viralMissions = useMemo(() => parseViralMissions(SEED_CONFIG), []);
 
   const refresh = useCallback(async () => undefined, []);
+  const upsertMission = useCallback(async () => {
+    return;
+  }, []);
 
   return {
     earnLimits,
     viralMissions,
     isLoading: false,
     isError: false,
+    isSaving: false,
+    writeUiUnlocked: true,
     refresh,
+    upsertMission,
   };
 }
