@@ -1,3 +1,4 @@
+import { Info } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { toDecimal } from '@phonara/money';
 
@@ -228,6 +229,30 @@ export function FuturesOrderTicket({
           disabled={busy || tradeBlocked}
         />
 
+        {marginCurrency === 'PHON' ? (
+          <div
+            role="status"
+            data-testid="futures-phon-margin-notional-warning"
+            className="border-line bg-surface-raised flex items-start gap-3 rounded-lg border px-3 py-2.5"
+          >
+            <Info className="text-foreground-muted mt-0.5 size-4 shrink-0" aria-hidden />
+            <div className="min-w-0">
+              <p
+                className="text-foreground m-0 text-sm font-semibold"
+                data-testid="futures-phon-margin-notional-warning-title"
+              >
+                {t('trade.futures.phonMarginNotionalWarning.title')}
+              </p>
+              <p
+                className="text-foreground-muted m-0 mt-0.5 text-xs leading-relaxed"
+                data-testid="futures-phon-margin-notional-warning-description"
+              >
+                {t('trade.futures.phonMarginNotionalWarning.description')}
+              </p>
+            </div>
+          </div>
+        ) : null}
+
         <label className="flex flex-col gap-1">
           <span className="text-foreground-muted flex items-center gap-1 text-xs">
             {t('trade.margin')}
@@ -283,7 +308,7 @@ export function FuturesOrderTicket({
             </dd>
           </div>
           <div
-            className="border-line grid gap-2 rounded-(--ds-radius-md) border px-2 py-2"
+            className="border-line grid gap-2 rounded-md border px-2 py-2"
             data-testid="futures-desk-balances"
           >
             <div className="flex items-baseline justify-between gap-2">
@@ -384,7 +409,7 @@ export function FuturesOrderTicket({
                   {t('trade.order.timeInForce')}
                 </span>
                 <select
-                  className="border-line bg-surface-raised text-foreground min-h-10 rounded-(--ds-radius-md) border px-2 text-sm"
+                  className="border-line bg-surface-raised text-foreground min-h-10 rounded-md border px-2 text-sm"
                   value={wire.timeInForce}
                   onChange={(event) =>
                     wire.setTimeInForce(event.target.value as FuturesTimeInForce)
