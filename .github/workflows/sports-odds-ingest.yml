@@ -1,0 +1,58 @@
+name: Sports Odds Ingest
+
+# Wave 0 (스포츠 무료 실배당 완결 로드맵) — 서버비 없는 상시 가동.
+# GitHub Actions scheduled cron은 "정각 근처" 실행이라 완전한 초단위 실시간은 아님 —
+# odds-api.io 무료 티어(시간당 100req)로는 5분 간격이면 충분히 여유 있음.
+#
+# 스코프 (Wave 0.5 하드 게이트와 별개로, 이 워크플로 자체도 REST만 스케줄):
+#   - REST 배당 폴링(sports:orchestrator의 rest tick)만 실행.
+#   - WS(실시간) 채널은 SPORTS_ORCHESTRATOR_WS=false로 명시적으로 비활성 — 라이브 코드/실행 경로는
+#     보존되지만(삭제 금지, .cursor/rules 97 참조) 이 cron에서는 스케줄하지 않는다.
+#   - Settle(정산)은 실머니 이동 경로라 Wave 2 머니 soak으로 별도 승인되기 전까지
+#     SPORTS_SETTLE_DRY_RUN=true로 유지(오즈 ingest만 live, 정산은 dry-run).
+#
+# 필요 GitHub repo secrets (Settings → Secrets and variables → Actions):
+#   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY — 기존 스크립트가 쓰는 것과 동일 키 재사용(신규 발급 금지)
+#   THE_ODDS_API_KEY (백업 벤더) · ODDS_API_IO_KEY (1순위 벤더, 무료 키는 operator가 직접 발급)
+# 선택 repo variable: SPORTS_INGEST_LEAGUES (기본 epl,k-league)
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sports-odds-ingest
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    name: sports odds REST ingest (orchestrator · WS disabled · settle dry-run)
+    runs-on: ubuntu-latest
+    # 다음 5분 cron trigger 전에 반드시 종료 — 겹치는 프로세스가 남지 않도록 orchestrator의
+    # 24/7 루프를 짧게 잘라서 "REST tick 1회 + settle dry-run tick 1회"로 사용한다(코드 변경 0).
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Run sports odds orchestrator (bounded single pass)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY }}
+          ODDS_API_IO_KEY: ${{ secrets.ODDS_API_IO_KEY }}
+          SPORTS_ODDS_VENDOR: auto
+          SPORTS_ODDS_VENDOR_PRIORITY: odds-api-io,the-odds-api
+          SPORTS_INGEST_LEAGUES: ${{ vars.SPORTS_INGEST_LEAGUES || 'epl,k-league' }}
+          SPORTS_INGEST_DRY_RUN: 'false'
+          SPORTS_SETTLE_DRY_RUN: 'true'
+          SPORTS_ORCHESTRATOR_WS: 'false'
+        # timeout-minutes(job) sends SIGTERM which the orchestrator handles gracefully
+        # (process.on('SIGTERM', ...) → clean stop()); no orphan process expected.
+        run: bun run sports:orchestrator
