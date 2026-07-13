@@ -96,7 +96,6 @@ DO $$
 DECLARE
   v_uid UUID := gen_random_uuid();
   v_market RECORD;
-  v_side TEXT;
   v_entry NUMERIC;
   v_open JSONB;
   v_expected_liq NUMERIC;
@@ -154,30 +153,21 @@ BEGIN
   LOOP
     SELECT price::NUMERIC INTO v_entry FROM oracle_prices WHERE symbol = v_market.symbol;
 
-    FOREACH v_side IN ARRAY ARRAY['long', 'short']
-    LOOP
-      v_open := rpc_open_futures_position(
-        v_market.symbol,
-        v_side,
-        'USDT',
-        '123.456789',
-        v_market.max_leverage::TEXT,
-        NULL,
-        NULL,
-        'max-boundary-' || v_market.symbol || '-' || v_side || '-' || v_uid::TEXT
-      );
-
-      IF v_side = 'long' THEN
-        v_expected_liq := v_entry * (1 - (1 / v_market.max_leverage) + v_market.mmr);
-      ELSE
-        v_expected_liq := v_entry * (1 + (1 / v_market.max_leverage) - v_market.mmr);
-      END IF;
-      IF v_expected_liq < 0 THEN v_expected_liq := 0; END IF;
-
-      ASSERT v_open->>'liquidation_price' = _fmt6(v_expected_liq),
-        format('%s %s max leverage liquidation parity failed: got=%s expected=%s',
-          v_market.symbol, v_side, v_open->>'liquidation_price', _fmt6(v_expected_liq));
-    END LOOP;
+    v_open := rpc_open_futures_position(
+      v_market.symbol,
+      'long',
+      'USDT',
+      '123.456789',
+      v_market.max_leverage::TEXT,
+      NULL,
+      NULL,
+      'max-boundary-' || v_market.symbol || '-long-' || v_uid::TEXT
+    );
+    v_expected_liq := v_entry * (1 - (1 / v_market.max_leverage) + v_market.mmr);
+    IF v_expected_liq < 0 THEN v_expected_liq := 0; END IF;
+    ASSERT v_open->>'liquidation_price' = _fmt6(v_expected_liq),
+      format('%s long max leverage liquidation parity failed: got=%s expected=%s',
+        v_market.symbol, v_open->>'liquidation_price', _fmt6(v_expected_liq));
 
     v_max_plus := _fmt6(v_market.max_leverage + 0.000001);
     v_rejected := FALSE;
@@ -199,6 +189,22 @@ BEGIN
     ASSERT v_rejected,
       format('%s just-over-max leverage must reject with leverage_too_high, got %s',
         v_market.symbol, COALESCE(v_msg, '<none>'));
+
+    v_open := rpc_open_futures_position(
+      v_market.symbol,
+      'short',
+      'USDT',
+      '123.456789',
+      v_market.max_leverage::TEXT,
+      NULL,
+      NULL,
+      'max-boundary-' || v_market.symbol || '-short-' || v_uid::TEXT
+    );
+    v_expected_liq := v_entry * (1 + (1 / v_market.max_leverage) - v_market.mmr);
+    IF v_expected_liq < 0 THEN v_expected_liq := 0; END IF;
+    ASSERT v_open->>'liquidation_price' = _fmt6(v_expected_liq),
+      format('%s short max leverage liquidation parity failed: got=%s expected=%s',
+        v_market.symbol, v_open->>'liquidation_price', _fmt6(v_expected_liq));
   END LOOP;
 
   RAISE NOTICE 'FUTURES MAX LEVERAGE BOUNDARY OK — max parity and just-over-max rejection verified';

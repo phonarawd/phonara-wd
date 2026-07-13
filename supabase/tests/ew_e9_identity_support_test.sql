@@ -89,7 +89,11 @@ BEGIN
     RAISE EXCEPTION 'authenticated complete must fail';
   EXCEPTION
     WHEN OTHERS THEN
-      IF SQLERRM NOT LIKE '%FORBIDDEN%' THEN RAISE; END IF;
+      IF SQLERRM NOT LIKE '%FORBIDDEN%'
+         AND SQLERRM NOT LIKE '%permission denied%'
+         AND SQLERRM NOT LIKE '%insufficient_privilege%' THEN
+        RAISE;
+      END IF;
   END;
   RESET ROLE;
   PERFORM set_config('request.jwt.claims', '{}', TRUE);

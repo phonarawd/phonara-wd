@@ -202,7 +202,19 @@ BEGIN
   ASSERT (v_order->>'reduce_only')::BOOLEAN = TRUE, 'reduce_only flag on place';
 
   RESET ROLE;
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('role', 'service_role')::TEXT,
+    TRUE
+  );
+  SET LOCAL ROLE service_role;
   PERFORM rpc_run_open_order_fills();
+  RESET ROLE;
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('sub', v_uid::TEXT, 'role', 'authenticated')::TEXT,
+    TRUE
+  );
   SET LOCAL ROLE authenticated;
 
   SELECT status INTO v_status FROM trading_open_orders WHERE id = v_order_id;

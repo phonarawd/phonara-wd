@@ -123,9 +123,9 @@ BEGIN
     'type', 'odds_upsert',
     'outcomeId', 'test-vendor:e22-odds-1:match_1x2:home',
     'odds', '2.000000',
-    'capturedAt', NOW()::TEXT
+    'capturedAt', (NOW() - INTERVAL '2 minutes')::TEXT
   ));
-  -- drift odds upward
+  -- drift odds upward (later capturedAt so _sports_latest_odds resolves 2.15)
   PERFORM rpc_ingest_sports_c1(jsonb_build_object(
     'type', 'odds_upsert',
     'outcomeId', 'test-vendor:e22-odds-1:match_1x2:home',
