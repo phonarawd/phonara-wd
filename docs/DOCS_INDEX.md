@@ -43,6 +43,11 @@
 | [`OPERATIONS/PLATFORM_RELEASE_FREEZE.md`](OPERATIONS/PLATFORM_RELEASE_FREEZE.md)                       | RC Freeze · Release candidate blocked            |
 | [`OPERATIONS/PLATFORM_SLO_SLA.yaml`](OPERATIONS/PLATFORM_SLO_SLA.yaml)                                 | SLO/Trigger 수치 (draft→Owner)                   |
 | [`audit/PLATFORM_AUDIT_REFERENCE.md`](audit/PLATFORM_AUDIT_REFERENCE.md)                               | Zero-assumption audit **참고** 정본              |
+| [`audit/MASTER_INVENTORY_AUDIT_2026-07-13.md`](audit/MASTER_INVENTORY_AUDIT_2026-07-13.md)             | Master Inventory Audit (Phase 1 · §1–§25)        |
+| [`audit/REPO_TREE_APPENDIX.txt`](audit/REPO_TREE_APPENDIX.txt)                                         | Machine-readable repo tree 부록                  |
+| [`audit/KNIP_DEADCODE_REPORT.md`](audit/KNIP_DEADCODE_REPORT.md)                                       | Knip dead-code 실측                              |
+| [`audit/RPC_USAGE_MATRIX.md`](audit/RPC_USAGE_MATRIX.md)                                               | types `rpc_*` ↔ apps 호출 매트릭스               |
+| [`audit/PER_PAGE_UI_MATRIX.md`](audit/PER_PAGE_UI_MATRIX.md)                                           | Web 79 surfaces loading/empty/error/responsive   |
 
 ## Audit reports (PQA §33 · read-only)
 
