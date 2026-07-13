@@ -2,7 +2,7 @@
 
 > **감사일:** 2026-07-13 · **모드:** READ-ONLY (코드/migration 수정 0 — 순수 기록)
 > **작업 방식:** 기존 감사 자산 재사용(표본 스팟체크) + 코드 레벨 격차만 신규 검증 (operator 승인 방식)
-> **작성 순서:** PART 1 (1-A → 1-F) 완료 후 → **1-G Trade · 1-H Casino · 1-I Sports 확장**(2026-07-13 동시) → PART 2는 PART 1 본편 완료 후 착수됨
+> **작성 순서:** PART 1 (1-A → 1-F) 완료 후 → **1-G Trade · 1-H Casino · 1-I Sports 확장**(2026-07-13 동시) → **1-J 듀얼 통화 자금 안전성 확장**(2026-07-13 후속, operator 지시 · ZA-14/15는 완화조치·문구 수정 포함) → PART 2는 PART 1 본편 완료 후 착수됨
 
 ## 0. 재사용 선언 — 이미 존재하는 Zero Assumption 감사 자산
 
@@ -576,7 +576,59 @@ IF FOUND THEN RETURN v_entry_id; END IF;
 
 ---
 
-**PART 1 확장(1-G~1-I) 완료.** 본편 finding 11건 + 확장 ZA-12·ZA-13 = **총 13건**. PART 2는 본편 1-A~1-F 결과를 근거로 이미 작성됨(아래).
+## 1-J. 듀얼 통화(USDT/PHON) 자금 안전성 — operator 지시 확장(2026-07-13 후속)
+
+> **목적:** USDT/PHON 두 통화가 정산·환율·프론트 UI·캐시백·Σ=0 보존 검증 전 구간에서 교차 오염 없이 분리되는지 직접 코드 판독으로 확정한다. 대상 계획: `듀얼_통화_자금_안전성_감사_za-14_e30fb04f.plan.md`.
+> **모드 예외:** 이 섹션의 ZA-14/ZA-15는 **READ-ONLY가 아니다** — operator가 P0(ZA-14)·확정 오류(ZA-15)로 지시해 조사와 별도로 임시 완화조치·문구 수정을 같은 세션에서 구현했다. 나머지(1-J.1·1-J.3·1-J.4·1-J.5, ZA-16~19)는 1-A~1-I와 동일한 READ-ONLY 판독이다.
+
+### 1-J.0 방법론 노트 — 동적 SQL 패치 관례
+
+kill switch 가드(ZA-14 완화조치 2/3)는 신규 컬럼/함수를 만들지 않고, 기존 migration 히스토리 전반에서 반복되는 **`pg_get_functiondef` → `regexp_replace`로 본문 패치 → `EXECUTE`** 관례를 그대로 따른다(`20260609000019_p0_feature_kill_switches.sql`의 확장 관례와 동일). 신규 migration [`20260826000001_za14_futures_phon_margin_killswitch.sql`](../../supabase/migrations/20260826000001_za14_futures_phon_margin_killswitch.sql)은 `rpc_open_futures_position`의 라이브 본문을 읽어 기존 `invalid_margin_currency` 체크 바로 다음 줄에 `IF p_margin_currency = 'PHON' THEN PERFORM _assert_feature_enabled('futures_phon_margin'); END IF;`를 주입하고, 앵커 문자열이 없으면 `RAISE EXCEPTION`으로 실패하도록 만들어(idempotent guard) 향후 함수 본문이 바뀌어 앵커가 사라지면 침묵 실패 대신 migration 자체가 실패한다. `rpc_set_feature_enabled`의 allowlist도 **AAL2 가드가 포함된 최신 라이브 정의**를 그대로 복제해 `'futures_phon_margin'`만 추가했다(과거 원본이 아니라 현재 정의를 기준으로 삼아야 AAL2 가드 유실을 막는다).
+
+### 1-J.1 정산 통화 분리 검증
+
+sports/futures/spot/staking 4개 정산 경로를 직접 판독한 결과, 전부 **저장된 `currency`/`margin_currency`/`stake_currency` 컬럼을 정산 시점에 그대로 읽어** 공유 지갑 헬퍼(`_lock_wallet_internal`/`_unlock_wallet_internal`/`_credit_wallet_internal`/`_debit_wallet_internal`, [`20260730000001_pir_idempotency_handlers.sql`](../../supabase/migrations/20260730000001_pir_idempotency_handlers.sql) 기준 최신 정의)의 `CASE p_currency` 분기로 전달한다. Sports 정산(`_finalize_sports_bet`, [`20260616000102_wave_s4_sportsbook_settle.sql`](../../supabase/migrations/20260616000102_wave_s4_sportsbook_settle.sql))도 `sports_bets.currency`를 그대로 재사용 — 정산 시점에 통화를 재추론하거나 하드코딩하는 지점 없음. **교차 오염 P0급 결함 없음.**
+
+**정보성 기록 — 스테이킹 리워드 통화 불일치 이력(수정됨):** [`20260620000130_trade_majors_staking.sql`](../../supabase/migrations/20260620000130_trade_majors_staking.sql)에서 `reward_currency` 컬럼이 도입될 때 기본값이 `'PHON'`으로 고정됐고, [`20260626000010_launch_rc_money_fixes.sql:96`](../../supabase/migrations/20260626000010_launch_rc_money_fixes.sql)이 한 차례 전 풀을 `'PHON'`으로 강제 통일한 이력이 있다(당시 `stake_currency`와 `reward_currency`가 갈릴 수 있었다는 신호). 이후 [`20260721000008_trade_t3_staking_majors_rewards.sql:12-16`](../../supabase/migrations/20260721000008_trade_t3_staking_majors_rewards.sql)이 `reward_currency = stake_currency`로 재정의해 스테이크·리워드 통화를 영구히 일치시켰다 — **현재 코드는 수정 완료 상태**, 신규 finding 아님.
+
+### 1-J.2 환율/가치 기준 일관성 — ZA-14(P0) · ZA-15
+
+**ZA-14 (P0 — 완화조치 구현됨, 근본 수정은 후속 트랙):** `rpc_open_futures_position`(`20260609000009_p0_auto_liquidation.sql:388` 부근 `invalid_margin_currency` 가드 직후)이 `p_margin_currency='PHON'`일 때 `PHON_USDT` 오라클 변환을 수행하지 않고 `v_notional := v_margin * v_lev`를 그대로 쓴다. 참조 TS 엔진([`packages/trading-engine/src/futures.ts`](../../packages/trading-engine/src/futures.ts))도 동일 결함을 그대로 재현해 문서화 목적으로는 일관되나, 실제 페그(오라클상 `PHON_USDT=0.01`)가 반영되지 않아 **저장/표시되는 `notional`·`quantity`가 100배 왜곡**되고 OI 캡·최소 notional 체크·화면 표시 무결성이 깨진다. 지갑에 실제 이동하는 PHON 액수 자체(마진 차감·PnL·수수료)는 변환 단계 부재가 상쇄되어 자기일관적이라 **자금 손실 경로는 아니지만**, operator가 표시·리스크한도 무결성 기준으로 **P0 확정**했다.
+
+완화조치 2건을 이번 세션에 구현:
+
+1. **경고 배너** — [`futures-order-ticket.tsx:232-254`](../../apps/web/src/product/surfaces/trade/futures-order-ticket.tsx)에 `marginCurrency === 'PHON'`일 때 `TradeMarketStatusBanner`의 `showOracleOnly` 독립 배너 패턴을 복제해 `trade.futures.phonMarginNotionalWarning.title`/`.description`(ko/en) 경고를 렌더한다. 기존 kill/circuit/stale 우선순위 트리 밖의 독립 슬롯이라 회귀 위험이 없다.
+2. **Kill switch** — [`20260826000001_za14_futures_phon_margin_killswitch.sql`](../../supabase/migrations/20260826000001_za14_futures_phon_margin_killswitch.sql)이 `app_config.feature_futures_phon_margin_enabled='false'`를 즉시 삽입하고 `rpc_open_futures_position`에 가드를 주입해 **신규 PHON 마진 포지션 오픈만 차단**한다(기존 포지션 종료/청산은 항상 허용). `stack:push-remote` 완료 · remote security advisor **0 ERROR** 확인됨.
+
+근본 수정(오라클 변환을 notional 계산에 반영)은 **이 완화조치의 범위 밖 후속 작업**으로 명시 — kill switch가 꺼져 있는 한 사용자 노출은 없다.
+
+**ZA-15 (확정 — 수정 완료):** `wallet.phon.guide.balance`가 "PHON은 USDT와 1:1로 가치가 맞춰져 있어요"라고 주장했으나 시스템 오라클 `PHON_USDT=0.01`과 불일치했다(발견 시점 상태). operator 확정("0.01이 정답, 문구가 오류")에 따라 [`packages/i18n/src/index.ts:968-969`](../../packages/i18n/src/index.ts)(ko) · `:4113-4114`(en)를 "PHON의 USDT 가치는 실시간 환율에 따라 변동돼요" / "PHON's USDT value follows the live exchange rate and can change"로 교체했다(키 이름 유지, 인접 `.deposit`/`.withdraw` 키의 "실시간 환율" 어조와 통일). **본 세션에서 수정 완료.**
+
+### 1-J.3 프론트엔드 통화 선택 UI 일관성
+
+`SpendCurrencySelector`/`ConfirmDialog` 프리미티브는 공유되지만, 통화 선택 상태는 최소 4곳에서 독립적으로 관리된다 — futures(`use-futures-desk-wire.ts`의 order-ticket 상태), spot(`use-spot-desk-wire.ts`), sports(`use-sports-bet-slip-state.ts`), staking(`staking-hub-page.tsx`/`staking-positions-panel.tsx`). 공유 프리미티브가 상태까지 소유하지 않고 각 컨트롤러가 `value`/`onChange`만 주입받는 구조라 **prop 계약은 일관**되지만, 파생 로직(가용 잔액 계산 등)은 4곳에서 각자 구현된다.
+
+**Finding ZA-17 (P2 — Sports 확인 모달 통화 미표시):** [`sports-bet-slip-panel.tsx:292-303`](../../apps/web/src/product/surfaces/sports/sports-bet-slip-panel.tsx)의 `ConfirmDialog`는 `t('sports.slip.confirm.body')` 고정 문구만 표시하고 스테이크 금액·통화를 동적으로 넣지 않는다(`sports.slip.confirm.body` = "표시된 배당과 스테이크로 슬립이 접수돼요..." — 통화 언급 없음). 슬립 패널 본문에는 이미 `currency={slip.stakeCurrency}`로 통화가 표시되므로(220-264행) 확인 다이얼로그만 뒤처진 상태.
+
+**Finding ZA-18 (P3 — 통화 상태관리 4곳 독립구현):** 위 4곳이 각자 `useState`/파생값을 소유해 한 곳의 파생 로직 변경(예: 가용 잔액 계산식)이 자동으로 다른 3곳에 전파되지 않는다. 현재 4곳의 동작이 서로 어긋난다는 증거는 없음(부수효과 계약상 차이 없음) — 리팩토링 권장 사항으로 기록.
+
+### 1-J.4 캐시백률 통화별 계산 경로 (ZA-08 확장)
+
+SQL에 캐시백을 자동으로 크레딧하는 RPC/트리거 자체가 없다(캐시백은 `tier.guide.rows.<tier>.cashback` i18n 카피로만 안내되는 등급 혜택표 — ZA-08 4-surface 표시 대상). 캐시백 **크레딧 메커니즘이 없으므로** 통화별 교차 오염 가능성도 없음 — Wave 7(ZA-08)이 다루는 것은 "같은 캐시백률 문구가 4곳에서 동일 소스를 쓰는가"이고, 이 확인은 통화 분리와는 독립적이다.
+
+### 1-J.5 Σ=0 보존 검증의 통화별 커버리지
+
+`supabase/tests/conservation_test.sql`은 USDT/PHON 양쪽 시스템 계정을 대칭으로 검증한다(1-F.4 보강 확인). Sportsbook 전용 보존 테스트 4종(`sportsbook_place_conservation_test.sql` · `sportsbook_combo_conservation_test.sql` · `sportsbook_settle_conservation_test.sql` · `sportsbook_void_conservation_test.sql`)은 전부 `currency = 'PHON'` 하드코딩만 검증한다(예: [`sportsbook_place_conservation_test.sql:67-95`](../../supabase/tests/sportsbook_place_conservation_test.sql)). USDT sports 베팅의 Σ=0은 별도 파일 [`usdt_betting_proof_e7_test.sql`](../../supabase/tests/usdt_betting_proof_e7_test.sql)에 존재한다 — **커버리지 자체는 있으나 파일명에서 "sportsbook"·"conservation" 두 키워드로 검색해도 이 USDT 파일이 나오지 않는 발견성(discoverability) 문제**로 기록.
+
+**Finding ZA-16 (조사 결과 — 결함 아님·양성):** `sports_bets.currency`([`20260616000101_wave_s3_sportsbook_place_bet.sql:27`](../../supabase/migrations/20260616000101_wave_s3_sportsbook_place_bet.sql))는 `TEXT`가 아니라 `currency NOT NULL`이며, `currency`는 `ENUM ('PHON','USDT','KRW')`([`20260609000001_phase1_auth_wallet_ledger.sql:18`](../../supabase/migrations/20260609000001_phase1_auth_wallet_ledger.sql))로 정의된 열거형 타입이다. 열거형 타입 자체가 DB 레벨에서 유효값만 허용하므로 별도 `CHECK` 제약이 없어도 **동등하거나 더 강한 보장**이 이미 있다 — 착수 전 가설(CHECK 부재 = 결함)은 코드 판독 결과 **반증됨**. 신규 결함으로 등록하지 않고 "조사 완료·양성"으로만 기록한다.
+
+**Finding ZA-19 (P2~P3 — sportsbook 전용 conservation 테스트 발견성):** 위 1-J.5 서술대로 sportsbook USDT Σ=0 검증이 `usdt_betting_proof_e7_test.sql`이라는 다른 이름 규칙의 파일에 있어, `sportsbook_*_conservation_test.sql` 4종만 훑으면 "USDT sportsbook은 보존 검증이 없다"고 오판하기 쉽다. 실제 커버리지 공백은 아니지만 **파일 네이밍 정합성**은 후속 정리 대상.
+
+**1-J 완료.** 신규 finding: ZA-14(P0·완화조치 구현됨)·ZA-15(확정·수정 완료)·ZA-17(P2)·ZA-18(P3)·ZA-19(P2~P3). ZA-16은 조사 결과 결함 아님(양성)으로 종결.
+
+---
+
+**PART 1 확장(1-G~1-J) 완료.** 본편 finding 11건 + 확장 ZA-12·ZA-13·ZA-14·ZA-15·ZA-17·ZA-18·ZA-19 = **총 18건**(ZA-16은 조사 결과 결함 아님으로 총계에서 제외). PART 2는 본편 1-A~1-F 결과를 근거로 이미 작성됨(아래).
 
 ---
 
@@ -634,27 +686,29 @@ IF FOUND THEN RETURN v_entry_id; END IF;
 
 ## 전체 문제 수 (본 감사 신규 발견 · 심각도별)
 
-| 심각도   |   개수 | ID                                                                                                            |
-| -------- | -----: | ------------------------------------------------------------------------------------------------------------- |
-| P0       |      1 | ZA-05 (Earn 도메인 `callRpc` 우회 25파일·72% Earn)                                                            |
-| P1       |      1 | ZA-07 (등급 페이지 죽은 링크 `/tier/me/history`)                                                              |
-| P2       |      7 | ZA-01·ZA-03·ZA-06·ZA-08·ZA-11·**ZA-12**(Trade 차트 empty=캔들 2봉 미만)·**ZA-13**(Sports ingest dry-run 기본) |
-| P3       |      3 | ZA-02(RPC 도메인 명명 경계 모호)·ZA-04(README 설명 부재)·ZA-09(breakpoint 토큰 중복 명명)                     |
-| LOW      |      1 | ZA-10(PWA 배너 셸 타입 미구분)                                                                                |
-| **합계** | **13** | —                                                                                                             |
+| 심각도   |   개수 | ID                                                                                                                                              |
+| -------- | -----: | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| P0       |      2 | ZA-05 (Earn 도메인 `callRpc` 우회 25파일·72% Earn) · **ZA-14**(futures PHON 마진 오라클 변환 누락 — 완화조치 구현됨)                             |
+| P1       |      1 | ZA-07 (등급 페이지 죽은 링크 `/tier/me/history`)                                                                                                |
+| P2       |     10 | ZA-01·ZA-03·ZA-06·ZA-08·ZA-11·ZA-12(Trade 차트 empty=캔들 2봉 미만)·ZA-13(Sports ingest dry-run 기본)·**ZA-17**(Sports 확인모달 통화 미표시)·**ZA-19**(sportsbook USDT conservation 발견성) |
+| P3       |      3 | ZA-02(RPC 도메인 명명 경계 모호)·ZA-04(README 설명 부재)·ZA-09(breakpoint 토큰 중복 명명)· **ZA-18**(통화 상태관리 4곳 독립구현)                 |
+| LOW      |      1 | ZA-10(PWA 배너 셸 타입 미구분)                                                                                                                  |
+| 확정·수정 완료 |  1 | **ZA-15**(지갑 1:1 페그 허위 문구 — 본 세션 수정 완료)                                                                                          |
+| 조사 완료·양성(결함 아님) | 0(별도) | **ZA-16**(`sports_bets.currency` — ENUM이 CHECK와 동등 이상 보장, 결함 아님)                                                                    |
+| **합계** | **18** | P0~LOW 소계(ZA-15 확정·수정 완료 1건 포함) — ZA-16은 결함 아님으로 총계 제외                                                                    |
 
-기존 `SYSTEM_AUDIT_2026-07-13`(SA-01~06, 6건)과 합산하면 총 **19건**이 현재 문서화된 오늘 날짜 기준 열린 이슈다. Critical(P0급 money-safety 결함)은 0건 — ZA-05가 유일한 P0이나 이는 아키텍처 일관성 문제이며 1-F에서 확인한 실제 자금 이동 로직 자체는 안전하다. Casino 1-H는 finding 0(positive).
+기존 `SYSTEM_AUDIT_2026-07-13`(SA-01~06, 6건)과 합산하면 총 **24건**이 현재 문서화된 오늘 날짜 기준 열린/기록된 이슈다(그중 ZA-15는 수정 완료, ZA-14는 완화조치 구현됨으로 근본수정 후속 트랙만 OPEN). Critical(P0급 money-safety 결함로 실제 자금 손실 경로가 열린 것)은 0건 — ZA-05는 아키텍처 일관성 문제, ZA-14는 표시·리스크한도 무결성 문제이며 실제 지갑 자금 이동 로직(1-F) 자체는 두 경우 모두 안전하다. Casino 1-H는 finding 0(positive).
 
-## 도메인별 완성도 (1-G~1-I 실측 후 갱신)
+## 도메인별 완성도 (1-G~1-J 실측 후 갱신)
 
-| 도메인        | 완성도 추정 | 신뢰도                       | 근거                                                                                                                                                        |
-| ------------- | ----------: | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Earn          |     **82%** | **높음**(1-E 직접 코드 판독) | 8/8 페이지 실작동, 1건 죽은 링크, 3건 도달 불가, 구조적 API 경로 불일치                                                                                     |
-| Wallet/Ledger |     **92%** | **높음**(1-F 직접 코드 판독) | 동시성·멱등성·Σ=0 로직 표본 확인 결과 최상위 수준                                                                                                           |
-| Admin         |     **85%** | 중간(1-A 표본 확인)          | "구현 금지" 표기 페이지가 실제로는 구현되어 있음 확인(ZA-03) — 문서 신뢰도 문제, 코드 자체는 양호                                                           |
-| Trade         |     **86%** | **높음**(1-G 직접 코드 판독) | Spot/Futures/Staking RPC 정상·오라클/표시 이중 경로 설계대로. 차트 empty=ZA-12(데이터 게이트). R9 lazy≠원인. Earn 연계 0(ZA-11) 잔존                        |
-| Sports        |     **78%** | **높음**(1-I 직접 코드 판독) | 보드·베팅 RPC·freshness 「—」규율 정상. VIP=자격 게이트+공유 보드(완전 스텁 아님). **ingest 기본 dry-run**(ZA-13)으로 배당 전면 「—」가능 · 베팅 게이트 OFF |
-| Casino        |     **93%** | **높음**(1-H 직접 코드 판독) | 12/12 (a) 실 RPC+PF. toFixed 전수 표시만. fairness 검증기 실동작. live 모드 인라인 PF 배지만 약함(수동 검증 가능)                                           |
+| 도메인        | 완성도 추정 | 신뢰도                       | 통화 분리 무결성                                                                             | 근거                                                                                                                                                        |
+| ------------- | ----------: | ---------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Earn          |     **82%** | **높음**(1-E 직접 코드 판독) | 해당 없음(캐시백 크레딧 메커니즘 자체 없음 — 1-J.4)                                          | 8/8 페이지 실작동, 1건 죽은 링크, 3건 도달 불가, 구조적 API 경로 불일치. Trade 연계 0→**1**(Wave 4·ZA-11 완료)                                              |
+| Wallet/Ledger |     **92%** | **높음**(1-F 직접 코드 판독) | **정상** — 정산 경로 4종 전부 저장 통화 컬럼 재사용, 교차 오염 없음(1-J.1)                    | 동시성·멱등성·Σ=0 로직 표본 확인 결과 최상위 수준                                                                                                           |
+| Admin         |     **85%** | 중간(1-A 표본 확인)          | 해당 없음                                                                                     | "구현 금지" 표기 페이지가 실제로는 구현되어 있음 확인(ZA-03) — 문서 신뢰도 문제, 코드 자체는 양호                                                           |
+| Trade         |     **85%** | **높음**(1-G·1-J 직접 코드 판독) | **부분 결함(완화됨)** — PHON 마진 notional 오라클 변환 누락(ZA-14 P0), kill switch로 신규 오픈 차단 중 · 근본수정 OPEN | Spot/Futures/Staking RPC 정상·오라클/표시 이중 경로 설계대로. 차트 empty=ZA-12(데이터 게이트). R9 lazy≠원인. Earn 연계 완료(ZA-11)                          |
+| Sports        |     **78%** | **높음**(1-I·1-J 직접 코드 판독) | **정상(표시 세부 격차)** — 정산 통화 분리 정상(1-J.1), 확인모달 통화 미표시(ZA-17)·conservation 발견성(ZA-19)는 표시/네이밍 격차 | 보드·베팅 RPC·freshness 「—」규율 정상. VIP=자격 게이트+공유 보드(완전 스텁 아님). **ingest 기본 dry-run**(ZA-13)으로 배당 전면 「—」가능 · 베팅 게이트 OFF |
+| Casino        |     **93%** | **높음**(1-H 직접 코드 판독) | 해당 없음(PHON 전용 게임 경제)                                                                | 12/12 (a) 실 RPC+PF. toFixed 전수 표시만. fairness 검증기 실동작. live 모드 인라인 PF 배지만 약함(수동 검증 가능)                                           |
 
 **1-G~1-I 이전의 「낮음」신뢰도 표기는 폐기.** Trade/Sports/Casino는 본 확장에서 컨트롤러·RPC·표시 경로를 Earn/Wallet과 동일 방식으로 직접 판독했다. 잔여 NOT VERIFIED: Trade 차트 Network 실측 · Sports prod fixture 행 수(108) · Casino 브라우저 클릭 1회.
 
@@ -666,14 +720,14 @@ IF FOUND THEN RETURN v_entry_id; END IF;
 | 부분(버그 1건)        |    1 |   9% | 등급(`/tier/me`) — 죽은 링크                       |
 | 페이지 정상·도달 불가 |    3 |  27% | 등급 리더보드·친구초대 리더보드·스테이킹 포지션    |
 
-Trade/Sports/Casino 전환 지점: **Casino 3 · Sports 1 · Trade 0**(1-E.2).
+Trade/Sports/Casino 전환 지점: **Casino 3 · Sports 1 · Trade 0→1**(1-E.2 발견 시점 값 · Wave 4/ZA-11에서 Earn Home Fold5에 Trade 진입 카드 추가로 1로 해소됨).
 
 ## 즉시 손대면 위험한 파일 목록
 
 | 파일                                                                                                                                                      | 위험 이유                                                                                                                       |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `supabase/migrations/20260811000001_ew_e8_financial.sql` · `20260730000001_pir_idempotency_handlers.sql` · `20260609000001_phase1_auth_wallet_ledger.sql` | Wallet/Ledger 핵심 RPC — 데드락 방지 잠금 순서·TOCTOU 방어 로직 포함, 부주의한 수정 시 이중 차감/데드락 재발 위험               |
-| `supabase/migrations/20260822~20260825*_platform_sql_ci_closeout*.sql` (4개)                                                                              | Freeze ACTIVE 중 이미 드리프트 중(ZA-01) — 추가 수정은 위반 확대                                                                |
+| `supabase/migrations/20260822~20260825*_platform_sql_ci_closeout*.sql` (4개) · `20260826000001_za14_futures_phon_margin_killswitch.sql`                  | ZA-01 Freeze 드리프트 5건 — Wave 0/0.5에서 `stack:push-remote` 완료·advisor 0 ERROR 확인됨(더 이상 pending 아님). 향후 재발 시 동일 절차                |
 | `apps/web/src/domain/unified-tier-display-contract.ts`                                                                                                    | `EARN_HUB_STATUS_RPC` 정의처 — 4개 이상 다른 이름으로 재수출되어 15개+ 컨트롤러가 참조(ZA-05), 값 변경 시 파급 범위 예측 어려움 |
 | `apps/web/src/lib/rpc.ts`                                                                                                                                 | 전체 앱의 유일한 타입세이프 RPC 진입점 — 단, 25개 파일이 이미 이를 우회하고 있어 여기만 고쳐도 전체가 안 고쳐짐                 |
 | `apps/web/src/product/shell/appshell.tsx` · `shell-chrome.css`                                                                                            | 전체 앱 셸 레이아웃·BottomNav clearance 토큰 소스 — 수정 시 전 페이지 레이아웃 영향                                             |
@@ -684,4 +738,4 @@ Trade/Sports/Casino 전환 지점: **Casino 3 · Sports 1 · Trade 0**(1-E.2).
 
 ## 문서 상태
 
-본 문서는 [`docs/DOCS_INDEX.md`](../DOCS_INDEX.md)에 등록 예정이며, 기존 `PLATFORM_AUDIT_REFERENCE.md`·`SYSTEM_AUDIT_2026-07-13/`·`MASTER_INVENTORY_AUDIT_2026-07-13.md`를 대체하지 않고 보완한다. 코드 수정은 이 문서 어디에도 수행되지 않았다(READ-ONLY 준수). 재설계·수정 단계는 사용자 승인 이후 별도 단계에서 진행한다.
+본 문서는 [`docs/DOCS_INDEX.md`](../DOCS_INDEX.md)에 등록됨 — 기존 `PLATFORM_AUDIT_REFERENCE.md`·`SYSTEM_AUDIT_2026-07-13/`·`MASTER_INVENTORY_AUDIT_2026-07-13.md`를 대체하지 않고 보완한다. PART 1(1-A~1-I)·PART 2는 READ-ONLY로 작성됐다. **1-J(ZA-14·ZA-15)는 예외** — operator가 P0/확정 오류로 지시해 조사와 같은 세션에서 임시 완화조치(경고 배너·kill switch migration)와 지갑 문구 수정을 구현했다(1-J.2 참조). 그 외 항목(1-J.1·1-J.3·1-J.4·1-J.5, ZA-16~19)은 READ-ONLY. ZA-14 근본 수정(오라클 변환 반영)과 ZA-17·ZA-18·ZA-19는 사용자 승인 이후 별도 단계로 남는다.
