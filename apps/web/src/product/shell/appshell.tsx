@@ -17,6 +17,7 @@ import {
   walletSurfaceRouteMatcher,
 } from './shell-route-matchers';
 import { TopBar } from './top-bar';
+import { TradeSideNavDesktop } from './trade-shell';
 import { TRADE_SUBNAV } from './trade-subnav';
 import { BetFirstVisitEducationGate } from './bet-first-visit-education-gate';
 import { TradeFirstVisitEducationGate } from './trade-first-visit-education-gate';
@@ -97,6 +98,7 @@ export function AppShell({ children }: AppShellProps) {
         <TopBar />
         <div className="flex min-h-0 flex-1">
           <EarnSideNavDesktop />
+          <TradeSideNavDesktop />
           <div className="flex min-w-0 flex-1 flex-col">
             <EarnSubnavMobile />
             <DomainSubnav />

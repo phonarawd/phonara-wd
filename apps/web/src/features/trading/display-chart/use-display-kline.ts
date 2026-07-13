@@ -7,6 +7,7 @@ import {
   parseBybitKlineWsMessage,
   type DisplayKlineCandle,
 } from './display-feed-contract';
+import { fetchMarketDataProxy } from './market-data-proxy-client';
 import {
   advanceKlineProviderOnFailure,
   createInitialKlineProviderState,
@@ -92,6 +93,9 @@ function sharedKey(symbol: string, interval: DisplayKlineInterval): string {
   return `${symbol.toUpperCase()}:${interval}`;
 }
 
+// History (REST) is fetched through `market-data-proxy` (ZA-12) — direct
+// browser calls to api.bybit.com/api.binance.com are blocked by CORS for
+// some visitors. Live WS streams below stay direct (CORS does not gate WS).
 async function fetchBybitKlineHistory(
   symbol: string,
   interval: DisplayKlineInterval,
@@ -99,9 +103,7 @@ async function fetchBybitKlineHistory(
   if (isPhonDisplaySymbol(symbol)) return [];
   const pair = resolveExchangePair(symbol);
   if (!pair) return [];
-  const res = await fetch(
-    `https://api.bybit.com/v5/market/kline?category=spot&symbol=${pair}&interval=${bybitIntervalParam(interval)}&limit=120`,
-  );
+  const res = await fetchMarketDataProxy({ provider: 'bybit', op: 'klines', symbol: pair, interval });
   if (!res.ok) return [];
   const json = (await res.json()) as {
     result?: { list?: string[][] };
@@ -126,9 +128,7 @@ async function fetchBinanceKlineHistory(
   if (isPhonDisplaySymbol(symbol)) return [];
   const pair = resolveExchangePair(symbol);
   if (!pair) return [];
-  const res = await fetch(
-    `https://api.binance.com/api/v3/klines?symbol=${pair}&interval=${intervalParam(interval)}&limit=120`,
-  );
+  const res = await fetchMarketDataProxy({ provider: 'binance', op: 'klines', symbol: pair, interval });
   if (!res.ok) return [];
   const rows = (await res.json()) as unknown[][];
   return rows.map((r) => ({

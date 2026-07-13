@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
@@ -17,6 +18,26 @@ const pwaRegisterDevStub = fileURLToPath(
 );
 const i18nReactSrc = fileURLToPath(new URL('../../packages/i18n/src/react.tsx', import.meta.url));
 const i18nSrc = fileURLToPath(new URL('../../packages/i18n/src/index.ts', import.meta.url));
+const headersFile = fileURLToPath(new URL('./public/_headers', import.meta.url));
+
+/**
+ * Mirror Pages `_headers` CSP on Vite dev/preview so ZA-21 chart feed
+ * allowlist can be verified locally (Cloudflare `_headers` is not applied by Vite).
+ */
+function readPagesCspHeader(): string | undefined {
+  try {
+    const source = readFileSync(headersFile, 'utf8');
+    const match = source.match(/^ {2}Content-Security-Policy:\s*(.+)$/m);
+    return match?.[1]?.trim();
+  } catch {
+    return undefined;
+  }
+}
+
+const pagesCsp = readPagesCspHeader();
+const localSecurityHeaders = pagesCsp
+  ? { 'Content-Security-Policy': pagesCsp }
+  : undefined;
 
 /** Phase R web entry — TanStack Router file routes + PWA injectManifest shell. */
 export default defineConfig(({ command }) => {
@@ -137,6 +158,13 @@ export default defineConfig(({ command }) => {
       port: 3000,
       strictPort: true,
       warmup: phonaraViteDevWarmup(webSrc),
+      ...(localSecurityHeaders ? { headers: localSecurityHeaders } : {}),
+    },
+    preview: {
+      host: '127.0.0.1',
+      port: 3000,
+      strictPort: true,
+      ...(localSecurityHeaders ? { headers: localSecurityHeaders } : {}),
     },
     build: {
       sourcemap: false,

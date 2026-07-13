@@ -155,3 +155,8 @@ verify_jwt = false
 [functions.product-analytics]
 # Public analytics ingress: HMAC(IP) dual-bucket in RPC; JWT optional.
 verify_jwt = false
+
+[functions.market-data-proxy]
+# Public display-only exchange REST passthrough (klines/depth/ticker); no
+# DB/RPC access, no auth required — read-only public market quote data.
+verify_jwt = false

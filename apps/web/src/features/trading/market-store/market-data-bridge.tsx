@@ -148,8 +148,12 @@ export function useMarketDataBridge(
   }, [activeSymbol, remote]);
 
   useEffect(() => {
+    // Depend on tickersKey only — parents often pass a fresh `marketSymbols`
+    // array each render (`.map`), which would churn subscribe/unsubscribe and
+    // abort CONNECTING Binance sockets ("WebSocket is closed before …").
+    const platforms = tickersKey.length > 0 ? tickersKey.split(',') : [];
     const exchangeSymbols: string[] = [];
-    for (const platform of marketSymbols) {
+    for (const platform of platforms) {
       const exchange = registerPlatformSymbol(platform);
       if (exchange) exchangeSymbols.push(exchange);
     }
@@ -168,7 +172,7 @@ export function useMarketDataBridge(
       }
       if (toRelease.length > 0) void remote.unsubscribeTickers(toRelease);
     };
-  }, [tickersKey, marketSymbols, remote]);
+  }, [tickersKey, remote]);
 }
 
 /** Mount once per terminal surface to wire display-only exchange feeds. */

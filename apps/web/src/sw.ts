@@ -2,8 +2,19 @@
 
 export {};
 
+// `self.__WB_MANIFEST` entries from `includeAssets` (e.g. offline.html) use
+// no leading slash, while the OFFLINE_URL fallback below uses `/offline.html`.
+// Both resolve to the same absolute request, but as distinct strings a plain
+// Set dedupe lets both through — `Cache.addAll()` then throws
+// "duplicate requests" because it resolves them to the same target. Compare
+// on the leading-slash-normalized key, keep the first-seen (manifest) form.
 function dedupePrecacheUrls(urls: string[]): string[] {
-  return [...new Set(urls)];
+  const seen = new Map<string, string>();
+  for (const url of urls) {
+    const key = url.startsWith('/') ? url.slice(1) : url;
+    if (!seen.has(key)) seen.set(key, url);
+  }
+  return [...seen.values()];
 }
 
 type PrecacheEntry = { url: string; revision: string | null };

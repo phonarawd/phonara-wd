@@ -6,6 +6,7 @@ import { createRafBatcher } from './market-data-emit-scheduler';
 import { createWsHeartbeatWatch, type WsHeartbeatWatch } from './market-data-heartbeat';
 import { createReconnectScheduler, parseWsJson } from './market-data-reconnect';
 import type { Ticker24hSnapshot } from '@/features/trading/display-chart/display-feed-contract';
+import { fetchMarketDataProxy } from '@/features/trading/display-chart/market-data-proxy-client';
 
 export type { Ticker24hSnapshot } from '@/features/trading/display-chart/display-feed-contract';
 
@@ -61,6 +62,8 @@ let ws: WebSocket | null = null;
 let tickerWs: WebSocket | null = null;
 let activeSymbol: string | null = null;
 const tickerSymbols = new Set<string>();
+/** Stable sorted stream key for the current ticker multiplex socket. */
+let tickerStreamKey: string | null = null;
 let guard = createSequenceGuard({ symbol: '', bids: [], asks: [], lastUpdateId: 0 });
 let currentBook: BookSnapshot = { symbol: '', bids: [], asks: [], lastUpdateId: 0 };
 let pendingSnapshot: BookSnapshot | null = null;
@@ -138,10 +141,14 @@ function mergeLevels(
   return [...map.entries()];
 }
 
+// Depth/ticker REST snapshots go through `market-data-proxy` (ZA-12) — direct
+// browser fetches to api.binance.com are blocked by CORS for some visitors.
+// The live depth WS below stays direct (CORS does not gate the WS handshake).
 async function seedDepth(symbol: string): Promise<BookSnapshot> {
-  const res = await fetch(
-    `https://api.binance.com/api/v3/depth?symbol=${symbol.toUpperCase()}&limit=1000`,
-  );
+  const res = await fetchMarketDataProxy({ provider: 'binance', op: 'depth', symbol });
+  if (!res.ok) {
+    throw new Error(`depth_fetch_failed:${res.status}`);
+  }
   const data = (await res.json()) as {
     lastUpdateId: number;
     bids: [string, string][];
@@ -160,7 +167,7 @@ async function seedDepth(symbol: string): Promise<BookSnapshot> {
 
 async function seedTicker(symbol: string): Promise<void> {
   const sym = symbol.toUpperCase();
-  const tickerRes = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${sym}`);
+  const tickerRes = await fetchMarketDataProxy({ provider: 'binance', op: 'ticker24h', symbol: sym });
   if (!tickerRes.ok) return;
   const data = (await tickerRes.json()) as Record<string, unknown>;
   const snapshot = parseTickerPayload(data);
@@ -236,7 +243,9 @@ function connectWs(symbol: string) {
     });
     guard = next;
     if (next.needsReseed) {
-      void seedDepth(symbol).then(postBookSnapshot);
+      void seedDepth(symbol)
+        .then(postBookSnapshot)
+        .catch(() => scheduleDepthReconnect(symbol));
       return;
     }
     currentBook = {
@@ -280,11 +289,30 @@ function scheduleTickerReconnect() {
 }
 
 function connectTickerWs() {
+  if (tickerSymbols.size === 0) {
+    closeTickerWs(true);
+    tickerStreamKey = null;
+    return;
+  }
+
+  const streams = [...tickerSymbols]
+    .map((sym) => `${sym.toLowerCase()}@ticker`)
+    .sort()
+    .join('/');
+
+  // Skip reopen when the multiplex target is unchanged and the socket is still alive —
+  // avoids Chrome "WebSocket is closed before the connection is established" spam.
+  if (
+    tickerWs &&
+    tickerStreamKey === streams &&
+    (tickerWs.readyState === WebSocket.CONNECTING || tickerWs.readyState === WebSocket.OPEN)
+  ) {
+    return;
+  }
+
   closeTickerWs(true);
   tickerIntentionalClose = false;
-  if (tickerSymbols.size === 0) return;
-
-  const streams = [...tickerSymbols].map((sym) => `${sym.toLowerCase()}@ticker`).join('/');
+  tickerStreamKey = streams;
   tickerWs = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
 
   tickerWs.onopen = () => {
@@ -316,6 +344,7 @@ function connectTickerWs() {
   tickerWs.onclose = () => {
     disposeTickerHeartbeat();
     tickerWs = null;
+    tickerStreamKey = null;
     if (tickerIntentionalClose || tickerSymbols.size === 0) return;
     scheduleTickerReconnect();
   };
@@ -333,9 +362,16 @@ const api: MarketDataWorkerApi = {
       postBookSnapshot(e2eStubBook(sym));
       return;
     }
-    const snapshot = await seedDepth(sym);
-    postBookSnapshot(snapshot);
-    connectWs(sym);
+    try {
+      const snapshot = await seedDepth(sym);
+      postBookSnapshot(snapshot);
+      connectWs(sym);
+    } catch {
+      // Initial seed failed (proxy/upstream unavailable) — retry through the
+      // same reconnect scheduler as WS drops instead of rejecting the
+      // Comlink call and leaving no book/retry at all.
+      scheduleDepthReconnect(sym);
+    }
   },
   async unsubscribeOrderBook(symbol: string) {
     if (activeSymbol !== symbol.toUpperCase()) return;

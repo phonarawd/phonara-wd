@@ -121,6 +121,37 @@ describe('shell elevation §34.10–34.11', () => {
     expect(screen.getByTestId('earn-side-rail-desktop')).toBeTruthy();
   });
 
+  it('Trade lg+ mounts side nav with Spot/Futures/Positions/Orders/History (ZA-21)', () => {
+    mockPathname = '/trade';
+    render(
+      <I18nProvider>
+        <AppShell>
+          <div>trade</div>
+        </AppShell>
+      </I18nProvider>,
+    );
+    const tradeDesktopNav = screen.getByTestId('trade-subnav-desktop');
+    expect(tradeDesktopNav).toBeTruthy();
+    expect(tradeDesktopNav.className).toContain('hidden');
+    expect(tradeDesktopNav.className).toContain('lg:block');
+    for (const path of ['/trade', '/trade/futures', '/trade/positions', '/trade/orders', '/ledger']) {
+      expect(tradeDesktopNav.querySelector(`a[href="${path}"]`)).toBeTruthy();
+    }
+    expect(screen.queryByTestId('earn-subnav-desktop')).toBeNull();
+  });
+
+  it('Trade desktop side nav does not mount off Trade routes', () => {
+    mockPathname = '/home';
+    render(
+      <I18nProvider>
+        <AppShell>
+          <div>earn</div>
+        </AppShell>
+      </I18nProvider>,
+    );
+    expect(screen.queryByTestId('trade-subnav-desktop')).toBeNull();
+  });
+
   it('AuroraBackground respects reduced-motion static flag', () => {
     const matchMedia = vi.fn().mockImplementation((query: string) => ({
       matches: query.includes('prefers-reduced-motion'),
