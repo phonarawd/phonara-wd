@@ -382,8 +382,8 @@ export function TradeChartPanel({
       </header>
 
       <div
-        className="flex min-h-0 flex-1 flex-col"
-        style={{ height: isFullscreen ? undefined : 'clamp(280px, 40vh, 420px)' }}
+        className="flex min-h-[280px] flex-1 flex-col"
+        style={{ height: isFullscreen ? undefined : 'clamp(280px, 42vh, 480px)' }}
       >
         {loading && candles.length < 2 ? (
           <Skeleton className="m-3 min-h-[240px] flex-1" data-testid="trade-chart-loading" />

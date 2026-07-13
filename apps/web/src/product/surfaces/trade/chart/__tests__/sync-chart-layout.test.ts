@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   CHART_LAYOUT_MIN_HEIGHT_PX,
   CHART_LAYOUT_MIN_WIDTH_PX,
+  CHART_RIGHT_SCALE_MARGINS,
   isChartHostSized,
   syncChartLayout,
 } from '../sync-chart-layout';
@@ -14,20 +15,27 @@ describe('sync-chart-layout', () => {
     expect(isChartHostSized({ width: 200, height: 200 })).toBe(true);
   });
 
-  it('applies size, resets autoscale, and fits time when host is sized', () => {
+  it('applies size, setAutoScale, and fits time when host is sized', () => {
     const applyOptions = vi.fn();
+    const setAutoScale = vi.fn();
     const priceScaleApply = vi.fn();
     const fitContent = vi.fn();
     const chart = {
       applyOptions,
-      priceScale: vi.fn(() => ({ applyOptions: priceScaleApply })),
+      priceScale: vi.fn((id: string) => {
+        if (id === 'right') {
+          return { applyOptions: priceScaleApply, setAutoScale };
+        }
+        return { applyOptions: priceScaleApply, setAutoScale: vi.fn() };
+      }),
       timeScale: vi.fn(() => ({ fitContent })),
     };
     const host = { clientWidth: 390, clientHeight: 280 } as HTMLElement;
 
     expect(syncChartLayout(chart as never, host)).toBe(true);
     expect(applyOptions).toHaveBeenCalledWith({ width: 390, height: 280 });
-    expect(priceScaleApply).toHaveBeenCalledWith({ autoScale: true });
+    expect(priceScaleApply).toHaveBeenCalledWith({ scaleMargins: { ...CHART_RIGHT_SCALE_MARGINS } });
+    expect(setAutoScale).toHaveBeenCalledWith(true);
     expect(fitContent).toHaveBeenCalledTimes(1);
   });
 

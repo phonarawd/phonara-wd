@@ -207,7 +207,7 @@ export function TradeDeskMobileTabs({
           {...swipeHandlers}
         >
           <TabsContent value="chart" data-testid="trade-desk-mobile-panel-chart">
-            <div className={cn(swipeActive && 'pointer-events-none')}>{chart}</div>
+            <div className={cn('min-h-[280px]', swipeActive && 'pointer-events-none')}>{chart}</div>
           </TabsContent>
 
           <TabsContent value="trade" data-testid="trade-desk-mobile-panel-trade">

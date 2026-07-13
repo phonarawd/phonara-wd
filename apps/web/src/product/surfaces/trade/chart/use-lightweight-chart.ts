@@ -9,7 +9,14 @@ import {
   lineSeriesOptions,
   readChartTheme,
 } from './chart-theme';
-import { isChartHostSized, readChartHostSize, scheduleChartLayoutSync, syncChartLayout } from './sync-chart-layout';
+import {
+  CHART_RSI_SCALE_MARGINS,
+  CHART_VOLUME_SCALE_MARGINS,
+  isChartHostSized,
+  readChartHostSize,
+  scheduleChartLayoutSync,
+  syncChartLayout,
+} from './sync-chart-layout';
 
 export type LightweightChartHandle = {
   chart: IChartApi;
@@ -50,15 +57,16 @@ export function useLightweightChart(
       ...lineSeriesOptions(theme.textMuted),
       visible: false,
     });
+    // Official overlay id is '' — keeps volume off the right price scale so
+    // ~2 BTC volume cannot stretch BTC ~62k into a -20k…50k axis.
     const volume = chart.addSeries(HistogramSeries, {
       priceFormat: { type: 'volume' },
-      priceScaleId: 'volume',
+      priceScaleId: '',
+      lastValueVisible: false,
+      priceLineVisible: false,
     });
-    chart.priceScale('volume').applyOptions({
-      scaleMargins: { top: 0.8, bottom: 0 },
-    });
-    chart.priceScale('right').applyOptions({
-      scaleMargins: { top: 0.05, bottom: 0.25 },
+    volume.priceScale().applyOptions({
+      scaleMargins: { ...CHART_VOLUME_SCALE_MARGINS },
     });
     const ma7 = chart.addSeries(LineSeries, {
       ...indicatorSeriesOptions(theme.marketUp),
@@ -84,9 +92,11 @@ export function useLightweightChart(
       ...indicatorSeriesOptions(theme.marketDown),
       visible: false,
       priceScaleId: 'rsi',
+      lastValueVisible: false,
+      priceLineVisible: false,
     });
-    chart.priceScale('rsi').applyOptions({
-      scaleMargins: { top: 0.75, bottom: 0 },
+    rsi.priceScale().applyOptions({
+      scaleMargins: { ...CHART_RSI_SCALE_MARGINS },
     });
 
     handleRef.current = {
@@ -133,8 +143,6 @@ export function useLightweightChart(
       const sized = isChartHostSized(size);
       const deltaW = Math.abs(size.width - lastWidth);
       const deltaH = Math.abs(size.height - lastHeight);
-      // Ignore sub-pixel noise; always sync when crossing the usable-size threshold
-      // (first paint after flex/fullscreen) or on meaningful geometry change.
       if (!sized) {
         lastSized = false;
         return;

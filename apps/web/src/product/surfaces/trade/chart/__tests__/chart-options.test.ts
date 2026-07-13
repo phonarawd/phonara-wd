@@ -23,9 +23,9 @@ describe('chart-options', () => {
     expect(interaction.handleScale?.pinch).toBe(true);
   });
 
-  it('builds createChart options with autoSize and theme tokens', () => {
+  it('builds createChart options without autoSize (manual ResizeObserver sizing)', () => {
     const options = createChartOptions(theme);
-    expect(options.autoSize).toBe(true);
+    expect(options.autoSize).toBe(false);
     expect(options.layout?.attributionLogo).toBe(true);
     expect(options.crosshair?.mode).toBe(CrosshairMode.MagnetOHLC);
     expect(options.timeScale?.timeVisible).toBe(true);

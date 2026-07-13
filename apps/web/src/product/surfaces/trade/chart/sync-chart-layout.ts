@@ -4,6 +4,11 @@ import type { IChartApi } from 'lightweight-charts';
 export const CHART_LAYOUT_MIN_WIDTH_PX = 32;
 export const CHART_LAYOUT_MIN_HEIGHT_PX = 64;
 
+/** Main pane keeps room for the volume overlay strip at the bottom. */
+export const CHART_RIGHT_SCALE_MARGINS = { top: 0.05, bottom: 0.25 } as const;
+export const CHART_VOLUME_SCALE_MARGINS = { top: 0.8, bottom: 0 } as const;
+export const CHART_RSI_SCALE_MARGINS = { top: 0.75, bottom: 0 } as const;
+
 export type ChartLayoutSize = {
   width: number;
   height: number;
@@ -18,29 +23,34 @@ export function isChartHostSized(size: ChartLayoutSize): boolean {
 }
 
 /**
- * Re-apply pane size + price autoscale + time fit after container changes
- * (fullscreen enter/exit, flex reflow, mobile tab reveal). Without this,
- * Lightweight Charts can keep a scale computed while the host was ~0px tall
- * — candles crush to a line until the user drags the price axis.
+ * Resize pane + force right-scale autoscale after container changes.
+ *
+ * Important: do NOT mix this with `autoSize: true` — fighting LWC's internal
+ * ResizeObserver leaves a stale visible price range (e.g. -20k…50k while BTC
+ * is at 62k), so candles clip above the pane until the user drags the axis.
  */
 export function syncChartLayout(chart: IChartApi, host: HTMLElement): boolean {
   const size = readChartHostSize(host);
   if (!isChartHostSized(size)) return false;
 
-  // Explicit size: autoSize alone can miss a frame across fullscreen CSS class
-  // application (React state lags the native fullscreenchange event).
   chart.applyOptions({ width: size.width, height: size.height });
-  chart.priceScale('right').applyOptions({ autoScale: true });
+
+  const right = chart.priceScale('right');
+  right.applyOptions({ scaleMargins: { ...CHART_RIGHT_SCALE_MARGINS } });
+  // setAutoScale (not applyOptions) actually clears a user/stale fixed range.
+  right.setAutoScale(true);
+
   try {
-    chart.priceScale('volume').applyOptions({ autoScale: true });
+    chart.priceScale('').applyOptions({ scaleMargins: { ...CHART_VOLUME_SCALE_MARGINS } });
   } catch {
-    /* volume scale may be absent before series attach */
+    /* volume overlay may be absent */
   }
   try {
-    chart.priceScale('rsi').applyOptions({ autoScale: true });
+    chart.priceScale('rsi').applyOptions({ scaleMargins: { ...CHART_RSI_SCALE_MARGINS } });
   } catch {
-    /* rsi scale may be absent when overlay is off */
+    /* rsi overlay may be absent */
   }
+
   chart.timeScale().fitContent();
   return true;
 }

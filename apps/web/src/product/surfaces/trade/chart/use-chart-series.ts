@@ -45,8 +45,17 @@ export function useChartSeries(
     const rsiData = overlays.rsi ? computeRsi14(candleData) : [];
 
     handle.candles.applyOptions({ visible: seriesMode === 'candles' });
-    handle.line.applyOptions({ visible: seriesMode === 'line' });
-    handle.volume.applyOptions({ visible: overlays.vol });
+    handle.line.applyOptions({
+      visible: seriesMode === 'line',
+      // Hidden close-line must not pull the right scale (same pane as candles).
+      autoscaleInfoProvider: seriesMode === 'line' ? undefined : () => null,
+    });
+    handle.volume.applyOptions({
+      visible: overlays.vol,
+      priceScaleId: '',
+      lastValueVisible: false,
+      priceLineVisible: false,
+    });
     handle.ma7.applyOptions({ visible: overlays.ma7 });
     handle.ema21.applyOptions({ visible: overlays.ema21 });
     handle.bbUpper.applyOptions({ visible: overlays.bb });
@@ -78,9 +87,8 @@ export function useChartSeries(
       prevLengthRef.current = candles.length;
       needsFlushRef.current = false;
       if (feedChanged || wasEmpty || overlayChanged) {
-        // Reset Y autoscale — fitContent alone leaves a crushed scale if setData
-        // ran while the host was still collapsing through flex/fullscreen.
-        handle.chart.priceScale('right').applyOptions({ autoScale: true });
+        // setAutoScale clears a stale fixed Y range left after undersized paints.
+        handle.chart.priceScale('right').setAutoScale(true);
         handle.chart.timeScale().fitContent();
       }
       return;
