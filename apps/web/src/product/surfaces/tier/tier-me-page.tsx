@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from '@tanstack/react-router';
-import { AlertTriangle, ChevronRight, Crown, History } from 'lucide-react';
+import { AlertTriangle, ChevronRight, Crown, History, Trophy } from 'lucide-react';
 
 import {
   TIER_BENEFITS_ROUTE,
@@ -13,6 +13,7 @@ import {
   resolveTierMeHistoryLinkRoute,
   buildTierMeBenefitsRows,
 } from '@/domain/tier-me-display-contract';
+import { TIER_LEADERBOARD_ROUTE } from '@/domain/tier-leaderboard-display-contract';
 import { useTierMePageController } from '@/features/earn/use-tier-me-page-controller';
 import { useEarnFiatHint } from '@/features/earn/use-earn-fiat-hint';
 import { buttonVariants } from '@/product/primitives/button';
@@ -373,18 +374,32 @@ export function TierMePage() {
           </section>
         ) : null}
 
-        <Link
-          to={resolveTierMeHistoryLinkRoute()}
-          className={cn(
-            buttonVariants({ variant: 'ghost', size: 'sm' }),
-            'text-foreground-muted w-fit px-0',
-          )}
-          data-testid="tier-me-history-link"
-        >
-          <History className="size-4" aria-hidden />
-          {t('tier.me.historyLink')}
-          <ChevronRight className="size-4" aria-hidden />
-        </Link>
+        <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-3">
+          <Link
+            to={resolveTierMeHistoryLinkRoute()}
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'sm' }),
+              'text-foreground-muted w-fit px-0',
+            )}
+            data-testid="tier-me-history-link"
+          >
+            <History className="size-4" aria-hidden />
+            {t('tier.me.historyLink')}
+            <ChevronRight className="size-4" aria-hidden />
+          </Link>
+          <Link
+            to={TIER_LEADERBOARD_ROUTE}
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'sm' }),
+              'text-foreground-muted w-fit px-0',
+            )}
+            data-testid="tier-me-leaderboard-link"
+          >
+            <Trophy className="size-4" aria-hidden />
+            {t('tier.me.leaderboardLink')}
+            <ChevronRight className="size-4" aria-hidden />
+          </Link>
+        </div>
       </div>
 
       {earnFiat.showDisclaimer ? <FiatHintDisclaimer className="md:col-span-2" /> : null}

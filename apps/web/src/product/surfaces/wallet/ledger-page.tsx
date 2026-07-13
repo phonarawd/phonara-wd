@@ -116,6 +116,13 @@ export function LedgerPage() {
           </h1>
           <p className="text-foreground-muted m-0 text-sm">{t('wallet.ledger.subtitle')}</p>
         </div>
+        <a
+          href="/rewards/history"
+          className="text-accent inline-flex items-center text-sm font-medium underline-offset-4 hover:underline"
+          data-testid="ledger-rewards-history-link"
+        >
+          {t('wallet.ledger.rewardsHistoryLink')}
+        </a>
       </header>
 
       <section aria-labelledby="ledger-filters-heading" className="flex flex-col gap-3">

@@ -3847,6 +3847,7 @@ export const presentationEnMessages = {
     'Track XP, daily limits, maintenance rules, and keep-status rewards in one place.',
   'tier.me.head.title': 'My tier — PHONARA',
   'tier.me.historyLink': 'Reward history',
+  'tier.me.leaderboardLink': 'Tier leaderboard',
   'tier.me.keepMissionTitle': 'Keep-status mission',
   'tier.me.limitsEmpty': 'Daily limits will appear after your first activity.',
   'tier.me.limitsTitle': "Today's limits",
@@ -4412,6 +4413,7 @@ export const presentationEnMessages = {
   'wallet.ledger.pagination.next': 'Next',
   'wallet.ledger.pagination.previous': 'Previous',
   'wallet.ledger.pagination.summary': 'Page {page} of {total} · {count} entries',
+  'wallet.ledger.rewardsHistoryLink': 'View reward history',
   'wallet.ledger.subtitle':
     'Every deposit, withdrawal, reward and fee — line by line, fully verifiable.',
   'wallet.ledger.title': 'Ledger',

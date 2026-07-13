@@ -139,6 +139,10 @@ describe('TierMePage', () => {
       'href',
       assertRegisteredFullPath('/tier/benefits'),
     );
+    expect(screen.getByTestId('tier-me-leaderboard-link')).toHaveAttribute(
+      'href',
+      assertRegisteredFullPath('/tier/leaderboard'),
+    );
   });
 
   it('shows tier keep mission claim CTA when E1 engine is live', () => {
