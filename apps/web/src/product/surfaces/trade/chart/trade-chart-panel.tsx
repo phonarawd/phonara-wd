@@ -149,7 +149,7 @@ export function TradeChartPanel({
       ref={panelRef}
       data-testid="trade-chart-panel"
       className={cn(
-        'border-line bg-surface flex min-h-0 flex-col overflow-hidden rounded-(--ds-radius-lg) border',
+        'border-line bg-surface flex min-h-0 flex-col overflow-hidden rounded-lg border',
         isFullscreen && 'h-screen w-screen rounded-none',
         className,
       )}
