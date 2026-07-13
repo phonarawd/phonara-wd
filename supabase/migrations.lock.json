@@ -239,6 +239,7 @@
     "20260818000001_h09_r3e_feature_flag_allowlist.sql": "bec60c2e45896f126974b417e9aa7c9694435cd9b1ba6bed51251bd07f8a4327",
     "20260819000001_h04_r4a_edge_ops_public_status_rebase.sql": "ccce28c5e2809f5c111048e0ee1852dcd2cc34cea41800b81ee0dbf7f85a1c8e",
     "20260820000001_m20_r4b_rls_perf_initplan.sql": "112032f1591fdb02f9aa6dbe81e6b7c8495e37f65743764b17da7ff8930deca3",
-    "20260821000001_m20_r4c_rls_permissive_consolidate.sql": "b5b2103ebc7e45524b5402c4fa2314f1e661102cf4c79d42540764e3029338e2"
+    "20260821000001_m20_r4c_rls_permissive_consolidate.sql": "b5b2103ebc7e45524b5402c4fa2314f1e661102cf4c79d42540764e3029338e2",
+    "20260822000001_platform_sql_ci_closeout.sql": "e89eaa8a69e23205c9bccd5a0bee3a830f7317f217c58eee56af38fdfc202bec"
   }
 }

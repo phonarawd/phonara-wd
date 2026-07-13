@@ -9308,32 +9308,19 @@ export type Database = {
         Args: { p_close_ratio: string; p_position_id: string }
         Returns: Json
       }
-      rpc_place_game_bet:
-        | {
-            Args: {
-              p_client_seed: string
-              p_currency: string
-              p_expected_result?: Json
-              p_idempotency_key: string
-              p_round_id: string
-              p_selection: Json
-              p_stake: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_client_seed: string
-              p_currency: string
-              p_expected_result?: Json
-              p_idempotency_key: string
-              p_round_id: string
-              p_selection: Json
-              p_stake: string
-              p_use_account_pf?: boolean
-            }
-            Returns: Json
-          }
+      rpc_place_game_bet: {
+        Args: {
+          p_client_seed: string
+          p_currency: string
+          p_expected_result?: Json
+          p_idempotency_key: string
+          p_round_id: string
+          p_selection: Json
+          p_stake: string
+          p_use_account_pf?: boolean
+        }
+        Returns: Json
+      }
       rpc_place_limit_order: {
         Args: {
           p_client_request_id: string
