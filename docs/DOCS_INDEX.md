@@ -51,7 +51,7 @@
 | [`audit/RPC_USAGE_MATRIX.md`](audit/RPC_USAGE_MATRIX.md)                                                             | types `rpc_*` ↔ apps 호출 매트릭스                               |
 | [`audit/PER_PAGE_UI_MATRIX.md`](audit/PER_PAGE_UI_MATRIX.md)                                                         | Web 79 surfaces loading/empty/error/responsive                   |
 | [`audit/SYSTEM_AUDIT_2026-07-13/00_EXECUTIVE_SCORECARD.md`](audit/SYSTEM_AUDIT_2026-07-13/00_EXECUTIVE_SCORECARD.md) | 7-Pillar 재점수 + SA-01~06                                       |
-| [`audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)                   | 코드 레벨 격차 감사(ZA-01~11) + PART 2 업계 벤치마크             |
+| [`audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)                   | Zero Assumption 감사 ZA-01~19 + 1-J 듀얼통화 · remediation Closeout 2026-07-14 |
 
 ## Audit reports (PQA §33 · read-only)
 

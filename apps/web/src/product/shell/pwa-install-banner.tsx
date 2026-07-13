@@ -72,7 +72,7 @@ export function PwaInstallBanner() {
         position === 'above-bottom-nav'
           ? 'bottom-[calc(var(--ds-shell-bottomnav-height)+env(safe-area-inset-bottom,0px))]'
           : 'bottom-[calc(1rem+env(safe-area-inset-bottom,0px))]',
-        'lg:bottom-4 lg:mx-auto lg:max-w-md lg:rounded-(--ds-radius-lg) lg:border lg:shadow-overlay',
+        'lg:bottom-4 lg:mx-auto lg:max-w-md lg:rounded-lg lg:border lg:shadow-overlay',
       )}
       data-testid="pwa-install-banner"
       data-position={position}
