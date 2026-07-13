@@ -99,10 +99,7 @@ export function translate(
   key: MessageKey,
   vars?: Record<string, string | number>,
 ): string {
-  const table =
-    locale === 'en'
-      ? (localeTables.en ?? localeTables.ko)
-      : localeTables.ko;
+  const table = locale === 'en' ? (localeTables.en ?? localeTables.ko) : localeTables.ko;
   let text: string = table[key] ?? localeTables.ko[key] ?? key;
   if (vars) {
     for (const [name, value] of Object.entries(vars)) {

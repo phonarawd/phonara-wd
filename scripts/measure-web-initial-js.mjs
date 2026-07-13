@@ -18,7 +18,9 @@ const outArg = process.argv.find((a) => a.startsWith('--out='));
 const outPath = outArg ? join(root, outArg.slice('--out='.length)) : null;
 
 if (!existsSync(htmlPath)) {
-  console.error('[measure-web-initial-js] missing apps/web/dist/index.html — run build:web:production first');
+  console.error(
+    '[measure-web-initial-js] missing apps/web/dist/index.html — run build:web:production first',
+  );
   process.exit(1);
 }
 

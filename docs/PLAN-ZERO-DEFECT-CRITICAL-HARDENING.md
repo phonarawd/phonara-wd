@@ -6,16 +6,16 @@
 
 ## 0. Metadata
 
-| 필드 | 값 |
-| --- | --- |
-| **문서 버전** | `1.0.0` |
-| **작성일** | 2026-07-14 |
-| **승인 상태** | **승인됨 (APPROVED) 2026-07-14** · operator 확정 — 잔여 hardening 정본. Phase별 구현은 별도 `Implement Phase N` 명령 필요 |
-| **전체 Risk** | **High** (Phase 2 SQL conservation · Phase 4 광범위 test churn 포함) |
-| **Phase 수** | **8 (Phase 0–7)** |
-| **DoD (문서 전체)** | (1) Critical(C-01/C-02) + High 잔여 결함 **회귀 잠금** 완료 · (2) OPEN High(`R9-PERF-JS`) **fix 또는 명시적 R11 waiver + Decision Log** · (3) Deno edge-shared 테스트 **CI green** 편입 · (4) Release Gate(§07_RELEASE_READINESS.md) **재판정 가능한 상태**로 정리 |
-| **근거 감사 원본** | [`docs/audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md) · [`docs/audit/SYSTEM_AUDIT_2026-07-13/`](audit/SYSTEM_AUDIT_2026-07-13/) (7-Pillar) · [`docs/OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml) |
-| **정본 vs 본 문서 관계** | 이 문서는 **잔여 hardening 실행 정본**이며 감사 원본을 대체하지 않는다. 최신 상태는 항상 registry + `07_RELEASE_READINESS.md`를 우선 확인한다. |
+| 필드                     | 값                                                                                                                                                                                                                                                                                                       |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **문서 버전**            | `1.0.0`                                                                                                                                                                                                                                                                                                  |
+| **작성일**               | 2026-07-14                                                                                                                                                                                                                                                                                               |
+| **승인 상태**            | **승인됨 (APPROVED) 2026-07-14** · operator 확정 — 잔여 hardening 정본. Phase별 구현은 별도 `Implement Phase N` 명령 필요                                                                                                                                                                                |
+| **전체 Risk**            | **High** (Phase 2 SQL conservation · Phase 4 광범위 test churn 포함)                                                                                                                                                                                                                                     |
+| **Phase 수**             | **8 (Phase 0–7)**                                                                                                                                                                                                                                                                                        |
+| **DoD (문서 전체)**      | (1) Critical(C-01/C-02) + High 잔여 결함 **회귀 잠금** 완료 · (2) OPEN High(`R9-PERF-JS`) **fix 또는 명시적 R11 waiver + Decision Log** · (3) Deno edge-shared 테스트 **CI green** 편입 · (4) Release Gate(§07_RELEASE_READINESS.md) **재판정 가능한 상태**로 정리                                       |
+| **근거 감사 원본**       | [`docs/audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md) · [`docs/audit/SYSTEM_AUDIT_2026-07-13/`](audit/SYSTEM_AUDIT_2026-07-13/) (7-Pillar) · [`docs/OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml) |
+| **정본 vs 본 문서 관계** | 이 문서는 **잔여 hardening 실행 정본**이며 감사 원본을 대체하지 않는다. 최신 상태는 항상 registry + `07_RELEASE_READINESS.md`를 우선 확인한다.                                                                                                                                                           |
 
 ## 1. Non-negotiables (전 Phase 공통)
 
@@ -30,13 +30,13 @@
 
 ## 2. Scope 전체 요약
 
-| 대상 | In | Out |
-| --- | --- | --- |
-| **Critical/High 결함** | 회귀 잠금 · 잔여 미해결(SA-01, R9-PERF-JS, H-09) fix/waiver | registry `VERIFIED_FIXED` 항목의 재구현 |
-| **SQL/Migration** | `ew_e21`/`ew_e22` conservation 원인 확정·수정 · additive migration만 | 광범위 엔진 리라이트 · Freeze 중 non-Critical 기능 |
-| **Perf** | i18n lazy-load 등 Stage1 JS 절감 | 차트/Pixi 재설계 · 기능 삭제 |
-| **Test infra** | Deno `_shared` suite CI 편입 · `test:engine` 오배선 수정 | `_shared` 미커버 모듈 신규 테스트 작성(별도 후속 PR) |
-| **Release Gate** | 체크리스트/템플릿 정리 · 재판정 준비 | soak/PPR/3-Owner 서명 대행 |
+| 대상                   | In                                                                   | Out                                                  |
+| ---------------------- | -------------------------------------------------------------------- | ---------------------------------------------------- |
+| **Critical/High 결함** | 회귀 잠금 · 잔여 미해결(SA-01, R9-PERF-JS, H-09) fix/waiver          | registry `VERIFIED_FIXED` 항목의 재구현              |
+| **SQL/Migration**      | `ew_e21`/`ew_e22` conservation 원인 확정·수정 · additive migration만 | 광범위 엔진 리라이트 · Freeze 중 non-Critical 기능   |
+| **Perf**               | i18n lazy-load 등 Stage1 JS 절감                                     | 차트/Pixi 재설계 · 기능 삭제                         |
+| **Test infra**         | Deno `_shared` suite CI 편입 · `test:engine` 오배선 수정             | `_shared` 미커버 모듈 신규 테스트 작성(별도 후속 PR) |
+| **Release Gate**       | 체크리스트/템플릿 정리 · 재판정 준비                                 | soak/PPR/3-Owner 서명 대행                           |
 
 ## 3. Phase 구조 (실행 순서)
 
@@ -53,14 +53,14 @@ flowchart TD
   P0 --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7
 ```
 
-| 감사 원본 | 현재 상태 (정본) | 본 문서 취급 |
-| --- | --- | --- |
-| C-01 합성 social proof · C-02 `/status` false-green | [`PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml) **VERIFIED_FIXED** · R1 Evidence | Phase 0 = **재검증 + 자동화 회귀 잠금만** (코드 재작성 금지) |
-| High 11건 (H-01~H-11) | 대부분 `VERIFIED_FIXED` · H-09 = `BLOCKED_DEP` (Pro+ entitlement) | Phase 1 = 잔여 보안 잠금 + H-09 operator 결제 경로 |
-| Medium 21건 | 대부분 `VERIFIED_FIXED` | Phase 3/5에서 표시·운영 잔여만 |
-| SA-01 (로컬 migration 2건 원격 미적용 · SQL conservation RED) | `docs/audit/SYSTEM_AUDIT_2026-07-13/02_DATABASE.md` · Release Readiness 38/100 · RC **BLOCKED** | Phase 2 + Phase 7 |
-| Deno `_shared` 24/24 · `test:engine` 오배선 · CI 미편입 | 실측 `deno test --no-check supabase/functions/_shared/` **24/24** · [`package.json`](../package.json) `test:engine`에 Deno 파일이 vitest로 잘못 포함 | Phase 6 전용 |
-| Release Gate 경로 0→7 | [`07_RELEASE_READINESS.md`](audit/SYSTEM_AUDIT_2026-07-13/07_RELEASE_READINESS.md) §5 | Phase 0→7 번호와 1:1 정렬 |
+| 감사 원본                                                     | 현재 상태 (정본)                                                                                                                                     | 본 문서 취급                                                 |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| C-01 합성 social proof · C-02 `/status` false-green           | [`PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml) **VERIFIED_FIXED** · R1 Evidence                           | Phase 0 = **재검증 + 자동화 회귀 잠금만** (코드 재작성 금지) |
+| High 11건 (H-01~H-11)                                         | 대부분 `VERIFIED_FIXED` · H-09 = `BLOCKED_DEP` (Pro+ entitlement)                                                                                    | Phase 1 = 잔여 보안 잠금 + H-09 operator 결제 경로           |
+| Medium 21건                                                   | 대부분 `VERIFIED_FIXED`                                                                                                                              | Phase 3/5에서 표시·운영 잔여만                               |
+| SA-01 (로컬 migration 2건 원격 미적용 · SQL conservation RED) | `docs/audit/SYSTEM_AUDIT_2026-07-13/02_DATABASE.md` · Release Readiness 38/100 · RC **BLOCKED**                                                      | Phase 2 + Phase 7                                            |
+| Deno `_shared` 24/24 · `test:engine` 오배선 · CI 미편입       | 실측 `deno test --no-check supabase/functions/_shared/` **24/24** · [`package.json`](../package.json) `test:engine`에 Deno 파일이 vitest로 잘못 포함 | Phase 6 전용                                                 |
+| Release Gate 경로 0→7                                         | [`07_RELEASE_READINESS.md`](audit/SYSTEM_AUDIT_2026-07-13/07_RELEASE_READINESS.md) §5                                                                | Phase 0→7 번호와 1:1 정렬                                    |
 
 ---
 
@@ -283,16 +283,16 @@ flowchart TD
 
 ## 4. Phase 착수 조건 요약
 
-| Phase | 선행 조건 | 독립 착수 가능? |
-| --- | --- | --- |
-| 0 | 없음 | Yes |
-| 1 | 없음 | Yes |
-| 2 | Phase 0/1 완료 권장 | 권장(강제 아님) |
-| 3 | 없음 | Yes(Phase 2와 병행 가능) |
-| 4 | Phase 2 green 이후 권장 | 권장(강제 아님) |
-| 5 | 없음 | Yes |
-| 6 | 없음(단, `package.json`/CI 변경 — 별도 Implement 세션) | Yes |
-| 7 | **Phase 2 + Phase 4 완료 필수** | No |
+| Phase | 선행 조건                                              | 독립 착수 가능?          |
+| ----- | ------------------------------------------------------ | ------------------------ |
+| 0     | 없음                                                   | Yes                      |
+| 1     | 없음                                                   | Yes                      |
+| 2     | Phase 0/1 완료 권장                                    | 권장(강제 아님)          |
+| 3     | 없음                                                   | Yes(Phase 2와 병행 가능) |
+| 4     | Phase 2 green 이후 권장                                | 권장(강제 아님)          |
+| 5     | 없음                                                   | Yes                      |
+| 6     | 없음(단, `package.json`/CI 변경 — 별도 Implement 세션) | Yes                      |
+| 7     | **Phase 2 + Phase 4 완료 필수**                        | No                       |
 
 ## 5. Global Safety Checklist (전 Phase 공통 · Phase 착수 전/후 확인)
 

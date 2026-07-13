@@ -120,7 +120,9 @@ function classify(file, text) {
       notes.push('pairs with live Edge module ' + sourceModule);
     }
     if (listedInTestEngine) {
-      notes.push('listed in package.json test:engine BUT uses Deno.test — vitest cannot execute Deno.test');
+      notes.push(
+        'listed in package.json test:engine BUT uses Deno.test — vitest cannot execute Deno.test',
+      );
       verdict = 'Keep — Deno unit test (miswired in test:engine)';
       confidence = 'HIGH';
     } else {
@@ -178,7 +180,10 @@ const anomalies = rows.filter(
 
 // Producer modules used by Edge that have tests
 const sharedModules = all
-  .filter((f) => f.startsWith('supabase/functions/_shared/') && f.endsWith('.ts') && !f.endsWith('.test.ts'))
+  .filter(
+    (f) =>
+      f.startsWith('supabase/functions/_shared/') && f.endsWith('.ts') && !f.endsWith('.test.ts'),
+  )
   .sort();
 const sharedCoverage = sharedModules.map((m) => {
   const test = m.replace(/\.ts$/, '.test.ts');

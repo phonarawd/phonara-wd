@@ -6,16 +6,16 @@
 
 ## 0. Metadata
 
-| 필드 | 값 |
-| --- | --- |
-| **문서 버전** | `1.0.0` |
-| **작성일** | 2026-07-14 |
-| **승인 상태** | **DRAFT — operator 확인 대기.** Wave 0~2는 본 문서 승인만으로 착수 가능(§9). **Wave 3(LAUNCH_GATES ON)은 이 승인과 별개로 그 시점에 operator의 명시적 재승인 명령이 반드시 필요**하다 — 비협상. |
-| **전체 Risk** | **Medium** (Wave 1/2는 additive money-adjacent migration · Wave 3만 High이며 별도 게이트) |
-| **Wave 수** | **5 (Wave 0 · 0.5 · 1 · 2 · 3 · 4 — 표기상 6개 섹션)** |
-| **현재 단계 범위** | **Pre-match(사전 배당)만.** 라이브(인플레이) 배당·베팅은 이번 단계에서 **활성화하지 않음** — 기존 라이브 코드는 의도적으로 보존되어 향후 유료 티어 전환 시 flag 하나로 켤 수 있다. |
-| **근거 원본** | 이전 세션 SQL 증거 덤프(원격 `yocjhjsdwoijfdrehzoq` 실측) · [`SPORTS_ODDS_INGEST_RUNBOOK.md`](OPERATIONS/SPORTS_ODDS_INGEST_RUNBOOK.md) · Cursor Plan `스포츠_무료_실배당_완결_로드맵_7e4363d6` |
-| **정본 vs 본 문서 관계** | 본 문서는 **스포츠 Pre-match Free Tier 실행 정본**이다. 라이브/유료 전환 로드맵은 본 문서 범위 밖 — 별도 후속 Plan(§6 참조)에서 다룬다. |
+| 필드                     | 값                                                                                                                                                                                              |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **문서 버전**            | `1.0.0`                                                                                                                                                                                         |
+| **작성일**               | 2026-07-14                                                                                                                                                                                      |
+| **승인 상태**            | **DRAFT — operator 확인 대기.** Wave 0~2는 본 문서 승인만으로 착수 가능(§9). **Wave 3(LAUNCH_GATES ON)은 이 승인과 별개로 그 시점에 operator의 명시적 재승인 명령이 반드시 필요**하다 — 비협상. |
+| **전체 Risk**            | **Medium** (Wave 1/2는 additive money-adjacent migration · Wave 3만 High이며 별도 게이트)                                                                                                       |
+| **Wave 수**              | **5 (Wave 0 · 0.5 · 1 · 2 · 3 · 4 — 표기상 6개 섹션)**                                                                                                                                          |
+| **현재 단계 범위**       | **Pre-match(사전 배당)만.** 라이브(인플레이) 배당·베팅은 이번 단계에서 **활성화하지 않음** — 기존 라이브 코드는 의도적으로 보존되어 향후 유료 티어 전환 시 flag 하나로 켤 수 있다.              |
+| **근거 원본**            | 이전 세션 SQL 증거 덤프(원격 `yocjhjsdwoijfdrehzoq` 실측) · [`SPORTS_ODDS_INGEST_RUNBOOK.md`](OPERATIONS/SPORTS_ODDS_INGEST_RUNBOOK.md) · Cursor Plan `스포츠_무료_실배당_완결_로드맵_7e4363d6` |
+| **정본 vs 본 문서 관계** | 본 문서는 **스포츠 Pre-match Free Tier 실행 정본**이다. 라이브/유료 전환 로드맵은 본 문서 범위 밖 — 별도 후속 Plan(§6 참조)에서 다룬다.                                                         |
 
 ## 1. Non-negotiables (전 Wave 공통)
 
@@ -226,13 +226,13 @@ flowchart TD
 
 ## 6. Live Code Preservation Strategy
 
-| 보존 대상 | 위치 | 비활성 방법 | 재활성화 방법(유료 전환 시) |
-| --- | --- | --- | --- |
-| 라이브 베팅 수락 | `rpc_place_sports_bet`/`rpc_place_sports_system_bet` `v_is_live` 분기 | Wave 0.5 feature flag guard | `feature_sports_live_betting_enabled='true'`로 config 갱신 1줄 |
-| 라이브 acceptance delay | `_sports_live_acceptance_delay`, `_sports_any_live_leg` | 호출 자체는 유지, 위 guard가 먼저 막음 | 자동 — flag만 켜면 그대로 동작 |
-| 인플레이 엔진 | `wave_s7_sportsbook_inplay_engine.sql`(`rpc_get_live_fixture_state` 등) | 미호출(ingest가 라이브 fixture를 만들지 않음) | ingest에 라이브 채널 추가 시 자동 사용 |
-| WS 실시간 ingest | `ws-run.ts`/`ws-worker.ts`/`odds-api-io-ws.ts`/`ws-stall-detector.ts` | GitHub Actions 워크플로가 호출하지 않음 | 별도 워크플로/프로세스로 스케줄 추가 |
-| 라이브 TTL 설정 | `sports_live_ttl_by_sport`(7행) | 데이터 미사용(라이브 fixture 없음) | 그대로 재사용 |
+| 보존 대상               | 위치                                                                    | 비활성 방법                                   | 재활성화 방법(유료 전환 시)                                    |
+| ----------------------- | ----------------------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------- |
+| 라이브 베팅 수락        | `rpc_place_sports_bet`/`rpc_place_sports_system_bet` `v_is_live` 분기   | Wave 0.5 feature flag guard                   | `feature_sports_live_betting_enabled='true'`로 config 갱신 1줄 |
+| 라이브 acceptance delay | `_sports_live_acceptance_delay`, `_sports_any_live_leg`                 | 호출 자체는 유지, 위 guard가 먼저 막음        | 자동 — flag만 켜면 그대로 동작                                 |
+| 인플레이 엔진           | `wave_s7_sportsbook_inplay_engine.sql`(`rpc_get_live_fixture_state` 등) | 미호출(ingest가 라이브 fixture를 만들지 않음) | ingest에 라이브 채널 추가 시 자동 사용                         |
+| WS 실시간 ingest        | `ws-run.ts`/`ws-worker.ts`/`odds-api-io-ws.ts`/`ws-stall-detector.ts`   | GitHub Actions 워크플로가 호출하지 않음       | 별도 워크플로/프로세스로 스케줄 추가                           |
+| 라이브 TTL 설정         | `sports_live_ttl_by_sport`(7행)                                         | 데이터 미사용(라이브 fixture 없음)            | 그대로 재사용                                                  |
 
 **원칙:** 이 표의 모든 항목은 파일·함수·테이블이 리포에 **그대로 존재**한다. 이번 Plan이 하는 일은 "호출하지 않음" + "명시적 flag로 한 번 더 잠금"뿐이다.
 
