@@ -1,15 +1,13 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup, configure } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { afterEach, beforeAll, beforeEach, vi } from 'vitest';
+import { afterEach, beforeEach, vi } from 'vitest';
 import { createElement, type ReactNode } from 'react';
 
 import { preloadAllLocalesForTests } from '@phonara/i18n';
 
-/** R9-PERF-JS / Phase 4 — en catalog is lazy in production; preload for sync I18nProvider tests. */
-beforeAll(async () => {
-  await preloadAllLocalesForTests();
-});
+/** R9-PERF-JS / Phase 4 — preload en before test collection (messages.en sync access). */
+await preloadAllLocalesForTests();
 
 /** Unit tests: allow-all RG gate without Supabase snapshot queries. */
 vi.mock('@/features/responsible-gaming/use-rg-gate-policy', () => ({
