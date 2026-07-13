@@ -32,6 +32,12 @@ export function buildEarnCashbackRows(currentTier: EarnVipTier): EarnCashbackRow
   });
 }
 
+/**
+ * SOT (ZA-08): `tier.guide.rows.${tier}.cashback` — canonical template owned by
+ * `buildTierBenefitsPreviewRow` in tier-me-display-contract.ts. Re-derived here
+ * (not imported) to keep this module self-contained; kept in sync by
+ * `tier-cashback-key-single-source.test.ts`.
+ */
 export function resolveCurrentCashbackKey(tier: EarnVipTier): MessageKey {
   return `tier.guide.rows.${tier}.cashback` as MessageKey;
 }

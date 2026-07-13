@@ -192,6 +192,17 @@ export function resolveDecayMaintenanceWindowDays(tier: EarnVipTier): number {
   return tier === 'diamond' ? TIER_DECAY_DIAMOND_GRACE_DAYS : TIER_DECAY_MAINTENANCE_WINDOW_DAYS;
 }
 
+/**
+ * SOT (ZA-08) — `tier.guide.rows.${tier}.cashback` is the single cashback i18n
+ * key template shared by 4 surfaces: `/tier/me` (this file) · `/tier`
+ * (tier-guide-display-contract.ts, reuses this function) · `/earn/cashback`
+ * (earn-cashback-display-contract.ts, re-derives the same literal) · `/fees`
+ * (fees-page-display-contract.ts, re-derives the same literal). The latter two
+ * intentionally duplicate the string rather than import this function to keep
+ * each domain module self-contained — `tier-cashback-key-single-source.test.ts`
+ * is the drift guard: if this template ever changes, that test fails until all
+ * 4 call sites are updated together.
+ */
 export function buildTierBenefitsPreviewRow(
   tier: EarnVipTier,
   currentTier: EarnVipTier,

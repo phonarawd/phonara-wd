@@ -1,7 +1,10 @@
 /**
  * `/fees` — public fee + side-income structure (P12 · ui_only).
  * Fee rows are i18n catalog labels only — no client fee math · settlement = server.
- * Tier cashback column reuses `tier.guide.rows.*.cashback` (same as cashback center).
+ * SOT (ZA-08): tier cashback column re-derives `tier.guide.rows.${tier}.cashback`
+ * — canonical template owned by `buildTierBenefitsPreviewRow` in
+ * tier-me-display-contract.ts (not imported, to keep this module
+ * self-contained); kept in sync by `tier-cashback-key-single-source.test.ts`.
  */
 
 import type { MessageKey } from '@phonara/i18n';
