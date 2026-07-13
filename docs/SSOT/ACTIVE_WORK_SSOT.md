@@ -14,13 +14,14 @@
 | **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                                       |
 | **Cursor 8GB perf (v4.4.5)**  | **`[x]` DONE**                               | `cursor:perf-rollout` diagnosis-first · `high-remediation` dry-run 기본 · evidence JSONL · summary remediation assert · tsserver/argv **옵트인** (`--include-tsserver-tuning`)                                                                                 |
 | **Platform Perfect Launch**   | **Plan 19/19 completed** · **R12 DONE**      | Plan `platform-perfect-launch` — **todo id = 착수 단위** · Handoff [`PLATFORM_AUDIT_TODO_HANDOFF.md`](../OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md) · 채팅 `Implement <todo-id>`                                                                               |
-| **ZA 통합 Remediation**       | **`[x]` DONE** 2026-07-14                    | Plan `za_통합_실행순서_c6df1c56` · ZA-01~15 코드/문서 **VERIFIED_FIXED**(ZA-14는 완화조치·근본 OPEN) · ZA-12/13 운영측 OPEN · ZA-17~19 후속 · 감사 [`ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](../audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)             |
+| **ZA 통합 Remediation**       | **`[x]` DONE** 2026-07-14                    | Plan `za_통합_실행순서_c6df1c56` · ZA-01~15·17·19 **VERIFIED_FIXED**(ZA-14는 완화조치·근본 OPEN) · ZA-12/13 운영측 OPEN · ZA-18 후속 · 감사 [`ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](../audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)                    |
 
 ## Zero Assumption 통합 Remediation (Plan `za_통합_실행순서_c6df1c56` · `[x]` DONE)
 
 > **상태:** **`[x]` DONE** 2026-07-14 — Wave 0~10 + Wave 0.5(ZA-14/15) + Wave 4.5(1-J) + Closeout  
 > **대체된 원본 플랜:** `듀얼_통화_자금_안전성_감사_za-14_e30fb04f` · `zero_assumption_11결함_해소_52756742`  
-> **후속(별도 승인):** ZA-14 오라클 notional 근본수정 · ZA-12/13 Soft Launch 운영 · ZA-17~19
+> **후속(별도 승인):** ZA-14 오라클 notional 근본수정 · ZA-12/13 Soft Launch 운영 · ZA-18 통화 상태 공유 리팩터  
+> **후속(에이전트 완료 2026-07-14):** ZA-17 확인모달 스테이크·통화 · ZA-19 conservation 교차 주석
 
 | Todo                             | 상태           | 완료일     | 증거                                                       |
 | -------------------------------- | -------------- | ---------- | ---------------------------------------------------------- |

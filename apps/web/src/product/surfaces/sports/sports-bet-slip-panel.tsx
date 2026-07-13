@@ -292,9 +292,36 @@ export function SportsBetSlipPanel({
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={onConfirmOpenChange}
+        contentTestId="sports-slip-confirm-dialog"
         title={t('sports.slip.confirm.title')}
         description={t('sports.slip.confirm.body')}
         confirmLabel={t('sports.slip.confirm')}
+        summary={
+          stakeRaw ? (
+            <dl className="m-0 grid gap-2" data-testid="sports-slip-confirm-summary">
+              <div className="flex items-baseline justify-between gap-3">
+                <dt className="text-foreground-muted">{t('sports.slip.stake')}</dt>
+                <dd className="m-0" data-testid="sports-slip-confirm-stake">
+                  <MoneyDisplay
+                    amount={stakeRaw}
+                    currency={slip.stakeCurrency}
+                    showCurrency
+                    className="text-foreground text-sm font-medium tabular-nums"
+                  />
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-3">
+                <dt className="text-foreground-muted">{t('sports.slip.currency')}</dt>
+                <dd
+                  className="text-foreground m-0 text-sm font-medium tabular-nums"
+                  data-testid="sports-slip-confirm-currency"
+                >
+                  {slip.stakeCurrency}
+                </dd>
+              </div>
+            </dl>
+          ) : null
+        }
         onConfirm={() => {
           void onConfirmPlaceBet();
         }}

@@ -169,6 +169,42 @@ describe('SportsPage', () => {
     });
   });
 
+  it('shows stake amount and currency in place-bet confirm summary (ZA-17)', () => {
+    useSportsPageControllerMock.mockReturnValue(
+      makeEngine({
+        confirmOpen: true,
+        canPlaceBet: true,
+        slip: makeSlipState({
+          stake: '25.000000',
+          stakeCurrency: 'PHON',
+          selections: [
+            {
+              fixtureId: 'fx-1',
+              outcomeId: 'home-1',
+              oddsAtBet: '1.95',
+              homeName: 'Home FC',
+              awayName: 'Away United',
+              selection: 'home',
+              marketType: '1x2',
+            },
+          ],
+          legCount: 1,
+        }),
+      }),
+    );
+
+    render(
+      <I18nProvider>
+        <SportsPage />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('sports-slip-confirm-dialog')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-slip-confirm-summary')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-slip-confirm-currency')).toHaveTextContent('PHON');
+    expect(screen.getByTestId('sports-slip-confirm-stake')).toBeInTheDocument();
+  });
+
   it('renders sportsbook board and slip rail', () => {
     useSportsPageControllerMock.mockReturnValue(makeEngine());
     render(
