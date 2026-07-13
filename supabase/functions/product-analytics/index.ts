@@ -4,6 +4,7 @@
  * Optional JWT sub binds user_id; never trust body.user_id.
  */
 import { createClient } from 'jsr:@supabase/supabase-js@2';
+import { handleCorsPreflight } from '../_shared/cors.ts';
 import { createEdgeContext, mapSupabaseError } from '../_shared/edge-observability.ts';
 import { decodeJwtSub, ingressIpHmac } from '../_shared/service-ingress.ts';
 
@@ -16,6 +17,9 @@ function env(name: string): string {
 const MAX_BODY_BYTES = 8192;
 
 Deno.serve(async (req) => {
+  const preflight = handleCorsPreflight(req);
+  if (preflight) return preflight;
+
   const ctx = createEdgeContext('product-analytics', req);
 
   try {

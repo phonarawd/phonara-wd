@@ -93,10 +93,6 @@ export default defineConfig({
               find: '@/product/i18n',
               replacement: path.resolve(root, 'apps/admin/src/product/i18n'),
             },
-            {
-              find: '@/lib/i18n',
-              replacement: path.resolve(root, 'apps/admin/src/lib/i18n.tsx'),
-            },
             { find: '@', replacement: path.resolve(root, 'apps/admin/src') },
             ...Object.entries(packageAliases).map(([find, replacement]) => ({
               find,

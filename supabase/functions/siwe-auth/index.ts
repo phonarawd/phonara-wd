@@ -6,6 +6,7 @@
  */
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 import { verifyMessage } from 'npm:viem@2.23.2';
+import { handleCorsPreflight } from '../_shared/cors.ts';
 import { createEdgeContext, mapSupabaseError } from '../_shared/edge-observability.ts';
 import { decodeJwtSub, ingressIpHmac } from '../_shared/service-ingress.ts';
 
@@ -31,6 +32,9 @@ function serviceClient() {
 }
 
 Deno.serve(async (req) => {
+  const preflight = handleCorsPreflight(req);
+  if (preflight) return preflight;
+
   const ctx = createEdgeContext('siwe-auth', req);
 
   try {

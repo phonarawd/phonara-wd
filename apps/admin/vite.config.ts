@@ -37,7 +37,6 @@ export default defineConfig({
         replacement: `${webProduct}/layout/content-shell.tsx`,
       },
       { find: '@/product/i18n', replacement: `${adminSrc}/product/i18n` },
-      { find: '@/lib/i18n', replacement: `${adminSrc}/lib/i18n.tsx` },
       { find: '@', replacement: adminSrc },
       { find: '@phonara/i18n/react', replacement: i18nReactSrc },
       { find: '@phonara/i18n', replacement: i18nSrc },

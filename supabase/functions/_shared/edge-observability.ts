@@ -2,6 +2,7 @@
  * Edge structured logging, HTTP error redaction, and provider-health helpers.
  * Secrets, tokens, PII, and raw provider payloads must never appear in logs or responses.
  */
+import { CORS_HEADERS } from './cors.ts';
 
 export const REQUEST_ID_HEADER = 'x-request-id';
 const REQUEST_ID_PATTERN = /^[a-zA-Z0-9._-]{8,128}$/;
@@ -9,7 +10,10 @@ const REQUEST_ID_PATTERN = /^[a-zA-Z0-9._-]{8,128}$/;
 export type DurationBucket = 'lt_100ms' | 'lt_500ms' | 'lt_1s' | 'gte_1s';
 export type ProviderHealthStatus = 'healthy' | 'degraded' | 'unavailable' | 'missing_config';
 
-const jsonHeaders = { 'content-type': 'application/json' };
+// SA-05 — every edge JSON response declares explicit CORS instead of relying
+// on the gateway default, so direct-from-browser functions (siwe-auth,
+// product-analytics) work under a locked-down/custom-domain gateway too.
+const jsonHeaders = { 'content-type': 'application/json', ...CORS_HEADERS };
 
 const SENSITIVE_KEY_RE =
   /(?:password|secret|token|authorization|bearer|api[_-]?key|private[_-]?key|signature|jwt|refresh|credential|email|phone|address|wallet|iban|account|ssn|payload)$/i;

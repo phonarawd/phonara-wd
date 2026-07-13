@@ -9,25 +9,25 @@
 
 The three high-signal categories from the baseline scan are now resolved:
 
-| Category | Baseline | After cleanup | Action |
-|----------|---------:|---------------:|--------|
-| Unused files | 3 | **0** | Deleted `apps/admin/src/contracts/admin-desk-views.ts`, `apps/admin/src/contracts/controller-view-freeze.ts` (only consumer was the first file), `apps/admin/src/lib/i18n.tsx` (deprecated shim, superseded by `@/product/i18n`) |
-| Unused dependency | 1 (`decimal.js`) | **0** | Removed root `package.json` `dependencies.decimal.js` — `packages/money` and `packages/trading-engine` already declare it as their own workspace dependency; root entry was redundant |
-| Unresolved script imports | 3 | **0** | Deleted `scripts/generate-web-sitemap.ts` (imported deleted `apps/web/src/lib/seo-config`, never existed post-Demolition) and `scripts/merge-presentation-i18n-wave1.ts` (imported deleted pre-demolition `apps/web/src/i18n/ko`/`en` catalogs) — removed the matching `generate:web-sitemap` script entry from `package.json` |
+| Category                  |         Baseline | After cleanup | Action                                                                                                                                                                                                                                                                                                                         |
+| ------------------------- | ---------------: | ------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Unused files              |                3 |         **0** | Deleted `apps/admin/src/contracts/admin-desk-views.ts`, `apps/admin/src/contracts/controller-view-freeze.ts` (only consumer was the first file), `apps/admin/src/lib/i18n.tsx` (deprecated shim, superseded by `@/product/i18n`)                                                                                               |
+| Unused dependency         | 1 (`decimal.js`) |         **0** | Removed root `package.json` `dependencies.decimal.js` — `packages/money` and `packages/trading-engine` already declare it as their own workspace dependency; root entry was redundant                                                                                                                                          |
+| Unresolved script imports |                3 |         **0** | Deleted `scripts/generate-web-sitemap.ts` (imported deleted `apps/web/src/lib/seo-config`, never existed post-Demolition) and `scripts/merge-presentation-i18n-wave1.ts` (imported deleted pre-demolition `apps/web/src/i18n/ko`/`en` catalogs) — removed the matching `generate:web-sitemap` script entry from `package.json` |
 
 ## Summary (current — post SA-03 cleanup)
 
-| Category | Count |
-|----------|------:|
-| Unused files | 0 |
-| Unused dependencies | 0 |
-| Unused devDependencies | 12 |
-| Unlisted binaries | 19 |
-| Unresolved imports | 0 |
-| Unused exports | 17 |
-| Unused exported types | 10 |
-| Duplicate exports | 7 |
-| Configuration hints | 7 |
+| Category               | Count |
+| ---------------------- | ----: |
+| Unused files           |     0 |
+| Unused dependencies    |     0 |
+| Unused devDependencies |    12 |
+| Unlisted binaries      |    19 |
+| Unresolved imports     |     0 |
+| Unused exports         |    17 |
+| Unused exported types  |    10 |
+| Duplicate exports      |     7 |
+| Configuration hints    |     7 |
 
 ## Interpretation (inventory)
 
