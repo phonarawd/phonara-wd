@@ -558,6 +558,9 @@ BEGIN
   INSERT INTO app_config (key, value, description, is_public)
   VALUES ('withdrawal_daily_cap_per_user', '100.000000', 'Per-user daily withdrawal cap (PHON).', FALSE)
   ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW();
+  INSERT INTO app_config (key, value, description, is_public)
+  VALUES ('tier_withdraw_daily_phon_bronze', '100.000000', 'E4 tier daily withdraw cap PHON (test).', FALSE)
+  ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW();
   PERFORM rpc_run_reconciliation();
   UPDATE app_config SET value = '0' WHERE key IN (
     'aml_min_account_age_hours', 'aml_rapid_credit_hours', 'aml_kyc_approval_cooldown_hours'

@@ -134,6 +134,8 @@ BEGIN
   ASSERT v_claims = 2, format('expected 2 claims, got %s', v_claims);
 
   RAISE NOTICE 'E7-1 OK — co-mission grant + conservation';
+  RESET ROLE;
+  PERFORM set_config('request.jwt.claims', '{}', TRUE);
 END;
 $$;
 
@@ -187,6 +189,8 @@ BEGIN
   END;
 
   RAISE NOTICE 'E7-2 OK — eligibility gate';
+  RESET ROLE;
+  PERFORM set_config('request.jwt.claims', '{}', TRUE);
 END;
 $$;
 

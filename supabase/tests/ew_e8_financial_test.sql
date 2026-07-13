@@ -40,6 +40,7 @@ DO $$
 DECLARE
   v_a UUID := gen_random_uuid();
   v_b UUID := gen_random_uuid();
+  v_recipient TEXT;
   v_res JSONB;
   v_before_a NUMERIC;
   v_after_a NUMERIC;
@@ -57,6 +58,7 @@ BEGIN
     (v_b, 'authenticated', 'authenticated', 'e8_b_' || v_b::TEXT || '@t.local', NOW(), NOW());
 
   UPDATE profiles SET username = 'e8user_b_' || substr(replace(v_b::TEXT, '-', ''), 1, 8) WHERE id = v_b;
+  SELECT username INTO v_recipient FROM profiles WHERE id = v_b;
 
   UPDATE app_config SET value = 'false'
     WHERE key IN ('system_halt', 'system_readonly', 'consent_gate_enabled');
@@ -90,7 +92,7 @@ BEGIN
   END;
 
   BEGIN
-    PERFORM rpc_transfer_to_user(v_b::TEXT, '999999.000000', NULL, 'e8-insuf');
+    PERFORM rpc_transfer_to_user(v_recipient, '999999.000000', NULL, 'e8-insuf');
     RAISE EXCEPTION 'insufficient must fail';
   EXCEPTION
     WHEN OTHERS THEN
@@ -112,7 +114,7 @@ BEGIN
   SET LOCAL ROLE authenticated;
 
   v_res := rpc_transfer_to_user(
-    (SELECT username FROM profiles WHERE id = v_b),
+    v_recipient,
     '100.000000',
     'hello',
     'e8-p2p-1'
@@ -121,7 +123,7 @@ BEGIN
   ASSERT (v_res->>'net_amount')::NUMERIC = 100, 'fee 0 → net=amount';
 
   v_res := rpc_transfer_to_user(
-    (SELECT username FROM profiles WHERE id = v_b),
+    v_recipient,
     '100.000000',
     'hello',
     'e8-p2p-1'

@@ -342,6 +342,8 @@ BEGIN
   ASSERT (v_step->>'current_multiplier')::NUMERIC > 1,
     format('mult after reveal: %s', v_step->>'current_multiplier');
 
+  RESET ROLE;
+  PERFORM set_config('request.jwt.claims', '{}', TRUE);
   SELECT
     (SELECT COALESCE(SUM(phon_available::NUMERIC + phon_locked::NUMERIC), 0) FROM wallets)
     + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'PHON')
@@ -354,6 +356,13 @@ BEGIN
     + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'PHON')
   INTO v_phon_before;
 
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('sub', v_uid::TEXT, 'role', 'authenticated')::TEXT,
+    TRUE
+  );
+  SET LOCAL ROLE authenticated;
+
   v_cash := rpc_progressive_cashout(
     v_session_id,
     'e23-mines-cash-' || v_uid::TEXT
@@ -361,12 +370,21 @@ BEGIN
   ASSERT v_cash->>'status' = 'cashed_out', format('cashout: %s', v_cash);
   ASSERT (v_cash->>'payout')::NUMERIC > 100, format('payout: %s', v_cash->>'payout');
 
+  RESET ROLE;
+  PERFORM set_config('request.jwt.claims', '{}', TRUE);
   SELECT
     (SELECT COALESCE(SUM(phon_available::NUMERIC + phon_locked::NUMERIC), 0) FROM wallets)
     + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'PHON')
   INTO v_phon_after;
   ASSERT v_phon_before = v_phon_after,
     format('conservation after cashout: before=%s after=%s', v_phon_before, v_phon_after);
+
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('sub', v_uid::TEXT, 'role', 'authenticated')::TEXT,
+    TRUE
+  );
+  SET LOCAL ROLE authenticated;
 
   -- Bust path
   v_start := rpc_progressive_start(
@@ -402,6 +420,8 @@ BEGIN
   ASSERT v_bust->>'status' = 'busted', format('bust: %s', v_bust);
   ASSERT (v_bust->>'payout')::NUMERIC = 0, 'bust payout 0';
 
+  RESET ROLE;
+  PERFORM set_config('request.jwt.claims', '{}', TRUE);
   SELECT
     (SELECT COALESCE(SUM(phon_available::NUMERIC + phon_locked::NUMERIC), 0) FROM wallets)
     + (SELECT COALESCE(SUM(balance::NUMERIC), 0) FROM system_accounts WHERE currency = 'PHON')
@@ -409,7 +429,6 @@ BEGIN
   ASSERT v_phon_before = v_phon_after,
     format('conservation after bust: before=%s after=%s', v_phon_before, v_phon_after);
 
-  RESET ROLE;
   RAISE NOTICE 'E23-2 OK — progressive mines cashout · bust · Σ=0';
 END;
 $$;

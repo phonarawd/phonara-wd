@@ -119,6 +119,16 @@ BEGIN
   FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']) AS doc_type
   ON CONFLICT DO NOTHING;
 
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('sub', v_uid::TEXT, 'role', 'authenticated')::TEXT,
+    TRUE
+  );
+  SET LOCAL ROLE authenticated;
+  PERFORM rpc_set_position_mode('hedge');
+  RESET ROLE;
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
+
   UPDATE futures_markets
      SET is_active = TRUE,
          max_user_positions = 100,

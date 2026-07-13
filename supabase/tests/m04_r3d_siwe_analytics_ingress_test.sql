@@ -113,6 +113,11 @@ BEGIN
   RESET ROLE;
 
   -- Service ingress creates challenge with IP hmac
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('role', 'service_role')::TEXT,
+    TRUE
+  );
   SET LOCAL ROLE service_role;
   v_ch := rpc_service_create_siwe_challenge(v_addr, 1, v_ip);
   ASSERT COALESCE((v_ch->>'ok')::BOOLEAN, FALSE), format('service challenge %s', v_ch);
@@ -193,7 +198,11 @@ BEGIN
   v_ch := rpc_create_siwe_challenge(v_addr, 1);
   v_cid := (v_ch->>'challenge_id')::UUID;
   RESET ROLE;
-  PERFORM set_config('request.jwt.claims', '{}', TRUE);
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('role', 'service_role')::TEXT,
+    TRUE
+  );
 
   SET LOCAL ROLE service_role;
   -- Bound challenge.user_id must match resolved user
@@ -247,6 +256,11 @@ BEGIN
       NULL;
   END;
   RESET ROLE;
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('role', 'service_role')::TEXT,
+    TRUE
+  );
 
   SET LOCAL ROLE service_role;
   v_res := rpc_service_record_product_analytics_event(
@@ -294,6 +308,11 @@ BEGIN
   PERFORM set_config('request.jwt.claims', '{}', TRUE);
 
   -- Retention purge
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('role', 'service_role')::TEXT,
+    TRUE
+  );
   SET LOCAL ROLE service_role;
   INSERT INTO product_analytics_events (
     id, user_id, anonymous_id, event_name, surface, properties, client_event_id, occurred_at, received_at

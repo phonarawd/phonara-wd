@@ -98,6 +98,7 @@ BEGIN
   UPDATE wallets SET phon_available = '50000.000000' WHERE user_id = v_uid;
   UPDATE app_config SET value = 'true' WHERE key = 'feature_sports_enabled';
   UPDATE app_config SET value = 'false' WHERE key = 'consent_gate_enabled';
+  UPDATE app_config SET value = '999999' WHERE key = 'sports_odds_velocity_ms';
 
   PERFORM rpc_ingest_sports_c1(jsonb_build_object(
     'type', 'event_upsert',
@@ -135,6 +136,20 @@ BEGIN
   SELECT id INTO v_outcome_id
   FROM sports_outcomes
   WHERE canonical_outcome_id = 'test-vendor:e22-odds-1:match_1x2:home';
+
+  UPDATE sports_markets m
+     SET status = 'open',
+         suspended_until = NULL,
+         suspend_reason = NULL
+    FROM sports_outcomes o
+   WHERE o.id = v_outcome_id
+     AND m.id = o.market_id;
+  UPDATE sports_fixtures f
+     SET suspended_until = NULL
+    FROM sports_outcomes o
+    JOIN sports_markets m ON m.id = o.market_id
+   WHERE o.id = v_outcome_id
+     AND f.id = m.fixture_id;
 
   PERFORM set_config(
     'request.jwt.claims',
@@ -215,6 +230,7 @@ BEGIN
   UPDATE wallets SET phon_available = '50000.000000' WHERE user_id = v_uid;
   UPDATE app_config SET value = 'true' WHERE key = 'feature_sports_enabled';
   UPDATE app_config SET value = 'false' WHERE key = 'consent_gate_enabled';
+  UPDATE app_config SET value = '999999' WHERE key = 'sports_odds_velocity_ms';
 
   PERFORM rpc_ingest_sports_c1(jsonb_build_object(
     'type', 'event_upsert',

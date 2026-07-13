@@ -27,8 +27,11 @@ DECLARE
     '_is_admin()',
     'rpc_get_fixture_markets(uuid)',
     'rpc_get_golden_earth_status()',
+    'rpc_get_public_platform_status()',
     'rpc_get_synthetic_book(text,integer)',
-    'rpc_list_sports_fixtures(date,text,text)'
+    'rpc_list_sports_catalog()',
+    'rpc_list_sports_fixtures(date,text,text)',
+    'rpc_live_crash_get_current()'
   ];
   v_expected_invoker TEXT[] := ARRAY[
     'rpc_get_live_fixture_state(uuid)',
@@ -140,6 +143,24 @@ BEGIN
       'rpc_list_sports_fixtures(date,text,text)',
       'public_read_definer_allowlisted',
       'Aggregates match_1x2 odds via _sports_latest_odds over sports_outcomes',
+      ARRAY['anon', 'authenticated', 'service_role']
+    ),
+    (
+      'rpc_get_public_platform_status()',
+      'public_read_definer_allowlisted',
+      'Sanitized public platform health lane; no secrets or operator metrics',
+      ARRAY['anon', 'authenticated', 'service_role']
+    ),
+    (
+      'rpc_list_sports_catalog()',
+      'public_read_definer_allowlisted',
+      'Public sports catalog read via definer; table SELECT blocked for anon',
+      ARRAY['anon', 'authenticated', 'service_role']
+    ),
+    (
+      'rpc_live_crash_get_current()',
+      'public_read_definer_allowlisted',
+      'Live crash public round state; server_seed withheld until reveal',
       ARRAY['anon', 'authenticated', 'service_role']
     );
 

@@ -58,6 +58,8 @@ BEGIN
   END;
 
   RAISE NOTICE 'E2-1 OK — list authz';
+  RESET ROLE;
+  PERFORM set_config('request.jwt.claims', '{}', TRUE);
 END;
 $$;
 
@@ -170,6 +172,8 @@ BEGIN
   END;
 
   RAISE NOTICE 'E2-3 OK — ad/survey forbidden';
+  RESET ROLE;
+  PERFORM set_config('request.jwt.claims', '{}', TRUE);
 END;
 $$;
 

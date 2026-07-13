@@ -82,7 +82,7 @@ BEGIN
   END LOOP;
 
   v_place := pg_get_functiondef(
-    'public.rpc_place_game_bet(uuid,text,text,jsonb,text,text,jsonb)'::regprocedure
+    'public.rpc_place_game_bet(uuid,text,text,jsonb,text,text,jsonb,boolean)'::regprocedure
   );
   v_sports := pg_get_functiondef(
     'public.rpc_place_sports_bet(jsonb,text,text,text,text,text,text,text)'::regprocedure

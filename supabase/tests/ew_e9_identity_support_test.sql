@@ -95,7 +95,11 @@ BEGIN
   PERFORM set_config('request.jwt.claims', '{}', TRUE);
 
   -- service_role complete
-  PERFORM set_config('request.jwt.claims', '{}', TRUE);
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('role', 'service_role')::TEXT,
+    TRUE
+  );
   SET LOCAL ROLE service_role;
   v_res := rpc_service_complete_siwe_login(v_cid, v_addr, v_user);
   ASSERT COALESCE((v_res->>'ok')::BOOLEAN, FALSE), format('complete ok %s', v_res);

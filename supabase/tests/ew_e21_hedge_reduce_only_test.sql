@@ -124,6 +124,8 @@ BEGIN
   ASSERT v_blocked, 'expected position_mode_one_way_opposite';
 
   RAISE NOTICE 'E21-1 OK — hedge dual · one_way opposite deny';
+  RESET ROLE;
+  PERFORM set_config('request.jwt.claims', '{}', TRUE);
 END;
 $$;
 
