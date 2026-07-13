@@ -36,6 +36,7 @@
 | [`OPERATIONS/P13_T0A_PROD_PREFLIGHT.md`](OPERATIONS/P13_T0A_PROD_PREFLIGHT.md)                                       | P13 T0-A prod checklist · `#232` **`[x]`**                                     |
 | [`OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md`](OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md)               | PIR evidence **`[x]` DONE** · `#205` unblocked                                 |
 | [`OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml)                 | Perfect Launch Finding registry (+`dod_profile`)                               |
+| [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md)                                   | 잔여 hardening 정본(Phase 0–7) — Phase 0–7 AI 트랙 `[x]` · NEXT=operator soak 개시 · **재착수 실행 큐 아님** |
 | [`OPERATIONS/PLATFORM_WITHDRAWAL_REENABLE_GATE.md`](OPERATIONS/PLATFORM_WITHDRAWAL_REENABLE_GATE.md)                 | H-10 withdrawal OFF · Feature Flag 5조건 재개                                  |
 | [`OPERATIONS/PLATFORM_AUDIT_RACI.md`](OPERATIONS/PLATFORM_AUDIT_RACI.md)                                             | 1인 겸임 RACI                                                                  |
 | [`OPERATIONS/TRADE_CHART_SOFT_LAUNCH_CHECKLIST.md`](OPERATIONS/TRADE_CHART_SOFT_LAUNCH_CHECKLIST.md)                 | ZA-12 — 차트 empty 원인 판별(PHON 오라클 시드 vs 거래소 피드)                  |

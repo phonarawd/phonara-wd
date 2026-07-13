@@ -13,6 +13,8 @@
 
 **2026-07-13 재확인 (Wave 6):** `bun run stack:auth-hibp-enable` 재실행 — 결과 불변(`PRO_PLAN_REQUIRED` 402, `docs/audit/SYSTEM_AUDIT_2026-07-13/07_RELEASE_READINESS.md` §6 증거). 코드/스크립트는 완전히 준비됐고 **operator의 Supabase Pro+ 결제만** 남은 유일한 블로커라 에이전트가 조정 가능한 점수 변동 없음.
 
+**2026-07-14 Phase 1 재확인:** `stack:auth-hibp-enable` 재실행 — 여전히 402 · H-09 `BLOCKED_DEP` 유지. H-02 remote privilege probe(anon/auth EXECUTE `rpc_lock_wallet`=false · service_role=true · wallets client write=false) — `VERIFIED_FIXED` 유지 · **코드 변경 0**.
+
 ## 1. Finding Registry 교차 (2026-07-13 기준 38건)
 
 | 상태            |     수 | 항목                                                                                                                                                                             |

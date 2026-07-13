@@ -13,10 +13,10 @@ notes: >-
 linked_existing:
   - id: 'R9-PERF-JS'
     severity: 'HIGH'
-    status: 'OPEN'
+    status: 'VERIFIED_FIXED'
     pillar: 'performance'
     registry: 'docs/OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml'
-    summary: 'Web Stage1 initial JS 539kb > SLO 450kb (web 21/21 FAIL) — Release Gate FAIL 2건의 근본 원인. 2026-07-13 Wave 1: framer-motion 제거로 로컬 재계측 557.66→519.31kB(-38.35kB) 확인, i18n dual-locale eager load(249.97kB)가 잔여 최대 요인이라 SLO 미달 지속 (docs/audit/SYSTEM_AUDIT_2026-07-13/06_PERFORMANCE.md §6)'
+    summary: 'Web Stage1 initial JS — Phase 4 i18n lazy (2026-07-14): local gzip 519.31→394.00 kB ≤450 SLO. Evidence docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-perf-js-phase4-i18n-lazy.md'
   - id: 'H-09'
     severity: 'HIGH'
     status: 'BLOCKED_DEP'
@@ -27,23 +27,22 @@ linked_existing:
 findings:
   - id: 'SA-01'
     severity: 'MEDIUM'
-    status: 'OPEN (partial)'
+    status: 'VERIFIED_FIXED'
     pillar: 'database'
     also: ['release']
     symptom: >-
       로컬 migration 2건(platform_sql_ci_closeout · platform_sql_ci_closeout2)이
       원격 미적용 상태이며, Freeze ACTIVE 중 워킹트리에서 수정/추가됨.
+      후속 CI sql RED로 ew_e21/ew_e22 conservation 오탐이 겹침.
     evidence:
-      - 'check:engine-foundation-parity 출력 2026-07-13 — local 241 · remote 239 · missing 2'
-      - 'git status: supabase/migrations/20260822000001_*.sql (M) · 20260823000001_*.sql (??)'
-      - 'docs/OPERATIONS/PLATFORM_RELEASE_FREEZE.md — Freeze ACTIVE'
-      - '2026-07-13 push-fix loop: quality·e2e·advisors 3/4 GREEN (run 29228583623) — admin/web
-        cross-app alias 회귀(SA-03 부작용) + controller-view-freeze.ts 오삭제 + format:check 수정.
-        sql job만 RED — ew_e21/ew_e22 conservation 미해결(사전 존재, 02_DATABASE.md 상세 조사 기록).
-        stack:push-remote는 sql job green 전까지 보류(96-prod-apply-agent-deny 정본 순서 준수).'
+      - 'check:engine-foundation-parity 출력 2026-07-13 — local 241 · remote 239 · missing 2 (당시)'
+      - '2026-07-14 Phase 2 closeout: check:engine-foundation-parity local 244 · remote 244 · missing 0'
+      - 'CI run 29271360173 — quality·sql·e2e·advisors 4/4 success'
+      - 'fd9290be — E21/E22 conservation Σ 직전 RESET ROLE (RLS false-drift 제거)'
+      - '8fa65cc9 — E22-3 correct_score place via rpc_place_sports_bet (stake lock)'
+      - '2026-07-14 stack:push-remote — pending 0 · security advisor ERROR 0'
     recommendation: >-
-      ew_e21/ew_e22 conservation을 로컬 RAISE NOTICE 계측으로 근본 원인 확정(operator 「gate 실행」
-      또는 CI 후속 세션) → sql job green → bun run stack:push-remote → advisor 0 ERROR 확인.
+      완료. money RPC 약화 없이 테스트 하네스만 수정. 후속 Release Gate는 Phase 7.
     owner: 'db'
   - id: 'SA-02'
     severity: 'LOW'

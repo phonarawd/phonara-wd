@@ -30,7 +30,7 @@ RC(Release Candidate) SHA 선언 이후 **Critical Fix 외 변경 금지**.
 | Known Good SHA    | `9c4bf29b40d31b2d2952bd6257f5690d691ecbc2`      |
 | Deploy parity     | remote green (R9)                               |
 | Freeze            | **ACTIVE**                                      |
-| Release candidate | **BLOCKED** (R9-PERF-JS OPEN · 3-Owner pending) |
+| Release candidate | **BLOCKED** (operator: soak-24h · 3-Owner · DR · R9-PERF-JS **VERIFIED_FIXED** 2026-07-14) |
 
 ## Standing Grant 축소
 

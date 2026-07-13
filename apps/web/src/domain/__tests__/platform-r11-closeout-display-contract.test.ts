@@ -17,10 +17,13 @@ describe('platform-r11-closeout-display-contract', () => {
     expect(PLATFORM_RELEASE_GATE_CRITERIA.length).toBeGreaterThanOrEqual(10);
   });
 
-  it('release candidate blocked while R9-PERF-JS and signoff pending', () => {
+  it('release candidate blocked while operator soak/signoff/DR pending', () => {
     expect(platformR11ReleaseCandidateVerdict()).toBe('blocked');
     const blockers = platformR11ReleaseBlockers().map((row) => row.id);
-    expect(blockers).toContain('runtime-stage1');
+    expect(blockers).not.toContain('runtime-stage1');
+    expect(blockers).not.toContain('dod-findings');
+    expect(blockers).toContain('soak-24h-evidence');
     expect(blockers).toContain('three-owner-signoff');
+    expect(blockers).toContain('dr-readiness');
   });
 });

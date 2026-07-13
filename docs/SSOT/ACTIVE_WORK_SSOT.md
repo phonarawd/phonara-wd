@@ -15,6 +15,7 @@
 | **Cursor 8GB perf (v4.4.5)**  | **`[x]` DONE**                               | `cursor:perf-rollout` diagnosis-first · `high-remediation` dry-run 기본 · evidence JSONL · summary remediation assert · tsserver/argv **옵트인** (`--include-tsserver-tuning`)                                                                                 |
 | **Platform Perfect Launch**   | **Plan 19/19 completed** · **R12 DONE**      | Plan `platform-perfect-launch` — **todo id = 착수 단위** · Handoff [`PLATFORM_AUDIT_TODO_HANDOFF.md`](../OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md) · 채팅 `Implement <todo-id>`                                                                               |
 | **ZA 통합 Remediation**       | **`[x]` DONE** 2026-07-14                    | Plan `za_통합_실행순서_c6df1c56` · ZA-01~15·17·19 **VERIFIED_FIXED**(ZA-14는 완화조치·근본 OPEN) · ZA-12/13 운영측 OPEN · ZA-18 후속 · 감사 [`ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](../audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)                    |
+| **Zero-Defect Critical Hardening** | Phase 0–7 **`[x]`** 2026-07-14 (AI 트랙) | [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) — Phase 7 Release Gate **DONE**(17 criteria 재판정 · PASS 13 · operator soak/PPR/서명 **미실행**) · **NEXT=operator O1 soak 개시일** · 재착수 실행 큐 아님 |
 
 ## Zero Assumption 통합 Remediation (Plan `za_통합_실행순서_c6df1c56` · `[x]` DONE)
 

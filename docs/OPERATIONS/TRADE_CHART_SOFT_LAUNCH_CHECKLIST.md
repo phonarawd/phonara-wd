@@ -43,6 +43,17 @@ R9 lazy-loading(코드 스플릿)은 empty 원인이 **아니다** — 1-G.2에�
 - `check:i18n` (신규 `trade.chart.empty.oracleAwaiting.*` / `trade.chart.empty.feedUnavailable.*` ko/en)
 - (선택·operator) Soft Launch 환경에서 Playwright MCP로 Network 1회 스모크 — 어느 심볼이 지금 empty인지 실측 기록(로컬 heavy E2E 금지, G13).
 
+## Phase 5 재검증 (2026-07-14 · Zero-Defect Critical Hardening)
+
+| 항목 | 결과 |
+| --- | --- |
+| 코드측 empty 원인 분기 | **유지** — `resolveTradeChartEmptyReason` · `TRADE_CHART_MOUNT_MIN_CANDLES=2` 미변경 |
+| owner vitest | `trade-chart-mount-display-contract` green (Phase 5 세션) |
+| Soft Launch Network 실측 | **여전히 OPEN** — 본 Phase에서 브라우저 실측·시드 트리거 **미실행** (운영자 Soft Launch 시 §PHON / §거래소 페어 절차) |
+| 본 Phase에서 하지 않은 것 | MIN_CANDLES 하향 · empty 카피 재작성 · 엔진/피드 코드 변경 **0** |
+
+정본 Plan: [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) Phase 5.
+
 ## 참고
 
 - [`trade-chart-mount-display-contract.ts`](../../apps/web/src/domain/trade-chart-mount-display-contract.ts) — `resolveTradeChartFeedStrategy` · `resolveTradeChartEmptyReason`

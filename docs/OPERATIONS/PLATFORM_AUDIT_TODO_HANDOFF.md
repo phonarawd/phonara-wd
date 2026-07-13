@@ -133,6 +133,8 @@
 **착수:** ~~`Implement audit-r3e-auth-hibp-feature-flag per PLATFORM_AUDIT_TODO_HANDOFF.md`~~  
 **Unblock HIBP:** Pro 업그레이드 → `bun run stack:auth-hibp-enable` → registry H-09 `VERIFIED_FIXED`
 
+**Phase 1 reverify (2026-07-14):** `bun run stack:auth-hibp-enable` → 여전히 `PRO_PLAN_REQUIRED` 402 · **코드 변경 0** · operator Pro+ 결제만 블로커 ([`07_RELEASE_READINESS.md`](../audit/SYSTEM_AUDIT_2026-07-13/07_RELEASE_READINESS.md) §6 Wave 6)
+
 ---
 
 ## audit-r4-market-ops `[x]` DONE

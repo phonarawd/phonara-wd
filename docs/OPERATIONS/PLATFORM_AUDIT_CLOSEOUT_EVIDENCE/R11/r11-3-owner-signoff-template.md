@@ -33,11 +33,11 @@ checklist:
   - '[ ] SLO/Trigger YAML current'
   - '[ ] Rollback Known Good SHA documented'
   - '[ ] DR/Incident runbook exists'
-  - '[ ] R9-PERF-JS triage: fix OR R11 waiver Decision Log'
+  - '[ ] R9-PERF-JS triage: **VERIFIED_FIXED** (Phase 4 · Stage1 JS 394≤450) — fix OR waiver 항목 해소'
 verdict: PENDING
 signed_at: ''
-evidence_uri: docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-stage1-matrix.md
-notes: 'Stage1 JS SLO fail blocks APPROVE until green or waiver'
+evidence_uri: docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R9/r9-perf-js-phase4-i18n-lazy.md
+notes: 'Stage1 JS SLO PASS (local 394.00 kB). Preview redeploy confirm optional. Remaining blockers: soak-24h · 3-Owner · DR drill.'
 ```
 
 ## Product Owner

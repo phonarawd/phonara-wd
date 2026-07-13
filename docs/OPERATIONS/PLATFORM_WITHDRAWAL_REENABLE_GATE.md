@@ -19,6 +19,16 @@
 
 **금지:** Owner 승인·본 체크리스트 Green 없이 `feature_withdrawal_enabled=true` flip.
 
+### Phase 5 재검증 (2026-07-14)
+
+| 항목 | 결과 |
+| --- | --- |
+| remote `app_config.feature_withdrawal_enabled` | **`false`** (MCP SELECT 2026-07-14 · 문서와 일치) |
+| UI fail-closed contract | `wallet-withdrawal-off-display-contract` · owner vitest green |
+| 본 Phase flag flip | **0** — Soft Launch 재개 게이트(§2·§3)만 참조 |
+
+정본: [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) Phase 5 · rail 재노출 금지.
+
 ---
 
 ## 2. Feature Flag 활성화 5조건 (Playbook §8)

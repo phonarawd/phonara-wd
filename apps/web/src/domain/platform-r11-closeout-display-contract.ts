@@ -49,9 +49,10 @@ export const PLATFORM_RELEASE_GATE_CRITERIA: readonly PlatformReleaseGateCriteri
     id: 'dod-findings',
     section: '§24',
     label: 'Finding DoD — Critical/High OPEN 0 (Medium per R11 owner criteria)',
-    status: 'fail',
-    blocker: true,
-    evidence: 'R9-PERF-JS OPEN · H-09 BLOCKED_DEP waiver',
+    status: 'pass',
+    blocker: false,
+    evidence:
+      'R9-PERF-JS VERIFIED_FIXED (Phase 4 · 394≤450) · Critical/High OPEN 0 · H-09 BLOCKED_DEP (Pro+ entitlement, not code)',
   },
   {
     id: 'evidence-integrity',
@@ -81,9 +82,10 @@ export const PLATFORM_RELEASE_GATE_CRITERIA: readonly PlatformReleaseGateCriteri
     id: 'runtime-stage1',
     section: 'R9',
     label: 'Runtime Stage1 strict matrix',
-    status: 'fail',
-    blocker: true,
-    evidence: 'R9-PERF-JS 21/21 JS SLO FAIL',
+    status: 'pass',
+    blocker: false,
+    evidence:
+      'Phase 4 i18n lazy · local Stage1 initial JS 394.00 kB ≤450 · r9-perf-js-phase4-i18n-lazy.md',
   },
   {
     id: 'soak-sop',
