@@ -9172,6 +9172,16 @@ export type Database = {
       }
       rpc_get_reward_config: { Args: never; Returns: Json }
       rpc_get_sports_bet: { Args: { p_bet_id: string }; Returns: Json }
+      rpc_get_sports_ingest_health: {
+        Args: {
+          p_channel?: string
+          p_league_code?: string
+          p_rest_stale_ms?: number
+          p_settle_stale_ms?: number
+          p_ws_stale_ms?: number
+        }
+        Returns: Json[]
+      }
       rpc_get_support_ticket: { Args: { p_ticket_id: string }; Returns: Json }
       rpc_get_synthetic_book: {
         Args: { p_levels?: number; p_symbol: string }
