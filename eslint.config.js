@@ -101,4 +101,15 @@ export default tseslint.config(
       },
     },
   },
+  {
+    // One-off Node dev/analysis scripts (not built/shipped) — CommonJS/ESM
+    // script globals only, no browser globals.
+    files: ['scripts/**/*.mjs', 'scripts/**/*.cjs'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
 );
