@@ -1523,6 +1523,12 @@ export const koMessages = {
   'trade.chart.loading': '차트를 불러오는 중...',
   'trade.chart.emptyTitle': '가격 데이터를 기다리는 중',
   'trade.chart.emptyDescription': '오라클 가격이 도착하면 차트가 표시됩니다.',
+  'trade.chart.empty.oracleAwaiting.title': '오라클 캔들 대기 중',
+  'trade.chart.empty.oracleAwaiting.description':
+    '이 마켓은 오라클 시세만 사용해요. 캔들이 쌓이는 동안 현재가 마크만 표시됩니다.',
+  'trade.chart.empty.feedUnavailable.title': '시세 피드가 일시적으로 안 보여요',
+  'trade.chart.empty.feedUnavailable.description':
+    '거래소 시세 연결이 잠시 끊겼어요. 재시도하거나 오라클 기준가로 계속 확인할 수 있어요.',
   'trade.chart.errorTitle': '차트를 표시할 수 없습니다',
   'trade.chart.errorDescription': '잠시 후 다시 시도해 주세요.',
   'trade.chart.volume': '거래량',
@@ -4688,6 +4694,12 @@ export const enMessages: Record<keyof typeof koMessages, string> = {
   'trade.chart.loading': 'Loading chart...',
   'trade.chart.emptyTitle': 'Waiting for price data',
   'trade.chart.emptyDescription': 'The chart appears when oracle prices arrive.',
+  'trade.chart.empty.oracleAwaiting.title': 'Waiting for oracle candles',
+  'trade.chart.empty.oracleAwaiting.description':
+    'This market uses oracle price only. Only the current-price mark shows while candles build up.',
+  'trade.chart.empty.feedUnavailable.title': 'Price feed unavailable right now',
+  'trade.chart.empty.feedUnavailable.description':
+    'The exchange feed dropped for a moment. Retry, or keep watching the oracle mark price.',
   'trade.chart.errorTitle': 'Unable to show the chart',
   'trade.chart.errorDescription': 'Please try again shortly.',
   'trade.chart.volume': 'Volume',

@@ -14,6 +14,7 @@ import {
   type OracleDisplayInterval,
 } from '@/features/trading/display-chart/display-feed-contract';
 import { useExchangeLiveCandles } from '@/features/trading/display-chart/use-exchange-live-candles';
+import { resolveTradeChartEmptyReason } from '@/domain/trade-chart-mount-display-contract';
 import { useT } from '@/product/i18n';
 import { Button } from '@/product/primitives/button';
 import { Skeleton } from '@/product/primitives/skeleton';
@@ -79,6 +80,21 @@ export function TradeChartPanel({
   );
 
   const feedKey = useMemo(() => `${marketSymbol ?? 'none'}:${interval}`, [interval, marketSymbol]);
+
+  /** ZA-12 — empty copy names the actual cause (oracle-seed-wait vs exchange feed outage). */
+  const emptyReason = useMemo(() => resolveTradeChartEmptyReason(marketSymbol), [marketSymbol]);
+  const emptyTitleKey =
+    emptyReason === 'oracle-awaiting-seed'
+      ? 'trade.chart.empty.oracleAwaiting.title'
+      : emptyReason === 'feed-unavailable'
+        ? 'trade.chart.empty.feedUnavailable.title'
+        : 'trade.chart.emptyTitle';
+  const emptyDescriptionKey =
+    emptyReason === 'oracle-awaiting-seed'
+      ? 'trade.chart.empty.oracleAwaiting.description'
+      : emptyReason === 'feed-unavailable'
+        ? 'trade.chart.empty.feedUnavailable.description'
+        : 'trade.chart.emptyDescription';
 
   useEffect(() => {
     const onFullscreenChange = () => {
@@ -362,9 +378,10 @@ export function TradeChartPanel({
           <div
             className="text-foreground-muted flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center text-sm"
             data-testid="trade-chart-empty"
+            data-empty-reason={emptyReason}
           >
-            <p className="text-foreground m-0 font-medium">{t('trade.chart.emptyTitle')}</p>
-            <p className="m-0">{t('trade.chart.emptyDescription')}</p>
+            <p className="text-foreground m-0 font-medium">{t(emptyTitleKey)}</p>
+            <p className="m-0">{t(emptyDescriptionKey)}</p>
             {oracleMarkPrice ? (
               <p
                 className="text-foreground m-0 tabular-nums"

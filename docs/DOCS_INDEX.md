@@ -23,33 +23,34 @@
 
 ## Engine · Gates · Ops (boundary / operator)
 
-| Doc                                                                                                                  | Role                                                 |
-| -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| [`QUALITY_GATES.md`](QUALITY_GATES.md)                                                                               | Quality gate ladder                                  |
-| [`SSOT/OPERATOR_GATES.md`](SSOT/OPERATOR_GATES.md)                                                                   | Operator gate entrypoint                             |
-| [`SSOT/ENGINE_BOUNDARY.md`](SSOT/ENGINE_BOUNDARY.md)                                                                 | Engine vs presentation                               |
-| [`SSOT/PAYMENT_ARCHITECTURE_CANON.md`](SSOT/PAYMENT_ARCHITECTURE_CANON.md)                                           | Payment rails canon                                  |
-| [`SSOT/CURSOR_AUTOPILOT.md`](SSOT/CURSOR_AUTOPILOT.md)                                                               | Cursor setup                                         |
-| [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md)                                                                       | Dev environment                                      |
-| [`RUNBOOK.md`](RUNBOOK.md)                                                                                           | Operations                                           |
-| [`OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md)                         | Pre-launch (operator)                                |
-| [`OPERATIONS/P13_T0A_PROD_PREFLIGHT.md`](OPERATIONS/P13_T0A_PROD_PREFLIGHT.md)                                       | P13 T0-A prod checklist · `#232` **`[x]`**           |
-| [`OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md`](OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md)               | PIR evidence **`[x]` DONE** · `#205` unblocked       |
-| [`OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml)                 | Perfect Launch Finding registry (+`dod_profile`)     |
-| [`OPERATIONS/PLATFORM_WITHDRAWAL_REENABLE_GATE.md`](OPERATIONS/PLATFORM_WITHDRAWAL_REENABLE_GATE.md)                 | H-10 withdrawal OFF · Feature Flag 5조건 재개        |
-| [`OPERATIONS/PLATFORM_AUDIT_RACI.md`](OPERATIONS/PLATFORM_AUDIT_RACI.md)                                             | 1인 겸임 RACI                                        |
-| [`PRODUCT/ADR/021-platform-observability-stack.md`](PRODUCT/ADR/021-platform-observability-stack.md)                 | 관측/알림 스택 ADR (R0)                              |
-| [`OPERATIONS/PLATFORM_EVIDENCE_RETENTION.md`](OPERATIONS/PLATFORM_EVIDENCE_RETENTION.md)                             | Evidence bucket · 90일                               |
-| [`OPERATIONS/PLATFORM_RELEASE_FREEZE.md`](OPERATIONS/PLATFORM_RELEASE_FREEZE.md)                                     | RC Freeze · Release candidate blocked                |
-| [`OPERATIONS/PLATFORM_SLO_SLA.yaml`](OPERATIONS/PLATFORM_SLO_SLA.yaml)                                               | SLO/Trigger 수치 (draft→Owner)                       |
-| [`audit/PLATFORM_AUDIT_REFERENCE.md`](audit/PLATFORM_AUDIT_REFERENCE.md)                                             | Zero-assumption audit **참고** 정본                  |
-| [`audit/MASTER_INVENTORY_AUDIT_2026-07-13.md`](audit/MASTER_INVENTORY_AUDIT_2026-07-13.md)                           | Master Inventory Audit (Phase 1 · §1–§25)            |
-| [`audit/REPO_TREE_APPENDIX.txt`](audit/REPO_TREE_APPENDIX.txt)                                                       | Machine-readable repo tree 부록                      |
-| [`audit/KNIP_DEADCODE_REPORT.md`](audit/KNIP_DEADCODE_REPORT.md)                                                     | Knip dead-code 실측                                  |
-| [`audit/RPC_USAGE_MATRIX.md`](audit/RPC_USAGE_MATRIX.md)                                                             | types `rpc_*` ↔ apps 호출 매트릭스                   |
-| [`audit/PER_PAGE_UI_MATRIX.md`](audit/PER_PAGE_UI_MATRIX.md)                                                         | Web 79 surfaces loading/empty/error/responsive       |
-| [`audit/SYSTEM_AUDIT_2026-07-13/00_EXECUTIVE_SCORECARD.md`](audit/SYSTEM_AUDIT_2026-07-13/00_EXECUTIVE_SCORECARD.md) | 7-Pillar 재점수 + SA-01~06                           |
-| [`audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)                   | 코드 레벨 격차 감사(ZA-01~11) + PART 2 업계 벤치마크 |
+| Doc                                                                                                                  | Role                                                          |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| [`QUALITY_GATES.md`](QUALITY_GATES.md)                                                                               | Quality gate ladder                                           |
+| [`SSOT/OPERATOR_GATES.md`](SSOT/OPERATOR_GATES.md)                                                                   | Operator gate entrypoint                                      |
+| [`SSOT/ENGINE_BOUNDARY.md`](SSOT/ENGINE_BOUNDARY.md)                                                                 | Engine vs presentation                                        |
+| [`SSOT/PAYMENT_ARCHITECTURE_CANON.md`](SSOT/PAYMENT_ARCHITECTURE_CANON.md)                                           | Payment rails canon                                           |
+| [`SSOT/CURSOR_AUTOPILOT.md`](SSOT/CURSOR_AUTOPILOT.md)                                                               | Cursor setup                                                  |
+| [`ENVIRONMENT_SETUP.md`](ENVIRONMENT_SETUP.md)                                                                       | Dev environment                                               |
+| [`RUNBOOK.md`](RUNBOOK.md)                                                                                           | Operations                                                    |
+| [`OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md)                         | Pre-launch (operator)                                         |
+| [`OPERATIONS/P13_T0A_PROD_PREFLIGHT.md`](OPERATIONS/P13_T0A_PROD_PREFLIGHT.md)                                       | P13 T0-A prod checklist · `#232` **`[x]`**                    |
+| [`OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md`](OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md)               | PIR evidence **`[x]` DONE** · `#205` unblocked                |
+| [`OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml)                 | Perfect Launch Finding registry (+`dod_profile`)              |
+| [`OPERATIONS/PLATFORM_WITHDRAWAL_REENABLE_GATE.md`](OPERATIONS/PLATFORM_WITHDRAWAL_REENABLE_GATE.md)                 | H-10 withdrawal OFF · Feature Flag 5조건 재개                 |
+| [`OPERATIONS/PLATFORM_AUDIT_RACI.md`](OPERATIONS/PLATFORM_AUDIT_RACI.md)                                             | 1인 겸임 RACI                                                 |
+| [`OPERATIONS/TRADE_CHART_SOFT_LAUNCH_CHECKLIST.md`](OPERATIONS/TRADE_CHART_SOFT_LAUNCH_CHECKLIST.md)                 | ZA-12 — 차트 empty 원인 판별(PHON 오라클 시드 vs 거래소 피드) |
+| [`PRODUCT/ADR/021-platform-observability-stack.md`](PRODUCT/ADR/021-platform-observability-stack.md)                 | 관측/알림 스택 ADR (R0)                                       |
+| [`OPERATIONS/PLATFORM_EVIDENCE_RETENTION.md`](OPERATIONS/PLATFORM_EVIDENCE_RETENTION.md)                             | Evidence bucket · 90일                                        |
+| [`OPERATIONS/PLATFORM_RELEASE_FREEZE.md`](OPERATIONS/PLATFORM_RELEASE_FREEZE.md)                                     | RC Freeze · Release candidate blocked                         |
+| [`OPERATIONS/PLATFORM_SLO_SLA.yaml`](OPERATIONS/PLATFORM_SLO_SLA.yaml)                                               | SLO/Trigger 수치 (draft→Owner)                                |
+| [`audit/PLATFORM_AUDIT_REFERENCE.md`](audit/PLATFORM_AUDIT_REFERENCE.md)                                             | Zero-assumption audit **참고** 정본                           |
+| [`audit/MASTER_INVENTORY_AUDIT_2026-07-13.md`](audit/MASTER_INVENTORY_AUDIT_2026-07-13.md)                           | Master Inventory Audit (Phase 1 · §1–§25)                     |
+| [`audit/REPO_TREE_APPENDIX.txt`](audit/REPO_TREE_APPENDIX.txt)                                                       | Machine-readable repo tree 부록                               |
+| [`audit/KNIP_DEADCODE_REPORT.md`](audit/KNIP_DEADCODE_REPORT.md)                                                     | Knip dead-code 실측                                           |
+| [`audit/RPC_USAGE_MATRIX.md`](audit/RPC_USAGE_MATRIX.md)                                                             | types `rpc_*` ↔ apps 호출 매트릭스                            |
+| [`audit/PER_PAGE_UI_MATRIX.md`](audit/PER_PAGE_UI_MATRIX.md)                                                         | Web 79 surfaces loading/empty/error/responsive                |
+| [`audit/SYSTEM_AUDIT_2026-07-13/00_EXECUTIVE_SCORECARD.md`](audit/SYSTEM_AUDIT_2026-07-13/00_EXECUTIVE_SCORECARD.md) | 7-Pillar 재점수 + SA-01~06                                    |
+| [`audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)                   | 코드 레벨 격차 감사(ZA-01~11) + PART 2 업계 벤치마크          |
 
 ## Audit reports (PQA §33 · read-only)
 
