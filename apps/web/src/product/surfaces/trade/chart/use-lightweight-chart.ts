@@ -9,6 +9,7 @@ import {
   lineSeriesOptions,
   readChartTheme,
 } from './chart-theme';
+import { isChartHostSized, readChartHostSize, scheduleChartLayoutSync, syncChartLayout } from './sync-chart-layout';
 
 export type LightweightChartHandle = {
   chart: IChartApi;
@@ -25,6 +26,8 @@ export type LightweightChartHandle = {
 
 export type LightweightChartApi = {
   fitContent: () => void;
+  /** Fullscreen / flex reflow — resize + reset autoscale + fit time. */
+  syncLayout: () => void;
 };
 
 export function useLightweightChart(
@@ -98,11 +101,55 @@ export function useLightweightChart(
       bbLower,
       rsi,
     };
-    onReadyRef.current?.({
+
+    const api: LightweightChartApi = {
       fitContent: () => chart.timeScale().fitContent(),
+      syncLayout: () => {
+        syncChartLayout(chart, host);
+      },
+    };
+    onReadyRef.current?.(api);
+
+    let lastSized = false;
+    let lastWidth = 0;
+    let lastHeight = 0;
+    let cancelPendingSync: (() => void) | null = null;
+    const requestSync = () => {
+      cancelPendingSync?.();
+      cancelPendingSync = scheduleChartLayoutSync(() => {
+        cancelPendingSync = null;
+        syncChartLayout(chart, host);
+        const size = readChartHostSize(host);
+        lastSized = isChartHostSized(size);
+        lastWidth = size.width;
+        lastHeight = size.height;
+      });
+    };
+
+    requestSync();
+
+    const observer = new ResizeObserver(() => {
+      const size = readChartHostSize(host);
+      const sized = isChartHostSized(size);
+      const deltaW = Math.abs(size.width - lastWidth);
+      const deltaH = Math.abs(size.height - lastHeight);
+      // Ignore sub-pixel noise; always sync when crossing the usable-size threshold
+      // (first paint after flex/fullscreen) or on meaningful geometry change.
+      if (!sized) {
+        lastSized = false;
+        return;
+      }
+      if (lastSized && deltaW < 2 && deltaH < 2) return;
+      lastSized = true;
+      lastWidth = size.width;
+      lastHeight = size.height;
+      requestSync();
     });
+    observer.observe(host);
 
     return () => {
+      cancelPendingSync?.();
+      observer.disconnect();
       handleRef.current = null;
       chart.remove();
     };

@@ -104,6 +104,21 @@ export function TradeChartPanel({
     return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
   }, []);
 
+  // Native fullscreen size changes before React applies `h-screen` / exits it —
+  // sync after paint so candles don't stay crushed to the prior pane scale.
+  useEffect(() => {
+    let inner = 0;
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => {
+        chartApiRef.current?.syncLayout();
+      });
+    });
+    return () => {
+      cancelAnimationFrame(outer);
+      cancelAnimationFrame(inner);
+    };
+  }, [isFullscreen]);
+
   const toggleOverlay = useCallback((key: keyof ChartOverlayToggles) => {
     setOverlays((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
@@ -195,7 +210,7 @@ export function TradeChartPanel({
               size="sm"
               variant="ghost"
               data-testid="trade-chart-reset-layout"
-              onClick={() => chartApiRef.current?.fitContent()}
+              onClick={() => chartApiRef.current?.syncLayout()}
             >
               {t('trade.chart.resetLayout')}
             </Button>

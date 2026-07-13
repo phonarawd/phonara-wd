@@ -77,7 +77,10 @@ export function useChartSeries(
       prevOverlayKeyRef.current = overlayKey;
       prevLengthRef.current = candles.length;
       needsFlushRef.current = false;
-      if (feedChanged || wasEmpty) {
+      if (feedChanged || wasEmpty || overlayChanged) {
+        // Reset Y autoscale — fitContent alone leaves a crushed scale if setData
+        // ran while the host was still collapsing through flex/fullscreen.
+        handle.chart.priceScale('right').applyOptions({ autoScale: true });
         handle.chart.timeScale().fitContent();
       }
       return;

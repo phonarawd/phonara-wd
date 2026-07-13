@@ -6,6 +6,7 @@ import { I18nProvider } from '@/product/i18n';
 import { TradeChartPanel } from '@/product/surfaces/trade/chart/trade-chart-panel';
 
 const mockFitContent = vi.fn();
+const mockSyncLayout = vi.fn();
 const mockUseExchangeLiveCandles = vi.fn();
 
 vi.mock('@/features/trading/display-chart/use-exchange-live-candles', () => ({
@@ -20,13 +21,13 @@ vi.mock('@/product/surfaces/trade/chart/trade-chart', () => ({
     oracleMarkPrice,
     liquidationPrice,
   }: {
-    onChartReady?: (api: { fitContent: () => void }) => void;
+    onChartReady?: (api: { fitContent: () => void; syncLayout: () => void }) => void;
     seriesMode?: string;
     overlays?: { ma7: boolean; ema21: boolean; rsi: boolean; bb: boolean; vol: boolean };
     oracleMarkPrice?: string | null;
     liquidationPrice?: string | null;
   }) => {
-    onChartReady?.({ fitContent: mockFitContent });
+    onChartReady?.({ fitContent: mockFitContent, syncLayout: mockSyncLayout });
     return (
       <div
         data-testid="trade-lightweight-chart-mock"
@@ -62,6 +63,7 @@ const sampleCandles = [
 describe('TradeChartPanel', () => {
   beforeEach(() => {
     mockFitContent.mockClear();
+    mockSyncLayout.mockClear();
     mockUseExchangeLiveCandles.mockReturnValue({
       candles: sampleCandles,
       loading: false,
@@ -174,7 +176,7 @@ describe('TradeChartPanel', () => {
     expect(screen.getByText('시세 피드가 일시적으로 안 보여요')).toBeInTheDocument();
   });
 
-  it('calls fitContent when reset layout is clicked', () => {
+  it('calls syncLayout when reset layout is clicked', () => {
     render(
       <I18nProvider>
         <TradeChartPanel marketSymbol="BTCUSDT-SIM" />
@@ -182,7 +184,7 @@ describe('TradeChartPanel', () => {
     );
 
     fireEvent.click(screen.getByTestId('trade-chart-reset-layout'));
-    expect(mockFitContent).toHaveBeenCalledTimes(1);
+    expect(mockSyncLayout).toHaveBeenCalledTimes(1);
   });
 
   it('renders overlay controls and toggles candle/line mode', () => {
