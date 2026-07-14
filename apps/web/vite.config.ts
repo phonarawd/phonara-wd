@@ -61,8 +61,14 @@ function resolveViteSecurityHeaders(
   command: 'build' | 'serve',
 ): Record<string, string> | undefined {
   if (!pagesCsp) return undefined;
-  const csp = command === 'serve' ? augmentCspForLocalDev(pagesCsp) : pagesCsp;
-  return { 'Content-Security-Policy': csp };
+  // Strict Pages CSP breaks Vite dev (@vite/client, HMR, dynamic imports). E2E and daily
+  // dev omit it; production/preview deploy applies public/_headers on Cloudflare.
+  // Opt in locally: PHONARA_VITE_DEV_CSP=1 bun run dev:web
+  if (command === 'serve') {
+    if (process.env['PHONARA_VITE_DEV_CSP'] !== '1') return undefined;
+    return { 'Content-Security-Policy': augmentCspForLocalDev(pagesCsp) };
+  }
+  return undefined;
 }
 
 /** Phase R web entry — TanStack Router file routes + PWA injectManifest shell. */
