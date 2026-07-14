@@ -70,6 +70,18 @@ export function crashReplayDurationMs(crashMultiplier: number): number {
   return Math.min(4000, Math.max(1500, Math.round(raw)));
 }
 
+/**
+ * Crash curve draw easing (Phase 1B — display timing only, no settlement impact).
+ * Accelerating (ease-IN): the on-screen line must build slowly then rocket right
+ * before the crash point — "live tension" (CASINO_UX_CANON §1 Crash). A
+ * decelerating curve (ease-OUT) reads as the opposite feel and was the pre-Phase-1B
+ * gap. `progress` is elapsed/duration in [0,1]; result feeds `endMult ** eased`.
+ */
+export function crashCurveEasing(progress: number): number {
+  const clamped = Math.min(1, Math.max(0, progress));
+  return Math.pow(clamped, 2.2);
+}
+
 export type ParsedCrashOutcome = {
   crashMultiplier: number;
   cashedOut: boolean;
@@ -133,6 +145,14 @@ export function assertCasinoGamesBatchAContractSync(): void {
   }
   if (crashReplayDurationMs(2) < 1500 || crashReplayDurationMs(100) > 4000) {
     throw new Error('casino-games-batch-a: crash duration clamp drift');
+  }
+  // Accelerating (convex), not decelerating: the delta over a late equal-width
+  // progress interval must exceed the delta over an early one — proves the curve
+  // builds slowly then rockets, rather than shooting up early then leveling off.
+  const earlyDelta = crashCurveEasing(0.5) - crashCurveEasing(0.1);
+  const lateDelta = crashCurveEasing(0.9) - crashCurveEasing(0.5);
+  if (lateDelta <= earlyDelta) {
+    throw new Error('casino-games-batch-a: crash curve easing must be accelerating (ease-in)');
   }
   const crash = parseCrashOutcome({
     crashMultiplier: 2.5,

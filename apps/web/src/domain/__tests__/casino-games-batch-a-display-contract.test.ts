@@ -5,6 +5,7 @@ import {
   CASINO_BATCH_A_GAME_CODES,
   CASINO_BATCH_A_L1_SPECS,
   CASINO_CRASH_AUTOCASHOUT_HELP_KEY,
+  crashCurveEasing,
   crashReplayDurationMs,
   isCasinoBatchAGame,
   P10_GAMES_BATCH_A_PREREQUISITE_TODOS,
@@ -47,5 +48,24 @@ describe('casino-games-batch-a-display-contract (p10-games-batch-a)', () => {
     expect(crashReplayDurationMs(1.01)).toBeGreaterThanOrEqual(1500);
     expect(crashReplayDurationMs(1.01)).toBeLessThanOrEqual(4000);
     expect(crashReplayDurationMs(1000)).toBe(4000);
+  });
+
+  it('crash curve easing accelerates — builds slowly then rockets (Phase 1B)', () => {
+    // Endpoints anchored regardless of curve shape.
+    expect(crashCurveEasing(0)).toBe(0);
+    expect(crashCurveEasing(1)).toBe(1);
+
+    // Convex (accelerating): a late equal-width progress interval must climb
+    // more than an early one — the opposite of the pre-Phase-1B ease-OUT curve,
+    // which shot up early and decelerated (leveled off) near the crash point.
+    const earlyDelta = crashCurveEasing(0.5) - crashCurveEasing(0.1);
+    const lateDelta = crashCurveEasing(0.9) - crashCurveEasing(0.5);
+    expect(lateDelta).toBeGreaterThan(earlyDelta);
+
+    // Every interior point stays strictly below the linear diagonal — "slow
+    // start" — and clamps out-of-range input instead of extrapolating/NaN.
+    expect(crashCurveEasing(0.5)).toBeLessThan(0.5);
+    expect(crashCurveEasing(-1)).toBe(0);
+    expect(crashCurveEasing(2)).toBe(1);
   });
 });

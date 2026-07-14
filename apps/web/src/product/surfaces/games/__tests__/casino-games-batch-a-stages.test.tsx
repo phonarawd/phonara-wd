@@ -124,11 +124,12 @@ describe('Casino games batch A stages (p10-games-batch-a)', () => {
     expect(screen.queryByTestId('casino-crash-live-cashout')).not.toBeInTheDocument();
   });
 
-  it('crash liveMode shows mid-flight cash-out control', () => {
+  it('crash liveMode shows mid-flight cash-out control when the user has an active bet', () => {
     wrap(
       <CrashStage
         autoCashout="2.00"
         liveMode
+        liveSessionActive
         liveRoundStatus="flying"
         liveMultiplier="1.42"
         onLiveCashout={() => undefined}
@@ -136,6 +137,24 @@ describe('Casino games batch A stages (p10-games-batch-a)', () => {
     );
     expect(screen.getByTestId('casino-crash-live-cashout')).toBeInTheDocument();
     expect(screen.getByTestId('casino-crash-stage')).toHaveAttribute('data-live-mode', 'true');
+  });
+
+  // Fixed 2026-07-15 (phase1b-crash functional QA) — previously the button stayed
+  // visible and clickable while the shared round kept flying for other players
+  // even after this user had no active bet, silently no-op'ing on click (P0 dead
+  // control). Full coverage: crash-stage.test.tsx.
+  it('crash liveMode hides the dead cash-out control when the user has no active bet', () => {
+    wrap(
+      <CrashStage
+        autoCashout="2.00"
+        liveMode
+        liveSessionActive={false}
+        liveRoundStatus="flying"
+        liveMultiplier="1.42"
+        onLiveCashout={() => undefined}
+      />,
+    );
+    expect(screen.queryByTestId('casino-crash-live-cashout')).not.toBeInTheDocument();
   });
 
   it('routes limbo and dice stages', () => {

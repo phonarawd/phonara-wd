@@ -10,7 +10,7 @@ import {
 } from '@/domain/casino-games-batch-d-display-contract';
 import { BlackjackStage } from '@/product/surfaces/games/blackjack-stage';
 import { CasinoGameStagePlaceholder } from '@/product/surfaces/games/casino-game-stage-placeholder';
-import { CrashStage } from '@/product/surfaces/games/crash-stage';
+import { CrashStage, type CrashLiveCashoutFlash } from '@/product/surfaces/games/crash-stage';
 import { DeepshaftStage } from '@/product/surfaces/games/deepshaft-stage';
 import { DiceStage } from '@/product/surfaces/games/dice-stage';
 import { GoldRushStage } from '@/product/surfaces/games/gold-rush-stage';
@@ -33,6 +33,8 @@ export type CasinoGameStageLiveControls = {
   onLiveRevealCell?: (cell: number) => void;
   onLiveGuess?: (guess: HiLoGuess) => void;
   onLiveMove?: (move: BlackjackMove) => void;
+  /** Crash-only — set once per successful mid-flight cash-out (display-only RPC passthrough). */
+  liveCashoutFlash?: CrashLiveCashoutFlash | null;
 };
 
 export type CasinoGameStageProps = {
@@ -92,10 +94,12 @@ export const CasinoGameStage = forwardRef<CasinoStageHandle, CasinoGameStageProp
             ref={ref}
             autoCashout={String(selection['autoCashout'] ?? '')}
             liveMode={live}
+            liveSessionActive={liveControls?.liveSessionActive}
             liveMultiplier={liveControls?.liveMultiplier}
             liveRoundStatus={liveControls?.liveRoundStatus}
             liveCashoutBusy={liveControls?.liveCashoutBusy}
             onLiveCashout={liveControls?.onLiveCashout}
+            liveCashoutFlash={liveControls?.liveCashoutFlash}
           />
         );
       }

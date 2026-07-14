@@ -64,6 +64,25 @@ Casino 12게임이 공유하는 `CasinoGameShell`/`PfStrip` 한 곳만 확장해
 
 **증거:** `gate:ai-impl -- --test apps/web/src/features/casino/__tests__ apps/web/src/product/surfaces/games/__tests__` green — vitest **88/88**(17 files, 신규 6개 포함) · `typecheck` · `lint` · `check:i18n` · `check:release` · `check:ui-architecture` · `check:phase-r-guards --strict` · `check:rpc-type-hygiene` · `check:primitive-ratchet --strict`(raw `<button>` 베이스라인 43/22 유지 — 신규 트리거는 `Button` 프리미티브 사용, 위반 없음). 엔진/RPC/컨트롤러 시그니처 변경 **0**.
 
+### Phase 1B-crash 결과 (Crash 기능 QA + 모션/퍼포먼스 폴리시 · 2026-07-15 · `world-class_presentation_rebuild_bc0d5f4b` plan todo `phase1b-crash`)
+
+**발견:** 착수 시점에 코드 구현은 이미 uncommitted 상태로 작업트리에 존재(이전 세션 산물, 커밋·검증·문서 동기화 누락) — 재구현이 아니라 검증+마감 처리로 수행.
+
+| 항목 | 내용 |
+| --- | --- |
+| **P0 데드 컨트롤 수정** | 공유 라이브 크래시 라운드가 다른 플레이어를 위해 계속 flying 상태를 유지하는 동안, 이 유저가 활성 베팅이 없어도 캐시아웃 버튼이 계속 보이고 클릭 가능한 채로 남아 조용히 no-op하던 결함(`crash-stage.tsx` `showLiveCashout`) — `liveSessionActive && liveRoundStatus === 'flying'` 동시 게이팅으로 수정 |
+| **라이브 캐시아웃 flash + number-pop 연동** | `CasinoGameShell` → `CasinoGameStage` → `CrashStage` 3계층에 `liveCashoutFlash` 상태 신규 배선. RPC `status === 'won'` 확인 후에만 트리거(옵티미스틱 아님, `90-ui-ux-presentation` 서버 응답 = source of truth) · 동일 bet id 재렌더 시 재트리거 안 함(dedup) · 새 bet id는 새 엘리먼트로 재트리거 |
+| **가속 커브 이징 (신규 함수)** | `crashCurveEasing(progress) = progress^2.2` — CASINO_UX_CANON §1 "느리게 시작해 크래시 직전 급등"에 맞춰 decelerate(ease-out)였던 기존 곡선을 accelerate(ease-in)로 교체. `assertCasinoGamesBatchAContractSync()`에 "후반 구간 delta > 초반 구간 delta" 불변식 추가 |
+| **퍼포먼스 수정 (O(n²) → O(1))** | 기존 `paintPath`는 매 rAF 프레임마다 누적된 전체 포인트 배열을 `map+join`으로 재구성(프레임마다 O(n), 전체 리플레이 O(n²)) — 신규 `appendPathPoint`는 문자열 누적 + 단일 `setAttribute` 호출만(프레임당 O(1)). Motion 기준 "최저 `data-gpu-tier`에서 ≥55fps" 충족 목적 |
+| **테스트** | 신규 `crash-stage.test.tsx`(11개 — 데드 컨트롤 3종, flash 트리거/dedup/reduced-motion 5종, oneshot 승/패 2종) + `casino-games-batch-a-stages.test.tsx`·`casino-game-shell.test.tsx` 회귀 갱신(shell 레벨 end-to-end: 라이브 배팅 → mid-flight 캐시아웃 클릭 → RPC 확인 → flash 렌더) + `casino-games-batch-a-display-contract.test.ts`(이징 가속 불변식) |
+| **PF verify** | Phase 1A에서 전 게임 공유로 이미 마감(`CasinoGameShell`에 상시 마운트) — 이번 세션은 crash 전용 shell 테스트로 RTP 배지·connection status·PF strip·verify link(`/casino/fairness`) 렌더를 재확인만, 신규 배선 없음 |
+
+**검증 방법 및 범위 (중요 — 정직화):** 실제 로컬 Docker+Supabase 기동 후 브라우저로 라이브 라운드를 직접 클릭하는 방식은 **이번 패스에서 수행하지 않음** — 라이브 크래시 라운드 전이(`rpc_live_crash_advance`)가 `service_role`/admin 전용이라 SQL 직접 구동까지 필요한 무거운 조합이며, 본 플랜 Execution model 자체가 "Heavy gates (E2E, check:full) stay on CI/operator-gate ... not run autonomously"를 명시하고 8GB 운영 PC RAM(가용 ~1.2–1.7GB)도 근거. 대신 위 표의 각 항목을 (a) 실제 RPC 시그니처(`supabase/migrations/20260810000001_ew_e23_casino_live.sql`의 `rpc_live_crash_place_bet`/`rpc_live_crash_cashout` 반환 shape)와 대조해 mock 정합성을 코드 레벨로 직접 확인하고, (b) 클릭 시뮬레이션(`fireEvent.click`)이 실제 유저가 클릭하는 동일 `data-testid` 엘리먼트를 그대로 구동하는 shell 레벨 통합 테스트로 검증. 실 브라우저 콘솔 0-에러·axe critical 0·4-viewport 스크린샷은 **미실행** — operator "gate 실행" 또는 CI 단계로 이연.
+
+**증거:** `gate:ai-impl -- --test apps/web/src/product/surfaces/games/__tests__/crash-stage.test.tsx apps/web/src/product/surfaces/games/__tests__/casino-games-batch-a-stages.test.tsx apps/web/src/product/surfaces/games/__tests__/casino-game-shell.test.tsx apps/web/src/domain/__tests__/casino-games-batch-a-display-contract.test.ts` green — L0~L4 전부(`cursor:status`·`check:hygiene`·`check:ui-architecture`·`check:phase-r-guards --strict`·`check:rpc-type-hygiene`·`check:primitive-ratchet --strict`·`typecheck`·`lint`·`check:i18n`·`check:release`) · vitest **29/29**(4 files) · `check:design-tokens` OK(신규 advisory 0 — 기존 111건은 crash 관련 파일과 무관한 타 surface). 엔진/RPC/컨트롤러 시그니처 변경 **0**(`supabase/*`, `packages/*-engine` 미터치).
+
+**Scope note:** 할당된 todo는 `phase1b-crash` 1건 — Phase 1B의 나머지(`phase1b-limbo`, `phase1b-dice`)는 `git diff`로 확인 결과 미착수(파일 변경 0) 그대로이며, 이번 세션은 그 두 todo를 건드리지 않음. Cursor Plan YAML(`~/.cursor/plans/world-class_presentation_rebuild_bc0d5f4b.plan.md`) frontmatter는 operator 지시(plan 파일 직접 편집 금지)에 따라 **본 세션에서 갱신하지 않음** — todo 상태 체크는 operator 확인 후 별도 처리.
+
 ### P2 결과 (dead-controls 전수조사 · 2026-07-15)
 
 **방법:** `dead-controls-display-contract.ts` 중앙 레지스트리 10건 전부 + 저장소 전체 `*_ENGINE_TODO`/`*_UI_UNLOCK_TODO` grep(추가 5건) + 실제 노출을 최종 결정하는 `apps/web/src/lib/launch-gates.ts` 스위치보드(34개 플래그) 대조.

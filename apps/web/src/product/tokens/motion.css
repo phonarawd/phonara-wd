@@ -137,3 +137,77 @@
 .ds-motion-ticker-line {
   animation: ds-ticker-line-in 200ms var(--ds-ease-standard) both;
 }
+
+/*
+ * Casino game motion (Phase 1B — additive, casino-only budget; §Motion & performance
+ * acceptance criteria "Result reveal" tier 200-500ms ease-out). Additive only — does
+ * NOT replace or loosen the L-A financial-surface tokens above. Key-based remount
+ * (see crash-stage.tsx, limbo-stage.tsx) restarts these on each new settle/cash-out
+ * event. Shared across Batch A games, not Crash-exclusive despite the "cashout"
+ * class name — Limbo/Dice reuse the same win-reveal glow for their (non-cashout)
+ * settle moment rather than inventing a second token for the identical visual.
+ */
+:root {
+  --ds-motion-casino-reveal: 360ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ds-motion-casino-reveal: 0ms;
+  }
+}
+
+/* Result-reveal text/number entrance (fade + rise — transform/opacity only, 0 layout shift). */
+@keyframes ds-casino-reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ds-casino-reveal-in {
+  animation: ds-casino-reveal-in var(--ds-motion-casino-reveal) var(--ds-ease-standard) both;
+}
+
+/* Win number pop — scale overshoot, transform-only (0 layout shift). */
+@keyframes ds-casino-number-pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.16);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.ds-casino-number-pop {
+  display: inline-block;
+  animation: ds-casino-number-pop var(--ds-motion-casino-reveal) var(--ds-ease-standard) both;
+}
+
+/* Cash-out flash — success-tinted glow overlay behind the settled number (opacity-only). */
+@keyframes ds-casino-cashout-flash {
+  0% {
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.ds-casino-cashout-flash {
+  position: absolute;
+  inset: -4px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: var(--ds-radius-sm);
+  background: color-mix(in oklch, var(--ds-success) 24%, transparent);
+  opacity: 0;
+  animation: ds-casino-cashout-flash var(--ds-motion-casino-reveal) var(--ds-ease-standard) both;
+}

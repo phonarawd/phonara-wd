@@ -78,6 +78,7 @@ import { BetModeTabs, type CasinoBetMode } from '@/product/surfaces/games/bet-mo
 import { CasinoGameStage } from '@/product/surfaces/games/casino-game-stage';
 import { CasinoMoneyWithFiatHint } from '@/product/surfaces/games/casino-money-with-fiat-hint';
 import { CasinoTrustStrip } from '@/product/surfaces/games/casino-trust-strip';
+import type { CrashLiveCashoutFlash } from '@/product/surfaces/games/crash-stage';
 import { GameOutcomeLayer } from '@/product/surfaces/games/game-outcome-layer';
 import { GameSelectionFields } from '@/product/surfaces/games/game-selection-fields';
 import { PfStrip } from '@/product/surfaces/games/pf-strip';
@@ -174,6 +175,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
   );
   const [liveCrashBetId, setLiveCrashBetId] = useState<string | null>(null);
   const [liveErrorKey, setLiveErrorKey] = useState<MessageKey | null>(null);
+  const [liveCashoutFlash, setLiveCashoutFlash] = useState<CrashLiveCashoutFlash | null>(null);
 
   const progressiveStart = useProgressiveStart();
   const progressiveStep = useProgressiveStep();
@@ -225,6 +227,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     setProgressiveSession(null);
     setLiveCrashBetId(null);
     setLiveErrorKey(null);
+    setLiveCashoutFlash(null);
     unlockSession();
     // Reset when navigating between game codes only.
   }, [gameCode]);
@@ -281,6 +284,9 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
 
   const handleLiveStart = useCallback(async () => {
     setLiveErrorKey(null);
+    // Clear the previous round's frozen cash-out display — a fresh bet means a
+    // fresh live-ticking multiplier, not the last round's locked-in result.
+    setLiveCashoutFlash(null);
     lockSession();
     try {
       if (gameCode === 'crash') {
@@ -345,11 +351,20 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     void (async () => {
       try {
         if (gameCode === 'crash' && liveCrashBetId) {
+          const cashedOutBetId = liveCrashBetId;
           const result = await liveCrashCashout.mutateAsync({
-            betId: liveCrashBetId,
+            betId: cashedOutBetId,
             idempotencyKey: crypto.randomUUID(),
           });
           presentSettle(result.payout ?? '0', result.status, activeStake);
+          // Display-only flash trigger — gated on the RPC-confirmed 'won' status,
+          // never optimistic (server response is source of truth, 90-ui-ux-presentation).
+          if (result.status === 'won') {
+            setLiveCashoutFlash({
+              id: cashedOutBetId,
+              multiplier: multiplierFromBet(activeStake, result.payout ?? '0'),
+            });
+          }
           setLiveCrashBetId(null);
           unlockSession();
           return;
@@ -566,6 +581,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
                       onLiveRevealCell: handleLiveRevealCell,
                       onLiveGuess: handleLiveGuess,
                       onLiveMove: handleLiveMove,
+                      liveCashoutFlash,
                     }
                   : undefined
               }
