@@ -22,9 +22,6 @@ import {
 const ADMIN_SRC = resolve(import.meta.dirname, '../..');
 const REPO_ROOT = resolve(ADMIN_SRC, '../../..');
 
-const ko = messages.ko as Record<string, string>;
-const en = messages.en as Record<string, string>;
-
 describe('admin-ops-push-display-contract (§32.6 Gap A-4 · YAML #231)', () => {
   it('registers ops push todo · queues deep-link · engine reuse', () => {
     expect(P13_ADMIN_OPS_PUSH_TODO).toBe('p13-admin-ops-push');
@@ -61,6 +58,8 @@ describe('admin-ops-push-display-contract (§32.6 Gap A-4 · YAML #231)', () => 
   });
 
   it('requires beginner i18n keys for ops push (ko+en)', () => {
+    const ko = messages.ko as Record<string, string>;
+    const en = messages.en as Record<string, string>;
     for (const key of ADMIN_OPS_PUSH_I18N_KEYS) {
       expect(ko[key], `ko ${key}`).toBeTruthy();
       expect(en[key], `en ${key}`).toBeTruthy();

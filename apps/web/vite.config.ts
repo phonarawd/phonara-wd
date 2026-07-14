@@ -53,6 +53,20 @@ function resolveViteSecurityHeaders(
   return { 'Content-Security-Policy': csp };
 }
 
+function phonaraE2eEngineHtmlMarker(): PluginOption {
+  return {
+    name: 'phonara-e2e-engine-html-marker',
+    transformIndexHtml: {
+      order: 'pre',
+      handler(html) {
+        if (process.env['VITE_PHONARA_E2E_ENGINE'] !== '1') return html;
+        if (html.includes('data-e2e-engine="1"')) return html;
+        return html.replace('<html lang="ko">', '<html lang="ko" data-e2e-engine="1">');
+      },
+    },
+  };
+}
+
 /** Phase R web entry — TanStack Router file routes + PWA injectManifest shell. */
 export default defineConfig(({ command }) => {
   const securityHeaders = resolveViteSecurityHeaders(command);
@@ -145,6 +159,7 @@ export default defineConfig(({ command }) => {
 
   return {
     plugins: [
+      phonaraE2eEngineHtmlMarker(),
       TanStackRouterVite({
         routesDirectory: './src/routes',
         generatedRouteTree: './src/routeTree.gen.ts',

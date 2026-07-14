@@ -13,9 +13,6 @@ import {
 const ADMIN_SRC = resolve(import.meta.dirname, '../..');
 const PRODUCT_ROOT = resolve(ADMIN_SRC, 'product');
 
-const ko = messages.ko as Record<string, string>;
-const en = messages.en as Record<string, string>;
-
 /** Soft Launch (#233) — exception dry-run desks. */
 const SOFT_LAUNCH_EXCEPTION_ROUTES = ['/queues', '/deposits', '/withdrawals', '/ops'] as const;
 
@@ -91,6 +88,8 @@ describe('p13-soft-launch-admin-spotcheck · §29.5 · viewer negative (#233)', 
   });
 
   it('admin nav beginner labels — ko Hangul · en no Hangul · no jargon menu words', () => {
+    const ko = messages.ko as Record<string, string>;
+    const en = messages.en as Record<string, string>;
     expect(ko['admin.nav.queues']).toBe('처리 대기함');
     expect(ko['admin.nav.overview']).toBe('오늘 할 일');
     expect(ko['admin.nav.ops']).toBe('시스템 상태');

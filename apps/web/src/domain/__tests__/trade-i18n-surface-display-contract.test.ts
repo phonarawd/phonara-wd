@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   P9_TRADE_I18N_SURFACE_AUDIT_TODO,
   TRADE_I18N_DEFER_RULES,
+  TRADE_I18N_MIN_CATALOG_KEYS,
   assertTradeI18nExternalCopyFree,
   assertTradeI18nSurfaceAuditSync,
 } from '../trade-i18n-surface-display-contract';
@@ -23,7 +24,7 @@ describe('trade-i18n-surface-display-contract §25.12.9.1-D step 26', () => {
 
   it('classifies every trade catalog key as wired or defer (unclassified 0)', () => {
     const audit = auditTradeI18nSurfaceCoverage();
-    expect(audit.catalogKeys.length).toBeGreaterThanOrEqual(300);
+    expect(audit.catalogKeys.length).toBeGreaterThanOrEqual(TRADE_I18N_MIN_CATALOG_KEYS);
     expect(audit.unclassified).toEqual([]);
   });
 

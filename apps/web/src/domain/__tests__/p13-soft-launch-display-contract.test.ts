@@ -35,9 +35,6 @@ import {
 const WEB_SRC = resolve(import.meta.dirname, '../..');
 const REPO_ROOT = resolve(WEB_SRC, '../../..');
 
-const ko = messages.ko as Record<string, string>;
-const en = messages.en as Record<string, string>;
-
 describe('p13-soft-launch-display-contract · YAML #233 Soft Launch BUNDLE', () => {
   it('registers BUNDLE todo · prerequisite T0-A · next da-w7 · engine touch 0', () => {
     expect(P13_SOFT_LAUNCH_BUNDLE_TODO).toBe('p13-soft-launch-bundle');
@@ -114,6 +111,8 @@ describe('p13-soft-launch-display-contract · YAML #233 Soft Launch BUNDLE', () 
   });
 
   it('ko/en Soft Launch nav anchors exist and English has no Hangul', () => {
+    const ko = messages.ko as Record<string, string>;
+    const en = messages.en as Record<string, string>;
     const softLaunchKeys = [
       'admin.nav.overview',
       'admin.nav.queues',

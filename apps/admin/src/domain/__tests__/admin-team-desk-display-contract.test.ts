@@ -20,9 +20,6 @@ import {
 const ADMIN_SRC = resolve(import.meta.dirname, '../..');
 const REPO_ROOT = resolve(ADMIN_SRC, '../../..');
 
-const ko = messages.ko as Record<string, string>;
-const en = messages.en as Record<string, string>;
-
 describe('admin-team-desk-display-contract (§29.5 · YAML #230)', () => {
   it('registers team desk todo · owner-only · 5 grantable roles', () => {
     expect(P13_PREP_ADMIN_TEAM_DESK_TODO).toBe('p13-prep-admin-team-desk');
@@ -51,6 +48,8 @@ describe('admin-team-desk-display-contract (§29.5 · YAML #230)', () => {
   });
 
   it('requires beginner i18n keys for team desk (ko+en)', () => {
+    const ko = messages.ko as Record<string, string>;
+    const en = messages.en as Record<string, string>;
     const keys = [
       'admin.nav.team',
       'admin.help.team.title',
