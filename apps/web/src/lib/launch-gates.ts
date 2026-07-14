@@ -6,10 +6,12 @@
  */
 export const LAUNCH_GATES = {
   cryptoRails: false,
-  sportsBetting: false,
+  /** SB-W3 — prematch place live (operator-approved Wave 3; live betting stays flag-off). */
+  sportsBetting: true,
   sportsComboBetting: false,
   sportsSystemBetting: false,
-  sportsCashout: false,
+  /** SB-W3 — full cashout card live with prematch betting (operator-approved Wave 3). */
+  sportsCashout: true,
   notificationsCenter: false,
   tierGuide: false,
   /** E1 — tier auto-decay engine + tier_decay_warning pref exposure on `/settings/notifications`. */

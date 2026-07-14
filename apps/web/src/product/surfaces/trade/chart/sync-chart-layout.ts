@@ -22,6 +22,17 @@ export function isChartHostSized(size: ChartLayoutSize): boolean {
   return size.width >= CHART_LAYOUT_MIN_WIDTH_PX && size.height >= CHART_LAYOUT_MIN_HEIGHT_PX;
 }
 
+export type SyncChartLayoutOptions = {
+  /**
+   * Whether to call `fitContent()` after resizing. Defaults to `true` for
+   * explicit reset semantics (initial mount, manual "Reset Layout", fullscreen
+   * toggle). ResizeObserver-triggered resyncs pass `fit: false` so a window
+   * resize / sidebar toggle doesn't discard the user's zoom/pan — `applyOptions`
+   * alone doesn't move the visible time range.
+   */
+  fit?: boolean;
+};
+
 /**
  * Resize pane + force right-scale autoscale after container changes.
  *
@@ -29,7 +40,11 @@ export function isChartHostSized(size: ChartLayoutSize): boolean {
  * ResizeObserver leaves a stale visible price range (e.g. -20k…50k while BTC
  * is at 62k), so candles clip above the pane until the user drags the axis.
  */
-export function syncChartLayout(chart: IChartApi, host: HTMLElement): boolean {
+export function syncChartLayout(
+  chart: IChartApi,
+  host: HTMLElement,
+  { fit = true }: SyncChartLayoutOptions = {},
+): boolean {
   const size = readChartHostSize(host);
   if (!isChartHostSized(size)) return false;
 
@@ -51,7 +66,9 @@ export function syncChartLayout(chart: IChartApi, host: HTMLElement): boolean {
     /* rsi overlay may be absent */
   }
 
-  chart.timeScale().fitContent();
+  if (fit) {
+    chart.timeScale().fitContent();
+  }
   return true;
 }
 

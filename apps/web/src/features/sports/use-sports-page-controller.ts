@@ -58,7 +58,7 @@ export type SportsPageControllerView = {
   setLeagueFilter: (value: SportsLeagueFilter) => void;
   sportsBlocked: boolean;
   sportsBlockedKey: MessageKey;
-  /** `LAUNCH_GATES.sportsBetting` → contract exposure (`built_disabled` until soft-launch flip). */
+  /** `LAUNCH_GATES.sportsBetting` → contract exposure (`live` since SB-W3 prematch flip). */
   placeCtaExposure: SportsCashoutExposureMode;
   /** H-05 — true only when ≥1 fresh server `captured_at` outcome is on the board. */
   oddsIngestHealthGreen: boolean;

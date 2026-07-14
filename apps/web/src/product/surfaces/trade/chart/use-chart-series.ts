@@ -86,7 +86,10 @@ export function useChartSeries(
       prevOverlayKeyRef.current = overlayKey;
       prevLengthRef.current = candles.length;
       needsFlushRef.current = false;
-      if (feedChanged || wasEmpty || overlayChanged) {
+      // Only refit for a genuine new symbol/interval/data — an overlay toggle
+      // (MA/EMA/RSI/BB/volume, candles/line mode) re-populates series data but
+      // must not discard the user's existing zoom/pan.
+      if (feedChanged || wasEmpty) {
         // setAutoScale clears a stale fixed Y range left after undersized paints.
         handle.chart.priceScale('right').setAutoScale(true);
         handle.chart.timeScale().fitContent();

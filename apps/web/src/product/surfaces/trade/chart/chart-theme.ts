@@ -5,6 +5,7 @@ export type ChartTheme = {
   marketDown: string;
   accent: string;
   background: string;
+  fontFamily: string;
 };
 
 /**
@@ -18,6 +19,13 @@ const CHART_RGB_FALLBACKS = {
   marketDown: 'rgb(230, 82, 82)',
   accent: 'rgb(31, 224, 138)',
 } as const;
+
+/**
+ * Canvas 2D `ctx.font` never resolves `var(...)` — same probe pattern as
+ * `readToken`, but for `font-family` (§25.4). Fallback mirrors the start of
+ * `--ds-font-sans` (`fonts.css`), not the full cascade.
+ */
+const CHART_FONT_FALLBACK = "'Pretendard Variable', -apple-system, system-ui, sans-serif";
 
 /** Canvas normalizes oklch/light-dark to rgb — same trick browsers use internally. */
 function toChartRgb(color: string): string {
@@ -62,6 +70,25 @@ function readToken(name: string, fallback: string): string {
   return /^rgba?\(/i.test(rgb) || /^#[0-9a-f]{3,8}$/i.test(rgb) ? rgb : fallback;
 }
 
+/** Resolve `--ds-font-sans` to a concrete `font-family` string for Canvas 2D. */
+function readFontFamily(name: string, fallback: string): string {
+  if (typeof document === 'undefined') return fallback;
+
+  const probe = document.createElement('span');
+  probe.style.setProperty('font-family', `var(${name})`);
+  probe.style.setProperty('position', 'absolute');
+  probe.style.setProperty('visibility', 'hidden');
+  probe.style.setProperty('pointer-events', 'none');
+  document.documentElement.appendChild(probe);
+  const resolved = getComputedStyle(probe).fontFamily.trim();
+  probe.remove();
+
+  // Unresolved custom property (e.g. no CSS loaded in a test env) — the
+  // engine may pass the literal `var(...)` through instead of evaluating it.
+  if (!resolved || /var\(/i.test(resolved)) return fallback;
+  return resolved;
+}
+
 /** Map `--ds-*` tokens to Lightweight Charts options (§25.4). */
 export function readChartTheme(): ChartTheme {
   return {
@@ -71,6 +98,7 @@ export function readChartTheme(): ChartTheme {
     marketDown: readToken('--ds-market-down', CHART_RGB_FALLBACKS.marketDown),
     accent: readToken('--ds-accent', CHART_RGB_FALLBACKS.accent),
     background: 'transparent',
+    fontFamily: readFontFamily('--ds-font-sans', CHART_FONT_FALLBACK),
   };
 }
 
@@ -78,7 +106,7 @@ export function chartLayoutOptions(theme: ChartTheme) {
   return {
     background: { color: theme.background },
     textColor: theme.textMuted,
-    fontFamily: 'var(--ds-font-sans)',
+    fontFamily: theme.fontFamily,
     attributionLogo: true as const,
   };
 }

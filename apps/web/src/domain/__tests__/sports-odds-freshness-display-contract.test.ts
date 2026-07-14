@@ -118,26 +118,43 @@ describe('sports-odds-freshness-display-contract (H-05)', () => {
     ).toBe(false);
   });
 
-  it('keeps LAUNCH_GATES.sportsBetting/sportsCashout false until ingest green (H-05)', () => {
-    expect(LAUNCH_GATES.sportsBetting).toBe(false);
-    expect(LAUNCH_GATES.sportsCashout).toBe(false);
+  it('SB-W3: gates flipped live but exposure still requires ingest green (H-05 defense-in-depth)', () => {
+    expect(LAUNCH_GATES.sportsBetting).toBe(true);
+    expect(LAUNCH_GATES.sportsCashout).toBe(true);
     expect(
       sportsBettingGatesClosedUntilIngestGreen({
         ingestHealthGreen: false,
+      }),
+    ).toBe(false);
+    expect(
+      sportsBettingGatesClosedUntilIngestGreen({
+        ingestHealthGreen: true,
       }),
     ).toBe(true);
     expect(
       resolveSportsBettingExposureAllowed({
         ingestHealthGreen: false,
-        sportsBettingGate: false,
+        sportsBettingGate: true,
+      }),
+    ).toBe(false);
+    expect(
+      resolveSportsBettingExposureAllowed({
+        ingestHealthGreen: true,
+        sportsBettingGate: true,
+      }),
+    ).toBe(true);
+    expect(
+      resolveSportsCashoutExposureAllowed({
+        ingestHealthGreen: false,
+        sportsCashoutGate: true,
       }),
     ).toBe(false);
     expect(
       resolveSportsCashoutExposureAllowed({
-        ingestHealthGreen: false,
-        sportsCashoutGate: false,
+        ingestHealthGreen: true,
+        sportsCashoutGate: true,
       }),
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it('blocks place/cashout network mutations while gate off or ingest down or selection stale', () => {

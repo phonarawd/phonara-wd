@@ -105,7 +105,7 @@ export function TradeDeskMobileTradeStack({
                 expandLabel={t('trade.mobile.ticket.expand')}
                 collapseLabel={t('trade.mobile.ticket.collapse')}
                 variant="plain"
-                className="border-line rounded-(--ds-radius-lg) border px-3"
+                className="border-line rounded-lg border px-3"
                 testId="trade-mobile-ticket-fold"
               >
                 {orderTicket}

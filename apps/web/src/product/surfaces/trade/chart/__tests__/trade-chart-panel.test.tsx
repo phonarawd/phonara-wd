@@ -176,6 +176,94 @@ describe('TradeChartPanel', () => {
     expect(screen.getByText('시세 피드가 일시적으로 안 보여요')).toBeInTheDocument();
   });
 
+  it('shows only the error state when error and empty both apply (error takes precedence)', () => {
+    mockUseExchangeLiveCandles.mockReturnValue({
+      candles: [],
+      loading: false,
+      error: true,
+      refetch: vi.fn(),
+      connected: false,
+    });
+
+    render(
+      <I18nProvider>
+        <TradeChartPanel marketSymbol="BTC_USDT" />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('trade-chart-error')).toBeInTheDocument();
+    expect(screen.queryByTestId('trade-chart-empty')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('trade-chart-loading')).not.toBeInTheDocument();
+  });
+
+  it('shows loading state, not empty or error, while candles are still arriving', () => {
+    mockUseExchangeLiveCandles.mockReturnValue({
+      candles: [],
+      loading: true,
+      error: true,
+      refetch: vi.fn(),
+      connected: false,
+    });
+
+    render(
+      <I18nProvider>
+        <TradeChartPanel marketSymbol="BTC_USDT" />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('trade-chart-loading')).toBeInTheDocument();
+    expect(screen.queryByTestId('trade-chart-empty')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('trade-chart-error')).not.toBeInTheDocument();
+  });
+
+  describe('stale feed badge (mounted chart)', () => {
+    it('shows the stale badge when the feed disconnects after the chart has mounted', () => {
+      mockUseExchangeLiveCandles.mockReturnValue({
+        candles: sampleCandles,
+        loading: false,
+        error: false,
+        refetch: vi.fn(),
+        connected: false,
+      });
+
+      render(
+        <I18nProvider>
+          <TradeChartPanel marketSymbol="BTCUSDT-SIM" />
+        </I18nProvider>,
+      );
+
+      expect(screen.getByTestId('trade-chart-stale-badge')).toBeInTheDocument();
+    });
+
+    it('hides the stale badge while connected', () => {
+      render(
+        <I18nProvider>
+          <TradeChartPanel marketSymbol="BTCUSDT-SIM" />
+        </I18nProvider>,
+      );
+
+      expect(screen.queryByTestId('trade-chart-stale-badge')).not.toBeInTheDocument();
+    });
+
+    it('does not show the stale badge before the chart has ever mounted (candles < 2)', () => {
+      mockUseExchangeLiveCandles.mockReturnValue({
+        candles: [],
+        loading: false,
+        error: false,
+        refetch: vi.fn(),
+        connected: false,
+      });
+
+      render(
+        <I18nProvider>
+          <TradeChartPanel marketSymbol="BTCUSDT-SIM" />
+        </I18nProvider>,
+      );
+
+      expect(screen.queryByTestId('trade-chart-stale-badge')).not.toBeInTheDocument();
+    });
+  });
+
   it('calls syncLayout when reset layout is clicked', () => {
     render(
       <I18nProvider>

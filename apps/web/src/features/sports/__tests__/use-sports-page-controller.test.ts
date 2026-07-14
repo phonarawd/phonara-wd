@@ -171,16 +171,15 @@ describe('useSportsPageController · LAUNCH_GATES.sportsBetting', () => {
     seedSportsControllerMocks();
   });
 
-  it('exposes placeCtaExposure=built_disabled while LAUNCH_GATES.sportsBetting is false', () => {
-    expect(LAUNCH_GATES.sportsBetting).toBe(false);
+  it('SB-W3: exposes placeCtaExposure=live while ingest health blocks canPlaceBet', () => {
+    expect(LAUNCH_GATES.sportsBetting).toBe(true);
 
     const { result } = renderHook(() => useSportsPageController());
 
-    expect(result.current.placeCtaExposure).toBe('built_disabled');
+    expect(result.current.placeCtaExposure).toBe('live');
     expect(result.current.canPlaceBet).toBe(false);
     expect(result.current.oddsIngestHealthGreen).toBe(false);
-    expect(result.current.sportsBlocked).toBe(true);
-    expect(result.current.sportsBlockedKey).toBe('sports.gate.feature_off');
+    expect(result.current.sportsBlocked).toBe(false);
   });
 
   it('keeps oddsIngestHealthGreen false for audit-era stale captured_at (H-05)', () => {
@@ -213,12 +212,13 @@ describe('useSportsPageController · LAUNCH_GATES.sportsBetting', () => {
     expect(result.current.canPlaceBet).toBe(false);
   });
 
-  it('keeps canPlaceBet false when kill-switch sportsBlocked even if slip is ready', () => {
+  it('keeps canPlaceBet false when kill-switch sportsBlocked even if launch gate is live', () => {
     seedSportsControllerMocks({ sportsBlocked: true });
 
     const { result } = renderHook(() => useSportsPageController());
 
-    expect(result.current.placeCtaExposure).toBe('built_disabled');
+    expect(result.current.placeCtaExposure).toBe('live');
+    expect(result.current.sportsBlocked).toBe(true);
     expect(result.current.canPlaceBet).toBe(false);
   });
 

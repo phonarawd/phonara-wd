@@ -19,6 +19,7 @@ import { useT } from '@/product/i18n';
 import { Button } from '@/product/primitives/button';
 import { Skeleton } from '@/product/primitives/skeleton';
 import { cn } from '@/product/primitives/lib/cn';
+import { TradeDisplayFeedStaleBadge } from '@/product/surfaces/trade/trade-display-feed-stale-badge';
 
 import {
   DEFAULT_CHART_OVERLAY_TOGGLES,
@@ -80,6 +81,10 @@ export function TradeChartPanel({
   );
 
   const feedKey = useMemo(() => `${marketSymbol ?? 'none'}:${interval}`, [interval, marketSymbol]);
+
+  /** Single derived state — error takes precedence over generic empty when both are true. */
+  const panelState: 'loading' | 'error' | 'empty' | 'ready' =
+    candles.length >= 2 ? 'ready' : loading ? 'loading' : error ? 'error' : 'empty';
 
   /** ZA-12 — empty copy names the actual cause (oracle-seed-wait vs exchange feed outage). */
   const emptyReason = useMemo(() => resolveTradeChartEmptyReason(marketSymbol), [marketSymbol]);
@@ -234,6 +239,11 @@ export function TradeChartPanel({
             >
               {connected ? t('trade.chart.syncedTitle') : t('trade.chart.loading')}
             </span>
+            <TradeDisplayFeedStaleBadge
+              visible={!connected && candles.length >= 2}
+              t={t}
+              testId="trade-chart-stale-badge"
+            />
           </div>
         </div>
 
@@ -385,11 +395,11 @@ export function TradeChartPanel({
         className="flex min-h-[280px] flex-1 flex-col"
         style={{ height: isFullscreen ? undefined : 'clamp(280px, 42vh, 480px)' }}
       >
-        {loading && candles.length < 2 ? (
+        {panelState === 'loading' ? (
           <Skeleton className="m-3 min-h-[240px] flex-1" data-testid="trade-chart-loading" />
         ) : null}
 
-        {!loading && candles.length < 2 ? (
+        {panelState === 'empty' ? (
           <div
             className="text-foreground-muted flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center text-sm"
             data-testid="trade-chart-empty"
@@ -422,7 +432,7 @@ export function TradeChartPanel({
           </div>
         ) : null}
 
-        {error && candles.length < 2 ? (
+        {panelState === 'error' ? (
           <div
             className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center"
             data-testid="trade-chart-error"
@@ -434,7 +444,7 @@ export function TradeChartPanel({
           </div>
         ) : null}
 
-        {candles.length >= 2 ? (
+        {panelState === 'ready' ? (
           <Suspense fallback={<Skeleton className="m-3 min-h-[240px] flex-1" />}>
             <TradeChart
               candles={candles}

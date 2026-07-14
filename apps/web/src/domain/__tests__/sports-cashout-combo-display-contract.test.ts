@@ -51,15 +51,17 @@ describe('sports-cashout-combo-display-contract', () => {
     expect(isSportsSection7CanaryBranch('place_system')).toBe(false);
   });
 
-  it('defaults all four sports launch gates to false (built-hidden/disabled)', () => {
+  it('SB-W3: prematch place/cashout gates live; combo/system remain built-hidden', () => {
     expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsBetting).toBe(LAUNCH_GATES.sportsBetting);
     expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsComboBetting).toBe(LAUNCH_GATES.sportsComboBetting);
     expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsSystemBetting).toBe(LAUNCH_GATES.sportsSystemBetting);
     expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsCashout).toBe(LAUNCH_GATES.sportsCashout);
-    expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsBetting).toBe(false);
-    expect(resolveSportsLaunchGateExposure('sportsCashout')).toBe('built_hidden');
-    expect(resolveSportsLaunchGateExposure('sportsBetting')).toBe('built_disabled');
-    expect(resolveSportsSlipPlaceCtaExposure()).toBe('built_disabled');
+    expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsBetting).toBe(true);
+    expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsCashout).toBe(true);
+    expect(SPORTS_LAUNCH_GATE_DEFAULTS.sportsComboBetting).toBe(false);
+    expect(resolveSportsLaunchGateExposure('sportsCashout')).toBe('live');
+    expect(resolveSportsLaunchGateExposure('sportsBetting')).toBe('live');
+    expect(resolveSportsSlipPlaceCtaExposure()).toBe('live');
   });
 
   it('ANDs LAUNCH_GATES.sportsBetting with feature_sports kill-switch for place eligibility', () => {
@@ -124,18 +126,18 @@ describe('sports-cashout-combo-display-contract', () => {
     ).toBe(true);
   });
 
-  it('hides cashout card until sportsCashout gate live', () => {
-    expect(shouldShowSportsCashoutCard('pending')).toBe(false);
-    expect(shouldShowSportsCashoutCard('pending', true)).toBe(true);
+  it('shows cashout card for pending bets when sportsCashout gate live (SB-W3)', () => {
+    expect(shouldShowSportsCashoutCard('pending')).toBe(true);
+    expect(shouldShowSportsCashoutCard('pending', false)).toBe(false);
     expect(shouldShowSportsCashoutCard('won', true)).toBe(false);
   });
 
-  it('freezes UI wire: combo/system/cashout built-hidden · place built-disabled · policy badges defer_stub', () => {
+  it('freezes UI wire: combo/system built-hidden · place/cashout live · policy badges defer_stub', () => {
     expect(SPORTS_CASHOUT_UI_WIRE_STATUS.slip_combo_tab).toBe('built_hidden');
     expect(SPORTS_CASHOUT_UI_WIRE_STATUS.slip_system_tab).toBe('built_hidden');
     expect(SPORTS_CASHOUT_UI_WIRE_STATUS.my_bets_cashout_card).toBe('live');
     expect(SPORTS_CASHOUT_UI_WIRE_STATUS.cashout_live_refresh).toBe('live');
-    expect(SPORTS_CASHOUT_UI_WIRE_STATUS.slip_place_cta).toBe('built_disabled');
+    expect(SPORTS_CASHOUT_UI_WIRE_STATUS.slip_place_cta).toBe('live');
     expect(SPORTS_CASHOUT_UI_WIRE_STATUS.slip_policy_badges).toBe('defer_stub');
   });
 });

@@ -131,12 +131,17 @@ export function useLightweightChart(
     let lastSized = false;
     let lastWidth = 0;
     let lastHeight = 0;
+    let isFirstSync = true;
     let cancelPendingSync: (() => void) | null = null;
     const requestSync = () => {
+      // Capture before the scheduled callback runs — a second resize can
+      // otherwise land before the first callback fires and lose its "first" fit.
+      const fit = isFirstSync;
+      isFirstSync = false;
       cancelPendingSync?.();
       cancelPendingSync = scheduleChartLayoutSync(() => {
         cancelPendingSync = null;
-        syncChartLayout(chart, host);
+        syncChartLayout(chart, host, { fit });
         const size = readChartHostSize(host);
         lastSized = isChartHostSized(size);
         lastWidth = size.width;

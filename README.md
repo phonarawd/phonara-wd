@@ -71,3 +71,4 @@ bun run check         # 전체 체인(로컬 최종 확인 시에만)
 
 - v2 UI 재구축 실행 문서(`UI_REBUILD_WAVE` · `NEXT_STEP` · `AI_REFERENCE_PRIORITY`)는 **Batch 11에서 삭제**됐다 — 재생성하지 않는다. 목록: [`docs/SSOT/DEPRECATED_DOC_DENYLIST.md`](docs/SSOT/DEPRECATED_DOC_DENYLIST.md).
 - 감사·현황 문서 인덱스: [`docs/DOCS_INDEX.md`](docs/DOCS_INDEX.md)
+- 서드파티 라이선스 고지: [`NOTICE`](NOTICE)

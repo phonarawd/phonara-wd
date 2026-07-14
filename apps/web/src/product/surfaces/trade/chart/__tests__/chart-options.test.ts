@@ -30,4 +30,12 @@ describe('chart-options', () => {
     expect(options.crosshair?.mode).toBe(CrosshairMode.MagnetOHLC);
     expect(options.timeScale?.timeVisible).toBe(true);
   });
+
+  it('resolves layout.fontFamily to a computed value, not the literal var() string', () => {
+    const options = createChartOptions(theme);
+    expect(options.layout?.fontFamily).toBeTypeOf('string');
+    expect(options.layout?.fontFamily.length).toBeGreaterThan(0);
+    expect(options.layout?.fontFamily).not.toBe('var(--ds-font-sans)');
+    expect(options.layout?.fontFamily).not.toMatch(/var\(/i);
+  });
 });

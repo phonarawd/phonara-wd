@@ -207,12 +207,12 @@ flowchart TD
 ### Wave 4 — Low-risk Cleanup (병행 가능, 라이브 코드 미터치)
 
 - **Goal:** 카지노 게임별 exposure cap 비정상값·admin RPC AAL2 비대칭·Auth 설정 등 저위험 잔여 항목을 정리한다.
-- **Scope In:** `app_config` `casino_*_house_exposure_cap_*`(다수 `999999999`)를 글로벌 캡 이하로 재산정하는 migration · `rpc_admin_list_sports_exposure`에 `_assert_admin_aal2()` 추가 · Supabase Auth 콘솔에서 leaked-password 보호 ON.
-- **Scope Out:** 라이브 관련 코드 전부(§1.2) · ZA-14 Futures PHON notional 근본 수정(별도 Plan).
+- **Scope In:** `app_config` `casino_*_house_exposure_cap_*`(다수 `999999999`)를 글로벌 캡 이하로 재산정하는 migration · `rpc_admin_list_sports_exposure`에 `_assert_admin_aal2()` 추가 · Supabase Auth leaked-password(HIBP)는 **Pro+ 유료** — 출시 직전 operator 트랙(`bun run stack:auth-hibp-enable`).
+- **Scope Out:** 라이브 관련 코드 전부(§1.2) · ZA-14 Futures PHON notional 근본 수정(별도 Plan) · **지금 세션에서 Supabase Pro 결제/HIBP ON 금지**(출시 전).
 - **Acceptance (binary):**
-  - [ ] 게임별 cap이 글로벌 캡 이하로 조정
-  - [ ] `rpc_admin_list_sports_exposure` AAL2 가드 존재
-  - [ ] Auth leaked-password 보호 ON
+  - [x] 게임별 cap이 글로벌 캡 이하로 조정 (migration `20260827000003` · PR #8)
+  - [x] `rpc_admin_list_sports_exposure` AAL2 가드 존재 (migration `20260827000004` · PR #8)
+  - [ ] Auth leaked-password 보호 ON — **DEFER 출시 전** (H-09 · Pro+ · `stack:auth-hibp-enable`)
 - **Dependencies:** 없음 — Wave 0.5 이후 언제든 병행 가능.
 - **Commit Strategy:** 항목별 1 commit.
 

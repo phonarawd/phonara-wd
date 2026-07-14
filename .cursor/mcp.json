@@ -3,10 +3,6 @@
     "supabase": {
       "args": ["/c", "scripts\\run-supabase-mcp.cmd"],
       "command": "cmd"
-    },
-    "playwright": {
-      "command": "cmd",
-      "args": ["/c", "scripts\\run-playwright-mcp.cmd"]
     }
   }
 }
