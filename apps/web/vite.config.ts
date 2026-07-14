@@ -39,10 +39,22 @@ const pagesCsp = readPagesCspHeader();
 const LOCAL_SUPABASE_CONNECT =
   'http://127.0.0.1:54321 ws://127.0.0.1:54321 http://localhost:54321 ws://localhost:54321';
 
+const VITE_DEV_HMR_CONNECT = 'ws://127.0.0.1:3000 ws://localhost:3000';
+
 /** E2E + local stack: Pages CSP omits localhost Supabase — append for Vite dev/preview only. */
 function augmentCspForLocalDev(csp: string): string {
-  if (csp.includes('127.0.0.1:54321')) return csp;
-  return csp.replace(/connect-src ([^;]+)/, `connect-src $1 ${LOCAL_SUPABASE_CONNECT}`);
+  // Vite dev/preview serves http://127.0.0.1 — upgrade-insecure-requests breaks module/HMR loads.
+  let out = csp
+    .replace(/;\s*upgrade-insecure-requests/g, '')
+    .replace(/upgrade-insecure-requests\s*;?\s*/g, '')
+    .trim();
+  if (!out.includes('127.0.0.1:54321')) {
+    out = out.replace(/connect-src ([^;]+)/, `connect-src $1 ${LOCAL_SUPABASE_CONNECT}`);
+  }
+  if (!out.includes('ws://127.0.0.1:3000')) {
+    out = out.replace(/connect-src ([^;]+)/, `connect-src $1 ${VITE_DEV_HMR_CONNECT}`);
+  }
+  return out;
 }
 
 function resolveViteSecurityHeaders(
@@ -51,20 +63,6 @@ function resolveViteSecurityHeaders(
   if (!pagesCsp) return undefined;
   const csp = command === 'serve' ? augmentCspForLocalDev(pagesCsp) : pagesCsp;
   return { 'Content-Security-Policy': csp };
-}
-
-function phonaraE2eEngineHtmlMarker(): PluginOption {
-  return {
-    name: 'phonara-e2e-engine-html-marker',
-    transformIndexHtml: {
-      order: 'pre',
-      handler(html) {
-        if (process.env['VITE_PHONARA_E2E_ENGINE'] !== '1') return html;
-        if (html.includes('data-e2e-engine="1"')) return html;
-        return html.replace('<html lang="ko">', '<html lang="ko" data-e2e-engine="1">');
-      },
-    },
-  };
 }
 
 /** Phase R web entry — TanStack Router file routes + PWA injectManifest shell. */
@@ -159,7 +157,6 @@ export default defineConfig(({ command }) => {
 
   return {
     plugins: [
-      phonaraE2eEngineHtmlMarker(),
       TanStackRouterVite({
         routesDirectory: './src/routes',
         generatedRouteTree: './src/routeTree.gen.ts',
