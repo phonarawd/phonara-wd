@@ -105,6 +105,7 @@
     "auth:sync-email": "tsx scripts/sync-auth-email-config.ts",
     "auth:verify-email": "tsx scripts/verify-auth-email-config.ts",
     "cf:configure-production": "tsx scripts/configure-cloudflare-production.ts",
+    "cf:allow-search-verification": "tsx scripts/cf-allow-search-verification.ts",
     "generate:brand": "tsx scripts/generate-brand-icons.ts",
     "generate:web-seo": "tsx scripts/generate-web-seo.ts",
     "generate:ssot-freeze-manifest": "tsx scripts/generate-ssot-freeze-manifest.ts",
