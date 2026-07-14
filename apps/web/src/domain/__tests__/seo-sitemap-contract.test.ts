@@ -48,8 +48,13 @@ describe('seo-sitemap-contract', () => {
 
   it('ships Google and Naver HTML ownership verification files', () => {
     const google = readFileSync(join(WEB_PUBLIC, 'googleb262cce23bd3d508.html'), 'utf8');
-    const naver = readFileSync(join(WEB_PUBLIC, 'naverba24284efb230dee9f04ad79fee9a841.html'), 'utf8');
+    const naver = readFileSync(
+      join(WEB_PUBLIC, 'naverba24284efb230dee9f04ad79fee9a841.html'),
+      'utf8',
+    );
     expect(google.trim()).toBe('google-site-verification: googleb262cce23bd3d508.html');
-    expect(naver.trim()).toBe('naver-site-verification: naverba24284efb230dee9f04ad79fee9a841.html');
+    expect(naver.trim()).toBe(
+      'naver-site-verification: naverba24284efb230dee9f04ad79fee9a841.html',
+    );
   });
 });

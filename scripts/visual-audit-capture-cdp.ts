@@ -41,7 +41,12 @@ const RUN_INTERACTION_PASS = process.env.PHONARA_AUDIT_INTERACT === '1';
 const NO_ASSERT = process.env.PHONARA_AUDIT_NO_ASSERT === '1';
 
 /** Canonical Phase R 4-tier smoke widths — apps/web/src/product/tokens/viewport-contract.ts VIEWPORT_SMOKE_WIDTHS. */
-type Vp = { id: '390' | '768' | '1024' | '2560'; folder: 'mobile' | 'tablet' | 'desktop'; w: number; h: number };
+type Vp = {
+  id: '390' | '768' | '1024' | '2560';
+  folder: 'mobile' | 'tablet' | 'desktop';
+  w: number;
+  h: number;
+};
 
 const MINIMAL = process.env.PHONARA_AUDIT_MINIMAL === '1';
 
@@ -311,7 +316,11 @@ async function runAxeCheck(cdp: CdpClient): Promise<AxeSummary> {
     serious: violations.filter((v) => v.impact === 'serious').length,
     moderate: violations.filter((v) => v.impact === 'moderate').length,
     minor: violations.filter((v) => v.impact === 'minor').length,
-    violations: violations.map((v) => ({ id: v.id, impact: v.impact ?? 'unknown', nodes: v.nodes })),
+    violations: violations.map((v) => ({
+      id: v.id,
+      impact: v.impact ?? 'unknown',
+      nodes: v.nodes,
+    })),
   };
 }
 
@@ -322,13 +331,20 @@ function createConsoleErrorTracker(cdp: CdpClient): { errors: string[]; reset: (
     const p = params as { type?: string; args?: Array<{ value?: unknown; description?: string }> };
     if (p.type !== 'error' && p.type !== 'assert') return;
     const text = (p.args ?? [])
-      .map((a) => (typeof a.value === 'string' ? a.value : a.description ?? JSON.stringify(a.value)))
+      .map((a) =>
+        typeof a.value === 'string' ? a.value : (a.description ?? JSON.stringify(a.value)),
+      )
       .join(' ');
     state.errors.push(text.slice(0, 300));
   });
   cdp.on('Runtime.exceptionThrown', (params) => {
-    const p = params as { exceptionDetails?: { text?: string; exception?: { description?: string } } };
-    const text = p.exceptionDetails?.exception?.description ?? p.exceptionDetails?.text ?? 'uncaught exception';
+    const p = params as {
+      exceptionDetails?: { text?: string; exception?: { description?: string } };
+    };
+    const text =
+      p.exceptionDetails?.exception?.description ??
+      p.exceptionDetails?.text ??
+      'uncaught exception';
     state.errors.push(String(text).slice(0, 300));
   });
   return {
@@ -587,7 +603,10 @@ async function runCasinoInteractionPass(
 
   steps['stakeSet'] = await evaluate(cdp, setNativeValueScript('casino-stake-input', '1'));
   if (gameCode === 'limbo') {
-    steps['targetSet'] = await evaluate(cdp, setNativeValueScript('casino-selection-target', '2.00'));
+    steps['targetSet'] = await evaluate(
+      cdp,
+      setNativeValueScript('casino-selection-target', '2.00'),
+    );
   }
   await sleep(200);
 
@@ -616,7 +635,10 @@ async function runCasinoInteractionPass(
 
   let fpsDuringReplay: number | null = null;
   if (gameCode === 'crash') {
-    const frames = await evaluate<number>(cdp, `(() => { window.__phonaraFpsRunning = false; return window.__phonaraFpsFrames; })()`);
+    const frames = await evaluate<number>(
+      cdp,
+      `(() => { window.__phonaraFpsRunning = false; return window.__phonaraFpsFrames; })()`,
+    );
     fpsDuringReplay = Math.round((frames / fpsWindowMs) * 1000 * 10) / 10;
   }
 
@@ -635,8 +657,14 @@ async function runCasinoInteractionPass(
 
   const shotDir = join(OUT, 'desktop');
   await mkdir(shotDir, { recursive: true });
-  const shot = await cdp.send<{ data: string }>('Page.captureScreenshot', { format: 'png', fromSurface: true });
-  await writeFile(join(shotDir, `casino-${gameCode}-1024-dark-bet-result.png`), Buffer.from(shot.data, 'base64'));
+  const shot = await cdp.send<{ data: string }>('Page.captureScreenshot', {
+    format: 'png',
+    fromSurface: true,
+  });
+  await writeFile(
+    join(shotDir, `casino-${gameCode}-1024-dark-bet-result.png`),
+    Buffer.from(shot.data, 'base64'),
+  );
 
   const axe = await runAxeCheck(cdp);
 
@@ -820,7 +848,9 @@ async function main(): Promise<void> {
         const result = await runCasinoInteractionPass(cdp, gameCode, consoleTracker);
         interactions.push(result);
         if (result.axe && result.axe.critical > 0) {
-          axeCriticalFindings.push(`casino-${gameCode} (interaction): ${result.axe.critical} critical`);
+          axeCriticalFindings.push(
+            `casino-${gameCode} (interaction): ${result.axe.critical} critical`,
+          );
         }
       }
     }
@@ -876,18 +906,32 @@ async function main(): Promise<void> {
       'utf8',
     );
     console.log('[cdp-audit] DONE', summary.counts);
-    console.log('[cdp-audit] bottomNavViolations:', bottomNavViolations.length ? bottomNavViolations : 'none');
-    console.log('[cdp-audit] axeCriticalFindings:', axeCriticalFindings.length ? axeCriticalFindings : 'none');
+    console.log(
+      '[cdp-audit] bottomNavViolations:',
+      bottomNavViolations.length ? bottomNavViolations : 'none',
+    );
+    console.log(
+      '[cdp-audit] axeCriticalFindings:',
+      axeCriticalFindings.length ? axeCriticalFindings : 'none',
+    );
     for (const interaction of interactions) {
-      console.log(`[cdp-audit] interaction ${interaction.gameCode}:`, JSON.stringify(interaction.steps));
+      console.log(
+        `[cdp-audit] interaction ${interaction.gameCode}:`,
+        JSON.stringify(interaction.steps),
+      );
       if (interaction.fpsDuringReplay !== null) {
-        console.log(`[cdp-audit] ${interaction.gameCode} measured FPS during replay:`, interaction.fpsDuringReplay);
+        console.log(
+          `[cdp-audit] ${interaction.gameCode} measured FPS during replay:`,
+          interaction.fpsDuringReplay,
+        );
       }
     }
 
     const hardFailures = bottomNavViolations.length > 0 || axeCriticalFindings.length > 0;
     if (hardFailures && !NO_ASSERT) {
-      console.error('[cdp-audit] FAIL — assertion violations found (see above). Set PHONARA_AUDIT_NO_ASSERT=1 to capture without failing.');
+      console.error(
+        '[cdp-audit] FAIL — assertion violations found (see above). Set PHONARA_AUDIT_NO_ASSERT=1 to capture without failing.',
+      );
       process.exitCode = 1;
     }
   } finally {
@@ -898,12 +942,14 @@ async function main(): Promise<void> {
     // `taskkill /T /F` kills the whole process tree; `cursor:kill-orphans`/`e2e:kill`
     // remain the belt-and-suspenders sweep if a grandchild still survives.
     if (chrome?.pid) {
-      if (process.platform === 'win32') spawnSync('taskkill', ['/pid', String(chrome.pid), '/T', '/F']);
+      if (process.platform === 'win32')
+        spawnSync('taskkill', ['/pid', String(chrome.pid), '/T', '/F']);
       else chrome.kill();
       await sleep(300);
     }
     if (vite?.pid) {
-      if (process.platform === 'win32') spawnSync('taskkill', ['/pid', String(vite.pid), '/T', '/F']);
+      if (process.platform === 'win32')
+        spawnSync('taskkill', ['/pid', String(vite.pid), '/T', '/F']);
       else vite.kill('SIGKILL');
       await sleep(300);
     }

@@ -4,7 +4,12 @@ import type { RealtimeConnectionStatus } from '@/hooks/use-realtime';
 import { useT } from '@/product/i18n';
 import { Button } from '@/product/primitives/button';
 import { cn } from '@/product/primitives/lib/cn';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/product/primitives/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/product/primitives/tooltip';
 
 export type CasinoTrustStripProps = {
   /** `casino-game-meta.ts` RTP for the active game (0-100, engine-configured). */
@@ -76,7 +81,9 @@ export function CasinoTrustStrip({
           <Wifi className="size-3.5 shrink-0" aria-hidden />
         )}
         <span>
-          {connectionDisconnected ? t('casino.connection.disconnected') : t('casino.connection.live')}
+          {connectionDisconnected
+            ? t('casino.connection.disconnected')
+            : t('casino.connection.live')}
         </span>
       </span>
     </div>

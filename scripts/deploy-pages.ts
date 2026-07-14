@@ -76,11 +76,11 @@ function main(): void {
   run('bun', ['run', buildScript], 'build');
 
   // TanStack Router may rewrite routeTree.gen.ts line endings on Windows — restore so H-06 stays clean.
-  const routeTreeRestore = spawnSync(
-    'git',
-    ['checkout', '--', 'apps/web/src/routeTree.gen.ts'],
-    { cwd: REPO_ROOT, stdio: 'ignore', shell: process.platform === 'win32' },
-  );
+  const routeTreeRestore = spawnSync('git', ['checkout', '--', 'apps/web/src/routeTree.gen.ts'], {
+    cwd: REPO_ROOT,
+    stdio: 'ignore',
+    shell: process.platform === 'win32',
+  });
   if ((routeTreeRestore.status ?? 1) !== 0) {
     process.stderr.write(
       '[deploy-pages] WARN — could not restore apps/web/src/routeTree.gen.ts after build\n',

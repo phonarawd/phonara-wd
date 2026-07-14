@@ -202,10 +202,7 @@ describe('CasinoGameShell (p10-casino-replay-and-infra)', () => {
       'subscribed',
     );
     expect(screen.getByTestId('casino-pf-strip')).toBeInTheDocument();
-    expect(screen.getByTestId('casino-pf-verify-link')).toHaveAttribute(
-      'href',
-      '/casino/fairness',
-    );
+    expect(screen.getByTestId('casino-pf-verify-link')).toHaveAttribute('href', '/casino/fairness');
     expect(screen.getByTestId('casino-crash-stage')).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('casino-bet-mode-auto'));

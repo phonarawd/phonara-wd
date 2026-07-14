@@ -36,11 +36,7 @@ describe('CasinoTrustStrip (phase1a-trust-layer)', () => {
   it('renders the disconnected alarm state', () => {
     render(
       <I18nProvider>
-        <CasinoTrustStrip
-          rtp={97.3}
-          connectionStatus="channel_error"
-          connectionDisconnected
-        />
+        <CasinoTrustStrip rtp={97.3} connectionStatus="channel_error" connectionDisconnected />
       </I18nProvider>,
     );
 

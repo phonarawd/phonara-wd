@@ -54,7 +54,11 @@ describe('casino-gpu-tier (phase1a-trust-layer)', () => {
 
   it('treats unsupported (null) device signals as healthy, not low', () => {
     expect(
-      resolveCasinoGpuTier({ ...STANDARD_SIGNALS, deviceMemoryGb: null, hardwareConcurrency: null }),
+      resolveCasinoGpuTier({
+        ...STANDARD_SIGNALS,
+        deviceMemoryGb: null,
+        hardwareConcurrency: null,
+      }),
     ).toBe('standard');
   });
 

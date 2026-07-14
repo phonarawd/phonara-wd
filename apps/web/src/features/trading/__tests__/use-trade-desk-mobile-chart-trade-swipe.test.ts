@@ -44,9 +44,7 @@ describe('useTradeDeskMobileChartTradeSwipe', () => {
     chartHost.appendChild(canvas);
     document.body.appendChild(chartHost);
 
-    const { result } = renderHook(() =>
-      useTradeDeskMobileChartTradeSwipe('chart', setActiveTab),
-    );
+    const { result } = renderHook(() => useTradeDeskMobileChartTradeSwipe('chart', setActiveTab));
 
     act(() => {
       result.current.swipeHandlers.onPointerDown({

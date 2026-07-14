@@ -73,9 +73,7 @@ describe('InstallPage', () => {
     expect(screen.getByTestId('install-guide-step-ios-1')).toBeInTheDocument();
     expect(screen.getByTestId('install-guide-step-ios-2')).toBeInTheDocument();
     expect(screen.getByTestId('install-guide-step-ios-3')).toBeInTheDocument();
-    expect(
-      screen.getByText('Safari 하단 가운데 공유 버튼(□↑)을 누르세요.'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('Safari 하단 가운데 공유 버튼(□↑)을 누르세요.')).toBeInTheDocument();
     expect(
       screen.getByText(
         '반드시 Safari에서 진행하세요. Chrome·인앱 브라우저는 홈 화면 추가가 안 됩니다.',

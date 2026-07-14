@@ -44,9 +44,9 @@ ${urls}
 }
 
 function renderRobotsTxt(): string {
-  const disallowLines = SEO_ROBOTS_DISALLOW_PREFIXES.map(
-    (prefix) => `Disallow: ${prefix}`,
-  ).join('\n');
+  const disallowLines = SEO_ROBOTS_DISALLOW_PREFIXES.map((prefix) => `Disallow: ${prefix}`).join(
+    '\n',
+  );
 
   return `User-agent: *
 Allow: /
