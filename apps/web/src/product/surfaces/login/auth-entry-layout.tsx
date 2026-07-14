@@ -38,7 +38,10 @@ export function AuthEntryLayout({
     <div
       data-testid={testId}
       className={cn(
-        'mx-auto grid w-full max-w-5xl gap-8 py-6 md:py-10 lg:grid-cols-[1fr,minmax(280px,360px)] lg:items-center lg:gap-12 lg:py-12',
+        // Form owns the dominant 1fr track (UX_REFERENCE_CANON.md §Login/Auth ·
+        // AUTH_UX_CANON.md "form 위 과도한 promo/hero 금지") — the brand/trust
+        // <aside> stays in the narrow fixed track, never the reverse.
+        'mx-auto grid w-full max-w-5xl gap-8 py-6 md:py-10 lg:grid-cols-[minmax(280px,360px),1fr] lg:items-center lg:gap-12 lg:py-12',
         className,
       )}
     >
