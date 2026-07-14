@@ -11,6 +11,7 @@ import {
   phonaraViteDevWarmup,
 } from './vite-dev-performance';
 import { pwaManifestCopy } from './pwa-manifest';
+import { phonaraSiteVerificationPlugin } from './vite-site-verification';
 
 const webSrc = fileURLToPath(new URL('./src', import.meta.url));
 const pwaRegisterDevStub = fileURLToPath(
@@ -170,6 +171,7 @@ export default defineConfig(({ command }) => {
       }),
       tailwindcss(),
       react(),
+      phonaraSiteVerificationPlugin(),
       // PWA manifest/service-worker graph is build-only — skipping it saves dev cold start.
       ...(command === 'build' ? [pwaPlugin] : []),
     ],

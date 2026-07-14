@@ -1,1 +1,5 @@
+# Ownership verification files — serve as static assets (do not SPA-fallback)
+/googleb262cce23bd3d508.html  /googleb262cce23bd3d508.html  200
+/naverba24284efb230dee9f04ad79fee9a841.html  /naverba24284efb230dee9f04ad79fee9a841.html  200
+
 /*    /index.html   200

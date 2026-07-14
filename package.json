@@ -106,6 +106,7 @@
     "auth:verify-email": "tsx scripts/verify-auth-email-config.ts",
     "cf:configure-production": "tsx scripts/configure-cloudflare-production.ts",
     "generate:brand": "tsx scripts/generate-brand-icons.ts",
+    "generate:web-seo": "tsx scripts/generate-web-seo.ts",
     "generate:ssot-freeze-manifest": "tsx scripts/generate-ssot-freeze-manifest.ts",
     "visual:freeze-diff": "tsx scripts/visual-freeze-diff.ts",
     "check:migrations": "tsx scripts/check-migrations.ts",
