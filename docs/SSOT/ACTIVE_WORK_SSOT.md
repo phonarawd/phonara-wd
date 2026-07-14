@@ -16,6 +16,52 @@
 | **Platform Perfect Launch**        | **Plan 19/19 completed** · **R12 DONE**      | Plan `platform-perfect-launch` — **todo id = 착수 단위** · Handoff [`PLATFORM_AUDIT_TODO_HANDOFF.md`](../OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md) · 채팅 `Implement <todo-id>`                                                                               |
 | **ZA 통합 Remediation**            | **`[x]` DONE** 2026-07-14                    | Plan `za_통합_실행순서_c6df1c56` · ZA-01~15·17·19 **VERIFIED_FIXED**(ZA-14는 완화조치·근본 OPEN) · ZA-12/13 운영측 OPEN · ZA-18 후속 · 감사 [`ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](../audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)                    |
 | **Zero-Defect Critical Hardening** | Phase 0–7 **`[x]`** 2026-07-14 (AI 트랙)     | [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) — Phase 7 Release Gate **DONE**(17 criteria 재판정 · PASS 13 · operator soak/PPR/서명 **미실행**) · **NEXT=operator O1 soak 개시일** · 재착수 실행 큐 아님               |
+| **DNA Audit 후속 3-우선순위**      | P1 랜딩 크래시 **FIXED+재검증** · Home/Trade/Wallet/Casino **실 세션 확인** 2026-07-15 | §"DNA Audit 후속" 절 참조 — P1 순환 import 수정(`typecheck`·vitest 19/51 green) + 로컬 스택 재캡처로 전 authenticated 화면 렌더 확인 · **신규 발견**: 데스크톱 BottomNav 노출(정책 불일치, 미수정) · P2 침묵형 dead control 0건 · P3(wave debt) **보류** |
+
+## DNA Audit 후속 3-우선순위 (operator 지시 2026-07-15)
+
+> **배경:** 2026-07-15 read-only DNA 감사 결과 확인 후 operator가 지시한 3개 후속 작업. 엔진/프레젠테이션 분리는 **검증 완료로 간주 · 재착수 금지**.
+> **문서 위치 안내:** operator가 지시한 `docs/rebuild/NEXT_STEP.md`는 [`DEPRECATED_DOC_DENYLIST.md`](DEPRECATED_DOC_DENYLIST.md)에 **2026-07-04 삭제·재생성 금지**로 명시된 파일이며(`00-core.mdc`: "실행 큐 = ACTIVE_WORK_SSOT"), 그 파일 대신 **본 절**을 실행 큐로 사용한다.
+
+| # | 우선순위 | 상태 | 비고 |
+|---|---|---|---|
+| **P1** | 렌더링 감사 — 390/768/1024/2560 CDP 스크린샷 캡처 · 토큰 규칙 vs 실제 화면 일치 확인 · DA W7 시각 사인오프 판정 | **IN PROGRESS** | `scripts/visual-audit-capture-cdp.ts` 4-tier 폭 정합 수정 후 실행 · 결과는 본 문서 하위 절에 기록 |
+| **P2** | `dead-controls-display-contract.ts` 전수조사 — `*_ENGINE_TODO`/`*_UI_UNLOCK_TODO` 전량 목록화 · 클릭해도 반응 없는 지점 launch blocker 승격 | **IN PROGRESS** | `LAUNCH_GATES` 스위치보드 대조 완료 — 상세는 본 문서 하위 절 |
+| **P3** | `ew-e*`/`da-w*`/`p*-gate` 명명 wave-debt 파일 정리 | **명시적 보류 (DEFER)** | operator 지시: 출시 이후로 연기 · 유지보수 이슈일 뿐 유저 비가시 영역 · **지금 착수 금지** |
+
+### P1 결과 (렌더링 감사 · 2026-07-15 · Chrome CDP · operator 승인 후 로컬 스택 포함 완결)
+
+**엔진:** `scripts/visual-audit-capture-cdp.ts` (Playwright 미사용 · hook-safe) — 4-tier 폭을 `viewport-contract.ts VIEWPORT_SMOKE_WIDTHS`(390/768/1024/2560)와 정합, `.local-trade-dev.credentials.json` 기반 로그인 스텝(`PHONARA_AUDIT_LOGIN=1`, 로컬 BASE만 허용) 추가. 산출물: `screenshots/{mobile,tablet,desktop}/*.png` (로컬 · 커밋 대상 아님).
+
+| 판정 | 항목 |
+| --- | --- |
+| **FAIL → FIXED & 재검증 완료** | `/` 랜딩 페이지가 순환 import(`home-attendance-display-contract.ts` ↔ `earn-play-display-contract.ts`)로 4개 뷰포트 전부 boot-splash 크래시. **`parseEarnHubRouletteSnapshot` 소유권을 `earn-play-display-contract.ts`로 이전**해 순환 제거(2026-07-15) · `home-attendance-display-contract.ts`는 재수출만. `typecheck` green · 관련 vitest **19 files / 51 tests green** · 재캡처로 390/768/1024/2560 전부 실제 콘텐츠 렌더 **확인** |
+| PASS | `/login`·`/signup`·`/install`·`/legal/terms` 전 폭 정상 렌더(토큰 일치) |
+| **PASS (operator 승인 후 로컬 세션으로 검증 완료)** | `/home`·`/trade`(첫방문 리스크 고지 시트)·`/wallet`(실 RPC 잔액·원장)·`/casino`(Provably Fair 배너 + 책임도박 고지) — 로컬 Supabase(Docker on-demand, operator 승인) + `dev-trade@phonara.local` 시드 계정 로그인 후 390/768/1024/2560 전부 실 콘텐츠 캡처(authRedirects **0/36**). 크래시·빈 화면 없음 |
+| **신규 발견 (FAIL 후보 — 별도 확인 필요)** | Home·Wallet 데스크톱(1024·2560) 캡처에서 **모바일 5탭 BottomNav가 그대로 노출**됨. `docs/audit/visual-ux-2026-07-11/RESPONSIVE_AUDIT.md` §3 표는 "BottomNav ≥1024 desktop **숨김(정책)**"으로 명시 — 코드 정책과 실제 화면이 불일치하는 것으로 보임. **launch blocker 후보로 기록**(고치지 않음 — 범위 밖) |
+| **개선 권고 → FIXED & 재검증 완료 (Phase 0B, 2026-07-15)** | `/login`·`/signup`·`/reset-password`·`/verify-email` (전부 `AuthEntryLayout` 공유) — **최초 진단보다 근본 원인이 한 단계 더 깊었음**: `lg:grid-cols-[minmax(280px,360px),1fr]`의 트랙 구분자가 콤마였는데, `grid-template-columns`는 콤마가 아니라 공백 구분 트랙 리스트라 **이 선언 자체가 무효 CSS**였음 — 브라우저가 통째로 무시해 두 트랙이 항상 1열로 스택(순서를 바꿔도 무의미). 저장소의 다른 모든 `grid-cols-[...]` 아비트러리 값은 밑줄(`_`) 구분자 사용 — 이 파일만 콤마였음. `lg:grid-cols-[minmax(280px,360px)_1fr]`로 수정 후 1024/2560 스크린샷으로 4개 라우트 전부 실제 2열(좁은 aside 좌측 · 폼 우측 dominant) 렌더 **확인**. `typecheck` green · vitest 10/10 green(`auth-entry-layout.test.tsx` 신규 회귀 테스트 포함) |
+| 개선 확인 (기존 이슈 해소) | 2026-07-11 1차 감사의 `/install` 에러 경계 캡처 — 이번 재현에서는 정상 렌더 |
+| **U3 재검증 (Phase 0B, 2026-07-15) — 과밀 여전히 관찰됨, 미수정(범위=재검증만)** | 최초 캡처는 Chrome 프로필에 남은 로그인 세션 때문에 `/`가 `/home`으로 리다이렉트되어 **마케팅 랜딩이 아니라 Home 허브를 찍고 있었음**(스크립트에 `landing=1` 쿼리 우회 추가로 수정). 올바른 랜딩 재캡처 결과: 1024×900 첫 폴드에 히어로(카피+CTA)·단계 플로우(가입→미션→적립→출금)·신뢰 배지 칩 3블록이 스크롤 없이 동시 노출, 2560×1440에서는 미션 프리뷰 카드 2개 + 리워드 지갑 프리뷰 카드까지 추가로 노출 — 2026-07-11 audit의 "hero budget 과밀" 판정이 **유효하게 재확인됨**. 모바일 390은 상대적으로 절제됨(신뢰 칩 행이 폴드 밖). 이 todo 범위는 재검증까지이며 리디자인은 후속 폴리시 phase 몫 |
+| DA W7 최종 판정 | **랜딩 크래시 FIXED로 최우선 launch blocker 해소.** Home·Trade·Wallet·Casino 실 세션 렌더 확인 — 시각 사인오프 자체는 여전히 **operator 육안 승인**(`VISUAL APPROVED: da-w7`) 몫이나, 데스크톱 BottomNav 노출 건은 사인오프 전 확인 권장 |
+
+**정리:** 로컬 스택은 검증 후 `bun run stack:stop`으로 완전 종료(Supabase 컨테이너 + Docker Desktop). `.env.local` UTF-8 BOM 파싱 오류(`supabase start` 실패 원인)도 이번에 함께 수정.
+
+### Phase 0B 결과 (Auth 그리드 + Landing U3 재검증 · 2026-07-15 · `world-class_presentation_rebuild_bc0d5f4b` plan todo `phase0b-auth-marketing`)
+
+이미 커밋된 순환 import 수정(`d0cbc4d8`)·1차 그리드 순서 교체(`ea25d57b`) 위에서, 스크린샷 기반 재검증이 위 표의 두 항목(그리드 근본 원인·U3)을 추가로 발견·해결. 상세 근거는 위 두 행 참조. 4개 Auth 라우트 × 2테마 × 4뷰포트 스크린샷 전량 재캡처로 확인, `bun run typecheck` · 타겟 vitest(auth-entry-layout·landing-page·auth-landing-visual-signoff·도메인 계약 2개) green.
+
+### P2 결과 (dead-controls 전수조사 · 2026-07-15)
+
+**방법:** `dead-controls-display-contract.ts` 중앙 레지스트리 10건 전부 + 저장소 전체 `*_ENGINE_TODO`/`*_UI_UNLOCK_TODO` grep(추가 5건) + 실제 노출을 최종 결정하는 `apps/web/src/lib/launch-gates.ts` 스위치보드(34개 플래그) 대조.
+
+| 분류 | 건수 | 판정 |
+| --- | --- | --- |
+| 중앙 레지스트리(`PQA_DEAD_CONTROL_DEFER_REGISTRY`) | 10건 | 전부 `live` 또는 `disabled+key` — **침묵형 no-op 0건** |
+| 레지스트리 밖 개별 게이트 항목(app-install-mission·tier-option-b·viral-cms·wallet-transfer·kakao-share) | 5건 | 각자 `LAUNCH_GATES.*Live` 기반 `isXxxLive()`/`shouldExpose...()` 리졸버 보유 — **중앙 목록에는 없지만 침묵형 아님** (분산 관리 = 문서 부채로만 기록) |
+| `LAUNCH_GATES`에서 현재 `false`인 노출 플래그 | 9개 (`cryptoRails`·`sportsComboBetting`·`sportsSystemBetting`·`notificationsCenter`·`tierGuide`·`siweLoginLive`·`missionChainsLive`·`coBetLive`·`mlMissionRecommendLive`) | `cryptoRails`는 라우트 redirect+RPC invoke 차단+rail 목록 제외 3중 가드 확인. 나머지는 각 `assertXxxWaveSync()`형 vitest가 `false` 고정을 강제 — **표본 조사 결과 침묵형 dead control 0건** |
+| **버려진 플래그(신규 발견)** | 1건 | **`LAUNCH_GATES.tierGuide`— 선언 후 `apps/web/src` 어디에서도 소비되지 않음.** 죽은 컨트롤은 아니지만(아무 UI도 참조 안 함) 문서-코드 drift — 제거 또는 실제 wiring 필요 |
+
+**종합 판정:** 요청하신 "클릭했는데 반응 없는" 유형의 **순수 침묵형 dead control은 이번 조사에서 발견되지 않음** — 이 코드베이스의 PQA F3 defer 패턴(`live`/`disabled+key`/`built_hidden`)이 실제로 일관되게 적용되어 있음. **대신 launch blocker로 승격할 것은 P1에서 발견한 랜딩 페이지 크래시(런타임, 정적 조사로는 안 잡힘) + `tierGuide` 미사용 플래그 정리.**
 
 ## Zero Assumption 통합 Remediation (Plan `za_통합_실행순서_c6df1c56` · `[x]` DONE)
 

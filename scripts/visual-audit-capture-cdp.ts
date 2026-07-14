@@ -6,6 +6,7 @@
  */
 import { spawn, type ChildProcess } from 'node:child_process';
 import { createConnection } from 'node:net';
+import { existsSync, readFileSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -17,22 +18,23 @@ const CHROME =
   process.env.PHONARA_CHROME_PATH ?? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const DEBUG_PORT = Number(process.env.PHONARA_CDP_PORT ?? 9222);
 const SPAWN_VITE = process.env.PHONARA_AUDIT_NO_SPAWN !== '1';
+/** Opt-in: log in with `.local-trade-dev.credentials.json` before capturing auth routes (local Supabase only). */
+const LOGIN_LOCAL_TRADE = process.env.PHONARA_AUDIT_LOGIN === '1';
 
 type Vp = { id: string; folder: 'mobile' | 'tablet' | 'desktop'; w: number; h: number };
 
 const MINIMAL = process.env.PHONARA_AUDIT_MINIMAL === '1';
 
+/** Canonical Phase R 4-tier smoke widths — apps/web/src/product/tokens/viewport-contract.ts VIEWPORT_SMOKE_WIDTHS. */
 const VIEWPORTS_FULL: Vp[] = [
   { id: '390x844', folder: 'mobile', w: 390, h: 844 },
   { id: '768x1024', folder: 'tablet', w: 768, h: 1024 },
-  { id: '1024x768', folder: 'tablet', w: 1024, h: 768 },
-  { id: '1920x1080', folder: 'desktop', w: 1920, h: 1080 },
+  { id: '1024x900', folder: 'desktop', w: 1024, h: 900 },
+  { id: '2560x1440', folder: 'desktop', w: 2560, h: 1440 },
 ];
 
-const VIEWPORTS_MIN: Vp[] = [
-  { id: '390x844', folder: 'mobile', w: 390, h: 844 },
-  { id: '1920x1080', folder: 'desktop', w: 1920, h: 1080 },
-];
+/** MINIMAL keeps all 4 canonical widths (routes are what shrink in MINIMAL mode). */
+const VIEWPORTS_MIN: Vp[] = VIEWPORTS_FULL;
 
 const VIEWPORTS: Vp[] = MINIMAL ? VIEWPORTS_MIN : VIEWPORTS_FULL;
 
@@ -44,13 +46,19 @@ type Route = {
 };
 
 const ROUTES_FULL: Route[] = [
-  { pageId: 'landing', path: '/', auth: 'public', themes: ['dark', 'light'] },
+  // `landing=1` forces the marketing LandingPage regardless of a leftover
+  // Supabase session in the capture browser profile — `/` otherwise
+  // redirects to `/home` for any authenticated session (see
+  // `landing-route-guard.ts`), which silently swaps in the wrong surface
+  // for Landing-density audits (2026-07-15 Phase 0B finding).
+  { pageId: 'landing', path: '/?landing=1', auth: 'public', themes: ['dark', 'light'] },
   { pageId: 'login', path: '/login', auth: 'public', themes: ['dark', 'light'] },
-  { pageId: 'signup', path: '/signup', auth: 'public', themes: ['dark'] },
+  { pageId: 'signup', path: '/signup', auth: 'public', themes: ['dark', 'light'] },
   { pageId: 'install', path: '/install', auth: 'public', themes: ['dark'] },
   { pageId: 'legal_terms', path: '/legal/terms', auth: 'public', themes: ['dark'] },
   { pageId: 'legal_privacy', path: '/legal/privacy', auth: 'public', themes: ['dark'] },
-  { pageId: 'reset_password', path: '/reset-password', auth: 'public', themes: ['dark'] },
+  { pageId: 'reset_password', path: '/reset-password', auth: 'public', themes: ['dark', 'light'] },
+  { pageId: 'verify_email', path: '/verify-email', auth: 'public', themes: ['dark', 'light'] },
   { pageId: 'home', path: '/home', auth: 'auth', themes: ['dark'] },
   { pageId: 'trade_spot', path: '/trade', auth: 'auth', themes: ['dark'] },
   { pageId: 'wallet', path: '/wallet', auth: 'auth', themes: ['dark'] },
@@ -60,19 +68,46 @@ const ROUTES_FULL: Route[] = [
 ];
 
 /** RAM-critical PC: public only · dark · fewer routes */
-const ROUTES_MIN: Route[] = [
-  { pageId: 'landing', path: '/', auth: 'public', themes: ['dark', 'light'] },
-  { pageId: 'login', path: '/login', auth: 'public', themes: ['dark'] },
-  { pageId: 'signup', path: '/signup', auth: 'public', themes: ['dark'] },
-  { pageId: 'install', path: '/install', auth: 'public', themes: ['dark'] },
-  { pageId: 'legal_terms', path: '/legal/terms', auth: 'public', themes: ['dark'] },
-  { pageId: 'home', path: '/home', auth: 'auth', themes: ['dark'] },
-  { pageId: 'trade_spot', path: '/trade', auth: 'auth', themes: ['dark'] },
-  { pageId: 'wallet', path: '/wallet', auth: 'auth', themes: ['dark'] },
-  { pageId: 'casino_lobby', path: '/casino', auth: 'auth', themes: ['dark'] },
-];
+const ROUTES_MIN: Route[] =
+  process.env.PHONARA_AUDIT_DEBUG_LOGIN_ONLY === '1'
+    ? [{ pageId: 'home', path: '/home', auth: 'auth', themes: ['dark'] }]
+    : [
+        // See ROUTES_FULL comment — `landing=1` bypasses the authenticated `/home` redirect.
+        { pageId: 'landing', path: '/?landing=1', auth: 'public', themes: ['dark', 'light'] },
+        { pageId: 'login', path: '/login', auth: 'public', themes: ['dark', 'light'] },
+        { pageId: 'signup', path: '/signup', auth: 'public', themes: ['dark', 'light'] },
+        { pageId: 'install', path: '/install', auth: 'public', themes: ['dark'] },
+        { pageId: 'legal_terms', path: '/legal/terms', auth: 'public', themes: ['dark'] },
+        {
+          pageId: 'reset_password',
+          path: '/reset-password',
+          auth: 'public',
+          themes: ['dark', 'light'],
+        },
+        {
+          pageId: 'verify_email',
+          path: '/verify-email',
+          auth: 'public',
+          themes: ['dark', 'light'],
+        },
+        { pageId: 'home', path: '/home', auth: 'auth', themes: ['dark'] },
+        { pageId: 'trade_spot', path: '/trade', auth: 'auth', themes: ['dark'] },
+        { pageId: 'wallet', path: '/wallet', auth: 'auth', themes: ['dark'] },
+        { pageId: 'casino_lobby', path: '/casino', auth: 'auth', themes: ['dark'] },
+      ];
 
-const ROUTES: Route[] = MINIMAL ? ROUTES_MIN : ROUTES_FULL;
+/** Opt-in: narrow a run to specific `pageId`s (comma-separated) — e.g. a single-surface re-verify pass. */
+const ONLY_PAGE_IDS = process.env.PHONARA_AUDIT_ROUTES
+  ? new Set(
+      process.env.PHONARA_AUDIT_ROUTES.split(',')
+        .map((id) => id.trim())
+        .filter(Boolean),
+    )
+  : null;
+
+const ROUTES: Route[] = (MINIMAL ? ROUTES_MIN : ROUTES_FULL).filter(
+  (route) => !ONLY_PAGE_IDS || ONLY_PAGE_IDS.has(route.pageId),
+);
 
 function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
@@ -188,7 +223,9 @@ async function captureViewport(
 
   const nav = await cdp.send<{ frameId: string }>('Page.navigate', { url });
   void nav;
-  await sleep(1200);
+  // Low-spec dev-server cold compile can outlast the original 1200ms wait,
+  // leaving the boot-splash captured instead of the mounted route (2026-07-15 finding).
+  await sleep(2600);
 
   await cdp.send('Runtime.evaluate', {
     expression: `
@@ -236,6 +273,106 @@ type ManifestRow = {
   redirectedToLogin: boolean;
 };
 
+type LocalTradeCredentials = { email: string; password: string; loginUrl: string };
+
+function readLocalTradeCredentials(): LocalTradeCredentials | null {
+  const path = join(ROOT, '.local-trade-dev.credentials.json');
+  if (!existsSync(path)) return null;
+  const parsed = JSON.parse(readFileSync(path, 'utf8')) as Record<string, unknown>;
+  if (typeof parsed['email'] !== 'string' || typeof parsed['password'] !== 'string') return null;
+  return {
+    email: parsed['email'],
+    password: parsed['password'],
+    loginUrl: typeof parsed['loginUrl'] === 'string' ? parsed['loginUrl'] : `${BASE}/login`,
+  };
+}
+
+/** Local-only login via `login-form.tsx` data-testids — never used against a non-local BASE. */
+async function loginViaForm(cdp: CdpClient, creds: LocalTradeCredentials): Promise<boolean> {
+  if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(BASE)) {
+    throw new Error('[cdp-audit] refuses login flow against non-local BASE');
+  }
+  await cdp.send('Emulation.setDeviceMetricsOverride', {
+    width: 1280,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  await cdp.send('Page.navigate', { url: `${BASE}/login` });
+  await sleep(2600);
+
+  const fillResult = await cdp.send<{ result: { value: string } }>('Runtime.evaluate', {
+    expression: `
+      (function () {
+        function setNativeValue(el, value) {
+          const proto = Object.getPrototypeOf(el);
+          const desc = Object.getOwnPropertyDescriptor(proto, 'value');
+          if (desc && desc.set) desc.set.call(el, value);
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        const emailEl = document.querySelector('[data-testid="login-email"]');
+        const passwordEl = document.querySelector('[data-testid="login-password"]');
+        if (emailEl) setNativeValue(emailEl, ${JSON.stringify(creds.email)});
+        if (passwordEl) setNativeValue(passwordEl, ${JSON.stringify(creds.password)});
+        return JSON.stringify({
+          foundEmail: !!emailEl,
+          foundPassword: !!passwordEl,
+          emailValueAfter: emailEl ? emailEl.value : null,
+          passwordValueAfter: passwordEl ? passwordEl.value : null,
+        });
+      })();
+    `,
+    returnByValue: true,
+  });
+  console.log('[cdp-audit] login fill diagnostic:', fillResult.result?.value);
+  await sleep(400);
+
+  const debugDir = join(OUT, 'hover');
+  await mkdir(debugDir, { recursive: true });
+  const beforeClickShot = await cdp.send<{ data: string }>('Page.captureScreenshot', {
+    format: 'png',
+    fromSurface: true,
+  });
+  await writeFile(
+    join(debugDir, 'login_debug_filled_01.png'),
+    Buffer.from(beforeClickShot.data, 'base64'),
+  );
+
+  const clickResult = await cdp.send<{ result: { value: string } }>('Runtime.evaluate', {
+    expression: `
+      (function () {
+        const btn = document.querySelector('[data-testid="login-submit"]');
+        const disabled = btn ? btn.disabled : null;
+        if (btn) btn.click();
+        return JSON.stringify({ foundButton: !!btn, disabled });
+      })();
+    `,
+    returnByValue: true,
+  });
+  console.log('[cdp-audit] login click diagnostic:', clickResult.result?.value);
+
+  await sleep(1500);
+  const afterClickShot = await cdp.send<{ data: string }>('Page.captureScreenshot', {
+    format: 'png',
+    fromSurface: true,
+  });
+  await writeFile(
+    join(debugDir, 'login_debug_after_click_01.png'),
+    Buffer.from(afterClickShot.data, 'base64'),
+  );
+
+  for (let i = 0; i < 15; i++) {
+    await sleep(1000);
+    const res = await cdp.send<{ result: { value: string } }>('Runtime.evaluate', {
+      expression: 'location.pathname',
+      returnByValue: true,
+    });
+    const pathname = res.result?.value ?? '';
+    if (pathname && !pathname.startsWith('/login')) return true;
+  }
+  return false;
+}
+
 async function main(): Promise<void> {
   let vite: ChildProcess | null = null;
   let chrome: ChildProcess | null = null;
@@ -279,24 +416,49 @@ async function main(): Promise<void> {
         ],
         { stdio: 'ignore' },
       );
-      await sleep(2000);
+      // A flat 2000ms sleep raced Chrome's cold-start (new user-data-dir +
+      // AV scan of the exe) often enough on this low-spec machine to fail
+      // with ECONNREFUSED (2026-07-15 finding) — poll the debug port instead.
+      const chromeReadyAt = Date.now();
+      while (!(await portOpen(DEBUG_PORT))) {
+        if (Date.now() - chromeReadyAt > 30_000) {
+          throw new Error(`timeout waiting for chrome CDP port ${DEBUG_PORT}`);
+        }
+        await sleep(300);
+      }
     }
 
     const wsUrl = await getPageWsUrl();
     const cdp = await connectCdp(wsUrl);
     console.log('[cdp-audit] CDP connected');
 
+    let loggedIn = false;
+    if (LOGIN_LOCAL_TRADE) {
+      const creds = readLocalTradeCredentials();
+      if (!creds) {
+        console.warn(
+          '[cdp-audit] PHONARA_AUDIT_LOGIN=1 but no .local-trade-dev.credentials.json found',
+        );
+      } else {
+        console.log('[cdp-audit] logging in as', creds.email);
+        loggedIn = await loginViaForm(cdp, creds);
+        console.log(
+          loggedIn ? '[cdp-audit] login OK' : '[cdp-audit] login FAILED (still on /login)',
+        );
+      }
+    }
+
     for (const route of ROUTES) {
       for (const theme of route.themes) {
         for (const vp of VIEWPORTS) {
-          if (route.auth === 'auth' && (vp.w === 768 || vp.w === 1024)) continue;
+          if (route.auth === 'auth' && vp.w === 768) continue;
 
           const dir = join(OUT, vp.folder);
           await mkdir(dir, { recursive: true });
           const scrolls: Array<'top' | 'mid' | 'end'> = MINIMAL ? ['top'] : ['top', 'mid', 'end'];
           let nn = 1;
           for (const scroll of scrolls) {
-            const fileName = `${route.pageId}_${vp.folder}_${theme}_${String(nn).padStart(2, '0')}.png`;
+            const fileName = `${route.pageId}_${vp.id}_${theme}_${String(nn).padStart(2, '0')}.png`;
             const abs = join(dir, fileName);
             console.log('[capture]', fileName);
             const { finalUrl } = await captureViewport(
@@ -352,7 +514,10 @@ async function main(): Promise<void> {
       finishedAt: new Date().toISOString(),
       base: BASE,
       engine: 'chrome-cdp',
-      note: 'Auth-gated routes without session redirect to /login. True authenticated UI needs Docker stack + login pass. Playwright blocked by hook — used system Chrome CDP.',
+      loggedIn,
+      note: loggedIn
+        ? 'Logged in as local-trade-dev; auth-gated routes captured with a real session.'
+        : 'Auth-gated routes without session redirect to /login. True authenticated UI needs Docker stack + login pass. Playwright blocked by hook — used system Chrome CDP.',
       counts: {
         png: manifest.length + 2,
         routes: ROUTES.length,
