@@ -143,10 +143,10 @@ Deno.serve(async (req) => {
   const now = Date.now();
   const cached = cache.get(cacheKey);
   if (cached && cached.expiresAt > now) {
-    return new Response(
-      cached.body,
-      { status: 200, headers: passthroughHeaders(cached.contentType, cached.expiresAt - now, ctx.requestId) },
-    );
+    return new Response(cached.body, {
+      status: 200,
+      headers: passthroughHeaders(cached.contentType, cached.expiresAt - now, ctx.requestId),
+    });
   }
 
   let upstreamUrl: string;

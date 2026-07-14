@@ -167,7 +167,11 @@ async function seedDepth(symbol: string): Promise<BookSnapshot> {
 
 async function seedTicker(symbol: string): Promise<void> {
   const sym = symbol.toUpperCase();
-  const tickerRes = await fetchMarketDataProxy({ provider: 'binance', op: 'ticker24h', symbol: sym });
+  const tickerRes = await fetchMarketDataProxy({
+    provider: 'binance',
+    op: 'ticker24h',
+    symbol: sym,
+  });
   if (!tickerRes.ok) return;
   const data = (await tickerRes.json()) as Record<string, unknown>;
   const snapshot = parseTickerPayload(data);

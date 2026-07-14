@@ -103,7 +103,12 @@ async function fetchBybitKlineHistory(
   if (isPhonDisplaySymbol(symbol)) return [];
   const pair = resolveExchangePair(symbol);
   if (!pair) return [];
-  const res = await fetchMarketDataProxy({ provider: 'bybit', op: 'klines', symbol: pair, interval });
+  const res = await fetchMarketDataProxy({
+    provider: 'bybit',
+    op: 'klines',
+    symbol: pair,
+    interval,
+  });
   if (!res.ok) return [];
   const json = (await res.json()) as {
     result?: { list?: string[][] };
@@ -128,7 +133,12 @@ async function fetchBinanceKlineHistory(
   if (isPhonDisplaySymbol(symbol)) return [];
   const pair = resolveExchangePair(symbol);
   if (!pair) return [];
-  const res = await fetchMarketDataProxy({ provider: 'binance', op: 'klines', symbol: pair, interval });
+  const res = await fetchMarketDataProxy({
+    provider: 'binance',
+    op: 'klines',
+    symbol: pair,
+    interval,
+  });
   if (!res.ok) return [];
   const rows = (await res.json()) as unknown[][];
   return rows.map((r) => ({

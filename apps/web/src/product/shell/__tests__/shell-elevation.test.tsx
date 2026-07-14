@@ -134,7 +134,13 @@ describe('shell elevation §34.10–34.11', () => {
     expect(tradeDesktopNav).toBeTruthy();
     expect(tradeDesktopNav.className).toContain('hidden');
     expect(tradeDesktopNav.className).toContain('lg:block');
-    for (const path of ['/trade', '/trade/futures', '/trade/positions', '/trade/orders', '/ledger']) {
+    for (const path of [
+      '/trade',
+      '/trade/futures',
+      '/trade/positions',
+      '/trade/orders',
+      '/ledger',
+    ]) {
       expect(tradeDesktopNav.querySelector(`a[href="${path}"]`)).toBeTruthy();
     }
     expect(screen.queryByTestId('earn-subnav-desktop')).toBeNull();

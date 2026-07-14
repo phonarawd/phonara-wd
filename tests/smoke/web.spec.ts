@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 
 /** Wait for Phase R root layout boot in E2E engine mode. */
 async function waitForE2eEngineBoot(page: Page): Promise<void> {
-  await page.waitForSelector('html[data-e2e-engine="1"]', { timeout: 60_000 });
+  await page.waitForSelector('html[data-e2e-engine="1"]', { state: 'attached', timeout: 60_000 });
 }
 
 /** Guest marketing boot — `/login` avoids `/` session probe (wallet-money E2E parity). */

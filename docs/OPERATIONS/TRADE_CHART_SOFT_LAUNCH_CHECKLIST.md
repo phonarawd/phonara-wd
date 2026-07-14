@@ -60,13 +60,13 @@ R9 lazy-loading(코드 스플릿)은 empty 원인이 **아니다** — 1-G.2에�
 아래 변경으로 코드측에서 제거되었다. 나머지(이그레스 정책·벤더 API 상태)는 인프라 요인으로 남아있어
 Soft Launch Network 실측은 여전히 필요하다.
 
-| 항목                        | 내용                                                                                                                                                                       |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 변경                        | Binance/Bybit klines 히스토리·depth 스냅샷·24h ticker REST 호출을 브라우저 직접 fetch에서 [`market-data-proxy`](../../supabase/functions/market-data-proxy/index.ts) Edge Function 경유로 전환 |
-| 미변경                      | WS 스트림(kline/depth/ticker)은 그대로 브라우저 직결 — CORS는 WS 핸드셰이크를 막지 않으므로 대상 아님                                                                       |
-| 코드측 효과                 | "브라우저 CORS/지역 차단으로 REST가 막혀 `feed-unavailable`이 뜨는" 경로가 구조적으로 제거됨(모든 REST가 Supabase 도메인을 통과)                                            |
-| **여전히 OPEN**             | (a) 배포 후 Network 탭에서 `api.binance.com`/`api.bybit.com` 직접 호출 0건 실측 (b) `_headers` `connect-src`에서 해당 REST 도메인 제거는 (a) 확인 **후에만** — 미확인 상태로 제거 금지 |
-| 완료 조건                   | 위 (a) 확인 후 `_headers` connect-src 정리 + 본 문서 "완전 CLOSE"로 갱신 — 아직 아님                                                                                        |
+| 항목            | 내용                                                                                                                                                                                           |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 변경            | Binance/Bybit klines 히스토리·depth 스냅샷·24h ticker REST 호출을 브라우저 직접 fetch에서 [`market-data-proxy`](../../supabase/functions/market-data-proxy/index.ts) Edge Function 경유로 전환 |
+| 미변경          | WS 스트림(kline/depth/ticker)은 그대로 브라우저 직결 — CORS는 WS 핸드셰이크를 막지 않으므로 대상 아님                                                                                          |
+| 코드측 효과     | "브라우저 CORS/지역 차단으로 REST가 막혀 `feed-unavailable`이 뜨는" 경로가 구조적으로 제거됨(모든 REST가 Supabase 도메인을 통과)                                                               |
+| **여전히 OPEN** | (a) 배포 후 Network 탭에서 `api.binance.com`/`api.bybit.com` 직접 호출 0건 실측 (b) `_headers` `connect-src`에서 해당 REST 도메인 제거는 (a) 확인 **후에만** — 미확인 상태로 제거 금지         |
+| 완료 조건       | 위 (a) 확인 후 `_headers` connect-src 정리 + 본 문서 "완전 CLOSE"로 갱신 — 아직 아님                                                                                                           |
 
 ## 참고
 

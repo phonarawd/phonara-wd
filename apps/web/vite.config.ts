@@ -35,12 +35,27 @@ function readPagesCspHeader(): string | undefined {
 }
 
 const pagesCsp = readPagesCspHeader();
-const localSecurityHeaders = pagesCsp
-  ? { 'Content-Security-Policy': pagesCsp }
-  : undefined;
+
+const LOCAL_SUPABASE_CONNECT =
+  'http://127.0.0.1:54321 ws://127.0.0.1:54321 http://localhost:54321 ws://localhost:54321';
+
+/** E2E + local stack: Pages CSP omits localhost Supabase — append for Vite dev/preview only. */
+function augmentCspForLocalDev(csp: string): string {
+  if (csp.includes('127.0.0.1:54321')) return csp;
+  return csp.replace(/connect-src ([^;]+)/, `connect-src $1 ${LOCAL_SUPABASE_CONNECT}`);
+}
+
+function resolveViteSecurityHeaders(
+  command: 'build' | 'serve',
+): Record<string, string> | undefined {
+  if (!pagesCsp) return undefined;
+  const csp = command === 'serve' ? augmentCspForLocalDev(pagesCsp) : pagesCsp;
+  return { 'Content-Security-Policy': csp };
+}
 
 /** Phase R web entry — TanStack Router file routes + PWA injectManifest shell. */
 export default defineConfig(({ command }) => {
+  const securityHeaders = resolveViteSecurityHeaders(command);
   const pwaPlugin: PluginOption = VitePWA({
     strategies: 'injectManifest',
     srcDir: 'src',
@@ -158,13 +173,13 @@ export default defineConfig(({ command }) => {
       port: 3000,
       strictPort: true,
       warmup: phonaraViteDevWarmup(webSrc),
-      ...(localSecurityHeaders ? { headers: localSecurityHeaders } : {}),
+      ...(securityHeaders ? { headers: securityHeaders } : {}),
     },
     preview: {
       host: '127.0.0.1',
       port: 3000,
       strictPort: true,
-      ...(localSecurityHeaders ? { headers: localSecurityHeaders } : {}),
+      ...(securityHeaders ? { headers: securityHeaders } : {}),
     },
     build: {
       sourcemap: false,
