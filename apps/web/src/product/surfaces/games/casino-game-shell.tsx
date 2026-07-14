@@ -3,9 +3,11 @@ import { Link } from '@tanstack/react-router';
 import type { GameCode } from '@phonara/game-engine';
 import { toDecimal } from '@phonara/money';
 
+import { getGameMeta, type CasinoGameId } from '@/data/casino-game-meta';
 import {
   CASINO_STAKE_CURRENCY_EXPOSURE,
   P10_CASINO_REPLAY_AND_INFRA_TODO,
+  casinoGameSlugFromCode,
   deriveCasinoWinTier,
   type CasinoWinTier,
 } from '@/domain/casino-outcome-replay-contract';
@@ -39,7 +41,9 @@ import {
   type AutoBetConfig,
   type AutoBetSessionState,
 } from '@/features/casino/use-auto-bet-queue';
+import { useCasinoConnectionStatus } from '@/features/casino/use-casino-connection-status';
 import { useCasinoFiatHint } from '@/features/casino/use-casino-fiat-hint';
+import { useCasinoGpuTier } from '@/features/casino/use-casino-gpu-tier';
 import { useCasinoRoundPipeline } from '@/features/casino/use-casino-round';
 import {
   useLiveCrashCashout,
@@ -73,6 +77,7 @@ import { AutoBetPanel } from '@/product/surfaces/games/auto-bet-panel';
 import { BetModeTabs, type CasinoBetMode } from '@/product/surfaces/games/bet-mode-tabs';
 import { CasinoGameStage } from '@/product/surfaces/games/casino-game-stage';
 import { CasinoMoneyWithFiatHint } from '@/product/surfaces/games/casino-money-with-fiat-hint';
+import { CasinoTrustStrip } from '@/product/surfaces/games/casino-trust-strip';
 import { GameOutcomeLayer } from '@/product/surfaces/games/game-outcome-layer';
 import { GameSelectionFields } from '@/product/surfaces/games/game-selection-fields';
 import { PfStrip } from '@/product/surfaces/games/pf-strip';
@@ -127,6 +132,12 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
   const { lockSession, unlockSession, sessionLocked, showDisclaimer, hintFor } =
     useCasinoFiatHint();
   const config = GAME_BY_CODE[gameCode];
+  const gpuTier = useCasinoGpuTier();
+  const connectionStatus = useCasinoConnectionStatus(userId);
+  const gameMeta = useMemo(
+    () => getGameMeta(casinoGameSlugFromCode(gameCode) as CasinoGameId),
+    [gameCode],
+  );
 
   const [currency, setCurrency] = useState<SpendCurrency>('USDT');
   const [stake, setStake] = useState(config.defaultStake);
@@ -494,6 +505,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
       data-stake-currency-exposure={CASINO_STAKE_CURRENCY_EXPOSURE}
       data-play-mode={liveMode ? 'live' : 'oneshot'}
       data-casino-live-unlocked={casinoLiveLive ? 'true' : 'false'}
+      data-gpu-tier={gpuTier}
     >
       <MoneyDisplayWithFiatHintSlot disclaimerSlot={showDisclaimer ? <FiatHintDisclaimer /> : null}>
         <header className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
@@ -576,6 +588,11 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
                 currency={currency}
               />
             ) : null}
+            <CasinoTrustStrip
+              rtp={gameMeta.rtp}
+              connectionStatus={connectionStatus.status}
+              connectionDisconnected={connectionStatus.disconnected}
+            />
             <PfStrip
               serverSeedHash={pipeline.commitment?.server_seed_hash ?? null}
               clientSeed={clientSeed}

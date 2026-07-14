@@ -1,5 +1,7 @@
+import { Link } from '@tanstack/react-router';
 import { ShieldCheck } from 'lucide-react';
 
+import { CASINO_FAIRNESS_ROUTE } from '@/domain/casino-lobby-display-contract';
 import { useT } from '@/product/i18n';
 import { cn } from '@/product/primitives/lib/cn';
 
@@ -59,6 +61,13 @@ export function PfStrip({
           </span>
         ) : null}
       </div>
+      <Link
+        to={CASINO_FAIRNESS_ROUTE}
+        className="text-accent w-fit text-xs font-medium no-underline"
+        data-testid="casino-pf-verify-link"
+      >
+        {t('casino.fairness.link')}
+      </Link>
     </div>
   );
 }

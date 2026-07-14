@@ -1380,6 +1380,8 @@ const enMessages: Record<keyof typeof koMessages, string> = {
   'casino.verify.pending': 'Pending',
   'casino.verify.match': 'Verified',
   'casino.verify.mismatch': 'Mismatch',
+  'casino.connection.live': 'Live',
+  'casino.connection.disconnected': 'Realtime disconnected',
   'casino.recent.title': 'Recent games',
   'casino.recent.description': 'Latest bet results for your account.',
   'casino.recent.empty': 'No bets yet.',

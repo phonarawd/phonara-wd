@@ -1359,6 +1359,8 @@ export const koMessages = {
   'casino.verify.pending': '검증 대기',
   'casino.verify.match': '검증 일치',
   'casino.verify.mismatch': '검증 불일치',
+  'casino.connection.live': '실시간 연결됨',
+  'casino.connection.disconnected': '실시간 연결 끊김',
   'casino.recent.title': '최근 게임',
   'casino.recent.description': '내 계정의 최근 베팅 결과입니다.',
   'casino.recent.empty': '아직 베팅 내역이 없습니다.',

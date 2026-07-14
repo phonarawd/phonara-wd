@@ -83,12 +83,33 @@ vi.mock('@/product/primitives/lib/use-prefers-reduced-motion', () => ({
   usePrefersReducedMotion: () => false,
 }));
 
+vi.mock('@/features/casino/use-casino-gpu-tier', () => ({
+  useCasinoGpuTier: () => 'standard',
+}));
+
+vi.mock('@/features/casino/use-casino-connection-status', () => ({
+  useCasinoConnectionStatus: () => ({ status: 'subscribed', connected: true, disconnected: false }),
+}));
+
 vi.mock('@tanstack/react-router', async () => {
   const actual =
     await vi.importActual<typeof import('@tanstack/react-router')>('@tanstack/react-router');
   return {
     ...actual,
-    Link: ({ children, to }: { children: ReactNode; to: string }) => <a href={to}>{children}</a>,
+    Link: ({
+      children,
+      to,
+      ...props
+    }: {
+      children: ReactNode;
+      to: string;
+      className?: string;
+      'data-testid'?: string;
+    }) => (
+      <a href={to} {...props}>
+        {children}
+      </a>
+    ),
   };
 });
 
@@ -125,11 +146,23 @@ describe('CasinoGameShell (p10-casino-replay-and-infra)', () => {
       'data-stake-currency-exposure',
       'live',
     );
+    expect(screen.getByTestId('casino-game-shell')).toHaveAttribute('data-gpu-tier', 'standard');
     expect(screen.getByTestId('casino-stake-currency')).toBeInTheDocument();
     expect(screen.getByTestId('casino-stake-currency-usdt')).toBeInTheDocument();
     expect(screen.getByTestId('casino-stake-currency-phon')).toBeInTheDocument();
     expect(screen.getByTestId('casino-bet-mode-tabs')).toBeInTheDocument();
+    expect(screen.getByTestId('casino-trust-strip')).toBeInTheDocument();
+    expect(screen.getByTestId('casino-rtp-badge')).toBeInTheDocument();
+    expect(screen.getByTestId('casino-rtp-value')).toHaveTextContent('99.00%');
+    expect(screen.getByTestId('casino-connection-status')).toHaveAttribute(
+      'data-connection-status',
+      'subscribed',
+    );
     expect(screen.getByTestId('casino-pf-strip')).toBeInTheDocument();
+    expect(screen.getByTestId('casino-pf-verify-link')).toHaveAttribute(
+      'href',
+      '/casino/fairness',
+    );
     expect(screen.getByTestId('casino-crash-stage')).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('casino-bet-mode-auto'));

@@ -50,6 +50,20 @@
 
 이미 커밋된 순환 import 수정(`d0cbc4d8`)·1차 그리드 순서 교체(`ea25d57b`) 위에서, 스크린샷 기반 재검증이 위 표의 두 항목(그리드 근본 원인·U3)을 추가로 발견·해결. 상세 근거는 위 두 행 참조. 4개 Auth 라우트 × 2테마 × 4뷰포트 스크린샷 전량 재캡처로 확인, `bun run typecheck` · 타겟 vitest(auth-entry-layout·landing-page·auth-landing-visual-signoff·도메인 계약 2개) green.
 
+### Phase 1A 결과 (Casino trust layer · 2026-07-15 · `world-class_presentation_rebuild_bc0d5f4b` plan todo `phase1a-trust-layer`)
+
+Casino 12게임이 공유하는 `CasinoGameShell`/`PfStrip` 한 곳만 확장해 트러스트 신호 3종을 추가·완성 — 게임별 반복 작업 없음, 전부 12게임에 동시 적용.
+
+| 항목 | 내용 |
+| --- | --- |
+| **`data-gpu-tier` 저사양 감지 (신규 구현)** | 저장소 전체 grep으로 구현 0건 확인(`DESIGN_PRINCIPLES.md:256` 의도 행만 존재) — `casino-gpu-tier.ts`(순수 판정 함수) + `use-casino-gpu-tier.ts`(훅: OS `prefers-reduced-motion` · `navigator.deviceMemory`≤2GB · `hardwareConcurrency`≤2 · `connection.saveData` · 기존 `VITE_PHONARA_E2E_ENGINE` 플래그 통합) 신규 작성. `CasinoGameShell` 루트에 `data-gpu-tier="low"\|"standard"` 부착 — Phase 1D 4개 Pixi 게임은 이 값을 소비만 하면 됨(신규 판정 로직 불필요) |
+| **인게임 RTP 표시 (신규)** | 플레이어 대상 RTP 표시가 전무했음을 재확인(로비 검색 필터 카테고리 + 죽은 `bet-hub-casino-embed.ts` 유물뿐, lobby-only 아님) — `casino-trust-strip.tsx`(`CasinoTrustStrip`) 신규, `casino-game-meta.ts` 게임별 RTP를 `CasinoGameShell`에 상시 표시. 기존에 있었지만 미사용이던 `casino.hub.rtp.label`/`.tooltip` i18n 키를 그대로 재사용(신규 키 최소화 — i18n copy-only 원칙) |
+| **네트워크/연결 상태 표시 (신규)** | Sports(`use-sports-realtime.ts`)·Trade(`use-trade-oracle-realtime-disconnected.ts`)가 이미 쓰는 `use-realtime.ts`의 `RealtimeConnectionStatus`/`connected` 모델을 그대로 재사용(새 상태 어휘 발명 없음) — `use-casino-connection-status.ts` 신규. `wallets` 실시간 채널(이미 `useWallet`이 구독 중)을 채널 풀링으로 공유해 소켓 추가 없이 `CasinoTrustStrip`에 표시 |
+| **PF verify 링크 wiring** | `PfStrip`가 모든 `/games/$gameCode` 라우트에 이미 마운트되어 있음을 재확인(add 아닌 confirm) — 여기에 기존에 있었지만 미사용이던 `casino.fairness.link` i18n 키로 `/casino/fairness`(도메인 상수 `CASINO_FAIRNESS_ROUTE`) 링크를 신규로 연결. 표시/내비게이션만 — PF 암호학적 정확성 재검증은 엔진 영역 그대로(범위 밖) |
+| **부가 정리** | 확인된 죽은 유물 `apps/web/src/features/trading/bet-hub-casino-embed.ts`(+테스트) 삭제 — 금지된 Trade-embeds-Casino 패턴의 잔재, 저장소 전체 재확인 결과 소비자 0건이라 제거 |
+
+**증거:** `gate:ai-impl -- --test apps/web/src/features/casino/__tests__ apps/web/src/product/surfaces/games/__tests__` green — vitest **88/88**(17 files, 신규 6개 포함) · `typecheck` · `lint` · `check:i18n` · `check:release` · `check:ui-architecture` · `check:phase-r-guards --strict` · `check:rpc-type-hygiene` · `check:primitive-ratchet --strict`(raw `<button>` 베이스라인 43/22 유지 — 신규 트리거는 `Button` 프리미티브 사용, 위반 없음). 엔진/RPC/컨트롤러 시그니처 변경 **0**.
+
 ### P2 결과 (dead-controls 전수조사 · 2026-07-15)
 
 **방법:** `dead-controls-display-contract.ts` 중앙 레지스트리 10건 전부 + 저장소 전체 `*_ENGINE_TODO`/`*_UI_UNLOCK_TODO` grep(추가 5건) + 실제 노출을 최종 결정하는 `apps/web/src/lib/launch-gates.ts` 스위치보드(34개 플래그) 대조.
