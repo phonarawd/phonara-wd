@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import {
   parseLimboOutcome,
@@ -18,9 +18,20 @@ export type LimboStageProps = {
   className?: string;
 };
 
+/** Result-reveal hold — matches `--ds-motion-casino-reveal` (motion.css), inside the 200-500ms band. */
+const LIMBO_REVEAL_HOLD_MS = 360;
+
 /**
  * Limbo L1 — target dial + result flash (§23.2 · §23.8).
  * Instant loop: RPC result vs target only — no fake mid-state.
+ *
+ * Phase 1B motion polish — reuses the shared casino reveal/pop/flash tokens
+ * (motion.css) rather than the previous ad-hoc `bg-success/15`/`bg-danger/15`
+ * box + mismatched 420ms JS timer (which never matched any CSS transition
+ * duration). Win: reveal-in + number-pop + glow ("punchy"). Loss (including a
+ * near-miss): reveal-in only, no pop/glow — CASINO_UX_CANON "lose: calm ·
+ * respectful", so a 1.99× miss against a 2.00× target reads exactly as clean
+ * as a 1.10× miss, never an alarming flash.
  */
 export const LimboStage = forwardRef<CasinoStageHandle, LimboStageProps>(function LimboStage(
   { target, className },
@@ -30,7 +41,8 @@ export const LimboStage = forwardRef<CasinoStageHandle, LimboStageProps>(functio
   const reducedMotion = usePrefersReducedMotion();
   const [phase, setPhase] = useState<CasinoStagePhase>('idle');
   const [outcome, setOutcome] = useState<ParsedLimboOutcome | null>(null);
-  const [flash, setFlash] = useState(false);
+  /** Monotonic counter — key-remount restarts the CSS reveal/pop/flash on each new settle (§Motion). */
+  const [revealPulse, setRevealPulse] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resolveRef = useRef<(() => void) | null>(null);
 
@@ -46,19 +58,18 @@ export const LimboStage = forwardRef<CasinoStageHandle, LimboStageProps>(functio
       clearTimer();
       setOutcome(parsed);
       setPhase('settled');
-      setFlash(true);
-      const hold = reducedMotion ? 0 : 420;
-      if (hold === 0) {
-        setFlash(false);
+      setRevealPulse((n) => n + 1);
+      if (reducedMotion) {
         resolveRef.current?.();
         resolveRef.current = null;
         return;
       }
+      // Resolve once the reveal itself finishes — matches the Motion criteria
+      // "must not block the next input longer than the animation itself".
       timerRef.current = setTimeout(() => {
-        setFlash(false);
         resolveRef.current?.();
         resolveRef.current = null;
-      }, hold);
+      }, LIMBO_REVEAL_HOLD_MS);
     },
     [clearTimer, reducedMotion],
   );
@@ -81,13 +92,19 @@ export const LimboStage = forwardRef<CasinoStageHandle, LimboStageProps>(functio
         resolveRef.current = null;
         setPhase('idle');
         setOutcome(null);
-        setFlash(false);
+        setRevealPulse(0);
       },
     }),
     [clearTimer, settle],
   );
 
+  // Perf (Phase 1B) — a bet placed right before navigating away must not leave
+  // a dangling timer; harmless today (the callback only touches refs), but a
+  // silent gap versus CrashStage's equivalent `useEffect(() => cancelRaf, ...)`.
+  useEffect(() => clearTimer, [clearTimer]);
+
   const won = outcome?.won === true;
+  const settled = phase === 'settled' && outcome !== null;
   const tone = outcome ? (won ? 'text-success' : 'text-danger') : 'text-foreground';
 
   return (
@@ -109,20 +126,32 @@ export const LimboStage = forwardRef<CasinoStageHandle, LimboStageProps>(functio
           {target || '—'}×
         </p>
         <div
-          className={cn(
-            'flex min-h-16 flex-col items-center justify-center gap-1 rounded-md px-6 py-3 transition-colors',
-            flash && won && 'bg-success/15',
-            flash && !won && outcome && 'bg-danger/15',
-          )}
+          className="flex min-h-16 flex-col items-center justify-center gap-1 rounded-md px-6 py-3"
           data-testid="casino-limbo-result-flash"
-          data-flash={flash ? 'true' : 'false'}
+          data-flash={settled ? 'true' : 'false'}
         >
           <span className="text-foreground-muted text-xs">{t('casino.stage.result')}</span>
-          <span
-            className={cn('text-3xl font-semibold tabular-nums md:text-4xl', tone)}
-            data-testid="casino-limbo-result"
-          >
-            {outcome ? `${outcome.resultMultiplier.toFixed(2)}×` : '—'}
+          <span className="relative inline-flex items-baseline">
+            {settled && won && !reducedMotion ? (
+              <span
+                key={`glow-${revealPulse}`}
+                aria-hidden="true"
+                data-testid="casino-limbo-win-flash"
+                className="ds-casino-cashout-flash"
+              />
+            ) : null}
+            <span
+              key={`value-${revealPulse}`}
+              className={cn(
+                'text-3xl font-semibold tabular-nums md:text-4xl',
+                tone,
+                settled && !reducedMotion && 'ds-casino-reveal-in',
+                settled && won && !reducedMotion && 'ds-casino-number-pop',
+              )}
+              data-testid="casino-limbo-result"
+            >
+              {outcome ? `${outcome.resultMultiplier.toFixed(2)}×` : '—'}
+            </span>
           </span>
         </div>
       </CardBody>
