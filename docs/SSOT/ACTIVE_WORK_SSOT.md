@@ -83,6 +83,49 @@ Casino 12게임이 공유하는 `CasinoGameShell`/`PfStrip` 한 곳만 확장해
 
 **Scope note:** 할당된 todo는 `phase1b-crash` 1건 — Phase 1B의 나머지(`phase1b-limbo`, `phase1b-dice`)는 `git diff`로 확인 결과 미착수(파일 변경 0) 그대로이며, 이번 세션은 그 두 todo를 건드리지 않음. Cursor Plan YAML(`~/.cursor/plans/world-class_presentation_rebuild_bc0d5f4b.plan.md`) frontmatter는 operator 지시(plan 파일 직접 편집 금지)에 따라 **본 세션에서 갱신하지 않음** — todo 상태 체크는 operator 확인 후 별도 처리.
 
+### Phase 1B-limbo 결과 (Limbo 기능 QA + 모션 폴리시 + 퍼포먼스 체크 · 2026-07-15 · `world-class_presentation_rebuild_bc0d5f4b` plan todo `phase1b-limbo`)
+
+**발견:** 착수 시점 Limbo는 target dial + result flash가 정상 동작(데드 컨트롤 없음)했으나 "minimal feel"이었음 — CASINO_UX_CANON 표의 code-verified gap과 일치. 결과 유지(hold) 타이머에 unmount 클린업이 없어 화면 이탈 시 보류 타이머가 남을 수 있는 소규모 리소스 누수도 확인. 신규 버그 재현이 아니라 폴리시 + 리소스 정리로 수행.
+
+| 항목 | 내용 |
+| --- | --- |
+| **기능 클릭스루 QA** | 타겟 설정(`casino-selection-target` 입력) → Prepare Hash → Place Bet → 결과 렌더까지 실 shell 배선(`CasinoGameShell` → `GameSelectionFields` → `LimboStage`)을 통과하는 신규 통합 테스트 2건(승/패) 추가 — 정상 승리·근접 패배(near-miss 1.99× vs 목표 2.00×)·왜곡된 RPC 응답(`resultMultiplier` 누락) 케이스 전부 정상 처리 확인. 데드 컨트롤 0건 |
+| **모션 폴리시 (Phase 1B 공유 토큰 재사용, 신규 토큰 발명 없음)** | 기존 `bg-success/15`/`bg-danger/15` 배경 박스 + 420ms 하드코딩 JS 타이머(어떤 CSS transition duration과도 불일치)를 제거하고, `phase1b-crash`가 이미 도입한 `motion.css` 공유 토큰(`ds-casino-reveal-in`·`ds-casino-number-pop`·`ds-casino-cashout-flash`, `--ds-motion-casino-reveal` 360ms — Motion 기준 "Result reveal" 200–500ms 밴드 내)을 그대로 재사용 — 승리: reveal-in + number-pop + glow("punchy"), 패배(근접 패배 포함): reveal-in만(CASINO_UX_CANON "lose: calm · respectful" — 근접 패배도 일반 패배와 동일하게 "clean"하게 읽혀야 함) |
+| **퍼포먼스 수정 (타이머 누수)** | 결과 유지 타이머에 unmount 클린업(`useEffect(() => clearTimer, [clearTimer])`)이 없던 갭 — `CrashStage`의 `cancelRaf` 클린업과 동일 패턴으로 추가. 연속 베팅 시 이전 타이머를 정리하는지, unmount 시 클린업이 호출되는지 `clearTimeout` spy로 검증. Limbo는 rAF 루프나 Pixi/WebGL이 없는 단발 CSS 애니메이션이라 `data-gpu-tier` 게이팅은 불필요(opacity/transform-only, 360ms 1회성) |
+| **테스트** | 신규 `limbo-stage.test.tsx`(17개 — 기능 QA 6종, 모션 폴리시 6종, 퍼포먼스 3종) + `casino-game-shell.test.tsx`에 Limbo 클릭스루 통합 테스트 2건 추가. 공유 `useCasinoRoundPipeline` 목을 정적 객체에서 실제 `useState` 기반 훅으로 교체(기존 2개 테스트는 prepareRound/requestBet을 호출하지 않아 동작 동일 — 회귀 없음, vitest로 확인) |
+| **범위 밖 관찰 (수정 안 함 — 별도 확인 필요)** | `CASINO_UX_CANON.md` §2 Limbo는 "win chance / payout preview 숨김 금지"를 명시하나, Limbo는 현재 win-chance %를 표시하지 않음(형제 게임 Dice는 `@phonara/game-engine`의 `diceWinProbability`/`diceMultiplier`로 이미 표시 중). 이 갭은 이번 plan의 code-verified gap 표에 없고, 할당된 todo 범위(베팅·타겟 설정·결과 QA + 모션 폴리시 + 퍼포먼스)를 벗어나며 엔진 패키지(`packages/game-engine`, frozen) 터치 여부를 operator 판단이 필요해 수정하지 않음 |
+
+**증거:** `gate:ai-impl -- --test apps/web/src/features/casino/__tests__ apps/web/src/product/surfaces/games/__tests__ apps/web/src/domain/__tests__/casino-games-batch-a-display-contract.test.ts` green — L0~L4 전부(`cursor:status`·`check:hygiene`·`check:ui-architecture`·`check:phase-r-guards --strict`·`check:rpc-type-hygiene`·`check:primitive-ratchet --strict`·`typecheck`·`lint`·`check:i18n`·`check:release`) · vitest **125/125**(20 files) · `check:design-tokens` OK(advisory 111건 — 전부 limbo 무관 기존 항목, 신규 0). 엔진/RPC/컨트롤러 시그니처 변경 **0**(`supabase/*`, `packages/*-engine` 미터치).
+
+**Scope note:** 할당된 todo는 `phase1b-limbo` 1건 — `phase1b-dice`는 `git diff` 확인 결과 미착수(파일 변경 0) 그대로이며 이번 세션은 건드리지 않음. Cursor Plan YAML(`~/.cursor/plans/world-class_presentation_rebuild_bc0d5f4b.plan.md`) frontmatter 본문은 operator 지시(plan 파일 직접 편집 금지)에 따라 이번 세션에서 직접 수정하지 않음 — `phase1b-crash` 세션과 동일 판단. (투명성 기록: 저장소 non-waivable 규칙 `99-plan-todo-auto-closeout`에 따라 `gate:ai-impl -- --closeout phase1b-limbo` 스크립트를 게이트 green 확인 후 1회 호출했으나, 그 직후 파일을 다시 읽어보니 `phase1b-limbo` 상태는 `in_progress`로 남아 있었음 — 스크립트 호출이 즉시 되돌려진 것으로 보이며 본 세션에서는 이를 다시 편집하지 않고 그대로 둠. 최종 체크 확정은 operator 확인 몫.)
+
+### 완료 체크 정직성 재감사 + 보완 (Phase 0A/0B/1A/1B-crash/1B-limbo · 2026-07-15 재감사 세션)
+
+**배경:** operator가 Plan `world-class_presentation_rebuild_bc0d5f4b`의 `completed` 5개 todo(0A/0B/1A/1B-crash/1B-limbo)를 플랜 원문 기준으로 정말 완벽하게 끝났는지 독립 재감사 지시. 코드 직접 열람 + git 커밋 이력 + 스크린샷 화소 대조 + 실시간 typecheck/vitest 재실행으로 조사한 결과, **코드/유닛테스트 레벨은 전부 실재·green이었으나, 플랜 자신이 명시한 Definition of Done(실브라우저 렌더 확인·axe·DevTools 성능)은 5개 항목 전부 미충족**이었음 — 아래 표는 재감사에서 발견한 구체 결함과 이번 세션에서 실제로 고친 것 vs 환경 문제로 막힌 것을 정직하게 구분한다.
+
+| # | 재감사 발견 | 근거 | 이번 세션 처리 |
+|---|---|---|---|
+| 1 | Phase 0A "회귀 매트릭스" 재검증이 실제로 안 됨 — CSS 수정(04:17am) 이후 캡처된 스크린샷은 전부 `AuthEntryLayout`/마케팅 라우트(BottomNav 자체가 없음)뿐이었고, BottomNav가 실제로 있는 인증 라우트(wallet/casino 등) 스크린샷은 전부 수정 **이전**(01:46am) 것이라 여전히 버그가 보임 | 파일 mtime 대조 + 스크린샷 직접 열람 | `scripts/visual-audit-capture-cdp.ts`에 실제 `getComputedStyle('.ds-shell-bottomnav').display` 어서션 추가(≥1024px `none` / <1024px `grid` 정책 위반 시 `bottomNavViolations`에 기록 + 프로세스 exitCode 1) — **코드는 완성·타입체크 green·public 라우트 스모크 테스트 통과**. 인증 라우트(Home/Trade/Wallet/Sports/Casino) 실행은 아래 #6 Docker 이슈로 **이번 세션에서 완료하지 못함** |
+| 2 | Phase 0A 스크린샷 네이밍 컨벤션이 플랜 요구(하이픈·width-only)로 정렬되지 않음 — 여전히 `${pageId}_${vp.id}_${theme}_${nn}.png` 구식 | `visual-audit-capture-cdp.ts:461` 직접 열람 | **완료** — `<surface>-<viewport>-<theme>[-state].png`로 전환, `pageId` kebab-case 통일, viewport id width-only. 스모크 테스트로 `login-1024-dark.png` 등 실제 산출 확인. 구식 파일 전량 정리(미커밋 상태였으므로 git 이력 영향 없음) |
+| 3 | Phase 1A/1B-crash/1B-limbo 전부 axe critical=0·console 0-에러·스크린샷 근거가 전무 — 실제로는 jsdom `fireEvent.click` 통합 테스트만 수행, 세션 자신이 "실 브라우저 콘솔 0-에러·axe critical 0·4-viewport 스크린샷 미실행"이라고 정직하게 기록(위 `phase1b-crash` 절 참조) | `ACTIVE_WORK_SSOT.md`(재감사 시점) crash 절 자체 기록 | `visual-audit-capture-cdp.ts`에 axe-core(기존 devDependency) 실주입 실행 + critical/serious 집계, 콘솔 에러/미처리 예외 수집(신규 `CdpClient.on()` 이벤트 리스너 — 기존 클라이언트는 응답 아닌 메시지를 전부 버렸음), `PHONARA_AUDIT_INTERACT=1` opt-in 카지노 베팅→결과 상호작용 패스(기존 로그인 스크립트 패턴 재사용, Playwright 없음) 신규 구현. **코드·타입체크 완료**. 실행은 #6으로 막힘 |
+| 4 | Phase 1B 성능 기준("DevTools ≥55fps trace")이 알고리즘적 논거(O(n²)→O(1))로만 대체됨 — 실측 없음 | `crash-stage.tsx` diff 검토 | Crash 리플레이 애니메이션 구간에 실제 `requestAnimationFrame` 카운터를 주입해 프레임/초를 실측하는 `runCasinoInteractionPass`의 FPS 측정 신규 구현(알고리즘 논거가 아닌 경험적 수치). 실행은 #6으로 막힘 |
+| 5 | Phase 1B-limbo 구현이 미커밋 상태로 "completed" 표시됨 | `git status`: `limbo-stage.tsx` M, `limbo-stage.test.tsx` ?? | **완료** — 커밋 `51a26aff`. 커밋 전 타겟 vitest 24/24 + typecheck 재확인 |
+| 6 | **로컬 Docker Desktop 엔진이 붙지 않음** — `bun run stack:ensure:full` 최초 시도(약 7.6분 후 `did not become ready`), `bun run stack:docker:recover`(180초 후 `FAIL — engine still not ready`, 스크립트 자체가 "Docker 트레이에서 수동 종료 → `wsl --shutdown` → 재실행" 수동 조치를 권고), WSL 완전 종료 후 클린 재시도(약 3.5분 후 다시 `daemon not ready`) — **3회 시도 전부 실패**. `docker ps`가 `dockerDesktopLinuxEngine` named pipe에 연결 실패하고 `Get-Process`로도 Docker Desktop 프로세스 자체가 없음을 확인 — 이 PC의 현재 환경 문제이며 이번 세션 코드와 무관 | 3회 시도 로그 + `docker context ls`/`Get-Process` 직접 확인 | 매 시도 후 `bun run stack:stop`으로 클린 정리(잔여 컨테이너/포트 없음 확인) — **operator 조치 필요**: Docker Desktop 트레이 아이콘 완전 종료 → `wsl --shutdown` → Docker Desktop 재실행 → 안정화 확인 후 아래 재실행 명령 |
+
+**Docker 정상화 후 재실행 명령 (이번 세션이 준비한 전부):**
+
+```powershell
+bun run stack:ensure:full
+$env:PHONARA_AUDIT_LOGIN='1'; $env:PHONARA_AUDIT_INTERACT='1'; bun run tsx scripts/visual-audit-capture-cdp.ts
+bun run stack:stop
+```
+
+성공 시 `docs/audit/visual-ux-2026-07-11/capture-manifest.json`의 `assertions.bottomNavViolations`/`assertions.axeCriticalFindings`가 빈 배열이어야 하고, `interactions[].fpsDuringReplay`(crash)가 55 이상이어야 Phase 0A/1A/1B-crash/1B-limbo가 플랜 Definition of Done 기준으로 진짜 완료다. 위반이 있으면 스크립트 자체가 `exitCode 1`로 실패해 화면에 정확히 무엇이 위반인지 출력한다(`PHONARA_AUDIT_NO_ASSERT=1`로 실패 없이 캡처만 하는 모드도 있음).
+
+**라이브 캐시아웃 범위 경계 (의도적으로 다루지 않음):** 크래시 공유 라운드를 진행시키는 `rpc_live_crash_advance`는 `service_role`만 실행 가능(`REVOKE ALL FROM PUBLIC, anon, authenticated` — `supabase/migrations/20260810000001_ew_e23_casino_live.sql:1905`). 이를 실제로 클릭 테스트하려면 스케줄러 루프를 흉내 내는 별도 fixture가 필요하며, 이는 프레젠테이션 스크린샷 도구가 아니라 Playwright/CI E2E 영역(G13)이다 — 이번 세션은 이 경계를 존중해 새 fixture를 만들지 않았고, one-shot 베팅 경로(8/12 게임 + crash/limbo의 non-live 경로)만 도구 범위로 잡았다.
+
+**증거:** `typecheck` green · `bun run test -- apps/web/src/features/casino apps/web/src/product/surfaces/games apps/web/src/product/surfaces/login apps/web/src/product/shell apps/web/src/domain/__tests__/casino-games-batch-a-display-contract.test.ts` 33 files/193 tests green · `check:i18n` green · `check:design-tokens` OK(신규 0) · `check:release` OK · `check:phase-r-guards --strict` OK. 커밋: `51a26aff`(Limbo) · `b2b56b70`(CDP 도구).
+
 ### P2 결과 (dead-controls 전수조사 · 2026-07-15)
 
 **방법:** `dead-controls-display-contract.ts` 중앙 레지스트리 10건 전부 + 저장소 전체 `*_ENGINE_TODO`/`*_UI_UNLOCK_TODO` grep(추가 5건) + 실제 노출을 최종 결정하는 `apps/web/src/lib/launch-gates.ts` 스위치보드(34개 플래그) 대조.
