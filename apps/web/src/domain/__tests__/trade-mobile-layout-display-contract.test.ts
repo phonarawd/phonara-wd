@@ -10,6 +10,8 @@ import {
   P2_MOBILE_375_SWIPE_TODO,
   TRADE_DESK_MOBILE_NARROW_SIGNOFF_WIDTH_PX,
   TRADE_DESK_MOBILE_ROOT_CLASS,
+  TRADE_CHART_GESTURE_OWNER_ATTR,
+  TRADE_CHART_GESTURE_OWNER_SELECTOR,
   TRADE_DESK_MOBILE_SWIPE_SURFACE_TESTID,
   TRADE_DESK_MOBILE_SWIPE_TAB_IDS,
   TRADE_DESK_MOBILE_TAB_TOUCH_MIN_WIDTH_PX,
@@ -41,6 +43,8 @@ describe('trade-mobile-layout-display-contract §25.12.9.1-E #22–23', () => {
     expect(TRADE_DESK_MOBILE_TAB_TOUCH_MIN_WIDTH_PX).toBe(44);
     expect(TRADE_DESK_MOBILE_TABLIST_CLASS).toBe('trade-desk-mobile-tablist');
     expect(TRADE_DESK_MOBILE_SWIPE_SURFACE_TESTID).toBe('trade-desk-mobile-swipe-surface');
+    expect(TRADE_CHART_GESTURE_OWNER_ATTR).toBe('data-chart-gesture-owner');
+    expect(TRADE_CHART_GESTURE_OWNER_SELECTOR).toBe('[data-chart-gesture-owner]');
     expect([...TRADE_DESK_MOBILE_SWIPE_TAB_IDS]).toEqual(['chart', 'trade']);
     expect(TRADE_DESK_MOBILE_ROOT_CLASS).toBe('trade-desk-mobile');
     expect(TRADE_DESK_MOBILE_TABS_CLASS).toBe('trade-desk-mobile-tabs');

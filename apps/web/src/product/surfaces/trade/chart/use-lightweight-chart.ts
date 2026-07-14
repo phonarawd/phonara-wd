@@ -16,6 +16,7 @@ import {
   isChartHostSized,
   readChartHostSize,
   scheduleChartLayoutSync,
+  shouldFitChartOnLayoutSync,
   syncChartLayout,
 } from './sync-chart-layout';
 
@@ -131,19 +132,27 @@ export function useLightweightChart(
     let lastSized = false;
     let lastWidth = 0;
     let lastHeight = 0;
-    let isFirstSync = true;
+    /** Cleared only after a successful sized sync — not when scheduling on 0×0. */
+    let awaitingFirstSuccessfulFit = true;
     let cancelPendingSync: (() => void) | null = null;
     const requestSync = () => {
-      // Capture before the scheduled callback runs — a second resize can
-      // otherwise land before the first callback fires and lose its "first" fit.
-      const fit = isFirstSync;
-      isFirstSync = false;
       cancelPendingSync?.();
       cancelPendingSync = scheduleChartLayoutSync(() => {
         cancelPendingSync = null;
-        syncChartLayout(chart, host, { fit });
         const size = readChartHostSize(host);
-        lastSized = isChartHostSized(size);
+        const sized = isChartHostSized(size);
+        const recoveringFromCollapsedHost = !lastSized;
+        const fit = shouldFitChartOnLayoutSync({
+          awaitingFirstSuccessfulFit,
+          recoveringFromCollapsedHost,
+        });
+        const ok = syncChartLayout(chart, host, { fit });
+        if (!ok || !sized) {
+          lastSized = false;
+          return;
+        }
+        awaitingFirstSuccessfulFit = false;
+        lastSized = true;
         lastWidth = size.width;
         lastHeight = size.height;
       });
@@ -161,9 +170,6 @@ export function useLightweightChart(
         return;
       }
       if (lastSized && deltaW < 2 && deltaH < 2) return;
-      lastSized = true;
-      lastWidth = size.width;
-      lastHeight = size.height;
       requestSync();
     });
     observer.observe(host);

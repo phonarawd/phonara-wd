@@ -5,6 +5,7 @@ import {
   CHART_LAYOUT_MIN_WIDTH_PX,
   CHART_RIGHT_SCALE_MARGINS,
   isChartHostSized,
+  shouldFitChartOnLayoutSync,
   syncChartLayout,
 } from '../sync-chart-layout';
 
@@ -13,6 +14,27 @@ describe('sync-chart-layout', () => {
     expect(isChartHostSized({ width: CHART_LAYOUT_MIN_WIDTH_PX - 1, height: 200 })).toBe(false);
     expect(isChartHostSized({ width: 200, height: CHART_LAYOUT_MIN_HEIGHT_PX - 1 })).toBe(false);
     expect(isChartHostSized({ width: 200, height: 200 })).toBe(true);
+  });
+
+  it('fits on first successful sync and when recovering from a collapsed host', () => {
+    expect(
+      shouldFitChartOnLayoutSync({
+        awaitingFirstSuccessfulFit: true,
+        recoveringFromCollapsedHost: false,
+      }),
+    ).toBe(true);
+    expect(
+      shouldFitChartOnLayoutSync({
+        awaitingFirstSuccessfulFit: false,
+        recoveringFromCollapsedHost: true,
+      }),
+    ).toBe(true);
+    expect(
+      shouldFitChartOnLayoutSync({
+        awaitingFirstSuccessfulFit: false,
+        recoveringFromCollapsedHost: false,
+      }),
+    ).toBe(false);
   });
 
   it('applies size, setAutoScale, and fits time when host is sized', () => {

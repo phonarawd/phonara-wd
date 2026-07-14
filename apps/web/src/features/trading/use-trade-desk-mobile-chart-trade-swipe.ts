@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState, type PointerEventHandler } from 'react';
 
 import {
+  TRADE_CHART_GESTURE_OWNER_SELECTOR,
   TRADE_DESK_MOBILE_SWIPE_MIN_DELTA_PX,
   TRADE_DESK_MOBILE_SWIPE_TAB_IDS,
   type TradeDeskMobileSwipeTabId,
@@ -9,6 +10,11 @@ import {
 
 function isSwipeTab(tabId: TradeDeskMobileTabId): tabId is TradeDeskMobileSwipeTabId {
   return (TRADE_DESK_MOBILE_SWIPE_TAB_IDS as readonly string[]).includes(tabId);
+}
+
+/** True when the pointer started on the LWC canvas / chart host (pan owns the gesture). */
+export function isTradeChartGestureTarget(target: EventTarget | null): boolean {
+  return target instanceof Element && Boolean(target.closest(TRADE_CHART_GESTURE_OWNER_SELECTOR));
 }
 
 export type TradeDeskMobileChartTradeSwipe = {
@@ -38,6 +44,12 @@ export function useTradeDeskMobileChartTradeSwipe(
   const onPointerDown = useCallback<PointerEventHandler<HTMLElement>>(
     (event) => {
       if (!swipeEligible || event.pointerType === 'mouse') return;
+      // Chart pan/pinch must never be stolen for tab navigation.
+      if (isTradeChartGestureTarget(event.target)) {
+        startXRef.current = null;
+        setSwipeActive(false);
+        return;
+      }
       startXRef.current = event.clientX;
       setSwipeActive(false);
     },

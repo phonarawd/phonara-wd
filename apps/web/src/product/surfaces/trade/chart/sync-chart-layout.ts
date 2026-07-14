@@ -22,6 +22,21 @@ export function isChartHostSized(size: ChartLayoutSize): boolean {
   return size.width >= CHART_LAYOUT_MIN_WIDTH_PX && size.height >= CHART_LAYOUT_MIN_HEIGHT_PX;
 }
 
+/**
+ * Whether a layout sync must call `fitContent()`.
+ *
+ * First successful size after mount — and recovery from a collapsed (0×0 /
+ * TabsContent) host — must refit. Otherwise ResizeObserver keeps the user's
+ * zoom/pan. Consuming "first sync" before the host is sized leaves candles
+ * off-screen (axes + price lines visible, empty grid).
+ */
+export function shouldFitChartOnLayoutSync(options: {
+  awaitingFirstSuccessfulFit: boolean;
+  recoveringFromCollapsedHost: boolean;
+}): boolean {
+  return options.awaitingFirstSuccessfulFit || options.recoveringFromCollapsedHost;
+}
+
 export type SyncChartLayoutOptions = {
   /**
    * Whether to call `fitContent()` after resizing. Defaults to `true` for

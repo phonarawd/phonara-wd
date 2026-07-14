@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
 
+import { TRADE_CHART_GESTURE_OWNER_ATTR } from '@/domain/trade-mobile-layout-display-contract';
 import type { TradingChartCandle } from '@/features/trading/display-chart/display-feed-contract';
 import { useT } from '@/product/i18n';
 import { cn } from '@/product/primitives/lib/cn';
@@ -86,7 +87,8 @@ export function TradeChart({
       <div
         ref={hostRef}
         data-testid="trade-lightweight-chart"
-        className={cn('h-full min-h-[280px] w-full flex-1', className)}
+        {...{ [TRADE_CHART_GESTURE_OWNER_ATTR]: '' }}
+        className={cn('h-full min-h-[280px] w-full flex-1 touch-none', className)}
       />
     </div>
   );

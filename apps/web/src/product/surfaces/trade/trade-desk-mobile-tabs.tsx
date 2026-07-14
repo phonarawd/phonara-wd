@@ -207,7 +207,12 @@ export function TradeDeskMobileTabs({
           {...swipeHandlers}
         >
           <TabsContent value="chart" data-testid="trade-desk-mobile-panel-chart">
-            <div className={cn('min-h-[280px]', swipeActive && 'pointer-events-none')}>{chart}</div>
+            {/*
+              Never pointer-events-none the chart — mid-swipe disable was stealing
+              LWC horzTouchDrag and flipping chart→trade. Chart host is excluded
+              from swipe tracking via data-chart-gesture-owner.
+            */}
+            <div className="min-h-[280px]">{chart}</div>
           </TabsContent>
 
           <TabsContent value="trade" data-testid="trade-desk-mobile-panel-trade">
