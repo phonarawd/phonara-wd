@@ -43,8 +43,13 @@
 
 .ds-shell-bottomnav {
   box-sizing: border-box;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  /* display intentionally NOT set unscoped here — `.ds-shell-bottomnav` is
+     unlayered CSS (no @layer anywhere in this stylesheet), which per CSS
+     Cascade Layers spec always wins over Tailwind's `@layer utilities`
+     `lg:hidden` regardless of source order/specificity. An unscoped
+     `display: grid` here would permanently defeat `lg:hidden` at ≥1024px.
+     Scope the grid layout to the mobile/tablet range only (<1024px);
+     desktop hiding is delegated to Tailwind's `lg:hidden` on the element. */
   /* Floating chrome — §34.10–34.11 · blur + shadow-2 · z-chrome */
   z-index: var(--ds-z-chrome);
   height: var(--ds-shell-bottomnav-height);
@@ -58,6 +63,13 @@
   box-shadow: var(--ds-shadow-2);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+}
+
+@media (max-width: 1023px) {
+  .ds-shell-bottomnav {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
 }
 
 .ds-shell-bottomnav-tab {

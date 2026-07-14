@@ -108,6 +108,27 @@ describe('shell elevation §34.10–34.11', () => {
     expect(chrome).toContain('z-index: var(--ds-z-chrome)');
   });
 
+  it('Phase 0A regression: .ds-shell-bottomnav must not set unscoped display (defeats lg:hidden via unlayered CSS)', () => {
+    // shell-chrome.css has zero @layer usage, so any bare `display:` declaration
+    // directly inside `.ds-shell-bottomnav { ... }` is unlayered CSS that always
+    // wins over Tailwind's `@layer utilities` `lg:hidden` at >=1024px, regardless
+    // of source order or specificity (CSS Cascade Layers spec). This is a
+    // source-text guard (jsdom has no `css: true` and cannot load real stylesheets
+    // — see vitest.config.ts); the authoritative check is a real-browser/CDP
+    // computed-style pass at >=1024px, run via operator "gate 실행" or CI.
+    const chrome = readFileSync(join(import.meta.dirname, '..', 'shell-chrome.css'), 'utf8');
+    const chromeNoComments = chrome.replace(/\/\*[\s\S]*?\*\//g, '');
+    const ruleMatch = chromeNoComments.match(/\.ds-shell-bottomnav\s*\{([^}]*)\}/);
+    expect(ruleMatch).not.toBeNull();
+    const unscopedBody = ruleMatch?.[1] ?? '';
+    expect(unscopedBody).not.toMatch(/(?<![-\w])display\s*:/);
+
+    // The grid layout must exist, but only inside a bounded (<1024px) media query.
+    expect(chromeNoComments).toMatch(
+      /@media \(max-width:\s*1023px\)\s*\{\s*\.ds-shell-bottomnav\s*\{[^}]*display:\s*grid/,
+    );
+  });
+
   it('Earn lg+ mounts side nav + complementary side rail', () => {
     mockPathname = '/home';
     render(
