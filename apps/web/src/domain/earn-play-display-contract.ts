@@ -6,8 +6,6 @@
 
 import type { MessageKey } from '@phonara/i18n';
 
-import { parseEarnHubRouletteSnapshot } from './home-attendance-display-contract';
-
 export const EARN_PLAY_ROUTE = '/earn/play' as const;
 export const EARN_PLAY_ROULETTE_ROUTE = '/earn/play' as const;
 export const SPIN_ROULETTE_RPC = 'rpc_spin_roulette' as const;
@@ -30,6 +28,24 @@ export type EarnPlaySpinResult = {
   prizeIndex: number;
   seedHash: string | null;
 };
+
+/**
+ * Owns the `roulette` sub-object parse for the earn hub payload.
+ * Re-exported by `home-attendance-display-contract.ts` — do not import back
+ * from there (would reintroduce the circular import fixed 2026-07-15).
+ */
+export function parseEarnHubRouletteSnapshot(
+  payload: Record<string, unknown> | null | undefined,
+): EarnPlayRouletteQuota | null {
+  const roulette = payload?.['roulette'];
+  if (!roulette || typeof roulette !== 'object') return null;
+  const row = roulette as Record<string, unknown>;
+  return {
+    remaining: Number(row['remaining'] ?? 0),
+    used: Number(row['used'] ?? 0),
+    max: Number(row['max'] ?? 0),
+  };
+}
 
 export function parseEarnPlayRouletteQuota(
   hubPayload: Record<string, unknown> | null | undefined,
