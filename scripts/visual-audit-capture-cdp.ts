@@ -26,6 +26,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { readLocalSupabaseEnv } from './lib/db-connect';
+import { killPortListeners } from './lib/e2e-lifecycle';
 
 const ROOT = process.cwd();
 const OUT = join(ROOT, 'screenshots');
@@ -975,12 +976,44 @@ async function runCasinoInteractionPass(
 async function main(): Promise<void> {
   let vite: ChildProcess | null = null;
   let chrome: ChildProcess | null = null;
+  let spawnedVite = false;
   const manifest: ManifestRow[] = [];
   const interactions: InteractionResult[] = [];
   const bottomNavViolations: string[] = [];
   const axeCriticalFindings: string[] = [];
   const startedAt = new Date().toISOString();
   const userDataDir = join(tmpdir(), `phonara-audit-chrome-${Date.now()}`);
+
+  const teardownAuditChildren = async (): Promise<void> => {
+    if (chrome?.pid) {
+      if (process.platform === 'win32')
+        spawnSync('taskkill', ['/pid', String(chrome.pid), '/T', '/F']);
+      else chrome.kill();
+      chrome = null;
+      await sleep(300);
+    }
+    if (vite?.pid) {
+      if (process.platform === 'win32')
+        spawnSync('taskkill', ['/pid', String(vite.pid), '/T', '/F']);
+      else vite.kill('SIGKILL');
+      vite = null;
+      await sleep(300);
+    }
+    // Belt-and-suspenders: Windows `shell: true` spawns often leave the real
+    // Vite listener as a grandchild when Cursor/agent interrupts mid-capture.
+    if (spawnedVite) {
+      const killed = killPortListeners(3000);
+      if (killed > 0) {
+        console.log(`[cdp-audit] swept ${killed} orphan listener(s) on port 3000`);
+      }
+    }
+  };
+
+  const onInterrupt = (): void => {
+    void teardownAuditChildren().finally(() => process.exit(130));
+  };
+  process.once('SIGINT', onInterrupt);
+  process.once('SIGTERM', onInterrupt);
 
   try {
     if (SPAWN_VITE && !(await portOpen(3000))) {
@@ -999,6 +1032,7 @@ async function main(): Promise<void> {
         if (/Local:|ready|3000/.test(s)) process.stdout.write(s);
       });
       vite.stderr?.on('data', (d: Buffer) => process.stderr.write(d));
+      spawnedVite = true;
       await waitHttp(BASE, 180_000);
     } else {
       await waitHttp(BASE, 30_000);
@@ -1253,24 +1287,9 @@ async function main(): Promise<void> {
       process.exitCode = 1;
     }
   } finally {
-    // Windows `shell: true` spawns (`bun --filter ... dev`) leave the real Vite/node
-    // process as a grandchild of the killed cmd.exe wrapper — a plain `.kill()` often
-    // only reaps the wrapper, and Node's event loop can then wait forever on stdio pipe
-    // handles that never close (2026-07-15 finding: script hung ~90s+ past "DONE").
-    // `taskkill /T /F` kills the whole process tree; `cursor:kill-orphans`/`e2e:kill`
-    // remain the belt-and-suspenders sweep if a grandchild still survives.
-    if (chrome?.pid) {
-      if (process.platform === 'win32')
-        spawnSync('taskkill', ['/pid', String(chrome.pid), '/T', '/F']);
-      else chrome.kill();
-      await sleep(300);
-    }
-    if (vite?.pid) {
-      if (process.platform === 'win32')
-        spawnSync('taskkill', ['/pid', String(vite.pid), '/T', '/F']);
-      else vite.kill('SIGKILL');
-      await sleep(300);
-    }
+    process.off('SIGINT', onInterrupt);
+    process.off('SIGTERM', onInterrupt);
+    await teardownAuditChildren();
   }
 }
 

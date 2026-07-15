@@ -55,6 +55,7 @@ docs/rebuild/LOWSPEC_RULES.md
 docs_archive
 docs_archive/
 gate-manifest/
+screenshots
 tests/visual/m0-baselines
 tests/visual/m0-baselines/
 tests/visual/mockups

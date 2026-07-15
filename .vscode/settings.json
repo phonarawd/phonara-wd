@@ -28,7 +28,8 @@
       "**/tests/visual/mockups/**": true,
       "**/tests/visual/m0-baselines/**": true,
       "**/docs/RELEASE_ROADMAP.md": true,
-      "**/docs/rebuild/LOWSPEC_RULES.md": true
+      "**/docs/rebuild/LOWSPEC_RULES.md": true,
+      "**/screenshots/**": true
     },
     "exclude": {
       "**/dist": true,
@@ -67,7 +68,8 @@
       "**/tests/visual/mockups/**": true,
       "**/tests/visual/m0-baselines/**": true,
       "**/docs/RELEASE_ROADMAP.md": true,
-      "**/docs/rebuild/LOWSPEC_RULES.md": true
+      "**/docs/rebuild/LOWSPEC_RULES.md": true,
+      "**/screenshots/**": true
     },
     "followSymlinks": false
   },

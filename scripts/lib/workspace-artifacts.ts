@@ -66,6 +66,8 @@ export const CURSOR_ARCHIVAL_DIR_PATTERNS = [
   'docs/archive',
   'tests/visual/mockups',
   'tests/visual/m0-baselines',
+  /** CDP visual-audit output — high-volume PNG churn; local evidence only (ACTIVE_WORK_SSOT). */
+  'screenshots',
 ] as const;
 
 /** Bulk LOCK globs — cleared after Presentation/paste archive purge. */
