@@ -21,13 +21,15 @@
  */
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { createConnection } from 'node:net';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { readLocalSupabaseEnv } from './lib/db-connect';
 
 const ROOT = process.cwd();
 const OUT = join(ROOT, 'screenshots');
+const ENV_LOCAL = join(ROOT, '.env.local');
 const BASE = process.env.PHONARA_AUDIT_BASE ?? 'http://127.0.0.1:3000';
 const CHROME =
   process.env.PHONARA_CHROME_PATH ?? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
@@ -71,6 +73,9 @@ const BOTTOM_NAV_ROUTES = new Set([
   'casino-lobby',
   'casino-crash',
   'casino-limbo',
+  'casino-dice',
+  'casino-mines',
+  'casino-hilo',
 ]);
 
 type Route = {
@@ -102,6 +107,9 @@ const ROUTES_FULL: Route[] = [
   { pageId: 'casino-lobby', path: '/casino', auth: 'auth', themes: ['dark'] },
   { pageId: 'casino-crash', path: '/games/crash', auth: 'auth', themes: ['dark'] },
   { pageId: 'casino-limbo', path: '/games/limbo', auth: 'auth', themes: ['dark'] },
+  { pageId: 'casino-dice', path: '/games/dice', auth: 'auth', themes: ['dark'] },
+  { pageId: 'casino-mines', path: '/games/mines', auth: 'auth', themes: ['dark'] },
+  { pageId: 'casino-hilo', path: '/games/hilo', auth: 'auth', themes: ['dark'] },
 ];
 
 /** RAM-critical PC: public only · dark · fewer routes */
@@ -148,6 +156,37 @@ const ROUTES: Route[] = (MINIMAL ? ROUTES_MIN : ROUTES_FULL).filter(
 
 function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
+}
+
+function upsertEnvLocal(lines: string[], key: string, value: string): string[] {
+  const prefix = `${key}=`;
+  let found = false;
+  const out = lines.map((line) => {
+    if (line.startsWith(prefix)) {
+      found = true;
+      return `${key}=${value}`;
+    }
+    return line;
+  });
+  if (!found) out.push(`${key}=${value}`);
+  return out;
+}
+
+/** Align Vite with the live `supabase status` port (54621≠54321 on this PC). */
+function syncLocalViteEnvForAudit(): boolean {
+  const local = readLocalSupabaseEnv();
+  if (!local) {
+    console.log(
+      '[cdp-audit] WARN: supabase status unreadable — Vite may hit wrong API port (login/interact will fail)',
+    );
+    return false;
+  }
+  const lines = existsSync(ENV_LOCAL) ? readFileSync(ENV_LOCAL, 'utf8').split(/\r?\n/) : [];
+  let out = upsertEnvLocal(lines, 'VITE_SUPABASE_URL', local.VITE_SUPABASE_URL);
+  out = upsertEnvLocal(out, 'VITE_SUPABASE_ANON_KEY', local.VITE_SUPABASE_ANON_KEY);
+  writeFileSync(ENV_LOCAL, `${out.join('\n').replace(/\n*$/, '')}\n`, 'utf8');
+  console.log('[cdp-audit] synced VITE_SUPABASE_* → .env.local', local.VITE_SUPABASE_URL);
+  return true;
 }
 
 async function portOpen(port: number): Promise<boolean> {
@@ -450,6 +489,19 @@ function readLocalTradeCredentials(): LocalTradeCredentials | null {
 }
 
 /** Local-only login via `login-form.tsx` data-testids — never used against a non-local BASE. */
+async function waitForLoginForm(cdp: CdpClient, timeoutMs = 45000): Promise<boolean> {
+  const t0 = Date.now();
+  while (Date.now() - t0 < timeoutMs) {
+    const res = await cdp.send<{ result: { value: boolean } }>('Runtime.evaluate', {
+      expression: `!!document.querySelector('[data-testid="login-email"]')`,
+      returnByValue: true,
+    });
+    if (res.result?.value) return true;
+    await sleep(500);
+  }
+  return false;
+}
+
 async function loginViaForm(cdp: CdpClient, creds: LocalTradeCredentials): Promise<boolean> {
   if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(BASE)) {
     throw new Error('[cdp-audit] refuses login flow against non-local BASE');
@@ -461,7 +513,12 @@ async function loginViaForm(cdp: CdpClient, creds: LocalTradeCredentials): Promi
     mobile: false,
   });
   await cdp.send('Page.navigate', { url: `${BASE}/login` });
-  await sleep(2600);
+  const formReady = await waitForLoginForm(cdp);
+  if (!formReady) {
+    console.log('[cdp-audit] login form not ready before timeout');
+    return false;
+  }
+  await sleep(400);
 
   const fillResult = await cdp.send<{ result: { value: string } }>('Runtime.evaluate', {
     expression: `
@@ -523,7 +580,7 @@ async function loginViaForm(cdp: CdpClient, creds: LocalTradeCredentials): Promi
     Buffer.from(afterClickShot.data, 'base64'),
   );
 
-  for (let i = 0; i < 15; i++) {
+  for (let i = 0; i < 30; i++) {
     await sleep(1000);
     const res = await cdp.send<{ result: { value: string } }>('Runtime.evaluate', {
       expression: 'location.pathname',
@@ -574,16 +631,59 @@ type InteractionResult = {
  * Casino one-shot bet-to-result interaction pass (opt-in, `PHONARA_AUDIT_INTERACT=1`).
  * Reuses this repo's existing hook-safe CDP click pattern (native-value-set + `.click()`,
  * no Playwright) — the exact method the plan's "Functional QA method" section specifies.
- * Scope: one-shot bet placement + result render + PF panel + (crash only) real rAF-measured
+ * Scope: one-shot bet placement + result render + PF panel + (crash/dice) real rAF-measured
  * FPS during the replay animation. Live mid-round cash-out is out of scope here: advancing a
  * shared live round requires `rpc_live_crash_advance` (service_role-only, revoked from
  * anon/authenticated — supabase/migrations/20260810000001_ew_e23_casino_live.sql:1905), i.e. a
  * real scheduler loop, which is genuine Playwright/CI E2E fixture territory (G13), not a
  * presentation-layer screenshot tool.
  */
+const ALL_INTERACTION_GAMES = ['crash', 'limbo', 'dice', 'hilo', 'mines'] as const;
+type InteractionGameCode = (typeof ALL_INTERACTION_GAMES)[number];
+
+/** When `PHONARA_AUDIT_ROUTES` narrows capture, run interaction only for matching casino games. */
+function interactionGamesForAudit(): InteractionGameCode[] {
+  if (!ONLY_PAGE_IDS) return [...ALL_INTERACTION_GAMES];
+  const scoped = ALL_INTERACTION_GAMES.filter((g) => ONLY_PAGE_IDS!.has(`casino-${g}`));
+  return scoped.length > 0 ? scoped : [...ALL_INTERACTION_GAMES];
+}
+
+function casinoResultTextScript(gameCode: InteractionGameCode): string {
+  if (gameCode === 'dice') {
+    return `(() => { const el = document.querySelector('[data-testid="casino-dice-roll"]'); return el ? el.textContent : null; })()`;
+  }
+  if (gameCode === 'hilo') {
+    return `(() => {
+      const stage = document.querySelector('[data-testid="casino-hilo-stage"]');
+      const card = document.querySelector('[data-testid="casino-hilo-card-hero"]');
+      if (!stage) return null;
+      return JSON.stringify({
+        won: stage.getAttribute('data-won'),
+        phase: stage.getAttribute('data-stage-phase'),
+        card: card ? card.textContent : null,
+      });
+    })()`;
+  }
+  if (gameCode === 'mines') {
+    return `(() => {
+      const stage = document.querySelector('[data-testid="casino-mines-stage"]');
+      if (!stage) return null;
+      const mult = document.querySelector('[data-testid="casino-mines-cashout-mult"]');
+      return JSON.stringify({
+        won: stage.getAttribute('data-won'),
+        hitMine: stage.getAttribute('data-hit-mine'),
+        phase: stage.getAttribute('data-stage-phase'),
+        mult: mult ? mult.textContent : null,
+      });
+    })()`;
+  }
+  const testId = `casino-${gameCode}-result`;
+  return `(() => { const el = document.querySelector('[data-testid="${testId}"]'); return el ? el.textContent : null; })()`;
+}
+
 async function runCasinoInteractionPass(
   cdp: CdpClient,
-  gameCode: 'crash' | 'limbo',
+  gameCode: InteractionGameCode,
   consoleTracker: { errors: string[]; reset: () => void },
 ): Promise<InteractionResult> {
   const steps: Record<string, unknown> = {};
@@ -608,14 +708,41 @@ async function runCasinoInteractionPass(
       setNativeValueScript('casino-selection-target', '2.00'),
     );
   }
+  if (gameCode === 'dice') {
+    steps['targetSet'] = await evaluate(
+      cdp,
+      setNativeValueScript('casino-selection-target', '50.00'),
+    );
+  }
+  if (gameCode === 'hilo') {
+    // Default oneshot selection pre-fills guesses:['higher'] (game-config.ts) — confirm
+    // the queue is visible before betting (phase1c-hilo stale-prefill audit hook).
+    steps['guessQueue'] = await evaluate(
+      cdp,
+      `(() => {
+        const el = document.querySelector('[data-testid="casino-hilo-guess-queue"]');
+        return el ? el.textContent : null;
+      })()`,
+    );
+  }
+  if (gameCode === 'mines') {
+    // Default oneshot selection pre-fills revealedCells:[0,1,2] (game-config.ts).
+    steps['pickedCount'] = await evaluate(
+      cdp,
+      `(() => {
+        const el = document.querySelector('[data-testid="casino-mines-picked-count"]');
+        return el ? el.textContent : null;
+      })()`,
+    );
+  }
   await sleep(200);
 
   steps['prepareHash'] = await evaluate(cdp, clickScript('casino-prepare-hash'));
   await sleep(1200);
 
-  // Start the real-FPS rAF counter *before* the bet click so the crash replay's
-  // client-side animation window (1.5-4s, crashReplayDurationMs) is fully inside it.
-  if (gameCode === 'crash') {
+  // Start the real-FPS rAF counter *before* the bet click so replay animations
+  // (crash curve 1.5–4s · dice roll-marker wobble ~480ms) are inside the window.
+  if (gameCode === 'crash' || gameCode === 'dice') {
     await cdp.send('Runtime.evaluate', {
       expression: `
         window.__phonaraFpsFrames = 0;
@@ -630,11 +757,20 @@ async function runCasinoInteractionPass(
   }
 
   steps['placeBet'] = await evaluate(cdp, clickScript('casino-place-bet'));
-  const fpsWindowMs = gameCode === 'crash' ? 4500 : 1800;
+  const fpsWindowMs =
+    gameCode === 'crash'
+      ? 4500
+      : gameCode === 'dice'
+        ? 1200
+        : gameCode === 'hilo'
+          ? 1200
+          : gameCode === 'mines'
+            ? 2000
+            : 1800;
   await sleep(fpsWindowMs);
 
   let fpsDuringReplay: number | null = null;
-  if (gameCode === 'crash') {
+  if (gameCode === 'crash' || gameCode === 'dice') {
     const frames = await evaluate<number>(
       cdp,
       `(() => { window.__phonaraFpsRunning = false; return window.__phonaraFpsFrames; })()`,
@@ -642,10 +778,7 @@ async function runCasinoInteractionPass(
     fpsDuringReplay = Math.round((frames / fpsWindowMs) * 1000 * 10) / 10;
   }
 
-  steps['resultText'] = await evaluate(
-    cdp,
-    `(() => { const el = document.querySelector('[data-testid="casino-${gameCode}-result"]'); return el ? el.textContent : null; })()`,
-  );
+  steps['resultText'] = await evaluate(cdp, casinoResultTextScript(gameCode));
   steps['pfHashReady'] = await evaluate(
     cdp,
     `(() => { const el = document.querySelector('[data-testid="casino-pf-hash-status"]'); return el ? el.textContent : null; })()`,
@@ -683,6 +816,9 @@ async function main(): Promise<void> {
 
   try {
     if (SPAWN_VITE && !(await portOpen(3000))) {
+      if (LOGIN_LOCAL_TRADE) {
+        syncLocalViteEnvForAudit();
+      }
       console.log('[cdp-audit] spawn bun run dev:web');
       vite = spawn('bun', ['run', 'dev:web'], {
         cwd: ROOT,
@@ -843,7 +979,7 @@ async function main(): Promise<void> {
     }
 
     if (RUN_INTERACTION_PASS && loggedIn) {
-      for (const gameCode of ['crash', 'limbo'] as const) {
+      for (const gameCode of interactionGamesForAudit()) {
         console.log('[cdp-audit] interaction pass:', gameCode);
         const result = await runCasinoInteractionPass(cdp, gameCode, consoleTracker);
         interactions.push(result);

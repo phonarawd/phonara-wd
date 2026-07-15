@@ -36,6 +36,32 @@ describe('casino-games-batch-b-display-contract (p10-games-batch-b)', () => {
     });
     expect(parseMinesOutcome({ minePositions: [99], hitMine: true })).toBeNull();
     expect(parseMinesOutcome({ minePositions: [0], hitMine: 'yes' })).toBeNull();
+  });
+
+  it('parses the E23 live/progressive revealedCells echo when present, and degrades to absent (not a parse failure) when malformed (phase1c-mines)', () => {
+    // rpc_progressive_step/cashout shape — one-shot rpc_place_game_bet responses
+    // never carry this field (engine MinesResult has no revealedCells).
+    expect(
+      parseMinesOutcome({ minePositions: [4, 8], hitMine: true, revealedCells: [1, 4] }),
+    ).toEqual({
+      minePositions: [4, 8],
+      hitMine: true,
+      revealedCells: [1, 4],
+    });
+    expect(parseMinesOutcome({ minePositions: [4, 8], hitMine: false })).toEqual({
+      minePositions: [4, 8],
+      hitMine: false,
+    });
+    expect(
+      parseMinesOutcome({ minePositions: [4, 8], hitMine: false })?.revealedCells,
+    ).toBeUndefined();
+    // Out-of-range/garbage revealedCells — degrade gracefully, core fields still parse.
+    expect(
+      parseMinesOutcome({ minePositions: [4, 8], hitMine: false, revealedCells: [99] }),
+    ).toEqual({ minePositions: [4, 8], hitMine: false });
+    expect(
+      parseMinesOutcome({ minePositions: [4, 8], hitMine: false, revealedCells: 'nope' }),
+    ).toEqual({ minePositions: [4, 8], hitMine: false });
     expect(
       parseHiloOutcome({
         cards: [7, 9],

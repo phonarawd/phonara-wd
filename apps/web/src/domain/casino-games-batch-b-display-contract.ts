@@ -64,6 +64,21 @@ export const CASINO_BATCH_B_TEST_PATHS = [
 export type ParsedMinesOutcome = {
   minePositions: number[];
   hitMine: boolean;
+  /**
+   * Authoritative reveal order — present on E23 live/progressive RPC
+   * responses (`rpc_progressive_step`/`rpc_progressive_cashout` echo the
+   * session's `revealedCells`), absent on one-shot `rpc_place_game_bet`
+   * responses (engine `MinesResult` never carries it — see
+   * `packages/game-engine/src/games/mines.ts`). Phase 1C fix: the stage must
+   * prefer this over its own prop-derived `picked` state when present,
+   * because a live mid-round reveal calls `playOutcome` in the same
+   * synchronous tick as the prop update that would otherwise carry the
+   * newly-revealed cell — reading `picked` there is one render stale and
+   * drops exactly the cell that ended the round (most visibly on a mine
+   * hit, where the busted tile then never gets the bold "you hit this"
+   * treatment).
+   */
+  revealedCells?: number[];
 };
 
 export type ParsedHiloOutcome = {
@@ -100,7 +115,15 @@ export function parseMinesOutcome(result: Record<string, unknown>): ParsedMinesO
   if (!minePositions) return null;
   if (minePositions.some((c) => c < 0 || c >= CASINO_MINES_GRID_SIZE)) return null;
   if (typeof result['hitMine'] !== 'boolean') return null;
-  return { minePositions, hitMine: result['hitMine'] };
+  // Optional/live-only field — a malformed value degrades to "absent"
+  // (stage falls back to its own picked-cells state) rather than failing
+  // the whole parse, since minePositions/hitMine are still trustworthy.
+  const rawRevealed = asIntArray(result['revealedCells']);
+  const revealedCells =
+    rawRevealed && rawRevealed.every((c) => c >= 0 && c < CASINO_MINES_GRID_SIZE)
+      ? rawRevealed
+      : undefined;
+  return { minePositions, hitMine: result['hitMine'], revealedCells };
 }
 
 export function parseHiloOutcome(result: Record<string, unknown>): ParsedHiloOutcome | null {
