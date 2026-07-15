@@ -1,6 +1,6 @@
 {
-  "startedAt": "2026-07-15T02:55:43.437Z",
-  "finishedAt": "2026-07-15T02:57:22.269Z",
+  "startedAt": "2026-07-15T04:26:55.990Z",
+  "finishedAt": "2026-07-15T04:28:09.252Z",
   "base": "http://127.0.0.1:3000",
   "engine": "chrome-cdp",
   "loggedIn": true,
@@ -21,14 +21,14 @@
   ],
   "manifest": [
     {
-      "file": "mobile/casino-dice-390-dark-01.png",
-      "pageId": "casino-dice",
-      "path": "/games/dice",
+      "file": "mobile/casino-mines-390-dark-01.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
       "viewport": "390",
       "folder": "mobile",
       "theme": "dark",
       "scroll": "01_top",
-      "finalUrl": "http://127.0.0.1:3000/games/dice",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
       "auth": "auth",
       "redirectedToLogin": false,
       "bottomNavDisplay": "grid",
@@ -39,14 +39,14 @@
       "consoleErrors": []
     },
     {
-      "file": "mobile/casino-dice-390-dark-02.png",
-      "pageId": "casino-dice",
-      "path": "/games/dice",
+      "file": "mobile/casino-mines-390-dark-02.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
       "viewport": "390",
       "folder": "mobile",
       "theme": "dark",
       "scroll": "02_mid",
-      "finalUrl": "http://127.0.0.1:3000/games/dice",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
       "auth": "auth",
       "redirectedToLogin": false,
       "bottomNavDisplay": "grid",
@@ -57,14 +57,14 @@
       "consoleErrors": []
     },
     {
-      "file": "mobile/casino-dice-390-dark-03.png",
-      "pageId": "casino-dice",
-      "path": "/games/dice",
+      "file": "mobile/casino-mines-390-dark-03.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
       "viewport": "390",
       "folder": "mobile",
       "theme": "dark",
       "scroll": "03_end",
-      "finalUrl": "http://127.0.0.1:3000/games/dice",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
       "auth": "auth",
       "redirectedToLogin": false,
       "bottomNavDisplay": "grid",
@@ -75,14 +75,14 @@
       "consoleErrors": []
     },
     {
-      "file": "desktop/casino-dice-1024-dark-01.png",
-      "pageId": "casino-dice",
-      "path": "/games/dice",
+      "file": "desktop/casino-mines-1024-dark-01.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
       "viewport": "1024",
       "folder": "desktop",
       "theme": "dark",
       "scroll": "01_top",
-      "finalUrl": "http://127.0.0.1:3000/games/dice",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
       "auth": "auth",
       "redirectedToLogin": false,
       "bottomNavDisplay": "none",
@@ -93,14 +93,14 @@
       "consoleErrors": []
     },
     {
-      "file": "desktop/casino-dice-1024-dark-02.png",
-      "pageId": "casino-dice",
-      "path": "/games/dice",
+      "file": "desktop/casino-mines-1024-dark-02.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
       "viewport": "1024",
       "folder": "desktop",
       "theme": "dark",
       "scroll": "02_mid",
-      "finalUrl": "http://127.0.0.1:3000/games/dice",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
       "auth": "auth",
       "redirectedToLogin": false,
       "bottomNavDisplay": "none",
@@ -111,14 +111,14 @@
       "consoleErrors": []
     },
     {
-      "file": "desktop/casino-dice-1024-dark-03.png",
-      "pageId": "casino-dice",
-      "path": "/games/dice",
+      "file": "desktop/casino-mines-1024-dark-03.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
       "viewport": "1024",
       "folder": "desktop",
       "theme": "dark",
       "scroll": "03_end",
-      "finalUrl": "http://127.0.0.1:3000/games/dice",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
       "auth": "auth",
       "redirectedToLogin": false,
       "bottomNavDisplay": "none",
@@ -129,14 +129,14 @@
       "consoleErrors": []
     },
     {
-      "file": "desktop/casino-dice-2560-dark-01.png",
-      "pageId": "casino-dice",
-      "path": "/games/dice",
+      "file": "desktop/casino-mines-2560-dark-01.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
       "viewport": "2560",
       "folder": "desktop",
       "theme": "dark",
       "scroll": "01_top",
-      "finalUrl": "http://127.0.0.1:3000/games/dice",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
       "auth": "auth",
       "redirectedToLogin": false,
       "bottomNavDisplay": "none",
@@ -147,14 +147,14 @@
       "consoleErrors": []
     },
     {
-      "file": "desktop/casino-dice-2560-dark-02.png",
-      "pageId": "casino-dice",
-      "path": "/games/dice",
+      "file": "desktop/casino-mines-2560-dark-02.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
       "viewport": "2560",
       "folder": "desktop",
       "theme": "dark",
       "scroll": "02_mid",
-      "finalUrl": "http://127.0.0.1:3000/games/dice",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
       "auth": "auth",
       "redirectedToLogin": false,
       "bottomNavDisplay": "none",
@@ -165,14 +165,14 @@
       "consoleErrors": []
     },
     {
-      "file": "desktop/casino-dice-2560-dark-03.png",
-      "pageId": "casino-dice",
-      "path": "/games/dice",
+      "file": "desktop/casino-mines-2560-dark-03.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
       "viewport": "2560",
       "folder": "desktop",
       "theme": "dark",
       "scroll": "03_end",
-      "finalUrl": "http://127.0.0.1:3000/games/dice",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
       "auth": "auth",
       "redirectedToLogin": false,
       "bottomNavDisplay": "none",
@@ -185,9 +185,10 @@
   ],
   "interactions": [
     {
-      "gameCode": "crash",
+      "gameCode": "mines",
       "steps": {
         "stakeSet": true,
+        "pickedCount": "3/22",
         "prepareHash": {
           "found": true,
           "disabled": false
@@ -196,97 +197,11 @@
           "found": true,
           "disabled": false
         },
-        "resultText": null,
-        "pfHashReady": "준비 완료",
-        "errorBanner": null
-      },
-      "fpsDuringReplay": 61.3,
-      "axe": {
-        "critical": 0,
-        "serious": 0,
-        "moderate": 3,
-        "minor": 0,
-        "violations": [
-          {
-            "id": "landmark-main-is-top-level",
-            "impact": "moderate",
-            "nodes": 1
-          },
-          {
-            "id": "landmark-no-duplicate-main",
-            "impact": "moderate",
-            "nodes": 1
-          },
-          {
-            "id": "landmark-unique",
-            "impact": "moderate",
-            "nodes": 1
-          }
-        ]
-      },
-      "consoleErrors": []
-    },
-    {
-      "gameCode": "limbo",
-      "steps": {
-        "stakeSet": true,
-        "targetSet": true,
-        "prepareHash": {
-          "found": true,
-          "disabled": false
-        },
-        "placeBet": {
-          "found": true,
-          "disabled": false
-        },
-        "resultText": "1.55×",
+        "resultText": "{\"won\":\"true\",\"hitMine\":\"false\",\"phase\":\"settled\",\"mult\":\"1.47×\"}",
         "pfHashReady": "준비 완료",
         "errorBanner": null
       },
       "fpsDuringReplay": null,
-      "axe": {
-        "critical": 0,
-        "serious": 0,
-        "moderate": 3,
-        "minor": 0,
-        "violations": [
-          {
-            "id": "landmark-main-is-top-level",
-            "impact": "moderate",
-            "nodes": 1
-          },
-          {
-            "id": "landmark-no-duplicate-main",
-            "impact": "moderate",
-            "nodes": 1
-          },
-          {
-            "id": "landmark-unique",
-            "impact": "moderate",
-            "nodes": 1
-          }
-        ]
-      },
-      "consoleErrors": []
-    },
-    {
-      "gameCode": "dice",
-      "steps": {
-        "stakeSet": true,
-        "targetSet": true,
-        "prepareHash": {
-          "found": true,
-          "disabled": false
-        },
-        "placeBet": {
-          "found": true,
-          "disabled": false
-        },
-        "resultText": "10.47",
-        "pfHashReady": "준비 완료",
-        "errorBanner": null
-      },
-      "fpsDuringReplay": 62.5,
       "axe": {
         "critical": 0,
         "serious": 0,

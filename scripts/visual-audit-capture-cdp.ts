@@ -74,6 +74,8 @@ const BOTTOM_NAV_ROUTES = new Set([
   'casino-crash',
   'casino-limbo',
   'casino-dice',
+  'casino-mines',
+  'casino-hilo',
 ]);
 
 type Route = {
@@ -106,6 +108,8 @@ const ROUTES_FULL: Route[] = [
   { pageId: 'casino-crash', path: '/games/crash', auth: 'auth', themes: ['dark'] },
   { pageId: 'casino-limbo', path: '/games/limbo', auth: 'auth', themes: ['dark'] },
   { pageId: 'casino-dice', path: '/games/dice', auth: 'auth', themes: ['dark'] },
+  { pageId: 'casino-mines', path: '/games/mines', auth: 'auth', themes: ['dark'] },
+  { pageId: 'casino-hilo', path: '/games/hilo', auth: 'auth', themes: ['dark'] },
 ];
 
 /** RAM-critical PC: public only · dark · fewer routes */
@@ -634,10 +638,46 @@ type InteractionResult = {
  * real scheduler loop, which is genuine Playwright/CI E2E fixture territory (G13), not a
  * presentation-layer screenshot tool.
  */
-type InteractionGameCode = 'crash' | 'limbo' | 'dice';
+const ALL_INTERACTION_GAMES = ['crash', 'limbo', 'dice', 'hilo', 'mines'] as const;
+type InteractionGameCode = (typeof ALL_INTERACTION_GAMES)[number];
+
+/** When `PHONARA_AUDIT_ROUTES` narrows capture, run interaction only for matching casino games. */
+function interactionGamesForAudit(): InteractionGameCode[] {
+  if (!ONLY_PAGE_IDS) return [...ALL_INTERACTION_GAMES];
+  const scoped = ALL_INTERACTION_GAMES.filter((g) => ONLY_PAGE_IDS!.has(`casino-${g}`));
+  return scoped.length > 0 ? scoped : [...ALL_INTERACTION_GAMES];
+}
 
 function casinoResultTextScript(gameCode: InteractionGameCode): string {
-  const testId = gameCode === 'dice' ? 'casino-dice-roll' : `casino-${gameCode}-result`;
+  if (gameCode === 'dice') {
+    return `(() => { const el = document.querySelector('[data-testid="casino-dice-roll"]'); return el ? el.textContent : null; })()`;
+  }
+  if (gameCode === 'hilo') {
+    return `(() => {
+      const stage = document.querySelector('[data-testid="casino-hilo-stage"]');
+      const card = document.querySelector('[data-testid="casino-hilo-card-hero"]');
+      if (!stage) return null;
+      return JSON.stringify({
+        won: stage.getAttribute('data-won'),
+        phase: stage.getAttribute('data-stage-phase'),
+        card: card ? card.textContent : null,
+      });
+    })()`;
+  }
+  if (gameCode === 'mines') {
+    return `(() => {
+      const stage = document.querySelector('[data-testid="casino-mines-stage"]');
+      if (!stage) return null;
+      const mult = document.querySelector('[data-testid="casino-mines-cashout-mult"]');
+      return JSON.stringify({
+        won: stage.getAttribute('data-won'),
+        hitMine: stage.getAttribute('data-hit-mine'),
+        phase: stage.getAttribute('data-stage-phase'),
+        mult: mult ? mult.textContent : null,
+      });
+    })()`;
+  }
+  const testId = `casino-${gameCode}-result`;
   return `(() => { const el = document.querySelector('[data-testid="${testId}"]'); return el ? el.textContent : null; })()`;
 }
 
@@ -674,6 +714,27 @@ async function runCasinoInteractionPass(
       setNativeValueScript('casino-selection-target', '50.00'),
     );
   }
+  if (gameCode === 'hilo') {
+    // Default oneshot selection pre-fills guesses:['higher'] (game-config.ts) — confirm
+    // the queue is visible before betting (phase1c-hilo stale-prefill audit hook).
+    steps['guessQueue'] = await evaluate(
+      cdp,
+      `(() => {
+        const el = document.querySelector('[data-testid="casino-hilo-guess-queue"]');
+        return el ? el.textContent : null;
+      })()`,
+    );
+  }
+  if (gameCode === 'mines') {
+    // Default oneshot selection pre-fills revealedCells:[0,1,2] (game-config.ts).
+    steps['pickedCount'] = await evaluate(
+      cdp,
+      `(() => {
+        const el = document.querySelector('[data-testid="casino-mines-picked-count"]');
+        return el ? el.textContent : null;
+      })()`,
+    );
+  }
   await sleep(200);
 
   steps['prepareHash'] = await evaluate(cdp, clickScript('casino-prepare-hash'));
@@ -696,7 +757,16 @@ async function runCasinoInteractionPass(
   }
 
   steps['placeBet'] = await evaluate(cdp, clickScript('casino-place-bet'));
-  const fpsWindowMs = gameCode === 'crash' ? 4500 : gameCode === 'dice' ? 1200 : 1800;
+  const fpsWindowMs =
+    gameCode === 'crash'
+      ? 4500
+      : gameCode === 'dice'
+        ? 1200
+        : gameCode === 'hilo'
+          ? 1200
+          : gameCode === 'mines'
+            ? 2000
+            : 1800;
   await sleep(fpsWindowMs);
 
   let fpsDuringReplay: number | null = null;
@@ -909,7 +979,7 @@ async function main(): Promise<void> {
     }
 
     if (RUN_INTERACTION_PASS && loggedIn) {
-      for (const gameCode of ['crash', 'limbo', 'dice'] as const) {
+      for (const gameCode of interactionGamesForAudit()) {
         console.log('[cdp-audit] interaction pass:', gameCode);
         const result = await runCasinoInteractionPass(cdp, gameCode, consoleTracker);
         interactions.push(result);

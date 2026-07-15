@@ -317,6 +317,17 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
                   typeof selection['startCard'] === 'number' ? selection['startCard'] : null,
               }
             : {};
+      if (gameCode === 'mines') {
+        // Fixed 2026-07-15 (Phase 1C functional QA) — mines' oneshot default
+        // selection pre-fills `revealedCells: [0, 1, 2]` (game-config.ts), which
+        // otherwise leaks into a fresh live session: the grid would show 3
+        // stale tiles as already picked while the server's new session truly
+        // starts at revealedCells: [] (P0 — displayed value did not match the
+        // RPC/engine value), and the live cash-out button would read as
+        // enabled (picked.length > 0) before the player had made a single real
+        // live reveal.
+        setSelection((prev) => ({ ...prev, revealedCells: [] }));
+      }
       const started = await progressiveStart.mutateAsync({
         game: gameCode,
         currency,

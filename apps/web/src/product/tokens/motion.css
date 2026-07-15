@@ -211,3 +211,40 @@
   opacity: 0;
   animation: ds-casino-cashout-flash var(--ds-motion-casino-reveal) var(--ds-ease-standard) both;
 }
+
+/*
+ * Phase 1C — per-tile reveal micro-feedback (grid/reveal games: Mines/Hilo/
+ * Deepshaft). Additive to the Phase 1B "Result reveal" budget above, one tier
+ * down: "Micro feedback (press, hover, tile-flip start)" is 120-200ms per the
+ * Motion & performance acceptance criteria, distinct from the 200-500ms
+ * "Result reveal" tier `--ds-motion-casino-reveal` already covers. Covers a
+ * pre-bet tile pick, a live mid-round step, and a cascade-replay tick through
+ * one shared class — transform/opacity only (0 layout shift).
+ */
+:root {
+  --ds-motion-casino-tile-flip: 160ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ds-motion-casino-tile-flip: 0ms;
+  }
+}
+
+@keyframes ds-casino-tile-reveal {
+  0% {
+    opacity: 0.35;
+    transform: scale(0.82);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.ds-casino-tile-reveal {
+  animation: ds-casino-tile-reveal var(--ds-motion-casino-tile-flip) var(--ds-ease-standard) both;
+}

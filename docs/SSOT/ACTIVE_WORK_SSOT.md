@@ -146,6 +146,36 @@ bun run stack:stop
 
 **다음 큐:** `phase1c-mines` (Grid/reveal games) — 본 세션은 착수하지 않음.
 
+### Phase 1C-mines 결과 (Mines 기능 QA + 모션 폴리시 + 퍼포먼스 체크 · 2026-07-15 · `world-class_presentation_rebuild_bc0d5f4b` plan todo `phase1c-mines`)
+
+**발견 (코드 레벨 정적 추적 + shell 통합 테스트로 재현 — "뼈대만 있고 버튼이 실제로 작동하는지 확인 안 됨"이라는 operator 우려에 정확히 해당하는 클래스):**
+
+1. **P0 — 라이브 mid-round 지뢰 히트 시 실제로 클릭한 타일이 "히트" 스타일로 표시되지 않음.** `MinesStage.playOutcome`이 캐스케이드 reveal 순서(`order`)를 스테이지 자신의 prop-derived `picked`에서만 만들었는데, `CasinoGameShell.handleLiveRevealCell`은 `setSelection(...)`(새로 공개된 셀 포함)과 `stageRef.current.playOutcome(result)` 호출을 **같은 동기 tick**에서 실행함 — `playOutcome` 실행 시점엔 아직 리렌더가 커밋되지 않아 `picked`가 한 렌더 stale 상태. 결과: 지뢰를 맞춰 라운드를 끝낸 바로 그 타일이 `revealedOrder`에 빠져, "당신이 맞춘 지뢰"의 굵은 `mine` 스타일이 아니라 "정산 후 공개된 다른 지뢰"의 흐린 `hidden-mine` 스타일로 렌더됨 — RPC/engine 값(hitMine·해당 셀)과 화면 표시가 불일치하는 정확히 Definition of Done P0 케이스. RED-first로 확인(수정 임시 되돌림 → `casino-game-shell.test.tsx`의 mine-hit 테스트가 정확히 이 증상으로 실패 → 수정 복구 → green).
+2. **P1 — 라이브 mid-round에서 서버가 이미 안전을 확인한 타일이 "선택됨"(picked) 칩으로만 보이고 "안전 확인"(safe 체크마크) 상태로 승격되지 않음.** `phase`가 라이브 진행 중 내내 `'idle'`에 머물러(캐스케이드/재생은 라운드 종료 시에만 트리거) 사전-베팅 선택과 서버-확인 안전 리빌이 시각적으로 구분되지 않았음.
+3. **P0 — 라이브 세션 시작 시 원샷 기본 선택(`revealedCells:[0,1,2]`, `game-config.ts`)이 그대로 남아, 서버의 새 세션은 `revealedCells:[]`로 시작했는데 그리드는 3칸이 이미 "선택됨"으로 표시됨** — 표시값이 RPC/engine 값과 불일치. 부수적으로 캐시아웃 버튼도 실제 라이브 클릭 0회 상태에서 `picked.length>0`으로 활성화된 것처럼 보임.
+4. **퍼포먼스 — 캐스케이드의 재귀 `setTimeout` 체인에 unmount 클린업이 없음** — Limbo(reveal-hold)·Dice(rAF)에서 이미 고친 것과 동일한 누수 클래스. 라이브 지뢰 히트 직후 다른 라우트로 이동하면 이미 unmount된 컴포넌트에 대해 setState가 계속 호출될 수 있었음.
+
+| 항목 | 내용 |
+| --- | --- |
+| **기능 클릭스루 QA — grid reveal** | 원샷 사전-베팅 pick/deselect 클릭 응답(`mines-stage.test.tsx`) + `CasinoGameShell` 실배선을 통한 라이브 mid-round 셀 클릭→`rpc_progressive_step` mock→안전 확인 렌더(`casino-game-shell.test.tsx`) — 데드 컨트롤 0건 |
+| **기능 클릭스루 QA — live cash-out** | 라이브 세션 시작→리빌→캐시아웃 버튼(0 pick 시 disabled·리빌 후 enabled)→`rpc_progressive_cashout` mock→정산 렌더까지 shell 레벨 통합 테스트. 서버가 이미 알고 있는 `revealedCells`를 재사용해 새 클릭 없이도 정산되는 케이스 포함 |
+| **기능 클릭스루 QA — mine hit** | 위 발견 #1을 그대로 재현하는 shell 레벨 통합 테스트 — 실제 프로덕션 클릭 경로(두 번의 순차 `fireEvent.click` → `handleLiveRevealCell` → `progressiveStep` mock → `applyProgressiveResult` → `playOutcome`)로 동일 tick 레이스를 재현, RED-first로 버그 확정 후 수정 검증 |
+| **버그 수정** | (a) `ParsedMinesOutcome.revealedCells`(옵셔널) 신규 — RPC가 이미 echo하는 값을 `playOutcome`이 stale `picked` 대신 우선 사용(원샷 응답엔 이 필드가 없어 fallback으로 기존 동작 그대로 보존). (b) `cellVisual`: `liveMode && liveSessionActive`일 때 idle-phase의 revealed 셀을 `safe`로 승격. (c) `CasinoGameShell.handleLiveRevealCell`(mines 분기만): 라이브 시작 시 `revealedCells`를 `[]`로 리셋 |
+| **모션 폴리시 (신규 additive 토큰 + 기존 Phase 1B 토큰 재사용)** | 신규 `--ds-motion-casino-tile-flip: 160ms` + `.ds-casino-tile-reveal`(`motion.css`, transform/opacity-only, 0 layout shift) — Motion 기준 "Micro feedback(press·hover·tile-flip start)" 120-200ms 밴드, 25칸 전부(사전 pick·라이브 리빌·캐스케이드 tick 공통 경로 1개). 멀티플라이어 래더: `revealPulse` 카운터로 현재/다음 배당 텍스트를 `ds-casino-reveal-in`(기존 Phase 1B 공유 토큰) key-remount, 승리 정산 시에만 `ds-casino-number-pop`+glow(`ds-casino-cashout-flash`) 추가 — Crash/Limbo/Dice와 동일한 "승리: punchy · 패배: calm·respectful"(CASINO_UX_CANON) 컨벤션, 지뢰 히트도 손실이므로 pop/glow 없이 reveal-in만 |
+| **퍼포먼스 수정 (타이머 누수)** | `useEffect(() => clearTimer, [clearTimer])` 추가 — Limbo/Dice와 동일 패턴. 라이브 지뢰 히트 직후 unmount 시나리오를 실제 400ms 대기(캐스케이드 전체 재생 시간 이상)로 통과시켜 `console.error`/`warn` 0건 확인(스파이 호출 횟수만이 아니라 실제 지연 이후까지 무증상임을 증명) |
+| **테스트** | 신규 `mines-stage.test.tsx`(21개 — 기능 QA 11종, 모션 폴리시 6종, 퍼포먼스 4종) + `casino-game-shell.test.tsx`에 Mines 라이브 클릭스루 4건(그리드 리빌·라이브 캐시아웃·지뢰 히트·스테일 선택 초기화) + `casino-games-batch-b-display-contract.ts`/test 확장(revealedCells 파싱 성공/방어적 malformed 처리 2건) |
+| **범위 밖 관찰 (버그로 확정하지 않음)** | `reset-accumulated-selection.ts`의 `resetAccumulatedSelection`(mines→`revealedCells:[]`로 리셋 문서화)가 실제로는 `CasinoGameShell.onAccumulatedSelectionReset`에 배선되지 않고 자체 단위 테스트만 존재(drift) — 실 shell은 게임 전체 `defaultSelection`(mines는 `[0,1,2]` 프리필 포함)으로 리셋해, 반복 원샷 베팅마다 항상 동일한 3칸이 다시 선택된 상태로 시작함. 반복 베팅 자체는 정상 동작(오류 아님)이라 이번 세션에서 수정하지 않음. Hilo도 동일 클래스의 비어있지 않은 프리필(`guesses:['higher']`)을 가지고 있어 `phase1c-hilo`에서 재확인 가치 있음 — 이번 세션은 hilo 파일을 건드리지 않음(todo 범위 밖) |
+
+**검증 방법 및 범위:** (a) RPC 시그니처·mock shape 코드 레벨 정합성, (b) shell 레벨 `fireEvent.click` 통합 테스트, (c) 발견 #1 RED-first 재현·복구. **실브라우저 CDP는 2026-07-15 후속 세션에서 Dice와 동등하게 마감** (아래 §실브라우저 Definition of Done).
+
+**증거:** `gate:ai-impl -- --test apps/web/src/product/surfaces/games/__tests__/mines-stage.test.tsx apps/web/src/product/surfaces/games/__tests__/casino-game-shell.test.tsx apps/web/src/product/surfaces/games/__tests__/casino-games-batch-b-stages.test.tsx apps/web/src/domain/__tests__/casino-games-batch-b-display-contract.test.ts` green — L0~L4 전부 · 타겟 vitest **45/45**(4 files). 엔진/RPC/컨트롤러 시그니처 변경 **0**.
+
+**실브라우저 Definition of Done (2026-07-15 CDP 마감 세션):** `stack:ensure --full` → `seed:local-trade` → `PHONARA_AUDIT_LOGIN=1` · `PHONARA_AUDIT_INTERACT=1` · `PHONARA_AUDIT_ROUTES=casino-mines` · `visual-audit-capture-cdp.ts` 실행 **green** (`capture-manifest.json` `loggedIn:true` · `authRedirects:0` · `assertions.bottomNavViolations:[]` · `assertions.axeCriticalFindings:[]`). Mines 4-viewport 스크린샷: **390/1024/2560** dark(`casino-mines-*-dark-*.png` 9장 + `casino-mines-1024-dark-bet-result.png`) — auth 라우트에서 **768 의도 스킵**. manifest 전 행 `consoleErrorCount:0`. Bet→result oneshot 상호작용: `pickedCount:"3/22"`(프리필 확인) · `resultText` won:true · hitMine:false · phase:settled · mult:`1.47×` · `errorBanner:null` · PF hash 준비 완료 · interaction axe critical=0 · `consoleErrors:[]`. CDP 도구: `casino-mines` 라우트·mines interaction pass·`PHONARA_AUDIT_ROUTES` 범위 시 interaction 필터 추가.
+
+**Plan closeout:** `phase1c-mines` → Plan YAML `status: completed` (`world-class_presentation_rebuild_bc0d5f4b.plan.md`).
+
+**다음 큐:** `phase1c-hilo` (Hilo) — 본 세션은 착수하지 않음.
+
 ### P2 결과 (dead-controls 전수조사 · 2026-07-15)
 
 **방법:** `dead-controls-display-contract.ts` 중앙 레지스트리 10건 전부 + 저장소 전체 `*_ENGINE_TODO`/`*_UI_UNLOCK_TODO` grep(추가 5건) + 실제 노출을 최종 결정하는 `apps/web/src/lib/launch-gates.ts` 스위치보드(34개 플래그) 대조.
