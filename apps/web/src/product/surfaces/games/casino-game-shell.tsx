@@ -18,6 +18,7 @@ import {
 import {
   isCasinoBatchBGame,
   P10_GAMES_BATCH_B_TODO,
+  parseHiloProgressiveOutcome,
 } from '@/domain/casino-games-batch-b-display-contract';
 import {
   isCasinoBatchCGame,
@@ -99,6 +100,26 @@ function asLiveRevealed(publicState: Record<string, unknown>): number[] {
   const raw = publicState['revealedCells'];
   if (!Array.isArray(raw)) return [];
   return raw.filter((n): n is number => typeof n === 'number' && Number.isInteger(n));
+}
+
+/**
+ * Hilo live/progressive selection sync (Phase 1C functional QA fix) —
+ * mirrors `asLiveRevealed` above for Mines. Reuses the strict domain parser
+ * (`parseHiloProgressiveOutcome`) rather than a second lenient ad-hoc
+ * reader, so the shell and `HiloStage.playOutcome` agree on exactly one
+ * definition of "valid `public_state`" for this shape. Degrades to an empty
+ * sync (not a thrown error) on a hypothetical malformed response — this is
+ * trusted first-party RPC data in practice, but a display-sync helper
+ * should never crash the shell over it.
+ */
+function asLiveHiloSelection(publicState: Record<string, unknown>): {
+  guesses: HiLoGuess[];
+  cards: number[];
+  multiplier: number | null;
+} {
+  const parsed = parseHiloProgressiveOutcome(publicState);
+  if (!parsed) return { guesses: [], cards: [], multiplier: null };
+  return { guesses: parsed.guesses, cards: parsed.cards, multiplier: parsed.multiplier };
 }
 
 function profitDeltaFromBet(stake: string, payout: string, won: boolean): string {
@@ -328,6 +349,17 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
         // live reveal.
         setSelection((prev) => ({ ...prev, revealedCells: [] }));
       }
+      if (gameCode === 'hilo') {
+        // Fixed 2026-07-15 (Phase 1C functional QA, same class as mines above)
+        // — hilo's oneshot default selection pre-fills `guesses: ['higher']`
+        // (game-config.ts), which otherwise leaks into a fresh live session:
+        // the streak chip/queue would show 1 stale guess and the cash-out
+        // button would read as already enabled (guesses.length > 0) before a
+        // single real live guess. Optimistic — avoids a flash of the stale
+        // prefill while the start RPC is in flight; superseded by the
+        // authoritative sync below once the server responds.
+        setSelection((prev) => ({ ...prev, guesses: [] }));
+      }
       const started = await progressiveStart.mutateAsync({
         game: gameCode,
         currency,
@@ -337,6 +369,18 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
         idempotencyKey: crypto.randomUUID(),
       });
       setProgressiveSession(started);
+      if (gameCode === 'hilo') {
+        // Authoritative sync — also carries the server-assigned `cards[0]`
+        // (startCard) when the client passed `startCard: null` (the default),
+        // which the pre-call reset above cannot know in advance.
+        const synced = asLiveHiloSelection(started.public_state);
+        setSelection((prev) => ({
+          ...prev,
+          guesses: synced.guesses,
+          cards: synced.cards,
+          multiplier: synced.multiplier,
+        }));
+      }
       if (started.status !== 'active') {
         applyProgressiveResult(started);
       }
@@ -435,6 +479,21 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
             action: { guess },
             idempotencyKey: crypto.randomUUID(),
           });
+          // Fixed 2026-07-15 (Phase 1C functional QA, P0) — previously this
+          // only called applyProgressiveResult, never syncing `selection`
+          // from the RPC's own echoed state (unlike handleLiveRevealCell
+          // above for mines). Since `applyProgressiveResult` only calls
+          // `stageRef.playOutcome` at genuine settle (not on a still-active
+          // correct guess), the hero card and streak chip would otherwise
+          // never move past whatever they last showed mid-session — a guess
+          // that visibly does nothing reads as a dead control.
+          const synced = asLiveHiloSelection(result.public_state);
+          setSelection((prev) => ({
+            ...prev,
+            guesses: synced.guesses,
+            cards: synced.cards,
+            multiplier: synced.multiplier,
+          }));
           applyProgressiveResult(result);
         } catch (error) {
           setLiveErrorKey(translateError(error) as MessageKey);

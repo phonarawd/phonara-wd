@@ -2328,6 +2328,7 @@ export const presentationEnMessages = {
   'games.hilo.placeBet': 'Bet',
   'games.hilo.prepare': 'Prepare round',
   'games.hilo.skip': 'Skip',
+  'games.hilo.stage.currentMult': 'Current mult',
   'games.hilo.stage.guessCount': 'Hi-Lo · {count} guesses',
   'games.hilo.stage.idle': 'Idle',
   'games.hilo.stage.pickStart': 'Pick a start card',

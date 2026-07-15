@@ -248,3 +248,46 @@
 .ds-casino-tile-reveal {
   animation: ds-casino-tile-reveal var(--ds-motion-casino-tile-flip) var(--ds-ease-standard) both;
 }
+
+/*
+ * Phase 1C — Hilo card-flip (single-card variant of the tile-reveal above,
+ * for grid/reveal games that show one hero card instead of a tile grid).
+ * A dedicated token (not a reuse of --ds-motion-casino-tile-flip 160ms or
+ * --ds-motion-casino-reveal 360ms) because it must numerically match the
+ * per-card tick interval `hiloFlipStepMs()` (hilo-stage.tsx) exactly — a
+ * JS timer with no matching CSS duration is the precise mismatch
+ * limbo-stage.tsx's own history warns against. Squeeze-scaleX (not a
+ * literal 3D rotateY, which would need a two-faced back-side element to
+ * avoid mirrored text) mimics a card turning edge-on and back —
+ * transform/opacity only, 0 layout shift — and doubles as the "suspense
+ * beat before reveal" (Motion & performance acceptance criteria): the
+ * value is unreadable at the near-edge-on midpoint, then resolves into
+ * the next card.
+ */
+:root {
+  --ds-motion-casino-card-flip: 280ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ds-motion-casino-card-flip: 0ms;
+  }
+}
+
+@keyframes ds-casino-card-flip {
+  0% {
+    opacity: 0.3;
+    transform: scaleX(0.2);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scaleX(0.04);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+.ds-casino-card-flip {
+  animation: ds-casino-card-flip var(--ds-motion-casino-card-flip) var(--ds-ease-standard) both;
+}

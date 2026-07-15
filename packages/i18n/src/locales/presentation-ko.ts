@@ -2310,6 +2310,7 @@ export const presentationKoMessages = {
   'games.hilo.placeBet': '베팅',
   'games.hilo.prepare': '라운드 준비',
   'games.hilo.skip': '스킵',
+  'games.hilo.stage.currentMult': '현재 배수',
   'games.hilo.stage.guessCount': 'Hi-Lo · {count}회 추측',
   'games.hilo.stage.idle': '대기',
   'games.hilo.stage.pickStart': '시작 카드를 선택하세요',

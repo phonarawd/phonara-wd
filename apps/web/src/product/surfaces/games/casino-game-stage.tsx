@@ -55,6 +55,15 @@ function asHiloGuesses(value: unknown): HiLoGuess[] {
   return value.filter((g): g is HiLoGuess => g === 'higher' || g === 'lower' || g === 'skip');
 }
 
+function asFiniteNumberOrNull(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string' && value.trim() !== '') {
+    const n = Number(value);
+    if (Number.isFinite(n)) return n;
+  }
+  return null;
+}
+
 function asBool(value: unknown): boolean {
   if (typeof value === 'boolean') return value;
   if (value === 'true' || value === '1') return true;
@@ -140,6 +149,7 @@ export const CasinoGameStage = forwardRef<CasinoStageHandle, CasinoGameStageProp
       const startRaw = selection['startCard'];
       const startCard =
         typeof startRaw === 'number' && Number.isInteger(startRaw) ? startRaw : null;
+      const liveCards = asNumberArray(selection['cards']);
       return (
         <HiloStage
           ref={ref}
@@ -149,6 +159,8 @@ export const CasinoGameStage = forwardRef<CasinoStageHandle, CasinoGameStageProp
           liveMode={live}
           liveSessionActive={liveControls?.liveSessionActive}
           liveCashoutBusy={liveControls?.liveCashoutBusy}
+          liveCards={liveCards.length > 0 ? liveCards : null}
+          liveMultiplier={asFiniteNumberOrNull(selection['multiplier'])}
           onLiveGuess={liveControls?.onLiveGuess}
           onLiveCashout={liveControls?.onLiveCashout}
           onGuessesChange={

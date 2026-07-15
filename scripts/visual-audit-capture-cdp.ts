@@ -648,21 +648,27 @@ function interactionGamesForAudit(): InteractionGameCode[] {
   return scoped.length > 0 ? scoped : [...ALL_INTERACTION_GAMES];
 }
 
+const HILO_STAGE_STATE_SCRIPT = `(() => {
+  const stage = document.querySelector('[data-testid="casino-hilo-stage"]');
+  const card = document.querySelector('[data-testid="casino-hilo-card-hero"]');
+  const mult = document.querySelector('[data-testid="casino-hilo-live-mult"]')
+    || document.querySelector('[data-testid="casino-hilo-round-mult"]');
+  if (!stage) return null;
+  return JSON.stringify({
+    won: stage.getAttribute('data-won'),
+    phase: stage.getAttribute('data-stage-phase'),
+    guessCount: stage.getAttribute('data-guess-count'),
+    card: card ? card.textContent : null,
+    mult: mult ? mult.textContent : null,
+  });
+})()`;
+
 function casinoResultTextScript(gameCode: InteractionGameCode): string {
   if (gameCode === 'dice') {
     return `(() => { const el = document.querySelector('[data-testid="casino-dice-roll"]'); return el ? el.textContent : null; })()`;
   }
   if (gameCode === 'hilo') {
-    return `(() => {
-      const stage = document.querySelector('[data-testid="casino-hilo-stage"]');
-      const card = document.querySelector('[data-testid="casino-hilo-card-hero"]');
-      if (!stage) return null;
-      return JSON.stringify({
-        won: stage.getAttribute('data-won'),
-        phase: stage.getAttribute('data-stage-phase'),
-        card: card ? card.textContent : null,
-      });
-    })()`;
+    return HILO_STAGE_STATE_SCRIPT;
   }
   if (gameCode === 'mines') {
     return `(() => {
@@ -681,11 +687,209 @@ function casinoResultTextScript(gameCode: InteractionGameCode): string {
   return `(() => { const el = document.querySelector('[data-testid="${testId}"]'); return el ? el.textContent : null; })()`;
 }
 
+async function startFpsCounter(cdp: CdpClient): Promise<void> {
+  await cdp.send('Runtime.evaluate', {
+    expression: `
+      window.__phonaraFpsFrames = 0;
+      window.__phonaraFpsRunning = true;
+      (function tick() {
+        if (!window.__phonaraFpsRunning) return;
+        window.__phonaraFpsFrames++;
+        requestAnimationFrame(tick);
+      })();
+    `,
+  });
+}
+
+async function stopFpsCounter(cdp: CdpClient, windowMs: number): Promise<number> {
+  const frames = await evaluate<number>(
+    cdp,
+    `(() => { window.__phonaraFpsRunning = false; return window.__phonaraFpsFrames; })()`,
+  );
+  return Math.round((frames / windowMs) * 1000 * 10) / 10;
+}
+
+async function captureDesktopScreenshot(cdp: CdpClient, fileName: string): Promise<void> {
+  const shotDir = join(OUT, 'desktop');
+  await mkdir(shotDir, { recursive: true });
+  const shot = await cdp.send<{ data: string }>('Page.captureScreenshot', {
+    format: 'png',
+    fromSurface: true,
+  });
+  await writeFile(join(shotDir, fileName), Buffer.from(shot.data, 'base64'));
+}
+
+const HILO_SMART_GUESS_SCRIPT = `
+(function () {
+  const card = document.querySelector('[data-testid="casino-hilo-card-hero"]')?.textContent?.trim();
+  const rankMap = { A: 1, J: 11, Q: 12, K: 13 };
+  let r = rankMap[card] ?? parseInt(card, 10);
+  if (!r || Number.isNaN(r)) return 'higher';
+  if (r <= 6) return 'higher';
+  if (r >= 8) return 'lower';
+  return 'higher';
+})()`;
+
+function hiloStageParsed(raw: unknown): {
+  won: string | null;
+  phase: string | null;
+  guessCount: string | null;
+  card: string | null;
+  mult: string | null;
+} | null {
+  if (typeof raw !== 'string') return null;
+  try {
+    return JSON.parse(raw) as ReturnType<typeof hiloStageParsed>;
+  } catch {
+    return null;
+  }
+}
+
+function hiloCashoutSettled(raw: unknown): boolean {
+  const parsed = hiloStageParsed(raw);
+  return parsed?.won === 'true' && parsed.phase === 'settled';
+}
+
+function hiloSessionActive(raw: unknown): boolean {
+  const parsed = hiloStageParsed(raw);
+  return Boolean(parsed && parsed.phase !== 'settled' && parsed.won !== 'false');
+}
+
+/**
+ * Hilo phase1c-hilo closeout: live hi/lo/skip + cash-out (real progressive RPC)
+ * then oneshot bet→result for Mines/Dice parity. Card-flip FPS measured during
+ * the live guess window (280ms/card token synced with `hiloFlipStepMs()`).
+ *
+ * Engine guard: `rpc_progressive_cashout` requires guesses.length > 0 AND
+ * current_multiplier > 1 — skip alone keeps mult at 1.0, so the cashout path
+ * must include a winning hi/lo guess first (card-rank heuristic, retry up to 5x).
+ */
+async function runHiloInteractionPass(
+  cdp: CdpClient,
+  consoleTracker: { errors: string[]; reset: () => void },
+): Promise<InteractionResult> {
+  const steps: Record<string, unknown> = {};
+  await cdp.send('Emulation.setDeviceMetricsOverride', {
+    width: 1024,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  consoleTracker.reset();
+  await cdp.send('Page.navigate', { url: `${BASE}/games/hilo` });
+  await sleep(2600);
+  await cdp.send('Runtime.evaluate', {
+    expression: `document.documentElement.setAttribute('data-theme', 'dark');`,
+  });
+  await sleep(300);
+
+  steps['stakeSet'] = await evaluate(cdp, setNativeValueScript('casino-stake-input', '1'));
+  steps['guessQueue'] = await evaluate(
+    cdp,
+    `(() => {
+      const el = document.querySelector('[data-testid="casino-hilo-guess-queue"]');
+      return el ? el.textContent : null;
+    })()`,
+  );
+  await sleep(200);
+
+  steps['liveMode'] = await evaluate(cdp, clickScript('casino-play-mode-live'));
+  await sleep(400);
+
+  let fpsDuringReplay: number | null = null;
+  const liveFpsWindowMs = 4500;
+
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    if (attempt > 1) {
+      await cdp.send('Page.navigate', { url: `${BASE}/games/hilo` });
+      await sleep(2600);
+      await cdp.send('Runtime.evaluate', {
+        expression: `document.documentElement.setAttribute('data-theme', 'dark');`,
+      });
+      await sleep(300);
+      steps[`liveRetry${attempt}`] = true;
+      steps['liveMode'] = await evaluate(cdp, clickScript('casino-play-mode-live'));
+      await sleep(400);
+    }
+
+    steps[`livePlaceBet${attempt}`] = await evaluate(cdp, clickScript('casino-live-place-bet'));
+    await sleep(2800);
+    steps[`liveAfterStart${attempt}`] = await evaluate(cdp, HILO_STAGE_STATE_SCRIPT);
+
+    const smartGuess = await evaluate<string>(cdp, HILO_SMART_GUESS_SCRIPT);
+    steps[`liveSmartGuess${attempt}`] = smartGuess;
+    await startFpsCounter(cdp);
+    steps[`liveGuess${attempt}`] = await evaluate(
+      cdp,
+      clickScript(`casino-hilo-guess-${smartGuess}`),
+    );
+    await sleep(1800);
+    steps[`afterSmartGuess${attempt}`] = await evaluate(cdp, HILO_STAGE_STATE_SCRIPT);
+
+    if (!hiloSessionActive(steps[`afterSmartGuess${attempt}`])) {
+      await stopFpsCounter(cdp, liveFpsWindowMs);
+      continue;
+    }
+
+    steps[`liveGuessSkip${attempt}`] = await evaluate(cdp, clickScript('casino-hilo-guess-skip'));
+    await sleep(1400);
+    steps[`afterSkip${attempt}`] = await evaluate(cdp, HILO_STAGE_STATE_SCRIPT);
+
+    if (!hiloSessionActive(steps[`afterSkip${attempt}`])) {
+      await stopFpsCounter(cdp, liveFpsWindowMs);
+      continue;
+    }
+
+    steps[`liveCashout${attempt}`] = await evaluate(cdp, clickScript('casino-hilo-live-cashout'));
+    await sleep(2500);
+    fpsDuringReplay = await stopFpsCounter(cdp, liveFpsWindowMs);
+    steps['liveResultText'] = await evaluate(cdp, HILO_STAGE_STATE_SCRIPT);
+    steps['liveCashoutSucceeded'] = hiloCashoutSettled(steps['liveResultText']);
+    steps['liveCashoutAttempt'] = attempt;
+    if (steps['liveCashoutSucceeded'] === true) break;
+  }
+
+  steps['errorBanner'] = await evaluate(
+    cdp,
+    `(() => { const el = document.querySelector('[data-testid="casino-error"]'); return el ? el.textContent : null; })()`,
+  );
+  if (steps['liveCashoutSucceeded'] === true) {
+    await captureDesktopScreenshot(cdp, 'casino-hilo-1024-dark-live-cashout.png');
+  }
+
+  // --- Oneshot bet→result (parity with Mines/Dice interaction captures) ---
+  await cdp.send('Page.navigate', { url: `${BASE}/games/hilo` });
+  await sleep(2600);
+  await cdp.send('Runtime.evaluate', {
+    expression: `document.documentElement.setAttribute('data-theme', 'dark');`,
+  });
+  await sleep(300);
+  steps['stakeSetOneshot'] = await evaluate(cdp, setNativeValueScript('casino-stake-input', '1'));
+  await sleep(200);
+  steps['prepareHash'] = await evaluate(cdp, clickScript('casino-prepare-hash'));
+  await sleep(1200);
+  steps['placeBet'] = await evaluate(cdp, clickScript('casino-place-bet'));
+  await sleep(1200);
+  steps['resultText'] = await evaluate(cdp, HILO_STAGE_STATE_SCRIPT);
+  steps['pfHashReady'] = await evaluate(
+    cdp,
+    `(() => { const el = document.querySelector('[data-testid="casino-pf-hash-status"]'); return el ? el.textContent : null; })()`,
+  );
+  await captureDesktopScreenshot(cdp, 'casino-hilo-1024-dark-bet-result.png');
+
+  const axe = await runAxeCheck(cdp);
+  return { gameCode: 'hilo', steps, fpsDuringReplay, axe, consoleErrors: [...consoleTracker.errors] };
+}
+
 async function runCasinoInteractionPass(
   cdp: CdpClient,
   gameCode: InteractionGameCode,
   consoleTracker: { errors: string[]; reset: () => void },
 ): Promise<InteractionResult> {
+  if (gameCode === 'hilo') {
+    return runHiloInteractionPass(cdp, consoleTracker);
+  }
+
   const steps: Record<string, unknown> = {};
   await cdp.send('Emulation.setDeviceMetricsOverride', {
     width: 1024,
@@ -714,17 +918,6 @@ async function runCasinoInteractionPass(
       setNativeValueScript('casino-selection-target', '50.00'),
     );
   }
-  if (gameCode === 'hilo') {
-    // Default oneshot selection pre-fills guesses:['higher'] (game-config.ts) — confirm
-    // the queue is visible before betting (phase1c-hilo stale-prefill audit hook).
-    steps['guessQueue'] = await evaluate(
-      cdp,
-      `(() => {
-        const el = document.querySelector('[data-testid="casino-hilo-guess-queue"]');
-        return el ? el.textContent : null;
-      })()`,
-    );
-  }
   if (gameCode === 'mines') {
     // Default oneshot selection pre-fills revealedCells:[0,1,2] (game-config.ts).
     steps['pickedCount'] = await evaluate(
@@ -743,17 +936,7 @@ async function runCasinoInteractionPass(
   // Start the real-FPS rAF counter *before* the bet click so replay animations
   // (crash curve 1.5–4s · dice roll-marker wobble ~480ms) are inside the window.
   if (gameCode === 'crash' || gameCode === 'dice') {
-    await cdp.send('Runtime.evaluate', {
-      expression: `
-        window.__phonaraFpsFrames = 0;
-        window.__phonaraFpsRunning = true;
-        (function tick() {
-          if (!window.__phonaraFpsRunning) return;
-          window.__phonaraFpsFrames++;
-          requestAnimationFrame(tick);
-        })();
-      `,
-    });
+    await startFpsCounter(cdp);
   }
 
   steps['placeBet'] = await evaluate(cdp, clickScript('casino-place-bet'));
@@ -762,20 +945,14 @@ async function runCasinoInteractionPass(
       ? 4500
       : gameCode === 'dice'
         ? 1200
-        : gameCode === 'hilo'
-          ? 1200
-          : gameCode === 'mines'
-            ? 2000
-            : 1800;
+        : gameCode === 'mines'
+          ? 2000
+          : 1800;
   await sleep(fpsWindowMs);
 
   let fpsDuringReplay: number | null = null;
   if (gameCode === 'crash' || gameCode === 'dice') {
-    const frames = await evaluate<number>(
-      cdp,
-      `(() => { window.__phonaraFpsRunning = false; return window.__phonaraFpsFrames; })()`,
-    );
-    fpsDuringReplay = Math.round((frames / fpsWindowMs) * 1000 * 10) / 10;
+    fpsDuringReplay = await stopFpsCounter(cdp, fpsWindowMs);
   }
 
   steps['resultText'] = await evaluate(cdp, casinoResultTextScript(gameCode));
@@ -788,16 +965,7 @@ async function runCasinoInteractionPass(
     `(() => { const el = document.querySelector('[data-testid="casino-error"]'); return el ? el.textContent : null; })()`,
   );
 
-  const shotDir = join(OUT, 'desktop');
-  await mkdir(shotDir, { recursive: true });
-  const shot = await cdp.send<{ data: string }>('Page.captureScreenshot', {
-    format: 'png',
-    fromSurface: true,
-  });
-  await writeFile(
-    join(shotDir, `casino-${gameCode}-1024-dark-bet-result.png`),
-    Buffer.from(shot.data, 'base64'),
-  );
+  await captureDesktopScreenshot(cdp, `casino-${gameCode}-1024-dark-bet-result.png`);
 
   const axe = await runAxeCheck(cdp);
 
@@ -986,6 +1154,20 @@ async function main(): Promise<void> {
         if (result.axe && result.axe.critical > 0) {
           axeCriticalFindings.push(
             `casino-${gameCode} (interaction): ${result.axe.critical} critical`,
+          );
+        }
+        if (gameCode === 'hilo' && result.steps['liveCashoutSucceeded'] !== true) {
+          axeCriticalFindings.push(
+            'casino-hilo (interaction): live hi/lo/skip→cash-out did not settle won:true',
+          );
+        }
+        if (
+          gameCode === 'hilo' &&
+          result.fpsDuringReplay !== null &&
+          result.fpsDuringReplay < 55
+        ) {
+          axeCriticalFindings.push(
+            `casino-hilo (interaction): FPS ${result.fpsDuringReplay} below 55 threshold`,
           );
         }
       }

@@ -1,13 +1,13 @@
 {
-  "startedAt": "2026-07-15T04:26:55.990Z",
-  "finishedAt": "2026-07-15T04:38:25.111Z",
+  "startedAt": "2026-07-15T13:53:03.285Z",
+  "finishedAt": "2026-07-15T13:54:24.791Z",
   "base": "http://127.0.0.1:3000",
   "engine": "chrome-cdp",
   "loggedIn": true,
   "note": "Logged in as local-trade-dev; auth-gated routes captured with a real session.",
   "counts": {
-    "png": 18,
-    "routes": 2,
+    "png": 11,
+    "routes": 1,
     "viewports": 4,
     "authRedirects": 0
   },
@@ -20,168 +20,6 @@
     "hover/landing-1280-dark-after-mousemove.png"
   ],
   "manifest": [
-    {
-      "file": "mobile/casino-mines-390-dark-01.png",
-      "pageId": "casino-mines",
-      "path": "/games/mines",
-      "viewport": "390",
-      "folder": "mobile",
-      "theme": "dark",
-      "scroll": "01_top",
-      "finalUrl": "http://127.0.0.1:3000/games/mines",
-      "auth": "auth",
-      "redirectedToLogin": false,
-      "bottomNavDisplay": "grid",
-      "bottomNavPolicyOk": true,
-      "axeCritical": null,
-      "axeSerious": null,
-      "consoleErrorCount": 0,
-      "consoleErrors": []
-    },
-    {
-      "file": "mobile/casino-mines-390-dark-02.png",
-      "pageId": "casino-mines",
-      "path": "/games/mines",
-      "viewport": "390",
-      "folder": "mobile",
-      "theme": "dark",
-      "scroll": "02_mid",
-      "finalUrl": "http://127.0.0.1:3000/games/mines",
-      "auth": "auth",
-      "redirectedToLogin": false,
-      "bottomNavDisplay": "grid",
-      "bottomNavPolicyOk": true,
-      "axeCritical": null,
-      "axeSerious": null,
-      "consoleErrorCount": 0,
-      "consoleErrors": []
-    },
-    {
-      "file": "mobile/casino-mines-390-dark-03.png",
-      "pageId": "casino-mines",
-      "path": "/games/mines",
-      "viewport": "390",
-      "folder": "mobile",
-      "theme": "dark",
-      "scroll": "03_end",
-      "finalUrl": "http://127.0.0.1:3000/games/mines",
-      "auth": "auth",
-      "redirectedToLogin": false,
-      "bottomNavDisplay": "grid",
-      "bottomNavPolicyOk": true,
-      "axeCritical": null,
-      "axeSerious": null,
-      "consoleErrorCount": 0,
-      "consoleErrors": []
-    },
-    {
-      "file": "desktop/casino-mines-1024-dark-01.png",
-      "pageId": "casino-mines",
-      "path": "/games/mines",
-      "viewport": "1024",
-      "folder": "desktop",
-      "theme": "dark",
-      "scroll": "01_top",
-      "finalUrl": "http://127.0.0.1:3000/games/mines",
-      "auth": "auth",
-      "redirectedToLogin": false,
-      "bottomNavDisplay": "none",
-      "bottomNavPolicyOk": true,
-      "axeCritical": 0,
-      "axeSerious": 0,
-      "consoleErrorCount": 0,
-      "consoleErrors": []
-    },
-    {
-      "file": "desktop/casino-mines-1024-dark-02.png",
-      "pageId": "casino-mines",
-      "path": "/games/mines",
-      "viewport": "1024",
-      "folder": "desktop",
-      "theme": "dark",
-      "scroll": "02_mid",
-      "finalUrl": "http://127.0.0.1:3000/games/mines",
-      "auth": "auth",
-      "redirectedToLogin": false,
-      "bottomNavDisplay": "none",
-      "bottomNavPolicyOk": true,
-      "axeCritical": null,
-      "axeSerious": null,
-      "consoleErrorCount": 0,
-      "consoleErrors": []
-    },
-    {
-      "file": "desktop/casino-mines-1024-dark-03.png",
-      "pageId": "casino-mines",
-      "path": "/games/mines",
-      "viewport": "1024",
-      "folder": "desktop",
-      "theme": "dark",
-      "scroll": "03_end",
-      "finalUrl": "http://127.0.0.1:3000/games/mines",
-      "auth": "auth",
-      "redirectedToLogin": false,
-      "bottomNavDisplay": "none",
-      "bottomNavPolicyOk": true,
-      "axeCritical": null,
-      "axeSerious": null,
-      "consoleErrorCount": 0,
-      "consoleErrors": []
-    },
-    {
-      "file": "desktop/casino-mines-2560-dark-01.png",
-      "pageId": "casino-mines",
-      "path": "/games/mines",
-      "viewport": "2560",
-      "folder": "desktop",
-      "theme": "dark",
-      "scroll": "01_top",
-      "finalUrl": "http://127.0.0.1:3000/games/mines",
-      "auth": "auth",
-      "redirectedToLogin": false,
-      "bottomNavDisplay": "none",
-      "bottomNavPolicyOk": true,
-      "axeCritical": null,
-      "axeSerious": null,
-      "consoleErrorCount": 0,
-      "consoleErrors": []
-    },
-    {
-      "file": "desktop/casino-mines-2560-dark-02.png",
-      "pageId": "casino-mines",
-      "path": "/games/mines",
-      "viewport": "2560",
-      "folder": "desktop",
-      "theme": "dark",
-      "scroll": "02_mid",
-      "finalUrl": "http://127.0.0.1:3000/games/mines",
-      "auth": "auth",
-      "redirectedToLogin": false,
-      "bottomNavDisplay": "none",
-      "bottomNavPolicyOk": true,
-      "axeCritical": null,
-      "axeSerious": null,
-      "consoleErrorCount": 0,
-      "consoleErrors": []
-    },
-    {
-      "file": "desktop/casino-mines-2560-dark-03.png",
-      "pageId": "casino-mines",
-      "path": "/games/mines",
-      "viewport": "2560",
-      "folder": "desktop",
-      "theme": "dark",
-      "scroll": "03_end",
-      "finalUrl": "http://127.0.0.1:3000/games/mines",
-      "auth": "auth",
-      "redirectedToLogin": false,
-      "bottomNavDisplay": "none",
-      "bottomNavPolicyOk": true,
-      "axeCritical": null,
-      "axeSerious": null,
-      "consoleErrorCount": 0,
-      "consoleErrors": []
-    },
     {
       "file": "mobile/casino-hilo-390-dark-01.png",
       "pageId": "casino-hilo",
@@ -347,53 +185,39 @@
   ],
   "interactions": [
     {
-      "gameCode": "mines",
-      "steps": {
-        "stakeSet": true,
-        "pickedCount": "3/22",
-        "prepareHash": {
-          "found": true,
-          "disabled": false
-        },
-        "placeBet": {
-          "found": true,
-          "disabled": false
-        },
-        "resultText": "{\"won\":\"true\",\"hitMine\":\"false\",\"phase\":\"settled\",\"mult\":\"1.47×\"}",
-        "pfHashReady": "준비 완료",
-        "errorBanner": null
-      },
-      "fpsDuringReplay": null,
-      "axe": {
-        "critical": 0,
-        "serious": 0,
-        "moderate": 3,
-        "minor": 0,
-        "violations": [
-          {
-            "id": "landmark-main-is-top-level",
-            "impact": "moderate",
-            "nodes": 1
-          },
-          {
-            "id": "landmark-no-duplicate-main",
-            "impact": "moderate",
-            "nodes": 1
-          },
-          {
-            "id": "landmark-unique",
-            "impact": "moderate",
-            "nodes": 1
-          }
-        ]
-      },
-      "consoleErrors": []
-    },
-    {
       "gameCode": "hilo",
       "steps": {
         "stakeSet": true,
         "guessQueue": "Higher",
+        "liveMode": {
+          "found": true,
+          "disabled": false
+        },
+        "livePlaceBet1": {
+          "found": true,
+          "disabled": false
+        },
+        "liveAfterStart1": "{\"won\":null,\"phase\":\"idle\",\"guessCount\":\"0\",\"card\":\"2\",\"mult\":\"현재 배수: 1.00×\"}",
+        "liveSmartGuess1": "higher",
+        "liveGuess1": {
+          "found": true,
+          "disabled": false
+        },
+        "afterSmartGuess1": "{\"won\":null,\"phase\":\"idle\",\"guessCount\":\"1\",\"card\":\"9\",\"mult\":\"현재 배수: 1.17×\"}",
+        "liveGuessSkip1": {
+          "found": true,
+          "disabled": false
+        },
+        "afterSkip1": "{\"won\":null,\"phase\":\"idle\",\"guessCount\":\"2\",\"card\":\"A\",\"mult\":\"현재 배수: 1.17×\"}",
+        "liveCashout1": {
+          "found": true,
+          "disabled": false
+        },
+        "liveResultText": "{\"won\":\"true\",\"phase\":\"settled\",\"guessCount\":\"2\",\"card\":\"A\",\"mult\":\"1.17×\"}",
+        "liveCashoutSucceeded": true,
+        "liveCashoutAttempt": 1,
+        "errorBanner": null,
+        "stakeSetOneshot": true,
         "prepareHash": {
           "found": true,
           "disabled": false
@@ -402,11 +226,10 @@
           "found": true,
           "disabled": false
         },
-        "resultText": "{\"won\":\"false\",\"phase\":\"settled\",\"card\":\"A\"}",
-        "pfHashReady": "준비 완료",
-        "errorBanner": null
+        "resultText": "{\"won\":\"true\",\"phase\":\"settled\",\"guessCount\":\"1\",\"card\":\"K\",\"mult\":\"1.60×\"}",
+        "pfHashReady": "준비 완료"
       },
-      "fpsDuringReplay": null,
+      "fpsDuringReplay": 76.9,
       "axe": {
         "critical": 0,
         "serious": 0,

@@ -164,6 +164,52 @@ export function hiloFlipStepMs(): number {
   return 280;
 }
 
+export type ParsedHiloProgressiveOutcome = {
+  cards: number[];
+  guesses: HiLoGuess[];
+  multiplier: number;
+  won: boolean;
+};
+
+/**
+ * Display-only parse of the E23 progressive/live `public_state` shape —
+ * `{cards, guesses, multiplier, lastCorrect, cashedOut?}`
+ * (`rpc_progressive_step`/`rpc_progressive_cashout`,
+ * `20260810000001_ew_e23_casino_live.sql`) — distinct from the one-shot RPC
+ * result shape `{cards, rounds, won}` that `parseHiloOutcome` handles above.
+ * Phase 1C functional QA fix: `HiloStage.playOutcome` previously only tried
+ * `parseHiloOutcome`, which returns null on this shape (no `rounds`/`won`
+ * keys) — the settle flip animation silently no-op'd for every live hilo
+ * round (bust, cash-out, or expiry).
+ *
+ * `won` is derived from `cashedOut === true` only: a busted step never sets
+ * `cashedOut` (settles with multiplier 0), and an expired session is forced
+ * to multiplier 0 without setting `cashedOut` either (its `lastCorrect` can
+ * still be stale-`true` from the last successful guess) — so `cashedOut ===
+ * true` is the only state where the round actually settled with payout >
+ * stake (`rpc_progressive_cashout` guards `current_multiplier > 1` before
+ * allowing it), matching what `CasinoGameShell.applyProgressiveResult`
+ * already treats as "won" for the settle presentation
+ * (`status === 'cashed_out' || Number(payout) > 0`).
+ */
+export function parseHiloProgressiveOutcome(
+  result: Record<string, unknown>,
+): ParsedHiloProgressiveOutcome | null {
+  const cards = asIntArray(result['cards']);
+  if (!cards || cards.length === 0) return null;
+  if (cards.some((c) => c < 1 || c > 13)) return null;
+  const rawGuesses = result['guesses'];
+  if (!Array.isArray(rawGuesses)) return null;
+  const guesses: HiLoGuess[] = [];
+  for (const g of rawGuesses) {
+    if (typeof g !== 'string' || !HILO_GUESSES.has(g as HiLoGuess)) return null;
+    guesses.push(g as HiLoGuess);
+  }
+  const multiplier = asFiniteNumber(result['multiplier']);
+  if (multiplier === null) return null;
+  return { cards, guesses, multiplier, won: result['cashedOut'] === true };
+}
+
 export function formatHiloRank(card: number): string {
   if (card === 1) return 'A';
   if (card === 11) return 'J';
@@ -208,5 +254,24 @@ export function assertCasinoGamesBatchBContractSync(): void {
   }
   if (formatHiloRank(1) !== 'A' || formatHiloRank(13) !== 'K') {
     throw new Error('casino-games-batch-b: rank format drift');
+  }
+  const hiloLive = parseHiloProgressiveOutcome({
+    cards: [7, 9],
+    guesses: ['higher'],
+    multiplier: '1.480000',
+    lastCorrect: true,
+  });
+  if (!hiloLive || hiloLive.won || hiloLive.guesses.length !== 1 || hiloLive.multiplier !== 1.48) {
+    throw new Error('casino-games-batch-b: hilo progressive parse drift');
+  }
+  const hiloLiveCashout = parseHiloProgressiveOutcome({
+    cards: [7, 9],
+    guesses: ['higher'],
+    multiplier: '1.480000',
+    lastCorrect: true,
+    cashedOut: true,
+  });
+  if (!hiloLiveCashout?.won) {
+    throw new Error('casino-games-batch-b: hilo progressive cashedOut->won drift');
   }
 }

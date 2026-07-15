@@ -606,6 +606,230 @@ describe('Mines live click-through (phase1c-mines)', () => {
   });
 });
 
+// phase1c-hilo functional QA — end-to-end click-through: live session start ->
+// per-guess hi/lo/skip -> mid-round cash-out / wrong-guess bust. Proves the
+// shell/stage wiring for the exact P0s this session found and fixed: (1)
+// handleLiveGuess never synced `selection` from the RPC's echoed public_state
+// (unlike handleLiveRevealCell above for mines) — a correct guess visibly did
+// nothing; (2) the oneshot `guesses: ['higher']` prefill (game-config.ts)
+// leaked into a fresh live session; (3) HiloStage.playOutcome only tried the
+// one-shot {cards, rounds, won} parser, which returns null on the live
+// {cards, guesses, multiplier, lastCorrect} shape — every live settle
+// silently skipped its flip animation (see parseHiloProgressiveOutcome doc).
+// Mirrors the Mines live click-through block above for its sibling game.
+describe('Hilo live click-through (phase1c-hilo)', () => {
+  function hiloSession(overrides: {
+    status?: string;
+    cards: number[];
+    guesses: string[];
+    multiplier: string;
+    lastCorrect?: boolean;
+    cashedOut?: boolean;
+    payout?: string;
+  }) {
+    return {
+      session_id: 'hilo-sess-1',
+      game: 'hilo' as const,
+      status: overrides.status ?? 'active',
+      currency: 'USDT',
+      stake: '10',
+      current_multiplier: overrides.multiplier,
+      public_state: {
+        cards: overrides.cards,
+        guesses: overrides.guesses,
+        multiplier: overrides.multiplier,
+        ...(overrides.lastCorrect !== undefined ? { lastCorrect: overrides.lastCorrect } : {}),
+        ...(overrides.cashedOut ? { cashedOut: true } : {}),
+      },
+      ...(overrides.payout !== undefined ? { payout: overrides.payout } : {}),
+    };
+  }
+
+  it('starting a live session clears the oneshot pre-filled guess instead of leaking a stale "1 guess" display, and syncs the server-assigned start card', async () => {
+    progressiveMock.startMutateAsync.mockResolvedValue(
+      hiloSession({ cards: [4], guesses: [], multiplier: '1.000000' }),
+    );
+    wrap(<CasinoGameShell gameCode="hilo" />);
+
+    // Oneshot default selection (game-config.ts) pre-fills guesses: ['higher'].
+    expect(screen.getByTestId('casino-hilo-stage')).toHaveAttribute('data-guess-count', '1');
+
+    fireEvent.click(screen.getByTestId('casino-play-mode-live'));
+    fireEvent.click(screen.getByTestId('casino-live-place-bet'));
+    await waitFor(() => expect(progressiveMock.startMutateAsync).toHaveBeenCalledTimes(1));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('casino-hilo-stage')).toHaveAttribute('data-guess-count', '0');
+    });
+    // Server-assigned startCard (client passed startCard: null) now shown —
+    // not left blank/stale from before the session started.
+    expect(screen.getByTestId('casino-hilo-card-hero')).toHaveTextContent('4');
+  });
+
+  it('hi/lo/skip — a live guess steps the session and updates the hero card + streak immediately (not a dead control)', async () => {
+    progressiveMock.startMutateAsync.mockResolvedValue(
+      hiloSession({ cards: [7], guesses: [], multiplier: '1.000000' }),
+    );
+    progressiveMock.stepMutateAsync.mockResolvedValue(
+      hiloSession({
+        cards: [7, 9],
+        guesses: ['higher'],
+        multiplier: '1.480000',
+        lastCorrect: true,
+      }),
+    );
+    wrap(<CasinoGameShell gameCode="hilo" />);
+
+    fireEvent.click(screen.getByTestId('casino-play-mode-live'));
+    fireEvent.click(screen.getByTestId('casino-live-place-bet'));
+    await waitFor(() => expect(progressiveMock.startMutateAsync).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByTestId('casino-hilo-card-hero')).toHaveTextContent('7'));
+
+    fireEvent.click(screen.getByTestId('casino-hilo-guess-higher'));
+    await waitFor(() => expect(progressiveMock.stepMutateAsync).toHaveBeenCalledTimes(1));
+    expect(progressiveMock.stepMutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sessionId: 'hilo-sess-1',
+        action: { guess: 'higher' },
+      }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('casino-hilo-card-hero')).toHaveTextContent('9');
+    });
+    expect(screen.getByTestId('casino-hilo-stage')).toHaveAttribute('data-guess-count', '1');
+    expect(screen.getByTestId('casino-hilo-live-mult')).toHaveTextContent('1.48×');
+  });
+
+  it('live skip — routes skip through progressive step and increments the streak without busting', async () => {
+    progressiveMock.startMutateAsync.mockResolvedValue(
+      hiloSession({ cards: [7], guesses: [], multiplier: '1.000000' }),
+    );
+    progressiveMock.stepMutateAsync.mockResolvedValue(
+      hiloSession({
+        cards: [7, 7],
+        guesses: ['skip'],
+        multiplier: '1.120000',
+        lastCorrect: true,
+      }),
+    );
+    wrap(<CasinoGameShell gameCode="hilo" />);
+
+    fireEvent.click(screen.getByTestId('casino-play-mode-live'));
+    fireEvent.click(screen.getByTestId('casino-live-place-bet'));
+    await waitFor(() => expect(progressiveMock.startMutateAsync).toHaveBeenCalledTimes(1));
+
+    fireEvent.click(screen.getByTestId('casino-hilo-guess-skip'));
+    await waitFor(() => expect(progressiveMock.stepMutateAsync).toHaveBeenCalledTimes(1));
+    expect(progressiveMock.stepMutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sessionId: 'hilo-sess-1',
+        action: { guess: 'skip' },
+      }),
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId('casino-hilo-stage')).toHaveAttribute('data-guess-count', '1');
+    });
+    expect(screen.getByTestId('casino-hilo-live-mult')).toHaveTextContent('1.12×');
+    expect(screen.getByTestId('casino-hilo-live-cashout')).toBeEnabled();
+  });
+
+  it('live cash-out — settles mid-round with the RPC-confirmed payout and hides the cash-out control', async () => {
+    progressiveMock.startMutateAsync.mockResolvedValue(
+      hiloSession({ cards: [7], guesses: [], multiplier: '1.000000' }),
+    );
+    progressiveMock.stepMutateAsync.mockResolvedValue(
+      hiloSession({
+        cards: [7, 9],
+        guesses: ['higher'],
+        multiplier: '1.480000',
+        lastCorrect: true,
+      }),
+    );
+    progressiveMock.cashoutMutateAsync.mockResolvedValue(
+      hiloSession({
+        status: 'cashed_out',
+        cards: [7, 9],
+        guesses: ['higher'],
+        multiplier: '1.480000',
+        lastCorrect: true,
+        cashedOut: true,
+        payout: '14.80',
+      }),
+    );
+    wrap(<CasinoGameShell gameCode="hilo" />);
+
+    fireEvent.click(screen.getByTestId('casino-play-mode-live'));
+    fireEvent.click(screen.getByTestId('casino-live-place-bet'));
+    await waitFor(() => expect(progressiveMock.startMutateAsync).toHaveBeenCalledTimes(1));
+    fireEvent.click(screen.getByTestId('casino-hilo-guess-higher'));
+    await waitFor(() => {
+      expect(screen.getByTestId('casino-hilo-card-hero')).toHaveTextContent('9');
+    });
+
+    fireEvent.click(screen.getByTestId('casino-hilo-live-cashout'));
+    await waitFor(() => expect(progressiveMock.cashoutMutateAsync).toHaveBeenCalledTimes(1));
+    expect(progressiveMock.cashoutMutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({ sessionId: 'hilo-sess-1' }),
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('casino-hilo-live-cashout')).not.toBeInTheDocument();
+    });
+    // The cash-out control disappears as soon as progressiveSession clears
+    // (fast); the stage's own flip settle is a separate, slightly slower
+    // async completion (non-reduced-motion real setTimeout tick) — wait for
+    // it explicitly rather than assuming it already landed.
+    await waitFor(() => {
+      expect(screen.getByTestId('casino-hilo-stage')).toHaveAttribute('data-won', 'true');
+    });
+    expect(screen.getByTestId('casino-hilo-round-mult')).toHaveTextContent('1.48×');
+  });
+
+  it('a wrong guess busts the live session — the losing card renders from the RPC-echoed cards, and the cash-out control disappears', async () => {
+    progressiveMock.startMutateAsync.mockResolvedValue(
+      hiloSession({ cards: [7], guesses: [], multiplier: '1.000000' }),
+    );
+    progressiveMock.stepMutateAsync
+      .mockResolvedValueOnce(
+        hiloSession({
+          cards: [7, 9],
+          guesses: ['higher'],
+          multiplier: '1.480000',
+          lastCorrect: true,
+        }),
+      )
+      .mockResolvedValueOnce(
+        hiloSession({
+          status: 'busted',
+          cards: [7, 9, 4],
+          guesses: ['higher', 'higher'],
+          multiplier: '0.000000',
+          lastCorrect: false,
+        }),
+      );
+    wrap(<CasinoGameShell gameCode="hilo" />);
+
+    fireEvent.click(screen.getByTestId('casino-play-mode-live'));
+    fireEvent.click(screen.getByTestId('casino-live-place-bet'));
+    await waitFor(() => expect(progressiveMock.startMutateAsync).toHaveBeenCalledTimes(1));
+
+    // First guess — correct, session stays active.
+    fireEvent.click(screen.getByTestId('casino-hilo-guess-higher'));
+    await waitFor(() => {
+      expect(screen.getByTestId('casino-hilo-card-hero')).toHaveTextContent('9');
+    });
+
+    // Second guess — wrong, busts the session.
+    fireEvent.click(screen.getByTestId('casino-hilo-guess-higher'));
+    await waitFor(() => {
+      expect(screen.getByTestId('casino-hilo-stage')).toHaveAttribute('data-won', 'false');
+    });
+    expect(screen.getByTestId('casino-hilo-card-hero')).toHaveTextContent('4');
+    expect(screen.queryByTestId('casino-hilo-live-cashout')).not.toBeInTheDocument();
+  });
+});
+
 describe('WinTierOverlay (p10-casino-replay-and-infra)', () => {
   it('shows Skip for big tier and calls onSkip', () => {
     const onSkip = vi.fn();
