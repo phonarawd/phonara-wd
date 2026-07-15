@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -213,23 +213,48 @@ describe('EarnHomePage', () => {
     expect(screen.getByTestId('earn-home-loading')).toBeInTheDocument();
   });
 
-  it('renders hub status, next action, ambient ticker, and entry grid', () => {
+  it('renders progressive Fold1–5 with Fold3 collapsed by default', () => {
     renderPage();
 
     expect(screen.getByTestId('earn-home-page')).toBeInTheDocument();
-
+    expect(screen.getByTestId('earn-home-page')).toHaveAttribute(
+      'data-signature',
+      'greeting-day-flow',
+    );
+    expect(screen.getByTestId('earn-home-greeting')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-signature-flow')).toHaveAttribute(
+      'data-flow-order',
+      'reward,tasks,market,events',
+    );
+    expect(screen.getByTestId('earn-home-flow-market')).toHaveAttribute('href', '/trade');
+    expect(screen.getByTestId('earn-home-fold1')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-tier-card')).toBeInTheDocument();
-
-    expect(screen.getByTestId('earn-home-catalog-sum')).toHaveTextContent('+12,500P');
-
+    expect(screen.getByTestId('earn-home-tier-xp')).toHaveAttribute('data-count-up', 'true');
+    expect(screen.getByTestId('earn-home-tier-xp')).toHaveTextContent('12,000 XP');
     expect(screen.getByTestId('earn-home-next-action')).toBeInTheDocument();
 
-    expect(screen.getByTestId('earn-home-activity-ticker')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-fold2')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-money-fold-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-catalog-sum')).toHaveTextContent('+12,500P');
 
+    expect(screen.getByTestId('earn-home-fold3')).toBeInTheDocument();
+    expect(screen.queryByTestId('earn-home-insights-fold-panel')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('earn-home-activity-ticker')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('earn-home-today-opportunity')).not.toBeInTheDocument();
+
+    expect(screen.getByTestId('earn-home-fold4')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-mission-daily-quiz')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-mission-daily-quiz')).toHaveAttribute(
+      'href',
+      '/home/missions',
+    );
+    expect(screen.getByTestId('earn-home-missions-view-all')).toHaveAttribute(
+      'href',
+      '/home/missions',
+    );
 
+    expect(screen.getByTestId('earn-home-fold5')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-entry-missions')).toBeInTheDocument();
-
     expect(screen.getByTestId('earn-home-entry-cta-wallet')).toHaveAttribute('href', '/wallet');
 
     expect(screen.getByTestId('earn-home-next-action-cta')).toHaveAttribute(
@@ -238,17 +263,26 @@ describe('EarnHomePage', () => {
     );
   });
 
-  it('shows zero-issuance reward ticket counts with honest note', () => {
+  it('expands Fold3 to show today, season, trust, and ambient ticker', () => {
     renderPage();
+
+    fireEvent.click(screen.getByTestId('earn-home-insights-fold-toggle'));
+
+    expect(screen.getByTestId('earn-home-insights-fold-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-activity-ticker')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-today-opportunity')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-season-card')).toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-trust-card')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-reward-tickets')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-discount-tickets')).toHaveTextContent('0');
     expect(screen.getByTestId('earn-home-free-trade-tickets')).toHaveTextContent('0');
     expect(screen.getByText('earn.home.tickets.issuanceNote')).toBeInTheDocument();
   });
 
-  it('hides ambient ticker when live proof mode is active', () => {
+  it('hides ambient ticker when live proof mode is active even after Fold3 expand', () => {
     renderPage(makeEngine({ useAmbientTicker: false }));
 
+    fireEvent.click(screen.getByTestId('earn-home-insights-fold-toggle'));
     expect(screen.queryByTestId('earn-home-activity-ticker')).not.toBeInTheDocument();
   });
 });

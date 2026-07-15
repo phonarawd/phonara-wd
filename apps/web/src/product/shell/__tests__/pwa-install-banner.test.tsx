@@ -73,4 +73,40 @@ describe('PwaInstallBanner', () => {
 
     expect(screen.queryByTestId('pwa-install-banner')).toBeNull();
   });
+
+  it('ZA-10: uses bottom-nav clearance on AppShell routes, floating bottom otherwise', () => {
+    window.sessionStorage.setItem('pwa.install.banner.nudge', '1');
+
+    render(
+      <I18nProvider>
+        <PwaInstallBanner />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('pwa-install-banner')).toHaveAttribute(
+      'data-position',
+      'above-bottom-nav',
+    );
+  });
+
+  it('ZA-10: floats above bottom-4 on a route without BottomNav (/tier)', () => {
+    window.sessionStorage.setItem('pwa.install.banner.nudge', '1');
+    useRouterStateMock.mockImplementation(
+      (opts?: { select?: (s: { location: { pathname: string } }) => unknown }) =>
+        opts?.select?.({ location: { pathname: '/tier' } }) ?? {
+          location: { pathname: '/tier' },
+        },
+    );
+
+    render(
+      <I18nProvider>
+        <PwaInstallBanner />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('pwa-install-banner')).toHaveAttribute(
+      'data-position',
+      'floating-bottom',
+    );
+  });
 });

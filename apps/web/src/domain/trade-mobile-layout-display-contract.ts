@@ -35,6 +35,13 @@ export const TRADE_DESK_MOBILE_TAB_TOUCH_MIN_WIDTH_PX = 44 as const;
 /** Horizontal swipe threshold — chart↔trade gesture assist only (P2-B). */
 export const TRADE_DESK_MOBILE_SWIPE_MIN_DELTA_PX = 48 as const;
 
+/**
+ * Chart canvas owns horizontal pan/pinch — tab swipe must ignore pointers that
+ * start inside this owner (Binance/Bybit pattern · chart > tab assist).
+ */
+export const TRADE_CHART_GESTURE_OWNER_ATTR = 'data-chart-gesture-owner' as const;
+export const TRADE_CHART_GESTURE_OWNER_SELECTOR = `[${TRADE_CHART_GESTURE_OWNER_ATTR}]` as const;
+
 /** Adjacent tabs that accept horizontal swipe (tabs remain primary IA). */
 export const TRADE_DESK_MOBILE_SWIPE_TAB_IDS = ['chart', 'trade'] as const;
 

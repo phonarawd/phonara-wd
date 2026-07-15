@@ -1,0 +1,314 @@
+{
+  "measuredAt": "2026-07-13T18:41:42.399Z",
+  "sloGzipKb": 450,
+  "initialJsGzipKb": 394,
+  "initialCssGzipKb": 15.98,
+  "underSlo": true,
+  "assetCount": 38,
+  "assets": [
+    {
+      "href": "/assets/i18n-BAKg4cKe.js",
+      "name": "i18n-BAKg4cKe.js",
+      "kind": "js",
+      "rawBytes": 534668,
+      "gzipBytes": 144265,
+      "gzipKb": 140.88
+    },
+    {
+      "href": "/assets/index-DJr2aGEN.js",
+      "name": "index-DJr2aGEN.js",
+      "kind": "js",
+      "rawBytes": 464599,
+      "gzipBytes": 137439,
+      "gzipKb": 134.22
+    },
+    {
+      "href": "/assets/supabase-CouPq6Wy.js",
+      "name": "supabase-CouPq6Wy.js",
+      "kind": "js",
+      "rawBytes": 269569,
+      "gzipBytes": 68256,
+      "gzipKb": 66.66
+    },
+    {
+      "href": "/assets/index-DC8nn1Xe.css",
+      "name": "index-DC8nn1Xe.css",
+      "kind": "css",
+      "rawBytes": 98816,
+      "gzipBytes": 16367,
+      "gzipKb": 15.98
+    },
+    {
+      "href": "/assets/dist-B3j2_W66.js",
+      "name": "dist-B3j2_W66.js",
+      "kind": "js",
+      "rawBytes": 32867,
+      "gzipBytes": 13038,
+      "gzipKb": 12.73
+    },
+    {
+      "href": "/assets/casino-lobby-display-contract-DSD5yWdg.js",
+      "name": "casino-lobby-display-contract-DSD5yWdg.js",
+      "kind": "js",
+      "rawBytes": 17161,
+      "gzipBytes": 6120,
+      "gzipKb": 5.98
+    },
+    {
+      "href": "/assets/es2015-Bf4IRA01.js",
+      "name": "es2015-Bf4IRA01.js",
+      "kind": "js",
+      "rawBytes": 15600,
+      "gzipBytes": 5966,
+      "gzipKb": 5.83
+    },
+    {
+      "href": "/assets/ClientOnly-JFkbFcxz.js",
+      "name": "ClientOnly-JFkbFcxz.js",
+      "kind": "js",
+      "rawBytes": 13219,
+      "gzipBytes": 4620,
+      "gzipKb": 4.51
+    },
+    {
+      "href": "/assets/jsx-runtime-BWRPWl8p.js",
+      "name": "jsx-runtime-BWRPWl8p.js",
+      "kind": "js",
+      "rawBytes": 7888,
+      "gzipBytes": 3005,
+      "gzipKb": 2.93
+    },
+    {
+      "href": "/assets/link-iSbOs1Bf.js",
+      "name": "link-iSbOs1Bf.js",
+      "kind": "js",
+      "rawBytes": 4520,
+      "gzipBytes": 2195,
+      "gzipKb": 2.14
+    },
+    {
+      "href": "/assets/useStore-DapjPFOS.js",
+      "name": "useStore-DapjPFOS.js",
+      "kind": "js",
+      "rawBytes": 5206,
+      "gzipBytes": 2183,
+      "gzipKb": 2.13
+    },
+    {
+      "href": "/assets/dist-DkRd7ivb.js",
+      "name": "dist-DkRd7ivb.js",
+      "kind": "js",
+      "rawBytes": 5275,
+      "gzipBytes": 1872,
+      "gzipKb": 1.83
+    },
+    {
+      "href": "/assets/fiat-reference-display-contract-Rs2LvxGu.js",
+      "name": "fiat-reference-display-contract-Rs2LvxGu.js",
+      "kind": "js",
+      "rawBytes": 4137,
+      "gzipBytes": 1708,
+      "gzipKb": 1.67
+    },
+    {
+      "href": "/assets/dist-BrFTOyES.js",
+      "name": "dist-BrFTOyES.js",
+      "kind": "js",
+      "rawBytes": 3010,
+      "gzipBytes": 1437,
+      "gzipKb": 1.4
+    },
+    {
+      "href": "/assets/notifications-center-display-contract-ykT-yLmT.js",
+      "name": "notifications-center-display-contract-ykT-yLmT.js",
+      "kind": "js",
+      "rawBytes": 4771,
+      "gzipBytes": 1272,
+      "gzipKb": 1.24
+    },
+    {
+      "href": "/assets/dist-B_U2lcEM.js",
+      "name": "dist-B_U2lcEM.js",
+      "kind": "js",
+      "rawBytes": 2692,
+      "gzipBytes": 1171,
+      "gzipKb": 1.14
+    },
+    {
+      "href": "/assets/dist-C3rU1ncy.js",
+      "name": "dist-C3rU1ncy.js",
+      "kind": "js",
+      "rawBytes": 2471,
+      "gzipBytes": 1117,
+      "gzipKb": 1.09
+    },
+    {
+      "href": "/assets/referral-hub-display-contract-DFD-6KQg.js",
+      "name": "referral-hub-display-contract-DFD-6KQg.js",
+      "kind": "js",
+      "rawBytes": 1386,
+      "gzipBytes": 721,
+      "gzipKb": 0.7
+    },
+    {
+      "href": "/assets/settings-notifications-display-contract-2Ghgztk6.js",
+      "name": "settings-notifications-display-contract-2Ghgztk6.js",
+      "kind": "js",
+      "rawBytes": 2612,
+      "gzipBytes": 698,
+      "gzipKb": 0.68
+    },
+    {
+      "href": "/assets/preload-helper-zJ_50EbN.js",
+      "name": "preload-helper-zJ_50EbN.js",
+      "kind": "js",
+      "rawBytes": 1193,
+      "gzipBytes": 683,
+      "gzipKb": 0.67
+    },
+    {
+      "href": "/assets/earn-static-missions-C7MR-S4y.js",
+      "name": "earn-static-missions-C7MR-S4y.js",
+      "kind": "js",
+      "rawBytes": 3548,
+      "gzipBytes": 608,
+      "gzipKb": 0.59
+    },
+    {
+      "href": "/assets/notifications-pwa-display-contract-Wq1jGNsU.js",
+      "name": "notifications-pwa-display-contract-Wq1jGNsU.js",
+      "kind": "js",
+      "rawBytes": 1338,
+      "gzipBytes": 576,
+      "gzipKb": 0.56
+    },
+    {
+      "href": "/assets/tslib.es6-Tae09705.js",
+      "name": "tslib.es6-Tae09705.js",
+      "kind": "js",
+      "rawBytes": 1069,
+      "gzipBytes": 525,
+      "gzipKb": 0.51
+    },
+    {
+      "href": "/assets/chunk-QTnfLwEv.js",
+      "name": "chunk-QTnfLwEv.js",
+      "kind": "js",
+      "rawBytes": 694,
+      "gzipBytes": 423,
+      "gzipKb": 0.41
+    },
+    {
+      "href": "/assets/launch-gates-BnnXiqvo.js",
+      "name": "launch-gates-BnnXiqvo.js",
+      "kind": "js",
+      "rawBytes": 899,
+      "gzipBytes": 420,
+      "gzipKb": 0.41
+    },
+    {
+      "href": "/assets/support-hub-display-contract-BcNUADSu.js",
+      "name": "support-hub-display-contract-BcNUADSu.js",
+      "kind": "js",
+      "rawBytes": 702,
+      "gzipBytes": 404,
+      "gzipKb": 0.39
+    },
+    {
+      "href": "/assets/utils-ltQ4nZqn.js",
+      "name": "utils-ltQ4nZqn.js",
+      "kind": "js",
+      "rawBytes": 639,
+      "gzipBytes": 380,
+      "gzipKb": 0.37
+    },
+    {
+      "href": "/assets/unified-tier-display-contract-BZQCepn0.js",
+      "name": "unified-tier-display-contract-BZQCepn0.js",
+      "kind": "js",
+      "rawBytes": 596,
+      "gzipBytes": 369,
+      "gzipKb": 0.36
+    },
+    {
+      "href": "/schema.webapplication.json",
+      "name": "schema.webapplication.json",
+      "kind": "js",
+      "rawBytes": 490,
+      "gzipBytes": 343,
+      "gzipKb": 0.33
+    },
+    {
+      "href": "/assets/redirect-CTDpd8-N.js",
+      "name": "redirect-CTDpd8-N.js",
+      "kind": "js",
+      "rawBytes": 494,
+      "gzipBytes": 310,
+      "gzipKb": 0.3
+    },
+    {
+      "href": "/assets/platform-narrative-display-contract-C1xLYxxE.js",
+      "name": "platform-narrative-display-contract-C1xLYxxE.js",
+      "kind": "js",
+      "rawBytes": 673,
+      "gzipBytes": 272,
+      "gzipKb": 0.27
+    },
+    {
+      "href": "/assets/settings-api-keys-display-contract-CHNiSrgU.js",
+      "name": "settings-api-keys-display-contract-CHNiSrgU.js",
+      "kind": "js",
+      "rawBytes": 410,
+      "gzipBytes": 231,
+      "gzipKb": 0.23
+    },
+    {
+      "href": "/assets/announcements-display-contract-xW_iINQ0.js",
+      "name": "announcements-display-contract-xW_iINQ0.js",
+      "kind": "js",
+      "rawBytes": 256,
+      "gzipBytes": 179,
+      "gzipKb": 0.17
+    },
+    {
+      "href": "/assets/useRouter-BVbs5dw0.js",
+      "name": "useRouter-BVbs5dw0.js",
+      "kind": "js",
+      "rawBytes": 184,
+      "gzipBytes": 158,
+      "gzipKb": 0.15
+    },
+    {
+      "href": "/assets/affiliate-partner-display-contract-d9oNIzeR.js",
+      "name": "affiliate-partner-display-contract-d9oNIzeR.js",
+      "kind": "js",
+      "rawBytes": 161,
+      "gzipBytes": 147,
+      "gzipKb": 0.14
+    },
+    {
+      "href": "/assets/matchContext-DQSwzIcl.js",
+      "name": "matchContext-DQSwzIcl.js",
+      "kind": "js",
+      "rawBytes": 175,
+      "gzipBytes": 146,
+      "gzipKb": 0.14
+    },
+    {
+      "href": "/assets/tournaments-pf-admin-display-contract-9KVSSj9s.js",
+      "name": "tournaments-pf-admin-display-contract-9KVSSj9s.js",
+      "kind": "js",
+      "rawBytes": 123,
+      "gzipBytes": 116,
+      "gzipKb": 0.11
+    },
+    {
+      "href": "/assets/invariant-DEEwAagU.js",
+      "name": "invariant-DEEwAagU.js",
+      "kind": "js",
+      "rawBytes": 60,
+      "gzipBytes": 80,
+      "gzipKb": 0.08
+    }
+  ]
+}

@@ -96,19 +96,30 @@ export function isProtectedBranch(branch: string): boolean {
   return branch === 'main' || branch === 'master';
 }
 
+/** Feature branches where unfinished WIP checkpoints are allowed. */
+export function isFeatureBranch(branch: string): boolean {
+  if (isProtectedBranch(branch)) return false;
+  return (
+    branch.startsWith('phase-r/') || branch.startsWith('wip/') || branch.startsWith('closeout/')
+  );
+}
+
 export function defaultWipBranchName(topic?: string): string {
   const slug =
     topic
       ?.trim()
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '') || 'trade-terminal-surfaces';
-  return `wip/${slug}`;
+      .replace(/^-|-$/g, '') || 'phase-r-slice';
+  const date = new Date().toISOString().slice(0, 10);
+  return `phase-r/${slug}-${date}`;
 }
 
 export function assertOnWipBranch(branch: string): void {
-  if (isProtectedBranch(branch)) {
-    process.stderr.write(`[wip] FAIL: protected branch "${branch}". Run: bun run wip:branch\n`);
+  if (!isFeatureBranch(branch)) {
+    process.stderr.write(
+      `[wip] FAIL: protected or unknown branch "${branch}". Run: bun run wip:branch -- "<topic>"\n`,
+    );
     process.exit(1);
   }
 }

@@ -1,28 +1,35 @@
 import { useEffect } from 'react';
+import { Link } from '@tanstack/react-router';
 
-import {
-  SPORTS_VIP_DEFER_REASON_KEY,
-  SPORTS_VIP_ENGINE_TODO,
-  SPORTS_VIP_UI_UNLOCK_TODO,
-} from '@/domain/dead-controls-display-contract';
+import { isSportsLiveInPlayStatus } from '@/domain/sports-live-surface-display-contract';
 import {
   SPORTS_LEAGUE_FILTER_OPTIONS,
+  resolveSportsLeagueLabelKey,
   type SportsLeagueFilter,
   type SportsPageMode,
 } from '@/domain/sports-page-display-contract';
+import { shouldShowSportsIngestOfflineBanner } from '@/domain/sports-odds-freshness-display-contract';
+import {
+  canBrowseSportsVipMarkets,
+  SPORTS_RULES_SEO_TITLE_KEY,
+  SPORTS_VIP_SEO_TITLE_KEY,
+} from '@/domain/sports-rules-and-vip-display-contract';
 import { useSportsPageController } from '@/features/sports/use-sports-page-controller';
 import { Button } from '@/product/primitives/button';
-import { Card, CardBody, CardHeader, CardTitle } from '@/product/primitives/card';
 import { Skeleton } from '@/product/primitives/skeleton';
 import { cn } from '@/product/primitives/lib/cn';
 
 import { SportsBetSlipPanel } from './sports-bet-slip-panel';
 import { SportsFixtureBoard } from './sports-fixture-board';
+import { SportsFixtureMarketsPanel } from './sports-fixture-markets-panel';
+import { SportsLiveInPlayBanner } from './sports-live-inplay-banner';
 import { SportsMyBetsPanel } from './sports-my-bets-panel';
-import { EmptyState } from '@/product/primitives/empty-state';
+import { SportsRulesPanel } from './sports-rules-panel';
+import { SportsVipStubPanel } from './sports-vip-stub-panel';
 
 export type SportsPageProps = {
   mode?: SportsPageMode;
+  fixtureId?: string;
 };
 
 function SportsLoadingShell() {
@@ -68,47 +75,22 @@ function SportsLeagueRail({
   );
 }
 
-function SportsRulesPanel({ t }: { t: ReturnType<typeof useSportsPageController>['t'] }) {
-  return (
-    <Card data-testid="sports-rules-panel">
-      <CardHeader>
-        <CardTitle>{t('sports.subnav.rules')}</CardTitle>
-      </CardHeader>
-      <CardBody className="text-foreground-muted space-y-2 text-sm leading-relaxed">
-        <p className="m-0">{t('sports.fixture.settlementNotice.finished')}</p>
-        <p className="m-0">{t('sports.filter.display_only')}</p>
-      </CardBody>
-    </Card>
-  );
-}
-
-function SportsVipDeferPanel({ t }: { t: ReturnType<typeof useSportsPageController>['t'] }) {
-  return (
-    <div
-      data-testid="sports-vip-defer"
-      data-engine-todo={SPORTS_VIP_ENGINE_TODO}
-      data-ui-unlock-todo={SPORTS_VIP_UI_UNLOCK_TODO}
-    >
-      <EmptyState
-        title={t('sports.vip.defer.title')}
-        description={t(SPORTS_VIP_DEFER_REASON_KEY)}
-        actionLabel={t('sports.subnav.home')}
-        onAction={() => {
-          window.location.assign('/sports');
-        }}
-      />
-    </div>
-  );
-}
-
 /** Canonical `/sports/**` sportsbook — fixtures · slip · dual stake currency (P10). */
-export function SportsPage({ mode = 'home' }: SportsPageProps) {
-  const engine = useSportsPageController(mode);
+export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
+  const engine = useSportsPageController(mode, fixtureId);
   const { t, loading, mode: pageMode } = engine;
 
   useEffect(() => {
+    if (pageMode === 'rules') {
+      document.title = t(SPORTS_RULES_SEO_TITLE_KEY);
+      return;
+    }
+    if (pageMode === 'vip') {
+      document.title = t(SPORTS_VIP_SEO_TITLE_KEY);
+      return;
+    }
     document.title = t('seo.sports.title');
-  }, [t]);
+  }, [pageMode, t]);
 
   if (loading) {
     return <SportsLoadingShell />;
@@ -117,7 +99,15 @@ export function SportsPage({ mode = 'home' }: SportsPageProps) {
   const showMyBets = pageMode === 'my-bets';
   const showRules = pageMode === 'rules';
   const showVip = pageMode === 'vip';
-  const showBoard = !showMyBets && !showRules && !showVip;
+  const showFixture = pageMode === 'fixture';
+  const showLive = pageMode === 'live';
+  const showListBoard = !showMyBets && !showRules && !showVip && !showFixture;
+  const vipBrowseOpen = showVip && canBrowseSportsVipMarkets();
+  const showSlip = showListBoard || showFixture || vipBrowseOpen;
+  const showLeagueRail = showListBoard;
+
+  const fixtureHome = engine.activeFixture?.home_name ?? t('sports.market.home');
+  const fixtureAway = engine.activeFixture?.away_name ?? t('sports.market.away');
 
   return (
     <div
@@ -126,25 +116,67 @@ export function SportsPage({ mode = 'home' }: SportsPageProps) {
       )}
       data-testid="sports-page"
       data-sports-mode={pageMode}
+      data-fixture-id={engine.fixtureId ?? undefined}
     >
       <header className="lg:col-span-3 space-y-1">
         <p className="text-accent m-0 text-xs font-semibold tracking-wide uppercase">
           {t('sports.hero.eyebrow')}
         </p>
         <h1 className="text-foreground m-0 text-2xl font-semibold md:text-3xl">
-          {t('sports.hero.title')}
+          {showFixture
+            ? `${fixtureHome} ${t('sports.fixture.vs')} ${fixtureAway}`
+            : showRules
+              ? t('sports.subnav.rules')
+              : showVip
+                ? t('sports.subnav.vip')
+                : t('sports.hero.title')}
         </h1>
-        <p className="text-foreground-muted m-0 text-sm leading-relaxed">{t('sports.hero.body')}</p>
+        <p className="text-foreground-muted m-0 text-sm leading-relaxed">
+          {showFixture
+            ? engine.activeFixture
+              ? t(resolveSportsLeagueLabelKey(engine.activeFixture.league_code))
+              : t('sports.fixture.detailFallback')
+            : t('sports.hero.body')}
+        </p>
+        {showFixture ? (
+          <Link
+            to="/sports/prematch"
+            className="text-accent m-0 inline-flex text-sm font-medium no-underline"
+            data-testid="sports-fixture-back-prematch"
+          >
+            {t('sports.subnav.prematch')}
+          </Link>
+        ) : null}
       </header>
 
-      {showBoard ? (
+      {showLeagueRail ? (
         <aside className="hidden lg:block" data-testid="sports-left-rail">
           <SportsLeagueRail value={engine.leagueFilter} onChange={engine.setLeagueFilter} t={t} />
         </aside>
       ) : null}
 
-      <main className="min-w-0 flex flex-col gap-4">
-        {showBoard ? (
+      <main className={cn('min-w-0 flex flex-col gap-4', !showLeagueRail && 'lg:col-start-2')}>
+        {showLive ? (
+          <SportsLiveInPlayBanner
+            state={engine.activeLiveState}
+            showDelayNotice
+            realtimeConnected={engine.realtimeConnected}
+            stale={engine.liveStatesStale && !engine.liveStatesLoading}
+            t={t}
+          />
+        ) : null}
+
+        {showFixture && engine.activeLiveState ? (
+          <SportsLiveInPlayBanner
+            state={engine.activeLiveState}
+            showDelayNotice={isSportsLiveInPlayStatus(engine.activeLiveState.status)}
+            realtimeConnected={engine.realtimeConnected}
+            stale={engine.liveStatesStale && !engine.liveStatesLoading}
+            t={t}
+          />
+        ) : null}
+
+        {showListBoard ? (
           <>
             <div className="lg:hidden">
               <SportsLeagueRail
@@ -155,12 +187,36 @@ export function SportsPage({ mode = 'home' }: SportsPageProps) {
             </div>
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-foreground m-0 text-base font-semibold">
-                {t('sports.board.title')}
+                {showLive ? t('sports.live.boardTitle') : t('sports.board.title')}
               </h2>
               <span className="text-foreground-muted text-xs tabular-nums">
                 {t('sports.board.count', { count: engine.fixtures.length })}
               </span>
             </div>
+
+            {shouldShowSportsIngestOfflineBanner({
+              hasFixtures: engine.fixtures.length > 0,
+              ingestHealthGreen: engine.oddsIngestHealthGreen,
+            }) ? (
+              <div
+                role="status"
+                data-testid="sports-board-ingest-offline-banner"
+                className="border-line bg-surface-raised flex items-start gap-2 rounded-lg border px-3 py-2.5"
+              >
+                <div className="min-w-0">
+                  <p
+                    className="text-foreground m-0 text-sm font-semibold"
+                    data-testid="sports-board-ingest-offline-banner-title"
+                  >
+                    {t('sports.board.ingestOfflineBanner.title')}
+                  </p>
+                  <p className="text-foreground-muted m-0 mt-0.5 text-xs leading-relaxed">
+                    {t('sports.board.ingestOfflineBanner.body')}
+                  </p>
+                </div>
+              </div>
+            ) : null}
+
             <SportsFixtureBoard
               fixtures={engine.fixtures}
               loading={engine.fixturesLoading}
@@ -169,19 +225,50 @@ export function SportsPage({ mode = 'home' }: SportsPageProps) {
               sportsBlocked={engine.sportsBlocked}
               onToggleSelection={engine.toggleSelection}
               onRetry={engine.refreshFixtures}
+              liveStatesByFixtureId={showLive ? engine.liveStatesByFixtureId : undefined}
               t={t}
             />
           </>
+        ) : null}
+
+        {showFixture && engine.fixtureId ? (
+          <SportsFixtureMarketsPanel
+            fixtureId={engine.fixtureId}
+            homeName={fixtureHome}
+            awayName={fixtureAway}
+            markets={engine.fixtureMarkets}
+            loading={engine.fixtureMarketsLoading}
+            errorKey={engine.fixtureMarketsErrorKey}
+            selectedOutcomeIds={engine.selectedOutcomeIds}
+            sportsBlocked={engine.sportsBlocked}
+            onToggleSelection={engine.toggleSelection}
+            onRetry={engine.refreshFixtureMarkets}
+            isLive={Boolean(
+              engine.activeLiveState && isSportsLiveInPlayStatus(engine.activeLiveState.status),
+            )}
+            t={t}
+          />
         ) : null}
 
         {showMyBets ? (
           <SportsMyBetsPanel bets={engine.myBets} loading={engine.myBetsLoading} t={t} />
         ) : null}
         {showRules ? <SportsRulesPanel t={t} /> : null}
-        {showVip ? <SportsVipDeferPanel t={t} /> : null}
+        {showVip ? (
+          <SportsVipStubPanel
+            t={t}
+            fixtures={engine.fixtures}
+            fixturesLoading={engine.fixturesLoading}
+            fixturesErrorKey={engine.fixturesErrorKey}
+            selectedOutcomeIds={engine.selectedOutcomeIds}
+            sportsBlocked={engine.sportsBlocked}
+            onToggleSelection={engine.toggleSelection}
+            onRetryFixtures={engine.refreshFixtures}
+          />
+        ) : null}
       </main>
 
-      {showBoard ? (
+      {showSlip ? (
         <aside className="min-w-0" data-testid="sports-slip-rail">
           <SportsBetSlipPanel
             slip={engine.slip}

@@ -5,11 +5,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { MessageKey } from '@phonara/i18n';
 
 import { useAuth } from '@/contexts/auth-context';
+import { shouldBlockCryptoWithdrawInvoke } from '@/domain/wallet-capability-rails-display-contract';
 import { requestUsdtWithdrawal, type CryptoWithdrawalResult } from '@/domain/wallet';
 import { useComplianceStatus } from '@/hooks/use-compliance-status';
 import { usePlatformGates } from '@/hooks/use-platform-gates';
 import { useClientGatePrechecks } from '@/hooks/use-client-gate-prechecks';
 import { useWallet } from '@/hooks/use-wallet';
+import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { translateError } from '@/lib/translate-error';
 
 import {
@@ -140,6 +142,9 @@ export function useCryptoWithdrawController(): CryptoWithdrawControllerView {
 
   const submitMutation = useMutation({
     mutationFn: async () => {
+      if (shouldBlockCryptoWithdrawInvoke(LAUNCH_GATES.cryptoRails)) {
+        throw new Error('crypto_rails_built_hidden');
+      }
       const normalizedAmount = formatUsdtAmountForRpc(amountUsdt);
       const normalizedAddress = normalizeCryptoWithdrawAddressInput(address);
       const net = estimateCryptoWithdrawNetUsdt(amountUsdt, chain);

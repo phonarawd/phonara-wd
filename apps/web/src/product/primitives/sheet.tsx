@@ -1,6 +1,5 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import { motion } from 'motion/react';
 import {
   forwardRef,
   type ComponentPropsWithoutRef,
@@ -11,41 +10,28 @@ import {
 import { usePrefersReducedMotion } from './lib/use-prefers-reduced-motion';
 
 import { cn } from './lib/cn';
-import {
-  overlayMotionTransition,
-  overlayMotionVariants,
-  sheetContentMotionVariants,
-  sheetMotionTransition,
-} from './lib/motion-presets';
 
 export const Sheet = DialogPrimitive.Root;
 export const SheetTrigger = DialogPrimitive.Trigger;
 export const SheetClose = DialogPrimitive.Close;
 export const SheetPortal = DialogPrimitive.Portal;
 
+/**
+ * R9-PERF-JS: CSS keyframes (`--ds-motion-*` in motion.css) replace framer-motion
+ * here — see the matching comment in `dialog.tsx` for the full rationale.
+ */
 export const SheetOverlay = forwardRef<
   ElementRef<typeof DialogPrimitive.Overlay>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => {
   const reduced = usePrefersReducedMotion() || import.meta.env['VITE_PHONARA_E2E_ENGINE'] === '1';
-  const overlayClassName = cn('fixed inset-0 z-50 bg-black/60', className);
-
-  return (
-    <DialogPrimitive.Overlay ref={ref} asChild {...props}>
-      {reduced ? (
-        <div className={overlayClassName} />
-      ) : (
-        <motion.div
-          className={overlayClassName}
-          variants={overlayMotionVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          transition={overlayMotionTransition}
-        />
-      )}
-    </DialogPrimitive.Overlay>
+  const overlayClassName = cn(
+    'fixed inset-0 z-50 bg-black/60',
+    !reduced && 'ds-motion-overlay',
+    className,
   );
+
+  return <DialogPrimitive.Overlay ref={ref} className={overlayClassName} {...props} />;
 });
 SheetOverlay.displayName = 'SheetOverlay';
 
@@ -56,45 +42,28 @@ export const SheetContent = forwardRef<
   const reduced = usePrefersReducedMotion() || import.meta.env['VITE_PHONARA_E2E_ENGINE'] === '1';
   const contentClassName = cn(
     'fixed inset-x-0 bottom-0 z-50 flex max-h-[90dvh] flex-col',
+    !reduced && 'ds-motion-sheet-content',
     'rounded-t-(--ds-radius-lg) border border-line bg-surface-overlay shadow-overlay',
     'pb-[max(1rem,env(safe-area-inset-bottom))] focus:outline-none',
     className,
-  );
-  const sheetBody = (
-    <>
-      <div className="mx-auto mt-3 h-1 w-10 shrink-0 rounded-full bg-line" aria-hidden />
-      {children}
-      <DialogPrimitive.Close
-        className={cn(
-          'absolute right-4 top-4 rounded-(--ds-radius-sm) p-1 text-foreground-muted',
-          'transition-opacity duration-(--ds-motion-press) hover:text-foreground',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
-        )}
-      >
-        <X className="size-4" aria-hidden />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
-    </>
   );
 
   return (
     <SheetPortal>
       <SheetOverlay />
-      <DialogPrimitive.Content ref={ref} asChild {...props}>
-        {reduced ? (
-          <div className={contentClassName}>{sheetBody}</div>
-        ) : (
-          <motion.div
-            className={contentClassName}
-            variants={sheetContentMotionVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            transition={sheetMotionTransition}
-          >
-            {sheetBody}
-          </motion.div>
-        )}
+      <DialogPrimitive.Content ref={ref} className={contentClassName} {...props}>
+        <div className="mx-auto mt-3 h-1 w-10 shrink-0 rounded-full bg-line" aria-hidden />
+        {children}
+        <DialogPrimitive.Close
+          className={cn(
+            'absolute right-4 top-4 rounded-(--ds-radius-sm) p-1 text-foreground-muted',
+            'transition-opacity duration-(--ds-motion-press) hover:text-foreground',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus',
+          )}
+        >
+          <X className="size-4" aria-hidden />
+          <span className="sr-only">Close</span>
+        </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </SheetPortal>
   );

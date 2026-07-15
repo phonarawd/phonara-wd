@@ -2,17 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useAuth } from '@/contexts/auth-context';
 import { parseEarnHubTierSnapshot } from '@/domain/tier-me-display-contract';
-import { TIER_FEE_EARN_HUB_RPC } from '@/domain/tier-fee-display-contract';
-import type { EarnVipTier } from '@/domain/unified-tier-display-contract';
-import { supabase } from '@/lib/supabase';
+import { EARN_HUB_STATUS_RPC, type EarnVipTier } from '@/domain/unified-tier-display-contract';
+import { callRpc } from '@/lib/rpc';
 
 export const tradeEarnVipTierKeys = {
   tier: (userId: string | null) => ['trade-earn-vip-tier', userId] as const,
 };
 
 async function fetchTradeEarnVipTier(): Promise<EarnVipTier> {
-  const { data, error } = await supabase.rpc(TIER_FEE_EARN_HUB_RPC);
-  if (error) throw error;
+  const data = await callRpc(EARN_HUB_STATUS_RPC);
   const snapshot = parseEarnHubTierSnapshot((data ?? {}) as Record<string, unknown>);
   return snapshot?.tier ?? 'bronze';
 }

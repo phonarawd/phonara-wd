@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
@@ -107,6 +108,24 @@ assert(
   'index.html must include apple splash links',
 );
 
+// CSP `script-src` allows the theme-init inline <script> only via an explicit
+// sha256 hash token in `_headers`. That token is hand-maintained (no build-time
+// injection), so it silently drifts whenever the inline script body changes —
+// recompute and compare on every check:pwa run so drift fails fast instead of
+// surfacing as a browser console CSP violation.
+const headersFile = read('apps/web/public/_headers');
+const inlineScriptMatch = indexHtml.match(/<script>([\s\S]*?)<\/script>/);
+assert(inlineScriptMatch, 'index.html must contain the inline theme-init <script> block');
+const inlineScriptHash = `sha256-${createHash('sha256')
+  .update(inlineScriptMatch![1], 'utf8')
+  .digest('base64')}`;
+assert(
+  headersFile.includes(`'${inlineScriptHash}'`),
+  `apps/web/public/_headers CSP script-src hash is stale for the current index.html inline ` +
+    `script — expected token '${inlineScriptHash}'. Update the sha256- hash in the ` +
+    `Content-Security-Policy script-src directive.`,
+);
+
 const offlineHtml = read('apps/web/public/offline.html');
 assert(offlineHtml.includes('viewport-fit=cover'), 'offline.html must be safe-area aware');
 assert(offlineHtml.includes('phonara.locale'), 'offline.html must resolve the stored app locale');
@@ -155,6 +174,14 @@ assert(
 assert(
   pwaShell.includes('notifyPwaSwUpdateReady'),
   'PwaShell must wire SW update UX via notifyPwaSwUpdateReady (productToast strict toast.pwa.updateAvailable)',
+);
+assert(
+  pwaShell.includes('InstallPromptProvider'),
+  'PwaShell must provide InstallPromptProvider for /install and deferred prompt UX',
+);
+assert(
+  pwaShell.includes('children'),
+  'PwaShell must accept children so InstallPromptProvider wraps the route outlet',
 );
 
 const serviceWorker = read('apps/web/src/sw.ts');

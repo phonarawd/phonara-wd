@@ -7,16 +7,29 @@ import {
   krwDepositStatusToMoneyState,
   mapGiftcardDepositHistoryRow,
   mergeDepositHistoryRows,
+  resolveDepositHubRails,
 } from '../deposit-hub-display';
 
 describe('deposit-hub-display', () => {
-  it('exposes exactly three canonical deposit rails', () => {
+  it('keeps a three-rail catalog and filters by capability (H-03 · H-11)', () => {
     expect(DEPOSIT_HUB_RAILS.map((rail) => rail.id)).toEqual(['krw', 'crypto', 'giftcard']);
     expect(DEPOSIT_HUB_RAILS.map((rail) => rail.href)).toEqual([
       '/wallet/deposit/krw',
       '/wallet/deposit/crypto',
       '/wallet/deposit/giftcard',
     ]);
+    expect(
+      resolveDepositHubRails({
+        cryptoRails: false,
+        giftcardMarketAvailable: false,
+      }).map((rail) => rail.id),
+    ).toEqual(['krw']);
+    expect(
+      resolveDepositHubRails({
+        cryptoRails: false,
+        giftcardMarketAvailable: true,
+      }).map((rail) => rail.id),
+    ).toEqual(['krw', 'giftcard']);
   });
 
   it('maps KRW deposit statuses to money grammar states', () => {

@@ -1,0 +1,10 @@
+playbook_version: '1.0.0'
+effective_date: '2026-07-13'
+supersedes: null
+plan_id: 'platform-perfect-launch'
+r0_todo: 'audit-r0-control-plane'
+known_good_sha: '9c4bf29b40d31b2d2952bd6257f5690d691ecbc2'
+change_log:
+  - version: '1.0.0'
+    date: '2026-07-13'
+    summary: 'Initial remediation playbook §§1-54 · R0 control plane artifacts'

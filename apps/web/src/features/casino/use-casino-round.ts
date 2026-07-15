@@ -27,7 +27,6 @@ function getCasinoConfirmPref(): boolean {
 import { ACCUMULATED_SELECTION_RESET_MS } from './reset-accumulated-selection';
 import { loadRecentBets } from './recent-bets';
 import type {
-  AutoBetResult,
   BetResponse,
   Currency,
   ManualBetResult,
@@ -37,7 +36,7 @@ import type {
   VerificationEvidence,
 } from './types';
 
-export type { AutoBetResult, ManualBetResult } from './types';
+export type { AutoBetResult, ManualBetResult, BetResponse } from './types';
 
 export function useCasinoRoundPipeline({
   gameCode,
@@ -153,80 +152,84 @@ export function useCasinoRoundPipeline({
     [clientSeedIsAuto, gameCode, onAccumulatedSelectionReset, setClientSeed, syncCommitment],
   );
 
-  const submitBet = useCallback(async (): Promise<boolean> => {
-    const round = commitmentRef.current;
-    if (!round || betInFlightRef.current || !betIdempotencyKeyRef.current) return false;
-    if (casinoBlocked) {
-      setErrorKey(casinoBlockedKey);
+  const submitBet = useCallback(
+    async (stakeOverride?: string): Promise<BetResponse | null> => {
+      const round = commitmentRef.current;
+      if (!round || betInFlightRef.current || !betIdempotencyKeyRef.current) return null;
+      if (casinoBlocked) {
+        setErrorKey(casinoBlockedKey);
+        setConfirmOpen(false);
+        return null;
+      }
+      const idempotencyKey = betIdempotencyKeyRef.current;
+      const fireStake = stakeOverride ?? stake;
+      betInFlightRef.current = true;
+      setBusy(true);
+      setErrorKey(null);
+      setVerificationEvidence(null);
       setConfirmOpen(false);
-      return false;
-    }
-    const idempotencyKey = betIdempotencyKeyRef.current;
-    betInFlightRef.current = true;
-    setBusy(true);
-    setErrorKey(null);
-    setVerificationEvidence(null);
-    setConfirmOpen(false);
-    try {
-      const placed = (await callRpc('rpc_place_game_bet', {
-        p_round_id: round.round_id,
-        p_currency: currency,
-        p_stake: stake,
-        p_selection: selection as Json,
-        p_client_seed: clientSeed,
-        p_idempotency_key: idempotencyKey,
-      })) as unknown as BetResponse;
-      setSettledResult(placed.result);
-      const revealed = (await callRpc('rpc_reveal_game_round', {
-        p_round_id: round.round_id,
-      })) as unknown as RevealResponse;
-      const fullResult = revealed.result as Record<string, unknown>;
-      const verified = await verifyRound({
-        game: gameCode,
-        serverSeed: revealed.server_seed,
-        serverSeedHash: round.server_seed_hash,
-        clientSeed,
-        nonce: 1,
-        selection,
-        expectedResult: fullResult,
-      });
-      setBet(placed);
-      setVerificationEvidence({
-        server_seed_hash: round.server_seed_hash,
-        server_seed: revealed.server_seed,
-        result: fullResult,
-        verification: verified,
-      });
-      setConfirmOpen(false);
-      setToastKey(placed.status === 'won' ? 'casino.toast.won' : 'casino.toast.settled');
-      await queryClient.invalidateQueries({ queryKey: walletKeys.all(userId) });
-      onRecentBetsChange(await loadRecentBets());
-      scheduleAccumulatedSelectionReset();
-      await prepareRound(gameCode, { preserveEvidence: true });
-      return true;
-    } catch (error) {
-      setErrorKey(errorToKey(error));
-      setConfirmOpen(false);
-      return false;
-    } finally {
-      setBusy(false);
-      betInFlightRef.current = false;
-      betIdempotencyKeyRef.current = null;
-    }
-  }, [
-    clientSeed,
-    currency,
-    gameCode,
-    onRecentBetsChange,
-    prepareRound,
-    queryClient,
-    scheduleAccumulatedSelectionReset,
-    selection,
-    stake,
-    userId,
-    casinoBlocked,
-    casinoBlockedKey,
-  ]);
+      try {
+        const placed = (await callRpc('rpc_place_game_bet', {
+          p_round_id: round.round_id,
+          p_currency: currency,
+          p_stake: fireStake,
+          p_selection: selection as Json,
+          p_client_seed: clientSeed,
+          p_idempotency_key: idempotencyKey,
+        })) as unknown as BetResponse;
+        setSettledResult(placed.result);
+        const revealed = (await callRpc('rpc_reveal_game_round', {
+          p_round_id: round.round_id,
+        })) as unknown as RevealResponse;
+        const fullResult = revealed.result as Record<string, unknown>;
+        const verified = await verifyRound({
+          game: gameCode,
+          serverSeed: revealed.server_seed,
+          serverSeedHash: round.server_seed_hash,
+          clientSeed,
+          nonce: 1,
+          selection,
+          expectedResult: fullResult,
+        });
+        setBet(placed);
+        setVerificationEvidence({
+          server_seed_hash: round.server_seed_hash,
+          server_seed: revealed.server_seed,
+          result: fullResult,
+          verification: verified,
+        });
+        setConfirmOpen(false);
+        setToastKey(placed.status === 'won' ? 'casino.toast.won' : 'casino.toast.settled');
+        await queryClient.invalidateQueries({ queryKey: walletKeys.all(userId) });
+        onRecentBetsChange(await loadRecentBets());
+        scheduleAccumulatedSelectionReset();
+        await prepareRound(gameCode, { preserveEvidence: true });
+        return placed;
+      } catch (error) {
+        setErrorKey(errorToKey(error));
+        setConfirmOpen(false);
+        return null;
+      } finally {
+        setBusy(false);
+        betInFlightRef.current = false;
+        betIdempotencyKeyRef.current = null;
+      }
+    },
+    [
+      clientSeed,
+      currency,
+      gameCode,
+      onRecentBetsChange,
+      prepareRound,
+      queryClient,
+      scheduleAccumulatedSelectionReset,
+      selection,
+      stake,
+      userId,
+      casinoBlocked,
+      casinoBlockedKey,
+    ],
+  );
 
   const openBetConfirm = useCallback(() => {
     betIdempotencyKeyRef.current ??= `casino:${randomHex()}`;
@@ -245,24 +248,29 @@ export function useCasinoRoundPipeline({
     return placed ? 'placed' : 'blocked';
   }, [openBetConfirm, submitBet]);
 
-  /** Auto-only: prepare-if-needed + submit; bypasses confirm pref. */
-  const autoBet = useCallback(async (): Promise<AutoBetResult> => {
-    if (betInFlightRef.current) return 'blocked';
-    if (casinoBlocked) {
-      setErrorKey(casinoBlockedKey);
-      return 'blocked';
-    }
+  /**
+   * Auto-only: prepare-if-needed + submit; bypasses confirm pref.
+   * `stakeOverride` is required for auto-bet loops so martingale/next stake is not stale React stake.
+   */
+  const autoBet = useCallback(
+    async (stakeOverride?: string): Promise<BetResponse | null> => {
+      if (betInFlightRef.current) return null;
+      if (casinoBlocked) {
+        setErrorKey(casinoBlockedKey);
+        return null;
+      }
 
-    let round = commitmentRef.current;
-    if (!round) {
-      round = await prepareRound(gameCode);
-      if (!round) return 'blocked';
-    }
+      let round = commitmentRef.current;
+      if (!round) {
+        round = await prepareRound(gameCode);
+        if (!round) return null;
+      }
 
-    betIdempotencyKeyRef.current = `casino:${randomHex()}`;
-    const placed = await submitBet();
-    return placed ? 'placed' : 'blocked';
-  }, [casinoBlocked, casinoBlockedKey, gameCode, prepareRound, submitBet]);
+      betIdempotencyKeyRef.current = `casino:${randomHex()}`;
+      return submitBet(stakeOverride);
+    },
+    [casinoBlocked, casinoBlockedKey, gameCode, prepareRound, submitBet],
+  );
 
   const cancelBetConfirm = useCallback(() => {
     if (betInFlightRef.current) return;

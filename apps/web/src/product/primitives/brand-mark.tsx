@@ -1,9 +1,11 @@
 import { BRAND_ASSETS, BRAND_AUTH_MARK_PX, BRAND_WORDMARK } from '@/domain/brand-display-contract';
+import { DA_W6_BRAND_MARK_AURORA_VARIANT } from '@/domain/da-w6-brand-elevation-display-contract';
 import { cn } from '@/product/primitives/lib/cn';
+import { usePrefersReducedMotion } from '@/product/primitives/lib/use-prefers-reduced-motion';
 
 export type BrandMarkSize = 20 | 24;
 
-export type BrandMarkVariant = 'flat' | 'hero-3d' | 'full-color' | 'shape';
+export type BrandMarkVariant = 'flat' | 'hero-3d' | 'full-color' | 'shape' | 'aurora';
 
 export type BrandMarkProps = {
   variant?: BrandMarkVariant;
@@ -12,13 +14,37 @@ export type BrandMarkProps = {
   testId?: string;
 };
 
-/** §25.9 — chrome: mono mask · hero: 3D · splash/header accent: full-color raster. */
+/** §25.9 — chrome: mono mask · hero: 3D · splash/header accent: full-color raster · §34.18 aurora. */
 export function BrandMark({
   variant = 'flat',
   size = BRAND_AUTH_MARK_PX,
   className,
   testId,
 }: BrandMarkProps) {
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  if (variant === DA_W6_BRAND_MARK_AURORA_VARIANT) {
+    return (
+      <span
+        className={cn('ds-brand-mark-aurora', className)}
+        data-testid={testId ?? 'brand-mark-aurora'}
+        data-brand-asset={BRAND_ASSETS.shape}
+        data-brand-variant={DA_W6_BRAND_MARK_AURORA_VARIANT}
+        data-static={prefersReducedMotion ? 'true' : 'false'}
+        aria-hidden
+      >
+        <span className="ds-brand-mark-aurora__glow" />
+        <img
+          src={BRAND_ASSETS.shape}
+          alt=""
+          width={512}
+          height={512}
+          className="ds-brand-mark-aurora__mark"
+        />
+      </span>
+    );
+  }
+
   if (variant === 'hero-3d' || variant === 'full-color' || variant === 'shape') {
     const asset =
       variant === 'hero-3d'

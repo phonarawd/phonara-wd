@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 import { seedWebE2EStorage } from '../e2e/fixtures/wallet-money';
 
@@ -6,9 +6,31 @@ test.beforeEach(async ({ page }) => {
   await seedWebE2EStorage(page);
 });
 
+/** Wait for Phase R React boot in E2E engine mode (html marker alone is not sufficient). */
+async function waitForE2eEngineBoot(page: Page): Promise<void> {
+  await page.waitForFunction(
+    () => {
+      const root = document.getElementById('root');
+      return (
+        document.documentElement.dataset.e2eEngine === '1' &&
+        root !== null &&
+        root.childElementCount > 0
+      );
+    },
+    { timeout: 60_000 },
+  );
+}
+
+/** Guest marketing boot — `/login` avoids `/` session probe (wallet-money E2E parity). */
+async function expectGuestMarketingBoot(page: Page): Promise<void> {
+  await page.goto('/login', { waitUntil: 'domcontentloaded' });
+  await waitForE2eEngineBoot(page);
+  await expect(page.getByTestId('marketing-shell')).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId('login-page')).toBeVisible({ timeout: 30_000 });
+}
+
 test('web app boots and renders the stub shell', async ({ page }) => {
-  await page.goto('/?landing=1', { waitUntil: 'domcontentloaded' });
-  await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 15_000 });
+  await expectGuestMarketingBoot(page);
 });
 
 test('PWA icon assets are reachable', async ({ page }) => {
@@ -39,6 +61,8 @@ test('offline fallback page is reachable', async ({ page }) => {
 });
 
 test('guest readonly surfaces boot without auth', async ({ page }) => {
-  await page.goto('/?landing=1', { waitUntil: 'domcontentloaded' });
-  await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 15_000 });
+  await page.goto('/security', { waitUntil: 'domcontentloaded' });
+  await waitForE2eEngineBoot(page);
+  await expect(page.getByTestId('marketing-shell')).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId('trust-security-page')).toBeVisible({ timeout: 30_000 });
 });

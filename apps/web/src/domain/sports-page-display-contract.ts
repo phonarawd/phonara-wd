@@ -5,7 +5,7 @@ export const SPORTS_LEAGUE_FILTER_OPTIONS = ['all', 'epl', 'k_league', 'mlb', 'w
 
 export type SportsLeagueFilter = (typeof SPORTS_LEAGUE_FILTER_OPTIONS)[number];
 
-export type SportsPageMode = 'home' | 'prematch' | 'live' | 'my-bets' | 'rules' | 'vip';
+export type SportsPageMode = 'home' | 'prematch' | 'live' | 'my-bets' | 'rules' | 'vip' | 'fixture';
 
 export type SportsBoardTab = 'featured' | 'live' | 'today' | 'upcoming';
 

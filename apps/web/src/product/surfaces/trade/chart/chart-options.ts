@@ -41,7 +41,10 @@ export function chartInteractionOptions() {
 
 export function createChartOptions(theme: ChartTheme) {
   return {
-    autoSize: true,
+    // Manual width/height via ResizeObserver (syncChartLayout). autoSize:true
+    // plus applyOptions({width,height}) fights itself and can freeze a bad
+    // visible price range after flex/fullscreen reflows.
+    autoSize: false,
     layout: chartLayoutOptions(theme),
     grid: chartGridOptions(theme),
     crosshair: chartCrosshairOptions(theme),
@@ -52,6 +55,7 @@ export function createChartOptions(theme: ChartTheme) {
     },
     rightPriceScale: {
       borderColor: theme.line,
+      scaleMargins: { top: 0.05, bottom: 0.25 },
     },
   };
 }

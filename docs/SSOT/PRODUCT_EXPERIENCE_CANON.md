@@ -36,6 +36,8 @@ Apple 여백 + Stripe 정보 설계 + Linear 미니멀 + Arc 미래감
 | Quad Stream colors | `apps/web/src/domain/brand-display-contract.ts`                        |
 | Motion tokens      | `apps/web/src/product/tokens/motion.css`                               |
 | Panel grid         | `apps/web/src/product/tokens/layout.css` `.ds-shell-panel-grid`        |
+| Aurora Mesh        | `apps/web/src/product/shell/aurora-background.tsx` (+ `.css`)          |
+| Orbit col-span     | `layout.css` `.ds-shell-col-span-8` / `.ds-shell-col-span-4`           |
 | Viewport smoke     | `apps/web/src/product/tokens/viewport-contract.ts` (390/768/1024/2560) |
 
 ---
@@ -58,7 +60,7 @@ Copy tone: [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md) · Earn FOMO 허용 �
 ## 3. Brand Memory Rules (§34.4)
 
 1. **Aurora ≤1 / route** — `check:design-tokens` (da-w7 strict).
-2. **Money** = 항상 `MoneyDisplay` (또는 domain wrapper) + `tabular-nums` + mono — ad-hoc `text-[10px]` trade escape hatch는 da-w\*에서 흡수.
+2. **Money** = 항상 `MoneyDisplay` (또는 domain wrapper) + `tabular-nums` + mono — `text-tiny` utility (구 `text-[10px]` escape hatch · da-w7 **`[x]`**).
 3. **Accent mint** (`--ds-accent`) = **primary CTA only** — section당 filled primary **1개**.
 4. **Quad Stream only** — 외부 브랜드 gradient·로고·unique identity clone **금지**.
 5. **DESIGN_CHARTER Phase 4 defer 해제** — geometric recall / brand memory는 DA W6+에서 구현 가능 ([`DESIGN_CHARTER.md`](../PRODUCT/DESIGN_CHARTER.md)).
@@ -75,7 +77,7 @@ Copy tone: [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md) · Earn FOMO 허용 �
 | 3 Overlay | Dialog · Sheet        | `--ds-shadow-overlay` / `--ds-shadow-3`   |
 | 4 Toast   | system toast          | `--ds-z-toast` · `--ds-shadow-4`          |
 
-**구현:** `product/tokens/elevation.css` · `Card` CVA (`default|raised|glass|mission|wallet-hero|vip|trade-dense|casino-play`) · `Text` primitive.
+**구현:** `product/tokens/elevation.css` · `Card` CVA (`default|raised|glass|mission|wallet-hero|vip|trade-dense|sports-odds|casino-play`) · `Text` primitive · `domain-card-personalities.css` (§34.17 signatures).
 
 ---
 
@@ -90,7 +92,11 @@ Copy tone: [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md) · Earn FOMO 허용 �
 Semantic CSS roles: [`DESIGN_PRINCIPLES.md`](DESIGN_PRINCIPLES.md) §3 (`--ds-motion-press` 120ms 등).  
 Interaction 표: [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md) §Interaction Grammar.
 
+**구현 (`da-w4-motion-system-bundle`):** `useCountUp` · `MoneyDisplay countUp` · `--ds-motion-count-up` 400ms · wire = wallet balance · Earn XP · futures PnL.
+
 `prefers-reduced-motion: reduce` → instant variants · static aurora · no count-up.
+
+**GATE (`da-w4-gate-motion`):** `usePrefersReducedMotion` media-query SOT · `instantMotionVariants` · CSS token 0ms · `gate:ai-impl` **38/38**.
 
 ---
 
@@ -145,13 +151,20 @@ Interaction 표: [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md) §Interaction Gram
 
 ## 9. Wave ownership (구현은 후속 todo)
 
-| Wave   | Todo                                             | Scope                                                              |
-| ------ | ------------------------------------------------ | ------------------------------------------------------------------ |
-| **W0** | `da-w0-foundation-ssot-bundle`                   | 본 문서 · ADR-009 · UNIFIED/DESIGN sync (**DOC**)                  |
-| **W1** | `da-w1-ds-foundation-bundle` · `da-w1-gate-ds-2` | Text · elevation.css · Card CVA · spacing ratchet · GATE **`[x]`** |
-| W2     | `da-w2-shell-elevation-infra`                    | Aurora backdrop · 12-col shell                                     |
-| W3–W8  | `da-w3`…`da-w8`                                  | IA · motion · domain cards · brand · signature                     |
-| W7     | `da-w7-enforcement-strict-tokens`                | `check:design-tokens --strict`                                     |
+| Wave   | Todo                                                                              | Scope                                                                                                               |
+| ------ | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **W0** | `da-w0-foundation-ssot-bundle`                                                    | 본 문서 · ADR-009 · UNIFIED/DESIGN sync (**DOC**)                                                                   |
+| **W1** | `da-w1-ds-foundation-bundle` · `da-w1-gate-ds-2`                                  | Text · elevation.css · Card CVA · spacing ratchet · GATE **`[x]`**                                                  |
+| **W2** | `da-w2-shell-elevation-infra` · `da-w2-gate-shell-elevation`                      | Aurora · floating BottomNav · 12-col · Earn rails · GATE **`[x]`**                                                  |
+| **W3** | `da-w3-ia-progressive-bundle` · `da-w3-gate-ia-progressive`                       | `/home` Fold1–5 · wallet-hero · trade ticket · GATE above-fold ≤3 **`[x]`**                                         |
+| **W4** | `da-w4-motion-system-bundle` · `da-w4-gate-motion`                                | `useCountUp` · reduced-motion instant · motion-presets GATE **`[x]`**                                               |
+| **W5** | `da-w5-cards-domain-variants` **`[x]`** · `da-w5-gate-domain-cards` **`[x]`**     | Domain card personalities CVA **`[x]`** · 0.2s scan GATE **`[x]`**                                                  |
+| **W6** | `da-w6-brand-elevation-bundle` **`[x]`** · `da-w6-gate-brand-elevation` **`[x]`** | BrandMark aurora · domain empty · Quad Stream loading **`[x]`** · GATE **`[x]`**                                    |
+| **W8** | `da-w8-signature-surfaces-bundle` **`[x]`**                                       | home greeting·day-flow · wallet living balance · trade heat · casino float · sports kickoff · VIP XP fill **`[x]`** |
+| **W8** | `da-w8-sound-design-spec-defer` **`[x]`**                                         | §34.27 mission·wallet·trade·vip 4톤 **DOC** · 구현=E-Wave · casino §23.8 제외 **`[x]`**                             |
+| **W8** | `da-w8-gate-signature-experience` **`[x]`**                                       | §34.2 Emotion Map spot-check · da-w8 bundle GATE · VISUAL: da-w8-signature advisory **`[x]`**                       |
+| **W7** | `da-w7-enforcement-strict-tokens` **`[x]`**                                       | `check:design-tokens --strict` · text-tiny · legacy purge **`[x]`**                                                 |
+| **W7** | `da-w7-operator-visual-dae-signoff` agent impl **`[x]`**                          | Home+Shell+Trade · 390/768/1024/2560 · preview · axe 0 · operator `VISUAL APPROVED: da-w7` 대기                     |
 
 ---
 
@@ -176,3 +189,4 @@ Interaction 표: [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md) §Interaction Gram
 | Domain UX           | `*_UX_CANON.md` · [`SURFACE_BLUEPRINTS.md`](SURFACE_BLUEPRINTS.md)                  |
 | Copy                | [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md)                                      |
 | ADR                 | [`009-digital-aurora-brand-dna.md`](../PRODUCT/ADR/009-digital-aurora-brand-dna.md) |
+| Sound (§34.27 DOC)  | [`SOUND_DESIGN_CANON.md`](SOUND_DESIGN_CANON.md) · E-Wave wire                      |

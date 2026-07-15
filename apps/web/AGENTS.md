@@ -1,7 +1,7 @@
 # apps/web — Phase R scope
 
-> **Phase R:** Presentation rebuild in progress — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `da-w2-shell-elevation-infra` (#188) · DA W1 GATE `[x]` · DA W1 `[x]` · DA W0 `[x]` · preflight: ACTIVE_WORK_SSOT.
-> **SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../docs/SSOT/ACTIVE_WORK_SSOT.md) · Plan **278 ids** · completed **187** · pending **84** (52차)
+> **Phase R:** Presentation rebuild in progress — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `null` (#null) · preflight: ACTIVE_WORK_SSOT.
+> **SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../docs/SSOT/ACTIVE_WORK_SSOT.md) · Plan **280 ids** · completed **273** · pending **0** (48차)
 
 ## KEEP (engine glue)
 
@@ -11,7 +11,7 @@
 
 ```bash
 bun run check:phase-r-guards -- --strict   # duplicate work + domain isolation
-bun run gate:ai-impl -- --test <path>
+bun run gate:ai-impl -- --test <path> --closeout <todo-id> --evidence "gate:ai-impl ... green · N/N"
 bun run typecheck
 ```
 

@@ -20,6 +20,7 @@ import {
   type TradeDeskMobileTradeSubtabId,
 } from '@/domain/trade-mobile-layout-display-contract';
 import { useTradeDeskMobileChartTradeSwipe } from '@/features/trading/use-trade-desk-mobile-chart-trade-swipe';
+import { CollapsibleSection } from '@/product/primitives/collapsible-section';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/product/primitives/tabs';
 import { cn } from '@/product/primitives/lib/cn';
 
@@ -96,7 +97,20 @@ export function TradeDeskMobileTradeStack({
 
         <TabsContent value="order" data-testid="trade-desk-mobile-trade-panel-order">
           <div className="flex flex-col gap-4">
-            {ticketExternal ? null : orderTicket}
+            {ticketExternal || !orderTicket ? null : (
+              <CollapsibleSection
+                title={t('trade.mobile.ticket.title')}
+                defaultOpen={false}
+                summary={t('trade.mobile.ticket.summary')}
+                expandLabel={t('trade.mobile.ticket.expand')}
+                collapseLabel={t('trade.mobile.ticket.collapse')}
+                variant="plain"
+                className="border-line rounded-lg border px-3"
+                testId="trade-mobile-ticket-fold"
+              >
+                {orderTicket}
+              </CollapsibleSection>
+            )}
             <div
               className={TRADE_DESK_MOBILE_STICKY_CTA_CLASS}
               data-testid="trade-desk-mobile-sticky-cta"
@@ -193,7 +207,12 @@ export function TradeDeskMobileTabs({
           {...swipeHandlers}
         >
           <TabsContent value="chart" data-testid="trade-desk-mobile-panel-chart">
-            <div className={cn(swipeActive && 'pointer-events-none')}>{chart}</div>
+            {/*
+              Never pointer-events-none the chart — mid-swipe disable was stealing
+              LWC horzTouchDrag and flipping chart→trade. Chart host is excluded
+              from swipe tracking via data-chart-gesture-owner.
+            */}
+            <div className="min-h-[280px]">{chart}</div>
           </TabsContent>
 
           <TabsContent value="trade" data-testid="trade-desk-mobile-panel-trade">

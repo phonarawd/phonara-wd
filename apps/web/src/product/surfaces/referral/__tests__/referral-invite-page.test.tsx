@@ -51,6 +51,9 @@ function makeEngine(
     copyInviteLink: vi.fn(),
     shareInvite: vi.fn(),
     claimShareReward: vi.fn(),
+    kakaoShareAvailable: true,
+    kakaoShareBusy: false,
+    shareViaKakao: vi.fn(),
     ...overrides,
   };
 }
@@ -109,5 +112,11 @@ describe('ReferralInvitePage', () => {
     expect(screen.getByTestId('referral-invite-share')).toHaveTextContent(
       'referral.invite.copyLinkCta',
     );
+  });
+
+  it('renders Kakao share augment when available', () => {
+    renderPage(makeEngine({ kakaoShareAvailable: true }));
+
+    expect(screen.getByTestId('referral-invite-kakao')).toHaveTextContent('earn.referral.kakao');
   });
 });

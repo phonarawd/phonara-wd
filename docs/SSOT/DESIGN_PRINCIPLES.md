@@ -103,17 +103,17 @@ Digital Aurora brand · emotion · tech stack은 [`PRODUCT_EXPERIENCE_CANON.md`]
 
 ### Allowed motion
 
-| Use                         | Token / pattern                            | Max duration           |
-| --------------------------- | ------------------------------------------ | ---------------------- |
-| Press · hover · dismiss     | `--ds-motion-press` (120ms)                | ≤200ms                 |
-| Field focus · border        | `--ds-motion-field` (150ms)                | ≤200ms                 |
-| Toggle · pill switch        | `--ds-motion-toggle` (150ms)               | ≤200ms                 |
-| Surface · badge · progress  | `--ds-motion-surface` (200ms)              | ≤300ms                 |
-| Overlay · sheet/dialog open | `--ds-motion-overlay` (320ms) · L-B spring | ≤320ms                 |
-| Page enter (shell)          | `pageEnter` / `usePageEnterVariants`       | ≤250ms                 |
-| Toast · inline feedback     | slide/fade in-out                          | ≤300ms                 |
-| Count-up (display only)     | `useCountUp` · RPC value unchanged         | ≤400ms                 |
-| Game/canvas feel            | engine stage hooks · GPU tier caps         | per `packages/game-ui` |
+| Use                         | Token / pattern                                                   | Max duration           |
+| --------------------------- | ----------------------------------------------------------------- | ---------------------- |
+| Press · hover · dismiss     | `--ds-motion-press` (120ms)                                       | ≤200ms                 |
+| Field focus · border        | `--ds-motion-field` (150ms)                                       | ≤200ms                 |
+| Toggle · pill switch        | `--ds-motion-toggle` (150ms)                                      | ≤200ms                 |
+| Surface · badge · progress  | `--ds-motion-surface` (200ms)                                     | ≤300ms                 |
+| Overlay · sheet/dialog open | `--ds-motion-overlay` (320ms) · L-B spring                        | ≤320ms                 |
+| Page enter (shell)          | `pageEnter` / `usePageEnterVariants`                              | ≤250ms                 |
+| Toast · inline feedback     | slide/fade in-out                                                 | ≤300ms                 |
+| Count-up (display only)     | `useCountUp` · `--ds-motion-count-up` 400ms · RPC value unchanged | ≤400ms                 |
+| Game/canvas feel            | engine stage hooks · GPU tier caps                                | per `packages/game-ui` |
 
 ### Forbidden motion
 
@@ -326,7 +326,10 @@ rg "text-\[\d+px\]|p-\[\d|gap-\[\d|rounded-\[\d|shadow-\[" <phase-r-ui-path>
 - [x] §7 Accessibility Elevation · 4-tier smoke · motion tier cross-ref (`da-w0-foundation-ssot-bundle`)
 - [x] da-w1: Text · elevation · Card CVA · spacing ratchet (`da-w1-ds-foundation-bundle`)
 - [x] da-w1-gate: `gate:ai-impl` primitives+tokens · `check:design-tokens` advisory (`da-w1-gate-ds-2`)
-- [ ] da-w7: `check:design-tokens --strict`
+- [x] da-w4-gate: `use-prefers-reduced-motion` regression · `motion-presets` instant · CSS 0ms (`da-w4-gate-motion`)
+- [x] da-w6-gate: BrandMark aurora · domain empty · Quad Stream · `check:design-tokens` advisory (`da-w6-gate-brand-elevation`)
+- [x] da-w7: `check:design-tokens --strict` · text-tiny · legacy purge (`da-w7-enforcement-strict-tokens`)
+- [x] da-w7 VISUAL agent impl: Home+Shell+Trade · 4-tier · preview (`da-w7-operator-visual-dae-signoff`) · operator `VISUAL APPROVED: da-w7` 대기
 
 ---
 

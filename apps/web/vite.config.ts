@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
@@ -10,6 +11,7 @@ import {
   phonaraViteDevWarmup,
 } from './vite-dev-performance';
 import { pwaManifestCopy } from './pwa-manifest';
+import { phonaraSiteVerificationPlugin } from './vite-site-verification';
 
 const webSrc = fileURLToPath(new URL('./src', import.meta.url));
 const pwaRegisterDevStub = fileURLToPath(
@@ -17,9 +19,62 @@ const pwaRegisterDevStub = fileURLToPath(
 );
 const i18nReactSrc = fileURLToPath(new URL('../../packages/i18n/src/react.tsx', import.meta.url));
 const i18nSrc = fileURLToPath(new URL('../../packages/i18n/src/index.ts', import.meta.url));
+const headersFile = fileURLToPath(new URL('./public/_headers', import.meta.url));
+
+/**
+ * Mirror Pages `_headers` CSP on Vite dev/preview so ZA-21 chart feed
+ * allowlist can be verified locally (Cloudflare `_headers` is not applied by Vite).
+ */
+function readPagesCspHeader(): string | undefined {
+  try {
+    const source = readFileSync(headersFile, 'utf8');
+    const match = source.match(/^ {2}Content-Security-Policy:\s*(.+)$/m);
+    return match?.[1]?.trim();
+  } catch {
+    return undefined;
+  }
+}
+
+const pagesCsp = readPagesCspHeader();
+
+const LOCAL_SUPABASE_CONNECT =
+  'http://127.0.0.1:54321 ws://127.0.0.1:54321 http://localhost:54321 ws://localhost:54321';
+
+const VITE_DEV_HMR_CONNECT = 'ws://127.0.0.1:3000 ws://localhost:3000';
+
+/** E2E + local stack: Pages CSP omits localhost Supabase — append for Vite dev/preview only. */
+function augmentCspForLocalDev(csp: string): string {
+  // Vite dev/preview serves http://127.0.0.1 — upgrade-insecure-requests breaks module/HMR loads.
+  let out = csp
+    .replace(/;\s*upgrade-insecure-requests/g, '')
+    .replace(/upgrade-insecure-requests\s*;?\s*/g, '')
+    .trim();
+  if (!out.includes('127.0.0.1:54321')) {
+    out = out.replace(/connect-src ([^;]+)/, `connect-src $1 ${LOCAL_SUPABASE_CONNECT}`);
+  }
+  if (!out.includes('ws://127.0.0.1:3000')) {
+    out = out.replace(/connect-src ([^;]+)/, `connect-src $1 ${VITE_DEV_HMR_CONNECT}`);
+  }
+  return out;
+}
+
+function resolveViteSecurityHeaders(
+  command: 'build' | 'serve',
+): Record<string, string> | undefined {
+  if (!pagesCsp) return undefined;
+  // Strict Pages CSP breaks Vite dev (@vite/client, HMR, dynamic imports). E2E and daily
+  // dev omit it; production/preview deploy applies public/_headers on Cloudflare.
+  // Opt in locally: PHONARA_VITE_DEV_CSP=1 bun run dev:web
+  if (command === 'serve') {
+    if (process.env['PHONARA_VITE_DEV_CSP'] !== '1') return undefined;
+    return { 'Content-Security-Policy': augmentCspForLocalDev(pagesCsp) };
+  }
+  return undefined;
+}
 
 /** Phase R web entry — TanStack Router file routes + PWA injectManifest shell. */
 export default defineConfig(({ command }) => {
+  const securityHeaders = resolveViteSecurityHeaders(command);
   const pwaPlugin: PluginOption = VitePWA({
     strategies: 'injectManifest',
     srcDir: 'src',
@@ -116,6 +171,7 @@ export default defineConfig(({ command }) => {
       }),
       tailwindcss(),
       react(),
+      phonaraSiteVerificationPlugin(),
       // PWA manifest/service-worker graph is build-only — skipping it saves dev cold start.
       ...(command === 'build' ? [pwaPlugin] : []),
     ],
@@ -137,6 +193,13 @@ export default defineConfig(({ command }) => {
       port: 3000,
       strictPort: true,
       warmup: phonaraViteDevWarmup(webSrc),
+      ...(securityHeaders ? { headers: securityHeaders } : {}),
+    },
+    preview: {
+      host: '127.0.0.1',
+      port: 3000,
+      strictPort: true,
+      ...(securityHeaders ? { headers: securityHeaders } : {}),
     },
     build: {
       sourcemap: false,

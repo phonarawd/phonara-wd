@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AdminAuditEvent } from '@/shared-types';
+import { callRpc } from '../../lib/rpc';
 import { supabase } from '../../lib/supabase';
 import { useAuditLogs } from '../use-audit-logs';
 import type {
@@ -85,13 +86,8 @@ export function useAdminUsersDesk() {
   } = useQuery({
     queryKey: ['admin-users-desk'],
     queryFn: async () => {
-      const { data, error } = await (
-        supabase as {
-          rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
-        }
-      ).rpc('rpc_admin_list_users', { p_search: null, p_limit: 200 });
-      if (error) throw error;
-      return ((data ?? []) as Record<string, unknown>[]).map(mapRow);
+      const data = await callRpc('rpc_admin_list_users', { p_limit: 200 });
+      return (data as Record<string, unknown>[]).map(mapRow);
     },
     staleTime: 15_000,
   });
@@ -155,12 +151,11 @@ export function useAdminUsersDesk() {
       if (reason.trim().length < MIN_REASON) {
         throw new Error('reason_too_short');
       }
-      const { error } = await (
-        supabase as {
-          rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
-        }
-      ).rpc('rpc_admin_set_user_activity', { p_user_id: id, p_action: action, p_reason: reason });
-      if (error) throw error;
+      await callRpc('rpc_admin_set_user_activity', {
+        p_user_id: id,
+        p_action: action,
+        p_reason: reason,
+      });
       await invalidate();
     },
     [invalidate],
@@ -171,11 +166,7 @@ export function useAdminUsersDesk() {
       if (input.reason.trim().length < MIN_ADJUST_REASON) {
         throw new Error('reason_too_short');
       }
-      const { error } = await (
-        supabase as {
-          rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
-        }
-      ).rpc('rpc_admin_manual_wallet_adjust', {
+      await callRpc('rpc_admin_manual_wallet_adjust', {
         p_user_id: id,
         p_currency: input.currency,
         p_amount: input.amount,
@@ -183,7 +174,6 @@ export function useAdminUsersDesk() {
         p_reason: input.reason.trim(),
         p_client_request_id: input.clientRequestId,
       });
-      if (error) throw error;
       await invalidate();
     },
     [invalidate],
@@ -194,12 +184,10 @@ export function useAdminUsersDesk() {
       if (reason.trim().length < MIN_REASON) {
         throw new Error('reason_too_short');
       }
-      const { error } = await (
-        supabase as {
-          rpc: (fn: string, args: Record<string, unknown>) => ReturnType<typeof supabase.rpc>;
-        }
-      ).rpc('rpc_admin_release_self_exclusion', { p_exclusion_id: exclusionId, p_reason: reason });
-      if (error) throw error;
+      await callRpc('rpc_admin_release_self_exclusion', {
+        p_exclusion_id: exclusionId,
+        p_reason: reason,
+      });
       await invalidate();
     },
     [invalidate],

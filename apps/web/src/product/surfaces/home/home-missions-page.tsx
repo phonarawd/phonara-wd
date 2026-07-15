@@ -6,6 +6,7 @@ import {
   HOME_MISSIONS_HUB_TABS,
   HOME_MISSIONS_TAB_LABEL_KEYS,
 } from '@/domain/home-missions-display-contract';
+import { APP_INSTALL_MISSION_UI_ID } from '@/domain/app-install-mission-display-contract';
 import { useHomeMissionsPageController } from '@/features/earn/use-home-missions-page-controller';
 import { useEarnFiatHint } from '@/features/earn/use-earn-fiat-hint';
 import { Button, buttonVariants } from '@/product/primitives/button';
@@ -37,6 +38,7 @@ export function HomeMissionsPage({ search }: HomeMissionsPageProps) {
     closeMission,
     claimMission,
   } = engine;
+  const { appInstallAction } = engine;
   const earnFiat = useEarnFiatHint();
 
   const selectedMission = missionId ? missions.find((mission) => mission.id === missionId) : null;
@@ -82,7 +84,7 @@ export function HomeMissionsPage({ search }: HomeMissionsPageProps) {
       </header>
 
       <div
-        className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden"
         role="tablist"
         aria-label={t('earn.missions.category.title')}
         data-testid="home-missions-tabs"
@@ -193,9 +195,7 @@ export function HomeMissionsPage({ search }: HomeMissionsPageProps) {
               <div
                 key={mission.id}
                 data-testid={`home-mission-${mission.id}`}
-                className={cn(
-                  mission.highlighted && 'ring-accent/50 rounded-(--ds-radius-md) ring-2',
-                )}
+                className={cn(mission.highlighted && 'ring-accent/50 rounded-md ring-2')}
               >
                 <MissionCard
                   title={t(mission.titleKey)}
@@ -227,6 +227,23 @@ export function HomeMissionsPage({ search }: HomeMissionsPageProps) {
                     </Link>
                   </div>
                 ) : null}
+                {mission.id === APP_INSTALL_MISSION_UI_ID &&
+                mission.state !== 'completed' &&
+                appInstallAction.canAct ? (
+                  <div className="mt-2 px-1">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      loading={appInstallAction.busy}
+                      data-testid="home-mission-app-install"
+                      onClick={() => void appInstallAction.recordOrInstall()}
+                    >
+                      {t(appInstallAction.ctaKey)}
+                    </Button>
+                  </div>
+                ) : null}
               </div>
             );
           })
@@ -242,6 +259,16 @@ export function HomeMissionsPage({ search }: HomeMissionsPageProps) {
       {error ? (
         <p className="text-destructive m-0 text-sm" role="alert" data-testid="home-missions-error">
           {t(error)}
+        </p>
+      ) : null}
+
+      {appInstallAction.errorKey ? (
+        <p
+          className="text-destructive m-0 text-sm"
+          role="alert"
+          data-testid="home-missions-app-install-error"
+        >
+          {t(appInstallAction.errorKey)}
         </p>
       ) : null}
     </div>

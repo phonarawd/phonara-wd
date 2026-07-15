@@ -11,6 +11,7 @@ import {
   TRADE_ORACLE_STALE_SECONDS,
   resolveOraclePriceStale,
   resolvePr1bSpotChartVerifyPass,
+  resolveTradeChartEmptyReason,
   resolveTradeChartFeedStrategy,
   resolveTradeChartPanelMount,
 } from '../trade-chart-mount-display-contract';
@@ -33,6 +34,14 @@ describe('T0-e PR-1B · trade chart mount display contract', () => {
     expect(resolveTradeChartFeedStrategy('PHONUSDT-PERP')).toBe('oracle-rpc-only');
     expect(resolveTradeChartFeedStrategy('BTC_USDT')).toBe('exchange-ws-with-oracle-fallback');
     expect(resolveTradeChartFeedStrategy('BTCUSDT-SIM')).toBe('exchange-ws-with-oracle-fallback');
+  });
+
+  it('ZA-12: differentiates empty-copy reason by feed strategy', () => {
+    expect(resolveTradeChartEmptyReason('PHON_USDT')).toBe('oracle-awaiting-seed');
+    expect(resolveTradeChartEmptyReason('PHONUSDT-PERP')).toBe('oracle-awaiting-seed');
+    expect(resolveTradeChartEmptyReason('BTC_USDT')).toBe('feed-unavailable');
+    expect(resolveTradeChartEmptyReason('BTCUSDT-SIM')).toBe('feed-unavailable');
+    expect(resolveTradeChartEmptyReason(null)).toBe('unsupported');
   });
 
   it('oracle stale when age exceeds 300s (submit block threshold)', () => {

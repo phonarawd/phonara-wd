@@ -329,10 +329,10 @@ export interface UseAdminEarnDesk {
   setSettlementFilters: (
     f: SettlementFilters | ((p: SettlementFilters) => SettlementFilters),
   ) => void;
-  approveSettlement: (id: string) => boolean;
+  approveSettlement: (id: string, reason: string) => Promise<boolean> | boolean;
   markSettlementPaid: (id: string, reason: string) => boolean;
   rejectSettlement: (id: string, reason: string) => boolean;
-  bulkApproveSettlements: (ids: string[]) => boolean;
+  bulkApproveSettlements: (ids: string[], reason: string) => boolean;
   bulkMarkSettlementsPaid: (ids: string[], reason: string) => boolean;
   settlementStates: SettlementState[];
 
@@ -445,7 +445,8 @@ export function useAdminEarnDeskMock(): UseAdminEarnDesk {
   );
 
   const approveSettlement = useCallback(
-    (id: string): boolean => {
+    (id: string, reason: string): boolean => {
+      if (!validReason(reason)) return false;
       const row = st.allRows.find((r) => r.id === id);
       if (!row) return false;
       if (row.state !== 'pending') return false;
@@ -461,6 +462,7 @@ export function useAdminEarnDeskMock(): UseAdminEarnDesk {
         actorKey: 'admin.primitive.audit.actor.system',
         actionKey: 'admin.earn.settlements.audit.approve',
         subject: row.agentCode,
+        reason: reason.trim(),
       });
       return true;
     },
@@ -521,9 +523,10 @@ export function useAdminEarnDeskMock(): UseAdminEarnDesk {
   );
 
   const bulkApproveSettlements = useCallback(
-    (ids: string[]): boolean => {
+    (ids: string[], reason: string): boolean => {
+      if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (approveSettlement(id)) any = true;
+      for (const id of ids) if (approveSettlement(id, reason)) any = true;
       return any;
     },
     [approveSettlement],

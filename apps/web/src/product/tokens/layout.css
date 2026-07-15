@@ -95,6 +95,13 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+/* Orbit Grid span helpers — desktop 12-col (§34.10–34.11) */
+.ds-shell-panel-grid > .ds-shell-col-span-4,
+.ds-shell-panel-grid > .ds-shell-col-span-8,
+.ds-shell-panel-grid > .ds-shell-col-span-12 {
+  min-width: 0;
+}
+
 @media (min-width: 768px) {
   .ds-shell-panel-grid[data-cols='2'],
   .ds-shell-panel-grid[data-cols='3'] {
@@ -103,11 +110,29 @@
 }
 
 @media (min-width: 1024px) {
+  /* Default Orbit Grid — 12 equal tracks for col-span-8/4 composition */
+  .ds-shell-panel-grid:not([data-cols]),
+  .ds-shell-panel-grid[data-cols='12'] {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
   .ds-shell-panel-grid[data-cols='3'] {
     grid-template-columns: minmax(var(--ds-panel-min), 1fr) minmax(0, 2fr) minmax(
         var(--ds-panel-min),
         1fr
       );
+  }
+
+  .ds-shell-panel-grid > .ds-shell-col-span-4 {
+    grid-column: span 4;
+  }
+
+  .ds-shell-panel-grid > .ds-shell-col-span-8 {
+    grid-column: span 8;
+  }
+
+  .ds-shell-panel-grid > .ds-shell-col-span-12 {
+    grid-column: span 12;
   }
 }
 

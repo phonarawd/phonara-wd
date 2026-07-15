@@ -11,7 +11,8 @@ alwaysApply: false
 |-------|------|
 | Agent index | `AGENTS.md` + nested `apps/*/AGENTS.md`, `supabase/AGENTS.md` |
 | Subagents | `.cursor/agents/verifier.md`, `security-auditor.md`, `gate-runner.md` |
-| Skills | `.cursor/skills/gate-ladder`, `supabase-apply`, `session-hygiene` |
+| Skills | `.cursor/skills/gate-ladder`, `supabase-apply`, `session-hygiene`, `ci-push-fix-loop` |
+| Plan closeout | rule `99-plan-todo-auto-closeout` · `bun run closeout:todo -- <id>` |
 | Auto-review | `.cursor/permissions.json` |
 | Sandbox network | `.cursor/sandbox.json` |
 | Hooks | `.cursor/hooks.json` |

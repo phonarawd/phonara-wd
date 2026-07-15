@@ -1,5 +1,4 @@
 import type { MessageKey } from '@phonara/i18n';
-import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { usePrefersReducedMotion } from '@/product/primitives/lib/use-prefers-reduced-motion';
@@ -72,18 +71,16 @@ export function LiveActivityTicker({ lines, className }: LiveActivityTickerProps
       aria-label={t('landing.proof.tickerAria')}
       data-testid="landing-activity-ticker"
     >
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.p
-          key={activeLine.id}
-          className="text-foreground-muted m-0 text-sm tabular-nums"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.2 }}
-        >
-          {formatLine(activeLine, t)}
-        </motion.p>
-      </AnimatePresence>
+      {/* R9-PERF-JS: CSS enter animation (motion.css `ds-motion-ticker-line`) replaces
+          AnimatePresence/motion.p — `key` swap remounts the node so the keyframe
+          replays per line; framer-motion's own exit crossfade isn't worth ~450kb
+          eager JS for a decorative ambient ticker. */}
+      <p
+        key={activeLine.id}
+        className="ds-motion-ticker-line text-foreground-muted m-0 text-sm tabular-nums"
+      >
+        {formatLine(activeLine, t)}
+      </p>
     </div>
   );
 }

@@ -1,0 +1,66 @@
+/**
+ * Signature Experience surfaces — Digital Aurora §34.21–34.26 · da-w8.
+ * Display-only cues: market heat · volume pulse · casino idle float · VIP XP fill.
+ * L2 financial submit paths must not use decorative loops.
+ */
+
+/* Trade — market heat edge (change24 tone · display-only)
+ * Inset bar needs matching start padding or it paints over "24h 변동" glyphs. */
+[data-signature='market-heat-volume-pulse'][data-market-heat='up'] {
+  padding-inline-start: 0.75rem;
+  box-shadow: inset 3px 0 0 color-mix(in oklch, var(--ds-market-up) 70%, transparent);
+}
+
+[data-signature='market-heat-volume-pulse'][data-market-heat='down'] {
+  padding-inline-start: 0.75rem;
+  box-shadow: inset 3px 0 0 color-mix(in oklch, var(--ds-market-down) 70%, transparent);
+}
+
+[data-signature='market-heat-volume-pulse'] [data-volume-pulse='true'] {
+  animation: ds-volume-pulse var(--ds-motion-surface) var(--ds-ease-standard) 2;
+}
+
+@keyframes ds-volume-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
+/* Casino — subtle idle float (L0 ambient · lobby tiles only) */
+[data-card-variant='casino-play'][data-signature='tile-float-glow'] {
+  animation: ds-casino-tile-float 4.5s var(--ds-ease-standard) infinite;
+}
+
+@keyframes ds-casino-tile-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+/* VIP — XP ring fill cue (mount animation owned by ProgressRing fillOnMount) */
+[data-signature='xp-fill'] {
+  isolation: isolate;
+}
+
+/* Wallet living balance — hero already owns count-up; cue for gate scan */
+[data-signature='living-balance'] {
+  isolation: isolate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-signature='market-heat-volume-pulse'] [data-volume-pulse='true'] {
+    animation: none;
+  }
+
+  [data-card-variant='casino-play'][data-signature='tile-float-glow'] {
+    animation: none;
+  }
+}

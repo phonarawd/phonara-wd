@@ -9,6 +9,16 @@ import {
   lineSeriesOptions,
   readChartTheme,
 } from './chart-theme';
+import {
+  CHART_LAYOUT_MIN_HEIGHT_PX,
+  CHART_RSI_SCALE_MARGINS,
+  CHART_VOLUME_SCALE_MARGINS,
+  isChartHostSized,
+  readChartHostSize,
+  scheduleChartLayoutSync,
+  shouldFitChartOnLayoutSync,
+  syncChartLayout,
+} from './sync-chart-layout';
 
 export type LightweightChartHandle = {
   chart: IChartApi;
@@ -25,6 +35,8 @@ export type LightweightChartHandle = {
 
 export type LightweightChartApi = {
   fitContent: () => void;
+  /** Fullscreen / flex reflow — resize + reset autoscale + fit time. */
+  syncLayout: () => void;
 };
 
 export function useLightweightChart(
@@ -40,22 +52,30 @@ export function useLightweightChart(
     if (!host) return;
 
     const theme = readChartTheme();
-    const chart = createChart(host, createChartOptions(theme));
+    const initial = readChartHostSize(host);
+    const chart = createChart(host, {
+      ...createChartOptions(theme),
+      // Seed size immediately — TabsContent remount often paints one frame at
+      // 0×0; waiting only on rAF leaves a blank canvas until fullscreen/resize.
+      width: Math.max(initial.width, 1),
+      height: Math.max(initial.height, CHART_LAYOUT_MIN_HEIGHT_PX),
+    });
 
     const candles = chart.addSeries(CandlestickSeries, candleSeriesOptions(theme));
     const line = chart.addSeries(LineSeries, {
       ...lineSeriesOptions(theme.textMuted),
       visible: false,
     });
+    // Official overlay id is '' — keeps volume off the right price scale so
+    // ~2 BTC volume cannot stretch BTC ~62k into a -20k…50k axis.
     const volume = chart.addSeries(HistogramSeries, {
       priceFormat: { type: 'volume' },
-      priceScaleId: 'volume',
+      priceScaleId: '',
+      lastValueVisible: false,
+      priceLineVisible: false,
     });
-    chart.priceScale('volume').applyOptions({
-      scaleMargins: { top: 0.8, bottom: 0 },
-    });
-    chart.priceScale('right').applyOptions({
-      scaleMargins: { top: 0.05, bottom: 0.25 },
+    volume.priceScale().applyOptions({
+      scaleMargins: { ...CHART_VOLUME_SCALE_MARGINS },
     });
     const ma7 = chart.addSeries(LineSeries, {
       ...indicatorSeriesOptions(theme.marketUp),
@@ -81,9 +101,11 @@ export function useLightweightChart(
       ...indicatorSeriesOptions(theme.marketDown),
       visible: false,
       priceScaleId: 'rsi',
+      lastValueVisible: false,
+      priceLineVisible: false,
     });
-    chart.priceScale('rsi').applyOptions({
-      scaleMargins: { top: 0.75, bottom: 0 },
+    rsi.priceScale().applyOptions({
+      scaleMargins: { ...CHART_RSI_SCALE_MARGINS },
     });
 
     handleRef.current = {
@@ -98,11 +120,63 @@ export function useLightweightChart(
       bbLower,
       rsi,
     };
-    onReadyRef.current?.({
+
+    const api: LightweightChartApi = {
       fitContent: () => chart.timeScale().fitContent(),
+      syncLayout: () => {
+        syncChartLayout(chart, host);
+      },
+    };
+    onReadyRef.current?.(api);
+
+    let lastSized = false;
+    let lastWidth = 0;
+    let lastHeight = 0;
+    /** Cleared only after a successful sized sync — not when scheduling on 0×0. */
+    let awaitingFirstSuccessfulFit = true;
+    let cancelPendingSync: (() => void) | null = null;
+    const requestSync = () => {
+      cancelPendingSync?.();
+      cancelPendingSync = scheduleChartLayoutSync(() => {
+        cancelPendingSync = null;
+        const size = readChartHostSize(host);
+        const sized = isChartHostSized(size);
+        const recoveringFromCollapsedHost = !lastSized;
+        const fit = shouldFitChartOnLayoutSync({
+          awaitingFirstSuccessfulFit,
+          recoveringFromCollapsedHost,
+        });
+        const ok = syncChartLayout(chart, host, { fit });
+        if (!ok || !sized) {
+          lastSized = false;
+          return;
+        }
+        awaitingFirstSuccessfulFit = false;
+        lastSized = true;
+        lastWidth = size.width;
+        lastHeight = size.height;
+      });
+    };
+
+    requestSync();
+
+    const observer = new ResizeObserver(() => {
+      const size = readChartHostSize(host);
+      const sized = isChartHostSized(size);
+      const deltaW = Math.abs(size.width - lastWidth);
+      const deltaH = Math.abs(size.height - lastHeight);
+      if (!sized) {
+        lastSized = false;
+        return;
+      }
+      if (lastSized && deltaW < 2 && deltaH < 2) return;
+      requestSync();
     });
+    observer.observe(host);
 
     return () => {
+      cancelPendingSync?.();
+      observer.disconnect();
       handleRef.current = null;
       chart.remove();
     };

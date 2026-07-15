@@ -25,6 +25,15 @@ vi.mock('@tanstack/react-router', async (importOriginal) => {
   };
 });
 
+vi.mock('@/hooks/admin/useAdminOperatorRbac', () => ({
+  useAdminOperatorRbac: () => ({
+    role: 'owner',
+    can: (action: string) => action === 'users.tier.write',
+    setPreviewRole: vi.fn(),
+    roleLabelKey: 'admin.access.role.owner.label',
+  }),
+}));
+
 vi.mock('@/hooks/admin/useAdminUserTierDesk', () => ({
   useAdminUserTierDesk: () => ({
     snapshot: {
@@ -39,11 +48,15 @@ vi.mock('@/hooks/admin/useAdminUserTierDesk', () => ({
     isLoading: false,
     isError: false,
     refresh: vi.fn(async () => undefined),
+    isSaving: false,
+    writeUiUnlocked: true,
+    writePathReady: true,
+    setUserTier: vi.fn(async () => undefined),
   }),
 }));
 
 describe('AdminUserTierPage', () => {
-  it('renders read-only earn tier snapshot for a member', () => {
+  it('renders tier snapshot and owner write controls when unlocked (M-12)', () => {
     render(
       <I18nProvider>
         <AdminUserTierPage userId="user-1" />
@@ -51,8 +64,9 @@ describe('AdminUserTierPage', () => {
     );
 
     expect(screen.getByRole('heading', { level: 2, name: '회원 등급' })).toBeTruthy();
-    expect(screen.getByText('골드')).toBeTruthy();
+    expect(screen.getAllByText('골드').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('1200')).toBeTruthy();
-    expect(screen.queryByRole('button', { name: /승급|Upgrade|수동/i })).toBeNull();
+    expect(screen.getByTestId('admin-user-tier-write')).toBeTruthy();
+    expect(screen.getByRole('button', { name: '등급 적용' })).toBeTruthy();
   });
 });

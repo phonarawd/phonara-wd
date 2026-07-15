@@ -9,6 +9,11 @@ import '@/product/tokens/index.css';
 import { queryClient } from './lib/query';
 import { router } from './router';
 
+/** E2E boot marker — set before React paint (smoke tests wait on html[data-e2e-engine="1"]). */
+if (import.meta.env['VITE_PHONARA_E2E_ENGINE'] === '1') {
+  document.documentElement.dataset['e2eEngine'] = '1';
+}
+
 const rootEl = document.getElementById('root');
 if (rootEl) {
   createRoot(rootEl).render(

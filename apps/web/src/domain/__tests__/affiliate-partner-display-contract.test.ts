@@ -37,10 +37,13 @@ describe('affiliate-partner-display-contract', () => {
     });
   });
 
-  it('defers partner rank snapshot until engine branch exists', () => {
-    expect(AFFILIATE_PARTNER_ENGINE_BRANCHES.affiliate_rank_leaderboard.engine).toBe('missing');
-    expect(shouldDeferPartnerRankSnapshot()).toBe(true);
-    expect(resolveAffiliatePartnerBranchExposure('affiliate_rank_leaderboard')).toBe('defer_stub');
+  it('defers partner rank snapshot until launch gate unlock (engine exists E3)', () => {
+    expect(AFFILIATE_PARTNER_ENGINE_BRANCHES.affiliate_rank_leaderboard.engine).toBe('exists');
+    expect(AFFILIATE_PARTNER_ENGINE_BRANCHES.affiliate_rank_leaderboard.rpc).toBe(
+      'rpc_get_affiliate_rank_leaderboard',
+    );
+    expect(shouldDeferPartnerRankSnapshot()).toBe(false);
+    expect(resolveAffiliatePartnerBranchExposure('affiliate_rank_leaderboard')).toBe('live');
   });
 
   it('partner settlements read is built_hidden until partner gate lifted', () => {

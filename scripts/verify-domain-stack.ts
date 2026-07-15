@@ -156,15 +156,12 @@ recordPresentation(
 );
 
 // —— Fonts & visual fidelity ——
-for (const f of [
+recordPresentation(
+  'Visual',
   'PretendardVariable.woff2',
-  'Pretendard-Regular.woff2',
-  'Pretendard-Medium.woff2',
-  'Pretendard-SemiBold.woff2',
-  'Pretendard-Bold.woff2',
-] as const) {
-  recordPresentation('Visual', f, fontOk(f), 'self-hosted KO UI (OFL)');
-}
+  fontOk('PretendardVariable.woff2'),
+  'self-hosted KO UI (OFL · variable only)',
+);
 recordPresentation(
   'Visual',
   'JetBrains Mono (trade mono)',

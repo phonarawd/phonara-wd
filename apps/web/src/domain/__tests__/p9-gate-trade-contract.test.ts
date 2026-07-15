@@ -72,6 +72,8 @@ describe('p9-gate-trade §12.19.6 · §3.4 · §32.5', () => {
       '/referral',
       '/tier/me',
       '/tier/benefits',
+      '/earn/cashback',
+      '/earn/play',
       '/share/earnings',
       '/staking',
     ]);

@@ -1,0 +1,18 @@
+---
+description: PHONARA 플랫폼 감사 후속 수정의 필수 참고 문서
+alwaysApply: true
+---
+
+# Platform Audit Reference
+
+- Plan `platform-perfect-launch` todo를 Implement할 때는 **먼저**
+  [`docs/OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md`](../../docs/OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md)의
+  **동일 id 절**을 읽고 착수한다. (Plan todo id = Handoff id = 실행 단위)
+- `docs/audit/PLATFORM_AUDIT_REFERENCE.md`의 결함을 근거로 수정·보완·재검증할 때는
+  코드 탐색이나 편집 전에 해당 문서를 먼저 읽는다.
+- 이 문서는 **참고용 감사 정본**이며 active implementation queue가 아니다.
+- 실행 순서와 착수 권한은 `docs/OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md` ·
+  `docs/SSOT/ACTIVE_WORK_SSOT.md` · `docs/PRODUCT/REBUILD_PLAN_v1.md`를 따른다.
+- 이 문서는 denylist 대상이 아니며 삭제된 legacy next-step 문서를 복구하거나 대체하지 않는다.
+- `UNVERIFIED` 항목은 실제 Browser/Admin/운영 증거 없이 결함으로 확정하지 않는다.
+- **마감:** Implement 완료 시 `bun run closeout:todo -- <동일-id>`로 Plan frontmatter `status: completed` 자동 체크 (rule `99-plan-todo-auto-closeout`).

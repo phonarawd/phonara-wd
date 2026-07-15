@@ -20,6 +20,8 @@ pages_build_output_dir = "apps/web/dist"
 #
 # SPA routing: apps/web/public/_redirects → /* /index.html 200
 # Security headers: apps/web/public/_headers (CSP, HSTS, frame deny)
+# Deploy: bun run deploy:pages:web[:preview] → scripts/deploy-pages.ts (--commit-dirty=false)
+# Release manifest: apps/web/dist/release-manifest.json (H-06 · SHA · lock hash · project ref)
 #
 # Cloudflare Dashboard (operator — zone phonara.net):
 #   SSL/TLS → Full (strict)

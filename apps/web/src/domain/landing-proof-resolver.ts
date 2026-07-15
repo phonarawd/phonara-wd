@@ -1,5 +1,6 @@
 /**
- * Landing proof tier resolver — presentation default · live operator flag (ADR-003 §5).
+ * Landing proof tier resolver — fail-closed (C-01).
+ * Synthetic ambient stats/testimonials/withdrawal rows stay hidden until verified live aggregates.
  */
 
 import {
@@ -17,11 +18,19 @@ export type LandingStatsMode = 'hidden' | 'presentation' | 'live';
 
 export type LandingWithdrawalMomentumMode = 'hidden' | 'live';
 
+export type LandingWithdrawalProofMode = 'hidden' | 'presentation';
+
+export type LandingAmbientSocialMode = 'hidden' | 'presentation';
+
 export type LandingProofResolver = {
   readonly testimonials: LandingTestimonialsMode;
   readonly stats: LandingStatsMode;
   readonly walletPreview: 'presentation';
   readonly withdrawalMomentum: LandingWithdrawalMomentumMode;
+  /** Masked withdrawal case rows — never factual without verified ledger aggregate. */
+  readonly withdrawalProof: LandingWithdrawalProofMode;
+  /** Signup concurrency bot + ambient ticker — hidden without live feed. */
+  readonly ambientSocial: LandingAmbientSocialMode;
 };
 
 export function resolveLandingProof(options?: {
@@ -31,17 +40,21 @@ export function resolveLandingProof(options?: {
 }): LandingProofResolver {
   const proofMode = options?.proofMode ?? resolveLandingLiveProofModeFromEnv();
   const liveCount = options?.liveMemberCount;
-  const stats: LandingStatsMode =
-    proofMode === 'live' ||
-    (liveCount !== undefined && liveCount >= LANDING_CUMULATIVE_STATS_THRESHOLD)
-      ? 'live'
-      : 'presentation';
 
-  let testimonials: LandingTestimonialsMode = options?.testimonialsMode ?? 'presentation';
-  if (testimonials !== 'hidden' && LANDING_TESTIMONIAL_POOL.length === 0) {
-    testimonials = 'hidden';
-  }
-  if (proofMode === 'live' && testimonials === 'presentation') {
+  const hasVerifiedLiveStats =
+    proofMode === 'live' &&
+    liveCount !== undefined &&
+    liveCount >= LANDING_CUMULATIVE_STATS_THRESHOLD;
+
+  /** Presentation synthetic stats are never default-on (audit C-01 fail-closed). */
+  const stats: LandingStatsMode = hasVerifiedLiveStats ? 'live' : 'hidden';
+
+  let testimonials: LandingTestimonialsMode = 'hidden';
+  if (
+    proofMode === 'live' &&
+    LANDING_TESTIMONIAL_POOL.length > 0 &&
+    options?.testimonialsMode !== 'hidden'
+  ) {
     testimonials = 'verified';
   }
 
@@ -50,5 +63,7 @@ export function resolveLandingProof(options?: {
     stats,
     walletPreview: 'presentation',
     withdrawalMomentum: proofMode === 'live' ? 'live' : 'hidden',
+    withdrawalProof: 'hidden',
+    ambientSocial: 'hidden',
   };
 }

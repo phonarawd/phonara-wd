@@ -3,8 +3,10 @@ import { useState } from 'react';
 import { RefreshCw } from 'lucide-react';
 
 import { useAdminViralStatsDesk } from '@/hooks/admin/useAdminViralStatsDesk';
+import { formatAdminMoney } from '@/lib/format-admin-money';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
@@ -12,20 +14,6 @@ import { EmptyState } from '@/product/primitives/empty-state';
 import { cn } from '@/product/primitives/lib/cn';
 import { Skeleton } from '@/product/primitives/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/product/primitives/tabs';
-
-function LoadingTable({ rows, cols }: { rows: number; cols: number }) {
-  return (
-    <div className="space-y-2" aria-busy="true">
-      {Array.from({ length: rows }, (_, rowIndex) => (
-        <div key={rowIndex} className="flex gap-3">
-          {Array.from({ length: cols }, (_, colIndex) => (
-            <Skeleton key={colIndex} className="h-10 flex-1" />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
@@ -38,7 +26,7 @@ function MetricCard({ label, value }: { label: string; value: string }) {
   );
 }
 
-/** Admin viral stats desk (`/viral-stats`) — referral counts · partial aggregates (§29.2 R0). */
+/** Admin viral stats desk (`/viral-stats`) — E3 `rpc_admin_get_viral_analytics` full aggregates. */
 export function AdminViralStatsPage() {
   const t = useT();
   const goTo = useAdminRouteNavigate();
@@ -132,7 +120,14 @@ export function AdminViralStatsPage() {
               {t('admin.nav.viralStats')}
             </h3>
             {isLoading ? (
-              <LoadingTable rows={1} cols={4} />
+              <div
+                className="col-span-full grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+                aria-busy="true"
+              >
+                {Array.from({ length: 4 }, (_, index) => (
+                  <Skeleton key={index} className="h-20" />
+                ))}
+              </div>
             ) : (
               <>
                 <MetricCard
@@ -173,7 +168,11 @@ export function AdminViralStatsPage() {
                 </CardHeader>
               </Card>
               {isLoading ? (
-                <LoadingTable rows={3} cols={2} />
+                <div className="grid gap-3 sm:grid-cols-3" aria-busy="true">
+                  {Array.from({ length: 3 }, (_, index) => (
+                    <Skeleton key={index} className="h-20" />
+                  ))}
+                </div>
               ) : (
                 <dl className="m-0 grid gap-3 sm:grid-cols-3">
                   <div className="rounded-(--ds-radius-md) border border-line px-4 py-3">
@@ -205,99 +204,83 @@ export function AdminViralStatsPage() {
             </TabsContent>
 
             <TabsContent value="missions" className="space-y-3">
-              {isLoading ? (
-                <LoadingTable rows={4} cols={3} />
-              ) : missionClaims.length === 0 ? (
-                <EmptyState
-                  title={t('admin.overview.empty.title')}
-                  description={t('admin.viralStats.empty.missions')}
-                  actionLabel={t('admin.viralStats.empty.cta')}
-                  onAction={() => {
-                    goTo('/earn/missions');
-                  }}
-                />
-              ) : (
-                <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                  <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-                    <thead className="bg-surface-raised text-foreground-muted">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.viralStats.col.mission')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.viralStats.col.claims')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.viralStats.col.phonAwarded')}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {missionClaims.map((row) => (
-                        <tr key={row.mission} className="border-line border-t">
-                          <td className="text-foreground px-4 py-3">{t(row.labelKey)}</td>
-                          <td className="text-foreground px-4 py-3 tabular-nums">
-                            {row.claimCount}
-                          </td>
-                          <td className="text-foreground px-4 py-3 tabular-nums">
-                            {row.phonAwardedTotal} PHON
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              <AdminTable
+                columns={[
+                  {
+                    id: 'mission',
+                    header: t('admin.viralStats.col.mission'),
+                    cell: ({ row }) => t(row.labelKey),
+                  },
+                  {
+                    id: 'claims',
+                    header: t('admin.viralStats.col.claims'),
+                    cell: ({ row }) => row.claimCount,
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'phonAwarded',
+                    header: t('admin.viralStats.col.phonAwarded'),
+                    cell: ({ row }) => formatAdminMoney(row.phonAwardedTotal, 'PHON'),
+                    meta: { className: 'tabular-nums' },
+                  },
+                ]}
+                rows={missionClaims}
+                getRowId={(row) => row.mission}
+                loading={isLoading}
+                loadingRowCount={4}
+                minWidth={640}
+                empty={
+                  <EmptyState
+                    title={t('admin.overview.empty.title')}
+                    description={t('admin.viralStats.empty.missions')}
+                    actionLabel={t('admin.viralStats.empty.cta')}
+                    onAction={() => goTo('/earn/missions')}
+                  />
+                }
+              />
             </TabsContent>
 
             <TabsContent value="commissions" className="space-y-3">
-              {isLoading ? (
-                <LoadingTable rows={4} cols={4} />
-              ) : commissionAggregates.length === 0 ? (
-                <EmptyState
-                  title={t('admin.overview.empty.title')}
-                  description={t('admin.viralStats.empty.commissions')}
-                  actionLabel={t('admin.viralStats.empty.ctaReferrals')}
-                  onAction={() => {
-                    goTo('/earn/referrals');
-                  }}
-                />
-              ) : (
-                <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                  <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-                    <thead className="bg-surface-raised text-foreground-muted">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.viralStats.col.domain')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.viralStats.col.currency')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.viralStats.col.grossRevenue')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.viralStats.col.period')}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {commissionAggregates.map((row) => (
-                        <tr key={`${row.domain}-${row.currency}`} className="border-line border-t">
-                          <td className="text-foreground px-4 py-3">{row.domain}</td>
-                          <td className="text-foreground px-4 py-3 tabular-nums">{row.currency}</td>
-                          <td className="text-foreground px-4 py-3 tabular-nums">
-                            {row.grossRevenueTotal}
-                          </td>
-                          <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                            {row.latestDate}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              <AdminTable
+                columns={[
+                  {
+                    id: 'domain',
+                    header: t('admin.viralStats.col.domain'),
+                    cell: ({ row }) => row.domain,
+                  },
+                  {
+                    id: 'currency',
+                    header: t('admin.viralStats.col.currency'),
+                    cell: ({ row }) => row.currency,
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'grossRevenue',
+                    header: t('admin.viralStats.col.grossRevenue'),
+                    cell: ({ row }) => row.grossRevenueTotal,
+                    meta: { className: 'tabular-nums' },
+                  },
+                  {
+                    id: 'period',
+                    header: t('admin.viralStats.col.period'),
+                    cell: ({ row }) => row.latestDate,
+                    meta: { className: 'text-foreground-muted tabular-nums' },
+                  },
+                ]}
+                rows={commissionAggregates}
+                getRowId={(row) => `${row.domain}-${row.currency}`}
+                loading={isLoading}
+                loadingRowCount={4}
+                minWidth={720}
+                empty={
+                  <EmptyState
+                    title={t('admin.overview.empty.title')}
+                    description={t('admin.viralStats.empty.commissions')}
+                    actionLabel={t('admin.viralStats.empty.ctaReferrals')}
+                    onAction={() => goTo('/earn/referrals')}
+                  />
+                }
+              />
             </TabsContent>
 
             <TabsContent value="shareEvents" className="space-y-3">

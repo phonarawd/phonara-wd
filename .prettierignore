@@ -20,3 +20,4 @@ supabase/.temp
 supabase/.branches
 supabase/functions-sql
 packages/shared-types/src/database.types.ts
+apps/web/src/routeTree.gen.ts

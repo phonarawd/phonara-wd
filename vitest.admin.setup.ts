@@ -1,8 +1,15 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup, configure } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { afterEach, beforeEach } from 'vitest';
+import { afterEach, beforeAll, beforeEach } from 'vitest';
 import { createElement, type ReactNode } from 'react';
+
+import { preloadAllLocalesForTests } from '@phonara/i18n';
+
+/** R9-PERF-JS / Phase 4 — preload en for sync I18nProvider in admin tests. */
+beforeAll(async () => {
+  await preloadAllLocalesForTests();
+});
 
 let queryClient: QueryClient;
 

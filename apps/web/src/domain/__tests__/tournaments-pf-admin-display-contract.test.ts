@@ -95,7 +95,7 @@ describe('tournaments-pf-admin-display-contract', () => {
   it('records Phase 1 UI wire status for mock tournaments vs wired fairness', () => {
     expect(TOURNAMENTS_PF_ADMIN_UI_WIRE_STATUS['/games/tournaments']).toBe('mock_only');
     expect(TOURNAMENTS_PF_ADMIN_UI_WIRE_STATUS['/games/fairness']).toBe('wired');
-    expect(TOURNAMENTS_PF_ADMIN_UI_WIRE_STATUS['/casino']).toBe('mock_only');
+    expect(TOURNAMENTS_PF_ADMIN_UI_WIRE_STATUS['/casino']).toBe('partial');
     expect(TOURNAMENTS_PF_ADMIN_UI_WIRE_STATUS['/admin/casino']).toBe('partial');
   });
 });

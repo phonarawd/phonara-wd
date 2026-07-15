@@ -81,7 +81,7 @@ BEGIN
     AND channel = '';
   ASSERT v_count = 0, 'healthy recovery must reset consecutive_failures';
 
-  -- Edge ops event append
+  -- Edge ops event append (legacy ok)
   v_res := rpc_service_record_edge_ops_event(
     'test-req-event-001',
     'price-feed',
@@ -92,16 +92,40 @@ BEGIN
     10,
     2,
     NULL,
-    '{"submitted": 8}'::JSONB
+    '{"applied": 8, "rejected": 0, "circuitOpen": 2, "rpcFailed": 0}'::JSONB
   );
   ASSERT COALESCE((v_res->>'ok')::BOOLEAN, FALSE),
     'edge ops event insert must return ok';
+
+  -- H-04 granular statuses must be accepted
+  v_res := rpc_service_record_edge_ops_event(
+    'test-req-event-partial',
+    'price-feed',
+    'ops.price_feed.completed',
+    'partial',
+    180,
+    'lt_500ms',
+    42,
+    9,
+    'partial_apply',
+    '{"applied": 9, "rejected": 24, "circuitOpen": 9, "rpcFailed": 0}'::JSONB
+  );
+  ASSERT COALESCE((v_res->>'ok')::BOOLEAN, FALSE),
+    'partial edge ops status must be accepted';
+  ASSERT COALESCE(v_res->>'status', '') = 'partial',
+    'record RPC must echo partial status';
 
   SELECT COUNT(*)::INT INTO v_count
   FROM edge_ops_events
   WHERE request_id = 'test-req-event-001'
     AND function_name = 'price-feed';
   ASSERT v_count = 1, 'edge_ops_events row must persist';
+
+  SELECT COUNT(*)::INT INTO v_count
+  FROM edge_ops_events
+  WHERE request_id = 'test-req-event-partial'
+    AND status = 'partial';
+  ASSERT v_count = 1, 'partial edge_ops_events row must persist';
 
   -- Snapshot includes providerHealth block
   v_edge := _build_edge_failure_snapshot();

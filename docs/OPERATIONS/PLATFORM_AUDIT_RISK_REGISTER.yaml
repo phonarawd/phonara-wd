@@ -1,0 +1,103 @@
+schema_version: 1
+playbook_version: '1.0.0'
+updated_at: '2026-07-13T00:34:00+09:00'
+risks:
+  - id: RISK-COMPLIANCE-SCOPEOUT
+    title: '법적/컴플라이언스 게이트는 R11 scope-out (의도)'
+    domain: Ops
+    impact: 4
+    likelihood: 3
+    severity: HIGH
+    status: ACCEPTED
+    mitigation: '별도 Owner 결정 · KYC/AML은 H-10 재개 조건 유지'
+    owner: product
+    trigger_link: ''
+    accepted_expires_at: '2026-10-13'
+    evidence: 'docs/OPERATIONS/PLATFORM_STAGE_SCHEDULE.md'
+    updated_at: '2026-07-13T00:34:00+09:00'
+  - id: RISK-LOAD-TEST-DEFER
+    title: '정식 부하/용량 테스트는 R12 이후 · soft-launch 전제'
+    domain: Ops
+    impact: 4
+    likelihood: 3
+    severity: HIGH
+    status: ACCEPTED
+    mitigation: 'SLO 위반 시 Trigger로 방어 · RPC Latency Risk 연결'
+    owner: sre
+    trigger_link: 'rpc_p95_ms'
+    accepted_expires_at: '2026-10-13'
+    evidence: 'docs/OPERATIONS/PLATFORM_SLO_SLA.yaml'
+    updated_at: '2026-07-13T00:34:00+09:00'
+  - id: RISK-UNUSED-RPC-SURFACE
+    title: '미사용 backend RPC ~99개 attack surface (출시 차단 아님)'
+    domain: Security
+    impact: 3
+    likelihood: 2
+    severity: MEDIUM
+    status: OPEN
+    mitigation: 'R12 이후 정리 큐 · 출시 전 임의 삭제 금지'
+    owner: security
+    trigger_link: ''
+    evidence: 'docs/audit/PLATFORM_AUDIT_REFERENCE.md §9.4'
+    updated_at: '2026-07-13T00:34:00+09:00'
+  - id: RISK-SINGLE-REGION
+    title: '단일 리전 · Region Failover 미구축'
+    domain: Ops
+    impact: 4
+    likelihood: 2
+    severity: HIGH
+    status: ACCEPTED
+    mitigation: 'DR local restore + PITR check · soft-launch'
+    owner: sre
+    trigger_link: ''
+    accepted_expires_at: '2026-10-13'
+    evidence: 'docs/OPERATIONS/PLATFORM_DISASTER_RECOVERY.md'
+    updated_at: '2026-07-13T00:34:00+09:00'
+  - id: RISK-DEP-OTEL
+    title: 'bun audit moderate @opentelemetry/core <2.8.0'
+    domain: Ops
+    impact: 2
+    likelihood: 2
+    severity: MEDIUM
+    status: OPEN
+    mitigation: 'R8 재스캔 · Owner 승인 후 bun update'
+    owner: sre
+    trigger_link: ''
+    evidence: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R0/bun-audit-2026-07-13.md'
+    updated_at: '2026-07-13T00:34:00+09:00'
+  - id: RISK-BROWSER-MCP
+    title: 'Browser MCP 부재로 Stage2 Runtime 전수 지연'
+    domain: Ops
+    impact: 4
+    likelihood: 5
+    severity: HIGH
+    status: MITIGATED
+    mitigation: 'M-18 Probe5 CAPTURE_OK · playwright-mcp-8gb.json · R9 matrix pending'
+    owner: sre
+    trigger_link: ''
+    evidence: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R0/browser-mcp-probe.md'
+    updated_at: '2026-07-13T00:34:00+09:00'
+  - id: RISK-OBS-STACK
+    title: '관측/알림 스택 R4 미구축 시 R10 Gate Block'
+    domain: Ops
+    impact: 4
+    likelihood: 1
+    severity: HIGH
+    status: MITIGATED
+    mitigation: 'ADR-021 Option A executed · EXT-01 dry-fire 6/6 · edge_ops outcome split'
+    owner: sre
+    trigger_link: 'PLATFORM_SLO_SLA.yaml#rollback_triggers'
+    evidence: 'docs/OPERATIONS/PLATFORM_AUDIT_CLOSEOUT_EVIDENCE/R4/r4-market-ops-implement.md'
+    updated_at: '2026-07-13T04:42:00+09:00'
+  - id: RISK-PII-RETENTION
+    title: '개인정보 보존·파기 정책 초안은 R5 · 완성 R12+'
+    domain: Ops
+    impact: 3
+    likelihood: 3
+    severity: MEDIUM
+    status: OPEN
+    mitigation: 'M-17과 함께 R5 초안'
+    owner: product
+    trigger_link: ''
+    evidence: ''
+    updated_at: '2026-07-13T00:34:00+09:00'

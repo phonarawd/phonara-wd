@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { EARN_SUBNAV, EARN_SUBNAV_CORE } from '../earn-subnav';
+import { CASINO_SUBNAV } from '../casino-subnav';
 import { TRADE_SUBNAV } from '../trade-subnav';
 import {
   filterRegisteredSubnavItems,
@@ -8,6 +9,7 @@ import {
   P7_GROWTH_REGISTERED_ROUTES,
   P8_CORE_REGISTERED_ROUTES,
   P9_TRADE_REGISTERED_ROUTES,
+  P11_SIDE_INCOME_REGISTERED_ROUTES,
   SHELL_SUBNAV_REGISTERED_ROUTES,
 } from '../subnav-route-manifest';
 import { SPORTS_SUBNAV } from '../sports-subnav';
@@ -27,6 +29,8 @@ describe('subnav-route-manifest §12.19.6', () => {
       '/referral',
       '/tier/me',
       '/tier/benefits',
+      '/earn/cashback',
+      '/earn/play',
       '/share/earnings',
       '/staking',
     ]);
@@ -36,6 +40,20 @@ describe('subnav-route-manifest §12.19.6', () => {
     expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/tier/me')).toBe(true);
     expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/tier/benefits')).toBe(true);
     expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/share/earnings')).toBe(true);
+  });
+
+  it('includes P11 side-income routes in manifest (p11-earn-side-surfaces)', () => {
+    for (const route of P11_SIDE_INCOME_REGISTERED_ROUTES) {
+      expect(SHELL_SUBNAV_REGISTERED_ROUTES.has(route)).toBe(true);
+    }
+    expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/events')).toBe(true);
+    expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/earn/play')).toBe(true);
+    expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/earn/cashback')).toBe(true);
+    expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/referral/leaderboard')).toBe(true);
+  });
+
+  it('includes wallet redeem in manifest (p11-page-wallet-redeem)', () => {
+    expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/wallet/redeem')).toBe(true);
   });
 
   it('includes P7 curated mission routes in manifest (p7-gate-growth)', () => {
@@ -89,8 +107,21 @@ describe('subnav-route-manifest §12.19.6', () => {
     expect(visible.map((item) => item.to)).not.toContain('/staking');
   });
 
-  it('hides sports child routes until P10 manifest extends', () => {
+  it('shows sports hub child routes after P10 Sports#0 manifest', () => {
     const visible = filterRegisteredSubnavItems(SPORTS_SUBNAV);
-    expect(visible.map((item) => item.to)).toEqual(['/sports']);
+    expect(visible.map((item) => item.to)).toEqual([
+      '/sports',
+      '/sports/prematch',
+      '/sports/live',
+      '/sports/my-bets',
+      '/sports/rules',
+      '/sports/vip',
+    ]);
+  });
+
+  it('shows casino fairness after p10-page-casino-fairness manifest', () => {
+    expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/casino/fairness')).toBe(true);
+    expect(SHELL_SUBNAV_REGISTERED_ROUTES.has('/casino/tournaments')).toBe(false);
+    expect(CASINO_SUBNAV.map((item) => item.to)).not.toContain('/casino/tournaments');
   });
 });

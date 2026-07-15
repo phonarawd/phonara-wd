@@ -1,5 +1,4 @@
 import { callRpc } from '../lib/rpc';
-import { supabase } from '../lib/supabase';
 import type { Json } from '@phonara/shared-types';
 
 export async function setSystemMode(input: {
@@ -55,27 +54,18 @@ export async function getOpsAlertsRaw(statuses?: string[]): Promise<Json> {
 }
 
 export async function getOpsDashboardRaw(): Promise<Json> {
-  const { data, error } = await supabase.rpc('rpc_admin_get_ops_dashboard' as never);
-  if (error) throw error;
-  return data as Json;
+  return callRpc('rpc_admin_get_ops_dashboard');
 }
 
 export async function listExceptionQueueRaw(domain?: string, limit?: number): Promise<Json> {
-  const { data, error } = await supabase.rpc(
-    'rpc_admin_list_exception_queue' as never,
-    {
-      p_domain: domain ?? null,
-      p_limit: limit ?? 50,
-    } as never,
-  );
-  if (error) throw error;
-  return data as Json;
+  return callRpc('rpc_admin_list_exception_queue', {
+    p_domain: domain,
+    p_limit: limit ?? 50,
+  });
 }
 
 export async function listAlertThresholdsRaw(): Promise<Json> {
-  const { data, error } = await supabase.rpc('rpc_admin_list_alert_thresholds' as never);
-  if (error) throw error;
-  return data as Json;
+  return callRpc('rpc_admin_list_alert_thresholds');
 }
 
 export async function setAlertThreshold(input: {
@@ -85,18 +75,13 @@ export async function setAlertThreshold(input: {
   windowSeconds: number;
   reason: string;
 }): Promise<Json> {
-  const { data, error } = await supabase.rpc(
-    'rpc_admin_set_alert_threshold' as never,
-    {
-      p_domain: input.domain,
-      p_threshold_key: input.thresholdKey,
-      p_threshold_value: input.thresholdValue,
-      p_window_seconds: input.windowSeconds,
-      p_reason: input.reason,
-    } as never,
-  );
-  if (error) throw error;
-  return data as Json;
+  return callRpc('rpc_admin_set_alert_threshold', {
+    p_domain: input.domain,
+    p_threshold_key: input.thresholdKey,
+    p_threshold_value: input.thresholdValue,
+    p_window_seconds: input.windowSeconds,
+    p_reason: input.reason,
+  });
 }
 
 export interface AdminTradeMarketBreakerRow {
@@ -127,9 +112,7 @@ function parseTradeMarketBreakerRow(value: Json): AdminTradeMarketBreakerRow | n
 }
 
 export async function listTradeMarketBreakersRaw(): Promise<AdminTradeMarketBreakerRow[]> {
-  const { data, error } = await supabase.rpc('rpc_admin_list_trade_market_breakers' as never);
-  if (error) throw error;
-  const rows = data as Json[] | null;
+  const rows = await callRpc('rpc_admin_list_trade_market_breakers');
   if (!Array.isArray(rows)) return [];
   return rows
     .map((row) => parseTradeMarketBreakerRow(row))
@@ -137,23 +120,15 @@ export async function listTradeMarketBreakersRaw(): Promise<AdminTradeMarketBrea
 }
 
 export async function haltTradeMarket(input: { symbol: string; reason: string }): Promise<void> {
-  const { error } = await supabase.rpc(
-    'rpc_admin_halt_market' as never,
-    {
-      p_symbol: input.symbol,
-      p_reason: input.reason,
-    } as never,
-  );
-  if (error) throw error;
+  await callRpc('rpc_admin_halt_market', {
+    p_symbol: input.symbol,
+    p_reason: input.reason,
+  });
 }
 
 export async function resumeTradeMarket(input: { symbol: string; reason: string }): Promise<void> {
-  const { error } = await supabase.rpc(
-    'rpc_resume_market' as never,
-    {
-      p_symbol: input.symbol,
-      p_reason: input.reason,
-    } as never,
-  );
-  if (error) throw error;
+  await callRpc('rpc_resume_market', {
+    p_symbol: input.symbol,
+    p_reason: input.reason,
+  });
 }

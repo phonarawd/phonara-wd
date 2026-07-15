@@ -16,7 +16,8 @@ export const P9_TRADE_BEGINNER_HELP_LAYER_TODO = 'p9-trade-beginner-help-layer' 
 export type TradeHelpOwnerTodo =
   | typeof P9_TRADE_BEGINNER_HELP_LAYER_TODO
   | typeof P9_TRADE_POSITION_MODE_LABEL_TODO
-  | typeof P9_TRADE_TIER_FEE_DISPLAY_TODO;
+  | typeof P9_TRADE_TIER_FEE_DISPLAY_TODO
+  | 'ew-e21-ui-trade-engine-unlocks';
 
 export type TradeBeginnerSurface = 'spot' | 'futures' | 'staking' | 'staking_positions';
 
@@ -82,6 +83,7 @@ export type TradeHelpTermId =
   | 'margin'
   | 'margin_mode'
   | 'position_mode'
+  | 'reduce_only'
   | 'liquidation'
   | 'order_book'
   | 'funding'
@@ -156,6 +158,13 @@ export const TRADE_BEGINNER_HELP_TERMS: readonly TradeHelpTerm[] = [
     bodyKey: 'trade.help.position_mode.body',
     surfaces: ['futures'],
     ownerTodo: P9_TRADE_POSITION_MODE_LABEL_TODO,
+  },
+  {
+    id: 'reduce_only',
+    labelKey: 'trade.help.reduce_only.label',
+    bodyKey: 'trade.help.reduce_only.body',
+    surfaces: ['futures'],
+    ownerTodo: 'ew-e21-ui-trade-engine-unlocks',
   },
   {
     id: 'liquidation',

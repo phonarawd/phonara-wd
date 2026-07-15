@@ -15,6 +15,8 @@ const serverTestErrorCodePattern = [
 // contain BOTH locales, so dropping either side re-triggers a failure.
 const allowedFiles = new Set([
   'packages/i18n/src/index.ts',
+  'packages/i18n/src/catalog-ko.ts',
+  'packages/i18n/src/catalog-en.ts',
   'packages/i18n/src/locales/presentation-ko.ts',
   'packages/i18n/src/locales/presentation-en.ts',
   'apps/web/index.html',

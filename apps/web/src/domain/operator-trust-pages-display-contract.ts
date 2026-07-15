@@ -30,7 +30,11 @@ export const FIRST_BET_EDUCATION_STORAGE_KEY = 'phonara.education.bet.dismissed'
 export const TRADE_EDUCATION_RISK_DISCLOSURE_ROUTE = '/legal/risk-disclosure' as const;
 export const TRADE_EDUCATION_RG_ROUTE = '/legal/responsible-gaming' as const;
 
+export const BET_EDUCATION_RG_ROUTE = TRADE_EDUCATION_RG_ROUTE;
+export const BET_EDUCATION_FAIRNESS_ROUTE = '/casino/fairness' as const;
+
 export type TradeEducationRiskTopic = 'fee' | 'liquidation' | 'rg';
+export type BetEducationRiskTopic = 'slip' | 'rg' | 'fairness';
 
 /** First-visit trade education — fee · liquidation · RG (§32.5 Financial tone). */
 /** Beginner how-it-works · HelpTip — §13.1.3 · trade-beginner-language-display-contract (separate layer). */
@@ -38,6 +42,13 @@ export const TRADE_EDUCATION_RISK_TOPICS: readonly TradeEducationRiskTopic[] = [
   'fee',
   'liquidation',
   'rg',
+] as const;
+
+/** First-visit sports+casino education — bet slip · RG · provably-fair (§32.5 · p10-first-bet-education). */
+export const BET_EDUCATION_RISK_TOPICS: readonly BetEducationRiskTopic[] = [
+  'slip',
+  'rg',
+  'fairness',
 ] as const;
 
 export const TRADE_EDUCATION_I18N_KEYS = {
@@ -48,12 +59,28 @@ export const TRADE_EDUCATION_I18N_KEYS = {
   rgLink: 'trade.education.rgLink',
 } as const satisfies Record<string, MessageKey>;
 
+export const BET_EDUCATION_I18N_KEYS = {
+  title: 'bet.education.title',
+  lead: 'bet.education.lead',
+  dismiss: 'bet.education.dismiss',
+  rgLink: 'bet.education.rgLink',
+  fairnessLink: 'bet.education.fairnessLink',
+} as const satisfies Record<string, MessageKey>;
+
 export function tradeEducationRiskTitleKey(topic: TradeEducationRiskTopic): MessageKey {
   return `trade.education.${topic}.title` as MessageKey;
 }
 
 export function tradeEducationRiskBodyKey(topic: TradeEducationRiskTopic): MessageKey {
   return `trade.education.${topic}.body` as MessageKey;
+}
+
+export function betEducationRiskTitleKey(topic: BetEducationRiskTopic): MessageKey {
+  return `bet.education.${topic}.title` as MessageKey;
+}
+
+export function betEducationRiskBodyKey(topic: BetEducationRiskTopic): MessageKey {
+  return `bet.education.${topic}.body` as MessageKey;
 }
 
 /** Footer trust links — `/legal/*` siblings ship separately; these four are P12 operator trust pages. */

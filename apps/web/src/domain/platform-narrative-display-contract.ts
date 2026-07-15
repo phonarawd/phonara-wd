@@ -5,7 +5,7 @@
 
 import type { MessageKey } from '@phonara/i18n';
 
-export const PLATFORM_PRODUCT_NAME = 'PrimeForge' as const;
+export const PLATFORM_PRODUCT_NAME = 'PHONARA' as const;
 export const PLATFORM_ENGINE_NAME = 'PHONARA' as const;
 
 export type PlatformPillarId = 'earn' | 'wallet' | 'play';
@@ -50,16 +50,12 @@ export const PLATFORM_PILLAR_ROUTES: Readonly<Record<PlatformPillarId, string>> 
   play: '/trade',
 };
 
-/** E-Wave STUB routes — hidden from IA until engine gate green (§22.5). */
-export const PLATFORM_EWAVE_HIDDEN_ROUTES = [
-  '/wallet/transfer',
-  '/settings/api-keys',
-  '/support/ticket',
-  '/support/chat',
-  '/tier/leaderboard',
-  '/status',
-  '/points/shop',
-] as const;
+/**
+ * E-Wave STUB routes — hidden from IA until engine/UI unlock (§22.5).
+ * `/wallet/transfer` · `/settings/api-keys` = `ew-e10-wallet-settings-ui`.
+ * `/support/ticket` · `/status` · `/tier/leaderboard` = `ew-e10-trust-support-ui`.
+ */
+export const PLATFORM_EWAVE_HIDDEN_ROUTES = ['/support/chat', '/points/shop'] as const;
 
 /** i18n key prefixes wired by platform canon (`p6-doc-platform-canon-sync` · `p3-platform-narrative-i18n`). */
 export const PLATFORM_NARRATIVE_KEY_PREFIXES = [
@@ -81,5 +77,8 @@ export function listPlatformNarrativeMessageKeys(): readonly MessageKey[] {
     PLATFORM_PILLARS_SECTION_TITLE_KEY,
     PLATFORM_PILLARS_SECTION_SUBTITLE_KEY,
     ...pillarKeys,
+    'platform.trust.ledger' as MessageKey,
+    'platform.trust.pf' as MessageKey,
+    'platform.trust.rg' as MessageKey,
   ];
 }

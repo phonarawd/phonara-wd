@@ -48,7 +48,7 @@ function SettingsNotificationsToggleRow({
           {partialEngine ? (
             <span
               className={cn(
-                'bg-surface-raised text-foreground-muted shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase',
+                'bg-surface-raised text-foreground-muted shrink-0 rounded-full px-2 py-0.5 text-tiny font-semibold tracking-wide uppercase',
               )}
               data-testid={`settings-notifications-partial-${id}`}
             >
@@ -108,7 +108,7 @@ export function NotificationsSettingsPage() {
           <Card key={group} data-testid={`settings-notifications-group-${group}`}>
             <CardHeader className="flex flex-row items-start gap-3 pb-2">
               <span
-                className="bg-accent/10 text-accent flex size-10 shrink-0 items-center justify-center rounded-(--ds-radius-md)"
+                className="bg-accent/10 text-accent flex size-10 shrink-0 items-center justify-center rounded-md"
                 aria-hidden
               >
                 <Bell className="size-5" />

@@ -1,0 +1,1636 @@
+{
+  "generatedAt": "2026-07-13T15:22:18.669Z",
+  "typesCount": 256,
+  "usedInTypes": 144,
+  "unusedInApps": [
+    "rpc_accept_co_bet",
+    "rpc_accept_co_mission",
+    "rpc_admin_fulfill_giftcard_redeem",
+    "rpc_admin_get_product_analytics",
+    "rpc_admin_list_giftcard_fee_market",
+    "rpc_admin_list_linked_device_users",
+    "rpc_admin_list_outcome_liability",
+    "rpc_admin_rebase_resume_market",
+    "rpc_admin_reject_giftcard_redeem",
+    "rpc_admin_trade_exposure_summary",
+    "rpc_admin_upsert_giftcard_fee_market",
+    "rpc_admin_void_game_bet",
+    "rpc_cancel_game_bet",
+    "rpc_check_casino_rtp_drift",
+    "rpc_check_reserve_ratio",
+    "rpc_claim_whale_mission",
+    "rpc_complete_co_bet",
+    "rpc_complete_co_mission",
+    "rpc_complete_mission",
+    "rpc_contribute_insurance_capital",
+    "rpc_create_game_round",
+    "rpc_create_siwe_challenge",
+    "rpc_create_support_ticket",
+    "rpc_disable_market_source",
+    "rpc_get_affiliate_rank_leaderboard",
+    "rpc_get_co_bet_status",
+    "rpc_get_co_mission_status",
+    "rpc_get_dr_health_summary",
+    "rpc_get_earn_activity_feed",
+    "rpc_get_mission_chain_status",
+    "rpc_get_reward_config",
+    "rpc_get_tier_leaderboard",
+    "rpc_get_whale_mission_status",
+    "rpc_golden_earth_tap",
+    "rpc_ingest_sports_c1",
+    "rpc_ingest_sports_c1_batch",
+    "rpc_ingest_sports_fixture_status",
+    "rpc_invite_co_bet",
+    "rpc_invite_co_mission",
+    "rpc_link_co_bet_bet",
+    "rpc_liquidate_position",
+    "rpc_list_mission_chains",
+    "rpc_list_sports_catalog",
+    "rpc_list_sports_market_types",
+    "rpc_list_wallet_identities",
+    "rpc_live_crash_advance",
+    "rpc_lock_wallet",
+    "rpc_process_bank_transfer",
+    "rpc_process_bank_transfer_batch",
+    "rpc_process_on_chain_transfer",
+    "rpc_rate_limit_buckets",
+    "rpc_rate_limit_configs",
+    "rpc_recommend_missions",
+    "rpc_record_app_install_attribution",
+    "rpc_record_product_analytics_event",
+    "rpc_record_sports_ingest_health",
+    "rpc_record_sports_score_quorum_mismatch",
+    "rpc_refresh_affiliate_commission_daily_aggregates",
+    "rpc_refresh_affiliate_tier_snapshots",
+    "rpc_register_affiliate_relationship",
+    "rpc_request_idem",
+    "rpc_request_self_exclusion_release",
+    "rpc_reveal_roulette_spin",
+    "rpc_run_cms_publish_scheduled",
+    "rpc_run_custody_reconciliation",
+    "rpc_run_funding_accrual",
+    "rpc_run_invariant_checks",
+    "rpc_run_liquidations",
+    "rpc_run_open_order_fills",
+    "rpc_run_phon_internal_oracle",
+    "rpc_run_reconciliation",
+    "rpc_run_spot_order_fills",
+    "rpc_run_stop_orders",
+    "rpc_run_tier_decay",
+    "rpc_service_assess_circuit_breaker",
+    "rpc_service_claim_notification_dispatch_batch",
+    "rpc_service_claim_ops_notify_batch",
+    "rpc_service_claim_withdrawal_broadcast_batch",
+    "rpc_service_complete_notification_dispatch",
+    "rpc_service_complete_ops_notify",
+    "rpc_service_complete_siwe_login",
+    "rpc_service_create_siwe_challenge",
+    "rpc_service_enqueue_ops_telegram_digest",
+    "rpc_service_fail_withdrawal_broadcast",
+    "rpc_service_ingest_usdt_krw_rate",
+    "rpc_service_lookup_siwe_identity",
+    "rpc_service_mark_withdrawal_broadcast",
+    "rpc_service_purge_siwe_analytics_retention",
+    "rpc_service_record_circuit_breaker_outcome",
+    "rpc_service_record_edge_ops_event",
+    "rpc_service_record_product_analytics_event",
+    "rpc_service_register_pg_webhook_replay",
+    "rpc_service_set_crypto_address",
+    "rpc_service_upsert_provider_health",
+    "rpc_set_affiliate_elite_override",
+    "rpc_set_market_limits",
+    "rpc_set_market_source",
+    "rpc_settle_game_bet",
+    "rpc_settle_sports_fixture",
+    "rpc_settle_sports_fixture_scores",
+    "rpc_settle_sports_prop_outcomes",
+    "rpc_submit_oracle_source_price",
+    "rpc_suspend_sports_fixture",
+    "rpc_sweep_stale_game_bets",
+    "rpc_sweep_stale_progressive_sessions",
+    "rpc_sync_sports_ingest_ops_alerts",
+    "rpc_transition_fixture_live",
+    "rpc_unlock_wallet",
+    "rpc_update_oracle_price",
+    "rpc_update_treasury_reserve",
+    "rpc_void_sports_bet",
+    "rpc_void_sports_fixture_dead_heat"
+  ],
+  "crossUse": {
+    "rpc_accept_co_bet": "sql_test_only",
+    "rpc_accept_co_mission": "sql_test_only",
+    "rpc_admin_fulfill_giftcard_redeem": "none",
+    "rpc_admin_get_product_analytics": "none",
+    "rpc_admin_list_giftcard_fee_market": "none",
+    "rpc_admin_list_linked_device_users": "none",
+    "rpc_admin_list_outcome_liability": "none",
+    "rpc_admin_rebase_resume_market": "sql_test_only",
+    "rpc_admin_reject_giftcard_redeem": "sql_test_only",
+    "rpc_admin_trade_exposure_summary": "none",
+    "rpc_admin_upsert_giftcard_fee_market": "sql_test_only",
+    "rpc_admin_void_game_bet": "sql_test_only",
+    "rpc_cancel_game_bet": "sql_cron_or_internal",
+    "rpc_check_casino_rtp_drift": "sql_cron_or_internal",
+    "rpc_check_reserve_ratio": "sql_test_only",
+    "rpc_claim_whale_mission": "sql_test_only",
+    "rpc_complete_co_bet": "sql_test_only",
+    "rpc_complete_co_mission": "sql_test_only",
+    "rpc_complete_mission": "sql_cron_or_internal",
+    "rpc_contribute_insurance_capital": "sql_cron_or_internal",
+    "rpc_create_game_round": "sql_test_only",
+    "rpc_create_siwe_challenge": "sql_cron_or_internal",
+    "rpc_create_support_ticket": "sql_test_only",
+    "rpc_disable_market_source": "sql_test_only",
+    "rpc_get_affiliate_rank_leaderboard": "sql_test_only",
+    "rpc_get_co_bet_status": "none",
+    "rpc_get_co_mission_status": "sql_test_only",
+    "rpc_get_dr_health_summary": "none",
+    "rpc_get_earn_activity_feed": "none",
+    "rpc_get_mission_chain_status": "sql_test_only",
+    "rpc_get_reward_config": "none",
+    "rpc_get_tier_leaderboard": "sql_test_only",
+    "rpc_get_whale_mission_status": "none",
+    "rpc_golden_earth_tap": "sql_test_only",
+    "rpc_ingest_sports_c1": "sql_cron_or_internal",
+    "rpc_ingest_sports_c1_batch": "sql_test_only",
+    "rpc_ingest_sports_fixture_status": "sql_test_only",
+    "rpc_invite_co_bet": "sql_test_only",
+    "rpc_invite_co_mission": "sql_test_only",
+    "rpc_link_co_bet_bet": "sql_test_only",
+    "rpc_liquidate_position": "sql_cron_or_internal",
+    "rpc_list_mission_chains": "sql_test_only",
+    "rpc_list_sports_catalog": "sql_test_only",
+    "rpc_list_sports_market_types": "sql_test_only",
+    "rpc_list_wallet_identities": "sql_test_only",
+    "rpc_live_crash_advance": "sql_test_only",
+    "rpc_lock_wallet": "sql_cron_or_internal",
+    "rpc_process_bank_transfer": "sql_cron_or_internal",
+    "rpc_process_bank_transfer_batch": "edge",
+    "rpc_process_on_chain_transfer": "edge",
+    "rpc_rate_limit_buckets": "sql_cron_or_internal",
+    "rpc_rate_limit_configs": "sql_cron_or_internal",
+    "rpc_recommend_missions": "sql_test_only",
+    "rpc_record_app_install_attribution": "sql_test_only",
+    "rpc_record_product_analytics_event": "sql_test_only",
+    "rpc_record_sports_ingest_health": "sql_test_only",
+    "rpc_record_sports_score_quorum_mismatch": "sql_test_only",
+    "rpc_refresh_affiliate_commission_daily_aggregates": "sql_cron_or_internal",
+    "rpc_refresh_affiliate_tier_snapshots": "sql_cron_or_internal",
+    "rpc_register_affiliate_relationship": "none",
+    "rpc_request_idem": "sql_cron_or_internal",
+    "rpc_request_self_exclusion_release": "none",
+    "rpc_reveal_roulette_spin": "sql_test_only",
+    "rpc_run_cms_publish_scheduled": "sql_cron_or_internal",
+    "rpc_run_custody_reconciliation": "sql_test_only",
+    "rpc_run_funding_accrual": "sql_cron_or_internal",
+    "rpc_run_invariant_checks": "sql_cron_or_internal",
+    "rpc_run_liquidations": "sql_cron_or_internal",
+    "rpc_run_open_order_fills": "sql_cron_or_internal",
+    "rpc_run_phon_internal_oracle": "sql_cron_or_internal",
+    "rpc_run_reconciliation": "sql_cron_or_internal",
+    "rpc_run_spot_order_fills": "sql_cron_or_internal",
+    "rpc_run_stop_orders": "sql_cron_or_internal",
+    "rpc_run_tier_decay": "sql_cron_or_internal",
+    "rpc_service_assess_circuit_breaker": "edge",
+    "rpc_service_claim_notification_dispatch_batch": "edge",
+    "rpc_service_claim_ops_notify_batch": "edge",
+    "rpc_service_claim_withdrawal_broadcast_batch": "edge",
+    "rpc_service_complete_notification_dispatch": "edge",
+    "rpc_service_complete_ops_notify": "edge",
+    "rpc_service_complete_siwe_login": "edge",
+    "rpc_service_create_siwe_challenge": "edge",
+    "rpc_service_enqueue_ops_telegram_digest": "edge",
+    "rpc_service_fail_withdrawal_broadcast": "edge",
+    "rpc_service_ingest_usdt_krw_rate": "edge",
+    "rpc_service_lookup_siwe_identity": "edge",
+    "rpc_service_mark_withdrawal_broadcast": "edge",
+    "rpc_service_purge_siwe_analytics_retention": "sql_test_only",
+    "rpc_service_record_circuit_breaker_outcome": "edge",
+    "rpc_service_record_edge_ops_event": "edge",
+    "rpc_service_record_product_analytics_event": "edge",
+    "rpc_service_register_pg_webhook_replay": "edge",
+    "rpc_service_set_crypto_address": "edge",
+    "rpc_service_upsert_provider_health": "edge",
+    "rpc_set_affiliate_elite_override": "sql_test_only",
+    "rpc_set_market_limits": "sql_test_only",
+    "rpc_set_market_source": "sql_test_only",
+    "rpc_settle_game_bet": "sql_cron_or_internal",
+    "rpc_settle_sports_fixture": "sql_cron_or_internal",
+    "rpc_settle_sports_fixture_scores": "sql_cron_or_internal",
+    "rpc_settle_sports_prop_outcomes": "sql_cron_or_internal",
+    "rpc_submit_oracle_source_price": "edge",
+    "rpc_suspend_sports_fixture": "sql_cron_or_internal",
+    "rpc_sweep_stale_game_bets": "sql_cron_or_internal",
+    "rpc_sweep_stale_progressive_sessions": "sql_test_only",
+    "rpc_sync_sports_ingest_ops_alerts": "sql_test_only",
+    "rpc_transition_fixture_live": "sql_cron_or_internal",
+    "rpc_unlock_wallet": "sql_cron_or_internal",
+    "rpc_update_oracle_price": "sql_cron_or_internal",
+    "rpc_update_treasury_reserve": "sql_cron_or_internal",
+    "rpc_void_sports_bet": "sql_cron_or_internal",
+    "rpc_void_sports_fixture_dead_heat": "sql_cron_or_internal"
+  },
+  "trulyUnused": [
+    "rpc_admin_fulfill_giftcard_redeem",
+    "rpc_admin_get_product_analytics",
+    "rpc_admin_list_giftcard_fee_market",
+    "rpc_admin_list_linked_device_users",
+    "rpc_admin_list_outcome_liability",
+    "rpc_admin_trade_exposure_summary",
+    "rpc_get_co_bet_status",
+    "rpc_get_dr_health_summary",
+    "rpc_get_earn_activity_feed",
+    "rpc_get_reward_config",
+    "rpc_get_whale_mission_status",
+    "rpc_register_affiliate_relationship",
+    "rpc_request_self_exclusion_release"
+  ],
+  "orphanCalls": ["rpc_error", "rpc_spot_market_buy", "rpc_spot_market_sell"],
+  "callSiteCount": 218,
+  "byRpc": {
+    "rpc_get_phon_balance_breakdown": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/phon-balance.ts",
+        "line": 16
+      }
+    ],
+    "rpc_set_rg_limit": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/responsible-gaming.ts",
+        "line": 9
+      }
+    ],
+    "rpc_set_self_exclusion": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/responsible-gaming.ts",
+        "line": 22
+      }
+    ],
+    "rpc_list_trading_api_keys": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-api-keys.ts",
+        "line": 30
+      }
+    ],
+    "rpc_create_trading_api_key": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-api-keys.ts",
+        "line": 39
+      }
+    ],
+    "rpc_revoke_trading_api_key": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-api-keys.ts",
+        "line": 47
+      }
+    ],
+    "rpc_get_candles": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 38
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/__tests__/trading-rpc-display-contract.test.ts",
+        "line": 27
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 352
+      }
+    ],
+    "rpc_get_synthetic_book": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 39
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 377
+      }
+    ],
+    "rpc_cancel_spot_order": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 40
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 788
+      }
+    ],
+    "rpc_get_position_mode": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 43
+      }
+    ],
+    "rpc_open_futures_position": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 45
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1208
+      }
+    ],
+    "rpc_place_limit_order": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 46
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1250
+      }
+    ],
+    "rpc_place_stop_order": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 47
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1294
+      }
+    ],
+    "rpc_partial_close_futures": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 48
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1327
+      }
+    ],
+    "rpc_adjust_isolated_margin": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 49
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1351
+      }
+    ],
+    "rpc_update_futures_position_sltp": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 50
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1375
+      }
+    ],
+    "rpc_set_trailing_stop": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 51
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/__tests__/trading-rpc-display-contract.test.ts",
+        "line": 28
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1400
+      }
+    ],
+    "rpc_clear_trailing_stop": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 52
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/__tests__/trading-rpc-display-contract.test.ts",
+        "line": 29
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1425
+      }
+    ],
+    "rpc_close_futures_position": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 53
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1448
+      }
+    ],
+    "rpc_record_consent": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 54
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/notifications/web-push-subscription.ts",
+        "line": 59
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1512
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/lib/ads-attribution-consent.ts",
+        "line": 62
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/lib/onboarding-consent.ts",
+        "line": 27
+      }
+    ],
+    "rpc_spot_market_buy": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 55
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1557
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1581
+      }
+    ],
+    "rpc_spot_market_sell": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 56
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1607
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1633
+      }
+    ],
+    "rpc_place_spot_limit_order": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 57
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1663
+      }
+    ],
+    "rpc_place_spot_stop_order": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 58
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1699
+      }
+    ],
+    "rpc_stake_phon": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 59
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1809
+      }
+    ],
+    "rpc_stake": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 60
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1839
+      }
+    ],
+    "rpc_unstake_phon": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 61
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1865
+      }
+    ],
+    "rpc_claim_staking_reward": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/trading-rpc-display-contract.ts",
+        "line": 62
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/__tests__/trading-rpc-display-contract.test.ts",
+        "line": 30
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1884
+      }
+    ],
+    "rpc_create_krw_deposit_request": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 23
+      }
+    ],
+    "rpc_attach_krw_deposit_proof": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 47
+      }
+    ],
+    "rpc_request_withdrawal": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 117
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 136
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 177
+      }
+    ],
+    "rpc_submit_kyc": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 211
+      }
+    ],
+    "rpc_list_giftcard_fee_market": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 260
+      }
+    ],
+    "rpc_preview_giftcard_deposit": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 268
+      }
+    ],
+    "rpc_create_giftcard_deposit_request": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 285
+      }
+    ],
+    "rpc_transfer_to_user": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 326
+      }
+    ],
+    "rpc_list_p2p_transfers": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 336
+      }
+    ],
+    "rpc_preview_giftcard_redeem": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 374
+      }
+    ],
+    "rpc_create_giftcard_redeem_request": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/wallet.ts",
+        "line": 384
+      }
+    ],
+    "rpc_get_tier_decay_status": [
+      {
+        "app": "web",
+        "file": "apps/web/src/domain/__tests__/ew-e1-gate-decay-display-contract.test.ts",
+        "line": 61
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-tier-me-page-controller.ts",
+        "line": 54
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/__tests__/use-tier-me-page-controller.test.ts",
+        "line": 106
+      }
+    ],
+    "rpc_get_earn_hub_status": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/account/use-account-hub-controller.ts",
+        "line": 45
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/account/use-account-profile-controller.ts",
+        "line": 33
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-earn-cashback-page-controller.ts",
+        "line": 26
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-earn-home-page-controller.ts",
+        "line": 61
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-earn-play-page-controller.ts",
+        "line": 31
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-home-attendance-page-controller.ts",
+        "line": 59
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-home-missions-invite-page-controller.ts",
+        "line": 54
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-home-missions-referral-page-controller.ts",
+        "line": 62
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-referral-invite-page-controller.ts",
+        "line": 55
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-referral-page-controller.ts",
+        "line": 55
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-share-earnings-page-controller.ts",
+        "line": 51
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-staking-page-controller.ts",
+        "line": 67
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-tier-benefits-page-controller.ts",
+        "line": 33
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-tier-guide-page-controller.ts",
+        "line": 25
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-tier-me-page-controller.ts",
+        "line": 53
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/__tests__/use-tier-me-page-controller.test.ts",
+        "line": 83
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/trading/use-trade-earn-vip-tier.ts",
+        "line": 13
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/wallet/earn-hub-tier.ts",
+        "line": 8
+      }
+    ],
+    "rpc_request_account_deletion": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/account/use-account-hub-controller.ts",
+        "line": 82
+      }
+    ],
+    "rpc_open_game_round": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/casino/use-casino-round.ts",
+        "line": 136
+      }
+    ],
+    "rpc_place_game_bet": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/casino/use-casino-round.ts",
+        "line": 172
+      }
+    ],
+    "rpc_reveal_game_round": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/casino/use-casino-round.ts",
+        "line": 181
+      }
+    ],
+    "rpc_get_game_pf_state": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/casino/use-game-pf-state.ts",
+        "line": 32
+      }
+    ],
+    "rpc_set_game_client_seed": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/casino/use-game-pf-state.ts",
+        "line": 45
+      }
+    ],
+    "rpc_rotate_game_server_seed": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/casino/use-game-pf-state.ts",
+        "line": 64
+      }
+    ],
+    "rpc_live_crash_get_current": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/casino/use-live-crash.ts",
+        "line": 58
+      }
+    ],
+    "rpc_live_crash_place_bet": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/casino/use-live-crash.ts",
+        "line": 83
+      }
+    ],
+    "rpc_live_crash_cashout": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/casino/use-live-crash.ts",
+        "line": 107
+      }
+    ],
+    "rpc_progressive_start": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/casino/use-progressive-round.ts",
+        "line": 53
+      }
+    ],
+    "rpc_progressive_step": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/casino/use-progressive-round.ts",
+        "line": 77
+      }
+    ],
+    "rpc_progressive_cashout": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/casino/use-progressive-round.ts",
+        "line": 99
+      }
+    ],
+    "rpc_spin_roulette": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-earn-play-page-controller.ts",
+        "line": 82
+      }
+    ],
+    "rpc_get_repeatable_mission_status": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-home-attendance-page-controller.ts",
+        "line": 65
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-repeatable-missions.ts",
+        "line": 40
+      }
+    ],
+    "rpc_get_viral_mission_status": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-home-attendance-page-controller.ts",
+        "line": 66
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-referral-invite-page-controller.ts",
+        "line": 56
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-viral-missions.ts",
+        "line": 50
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/onboarding/use-onboarding-missions-page-controller.ts",
+        "line": 48
+      }
+    ],
+    "rpc_claim_daily_reward": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-home-attendance-page-controller.ts",
+        "line": 197
+      }
+    ],
+    "rpc_claim_repeatable_mission": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-repeatable-missions.ts",
+        "line": 64
+      }
+    ],
+    "rpc_get_golden_earth_status": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-share-earnings-page-controller.ts",
+        "line": 52
+      }
+    ],
+    "rpc_claim_viral_mission": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/earn/use-viral-missions.ts",
+        "line": 75
+      }
+    ],
+    "rpc_list_cms_content": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/landing/use-landing-live-proof.ts",
+        "line": 22
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-cms-content.ts",
+        "line": 22
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-cms-content.ts",
+        "line": 60
+      }
+    ],
+    "rpc_get_public_platform_status": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/marketing/use-system-status.ts",
+        "line": 16
+      }
+    ],
+    "rpc_claim_welcome_bonus": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/onboarding/use-onboarding-missions-page-controller.ts",
+        "line": 137
+      }
+    ],
+    "rpc_list_sports_fixtures": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/sports/use-sports-betting.ts",
+        "line": 95
+      }
+    ],
+    "rpc_get_fixture_markets": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/sports/use-sports-betting.ts",
+        "line": 163
+      },
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminSports.ts",
+        "line": 37
+      }
+    ],
+    "rpc_place_sports_bet": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/sports/use-sports-betting.ts",
+        "line": 196
+      }
+    ],
+    "rpc_list_my_sports_bets": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/sports/use-sports-betting.ts",
+        "line": 230
+      }
+    ],
+    "rpc_get_sports_bet": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/sports/use-sports-betting.ts",
+        "line": 242
+      }
+    ],
+    "rpc_get_live_fixture_state": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/sports/use-sports-betting.ts",
+        "line": 252
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/features/sports/use-sports-betting.ts",
+        "line": 270
+      }
+    ],
+    "rpc_preview_sports_cashout": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/sports/use-sports-betting.ts",
+        "line": 306
+      }
+    ],
+    "rpc_place_sports_system_bet": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/sports/use-sports-betting.ts",
+        "line": 333
+      }
+    ],
+    "rpc_cashout_sports_bet": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/sports/use-sports-betting.ts",
+        "line": 360
+      }
+    ],
+    "rpc_partial_cashout_sports_bet": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/sports/use-sports-betting.ts",
+        "line": 385
+      }
+    ],
+    "rpc_preview_sports_partial_cashout": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/sports/use-sports-betting.ts",
+        "line": 415
+      }
+    ],
+    "rpc_list_support_tickets": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/support/__tests__/use-support-ticket-controller.test.ts",
+        "line": 15
+      }
+    ],
+    "rpc_get_crypto_deposit_address": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/wallet/use-crypto-deposit.ts",
+        "line": 47
+      }
+    ],
+    "rpc_create_crypto_deposit_request": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/wallet/use-crypto-deposit.ts",
+        "line": 114
+      }
+    ],
+    "rpc_list_withdrawal_addresses": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/wallet/use-crypto-withdraw.ts",
+        "line": 37
+      }
+    ],
+    "rpc_add_withdrawal_address": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/wallet/use-crypto-withdraw.ts",
+        "line": 47
+      }
+    ],
+    "rpc_remove_withdrawal_address": [
+      {
+        "app": "web",
+        "file": "apps/web/src/features/wallet/use-crypto-withdraw.ts",
+        "line": 55
+      }
+    ],
+    "rpc_check_onboarding_consent": [
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-client-gate-prechecks.ts",
+        "line": 46
+      },
+      {
+        "app": "web",
+        "file": "apps/web/src/lib/onboarding-consent.ts",
+        "line": 41
+      }
+    ],
+    "rpc_get_compliance_status": [
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-compliance-status.ts",
+        "line": 78
+      }
+    ],
+    "rpc_set_margin_mode": [
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 899
+      }
+    ],
+    "rpc_set_position_mode": [
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 917
+      }
+    ],
+    "rpc_cancel_order": [
+      {
+        "app": "web",
+        "file": "apps/web/src/hooks/use-trading.ts",
+        "line": 1158
+      }
+    ],
+    "rpc_register_referral": [
+      {
+        "app": "web",
+        "file": "apps/web/src/lib/referral-register.ts",
+        "line": 15
+      }
+    ],
+    "rpc_error": [
+      {
+        "app": "web",
+        "file": "apps/web/src/lib/referral-register.ts",
+        "line": 19
+      }
+    ],
+    "rpc_get_user_tier_summary": [
+      {
+        "app": "web",
+        "file": "apps/web/src/product/surfaces/sports/sports-vip-stub-panel.tsx",
+        "line": 46
+      }
+    ],
+    "rpc_set_system_mode": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 9
+      }
+    ],
+    "rpc_set_feature_enabled": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 21
+      }
+    ],
+    "rpc_sync_ops_alerts_from_health": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 29
+      }
+    ],
+    "rpc_ack_ops_alert": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 33
+      }
+    ],
+    "rpc_resolve_ops_alert": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 40
+      }
+    ],
+    "rpc_get_ops_health": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 47
+      }
+    ],
+    "rpc_get_ops_alerts": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 52
+      },
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 53
+      }
+    ],
+    "rpc_admin_get_ops_dashboard": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 57
+      }
+    ],
+    "rpc_admin_list_exception_queue": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 61
+      }
+    ],
+    "rpc_admin_list_alert_thresholds": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 68
+      }
+    ],
+    "rpc_admin_set_alert_threshold": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 78
+      }
+    ],
+    "rpc_admin_list_trade_market_breakers": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 115
+      }
+    ],
+    "rpc_admin_halt_market": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 123
+      }
+    ],
+    "rpc_resume_market": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/ops.ts",
+        "line": 130
+      }
+    ],
+    "rpc_resolve_admin_review_queue": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/queues.ts",
+        "line": 20
+      }
+    ],
+    "rpc_resolve_sanctions_screening": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/queues.ts",
+        "line": 27
+      },
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/queues.ts",
+        "line": 35
+      }
+    ],
+    "rpc_approve_withdrawal": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/queues.ts",
+        "line": 43
+      }
+    ],
+    "rpc_reject_withdrawal": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/queues.ts",
+        "line": 50
+      }
+    ],
+    "rpc_mark_withdrawal_sent": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/queues.ts",
+        "line": 57
+      }
+    ],
+    "rpc_update_str_case_status": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/queues.ts",
+        "line": 64
+      },
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/queues.ts",
+        "line": 72
+      },
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/queues.ts",
+        "line": 80
+      }
+    ],
+    "rpc_clear_risk_flag": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/queues.ts",
+        "line": 88
+      }
+    ],
+    "rpc_review_kyc_submission": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/queues.ts",
+        "line": 95
+      },
+      {
+        "app": "admin",
+        "file": "apps/admin/src/domain/queues.ts",
+        "line": 103
+      }
+    ],
+    "rpc_admin_list_casino_catalog": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminCasinoDesk.ts",
+        "line": 239
+      }
+    ],
+    "rpc_admin_set_casino_game_status": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminCasinoDesk.ts",
+        "line": 295
+      }
+    ],
+    "rpc_admin_list_cms_content": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminCmsDesk.ts",
+        "line": 113
+      }
+    ],
+    "rpc_admin_upsert_cms_content": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminCmsDesk.ts",
+        "line": 136
+      }
+    ],
+    "rpc_admin_get_viral_analytics": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminEarnActivityDesk.ts",
+        "line": 36
+      },
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminViralStatsDesk.ts",
+        "line": 62
+      }
+    ],
+    "rpc_approve_affiliate_commission": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminEarnDesk.ts",
+        "line": 127
+      },
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminReferralsDesk.ts",
+        "line": 109
+      }
+    ],
+    "rpc_admin_list_mfa_policy": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminMfaPolicyDesk.ts",
+        "line": 125
+      }
+    ],
+    "rpc_admin_set_mfa_policy": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminMfaPolicyDesk.ts",
+        "line": 162
+      }
+    ],
+    "rpc_admin_list_mission_catalog": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminMissionsDesk.ts",
+        "line": 29
+      }
+    ],
+    "rpc_admin_upsert_mission_catalog": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminMissionsDesk.ts",
+        "line": 38
+      }
+    ],
+    "rpc_admin_list_role_grants": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminOperatorRbac.ts",
+        "line": 38
+      },
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminTeamDesk.ts",
+        "line": 129
+      }
+    ],
+    "rpc_run_affiliate_settlements": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminReferralsDesk.ts",
+        "line": 139
+      }
+    ],
+    "rpc_admin_list_users": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminRewardsDesk.ts",
+        "line": 101
+      },
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminUsersDesk.ts",
+        "line": 89
+      },
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminUserTierDesk.ts",
+        "line": 60
+      }
+    ],
+    "rpc_admin_manual_wallet_adjust": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminRewardsDesk.ts",
+        "line": 147
+      },
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminUsersDesk.ts",
+        "line": 169
+      }
+    ],
+    "rpc_admin_list_unsettled_sports_fixtures": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminSports.ts",
+        "line": 140
+      }
+    ],
+    "rpc_admin_list_sports_exposure": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminSports.ts",
+        "line": 141
+      }
+    ],
+    "rpc_admin_list_sports_risk_events": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminSports.ts",
+        "line": 142
+      }
+    ],
+    "rpc_admin_suspend_sports_market": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminSports.ts",
+        "line": 191
+      }
+    ],
+    "rpc_admin_resume_sports_market": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminSports.ts",
+        "line": 211
+      }
+    ],
+    "rpc_admin_settle_sports_fixture_quorum": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminSports.ts",
+        "line": 235
+      }
+    ],
+    "rpc_void_sports_market": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminSports.ts",
+        "line": 257
+      }
+    ],
+    "rpc_admin_set_sports_risk_tier": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminSports.ts",
+        "line": 274
+      }
+    ],
+    "rpc_admin_list_staking_pools": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminStakingDesk.ts",
+        "line": 85
+      }
+    ],
+    "rpc_admin_set_staking_pool_active": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminStakingDesk.ts",
+        "line": 100
+      }
+    ],
+    "rpc_admin_list_support_tickets": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminSupportDesk.ts",
+        "line": 173
+      }
+    ],
+    "rpc_admin_resolve_support_ticket": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminSupportDesk.ts",
+        "line": 215
+      }
+    ],
+    "rpc_get_support_ticket": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminSupportDesk.ts",
+        "line": 229
+      }
+    ],
+    "rpc_admin_set_role_grant": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminTeamDesk.ts",
+        "line": 169
+      }
+    ],
+    "rpc_admin_set_user_activity": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminUsersDesk.ts",
+        "line": 154
+      }
+    ],
+    "rpc_admin_release_self_exclusion": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminUsersDesk.ts",
+        "line": 187
+      }
+    ],
+    "rpc_admin_set_user_earn_vip_tier": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminUserTierDesk.ts",
+        "line": 98
+      }
+    ],
+    "rpc_admin_approve_giftcard_deposit": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminWalletDesk.ts",
+        "line": 329
+      }
+    ],
+    "rpc_admin_match_krw_deposit": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminWalletDesk.ts",
+        "line": 335
+      }
+    ],
+    "rpc_admin_match_crypto_deposit": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminWalletDesk.ts",
+        "line": 354
+      }
+    ],
+    "rpc_admin_flag_deposit": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminWalletDesk.ts",
+        "line": 392
+      }
+    ],
+    "rpc_admin_review_krw_deposit_proof": [
+      {
+        "app": "admin",
+        "file": "apps/admin/src/hooks/admin/useAdminWalletDesk.ts",
+        "line": 419
+      }
+    ]
+  }
+}

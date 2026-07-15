@@ -36,6 +36,12 @@
         "matcher": "supabase db push|supabase migration up|supabase db remote|apply_migration",
         "failClosed": true,
         "timeout": 10
+      },
+      {
+        "command": "bun .cursor/hooks/main-push-deny.ts",
+        "matcher": "git push",
+        "failClosed": true,
+        "timeout": 10
       }
     ],
     "beforeMCPExecution": [

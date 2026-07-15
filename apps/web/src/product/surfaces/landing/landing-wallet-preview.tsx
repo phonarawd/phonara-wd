@@ -1,25 +1,28 @@
-import {
-  formatLandingKrwAmount,
-  formatLandingPhonAmount,
-  LANDING_WALLET_PREVIEW_PHON,
-} from '@/domain/landing-display-contract';
+import { LANDING_WALLET_PREVIEW_PHON } from '@/domain/landing-display-contract';
 import { landingAnalyticsEventAttr } from '@/domain/landing-analytics-display-contract';
+import { useEarnFiatHint } from '@/features/earn/use-earn-fiat-hint';
 import { LandingAnalyticsSection } from '@/features/landing/landing-analytics-section';
 import { useT } from '@/product/i18n';
 import { buttonVariants } from '@/product/primitives/button';
 import { Card, CardBody, CardHeader, CardTitle } from '@/product/primitives/card';
 import { cn } from '@/product/primitives/lib/cn';
+import { MoneyDisplay } from '@/product/primitives/money-display';
+import { FiatHintSecondaryLine } from '@/product/primitives/money-display-with-fiat-hint';
 
 export type LandingWalletPreviewProps = {
   signupHref: string;
   className?: string;
 };
 
-/** Presentation wallet card — 1 PHON = 1 KRW · withdraw CTA → signup (CVR §3.4). */
+/**
+ * Presentation wallet card — PHON Decimal string + fresh FiatHint only (H-01).
+ * Missing/stale rate → omit KRW line · never invent 1 PHON = 1 KRW.
+ */
 export function LandingWalletPreview({ signupHref, className }: LandingWalletPreviewProps) {
   const t = useT();
-  const phonAmount = formatLandingPhonAmount(LANDING_WALLET_PREVIEW_PHON);
-  const krwAmount = formatLandingKrwAmount(LANDING_WALLET_PREVIEW_PHON);
+  const earnFiat = useEarnFiatHint(true);
+  const fiatHint = earnFiat.hintFor(LANDING_WALLET_PREVIEW_PHON, 'PHON');
+  const showFiatHint = !fiatHint.disabled && fiatHint.formattedHint !== '—';
 
   return (
     <LandingAnalyticsSection
@@ -37,26 +40,29 @@ export function LandingWalletPreview({ signupHref, className }: LandingWalletPre
               <span className="text-foreground-muted text-xs font-medium">
                 {t('landing.wallet.balanceLabel')}
               </span>
-              <p className="text-foreground m-0 text-3xl font-semibold tabular-nums">
-                {phonAmount}
-              </p>
+              <MoneyDisplay
+                amount={LANDING_WALLET_PREVIEW_PHON}
+                currency="PHON"
+                showCurrency
+                size="hero"
+                className="text-foreground text-3xl font-semibold"
+              />
             </div>
-            <p className="text-foreground-muted m-0 text-sm tabular-nums">
-              {t('landing.wallet.fiatApprox', { amount: krwAmount })}
-            </p>
+            {showFiatHint ? (
+              <FiatHintSecondaryLine fiatHint={fiatHint} hintLayout="secondary" />
+            ) : null}
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-foreground-muted m-0 text-xs">{t('landing.wallet.footnote')}</p>
+            <p className="text-foreground-muted m-0 text-xs">{t('landing.wallet.withdrawHint')}</p>
             <a
               href={signupHref}
-              className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'shrink-0')}
+              className={cn(buttonVariants({ variant: 'ghost', size: 'md' }), 'shrink-0 px-3')}
               data-testid="landing-wallet-withdraw-cta"
               {...landingAnalyticsEventAttr('landing.signup.started')}
             >
               {t('landing.wallet.withdrawCta')}
             </a>
           </div>
-          <p className="text-foreground-muted m-0 text-xs">{t('landing.wallet.withdrawHint')}</p>
         </CardBody>
       </Card>
     </LandingAnalyticsSection>

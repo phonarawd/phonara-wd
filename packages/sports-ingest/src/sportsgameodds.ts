@@ -1,4 +1,5 @@
 import type { IngestMessage } from '@phonara/sportsbook-engine';
+import { vendorPriceToOddsString } from './decimal-odds';
 import {
   expandEventWithOdds,
   normalizeVendorEventUpsert,
@@ -170,7 +171,7 @@ export function mapSportsGameOddsEventToMessages(
 
   if (upsert.type !== 'event_upsert') return [upsert];
 
-  const prices: Record<string, string | number> = {};
+  const prices: Record<string, string> = {};
   for (const market of upsert.markets) {
     const sourceMarket = vendorMarkets.find((m) => m.key === market.marketType);
     if (!sourceMarket?.outcomes) continue;
@@ -178,7 +179,7 @@ export function mapSportsGameOddsEventToMessages(
       const outcome = market.outcomes[i];
       const sourceOutcome = sourceMarket.outcomes[i];
       if (outcome && sourceOutcome?.price) {
-        prices[outcome.outcomeId] = sourceOutcome.price;
+        prices[outcome.outcomeId] = vendorPriceToOddsString(sourceOutcome.price);
       }
     }
   }

@@ -149,8 +149,8 @@ export const TRADE_DUAL_CURRENCY_MATRIX: readonly TradeDualCurrencyRow[] = [
     usdt: true,
     phon: true,
     engineRpc: 'game bet p_currency',
-    phonara: 'no',
-    ownerTodo: 'p10-casino-replay-and-infra',
+    phonara: 'yes',
+    ownerTodo: null,
   },
   {
     id: 'staking-pool-currency',
@@ -536,9 +536,9 @@ export const TRADE_EXCHANGE_PARITY_MATRIX: readonly TradeExchangeParityRow[] = [
     binance: true,
     bybit: true,
     okx: true,
-    phonara: 'no',
-    tier: 'B',
-    ownerTodo: 'ew-e21-engine-reduce-only-orders',
+    phonara: 'yes',
+    tier: 'DONE',
+    ownerTodo: null,
   },
   {
     id: 'one-way-position',
@@ -558,9 +558,9 @@ export const TRADE_EXCHANGE_PARITY_MATRIX: readonly TradeExchangeParityRow[] = [
     binance: true,
     bybit: true,
     okx: true,
-    phonara: 'no',
-    tier: 'B',
-    ownerTodo: 'ew-e21-engine-hedge-position-mode',
+    phonara: 'yes',
+    tier: 'DONE',
+    ownerTodo: null,
   },
   {
     id: 'partial-close',
@@ -646,8 +646,8 @@ export const TRADE_EXCHANGE_PARITY_MATRIX: readonly TradeExchangeParityRow[] = [
     binance: true,
     bybit: true,
     okx: true,
-    phonara: 'no',
-    tier: 'N/A',
+    phonara: 'yes',
+    tier: 'DONE',
     ownerTodo: null,
   },
 ] as const;
@@ -954,10 +954,10 @@ export const TRADE_USER_COMPLAINT_RISKS: readonly TradeUserComplaintRisk[] = [
   {
     id: 'hedge-visible',
     control: 'Hedge / dual-side position mode toggle',
-    rpcPath: null,
-    failSymptom: 'hedge toggle visible · engine false',
-    ownerTodo: 'ew-e21-engine-hedge-position-mode',
-    mitigatedBy: 'built_hidden',
+    rpcPath: 'rpc_set_position_mode',
+    failSymptom: 'hedge toggle missing after E21 UI unlock',
+    ownerTodo: 'ew-e21-ui-trade-engine-unlocks',
+    mitigatedBy: 'live',
   },
   {
     id: 'spot-limit-visible',
@@ -979,17 +979,17 @@ export const TRADE_USER_COMPLAINT_RISKS: readonly TradeUserComplaintRisk[] = [
   {
     id: 'reduce-only-visible',
     control: 'Reduce-only order toggle',
-    rpcPath: null,
-    failSymptom: 'reduce-only toggle exposed · engine RPC missing',
-    ownerTodo: 'ew-e21-engine-reduce-only-orders',
-    mitigatedBy: 'disabled',
+    rpcPath: 'rpc_place_limit_order',
+    failSymptom: 'reduce-only toggle missing after E21 UI unlock',
+    ownerTodo: 'ew-e21-ui-trade-engine-unlocks',
+    mitigatedBy: 'live',
   },
   {
     id: 'position-tpsl-edit',
     control: 'Post-open TP/SL amend',
     rpcPath: FUTURES_UPDATE_SLTP_RPC,
     failSymptom: 'edit TP/SL visible · RPC wired',
-    ownerTodo: 'ew-e21-engine-position-tpsl-amend',
+    ownerTodo: 'ew-e21-trade-parity-wave',
     mitigatedBy: 'live',
   },
   {
@@ -1206,17 +1206,17 @@ export function listTradeParityRowsByTier(tier: TradeParityTier): TradeExchangeP
 
 /** Assert margin-position-mode · trade-order-states · parity contract agree on honest UX gates. */
 export function assertTradeParityContractSync(): void {
-  if (OKX_MARGIN_POSITION_PARITY_ACHIEVED) {
-    throw new Error('trade-parity: OKX_MARGIN_POSITION_PARITY_ACHIEVED must stay false until E21');
+  if (!OKX_MARGIN_POSITION_PARITY_ACHIEVED) {
+    throw new Error('trade-parity: OKX_MARGIN_POSITION_PARITY_ACHIEVED must be true after E21 UI');
   }
-  if (!shouldHideHedgePositionModeToggle() || !shouldHideHedgePositionMode()) {
-    throw new Error('trade-parity: hedge position mode must stay hidden across contracts');
+  if (shouldHideHedgePositionModeToggle() || shouldHideHedgePositionMode()) {
+    throw new Error('trade-parity: hedge position mode must be visible after E21 UI unlock');
   }
-  if (OKX_MARGIN_POSITION_UI_WIRE_STATUS.position_mode_hedge_toggle !== 'built_hidden') {
-    throw new Error('trade-parity: margin contract hedge toggle must be built_hidden');
+  if (OKX_MARGIN_POSITION_UI_WIRE_STATUS.position_mode_hedge_toggle !== 'live') {
+    throw new Error('trade-parity: margin contract hedge toggle must be live');
   }
-  if (TRADE_ORDER_UI_WIRE_STATUS.hedge_mode_toggle !== 'built_hidden') {
-    throw new Error('trade-parity: order-states hedge toggle must be built_hidden');
+  if (TRADE_ORDER_UI_WIRE_STATUS.hedge_mode_toggle !== 'live') {
+    throw new Error('trade-parity: order-states hedge toggle must be live');
   }
   if (isSpotLimitStopSupported()) {
     if (TRADE_ORDER_UI_WIRE_STATUS.spot_limit_tab !== 'live') {
@@ -1240,8 +1240,8 @@ export function assertTradeParityContractSync(): void {
     }
   }
   const hedgeRisk = findTradeComplaintRisk('hedge-visible');
-  if (!hedgeRisk || hedgeRisk.mitigatedBy !== 'built_hidden') {
-    throw new Error('trade-parity: hedge-visible complaint risk must be built_hidden');
+  if (!hedgeRisk || hedgeRisk.mitigatedBy !== 'live') {
+    throw new Error('trade-parity: hedge-visible complaint risk must be live after E21 UI');
   }
   if (TRADE_FUTURES_PANEL_CAPABILITIES.positionTpSlEdit) {
     if (TRADE_ORDER_UI_WIRE_STATUS.position_tpsl_edit !== 'live') {
@@ -1258,13 +1258,14 @@ export function assertTradeParityContractSync(): void {
     }
   }
   const reduceOnlyRisk = findTradeComplaintRisk('reduce-only-visible');
-  if (!reduceOnlyRisk || reduceOnlyRisk.mitigatedBy !== 'disabled') {
-    throw new Error('trade-parity: reduce-only-visible must be disabled when engine RPC missing');
+  if (!reduceOnlyRisk || reduceOnlyRisk.mitigatedBy !== 'live') {
+    throw new Error('trade-parity: reduce-only-visible must be live after E21 UI');
   }
-  if (TRADE_ORDER_UI_WIRE_STATUS.reduce_only_toggle !== 'built_disabled') {
-    throw new Error(
-      'trade-parity: reduce_only_toggle must be built_disabled when engine RPC missing',
-    );
+  if (TRADE_ORDER_UI_WIRE_STATUS.reduce_only_toggle !== 'live') {
+    throw new Error('trade-parity: reduce_only_toggle must be live after E21 UI');
+  }
+  if (!TRADE_FUTURES_PANEL_CAPABILITIES.reduceOnlyOrders) {
+    throw new Error('trade-parity: reduceOnlyOrders capability must be true after E21 UI');
   }
   const crossRisk = findTradeComplaintRisk('cross-margin-live-claim');
   if (!crossRisk || crossRisk.mitigatedBy !== 'disabled+key') {

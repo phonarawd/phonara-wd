@@ -84,7 +84,7 @@ export function RewardsHistoryPage() {
   if (engine.errorKey) {
     return (
       <div
-        className="border-danger/30 bg-surface flex flex-col items-start gap-3 rounded-(--ds-radius-lg) border p-4"
+        className="border-danger/30 bg-surface flex flex-col items-start gap-3 rounded-lg border p-4"
         data-testid="rewards-history-error"
         role="alert"
       >
@@ -115,6 +115,7 @@ export function RewardsHistoryPage() {
         </div>
         <a
           href="/ledger?filter=reward"
+          data-testid="rewards-history-ledger-link"
           className="text-accent text-sm font-medium underline-offset-4 hover:underline"
         >
           {t('rewards.history.viewLedger')}
@@ -264,7 +265,7 @@ export function RewardsHistoryPage() {
           </div>
 
           <ul
-            className="border-line divide-line m-0 list-none divide-y rounded-(--ds-radius-md) border p-0 md:hidden"
+            className="border-line divide-line m-0 list-none divide-y rounded-md border p-0 md:hidden"
             data-testid="rewards-history-list"
           >
             {engine.rows.map((row) => (

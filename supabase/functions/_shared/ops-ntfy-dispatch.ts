@@ -5,6 +5,8 @@ export interface OpsNtfyConfig {
   server: string;
   topic: string;
   token?: string;
+  /** Absolute Admin URL for ntfy Click → pending work queue. */
+  clickUrl?: string;
 }
 
 const DEFAULT_NTFY_SERVER = 'https://ntfy.sh';
@@ -34,10 +36,23 @@ export function ntfyTagsForPayload(payload: OpsTelegramDispatchPayload): string 
 export function readOpsNtfyConfigFromEnv(env: Pick<typeof Deno.env, 'get'>): OpsNtfyConfig | null {
   const topic = env.get('OPS_NTFY_TOPIC')?.trim();
   if (!topic) return null;
+  const adminPublicUrl = env.get('OPS_ADMIN_PUBLIC_URL')?.trim();
+  let clickUrl: string | undefined;
+  if (adminPublicUrl) {
+    try {
+      clickUrl = new URL(
+        '/queues',
+        adminPublicUrl.endsWith('/') ? adminPublicUrl : `${adminPublicUrl}/`,
+      ).href;
+    } catch {
+      clickUrl = undefined;
+    }
+  }
   return {
     server: normalizeNtfyServer(env.get('OPS_NTFY_SERVER') ?? undefined),
     topic,
     token: env.get('OPS_NTFY_TOKEN')?.trim() || undefined,
+    clickUrl,
   };
 }
 
@@ -56,6 +71,9 @@ export async function sendOpsNtfyMessage(
   };
   if (config.token) {
     headers.Authorization = `Bearer ${config.token}`;
+  }
+  if (config.clickUrl) {
+    headers.Click = config.clickUrl;
   }
 
   const res = await fetch(buildNtfyPublishUrl(config.server, config.topic), {

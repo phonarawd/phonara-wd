@@ -1,8 +1,13 @@
 import { useCallback, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../../lib/supabase';
 import type { MessageKey } from '@phonara/i18n';
+
+import { shouldBlockCryptoDepositInvoke } from '@/domain/wallet-capability-rails-display-contract';
+import { LAUNCH_GATES } from '@/lib/launch-gates';
+
 import { useAuth } from '../../contexts/auth-context';
+import { callRpc } from '../../lib/rpc';
+import { supabase } from '../../lib/supabase';
 import { translateError } from '../../lib/translate-error';
 
 export interface CryptoDepositAddress {
@@ -36,13 +41,18 @@ async function ensureCryptoAddressDerived(
   asset: string,
   chain: string,
 ): Promise<CryptoDepositAddress> {
-  const { data: rpcData, error } = await supabase.rpc('rpc_get_crypto_deposit_address', {
+  if (shouldBlockCryptoDepositInvoke(LAUNCH_GATES.cryptoRails)) {
+    throw new Error('crypto_rails_built_hidden');
+  }
+  const rpcData = await callRpc('rpc_get_crypto_deposit_address', {
     p_asset: asset,
     p_chain: chain,
   });
-  if (error) throw error;
   let result = rpcData as unknown as CryptoDepositAddress;
   if (result.needs_derivation) {
+    if (shouldBlockCryptoDepositInvoke(LAUNCH_GATES.cryptoRails)) {
+      throw new Error('crypto_rails_built_hidden');
+    }
     const { data: derived, error: fnError } = await supabase.functions.invoke(
       'derive-crypto-address',
       {
@@ -60,6 +70,7 @@ async function ensureCryptoAddressDerived(
 export function useCryptoDepositAddress(asset = 'USDT', chain = 'TRC20', enabled = true) {
   const { session } = useAuth();
   const userId = session?.user.id ?? null;
+  const cryptoLive = !shouldBlockCryptoDepositInvoke(LAUNCH_GATES.cryptoRails);
 
   const {
     data = null,
@@ -69,7 +80,7 @@ export function useCryptoDepositAddress(asset = 'USDT', chain = 'TRC20', enabled
   } = useQuery({
     queryKey: cryptoDepositKeys.address(userId, asset, chain),
     queryFn: () => ensureCryptoAddressDerived(asset, chain),
-    enabled: enabled && !!userId,
+    enabled: enabled && cryptoLive && !!userId,
     staleTime: 60_000,
   });
 
@@ -96,14 +107,16 @@ export function useCryptoDepositRequest() {
       setLoading(true);
       setError(null);
       try {
+        if (shouldBlockCryptoDepositInvoke(LAUNCH_GATES.cryptoRails)) {
+          throw new Error('crypto_rails_built_hidden');
+        }
         await ensureCryptoAddressDerived(params.asset ?? 'USDT', params.chain ?? 'TRC20');
-        const { data, error: rpcError } = await supabase.rpc('rpc_create_crypto_deposit_request', {
+        const data = await callRpc('rpc_create_crypto_deposit_request', {
           p_amount: params.amount,
           p_asset: params.asset ?? 'USDT',
           p_chain: params.chain ?? 'TRC20',
           p_client_request_id: params.clientRequestId,
         });
-        if (rpcError) throw rpcError;
         const created = data as unknown as CryptoDepositRequestResult;
         setResult(created);
         void qc.invalidateQueries({

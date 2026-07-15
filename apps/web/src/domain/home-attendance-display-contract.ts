@@ -5,10 +5,18 @@
 
 import type { MessageKey } from '@phonara/i18n';
 
+import { EARN_PLAY_ROUTE, parseEarnHubRouletteSnapshot } from './earn-play-display-contract';
 import { HOME_MISSIONS_ROUTE } from './home-missions-display-contract';
 import { REFERRAL_INVITE_ROUTE } from './referral-hub-display-contract';
-import { HOME_ROUTE } from './unified-tier-display-contract';
 import { formatPhonRewardDisplay } from './viral-missions-display-contract';
+
+/**
+ * Re-exported for existing consumers (`use-home-attendance-page-controller.ts`,
+ * `use-earn-home-page-controller.ts`). Owner moved to `earn-play-display-contract.ts`
+ * 2026-07-15 to break a circular import (`home-attendance` <-> `earn-play`) that
+ * caused a TDZ `ReferenceError` crash loop on the `/` landing route in dev.
+ */
+export { parseEarnHubRouletteSnapshot };
 
 export const HOME_ATTENDANCE_ROUTE = '/home/attendance' as const;
 export const DAILY_REWARD_CLAIM_RPC = 'rpc_claim_daily_reward' as const;
@@ -76,7 +84,7 @@ export const ROUTINE_STEP_DEFINITIONS: readonly RoutineStepDefinition[] = [
   {
     id: 'roulette',
     labelKey: 'earn.routine.step.roulette',
-    route: HOME_ROUTE,
+    route: EARN_PLAY_ROUTE,
     durationKey: 'earn.routine.duration.roulette',
   },
   {
@@ -118,19 +126,6 @@ export function parseEarnHubAttendanceSnapshot(
     cycleDay: Number(row['cycle_day'] ?? 1),
     todayRewardPhon: String(row['next_reward_phon'] ?? '0'),
     resetsAt: row['resets_at'] != null ? String(row['resets_at']) : null,
-  };
-}
-
-export function parseEarnHubRouletteSnapshot(
-  payload: Record<string, unknown> | null | undefined,
-): { remaining: number; used: number; max: number } | null {
-  const roulette = payload?.['roulette'];
-  if (!roulette || typeof roulette !== 'object') return null;
-  const row = roulette as Record<string, unknown>;
-  return {
-    remaining: Number(row['remaining'] ?? 0),
-    used: Number(row['used'] ?? 0),
-    max: Number(row['max'] ?? 0),
   };
 }
 

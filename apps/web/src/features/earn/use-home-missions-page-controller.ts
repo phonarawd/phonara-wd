@@ -39,6 +39,12 @@ import {
 import { supabase } from '@/lib/supabase';
 import { translateError } from '@/lib/translate-error';
 import { productToast } from '@/product/primitives/toast-zone';
+import {
+  APP_INSTALL_MISSION_UI_ID,
+  APP_INSTALL_MISSION_CTA_KEY,
+  APP_INSTALL_MISSION_VERIFY_KEY,
+} from '@/domain/app-install-mission-display-contract';
+import { useAppInstallMissionAction } from '@/features/earn/use-app-install-mission-action';
 import { useT } from '@/product/i18n';
 
 export const homeMissionsPageKeys = {
@@ -98,6 +104,13 @@ export type HomeMissionsPageControllerView = {
   openMission: (missionId: string) => void;
   closeMission: () => void;
   claimMission: (missionId: string) => Promise<void>;
+  appInstallAction: {
+    canAct: boolean;
+    busy: boolean;
+    errorKey: MessageKey | null;
+    ctaKey: MessageKey;
+    recordOrInstall: () => Promise<void>;
+  };
 };
 
 export function useHomeMissionsPageController(
@@ -115,6 +128,7 @@ export function useHomeMissionsPageController(
   const { claimViralMission, loading: viralClaimLoading } = useViralMissionClaim();
   const { claimMission: claimRepeatableMission, loading: repeatableClaimLoading } =
     useRepeatableMissionClaim();
+  const appInstall = useAppInstallMissionAction();
   const [claimingMission, setClaimingMission] = useState<string | null>(null);
   const [actionError, setActionError] = useState<MessageKey | null>(null);
 
@@ -161,7 +175,8 @@ export function useHomeMissionsPageController(
         state === 'reward_pending' &&
         !claimBlocked &&
         Boolean(viralRpc || repeatableRpc) &&
-        !mission.soon;
+        !mission.soon &&
+        mission.id !== APP_INSTALL_MISSION_UI_ID;
 
       return {
         id: mission.id,
@@ -284,6 +299,15 @@ export function useHomeMissionsPageController(
     openMission,
     closeMission,
     claimMission,
+    appInstallAction: {
+      canAct: appInstall.canAct,
+      busy: appInstall.busy,
+      errorKey: appInstall.errorKey,
+      ctaKey: appInstall.canNativePrompt
+        ? APP_INSTALL_MISSION_CTA_KEY
+        : APP_INSTALL_MISSION_VERIFY_KEY,
+      recordOrInstall: appInstall.recordOrInstall,
+    },
   };
 }
 

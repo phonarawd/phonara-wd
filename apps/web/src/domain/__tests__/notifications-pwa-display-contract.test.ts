@@ -13,6 +13,7 @@ import {
   resolveLocalNotifPrefBlocksClientEmit,
   resolveNotificationBranchExposure,
   resolveNotificationsCenterVisible,
+  resolvePwaInstallBannerPosition,
   resolvePwaInstallBannerVisible,
   isServerBackedNotificationPref,
   shouldDeferPwaAdvancedCapabilities,
@@ -92,6 +93,11 @@ describe('notifications-pwa-display-contract', () => {
         isDismissed: false,
       }),
     ).toBe(true);
+  });
+
+  it('ZA-10: positions PWA banner above bottom-nav only when AppShell is mounted', () => {
+    expect(resolvePwaInstallBannerPosition(true)).toBe('above-bottom-nav');
+    expect(resolvePwaInstallBannerPosition(false)).toBe('floating-bottom');
   });
 
   it('defers E22 advanced PWA capabilities', () => {

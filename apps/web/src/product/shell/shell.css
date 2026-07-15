@@ -1,5 +1,7 @@
 /**
  * §12.19.5 AppShell chrome geometry — BottomNav 56px · TopBar 56px · Earn chip 48px.
+ * §34.10–34.11 Shell elevation — Aurora Mesh + floating chrome.
  */
 @import './shell-chrome.css';
+@import './aurora-background.css';
 @import './marketing-shell.css';

@@ -11,6 +11,7 @@ import {
 import { formatAmountString } from '@/hooks/admin/useAdminWalletDesk';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
@@ -191,67 +192,68 @@ export function AdminEarnReferralsPage() {
             className="max-w-md"
           />
 
-          {filteredApprovals.length === 0 ? (
-            <EmptyState
-              title={t('admin.overview.empty.title')}
-              description={t('admin.referrals.empty.filtered')}
-              actionLabel={t('admin.referrals.empty.clearSearch')}
-              onAction={() => setFilters({ search: '' })}
-            />
-          ) : (
-            <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-              <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-                <thead className="bg-surface-raised text-foreground-muted">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">{t('admin.referrals.col.affiliate')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.referrals.col.period')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.referrals.col.amount')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.referrals.col.status')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.referrals.col.requested')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.referrals.col.action')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredApprovals.map((row) => (
-                    <tr key={row.id} className="border-line border-t">
-                      <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                        {row.affiliateMask}
-                      </td>
-                      <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                        {row.periodKey}
-                      </td>
-                      <td className="text-foreground px-4 py-3 tabular-nums">
-                        {formatAmountString(row.amount, row.currency)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <StatusBadge state={approvalStatusState(row.state)} />
-                      </td>
-                      <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                        {formatWhen(row.requestedAt, locale)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() =>
-                            setActionTarget({
-                              kind: 'approveCommission',
-                              id: row.id,
-                              titleKey: 'admin.referrals.dialog.approve',
-                              confirmKey: 'admin.referrals.action.approve',
-                              summary: formatRowSummary(row),
-                            })
-                          }
-                        >
-                          {t('admin.referrals.action.approve')}
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <AdminTable
+            columns={[
+              {
+                id: 'affiliate',
+                header: t('admin.referrals.col.affiliate'),
+                cell: ({ row }) => row.affiliateMask,
+                meta: { className: 'text-foreground-muted tabular-nums' },
+              },
+              {
+                id: 'period',
+                header: t('admin.referrals.col.period'),
+                cell: ({ row }) => row.periodKey,
+                meta: { className: 'text-foreground-muted tabular-nums' },
+              },
+              {
+                id: 'amount',
+                header: t('admin.referrals.col.amount'),
+                cell: ({ row }) => formatAmountString(row.amount, row.currency),
+                meta: { className: 'tabular-nums' },
+              },
+              {
+                id: 'status',
+                header: t('admin.referrals.col.status'),
+                cell: ({ row }) => <StatusBadge state={approvalStatusState(row.state)} />,
+              },
+              {
+                id: 'requested',
+                header: t('admin.referrals.col.requested'),
+                cell: ({ row }) => formatWhen(row.requestedAt, locale),
+                meta: { className: 'text-foreground-muted tabular-nums' },
+              },
+            ]}
+            rows={filteredApprovals}
+            getRowId={(row) => row.id}
+            minWidth={760}
+            empty={
+              <EmptyState
+                title={t('admin.overview.empty.title')}
+                description={t('admin.referrals.empty.filtered')}
+                actionLabel={t('admin.referrals.empty.clearSearch')}
+                onAction={() => setFilters({ search: '' })}
+              />
+            }
+            rowActionsHeader={t('admin.referrals.col.action')}
+            rowActions={(row) => (
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() =>
+                  setActionTarget({
+                    kind: 'approveCommission',
+                    id: row.id,
+                    titleKey: 'admin.referrals.dialog.approve',
+                    confirmKey: 'admin.referrals.action.approve',
+                    summary: formatRowSummary(row),
+                  })
+                }
+              >
+                {t('admin.referrals.action.approve')}
+              </Button>
+            )}
+          />
         </section>
       )}
 

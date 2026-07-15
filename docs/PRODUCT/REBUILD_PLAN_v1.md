@@ -1,7 +1,7 @@
 # Phase R — PrimeForge Super-App Rebuild (v1)
 
-> **상태:** `[x] operator 승인` (2026-07-04) · **실행 중** — DA W1 GATE **`[x]` DONE** (2026-07-09) · **NEXT** `da-w2-shell-elevation-infra` (YAML #188)
-> **정본 큐:** Cursor Plan `phase_r_super-app_8bdf2c10` (YAML frontmatter · **278 ids** · §20.6.1: Track A **243** + Track B **35** · completed **187** · pending **84** · cancelled **7** · **52차** 2026-07-09 — §35 Forensic R0 · §34 DA W2 · §22.2.5 Sports Parity · §23.2.1 Casino replay · E22/E23)
+> **상태:** `[x] operator 승인` (2026-07-04) · **실행 중** — E21 GATE `#255` **`[x]` DONE** (2026-07-12) · **NEXT** `ew-e21-ui-trade-engine-unlocks` · E21 WAVE `#254` **`[x]`** · E7 GATE `#253` **`[x]`** · E7 WAVE `#252` **`[x]`** · E6 GATE `#251` **`[x]`** · E6 WAVE `#250` **`[x]`** · E5 GATE `#249` **`[x]`** · E5 WIRE `#248` **`[x]`** · E4 GATE `#247` **`[x]`** · E4 WAVE `#246` **`[x]`** · E3 GATE `#245` **`[x]`** · E3 WAVE `#244` **`[x]`** · E2 GATE `#243` **`[x]`** · E2 WAVE `#242` **`[x]`** · E1 GATE `#241` **`[x]`** · E1 wave `#240` **`[x]`** · E0 ADR `#239` **`[x]`** · T2 scale `#238` **`[x]`** · T1 ramp `#237` **`[x]`** · P13 closeout `#236` **`[x]`** · DA W7 VISUAL `#235` agent impl **`[x]`**
+> **정본 큐:** Cursor Plan `phase_r_super-app_8bdf2c10` (YAML frontmatter · **280 ids** · §20.6.1: Track A **245** + Track B **35** · completed **273** · pending **0** · cancelled **7** · **52차** 2026-07-10 — §35 Forensic R0 · §34 DA W5 GATE · §22.2.5 Sports Parity · §23.2.1 Casino replay · E22/E23)
 > **World-Class:** §32 · E0–**E10** · §32.5 operator trust pages  
 > **Active SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md)
 
@@ -27,7 +27,7 @@
 | ------------- | -------------------------------------- | ---------------------------------- |
 | **목표**      | 0원 출시 Soft Launch · exists RPC wire | gap 엔진 완성 · STUB→live          |
 | **엔진 변경** | **금지** (glue only)                   | 허용 (operator RED STOP 해제 후)   |
-| **마감**      | `p13-closeout-ci`                      | `ew-e10-gate-platform-world-class` |
+| **마감**      | `p13-closeout-bundle`                  | `ew-e10-gate-platform-world-class` |
 
 ```text
 P0 (DONE) → P1 Foundation → P2 Admin → P3 Auth → P4 Money → P5 Security
@@ -93,7 +93,7 @@ apps/web/src/product/
 ## 산출물 (Track A closeout)
 
 1. 본 문서 + [`ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md) 동기화
-2. [`docs/PRODUCT/ADR/ENGINE_GAP_ADR.md`](ADR/) — Track B E0 승인 시
+2. [`docs/PRODUCT/ADR/ENGINE_GAP_ADR.md`](ADR/) — Track B E0 **`[x]` Accepted** 2026-07-11
 3. Phase R ADR — component ownership · token SOT · route cardinality
 4. `apps/web/src/product/bridge/` — surface별 bridge 타입
 
@@ -116,6 +116,8 @@ apps/web/src/product/
 | `p1-foundation-ux-grammar`                    | `[x] DONE`            | UNIFIED_UX_CANON primitives · HowItWorks · HelpTip · ToastZone mount · 2026-07-04 · vitest 8/8 · `check:i18n`                                                                                                                                                              |
 | `p1-gate-foundation`                          | `[x] DONE`            | Part GATE — `typecheck` · `check:i18n` · `check:pwa` · `check:release` · `gate:ai-impl` vitest 34/34 · §3.0 4-tier smoke · 2026-07-04                                                                                                                                      |
 | `p2-gate-admin`                               | `[x] DONE`            | P2 Admin Part GATE — 17 desks · §29.1–29.4 · 2026-07-04                                                                                                                                                                                                                    |
+| `p2-admin-table-primitive`                    | `[x] DONE`            | §29.6 AdminTable · `@tanstack/react-table` · 18 desk migration · vitest 46/46 · 2026-07-11                                                                                                                                                                                 |
+| `p2-gate-admin-table-dedup`                   | `[x] DONE`            | §29.6 dedup GATE · native `<table>` desk 0 · LoadingTable 0 · `admin-table-dedup-display-contract` · `gate:ai-impl` **8/8** · 2026-07-11                                                                                                                                   |
 | `p2-closeout-*`                               | `[x] DONE`            | AdminNav · sports resume RPC · router navigate · user tier · doc sync · L5 migration gate · `gate:ai-impl` 40/40                                                                                                                                                           |
 | `p2-closeout-migration-gate`                  | `[x] DONE`            | `test:sql` 99/99 · `stack:push-remote` · advisor 0 · 2026-07-04                                                                                                                                                                                                            |
 | `p3-page-login`                               | `[x] DONE`            | `/login` password·passkey·magic · `pf.hasAccount` · `gate:ai-impl` vitest 7/7 · 2026-07-04                                                                                                                                                                                 |
@@ -138,6 +140,7 @@ apps/web/src/product/
 | `p4-preflight-design-sot-*`                   | `[x] DONE`            | P4 design SOT preflight bundle · `gate:ai-impl` 179/179 · 2026-07-04                                                                                                                                                                                                       |
 | `p4-page-wallet` … `p4-page-rewards-history`  | `[x] DONE`            | P4 Money 10 surfaces · canonical `/wallet/*` · `/ledger` · `/rewards/history` · 2026-07-04                                                                                                                                                                                 |
 | `p4-gate-money`                               | `[x]` impl partial    | P4 Part GATE — §31.3 deposit no-limit + withdraw tier limits · `wallet-money-policy-display` · `gate:ai-impl` wallet **57/57** · `tests/e2e/wallet-d3.spec.ts` 6 spec operator/CI Σ=0 (G13) · 2026-07-04                                                                   |
+| `p4-operator-visual-signoff`                  | `[x]` agent impl      | **agent impl** · §20.12 · §22.2 Wallet · §25.12.6 · `/wallet/*` · `/ledger` · `/rewards/history` · preview https://preview.phonara-web.pages.dev · 390/768/1024 · axe critical 0 · dead control 0 · vitest **19/19** · **operator `VISUAL APPROVED` 대기** · 2026-07-11    |
 | `p5-page-settings-security`                   | `[x] DONE`            | `/settings/security` · passkey + TOTP · `user-auth-security` · `/setup-2fa` redirect · `gate:ai-impl` vitest **14/14** · 2026-07-05                                                                                                                                        |
 | `p5-page-settings-bank-accounts`              | `[x] DONE`            | `/settings/bank-accounts` · `withdrawal_address_whitelist` BANK chain · `rpc_list/add/remove_withdrawal_address` · `gate:ai-impl` vitest **17/17** · 2026-07-05                                                                                                            |
 | `p5-page-account-kyc`                         | `[x] DONE`            | `/account/kyc` · compliance + KYC submit · `gate:ai-impl` vitest **4/4** · 2026-07-05                                                                                                                                                                                      |
@@ -162,8 +165,20 @@ apps/web/src/product/
 | `p9-trade-spot-pair-wire` | `[x]` impl partial | §13.1.1 spot stake per pair · `spot-stake-display-contract` · `use-spot-desk-wire` · header pair Select · vitest **10/10** · 2026-07-05 |
 | `p9-trade-audit-remediation-a1` | `[x]` DONE | 2026-07-06 | spot whitelist filter+cancel · `cancel-spot-open-order` · §12.19 isolation · `trade_audit_a1_a2_fix` plan |
 | `p9-trade-audit-remediation-a2` | `[x]` DONE | 2026-07-06 | `useTradeDeskViewport` · chart single mount · A2 desk tests · `trade_audit_a1_a2_fix` plan |
+| `p11-earn-side-surfaces` | `[x]` DONE | 2026-07-11 | `/events` · `/earn/play` · `/earn/cashback` · `/referral/leaderboard` STUB · `gate:ai-impl` **45/45** |
+| `p11-page-wallet-redeem` | `[x]` DONE | 2026-07-11 | `/wallet/redeem` · Payment Method Card · withdraw/deposit rails · `gate:ai-impl` **21/21** |
+| `p11-gate-side-income` | `[x]` DONE | 2026-07-11 | §12.19.6 Side GATE · dead link 0 · `p11-gate-side-income-display-contract` · `gate:ai-impl` **39/39** |
+| `p12-trust-marketing-hub` | `[x]` DONE | 2026-07-11 | `/tier` · `/features*` · `/fees` · `/security` · trust narrative · `gate:ai-impl` **36/36** |
+| `p12-community-support-hub` | `[x]` DONE | 2026-07-11 | `/announcements` · `/status` STUB · `/support*` · `/feedback` · `gate:ai-impl` **40/40** |
+| `p12-legal-pages` | `[x]` DONE | 2026-07-11 | `/legal/affiliate` · `/legal/cookies` · redirects · `gate:ai-impl` **40/40** |
+| `p12-gate-marketing` | `[x]` DONE | 2026-07-11 | §32.5 FAQ·feedback·affiliate·cookies + marketing · footer/redirect/education · `gate:ai-impl` **59/59** |
+| `da-w8-signature-surfaces-bundle` | `[x]` DONE | 2026-07-11 | §34.21–34.26 home·wallet·trade·casino·sports·vip · `gate:ai-impl` **36/36** |
+| `da-w8-sound-design-spec-defer` | `[x]` DONE | 2026-07-11 | §34.27 mission·wallet·trade·vip 4톤 DOC · `SOUND_DESIGN_CANON` · `gate:ai-impl` **5/5** · 구현=E-Wave |
+| `da-w8-gate-signature-experience` | `[x]` DONE | 2026-07-11 | §34.2 Emotion Map spot-check · da-w8 bundle · VISUAL: da-w8-signature advisory · `gate:ai-impl` **49/49** |
+| `p13-prep-admin-canonical-docs` | `[x]` DONE | 2026-07-11 | §29.1·§29.5 · ADMIN_BEGINNER_LANGUAGE_CANON · correspondence · RBAC · §12.14 · `gate:ai-impl` **12/12** |
+| `p13-prep-admin-team-desk` | `[x]` DONE | 2026-07-11 | `/admin/team` · AdminTable · owner-only nav · settings link · `rpc_admin_set_role_grant` · `gate:ai-impl` **22/22** |
 
-**현재 NEXT:** **`da-w2-shell-elevation-infra`** (#188) · DA W1 GATE `#187` / DA W1 `#186` / DA W0 `#185` / R0 `#180–184` / PQA / Fiat / `p10-page-sports` **`[x]`** · READ: [`ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md)
+**현재 NEXT:** **`ew-e1-decay-wave`** (#240) · E0 `#239` **`[x]` DONE** · T2 scale `#238` **`[x]` DONE** · T1 ramp `#237` **`[x]` DONE** · P13 closeout `#236` **`[x]` DONE** · DA W7 VISUAL `#235` agent impl **`[x]`** · W7 strict `#234` **`[x]`** · Soft Launch `#233` **`[x]`** · T0-A `#232` **`[x]`** · ops Web Push `#231` **`[x]`** · team desk `#230` **`[x]`** · Admin canonical docs `#229` **`[x]`** · W8 GATE `#228` **`[x]`** · W8 sound DOC `#227` **`[x]`** · W8 signature `#226` **`[x]`** · P12 GATE `#225` **`[x]`** · P12 legal pages `#224` **`[x]`** · P12 community hub `#223` **`[x]`** · P12 trust hub `#222` **`[x]`** · P11 GATE `#221` **`[x]`** · P11 wallet redeem `#220` **`[x]`** · P11 Earn side `#219` **`[x]`** · P4 VISUAL `#218` agent impl **`[x]`** · W6 GATE `#217` **`[x]`** · W6 BUNDLE `#216` **`[x]`** · P10 VISUAL `#215` agent impl **`[x]`** · P10 GATE `#214` **`[x]`** · first-bet education `#213` **`[x]`** · Fairness `#212` **`[x]`** · Batch D `#211` **`[x]`** · Batch C `#210` **`[x]`** · Batch B `#209` **`[x]`** · Batch A `#208` **`[x]`** · AdminTable GATE `#207` **`[x]`** · AdminTable `#206` **`[x]`** · Fiat#11 `#205` **`[x]`** · CasinoR#1 `#204` **`[x]`** · Casino lobby `#203` **`[x]`** · Sports#4 `#202` **`[x]`** · Sports#3 `#200` **`[x]`** · Sports#2 `#199` **`[x]`** · Sports#1 `#198` **`[x]`** · Sports#0 `#197` **`[x]`** · Fiat#10 `#196` **`[x]`** · DA W5 GATE `#195` **`[x]`** · DA W5 `#194` **`[x]`** · DA W4 GATE `#193` **`[x]`** · DA W4 `#192` **`[x]`** · DA W3 GATE `#191` **`[x]`** · DA W3 `#190` **`[x]`** / DA W2 GATE `#189` / DA W2 `#188` / DA W1 GATE `#187` / DA W1 `#186` / DA W0 `#185` / R0 `#180–184` / PQA / Fiat / `p10-page-sports` **`[x]`** · READ: [`ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md)
 
 **Phase R money/trade 정본 (Plan §13.1):**
 
@@ -174,7 +189,7 @@ apps/web/src/product/
 | §13.1.3 | Trade·Staking 초등어 · 초보 가이드 — HowItWorks · HelpTip · subnav help                | `TRADE_BEGINNER_LANGUAGE_CANON.md` · `trade-beginner-language-display-contract.ts` · `p9-trade-beginner-help-layer`      |
 | §13.1.4 | Fiat Reference Money Stack — display-only hint · 3-tier rate · Fiat#1–12               | `fiat-reference-display-contract.ts` · §20.13.2 · **`p4-gate-fiat-reference-world-class` `[x]`** (Fiat#9G · P10 unblock) |
 
-**YAML todo 정본:** Cursor Plan `phase_r_super-app_8bdf2c10` frontmatter — repo에 복사하지 않음. **수치:** §20.6.1 (**278 ids**) · **P9 step:** §25.12.9.1-D + §25.12.9.2 remediation · **Fiat:** §20.13.2 · **실행 #N:** §20.13 · drift: §20.6.2 · **§29.5:** Admin 초등어 · **§32.5–32.6:** trust + Admin operator completeness
+**YAML todo 정본:** Cursor Plan `phase_r_super-app_8bdf2c10` frontmatter — repo에 복사하지 않음. **수치:** §20.6.1 (**280 ids**) · **P9 step:** §25.12.9.1-D + §25.12.9.2 remediation · **Fiat:** §20.13.2 · **실행 #N:** §20.13 · drift: §20.6.2 · **§29.5:** Admin 초등어 · **§32.5–32.6:** trust + Admin operator completeness
 
 ## 참고 (읽지 말 것)
 

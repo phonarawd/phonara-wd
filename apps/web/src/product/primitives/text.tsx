@@ -18,7 +18,7 @@ export const textVariants = cva('text-foreground', {
       body: 'text-base font-normal leading-[var(--ds-line-height-body)]',
       caption: 'text-sm text-foreground-muted leading-[var(--ds-line-height-body)]',
       label: 'text-sm font-medium leading-[var(--ds-line-height-body)]',
-      tiny: 'text-xs text-foreground-muted leading-[var(--ds-line-height-body)]',
+      tiny: 'text-tiny text-foreground-muted leading-[var(--ds-line-height-body)]',
       'money-mono': 'font-mono text-base tabular-nums lining-nums tracking-normal',
     },
   },

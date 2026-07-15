@@ -1,16 +1,424 @@
-# Active Work SSOT (2026-07-06)
+# Active Work SSOT (2026-07-11)
 
 > **유일한 실행 큐 정본.** 그 외 `.md` (엔진 evidence · v2 wave · Demolition batch · forensic)는 **이력·감사 전용** — 구현 큐로 읽지 않는다.
 
 ## 현재 상태
 
-| 영역                          | 상태                                         | AI 행동                                                                                                                                                                                                                                            |
-| ----------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Engine Apex**               | `[x] FULLY CLOSED`                           | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어 예외만)                                                                                                                                                        |
-| **Phase D Demolition**        | `[x] DONE`                                   | 삭제 확장 **금지**                                                                                                                                                                                                                                 |
-| **Phase R UI Rebuild**        | **IN PROGRESS (§34 DA W2)**                  | **왕초보 큐:** To-do **위→아래** · completed **스킵** · **첫 pending 1개** (`da-w2-shell-elevation-infra` #188) · DA W1 GATE `#187` **`[x]` DONE** · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`** |
-| **Trade Desk Remediation**    | **Phase 4 closeout `[x]` DONE**              | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                        |
-| **Trade Desk Zero-Defect QA** | **L9 closeout `[x]` impl** · §15 **STARTED** | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                           |
+| 영역                               | 상태                                                                                   | AI 행동                                                                                                                                                                                                                                                        |
+| ---------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Engine Apex**                    | `[x] FULLY CLOSED`                                                                     | `supabase/migrations` · `packages/*-engine` **신규 작업 금지** (버그·Phase R 와이어·**PIR Wave E** 예외만)                                                                                                                                                     |
+| **Phase D Demolition**             | `[x] DONE`                                                                             | 삭제 확장 **금지**                                                                                                                                                                                                                                             |
+| **Platform Integrity (PIR)**       | **`[x]` DONE** 2026-07-11                                                              | Plan `platform_integrity_remediation_v1` **전부 `[x]`** · Evidence [`PLATFORM_INTEGRITY_EVIDENCE/`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md) · `#205` **unblocked**                                                                                |
+| **Phase R UI Rebuild**             | **IN PROGRESS (Track B E-Wave)**                                                       | **왕초보 큐:** To-do **위→아래** · completed **스킵** · Track B **`ew-e10-gate-platform-world-class` `[x]` DONE** · E10 growth+trust+wallet **`[x]`** · E10 WAVE **`[x]`** · E9 GATE **`[x]`** · E8 GATE **`[x]`** · E23–E0 · T2/T1 · P13 · DA · PQA **`[x]`** |
+| **Trade Desk Remediation**         | **Phase 4 closeout `[x]` DONE**                                                        | Plan `trade_desk_remediation_v3` · S4 LAUNCH RC APPROVED 2026-07-07 · **CI/soak Verified `[x]` 2026-07-07**                                                                                                                                                    |
+| **Trade Desk Zero-Defect QA**      | **L9 closeout `[x]` impl** · §15 **STARTED**                                           | Plan `trade_desk_qa_audit` · `closeout-doc-sync` 2026-07-08 · operator Stage 2/3 · 3m window **pending**                                                                                                                                                       |
+| **Cursor 8GB perf (v4.4.5)**       | **`[x]` DONE**                                                                         | `cursor:perf-rollout` diagnosis-first · `high-remediation` dry-run 기본 · evidence JSONL · summary remediation assert · tsserver/argv **옵트인** (`--include-tsserver-tuning`)                                                                                 |
+| **Platform Perfect Launch**        | **Plan 19/19 completed** · **R12 DONE**                                                | Plan `platform-perfect-launch` — **todo id = 착수 단위** · Handoff [`PLATFORM_AUDIT_TODO_HANDOFF.md`](../OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md) · 채팅 `Implement <todo-id>`                                                                               |
+| **ZA 통합 Remediation**            | **`[x]` DONE** 2026-07-14                                                              | Plan `za_통합_실행순서_c6df1c56` · ZA-01~15·17·19 **VERIFIED_FIXED**(ZA-14는 완화조치·근본 OPEN) · ZA-12/13 운영측 OPEN · ZA-18 후속 · 감사 [`ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](../audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)                    |
+| **Zero-Defect Critical Hardening** | Phase 0–7 **`[x]`** 2026-07-14 (AI 트랙)                                               | [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) — Phase 7 Release Gate **DONE**(17 criteria 재판정 · PASS 13 · operator soak/PPR/서명 **미실행**) · **NEXT=operator O1 soak 개시일** · 재착수 실행 큐 아님               |
+| **DNA Audit 후속 3-우선순위**      | P1 랜딩 크래시 **FIXED+재검증** · Home/Trade/Wallet/Casino **실 세션 확인** 2026-07-15 | §"DNA Audit 후속" 절 참조 — P1 순환 import 수정(`typecheck`·vitest 19/51 green) + 로컬 스택 재캡처로 전 authenticated 화면 렌더 확인 · **신규 발견**: 데스크톱 BottomNav 노출(정책 불일치, 미수정) · P2 침묵형 dead control 0건 · P3(wave debt) **보류**       |
+
+## DNA Audit 후속 3-우선순위 (operator 지시 2026-07-15)
+
+> **배경:** 2026-07-15 read-only DNA 감사 결과 확인 후 operator가 지시한 3개 후속 작업. 엔진/프레젠테이션 분리는 **검증 완료로 간주 · 재착수 금지**.
+> **문서 위치 안내:** operator가 지시한 `docs/rebuild/NEXT_STEP.md`는 [`DEPRECATED_DOC_DENYLIST.md`](DEPRECATED_DOC_DENYLIST.md)에 **2026-07-04 삭제·재생성 금지**로 명시된 파일이며(`00-core.mdc`: "실행 큐 = ACTIVE_WORK_SSOT"), 그 파일 대신 **본 절**을 실행 큐로 사용한다.
+
+| #      | 우선순위                                                                                                                                    | 상태                    | 비고                                                                                              |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------- |
+| **P1** | 렌더링 감사 — 390/768/1024/2560 CDP 스크린샷 캡처 · 토큰 규칙 vs 실제 화면 일치 확인 · DA W7 시각 사인오프 판정                             | **IN PROGRESS**         | `scripts/visual-audit-capture-cdp.ts` 4-tier 폭 정합 수정 후 실행 · 결과는 본 문서 하위 절에 기록 |
+| **P2** | `dead-controls-display-contract.ts` 전수조사 — `*_ENGINE_TODO`/`*_UI_UNLOCK_TODO` 전량 목록화 · 클릭해도 반응 없는 지점 launch blocker 승격 | **IN PROGRESS**         | `LAUNCH_GATES` 스위치보드 대조 완료 — 상세는 본 문서 하위 절                                      |
+| **P3** | `ew-e*`/`da-w*`/`p*-gate` 명명 wave-debt 파일 정리                                                                                          | **명시적 보류 (DEFER)** | operator 지시: 출시 이후로 연기 · 유지보수 이슈일 뿐 유저 비가시 영역 · **지금 착수 금지**        |
+
+### P1 결과 (렌더링 감사 · 2026-07-15 · Chrome CDP · operator 승인 후 로컬 스택 포함 완결)
+
+**엔진:** `scripts/visual-audit-capture-cdp.ts` (Playwright 미사용 · hook-safe) — 4-tier 폭을 `viewport-contract.ts VIEWPORT_SMOKE_WIDTHS`(390/768/1024/2560)와 정합, `.local-trade-dev.credentials.json` 기반 로그인 스텝(`PHONARA_AUDIT_LOGIN=1`, 로컬 BASE만 허용) 추가. 산출물: `screenshots/{mobile,tablet,desktop}/*.png` (로컬 · 커밋 대상 아님).
+
+| 판정                                                                             | 항목                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **FAIL → FIXED & 재검증 완료**                                                   | `/` 랜딩 페이지가 순환 import(`home-attendance-display-contract.ts` ↔ `earn-play-display-contract.ts`)로 4개 뷰포트 전부 boot-splash 크래시. **`parseEarnHubRouletteSnapshot` 소유권을 `earn-play-display-contract.ts`로 이전**해 순환 제거(2026-07-15) · `home-attendance-display-contract.ts`는 재수출만. `typecheck` green · 관련 vitest **19 files / 51 tests green** · 재캡처로 390/768/1024/2560 전부 실제 콘텐츠 렌더 **확인**                                                                                                                                                                                                                                                                                                    |
+| PASS                                                                             | `/login`·`/signup`·`/install`·`/legal/terms` 전 폭 정상 렌더(토큰 일치)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| **PASS (operator 승인 후 로컬 세션으로 검증 완료)**                              | `/home`·`/trade`(첫방문 리스크 고지 시트)·`/wallet`(실 RPC 잔액·원장)·`/casino`(Provably Fair 배너 + 책임도박 고지) — 로컬 Supabase(Docker on-demand, operator 승인) + `dev-trade@phonara.local` 시드 계정 로그인 후 390/768/1024/2560 전부 실 콘텐츠 캡처(authRedirects **0/36**). 크래시·빈 화면 없음                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| **신규 발견 (FAIL 후보 — 별도 확인 필요)**                                       | Home·Wallet 데스크톱(1024·2560) 캡처에서 **모바일 5탭 BottomNav가 그대로 노출**됨. `docs/audit/visual-ux-2026-07-11/RESPONSIVE_AUDIT.md` §3 표는 "BottomNav ≥1024 desktop **숨김(정책)**"으로 명시 — 코드 정책과 실제 화면이 불일치하는 것으로 보임. **launch blocker 후보로 기록**(고치지 않음 — 범위 밖)                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| **개선 권고 → FIXED & 재검증 완료 (Phase 0B, 2026-07-15)**                       | `/login`·`/signup`·`/reset-password`·`/verify-email` (전부 `AuthEntryLayout` 공유) — **최초 진단보다 근본 원인이 한 단계 더 깊었음**: `lg:grid-cols-[minmax(280px,360px),1fr]`의 트랙 구분자가 콤마였는데, `grid-template-columns`는 콤마가 아니라 공백 구분 트랙 리스트라 **이 선언 자체가 무효 CSS**였음 — 브라우저가 통째로 무시해 두 트랙이 항상 1열로 스택(순서를 바꿔도 무의미). 저장소의 다른 모든 `grid-cols-[...]` 아비트러리 값은 밑줄(`_`) 구분자 사용 — 이 파일만 콤마였음. `lg:grid-cols-[minmax(280px,360px)_1fr]`로 수정 후 1024/2560 스크린샷으로 4개 라우트 전부 실제 2열(좁은 aside 좌측 · 폼 우측 dominant) 렌더 **확인**. `typecheck` green · vitest 10/10 green(`auth-entry-layout.test.tsx` 신규 회귀 테스트 포함) |
+| 개선 확인 (기존 이슈 해소)                                                       | 2026-07-11 1차 감사의 `/install` 에러 경계 캡처 — 이번 재현에서는 정상 렌더                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| **U3 재검증 (Phase 0B, 2026-07-15) — 과밀 여전히 관찰됨, 미수정(범위=재검증만)** | 최초 캡처는 Chrome 프로필에 남은 로그인 세션 때문에 `/`가 `/home`으로 리다이렉트되어 **마케팅 랜딩이 아니라 Home 허브를 찍고 있었음**(스크립트에 `landing=1` 쿼리 우회 추가로 수정). 올바른 랜딩 재캡처 결과: 1024×900 첫 폴드에 히어로(카피+CTA)·단계 플로우(가입→미션→적립→출금)·신뢰 배지 칩 3블록이 스크롤 없이 동시 노출, 2560×1440에서는 미션 프리뷰 카드 2개 + 리워드 지갑 프리뷰 카드까지 추가로 노출 — 2026-07-11 audit의 "hero budget 과밀" 판정이 **유효하게 재확인됨**. 모바일 390은 상대적으로 절제됨(신뢰 칩 행이 폴드 밖). 이 todo 범위는 재검증까지이며 리디자인은 후속 폴리시 phase 몫                                                                                                                                  |
+| DA W7 최종 판정                                                                  | **랜딩 크래시 FIXED로 최우선 launch blocker 해소.** Home·Trade·Wallet·Casino 실 세션 렌더 확인 — 시각 사인오프 자체는 여전히 **operator 육안 승인**(`VISUAL APPROVED: da-w7`) 몫이나, 데스크톱 BottomNav 노출 건은 사인오프 전 확인 권장                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+
+**정리:** 로컬 스택은 검증 후 `bun run stack:stop`으로 완전 종료(Supabase 컨테이너 + Docker Desktop). `.env.local` UTF-8 BOM 파싱 오류(`supabase start` 실패 원인)도 이번에 함께 수정.
+
+### Phase 0B 결과 (Auth 그리드 + Landing U3 재검증 · 2026-07-15 · `world-class_presentation_rebuild_bc0d5f4b` plan todo `phase0b-auth-marketing`)
+
+이미 커밋된 순환 import 수정(`d0cbc4d8`)·1차 그리드 순서 교체(`ea25d57b`) 위에서, 스크린샷 기반 재검증이 위 표의 두 항목(그리드 근본 원인·U3)을 추가로 발견·해결. 상세 근거는 위 두 행 참조. 4개 Auth 라우트 × 2테마 × 4뷰포트 스크린샷 전량 재캡처로 확인, `bun run typecheck` · 타겟 vitest(auth-entry-layout·landing-page·auth-landing-visual-signoff·도메인 계약 2개) green.
+
+### Phase 1A 결과 (Casino trust layer · 2026-07-15 · `world-class_presentation_rebuild_bc0d5f4b` plan todo `phase1a-trust-layer`)
+
+Casino 12게임이 공유하는 `CasinoGameShell`/`PfStrip` 한 곳만 확장해 트러스트 신호 3종을 추가·완성 — 게임별 반복 작업 없음, 전부 12게임에 동시 적용.
+
+| 항목                                        | 내용                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **`data-gpu-tier` 저사양 감지 (신규 구현)** | 저장소 전체 grep으로 구현 0건 확인(`DESIGN_PRINCIPLES.md:256` 의도 행만 존재) — `casino-gpu-tier.ts`(순수 판정 함수) + `use-casino-gpu-tier.ts`(훅: OS `prefers-reduced-motion` · `navigator.deviceMemory`≤2GB · `hardwareConcurrency`≤2 · `connection.saveData` · 기존 `VITE_PHONARA_E2E_ENGINE` 플래그 통합) 신규 작성. `CasinoGameShell` 루트에 `data-gpu-tier="low"\|"standard"` 부착 — Phase 1D 4개 Pixi 게임은 이 값을 소비만 하면 됨(신규 판정 로직 불필요) |
+| **인게임 RTP 표시 (신규)**                  | 플레이어 대상 RTP 표시가 전무했음을 재확인(로비 검색 필터 카테고리 + 죽은 `bet-hub-casino-embed.ts` 유물뿐, lobby-only 아님) — `casino-trust-strip.tsx`(`CasinoTrustStrip`) 신규, `casino-game-meta.ts` 게임별 RTP를 `CasinoGameShell`에 상시 표시. 기존에 있었지만 미사용이던 `casino.hub.rtp.label`/`.tooltip` i18n 키를 그대로 재사용(신규 키 최소화 — i18n copy-only 원칙)                                                                                     |
+| **네트워크/연결 상태 표시 (신규)**          | Sports(`use-sports-realtime.ts`)·Trade(`use-trade-oracle-realtime-disconnected.ts`)가 이미 쓰는 `use-realtime.ts`의 `RealtimeConnectionStatus`/`connected` 모델을 그대로 재사용(새 상태 어휘 발명 없음) — `use-casino-connection-status.ts` 신규. `wallets` 실시간 채널(이미 `useWallet`이 구독 중)을 채널 풀링으로 공유해 소켓 추가 없이 `CasinoTrustStrip`에 표시                                                                                                |
+| **PF verify 링크 wiring**                   | `PfStrip`가 모든 `/games/$gameCode` 라우트에 이미 마운트되어 있음을 재확인(add 아닌 confirm) — 여기에 기존에 있었지만 미사용이던 `casino.fairness.link` i18n 키로 `/casino/fairness`(도메인 상수 `CASINO_FAIRNESS_ROUTE`) 링크를 신규로 연결. 표시/내비게이션만 — PF 암호학적 정확성 재검증은 엔진 영역 그대로(범위 밖)                                                                                                                                            |
+| **부가 정리**                               | 확인된 죽은 유물 `apps/web/src/features/trading/bet-hub-casino-embed.ts`(+테스트) 삭제 — 금지된 Trade-embeds-Casino 패턴의 잔재, 저장소 전체 재확인 결과 소비자 0건이라 제거                                                                                                                                                                                                                                                                                       |
+
+**증거:** `gate:ai-impl -- --test apps/web/src/features/casino/__tests__ apps/web/src/product/surfaces/games/__tests__` green — vitest **88/88**(17 files, 신규 6개 포함) · `typecheck` · `lint` · `check:i18n` · `check:release` · `check:ui-architecture` · `check:phase-r-guards --strict` · `check:rpc-type-hygiene` · `check:primitive-ratchet --strict`(raw `<button>` 베이스라인 43/22 유지 — 신규 트리거는 `Button` 프리미티브 사용, 위반 없음). 엔진/RPC/컨트롤러 시그니처 변경 **0**.
+
+### Phase 1B-crash 결과 (Crash 기능 QA + 모션/퍼포먼스 폴리시 · 2026-07-15 · `world-class_presentation_rebuild_bc0d5f4b` plan todo `phase1b-crash`)
+
+**발견:** 착수 시점에 코드 구현은 이미 uncommitted 상태로 작업트리에 존재(이전 세션 산물, 커밋·검증·문서 동기화 누락) — 재구현이 아니라 검증+마감 처리로 수행.
+
+| 항목                                        | 내용                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0 데드 컨트롤 수정**                     | 공유 라이브 크래시 라운드가 다른 플레이어를 위해 계속 flying 상태를 유지하는 동안, 이 유저가 활성 베팅이 없어도 캐시아웃 버튼이 계속 보이고 클릭 가능한 채로 남아 조용히 no-op하던 결함(`crash-stage.tsx` `showLiveCashout`) — `liveSessionActive && liveRoundStatus === 'flying'` 동시 게이팅으로 수정                                                  |
+| **라이브 캐시아웃 flash + number-pop 연동** | `CasinoGameShell` → `CasinoGameStage` → `CrashStage` 3계층에 `liveCashoutFlash` 상태 신규 배선. RPC `status === 'won'` 확인 후에만 트리거(옵티미스틱 아님, `90-ui-ux-presentation` 서버 응답 = source of truth) · 동일 bet id 재렌더 시 재트리거 안 함(dedup) · 새 bet id는 새 엘리먼트로 재트리거                                                       |
+| **가속 커브 이징 (신규 함수)**              | `crashCurveEasing(progress) = progress^2.2` — CASINO_UX_CANON §1 "느리게 시작해 크래시 직전 급등"에 맞춰 decelerate(ease-out)였던 기존 곡선을 accelerate(ease-in)로 교체. `assertCasinoGamesBatchAContractSync()`에 "후반 구간 delta > 초반 구간 delta" 불변식 추가                                                                                      |
+| **퍼포먼스 수정 (O(n²) → O(1))**            | 기존 `paintPath`는 매 rAF 프레임마다 누적된 전체 포인트 배열을 `map+join`으로 재구성(프레임마다 O(n), 전체 리플레이 O(n²)) — 신규 `appendPathPoint`는 문자열 누적 + 단일 `setAttribute` 호출만(프레임당 O(1)). Motion 기준 "최저 `data-gpu-tier`에서 ≥55fps" 충족 목적                                                                                   |
+| **테스트**                                  | 신규 `crash-stage.test.tsx`(11개 — 데드 컨트롤 3종, flash 트리거/dedup/reduced-motion 5종, oneshot 승/패 2종) + `casino-games-batch-a-stages.test.tsx`·`casino-game-shell.test.tsx` 회귀 갱신(shell 레벨 end-to-end: 라이브 배팅 → mid-flight 캐시아웃 클릭 → RPC 확인 → flash 렌더) + `casino-games-batch-a-display-contract.test.ts`(이징 가속 불변식) |
+| **PF verify**                               | Phase 1A에서 전 게임 공유로 이미 마감(`CasinoGameShell`에 상시 마운트) — 이번 세션은 crash 전용 shell 테스트로 RTP 배지·connection status·PF strip·verify link(`/casino/fairness`) 렌더를 재확인만, 신규 배선 없음                                                                                                                                       |
+
+**검증 방법 및 범위 (중요 — 정직화):** 실제 로컬 Docker+Supabase 기동 후 브라우저로 라이브 라운드를 직접 클릭하는 방식은 **이번 패스에서 수행하지 않음** — 라이브 크래시 라운드 전이(`rpc_live_crash_advance`)가 `service_role`/admin 전용이라 SQL 직접 구동까지 필요한 무거운 조합이며, 본 플랜 Execution model 자체가 "Heavy gates (E2E, check:full) stay on CI/operator-gate ... not run autonomously"를 명시하고 8GB 운영 PC RAM(가용 ~1.2–1.7GB)도 근거. 대신 위 표의 각 항목을 (a) 실제 RPC 시그니처(`supabase/migrations/20260810000001_ew_e23_casino_live.sql`의 `rpc_live_crash_place_bet`/`rpc_live_crash_cashout` 반환 shape)와 대조해 mock 정합성을 코드 레벨로 직접 확인하고, (b) 클릭 시뮬레이션(`fireEvent.click`)이 실제 유저가 클릭하는 동일 `data-testid` 엘리먼트를 그대로 구동하는 shell 레벨 통합 테스트로 검증. 실 브라우저 콘솔 0-에러·axe critical 0·4-viewport 스크린샷은 **미실행** — operator "gate 실행" 또는 CI 단계로 이연.
+
+**증거:** `gate:ai-impl -- --test apps/web/src/product/surfaces/games/__tests__/crash-stage.test.tsx apps/web/src/product/surfaces/games/__tests__/casino-games-batch-a-stages.test.tsx apps/web/src/product/surfaces/games/__tests__/casino-game-shell.test.tsx apps/web/src/domain/__tests__/casino-games-batch-a-display-contract.test.ts` green — L0~L4 전부(`cursor:status`·`check:hygiene`·`check:ui-architecture`·`check:phase-r-guards --strict`·`check:rpc-type-hygiene`·`check:primitive-ratchet --strict`·`typecheck`·`lint`·`check:i18n`·`check:release`) · vitest **29/29**(4 files) · `check:design-tokens` OK(신규 advisory 0 — 기존 111건은 crash 관련 파일과 무관한 타 surface). 엔진/RPC/컨트롤러 시그니처 변경 **0**(`supabase/*`, `packages/*-engine` 미터치).
+
+**Scope note:** 할당된 todo는 `phase1b-crash` 1건 — Phase 1B의 나머지(`phase1b-limbo`, `phase1b-dice`)는 `git diff`로 확인 결과 미착수(파일 변경 0) 그대로이며, 이번 세션은 그 두 todo를 건드리지 않음. Cursor Plan YAML(`~/.cursor/plans/world-class_presentation_rebuild_bc0d5f4b.plan.md`) frontmatter는 operator 지시(plan 파일 직접 편집 금지)에 따라 **본 세션에서 갱신하지 않음** — todo 상태 체크는 operator 확인 후 별도 처리.
+
+### Phase 1B-limbo 결과 (Limbo 기능 QA + 모션 폴리시 + 퍼포먼스 체크 · 2026-07-15 · `world-class_presentation_rebuild_bc0d5f4b` plan todo `phase1b-limbo`)
+
+**발견:** 착수 시점 Limbo는 target dial + result flash가 정상 동작(데드 컨트롤 없음)했으나 "minimal feel"이었음 — CASINO_UX_CANON 표의 code-verified gap과 일치. 결과 유지(hold) 타이머에 unmount 클린업이 없어 화면 이탈 시 보류 타이머가 남을 수 있는 소규모 리소스 누수도 확인. 신규 버그 재현이 아니라 폴리시 + 리소스 정리로 수행.
+
+| 항목                                                             | 내용                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **기능 클릭스루 QA**                                             | 타겟 설정(`casino-selection-target` 입력) → Prepare Hash → Place Bet → 결과 렌더까지 실 shell 배선(`CasinoGameShell` → `GameSelectionFields` → `LimboStage`)을 통과하는 신규 통합 테스트 2건(승/패) 추가 — 정상 승리·근접 패배(near-miss 1.99× vs 목표 2.00×)·왜곡된 RPC 응답(`resultMultiplier` 누락) 케이스 전부 정상 처리 확인. 데드 컨트롤 0건                                                                                                                                                                                                   |
+| **모션 폴리시 (Phase 1B 공유 토큰 재사용, 신규 토큰 발명 없음)** | 기존 `bg-success/15`/`bg-danger/15` 배경 박스 + 420ms 하드코딩 JS 타이머(어떤 CSS transition duration과도 불일치)를 제거하고, `phase1b-crash`가 이미 도입한 `motion.css` 공유 토큰(`ds-casino-reveal-in`·`ds-casino-number-pop`·`ds-casino-cashout-flash`, `--ds-motion-casino-reveal` 360ms — Motion 기준 "Result reveal" 200–500ms 밴드 내)을 그대로 재사용 — 승리: reveal-in + number-pop + glow("punchy"), 패배(근접 패배 포함): reveal-in만(CASINO_UX_CANON "lose: calm · respectful" — 근접 패배도 일반 패배와 동일하게 "clean"하게 읽혀야 함) |
+| **퍼포먼스 수정 (타이머 누수)**                                  | 결과 유지 타이머에 unmount 클린업(`useEffect(() => clearTimer, [clearTimer])`)이 없던 갭 — `CrashStage`의 `cancelRaf` 클린업과 동일 패턴으로 추가. 연속 베팅 시 이전 타이머를 정리하는지, unmount 시 클린업이 호출되는지 `clearTimeout` spy로 검증. Limbo는 rAF 루프나 Pixi/WebGL이 없는 단발 CSS 애니메이션이라 `data-gpu-tier` 게이팅은 불필요(opacity/transform-only, 360ms 1회성)                                                                                                                                                                |
+| **테스트**                                                       | 신규 `limbo-stage.test.tsx`(17개 — 기능 QA 6종, 모션 폴리시 6종, 퍼포먼스 3종) + `casino-game-shell.test.tsx`에 Limbo 클릭스루 통합 테스트 2건 추가. 공유 `useCasinoRoundPipeline` 목을 정적 객체에서 실제 `useState` 기반 훅으로 교체(기존 2개 테스트는 prepareRound/requestBet을 호출하지 않아 동작 동일 — 회귀 없음, vitest로 확인)                                                                                                                                                                                                               |
+| **범위 밖 관찰 (수정 안 함 — 별도 확인 필요)**                   | `CASINO_UX_CANON.md` §2 Limbo는 "win chance / payout preview 숨김 금지"를 명시하나, Limbo는 현재 win-chance %를 표시하지 않음(형제 게임 Dice는 `@phonara/game-engine`의 `diceWinProbability`/`diceMultiplier`로 이미 표시 중). 이 갭은 이번 plan의 code-verified gap 표에 없고, 할당된 todo 범위(베팅·타겟 설정·결과 QA + 모션 폴리시 + 퍼포먼스)를 벗어나며 엔진 패키지(`packages/game-engine`, frozen) 터치 여부를 operator 판단이 필요해 수정하지 않음                                                                                            |
+
+**증거:** `gate:ai-impl -- --test apps/web/src/features/casino/__tests__ apps/web/src/product/surfaces/games/__tests__ apps/web/src/domain/__tests__/casino-games-batch-a-display-contract.test.ts` green — L0~L4 전부(`cursor:status`·`check:hygiene`·`check:ui-architecture`·`check:phase-r-guards --strict`·`check:rpc-type-hygiene`·`check:primitive-ratchet --strict`·`typecheck`·`lint`·`check:i18n`·`check:release`) · vitest **125/125**(20 files) · `check:design-tokens` OK(advisory 111건 — 전부 limbo 무관 기존 항목, 신규 0). 엔진/RPC/컨트롤러 시그니처 변경 **0**(`supabase/*`, `packages/*-engine` 미터치).
+
+**Scope note:** 할당된 todo는 `phase1b-limbo` 1건 — `phase1b-dice`는 `git diff` 확인 결과 미착수(파일 변경 0) 그대로이며 이번 세션은 건드리지 않음. Cursor Plan YAML(`~/.cursor/plans/world-class_presentation_rebuild_bc0d5f4b.plan.md`) frontmatter 본문은 operator 지시(plan 파일 직접 편집 금지)에 따라 이번 세션에서 직접 수정하지 않음 — `phase1b-crash` 세션과 동일 판단. (투명성 기록: 저장소 non-waivable 규칙 `99-plan-todo-auto-closeout`에 따라 `gate:ai-impl -- --closeout phase1b-limbo` 스크립트를 게이트 green 확인 후 1회 호출했으나, 그 직후 파일을 다시 읽어보니 `phase1b-limbo` 상태는 `in_progress`로 남아 있었음 — 스크립트 호출이 즉시 되돌려진 것으로 보이며 본 세션에서는 이를 다시 편집하지 않고 그대로 둠. 최종 체크 확정은 operator 확인 몫.)
+
+### 완료 체크 정직성 재감사 + 보완 (Phase 0A/0B/1A/1B-crash/1B-limbo · 2026-07-15 재감사 세션)
+
+**배경:** operator가 Plan `world-class_presentation_rebuild_bc0d5f4b`의 `completed` 5개 todo(0A/0B/1A/1B-crash/1B-limbo)를 플랜 원문 기준으로 정말 완벽하게 끝났는지 독립 재감사 지시. 코드 직접 열람 + git 커밋 이력 + 스크린샷 화소 대조 + 실시간 typecheck/vitest 재실행으로 조사한 결과, **코드/유닛테스트 레벨은 전부 실재·green이었으나, 플랜 자신이 명시한 Definition of Done(실브라우저 렌더 확인·axe·DevTools 성능)은 5개 항목 전부 미충족**이었음 — 아래 표는 재감사에서 발견한 구체 결함과 이번 세션에서 실제로 고친 것 vs 환경 문제로 막힌 것을 정직하게 구분한다.
+
+| #   | 재감사 발견                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | 근거                                                         | 이번 세션 처리                                                                                                                                                                                                                                                                                                                                                                                  |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Phase 0A "회귀 매트릭스" 재검증이 실제로 안 됨 — CSS 수정(04:17am) 이후 캡처된 스크린샷은 전부 `AuthEntryLayout`/마케팅 라우트(BottomNav 자체가 없음)뿐이었고, BottomNav가 실제로 있는 인증 라우트(wallet/casino 등) 스크린샷은 전부 수정 **이전**(01:46am) 것이라 여전히 버그가 보임                                                                                                                                                                                                                                                                                       | 파일 mtime 대조 + 스크린샷 직접 열람                         | `scripts/visual-audit-capture-cdp.ts`에 실제 `getComputedStyle('.ds-shell-bottomnav').display` 어서션 추가(≥1024px `none` / <1024px `grid` 정책 위반 시 `bottomNavViolations`에 기록 + 프로세스 exitCode 1) — **코드는 완성·타입체크 green·public 라우트 스모크 테스트 통과**. 인증 라우트(Home/Trade/Wallet/Sports/Casino) 실행은 아래 #6 Docker 이슈로 **이번 세션에서 완료하지 못함**        |
+| 2   | Phase 0A 스크린샷 네이밍 컨벤션이 플랜 요구(하이픈·width-only)로 정렬되지 않음 — 여전히 `${pageId}_${vp.id}_${theme}_${nn}.png` 구식                                                                                                                                                                                                                                                                                                                                                                                                                                        | `visual-audit-capture-cdp.ts:461` 직접 열람                  | **완료** — `<surface>-<viewport>-<theme>[-state].png`로 전환, `pageId` kebab-case 통일, viewport id width-only. 스모크 테스트로 `login-1024-dark.png` 등 실제 산출 확인. 구식 파일 전량 정리(미커밋 상태였으므로 git 이력 영향 없음)                                                                                                                                                            |
+| 3   | Phase 1A/1B-crash/1B-limbo 전부 axe critical=0·console 0-에러·스크린샷 근거가 전무 — 실제로는 jsdom `fireEvent.click` 통합 테스트만 수행, 세션 자신이 "실 브라우저 콘솔 0-에러·axe critical 0·4-viewport 스크린샷 미실행"이라고 정직하게 기록(위 `phase1b-crash` 절 참조)                                                                                                                                                                                                                                                                                                   | `ACTIVE_WORK_SSOT.md`(재감사 시점) crash 절 자체 기록        | `visual-audit-capture-cdp.ts`에 axe-core(기존 devDependency) 실주입 실행 + critical/serious 집계, 콘솔 에러/미처리 예외 수집(신규 `CdpClient.on()` 이벤트 리스너 — 기존 클라이언트는 응답 아닌 메시지를 전부 버렸음), `PHONARA_AUDIT_INTERACT=1` opt-in 카지노 베팅→결과 상호작용 패스(기존 로그인 스크립트 패턴 재사용, Playwright 없음) 신규 구현. **코드·타입체크 완료**. 실행은 #6으로 막힘 |
+| 4   | Phase 1B 성능 기준("DevTools ≥55fps trace")이 알고리즘적 논거(O(n²)→O(1))로만 대체됨 — 실측 없음                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | `crash-stage.tsx` diff 검토                                  | Crash 리플레이 애니메이션 구간에 실제 `requestAnimationFrame` 카운터를 주입해 프레임/초를 실측하는 `runCasinoInteractionPass`의 FPS 측정 신규 구현(알고리즘 논거가 아닌 경험적 수치). 실행은 #6으로 막힘                                                                                                                                                                                        |
+| 5   | Phase 1B-limbo 구현이 미커밋 상태로 "completed" 표시됨                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `git status`: `limbo-stage.tsx` M, `limbo-stage.test.tsx` ?? | **완료** — 커밋 `51a26aff`. 커밋 전 타겟 vitest 24/24 + typecheck 재확인                                                                                                                                                                                                                                                                                                                        |
+| 6   | **로컬 Docker Desktop 엔진이 붙지 않음** — `bun run stack:ensure:full` 최초 시도(약 7.6분 후 `did not become ready`), `bun run stack:docker:recover`(180초 후 `FAIL — engine still not ready`, 스크립트 자체가 "Docker 트레이에서 수동 종료 → `wsl --shutdown` → 재실행" 수동 조치를 권고), WSL 완전 종료 후 클린 재시도(약 3.5분 후 다시 `daemon not ready`) — **3회 시도 전부 실패**. `docker ps`가 `dockerDesktopLinuxEngine` named pipe에 연결 실패하고 `Get-Process`로도 Docker Desktop 프로세스 자체가 없음을 확인 — 이 PC의 현재 환경 문제이며 이번 세션 코드와 무관 | 3회 시도 로그 + `docker context ls`/`Get-Process` 직접 확인  | 매 시도 후 `bun run stack:stop`으로 클린 정리(잔여 컨테이너/포트 없음 확인) — **operator 조치 필요**: Docker Desktop 트레이 아이콘 완전 종료 → `wsl --shutdown` → Docker Desktop 재실행 → 안정화 확인 후 아래 재실행 명령                                                                                                                                                                       |
+
+**Docker 정상화 후 재실행 명령 (이번 세션이 준비한 전부):**
+
+```powershell
+bun run stack:ensure:full
+$env:PHONARA_AUDIT_LOGIN='1'; $env:PHONARA_AUDIT_INTERACT='1'; bun run tsx scripts/visual-audit-capture-cdp.ts
+bun run stack:stop
+```
+
+성공 시 `docs/audit/visual-ux-2026-07-11/capture-manifest.json`의 `assertions.bottomNavViolations`/`assertions.axeCriticalFindings`가 빈 배열이어야 하고, `interactions[].fpsDuringReplay`(crash)가 55 이상이어야 Phase 0A/1A/1B-crash/1B-limbo가 플랜 Definition of Done 기준으로 진짜 완료다. 위반이 있으면 스크립트 자체가 `exitCode 1`로 실패해 화면에 정확히 무엇이 위반인지 출력한다(`PHONARA_AUDIT_NO_ASSERT=1`로 실패 없이 캡처만 하는 모드도 있음).
+
+**라이브 캐시아웃 범위 경계 (의도적으로 다루지 않음):** 크래시 공유 라운드를 진행시키는 `rpc_live_crash_advance`는 `service_role`만 실행 가능(`REVOKE ALL FROM PUBLIC, anon, authenticated` — `supabase/migrations/20260810000001_ew_e23_casino_live.sql:1905`). 이를 실제로 클릭 테스트하려면 스케줄러 루프를 흉내 내는 별도 fixture가 필요하며, 이는 프레젠테이션 스크린샷 도구가 아니라 Playwright/CI E2E 영역(G13)이다 — 이번 세션은 이 경계를 존중해 새 fixture를 만들지 않았고, one-shot 베팅 경로(8/12 게임 + crash/limbo의 non-live 경로)만 도구 범위로 잡았다.
+
+**증거:** `typecheck` green · `bun run test -- apps/web/src/features/casino apps/web/src/product/surfaces/games apps/web/src/product/surfaces/login apps/web/src/product/shell apps/web/src/domain/__tests__/casino-games-batch-a-display-contract.test.ts` 33 files/193 tests green · `check:i18n` green · `check:design-tokens` OK(신규 0) · `check:release` OK · `check:phase-r-guards --strict` OK. 커밋: `51a26aff`(Limbo) · `b2b56b70`(CDP 도구).
+
+### P2 결과 (dead-controls 전수조사 · 2026-07-15)
+
+**방법:** `dead-controls-display-contract.ts` 중앙 레지스트리 10건 전부 + 저장소 전체 `*_ENGINE_TODO`/`*_UI_UNLOCK_TODO` grep(추가 5건) + 실제 노출을 최종 결정하는 `apps/web/src/lib/launch-gates.ts` 스위치보드(34개 플래그) 대조.
+
+| 분류                                                                                                    | 건수                                                                                                                                                                      | 판정                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 중앙 레지스트리(`PQA_DEAD_CONTROL_DEFER_REGISTRY`)                                                      | 10건                                                                                                                                                                      | 전부 `live` 또는 `disabled+key` — **침묵형 no-op 0건**                                                                                                                                      |
+| 레지스트리 밖 개별 게이트 항목(app-install-mission·tier-option-b·viral-cms·wallet-transfer·kakao-share) | 5건                                                                                                                                                                       | 각자 `LAUNCH_GATES.*Live` 기반 `isXxxLive()`/`shouldExpose...()` 리졸버 보유 — **중앙 목록에는 없지만 침묵형 아님** (분산 관리 = 문서 부채로만 기록)                                        |
+| `LAUNCH_GATES`에서 현재 `false`인 노출 플래그                                                           | 9개 (`cryptoRails`·`sportsComboBetting`·`sportsSystemBetting`·`notificationsCenter`·`tierGuide`·`siweLoginLive`·`missionChainsLive`·`coBetLive`·`mlMissionRecommendLive`) | `cryptoRails`는 라우트 redirect+RPC invoke 차단+rail 목록 제외 3중 가드 확인. 나머지는 각 `assertXxxWaveSync()`형 vitest가 `false` 고정을 강제 — **표본 조사 결과 침묵형 dead control 0건** |
+| **버려진 플래그(신규 발견)**                                                                            | 1건                                                                                                                                                                       | **`LAUNCH_GATES.tierGuide`— 선언 후 `apps/web/src` 어디에서도 소비되지 않음.** 죽은 컨트롤은 아니지만(아무 UI도 참조 안 함) 문서-코드 drift — 제거 또는 실제 wiring 필요                    |
+
+**종합 판정:** 요청하신 "클릭했는데 반응 없는" 유형의 **순수 침묵형 dead control은 이번 조사에서 발견되지 않음** — 이 코드베이스의 PQA F3 defer 패턴(`live`/`disabled+key`/`built_hidden`)이 실제로 일관되게 적용되어 있음. **대신 launch blocker로 승격할 것은 P1에서 발견한 랜딩 페이지 크래시(런타임, 정적 조사로는 안 잡힘) + `tierGuide` 미사용 플래그 정리.**
+
+## Zero Assumption 통합 Remediation (Plan `za_통합_실행순서_c6df1c56` · `[x]` DONE)
+
+> **상태:** **`[x]` DONE** 2026-07-14 — Wave 0~10 + Wave 0.5(ZA-14/15) + Wave 4.5(1-J) + Closeout  
+> **대체된 원본 플랜:** `듀얼_통화_자금_안전성_감사_za-14_e30fb04f` · `zero_assumption_11결함_해소_52756742`  
+> **후속(별도 승인):** ZA-14 오라클 notional 근본수정 · ZA-12/13 Soft Launch 운영 · ZA-18 통화 상태 공유 리팩터  
+> **후속(에이전트 완료 2026-07-14):** ZA-17 확인모달 스테이크·통화 · ZA-19 conservation 교차 주석
+
+| Todo                             | 상태           | 완료일     | 증거                                                       |
+| -------------------------------- | -------------- | ---------- | ---------------------------------------------------------- |
+| `w0-za01-freeze-hygiene`         | **`[x]` DONE** | 2026-07-14 | closeout migration push · lock · types CI sync · advisor 0 |
+| `w0b-za14-mitigation-banner`     | **`[x]` DONE** | 2026-07-13 | PHON 마진 경고 배너 + i18n                                 |
+| `w0b-za14-mitigation-killswitch` | **`[x]` DONE** | 2026-07-13 | `feature_futures_phon_margin` kill switch · remote applied |
+| `w0b-za15-wallet-copy`           | **`[x]` DONE** | 2026-07-13 | `wallet.phon.guide.balance` 1:1 페그 문구 제거             |
+| `w1-za07-tier-history-link`      | **`[x]` DONE** | 2026-07-13 | `/rewards/history` redirect                                |
+| `w2-za05-earn-rpc-boundary`      | **`[x]` DONE** | 2026-07-13 | Earn/Account `callRpc`                                     |
+| `w3-za06-orphan-route-ctas`      | **`[x]` DONE** | 2026-07-13 | orphan 3라우트 CTA                                         |
+| `w4-za11-trade-entry-cta`        | **`[x]` DONE** | 2026-07-13 | Earn Fold5 Trade 카드                                      |
+| `w4b-za14-doc-1j-sections`       | **`[x]` DONE** | 2026-07-13 | 1-J.0~1-J.5 + ZA-16~19                                     |
+| `w5-za03-za04-doc-accuracy`      | **`[x]` DONE** | 2026-07-13 | CURRENT_STATUS · README                                    |
+| `w6-za02-za09-naming-docs`       | **`[x]` DONE** | 2026-07-13 | breakpoint 주석 · RPC 도메인 그룹                          |
+| `w7-za08-cashback-single-source` | **`[x]` DONE** | 2026-07-14 | cashback key vitest                                        |
+| `w8-za10-pwa-shell-aware`        | **`[x]` DONE** | 2026-07-14 | shell-aware PWA banner                                     |
+| `w9-za12-trade-chart-empty`      | **`[x]` DONE** | 2026-07-14 | chart empty 카피 분화 · 운영측 OPEN                        |
+| `w10-za13-sports-ingest-ops`     | **`[x]` DONE** | 2026-07-14 | ingest-offline 배너+런북 · 운영측 OPEN                     |
+| `closeout-za-doc-resync`         | **`[x]` DONE** | 2026-07-14 | 요약표·ACTIVE_WORK·DOCS_INDEX·Plan YAML                    |
+
+## Platform Perfect Launch Remediation (Plan `platform-perfect-launch` · execute SSOT)
+
+> **착수 정본 (1:1):** [`PLATFORM_AUDIT_TODO_HANDOFF.md`](../OPERATIONS/PLATFORM_AUDIT_TODO_HANDOFF.md) — **Plan todo id = Handoff id = 실행 단위**  
+> **Plan 파일:** `.cursor/plans/platform-perfect-launch_6982dfdf.plan.md` (Cursor 체크박스)  
+> **통제:** [`PLATFORM_AUDIT_FINDING_REGISTRY.yaml`](../OPERATIONS/PLATFORM_AUDIT_FINDING_REGISTRY.yaml) · Standing Grant [`PLATFORM_STANDING_GRANT.md`](../OPERATIONS/PLATFORM_STANDING_GRANT.md)  
+> **Release SHA (R1):** `391646f6f8ab6ae204d17f55ae59677036ca0728`
+
+### Operator — 플랜에서 바로 시작
+
+```text
+1. Cursor Plan에서 다음 pending todo 확인 (Plan **19/19 complete** — operator PPR 실행)
+2. 채팅: PPR 24h template fill 또는 Phase R Track B NEXT todo
+   (또는 Plan UI Assign / todo 체크 후 동일 문장)
+3. 에이전트: PLATFORM_AUDIT_TODO_HANDOFF.md 해당 절만 읽고 Implement
+4. 마감: Evidence · registry · **`bun run closeout:todo -- <id>`** · ACTIVE_WORK `[x]`
+```
+
+| Plan todo id                              | Finding             | Plan      | 실행                                     | Handoff    |
+| ----------------------------------------- | ------------------- | --------- | ---------------------------------------- | ---------- |
+| `audit-r0-control-plane`                  | R0 통제             | completed | **`[x]`**                                | §audit-r0  |
+| `audit-r1-trust-truth`                    | C-01/C-02/H-01/M-01 | completed | **`[x]`**                                | §audit-r1  |
+| **`audit-r2a-crypto-giftcard`**           | **H-03 · H-11**     | completed | **`[x]` DONE**                           | §audit-r2a |
+| **`audit-r2b-withdrawal-copy`**           | **H-10**            | completed | **`[x]` DONE**                           | §audit-r2b |
+| **`audit-r2c-sports-odds-freshness`**     | **H-05**            | completed | **`[x]` DONE**                           | §audit-r2c |
+| **`audit-r2d-krw-proof-wire`**            | **M-21**            | completed | **`[x]` DONE**                           | §audit-r2d |
+| **`audit-r3a-wallet-mutator-live-crash`** | **H-02**            | completed | **`[x]` DONE**                           | §audit-r3a |
+| **`audit-r3b-service-write-grants`**      | **M-06**            | completed | **`[x]` DONE**                           | §audit-r3b |
+| **`audit-r3c-search-path-sweep`**         | **M-05**            | completed | **`[x]` DONE**                           | §audit-r3c |
+| **`audit-r3d-siwe-analytics-ingress`**    | **M-04**            | completed | **`[x]` DONE**                           | §audit-r3d |
+| **`audit-r3e-auth-hibp-feature-flag`**    | **H-09**            | completed | **`[x]` DONE** (HIBP `BLOCKED_DEP` Pro+) | §audit-r3e |
+| **`audit-r4-market-ops`**                 | H-04·EXT-01·M-20    | completed | **`[x]` DONE**                           | §audit-r4  |
+| `audit-r5-admin-safety`                   | H-07·H-08·M-12…     | completed | **`[x]` DONE**                           | §audit-r5  |
+| `audit-r6-product-consistency`            | M-03…M-19           | completed | **`[x]` DONE**                           | §audit-r6  |
+| `audit-r7-type-ui-hygiene`                | M-14·M-15·M-16      | completed | **`[x]` DONE**                           | §audit-r7  |
+| `audit-r8-deploy-parity`                  | H-06                | completed | **`[x]` DONE**                           | §audit-r8  |
+| `audit-r9-runtime-matrix`                 | M-18·124 URL        | completed | **`[x]` DONE** 2026-07-13                | §audit-r9  |
+| `audit-r10-rollout-soak`                  | soak·rollback       | completed | **`[x]` DONE** 2026-07-13                | §audit-r10 |
+| `audit-r11-closeout`                      | 3-Owner             | completed | **`[x]` DONE** 2026-07-13                | §audit-r11 |
+| `audit-r12-post-release`                  | PPR·DR              | completed | **`[x]` DONE** 2026-07-13                | §audit-r12 |
+
+**현재:** Platform Perfect Launch Plan **19/19 DONE** · operator PPR 24h/72h/7d 실행 · Release candidate **BLOCKED** (R9-PERF-JS · 3-Owner pending)
+
+## Cursor 8GB Performance Rollout (v4.4.5 · diagnosis-first · YAML `phase0-gate`)
+
+> **정본:** Plan `8gb_cursor_최적화` · branch `phase-r/cursor-perf-8gb` · operator: `bun run cursor:perf-rollout`
+
+| Todo                                       | 상태           | 완료일         | 증거                                                                                                                        |
+| ------------------------------------------ | -------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **`phase0-gate`** (Phase 0 선행 + rollout) | **`[x]` DONE** | **2026-07-10** | `gate-diagnosis` · `gate-phase0` · `high-remediation` · `perf-rollout` v4.4 step order · evidence JSONL · summary PASS-only |
+
+**Implemented:** `gate:ai-impl` perf scripts **90/90** · `cursor-dev-processes` DRIFT · `dominant-ram-consumer` 경계 fixture · `claude-desktop-processes` allowlist · `parse-migrations-lock` SOT · `schtasks-lifecycle` Query-first · standby 8s · `.cursor/perf/` workspace-artifacts
+
+**Operator:** `bun run cursor:perf-rollout` → `RESTART_CURSOR_REQUIRED` 시 Cursor 재시작 · HIGH 시 `--confirm-high-remediation` 확인 후 · Max Context UNVERIFIED 시 `--attest-max-context=6k` 또는 evidence 제출
+
+## Platform Integrity Remediation (Plan `platform_integrity_remediation_v1` · execute SSOT)
+
+> **상태:** **`[x]` DONE** 2026-07-11 — 형제 큐 **전부 마감** · Track A `#205` **unblocked**  
+> **근거:** 2026-07-11 READ-ONLY 감사 (DB · 엔진 · Realtime/Edge)  
+> **Evidence:** [`PLATFORM_INTEGRITY_EVIDENCE/README.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md)  
+> **ADR-008 교차:** C-2 system-account 잠금순서 = Engine Wave DB TX deep audit의 **부분 Accepted** ([`008-engine-wave-db-tx-race-defer.md`](../PRODUCT/ADR/008-engine-wave-db-tx-race-defer.md) §PIR)
+
+| Todo                           | 상태           | 완료일         | 증거                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------ | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`pir-w0-ssot`**              | **`[x]` DONE** | **2026-07-11** | ACTIVE_WORK_SSOT 형제 큐 · Evidence 스캐폴드 · `#205` BLOCKED · ADR-008 §PIR                                                                                                                                                                                                                                                                                                    |
+| `pir-p0-autobet-session`       | **`[x]` DONE** | **2026-07-11** | 순수 `stepAutoBetSession` · 루프 지역 상태 · `sessionActiveRef` · `autoBet(stakeOverride)` · vitest **9/9** · shell **4/4**                                                                                                                                                                                                                                                     |
+| `pir-p0-autobet-gate`          | **`[x]` DONE** | **2026-07-11** | `gate:ai-impl` auto-bet+shell · L0~L4 green · vitest **13/13** · Evidence [`P0/autobet-gate.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/P0/autobet-gate.md)                                                                                                                                                                                                                  |
+| `pir-p1-admin-rbac`            | **`[x]` DONE** | **2026-07-11** | `rpc_admin_list_role_grants` fail-closed · localStorage DEV-only · vitest **17/17** · Evidence [`P1/admin-rbac.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/P1/admin-rbac.md)                                                                                                                                                                                                 |
+| `pir-p1-sports-odds-debounce`  | **`[x]` DONE** | **2026-07-11** | odds INSERT ≥500ms debounce · fixture-only patch · no full `['sports']` invalidate · Evidence [`P1/sports-odds-debounce.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/P1/sports-odds-debounce.md)                                                                                                                                                                              |
+| `pir-e1-system-lock-order`     | **`[x]` DONE** | **2026-07-11** | `_lock_system_accounts` · buy/sell/fill 선잠금 · SQL 118/118 · `stack:push-remote` · advisor 0 · Evidence [`E1/system-lock-order.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/E1/system-lock-order.md)                                                                                                                                                                        |
+| `pir-e2-realtime-narrow`       | **`[x]` DONE** | **2026-07-11** | publication DROP `wallet_ledger`/fills · `ledger_user_created_idx` · wallets→ledger invalidate · SQL **119/119** · `stack:push-remote` · advisor 0 · Evidence [`E2/realtime-narrow.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/E2/realtime-narrow.md)                                                                                                                        |
+| `pir-e3-golden-earth`          | **`[x]` DONE** | **2026-07-11** | lock-late global FOR UPDATE · `golden_earth:gjp:{total}` · `gen_random_bytes` · E3-0/1/2 SQL OK · `stack:push-remote` · advisor 0 · Evidence [`E3/golden-earth.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/E3/golden-earth.md)                                                                                                                                               |
+| `pir-e4-sweep-chunk`           | **`[x]` DONE** | **2026-07-11** | liq/stop keyset · funding hold schedule · affiliate LIMIT · SQL E4-0..3 · `stack:push-remote` · advisor 0 · Evidence [`E4/sweep-chunk.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/E4/sweep-chunk.md)                                                                                                                                                                         |
+| `pir-e5-idempotency-handlers`  | **`[x]` DONE** | **2026-07-11** | place/claim UV→existing · wallet recheck · SQL E5-0..3 · `stack:push-remote` · advisor 0 · Evidence [`E5/idempotency-handlers.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/E5/idempotency-handlers.md)                                                                                                                                                                        |
+| `pir-p2-quantize-odds`         | **`[x]` DONE** | **2026-07-11** | `quantize6` number 제거 · ingest string-only · vitest quantize+decimal-odds · Evidence [`P2/quantize-odds.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/P2/quantize-odds.md)                                                                                                                                                                                                   |
+| `pir-p2-pf-golden-vectors`     | **`[x]` DONE** | **2026-07-11** | 12게임 PF 경계 float SQL↔TS pin · `check:determinism` · vitest **4/4** · SQL `pir_pf_golden_vectors_test` · Evidence [`P2/pf-golden-vectors.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/P2/pf-golden-vectors.md)                                                                                                                                                             |
+| `pir-gate-platform-integrity`  | **`[x]` DONE** | **2026-07-11** | `gate:ai-impl` PIR bundle vitest **53/53** · `phase-r-guards --strict` · i18n/release · security-auditor **PASS ERROR 0** · CI quality·sql·e2e·advisors green ([run 29121620586](https://github.com/rlawhdgus10041004-sys/phonara-gb/actions/runs/29121620586)) · Evidence [`GATE/platform-integrity.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/GATE/platform-integrity.md) |
+| **`pir-closeout-unblock-205`** | **`[x]` DONE** | **2026-07-11** | §82 · NEXT = `#205` · Evidence [`GATE/unblock-205.md`](../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/GATE/unblock-205.md) · Plan YAML completed                                                                                                                                                                                                                                     |
+
+**현재 NEXT (전역):** **`p10-games-batch-c`** (#210) — E10 Platform World-Class GATE **`[x]` DONE** 2026-07-12 · E10 growth UI **`[x]`** · E10 trust+support **`[x]`** · E10 wallet+settings **`[x]`** · E10 Admin KRW **`[x]`** · E10 WAVE **`[x]`** · E9 GATE **`[x]`** · E8 GATE **`[x]`** · E23–E0 · T2/T1 · P13 **`[x]`**
+
+## Track B E10 Platform World-Class GATE (`ew-e10-gate-platform-world-class` · §21.4 · §32.2) — `[x]` DONE · 재착수 금지
+
+> **선행:** `ew-e10-growth-ui` **`[x]`** · E10 linear chain 전부 **`[x]`** · **후행:** Track A `p13-closeout-bundle` (Soft Launch sibling)
+
+| Todo                                   | 상태           | 완료일         | 증거                                                                                                                                           |
+| -------------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`ew-e10-gate-platform-world-class`** | **`[x]` DONE** | **2026-07-12** | Platform World-Class E8–E10 final · [`ENGINE_GAP_E10_GATE_PLATFORM_WORLD_CLASS.md`](../OPERATIONS/ENGINE_GAP_E10_GATE_PLATFORM_WORLD_CLASS.md) |
+
+**Implemented:** E8+E9+E10 GATE contracts · §12.18 gap 0 (ad/survey skip) · §32 canon wired · `isEwE10PlatformWorldClassGateReady()`
+
+**증거:** `gate:ai-impl` E10 GATE bundle **3/3** · `test:engine` **285/285** · `stack:push-remote` tail `20260711225356_ew_e10_platform_engine` · advisor **0 ERROR** · SQL E8+E9+E10 (CI authoritative · G13)
+
+**다음 todo:** `p10-games-batch-c` (Track A)
+
+## Track B E10 Growth UI (`ew-e10-growth-ui` · §21.1) — `[x]` DONE · 재착수 금지
+
+> **선행:** `ew-e10-trust-support-ui` **`[x]`** · **후행:** `ew-e10-gate-platform-world-class` **`[x]`**
+
+| Todo                   | 상태           | 완료일         | 증거                                                                                                                |
+| ---------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **`ew-e10-growth-ui`** | **`[x]` DONE** | **2026-07-12** | Kakao augment · app-install growth tab · [`ENGINE_GAP_E10_GROWTH_UI.md`](../OPERATIONS/ENGINE_GAP_E10_GROWTH_UI.md) |
+
+**Implemented:** `appInstallMissionLive` · `kakaoShareSdkLive` · `/referral/invite` · `/home/missions` growth tab
+
+**증거:** `gate:ai-impl` growth UI · vitest · `isEwE10GrowthUiUnlocked()=true`
+
+**다음 todo:** `ew-e10-gate-platform-world-class` **`[x]`**
+
+## Track B E10 Trust+Support UI (`ew-e10-trust-support-ui` · §21.1) — `[x]` DONE · 재착수 금지
+
+> **선행:** E10 wallet+settings `ew-e10-wallet-settings-ui` **`[x]`** · E9 GATE **`[x]`** · **후행:** `ew-e10-growth-ui`
+
+| Todo                          | 상태           | 완료일         | 증거                                                                                                                                           |
+| ----------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`ew-e10-trust-support-ui`** | **`[x]` DONE** | **2026-07-12** | `/support/ticket` · `/status` · `/tier/leaderboard` · [`ENGINE_GAP_E10_TRUST_SUPPORT_UI.md`](../OPERATIONS/ENGINE_GAP_E10_TRUST_SUPPORT_UI.md) |
+
+**Implemented:** support ticket intake+history · public system status lanes · VIP XP leaderboard · `supportTicketsLive` · `tierLeaderboardLive` · `systemStatusLive`
+
+**증거:** `gate:ai-impl` L0–L4 green · vitest **16/16** (trust+support bundle) · E9 RPC wire live
+
+**다음 todo:** `ew-e10-growth-ui`
+
+## Track B E10 Wallet+Settings UI (`ew-e10-wallet-settings-ui` · §21.1) — `[x]` DONE · 재착수 금지
+
+> **선행:** E10 WAVE `ew-e10-platform-engine-wave` **`[x]`** · Admin KRW proof **`[x]`** · E8 GATE **`[x]`** · **후행:** `ew-e10-trust-support-ui`
+
+| Todo                            | 상태           | 완료일         | 증거                                                                                                                                                                                    |
+| ------------------------------- | -------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`ew-e10-wallet-settings-ui`** | **`[x]` DONE** | **2026-07-12** | `/wallet/transfer` · `/settings/api-keys` · redeem reverse · `financialConnectivityLive` · [`ENGINE_GAP_E10_WALLET_SETTINGS_UI.md`](../OPERATIONS/ENGINE_GAP_E10_WALLET_SETTINGS_UI.md) |
+
+**Implemented:** transfer hub · API keys CRUD · giftcard redeem reverse · launch gate live
+
+**증거:** `gate:ai-impl` L0–L4 green · vitest **13/13** · `financialConnectivityLive=true` · wire transfer/api-keys/redeem **live**
+
+**다음 todo:** `ew-e10-trust-support-ui`
+
+## Track B E10 Admin KRW Proof Review (`ew-e10-page-admin-krw-proof-review` · §29.2) — `[x]` DONE · 재착수 금지
+
+> **선행:** E10 WAVE `ew-e10-platform-engine-wave` **`[x]`** · **후행:** `ew-e10-wallet-settings-ui` **`[x]`**
+
+| Todo                                     | 상태           | 완료일         | 증거                                                                                                                           |
+| ---------------------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **`ew-e10-page-admin-krw-proof-review`** | **`[x]` DONE** | **2026-07-12** | `/admin/deposits` 증빙 보기·맞음 표시 · [`ENGINE_GAP_E10_ADMIN_KRW_PROOF.md`](../OPERATIONS/ENGINE_GAP_E10_ADMIN_KRW_PROOF.md) |
+
+**Implemented:** `AdminDepositsPage` proof column · view signed URL · `rpc_admin_review_krw_deposit_proof` · **원장 이동 0** notice · beginner §29.2 RPC pin · display contract
+
+**증거:** `gate:ai-impl` admin-krw-proof · vitest display+deposits page
+
+**다음 todo:** `ew-e10-growth-ui` (wallet-settings `[x]`)
+
+## Track B E10 Platform Engine WAVE (`ew-e10-platform-engine-wave` · §21.1) — `[x]` DONE · 재착수 금지
+
+> **선행:** E9 GATE `ew-e9-gate-identity-support` **`[x]`** · **후행:** `ew-e10-page-admin-krw-proof-review` **`[x]`**
+
+| Todo                              | 상태           | 완료일         | 증거                                                                                                                                 |
+| --------------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **`ew-e10-platform-engine-wave`** | **`[x]` DONE** | **2026-07-12** | ADR-020 · KRW proof · mission chains · co-bet · recommend · [`ENGINE_GAP_E10_PLATFORM.md`](../OPERATIONS/ENGINE_GAP_E10_PLATFORM.md) |
+
+**Implemented (WAVE):** ADR-020 · `ew_e10_platform_engine` · `platformEngine=true` · live flags **false** · EXISTS KRW match / E7 co-mission remigration **0**
+
+**증거:** `gate:ai-impl` ew-e10-platform · vitest display contract · SQL E10-0..E10-5 artifact (CI authoritative · G13) · GATE remote apply = 후행
+
+**다음 todo:** `ew-e10-growth-ui` (Admin KRW proof `[x]` · wallet-settings `[x]`)
+
+## Track B E9 Admin Support Desk (`ew-e9-page-admin-support` · §29.5) — `[x]` DONE · 재착수 금지
+
+> **선행:** E9 GATE `ew-e9-gate-identity-support` **`[x]`** · **후행:** `ew-e10-platform-engine-wave` **`[x]`**
+
+| Todo                           | 상태           | 완료일         | 증거                                                                                                                             |
+| ------------------------------ | -------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **`ew-e9-page-admin-support`** | **`[x]` DONE** | **2026-07-12** | `/admin/support` · list/resolve · queues 수렴 · [`ENGINE_GAP_E9_ADMIN_SUPPORT.md`](../OPERATIONS/ENGINE_GAP_E9_ADMIN_SUPPORT.md) |
+
+**Implemented:** `AdminSupportPage` · `useAdminSupportDesk` · nav owner/support · `AdminTable` · queues open-ticket banner · beginner i18n · display contract
+
+**증거:** `gate:ai-impl` admin-support · vitest desk+page **9/9** · typecheck · i18n · release · related admin contracts **34/34**
+
+**다음 todo:** `ew-e10-growth-ui` (Admin KRW proof `[x]` · wallet-settings `[x]`)
+
+## Track B E9 Identity+Support GATE (`ew-e9-gate-identity-support` · §21.1) — `[x]` DONE · 재착수 금지
+
+> **선행:** E9 WAVE `ew-e9-identity-wave` **`[x]`** · **후행:** `ew-e9-page-admin-support` **`[x]`**
+
+| Todo                              | 상태           | 완료일         | 증거                                                                                                                                                         |
+| --------------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **`ew-e9-identity-wave`**         | **`[x]` DONE** | **2026-07-12** | ADR-019 · SIWE · tickets · analytics · app-install · tier LB · [`ENGINE_GAP_E9_IDENTITY_SUPPORT.md`](../OPERATIONS/ENGINE_GAP_E9_IDENTITY_SUPPORT.md)        |
+| **`ew-e9-gate-identity-support`** | **`[x]` DONE** | **2026-07-12** | `stack:push-remote` · advisor **0** · SQL E9-0..E9-5 (CI) · [`ENGINE_GAP_E9_GATE_IDENTITY_SUPPORT.md`](../OPERATIONS/ENGINE_GAP_E9_GATE_IDENTITY_SUPPORT.md) |
+
+**Implemented (GATE):** remote `ew_e9_app_install_enum` (tail `20260711194352`) · `ew_e9_identity_support` (tail `20260711194354`) · advisor **0 ERROR** · GATE display contract · hubs `built_hidden` · live flags **false** · EXISTS passkey/viral/affiliate remigration **0**
+
+**증거:** `gate:ai-impl` ew-e9-gate-identity · vitest GATE+WAVE · `stack:push-remote` OK · advisor **0** · SQL E9-0..E9-5 **CI authoritative** (G13)
+
+**다음 todo:** `ew-e10-growth-ui` (Admin KRW proof `[x]` · Admin support `[x]` · wallet-settings `[x]`)
+
+## Track B E9 Identity+Support WAVE (`ew-e9-identity-wave` · §21.1) — `[x]` DONE · 재착수 금지
+
+> **선행:** E8 GATE `ew-e8-gate-financial` **`[x]`** · **후행:** `ew-e9-gate-identity-support` **`[x]`**
+
+| Todo                      | 상태           | 완료일         | 증거                                                                                                                                                  |
+| ------------------------- | -------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`ew-e9-identity-wave`** | **`[x]` DONE** | **2026-07-12** | ADR-019 · SIWE · tickets · analytics · app-install · tier LB · [`ENGINE_GAP_E9_IDENTITY_SUPPORT.md`](../OPERATIONS/ENGINE_GAP_E9_IDENTITY_SUPPORT.md) |
+
+**Implemented (WAVE):** ADR-019 · `ew_e9_app_install_enum` · `ew_e9_identity_support` · edge `siwe-auth` · `LAUNCH_GATES.identitySupportEngine=true` · live flags **false** · EXISTS passkey/viral/affiliate remigration **0**
+
+**증거:** `gate:ai-impl` ew-e9-identity · vitest display contract · SQL E9-0..E9-5 artifact (CI authoritative · G13) · GATE remote apply **`[x]`**
+
+**다음 todo:** `ew-e10-growth-ui` (Admin KRW proof `[x]` · Admin support `[x]` · E9 GATE `[x]` · wallet-settings `[x]`)
+
+## Track B E8 Financial GATE (`ew-e8-gate-financial` · §21.1) — `[x]` DONE · 재착수 금지
+
+> **선행:** E8 WAVE `ew-e8-financial-wave` **`[x]`** · **후행:** `ew-e9-identity-wave` **`[x]`**
+
+| Todo                       | 상태           | 완료일         | 증거                                                                                                                                    |
+| -------------------------- | -------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **`ew-e8-financial-wave`** | **`[x]` DONE** | **2026-07-12** | ADR-018 · P2P · API keys · giftcard redeem · [`ENGINE_GAP_E8_FINANCIAL.md`](../OPERATIONS/ENGINE_GAP_E8_FINANCIAL.md)                   |
+| **`ew-e8-gate-financial`** | **`[x]` DONE** | **2026-07-12** | `stack:push-remote` · advisor **0** · SQL Σ=0 (CI) · [`ENGINE_GAP_E8_GATE_FINANCIAL.md`](../OPERATIONS/ENGINE_GAP_E8_GATE_FINANCIAL.md) |
+
+**Implemented (GATE):** remote `ew_e8_financial` (tail `20260711192506`) · advisor **0 ERROR** · GATE display contract · hub `built_hidden` · `financialConnectivityLive=false` · EXISTS deposit pin
+
+**증거:** `gate:ai-impl` ew-e8-gate-financial · vitest GATE+WAVE · `stack:push-remote` OK · advisor **0** · SQL E8-0..E8-4 Σ=0 **CI authoritative** (G13)
+
+**다음 todo:** `ew-e10-growth-ui` (E10 wallet-settings `[x]` · Admin KRW proof `[x]` · Admin support `[x]` · E9 GATE `[x]`)
+
+**Track A `#236` P13 Launch Closeout:** **`[x]` DONE** 2026-07-11 — legacy class purge · docs sync · CI gate pin · `gate:ai-impl` **16/16** · `check:design-tokens --strict` · migration **0** · [`P13_LAUNCH_CLOSEOUT_BUNDLE.md`](../OPERATIONS/P13_LAUNCH_CLOSEOUT_BUNDLE.md)
+**Track A `#235` DA W7 VISUAL:** agent impl `[x]` 2026-07-11 — Home+Shell+Trade · 390/768/1024/2560 · preview · axe 0 · dead control 0 · `gate:ai-impl` **22/22** · Plan YAML `completed` = operator `VISUAL APPROVED: da-w7` 후
+**Track A `#234` DA W7 strict tokens:** **`[x]` DONE** 2026-07-11 — `check:design-tokens --strict` · text-tiny · legacy purge · `gate:ai-impl` · migration **0**
+**Track A `#233` Soft Launch BUNDLE:** **`[x]` DONE** 2026-07-11 — ko/en QA · viewport/axe · CB-01~06 · admin spot-check · `gate:ai-impl` · migration **0**
+**Track A `#232` T0-A prod preflight:** **`[x]` DONE** 2026-07-11 — checklist · live audit · `gate:ai-impl` **7/7** · migration **0**
+**Track A `#231` P13 ops Web Push:** **`[x]` DONE** 2026-07-11 — settings 「알림 받기」 · SW · `push_subscriptions` · `ops-notify` web_push → `/queues` · `gate:ai-impl` **8/8** · migration **0**
+**Track A `#230` Admin team desk:** **`[x]` DONE** 2026-07-11 — `/admin/team` · owner-only · `gate:ai-impl` **22/22**
+**Track A `#229` Admin canonical docs:** **`[x]` DONE** 2026-07-11 — §29.5 · correspondence · RBAC · `gate:ai-impl` **12/12**
+**Track A `#228` W8 GATE:** **`[x]` DONE** 2026-07-11 — Emotion Map · `gate:ai-impl` **49/49**
+**Track A `#227` W8 sound DOC:** **`[x]` DONE** 2026-07-11 — `SOUND_DESIGN_CANON` · `gate:ai-impl` **5/5**
+**Track A `#226` W8 signature:** **`[x]` DONE** 2026-07-11 — home·wallet·trade·casino·sports·vip · `gate:ai-impl` **36/36**
+**Track A `#225` P12 Marketing GATE:** **`[x]` DONE** 2026-07-11 — §32.5 FAQ·feedback·affiliate·cookies + marketing surfaces · footer/redirect/education · `gate:ai-impl` vitest **59/59** · engine **0**  
+**Track A `#221` P11 Side-income GATE:** **`[x]` DONE** 2026-07-11 — §12.19.6 `/wallet/redeem` · `/earn/cashback` · `/earn/play` · `/events` · leaderboard STUB · `gate:ai-impl` vitest **39/39** · engine **0**  
+**Track A `#220` P11 wallet redeem:** **`[x]` DONE** 2026-07-11 — `/wallet/redeem` · Payment Method Card · withdraw/deposit rails · `gate:ai-impl` vitest **21/21** · subnav register · engine **0**  
+**Track A `#219` P11 Earn side surfaces:** **`[x]` DONE** 2026-07-11 — `/events` · `/earn/play` · `/earn/cashback` · `/referral/leaderboard` STUB · `gate:ai-impl` vitest **45/45** · subnav P11 register  
+**Track A `#218` P4 VISUAL:** agent impl `[x]` 2026-07-11 — contract **6/6** · surface **13/13** · axe 0 · dead control 0 · Plan YAML `completed` = operator `VISUAL APPROVED` 후  
+**Track A `#216` DA W6 Brand elevation:** **`[x]` DONE** 2026-07-11 — BrandMark aurora · domain empty · QuadStreamLoading · `gate:ai-impl` **55/55**  
+**Track A `#215` P10 VISUAL:** agent impl `[x]` 2026-07-11 — contract **6/6** · surface **13/13** · axe 0 · dead control 0 · Plan YAML `completed` = operator APPROVED 후  
+**Track A `#214` P10 GATE:** **`[x]` DONE** 2026-07-11 — Sports+Casino 12 · subnav dead link 0 · H5/Fiat#12 · first-bet · `gate:ai-impl` **42/42**  
+**Track A `#213` first-bet education:** **`[x]` DONE** 2026-07-11  
+**Track A `#212` Casino fairness:** **`[x]` DONE** 2026-07-11 — `/casino/fairness` verifyRound · §23.2.1 PF limits · `gate:ai-impl` **23/23**  
+**Track A `#211`–`#208` Games batches:** **`[x]` DONE** 2026-07-11 — Batch D/C/B/A  
+**Track A `#207` AdminTable GATE:** **`[x]` DONE** 2026-07-11 — native `<table>` desk 0 · LoadingTable 0 · `gate:ai-impl` **8/8**  
+**Track A `#206` AdminTable:** **`[x]` DONE** 2026-07-11 — `admin-table.tsx` · 18 desk migration · native `<table>` 0 · LoadingTable 0  
+**Track A `#205` Fiat#11:** **`[x]` DONE** 2026-07-11 — Casino fiat hint session-lock
+
+**재개 조건 (충족):**
+
+```text
+ew-e10-trust-support-ui [x] DONE
+  → phase_r Track B 다음 = ew-e10-growth-ui
+```
 
 ## Trade Desk Remediation (Plan `trade_desk_remediation_v3` · execute SSOT)
 
@@ -70,13 +478,14 @@
 
 **Implemented (Phase E):** `rpc_set_trailing_stop` · `rpc_clear_trailing_stop` · `time_in_force` · `display_quantity` iceberg slices · `rpc_run_stop_orders` trailing peak · `rpc_run_open_order_fills` IOC/FOK expiry
 
-**NEXT:** **`da-w2-shell-elevation-infra`** (#188) · DA W1 GATE `#187` **`[x]` DONE** 2026-07-09 · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
+**NEXT:** **`da-w8-signature-surfaces-bundle` (#226)** · P12 GATE `#225` **`[x]`** 2026-07-11 · P12 legal pages `#224` **`[x]`** 2026-07-11 · P12 community hub `#223` **`[x]`** 2026-07-11 · P12 trust hub `#222` **`[x]`** 2026-07-11 · P11 GATE `#221` **`[x]`** 2026-07-11 · P11 wallet redeem `#220` **`[x]`** 2026-07-11 · Earn side `#219` **`[x]`** 2026-07-11 · P4 VISUAL `#218` agent impl `[x]` 2026-07-11 · W6 GATE `#217` **`[x]` DONE** 2026-07-11 · W6 BUNDLE `#216` **`[x]` DONE** 2026-07-11 · P10 VISUAL `#215` agent impl `[x]` · P10 GATE `#214` **`[x]` DONE** 2026-07-11 · first-bet education `#213` **`[x]` DONE** 2026-07-11 · Fairness `#212` **`[x]` DONE** 2026-07-11 · Batch D–A `#211`–`#208` **`[x]`** · AdminTable GATE `#207` **`[x]` DONE** 2026-07-11 · AdminTable `#206` **`[x]` DONE** 2026-07-11 · Fiat#11 `#205` **`[x]` DONE** 2026-07-11 · PIR **`[x]` DONE** · CasinoR#1 `#204` **`[x]`** · Casino lobby `#203` **`[x]`** · Sports#4–0 · Fiat#10 · DA W5…W0 · R0 · PQA §33 **`[x]`**
 
 ## 읽을 것 (active)
 
 1. 본 문서 (`ACTIVE_WORK_SSOT.md`)
 2. Phase R 실행: [`docs/PRODUCT/REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md)
-3. YAML todo 정본: Cursor Plan `phase_r_super-app_8bdf2c10` (frontmatter · **278 ids** · Track A **243** + Track B **35** · completed **187** · pending **84** · cancelled **7** · §20.6.1–§20.6.3 · §20.13 · §20.13.2 Fiat# · **§20.13.3 Sports#·CasinoR#** · **§20.14 Launch** · **§35 Forensic R0** · **§34 DA W2** · §25.12.9.1-D · §22.2.4 · **§22.2.5 Sports Parity** · **§23.2.1 Casino one-shot replay** · **§32.7** · **52차** 2026-07-09 · orchestration SSOT=본 plan · execute sibling=`trade_desk_*`·`phonara_수렴_*`)
+3. YAML todo 정본: Cursor Plan `phase_r_super-app_8bdf2c10` (frontmatter · **280 ids** · Track A **245** + Track B **35** · completed **273** · pending **0** · cancelled **7** · §20.6.1–§20.6.3 · §20.13 · §20.13.2 Fiat# · **§20.13.3 Sports#·CasinoR#** · **§20.14 Launch** · **§35 Forensic R0** · **§34 DA W5 GATE** · §25.12.9.1-D · §22.2.4 · **§22.2.5 Sports Parity** · **§23.2.1 Casino one-shot replay** · **§32.7** · **52차** 2026-07-10 · orchestration SSOT=본 plan · execute sibling=`trade_desk_*`·`phonara_수렴_*`)
+   > **Note:** execute SSOT는 본 문서 — Fiat#11 `#205` **`[x]`** · Plan YAML frontmatter는 operator/Cursor UI에서 `completed` 동기화 필요 (세션 지시: plan 파일 직접 편집 금지)
 4. 엔진 **상태 한 줄만**: [`docs/ENGINE_APEX_CLOSEOUT.md`](../ENGINE_APEX_CLOSEOUT.md) (게이트 수치 · 재착수 금지)
 5. UX **의도 참조** (실행 큐 아님): `docs/SSOT/*_UX_CANON.md` · `UX_REFERENCE_CANON.md`
 6. 경계: [`ENGINE_BOUNDARY.md`](ENGINE_BOUNDARY.md) · [`OPERATOR_GATES.md`](OPERATOR_GATES.md) · [`CI_GATE_AUTHORITY.md`](CI_GATE_AUTHORITY.md)
@@ -118,16 +527,16 @@ bun run check:advisors
 
 **P1 Foundation** → **P2 Admin** → P3 Auth → P4 Money → P5 Security → P6 Shell → **P7 Growth** → **P8 Core** → P9–P12 Product → P13 Soft Launch → E0–E7 Engine Wave
 
-**현재 NEXT:** **`da-w2-shell-elevation-infra`** — §34.10–34.11 DA YAML **#188** · DA W1 GATE `#187` **`[x]` DONE** 2026-07-09 · DA W1 `#186` **`[x]`** · DA W0 `#185` **`[x]`** · R0 `#180–184` **`[x]`** · PQA §33 **`[x]`**
+**현재 NEXT:** **`launch-ramp-t1-feature-gates` (#237)** · P13 closeout `#236` **`[x]` DONE** 2026-07-11 · W7 strict `#234` **`[x]`** 2026-07-11 · Soft Launch `#233` **`[x]`** 2026-07-11 · T0-A `#232` **`[x]`** · ops Web Push `#231` **`[x]`** 2026-07-11 · team desk `#230` **`[x]`** · Admin docs `#229` **`[x]`** · W8 GATE `#228` **`[x]`** · W8 sound `#227` **`[x]`** · W8 signature `#226` **`[x]`** · P12 GATE `#225` **`[x]`** 2026-07-11 · P12 legal pages `#224` **`[x]`** 2026-07-11 · P12 community hub `#223` **`[x]`** 2026-07-11 · P12 trust hub `#222` **`[x]`** 2026-07-11 · P11 GATE `#221` **`[x]`** 2026-07-11 · P11 wallet redeem `#220` **`[x]`** 2026-07-11 · Earn side `#219` **`[x]`** 2026-07-11 · P4 VISUAL `#218` agent impl `[x]` 2026-07-11 · W6 GATE `#217` **`[x]` DONE** 2026-07-11 · W6 BUNDLE `#216` **`[x]` DONE** 2026-07-11 · P10 VISUAL `#215` agent impl `[x]` · P10 GATE `#214` **`[x]` DONE** 2026-07-11 · first-bet education `#213` **`[x]` DONE** 2026-07-11 · Fairness `#212` **`[x]` DONE** 2026-07-11 · Batch D–A `#211`–`#208` **`[x]`** · AdminTable GATE `#207` **`[x]` DONE** 2026-07-11 · AdminTable `#206` **`[x]` DONE** 2026-07-11 · Fiat#11 `#205` **`[x]` DONE** 2026-07-11 · PIR **`[x]` DONE** · CasinoR#1 `#204` **`[x]`** · Casino lobby `#203` **`[x]`** · Sports#4–0 · Fiat#10 · DA · R0 · PQA **`[x]`**
 
 **왕초보 작업법 (43차 · 이것만):**
 
 1. Cursor Plan To-do **위에서 아래로** 본다
 2. **`completed`(체크됨)는 건너뛴다**
-3. **첫 `pending`(빈 원) 1개만** 한다 — agent impl 완료 후 operator **`VISUAL APPROVED: p9-operator-visual-signoff`** → YAML #152 completed → **28번 gate**
-4. 끝나면 다음 pending — **순서 바꾸지 않음** · **병렬 없음**
+3. Track A **`#225` P12 Marketing GATE `[x]`** — 다음 `#226` `da-w8-signature-surfaces-bundle`
+4. PIR 형제 큐는 **`[x]` DONE** — 재착수 금지
 
-**직선 큐 (pending 구간):** … Fiat (#158–167) → `p10-page-sports` (#168) → **PQA (#169–179 `[x]`)** → **§35 R0 (#180–184 `[x]`)** → **DA W0+ (#185+)** → P10 잔여 → P11 → P12 → P13 → T1/T2 → Engine Wave
+**직선 큐 (pending 구간):** Track A `#205` → P10 잔여 → P11 → P12 → P13 → T1/T2 → Engine Wave (잔여 DB TX deep audit)
 
 **품질 바 (운영자):** §13.1.2 — UX=거래소급 · 정산=플랫폼 내부 only · chart/WS **display-only** · §32.7 — 노출=동작|disabled+reason|hidden · §22.2.4 표시=RPC · dead control 0
 
@@ -190,7 +599,7 @@ bun run check:advisors
 
 **증거:** `gate:ai-impl` fiat bundle **113/113** (18 files) · `p4-gate-fiat-reference-world-class-display-contract` **6/6** · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
 
-**마지막 완료:** **`p4-gate-fiat-reference-world-class` `[x]`** — §13.1.4 Fiat#9G core gate · **NEXT `p10-sports-fiat-hint-wire` (#169)**
+**마지막 완료:** **`p10-page-casino` `[x]`** — §23 casino lobby Stake grid · Sports#4 **`[x]`** · **NEXT `p10-casino-replay-and-infra` (#204)**
 
 ## Sportsbook Home (`p10-page-sports` · §13.1.1 · §12.7 · YAML #168) — `[x]` DONE · 재착수 금지
 
@@ -231,9 +640,476 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **P1 engine 큐 (F와 병행 · RED STOP):** `launch-engine-e5-realtime-publication` **`[x]`** 2026-07-09
 
+## Sports Fiat Hint (`p10-sports-fiat-hint-wire` · §13.1.4.4 · §20.13.2 Fiat#10 · YAML #196) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w5-gate-domain-cards` **`[x]`** · `p4-fiat-money-display-hint` **`[x]`** · `p10-page-sports` **`[x]`** · **후행:** `p10-sports-hub-pages` (#197) **`[x]`**
+
+| Todo                            | 상태           | 완료일         | 증거                                                                                                                                                                      |
+| ------------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-sports-fiat-hint-wire`** | **`[x]` DONE** | **2026-07-10** | stake+return secondary · odds-after `potentialPayoutDisplay` · trade 30s rates · `fiat-hint-sports-odds-order` live · `gate:ai-impl` sports fiat **25/25** · engine **0** |
+
+**Implemented:** `sports-fiat-hint-display.ts` · `use-sports-fiat-hint.ts` · `sports-money-with-fiat-hint.tsx` · slip avail/stake/payout rows · `FiatHintDisclaimer` 1× · client odds multiply **0**
+
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
+
+## Casino Fiat Hint session-lock (`p10-casino-fiat-hint-session-lock` · §13.1.4.4 · §20.13.2 Fiat#11 · YAML #205) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p4-fiat-money-display-hint` **`[x]`** · `p10-casino-replay-and-infra` **`[x]`** · **후행:** `p2-admin-table-primitive` (#206) **`[x]`** → `p2-gate-admin-table-dedup` (#207)
+
+| Todo                                    | 상태           | 완료일         | 증거                                                                                                                                                     |
+| --------------------------------------- | -------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-casino-fiat-hint-session-lock`** | **`[x]` DONE** | **2026-07-11** | `CasinoFiatRateSession` · bet-open lock · spin drift 0 · `casino_session_lock` · `fiat-hint-casino-drift` live · `gate:ai-impl` **22/22** · engine **0** |
+
+**Implemented:** `casino-fiat-rate-session.ts` · `casino-fiat-hint-display.ts` · `use-casino-fiat-hint.ts` · `casino-money-with-fiat-hint.tsx` · shell stake/win/balance wire · `GameOutcomeLayer` FiatHint · ComplaintRisk `fiat-hint-casino-drift` owned live
+
+**증거:** `gate:ai-impl` casino fiat session-lock **22/22** (6 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**마지막 완료:** **`p12-gate-marketing` `[x]`** — P12 Marketing GATE · §32.5 FAQ·feedback·affiliate·cookies + marketing · `gate:ai-impl` **59/59** · **NEXT `da-w8-signature-surfaces-bundle` (#226)**
+
+## P13 Admin ops Web Push (`p13-admin-ops-push` · §32.6 Gap A-4 · YAML #231) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p13-prep-admin-team-desk` (#230) **`[x]`** · **후행:** `p13-ops-prod-preflight` (#232)
+
+| Todo                     | 상태           | 완료일         | 증거                                                                                                                                  |
+| ------------------------ | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p13-admin-ops-push`** | **`[x]` DONE** | **2026-07-11** | settings CTA · SW `/sw.js` · `push_subscriptions` · `ops-notify` WEB_PUSH fan-out → `/queues` · `gate:ai-impl` **8/8** · engine **0** |
+
+**Implemented:** `admin-ops-push-display-contract.ts` · `admin-ops-web-push.ts` · `useAdminOpsPush.ts` · settings push section · `apps/admin/public/sw.js` · `ops-web-push-dispatch.ts` · ntfy Click `OPS_ADMIN_PUBLIC_URL`
+
+**증거:** `gate:ai-impl` P13 ops push **8/8** · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · migration **0** (edge wire only)
+
+**다음 todo:** `launch-ramp-t1-feature-gates` (#237) — P13 closeout #236 `[x]` DONE
+
+**다음 todo:** `launch-ramp-t1-feature-gates` (#237) — P13 closeout #236 `[x]` DONE
+
+## DA W7 Enforcement Strict Tokens (`da-w7-enforcement-strict-tokens` · §34.28 · YAML #234) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w6-gate-brand-elevation` (#217) **`[x]`** · Soft Launch `#233` **`[x]`** · **후행:** `da-w7-operator-visual-dae-signoff` (#235) agent impl **`[x]`**
+
+| Todo                                  | 상태           | 완료일         | 증거                                                                                                                         |
+| ------------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w7-enforcement-strict-tokens`** | **`[x]` DONE** | **2026-07-11** | `check:design-tokens --strict` green · text-tiny · P3 legacy class/bridge purge · `gate:ai-impl` **19/19** · migration **0** |
+
+**Implemented:** `--ds-text-tiny` / `text-tiny` · Text `tiny` variant · legacy `text-primary`/`muted-foreground`/`bg-primary` → accent/muted SOT · theme bridge purge · `scripts/check-design-tokens.ts` strict (spacing-ratchet advisory) · `da-w7-enforcement-strict-tokens-display-contract.ts`
+
+**증거:** `gate:ai-impl` W7 owners **19/19** · `check:design-tokens --strict` green (101 spacing advisory) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine **0**
+
+**다음 todo:** `launch-ramp-t1-feature-gates` (#237) — P13 closeout #236 `[x]` DONE
+
+## DA W7 Operator Visual DAE Sign-off (`da-w7-operator-visual-dae-signoff` · §20.12 · §34.28 · YAML #235) — agent impl `[x]` 2026-07-11
+
+> **§20.12:** agent gate green ≠ Plan YAML `completed` — operator preview 육안 **`VISUAL APPROVED: da-w7`** 채팅 기록 후 Plan #235 `completed` 가능.
+
+**Implemented (green):**
+
+| 항목                 | 증거                                                                                                                  |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Display contract     | `da-w7-operator-visual-dae-signoff-display-contract.ts` · Home+Shell+Trade · 4-tier 390/768/1024/2560 · DAE checklist |
+| Automated companions | surface **16/16** · contract **6/6** · axe critical 0 · dead control 0                                                |
+| Preview              | `deploy:pages:web:preview` → https://preview.phonara-web.pages.dev                                                    |
+| Bundle gate          | `gate:ai-impl` **22/22** · `typecheck` · `check:i18n` · `check:release` · engine **0**                                |
+
+**operator 육안 체크리스트 (§20.12 · Plan YAML #235 completed 조건):**
+
+1. Preview **390 / 768 / 1024 / 2560** — `/home` · AppShell (BottomNav·TopBar·aurora) · `/trade` · `/trade/futures`
+2. Home signature day-flow · next-action accent · Shell aurora backdrop · Trade spot desk
+3. dead control 0 · axe critical 0 (브라우저 DevTools)
+4. 채팅 **`VISUAL APPROVED: da-w7`** → Plan YAML `completed` + §82 doc sync
+
+**다음 todo:** `launch-ramp-t1-feature-gates` (#237) — P13 closeout #236 `[x]` DONE
+
+## P13 Soft Launch Bundle (`p13-soft-launch-bundle` · §20.5 · §20.14.5 · YAML #233) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p13-ops-prod-preflight` (#232) **`[x]`** · **후행:** `da-w7-enforcement-strict-tokens` (#234) **`[x]`**
+
+| Todo                         | 상태           | 완료일         | 증거                                                                                                     |
+| ---------------------------- | -------------- | -------------- | -------------------------------------------------------------------------------------------------------- |
+| **`p13-soft-launch-bundle`** | **`[x]` DONE** | **2026-07-11** | Soft Launch QA · CB-01~06 · viewport/axe · admin spot-check · `gate:ai-impl` **22/22** · migration **0** |
+
+**Implemented:** `P13_SOFT_LAUNCH_BUNDLE.md` · `p13-soft-launch-display-contract.ts` · QA vitest · admin spot-check
+
+**증거:** Soft Launch contract + QA + admin spot-check · `gate:ai-impl` **22/22** · ko/en · 390/768/1024 · axe critical 0 · CB caps pin · viewer negative · engine **0**
+
+**Operator Verified (실돈 CB · 실기기 PWA 스크린샷):** T0-A MFA/자본 DEFER와 독립 — 「Closed Beta gate 실행」 시 재개
+
+**다음 todo:** `launch-ramp-t1-feature-gates` (#237) — P13 closeout #236 `[x]` DONE
+
+## P13 T0-A Prod Preflight (`p13-ops-prod-preflight` · §20.14 · YAML #232) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p13-admin-ops-push` (#231) **`[x]`** · **후행:** `p13-soft-launch-bundle` (#233) **`[x]`**
+
+| Todo                         | 상태           | 완료일         | 증거                                                                        |
+| ---------------------------- | -------------- | -------------- | --------------------------------------------------------------------------- |
+| **`p13-ops-prod-preflight`** | **`[x]` DONE** | **2026-07-11** | T0-A checklist · prod live audit · `gate:ai-impl` **7/7** · migration **0** |
+
+**Implemented:** `P13_T0A_PROD_PREFLIGHT.md` · `p13-ops-prod-preflight-display-contract.ts` · `scripts/p13-ops-prod-preflight-spotcheck.sql`
+
+**증거:** `gate:ai-impl` T0-A **7/7** · pg_cron 14/14 · Vault price-feed · funding/withdrawal **false** · CB lev 5 / OI 50% · engine **0**
+
+**Operator DEFER (2026-07-11 · soft-launch blocker 아님):**
+
+- **MFA enroll** — 유료 결제 필요 → 나중 ([`P13_T0A_PROD_PREFLIGHT.md`](../OPERATIONS/P13_T0A_PROD_PREFLIGHT.md) §3.1 D1)
+- **실입금 · insurance/treasury 자본** — 나중 (같은 문서 §3.1 D2)
+
+**다음 todo:** `launch-ramp-t1-feature-gates` (#237) — P13 closeout #236 `[x]` DONE
+
+## P12 Marketing GATE (`p12-gate-marketing` · §3.5 · §28.5 · §32.5 · YAML #225) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p12-legal-pages` (#224) **`[x]`** · **후행:** `da-w8-signature-surfaces-bundle` (#226)
+
+| Todo                     | 상태           | 완료일         | 증거                                                                                                                                                                                                                              |
+| ------------------------ | -------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p12-gate-marketing`** | **`[x]` DONE** | **2026-07-11** | §32.5 `/support/faq` · `/feedback` · `/legal/affiliate` · `/legal/cookies` + trust/community hubs · footer FAQ/feedback · referral affiliate CTA · ads cookies · education localStorage · `gate:ai-impl` **59/59** · engine **0** |
+
+**Implemented:** `p12-gate-marketing-display-contract.ts` · assert bundle (trust · community · legal · operator-trust · redirects · footer · education) · vitest **6/6** owner + **59/59** gate bundle
+
+**증거:** `gate:ai-impl` P12 marketing GATE **59/59** (14 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `da-w8-signature-surfaces-bundle` (#226)
+
+## P12 Legal pages (`p12-legal-pages` · §12.15 · §28.5 · §32.5 · YAML #224) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p12-community-support-hub` (#223) **`[x]`** · **후행:** `p12-gate-marketing` (#225) **`[x]`**
+
+| Todo                  | 상태           | 완료일         | 증거                                                                                                                                                                                  |
+| --------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p12-legal-pages`** | **`[x]` DONE** | **2026-07-11** | `/legal/affiliate` · `/legal/cookies` · `/referral/terms`→affiliate · `/cookies`→cookies · footer + referral CTA + ads consent cookies link · `gate:ai-impl` **40/40** · engine **0** |
+
+**Implemented:** `p12-legal-pages-display-contract.ts` · `legal-display-contract` affiliate/cookies · `affiliate-page` · `cookies-page` · LegalNav · redirects · landing footer · ads consent cookies link · referral terms link · i18n `legal.affiliate.*` · `legal.cookies.*`
+
+**증거:** `gate:ai-impl` P12 legal pages **40/40** (7 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `da-w8-signature-surfaces-bundle` (#226) — P12 GATE `#225` **`[x]`**
+
+## P12 Community+support hub (`p12-community-support-hub` · §12.12 · §32.5 · YAML #223) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p12-trust-marketing-hub` (#222) **`[x]`** · **후행:** `p12-legal-pages` (#224) **`[x]`**
+
+| Todo                            | 상태           | 완료일         | 증거                                                                                                                                                                                     |
+| ------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p12-community-support-hub`** | **`[x]` DONE** | **2026-07-11** | `/announcements` · `/status` STUB · `/support/ticket` STUB · `/support` · `/support/faq` · `/feedback` · `/faq` redirect · footer FAQ/feedback · `gate:ai-impl` **40/40** · engine **0** |
+
+**Implemented:** `p12-community-support-hub-display-contract.ts` · announcements/support/status/feedback contracts · `product/surfaces/marketing/*` support pages · routes · dead-controls STUB rows · MarketingShell matchers · landing footer FAQ/feedback/support
+
+**증거:** `gate:ai-impl` P12 community+support **40/40** (14 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `da-w8-signature-surfaces-bundle` (#226) — P12 GATE `#225` **`[x]`**
+
+## P12 Trust+marketing hub (`p12-trust-marketing-hub` · §3.5 · §12.0β Public · YAML #222) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p11-gate-side-income` (#221) **`[x]`** · **후행:** `p12-community-support-hub` (#223) **`[x]`**
+
+| Todo                          | 상태           | 완료일         | 증거                                                                                                                                                            |
+| ----------------------------- | -------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p12-trust-marketing-hub`** | **`[x]` DONE** | **2026-07-11** | `/tier` · `/features` · `/features/earn` · `/features/vip` · `/fees` · `/security` · trust narrative · MarketingShell · `gate:ai-impl` **36/36** · engine **0** |
+
+**Implemented:** `p12-trust-marketing-hub-display-contract.ts` · `tier-guide` · `features-hub` · `fees-page` · `trust-hub` contracts · `product/surfaces/marketing/*` · routes · `platform.trust.*` · `trust.hub.*` i18n · landing footer links
+
+**증거:** `gate:ai-impl` P12 trust+marketing **36/36** (14 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `da-w8-signature-surfaces-bundle` (#226) — P12 GATE `#225` **`[x]`**
+
+## P11 Side-income GATE (`p11-gate-side-income` · §12.19.6 · YAML #221) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p11-earn-side-surfaces` (#219) **`[x]`** · `p11-page-wallet-redeem` (#220) **`[x]`** · **후행:** `p12-trust-marketing-hub` (#222) **`[x]`**
+
+| Todo                       | 상태           | 완료일         | 증거                                                                                                                                                                        |
+| -------------------------- | -------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p11-gate-side-income`** | **`[x]` DONE** | **2026-07-11** | §12.19.6 `/wallet/redeem` · `/earn/cashback` · `/earn/play` · `/events` · leaderboard STUB defer · earn/wallet subnav dead link 0 · `gate:ai-impl` **39/39** · engine **0** |
+
+**Implemented:** `p11-gate-side-income-display-contract.ts` · assert bundle (earn-side · redeem rails · STUB defer) · vitest **5/5** owner + **39/39** gate bundle
+
+**증거:** `gate:ai-impl` P11 side-income GATE **39/39** (13 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `da-w8-signature-surfaces-bundle` (#226) — P12 GATE `#225` **`[x]`**
+
+## P11 wallet redeem (`p11-page-wallet-redeem` · §12.5 · §13.1 · YAML #220) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p11-earn-side-surfaces` (#219) **`[x]`** · **후행:** `p11-gate-side-income` (#221) **`[x]`**
+
+| Todo                         | 상태           | 완료일         | 증거                                                                                                                                                 |
+| ---------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p11-page-wallet-redeem`** | **`[x]` DONE** | **2026-07-11** | `/wallet/redeem` · PHON shop · Payment Method Card · withdraw/deposit rails · no new RPC · `gate:ai-impl` **21/21** · subnav register · engine **0** |
+
+**Implemented:** `wallet-redeem-display-contract.ts` · `use-wallet-redeem-controller.ts` · `wallet-redeem-page.tsx` · `routes/wallet.redeem.tsx` · `P11_WALLET_REDEEM_REGISTERED_ROUTES` · i18n `wallet.redeem.*`
+
+**증거:** `gate:ai-impl` wallet-redeem **21/21** (3 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `da-w8-signature-surfaces-bundle` (#226) — P12 GATE `#225` **`[x]`**
+
+## P4 VISUAL (`p4-operator-visual-signoff` · §20.12 · §22.2 Wallet · §25.12.6 · YAML #218) — agent impl `[x]` 2026-07-11
+
+> **§20.12:** agent gate green ≠ Plan YAML `completed` — operator preview 육안 **`VISUAL APPROVED: p4-operator-visual-signoff`** 채팅 기록 후 Plan #218 `completed` 가능.
+
+**Implemented (green):**
+
+| 항목                      | 증거                                                                                                                                   |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Display contract          | `p4-money-visual-signoff-display-contract.ts` · §22.2 Wallet checklist · §30.3 · 3-rail · wallet-hero · 3-tier                         |
+| Automated companions      | `p4-money-visual-signoff.test.tsx` **13/13** · contract test **6/6**                                                                   |
+| §25.12.6 / Toss·Revolut   | balance hero · deposit/withdraw CTA · 3-rail hub · KRW auto-convert disclosure                                                         |
+| §32.7 / H8 dead control 0 | wallet CTA · deposit rails · withdraw rails · krw submit · rewards→ledger                                                              |
+| Bundle gate               | `gate:ai-impl` visual signoff **13/13** · `typecheck` · `check:i18n` · `check:release` · `check:design-tokens` advisory · engine **0** |
+
+**operator 육안 체크리스트 (§20.12 · Plan YAML #218 completed 조건):**
+
+1. `bun run deploy:pages:web:preview` foreground 1회 (§30.1) — **`[x]`** 2026-07-11 → https://preview.phonara-web.pages.dev
+2. Preview **390 / 768 / 1024** — `/wallet` · `/wallet/deposit` · `/wallet/withdraw` · `/wallet/deposit/krw` · `/ledger` · `/rewards/history`
+3. **§22.2** 3-rail deposit (KRW·Crypto·Giftcard) · withdraw KRW+crypto · hero balance clarity
+4. **§30.3** KRW deposit auto-convert + rate snapshot + expected PHON
+5. dead control 0 · axe critical 0 (브라우저 DevTools)
+6. 채팅 **`VISUAL APPROVED: p4-operator-visual-signoff`** → Plan YAML `completed` + §82 doc sync
+
+**다음 todo:** `p12-trust-marketing-hub` (#222)
+
+## Digital Aurora W6 GATE (`da-w6-gate-brand-elevation` · §34.18–34.20 · YAML #217) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w6-brand-elevation-bundle` (#216) **`[x]`** · **후행:** `p4-operator-visual-signoff` (#218) **agent impl `[x]`**
+
+| Todo                             | 상태           | 완료일         | 증거                                                                                                                                                                                                  |
+| -------------------------------- | -------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w6-gate-brand-elevation`** | **`[x]` DONE** | **2026-07-11** | BrandMark aurora · domain empty · Quad Stream · `da-w6-gate-brand-elevation-display-contract` · `gate:ai-impl` **23/23** · `check:design-tokens` advisory (91 notes) · VISUAL advisory · engine **0** |
+
+**Implemented:** GATE display contract · brand scan cues (6 unique) · surface scan board · VISUAL advisory checklist (10)
+
+**operator VISUAL advisory (§34.18–34.20 · full §20.12 = da-w7):**
+
+1. BrandMark `aurora` Quad Stream glow (landing hero)
+2. Domain empty: casino chips · trade pulse · wallet vault · sports stadium
+3. Quad Stream loading (router pending · ledger/sports)
+4. `prefers-reduced-motion` → static glow/axes
+5. `check:design-tokens --strict` green (`da-w7-enforcement-strict-tokens` **`[x]`**)
+
+**다음 todo:** `p12-trust-marketing-hub` (#222) — P4 VISUAL `#218` **agent impl `[x]`**
+
+## Digital Aurora W6 Brand Elevation (`da-w6-brand-elevation-bundle` · §34.18–34.20 · YAML #216) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-operator-visual-signoff` (#215) agent impl `[x]` · operator assign `#216` · **후행:** `da-w6-gate-brand-elevation` (#217) **`[x]`**
+
+| Todo                               | 상태           | 완료일         | 증거                                                                                                                                            |
+| ---------------------------------- | -------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w6-brand-elevation-bundle`** | **`[x]` DONE** | **2026-07-11** | BrandMark `aurora` · DomainEmptyMark (chips/pulse/vault/stadium) · QuadStreamLoading · router pending · `gate:ai-impl` **55/55** · engine **0** |
+
+**Implemented:** `da-w6-brand-elevation-display-contract.ts` · `brand-elevation.css` · `brand-mark` aurora · `domain-empty-mark` · `quad-stream-loading` · EmptyState `domain` · landing AB-b aurora · casino/trade/wallet/sports wires · `defaultPendingComponent`
+
+**증거:** `gate:ai-impl` W6 brand elevation **55/55** (10 files) · `typecheck` · `check:i18n` · `check:release` · `check:phase-r-guards --strict` · engine touch **0**
+
+**다음 todo:** `p12-trust-marketing-hub` (#222) — P4 VISUAL `#218` **agent impl `[x]`**
+
+## P10 VISUAL (`p10-operator-visual-signoff` · §20.12 · §22.2 Sports+Casino · §34.17 · YAML #215) — agent impl `[x]` 2026-07-11
+
+> **§20.12:** agent gate green ≠ Plan YAML `completed` — operator preview 육안 **`VISUAL APPROVED: p10-operator-visual-signoff`** 채팅 기록 후 Plan #215 `completed` 가능.
+
+**Implemented (green):**
+
+| 항목                      | 증거                                                                                                                                                                                               |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Display contract          | `p10-betting-visual-signoff-display-contract.ts` · §22.2 checklist · §34.17 sports-odds/casino-play · 3-tier · dual-currency                                                                       |
+| Automated companions      | `p10-betting-visual-signoff.test.tsx` **13/13** · contract test **6/6**                                                                                                                            |
+| §13.1.1 spot-check        | sports slip USDT/PHON · casino shell stake currency                                                                                                                                                |
+| §32.7 / H8 dead control 0 | slip place · lobby PF/play · shell place/back · bet-mode · fairness verify                                                                                                                         |
+| Bundle gate               | `gate:ai-impl` visual signoff **13/13** · `typecheck` · `check:i18n` · `check:release` · `check:ui-architecture` · `check:phase-r-guards --strict` · `check:design-tokens` advisory · engine **0** |
+
+**operator 육안 체크리스트 (§20.12 · Plan YAML #215 completed 조건):**
+
+1. `bun run deploy:pages:web:preview` foreground 1회 (§30.1) — **`[x]`** 2026-07-11 → https://preview.phonara-web.pages.dev
+2. Preview **390 / 768 / 1024** — `/sports` · `/sports/live` · `/sports/my-bets` · `/casino` · `/casino/fairness` · `/games/crash` (+ sample games)
+3. **§13.1.1** USDT/PHON selector spot-check (sports slip · casino shell)
+4. **§34.17** sports-odds heatmap · casino-play hover glow tiles
+5. dead control 0 · axe critical 0 (브라우저 DevTools)
+6. 채팅 **`VISUAL APPROVED: p10-operator-visual-signoff`** → Plan YAML `completed` + §82 doc sync
+
+**다음 todo:** `p12-trust-marketing-hub` (#222) — P4 VISUAL `#218` **agent impl `[x]`** · W6 GATE `#217` **`[x]`** · W6 BUNDLE `#216` **`[x]`**
+
+## P10 Betting GATE (`p10-gate-betting` · §12.19.6 · §32.7 H5 · Fiat#12 · YAML #214) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-first-bet-education` (#213) **`[x]`** · **후행:** `p10-operator-visual-signoff` (#215) **agent impl `[x]`**
+
+| Todo                   | 상태           | 완료일         | 증거                                                                                                                                                                                               |
+| ---------------------- | -------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-gate-betting`** | **`[x]` DONE** | **2026-07-11** | Sports hub+fairness manifest · 12 stage files · H5 stake dual live · Fiat#12 hints live · first-bet sheet · §31.4 risk row · casino E2E=`operator-or-ci` · `gate:ai-impl` **42/42** · engine **0** |
+
+**Implemented:** `p10-gate-betting-display-contract.ts` · assert bundle (parity · fiat sports/casino · replay · education) · vitest **6/6** owner + **42/42** gate bundle
+
+## First-bet Education (`p10-first-bet-education` · §32.5 · YAML #213) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-page-casino-fairness` (#212) **`[x]`** · **후행:** `p10-gate-betting` (#214) **`[x]`**
+
+| Todo                          | 상태           | 완료일         | 증거                                                                                                                                                                                            |
+| ----------------------------- | -------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-first-bet-education`** | **`[x]` DONE** | **2026-07-11** | sports+casino sheet · bet slip·RG·provably-fair · `phonara.education.bet.dismissed` · `/legal/responsible-gaming` · `/casino/fairness` · 독립 route 0 · `gate:ai-impl` **15/15** · engine **0** |
+
+**Implemented:** `operator-trust-pages-display-contract` BET\__ · `bet-first-visit-education` · `use-bet-first-visit-education` · `BetFirstVisitEducationSheet` · `BetFirstVisitEducationGate` · AppShell mount · `bet.education._` i18n
+
+## Casino Fairness Verifier (`p10-page-casino-fairness` · §23.2.1 · YAML #212) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-games-batch-d` (#211) **`[x]`** · **후행:** `p10-first-bet-education` (#213) **`[x]`**
+
+| Todo                           | 상태           | 완료일         | 증거                                                                                                                                                                         |
+| ------------------------------ | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-page-casino-fairness`** | **`[x]` DONE** | **2026-07-11** | `/casino/fairness` · `verifyRound` UI · nonce=1 · per-bet client seed · seed rotation UI 0 · lobby PF CTA live · subnav registered · `gate:ai-impl` **23/23** · engine **0** |
+
+**Implemented:** `casino-fairness-display-contract` · `use-casino-fairness-verifier` · `casino-fairness-page` · `casino.fairness` route · lobby CTA unlock · `SHELL_SUBNAV_REGISTERED_ROUTES` `/casino/fairness`
+
+## Sports Hub Pages (`p10-sports-hub-pages` · §20.13.3 Sports#0 · YAML #197) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-sports-fiat-hint-wire` **`[x]`** · **후행:** `p10-sports-parity-contract-and-board` (#198) **`[x]`**
+
+| Todo                       | 상태           | 완료일         | 증거                                                                                                                                                                                                        |
+| -------------------------- | -------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-sports-hub-pages`** | **`[x]` DONE** | **2026-07-10** | `/sports/prematch` · `/sports/fixture/$fixtureId` · `/sports/my-bets` · P10 subnav manifest · `rpc_get_fixture_markets` 1x2 · `/my-bets`+`/betting/[id]` redirect · `gate:ai-impl` **41/41** · engine **0** |
+
+**Implemented:** `sports-hub-pages-display-contract` · `sports.fixture.$fixtureId` route · `SportsFixtureMarketsPanel` · board→fixture Link · my-bets panel · §12.19.6 hub chips live
+
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#2 **`[x]`**
+
+## Sports Live Surface Wire (`p10-sports-live-surface-wire` · §20.13.3 Sports#2 · YAML #199) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-sports-parity-contract-and-board` **`[x]`** · **후행:** `p10-sports-slip-advanced-wire` (#200)
+
+| Todo                               | 상태           | 완료일         | 증거                                                                                                                                                                                                       |
+| ---------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-sports-live-surface-wire`** | **`[x]` DONE** | **2026-07-10** | `sports-live-surface-display-contract` · `useLiveFixtureState`/`useLiveFixtureStates` · `useSportsRealtime` · suspend/score/delay banner · `/sports/live` 확장만 · `gate:ai-impl` **33/33** · engine **0** |
+
+**Implemented:** Live in-play wire — goal/market suspend 배너 · live delay notice · score 갱신 · realtime cache patch · parity `live-inplay-state`/`live-realtime-cache` → DONE · parallel live route **0**
+
+**다음 todo:** **`p10-casino-replay-and-infra`** (#204) — Casino lobby **`[x]`**
+
+## Casino Lobby (`p10-page-casino` · §23 · YAML #203) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-sports-rules-and-vip-stub` **`[x]`** · **후행:** `p10-casino-replay-and-infra` (#204)
+
+| Todo                  | 상태           | 완료일         | 증거                                                                                                                                                                                                                 |
+| --------------------- | -------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-page-casino`** | **`[x]` DONE** | **2026-07-10** | `casino-lobby-display-contract` · `/casino` Stake grid · Originals/Slots/Table/Live · featured · balance RPC display · PF CTA deferred · `casinoGamePath` → `/games/$code` · `gate:ai-impl` **26/26** · engine **0** |
+
+**Implemented:** Lobby discovery live · category chips · featured+grid · wallet balance display-only · PF strip disabled+reason until fairness · dead-controls hub → live · parallel defer page **0**
+
+**다음 todo:** **`p10-casino-replay-and-infra`** (#204)
+
+## Sports Rules + VIP Stub (`p10-sports-rules-and-vip-stub` · §20.13.3 Sports#4 · YAML #202) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-sports-layout-dedup-gate` **`[x]`** · **후행:** `p10-page-casino` (#203) **`[x]`**
+
+| Todo                                | 상태           | 완료일         | 증거                                                                                                                                                                                                                            |
+| ----------------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-sports-rules-and-vip-stub`** | **`[x]` DONE** | **2026-07-10** | `sports-rules-and-vip-display-contract` · `/sports/rules` i18n sections · `/sports/vip` Platinum+ eligibility strip + defer stub · `ew-e5-gap-surfaces-wire` unlock · `gate:ai-impl` **4/4** · related **30/30** · engine **0** |
+
+**Implemented:** Rules panel (odds/settlement/void/live/responsible) · VIP STUB with eligibility strip · dead-controls unlock todo → `ew-e5-gap-surfaces-wire` · parallel rules/vip page **0**
+
+**다음 todo:** **`p10-casino-replay-and-infra`** (#204) — Casino lobby **`[x]`**
+
+## Sports Parity + Multi-Market Board (`p10-sports-parity-contract-and-board` · §20.13.3 Sports#1 · YAML #198) — `[x]` DONE · 재착수 금지
+
+> **선행:** `p10-sports-hub-pages` **`[x]`** · **후행:** `p10-sports-live-surface-wire` (#199) **`[x]`**
+
+| Todo                                       | 상태           | 완료일         | 증거                                                                                                                                                                                                                                |
+| ------------------------------------------ | -------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`p10-sports-parity-contract-and-board`** | **`[x]` DONE** | **2026-07-10** | `sports-exchange-parity-display-contract` · `SPORTS_PARITY_MATRIX` · `SPORTS_UI_ZONE_OWNERS` · `SPORTS_USER_COMPLAINT_RISKS` · `SPORTS_ACTION_PATH_REGISTRY` · fixture multi-market board · `gate:ai-impl` **20/20** · engine **0** |
+
+**Implemented:** §22.2.5 parity contract · totals/spread/handicap/asian_handicap/btts/props selectable on `SportsFixtureMarketsPanel` · `sports-market-1x2-only` → live · parallel `market-board-v2` **0**
+
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#2 **`[x]`**
+
+## Digital Aurora W5 GATE (`da-w5-gate-domain-cards` · §34.17 · YAML #195) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w5-cards-domain-variants` **`[x]`** · **후행:** `p10-sports-fiat-hint-wire` (#196) **`[x]`**
+
+| Todo                          | 상태           | 완료일         | 증거                                                                                                                                                    |
+| ----------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w5-gate-domain-cards`** | **`[x]` DONE** | **2026-07-10** | 0.2s scan distinguish · mission-card + wallet-hero + casino tile · `da-w5-gate-domain-cards-display-contract` · `gate:ai-impl` **40/40** · engine **0** |
+
+**Implemented:** Domain cards GATE — unique scan cues · CVA fingerprints · Mission/Wallet/Casino owner wires verified
+
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#2 **`[x]`**
+
+## Digital Aurora W5 Domain Cards (`da-w5-cards-domain-variants` · §34.17 · YAML #194) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w4-gate-motion` **`[x]`** · **후행:** `da-w5-gate-domain-cards` (#195) **`[x]`**
+
+| Todo                              | 상태           | 완료일         | 증거                                                                                                                                                                                                 |
+| --------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w5-cards-domain-variants`** | **`[x]` DONE** | **2026-07-10** | Card CVA 6 personalities · `domain-card-personalities.css` · mission/wallet/vip/trade/sports/casino wires · `da-w5-cards-domain-variants-display-contract` · `gate:ai-impl` **49/49** · engine **0** |
+
+**Implemented:** Domain card personalities — Mission(ring+glow) · Wallet-hero(aurora edge) · VIP(tier ramp) · Trade-dense(line-first) · Sports-odds(heatmap) · Casino-play(hover glow) · CVA only
+
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
+
+## Digital Aurora W4 GATE (`da-w4-gate-motion` · §34.15–34.16 · YAML #193) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w4-motion-system-bundle` **`[x]`** · **후행:** `da-w5-cards-domain-variants` (#194) **`[x]`**
+
+| Todo                    | 상태           | 완료일         | 증거                                                                                                                                                          |
+| ----------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w4-gate-motion`** | **`[x]` DONE** | **2026-07-10** | `use-prefers-reduced-motion` regression · `motion-presets` instant + CSS 0ms · `da-w4-gate-motion-display-contract` · `gate:ai-impl` **38/38** · engine **0** |
+
+**Implemented:** reduced-motion GATE — hook media-query SOT · instant variants · aurora static · count-up L2/reduced instant verified
+
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
+
+## Digital Aurora W4 Motion BUNDLE (`da-w4-motion-system-bundle` · §34.15–34.16 · YAML #192) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w3-gate-ia-progressive` **`[x]`** · **후행:** `da-w4-gate-motion` (#193) **`[x]`**
+
+| Todo                             | 상태           | 완료일         | 증거                                                                                                                                                                                                                         |
+| -------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w4-motion-system-bundle`** | **`[x]` DONE** | **2026-07-10** | `useCountUp` · `MoneyDisplay countUp` · `--ds-motion-count-up` 400ms · wallet balance · Earn XP · futures PnL · L2/reduced-motion instant · `da-w4-motion-system-display-contract` · `gate:ai-impl` **47/47** · engine **0** |
+
+**Implemented:** interaction grammar wire · Signal Pulse display-only · reduced-motion instant
+
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
+
+## Digital Aurora W3 GATE (`da-w3-gate-ia-progressive` · §34.12–34.14 · YAML #191) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w3-ia-progressive-bundle` **`[x]`** · **후행:** `da-w4-motion-system-bundle` (#192) **`[x]`**
+
+| Todo                            | 상태           | 완료일         | 증거                                                                                                                                                                                                             |
+| ------------------------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w3-gate-ia-progressive`** | **`[x]` DONE** | **2026-07-10** | `/home` above-fold ≤3 · `da-w3-gate-ia-progressive-display-contract` · `gate:ai-impl` **63/63** (home+wallet+trade) · 390/768/1024 VISUAL advisory · `typecheck` · `check:i18n` · `check:release` · engine **0** |
+
+**Implemented:** Progressive disclosure GATE — Fold1–2 above-fold · Fold3 collapsed · wallet-hero/trade ticket collapse verified
+
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
+
+## Digital Aurora W3 Progressive IA (`da-w3-ia-progressive-bundle` · §34.12–34.14 · YAML #190) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w2-gate-shell-elevation` **`[x]`** · **후행:** `da-w3-gate-ia-progressive` (#191) **`[x]`**
+
+| Todo                              | 상태           | 완료일         | 증거                                                                                                                                                                      |
+| --------------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w3-ia-progressive-bundle`** | **`[x]` DONE** | **2026-07-09** | `CollapsibleSection` · `/home` Fold1–5 · missions max3 · wallet-hero accordion · trade mobile ticket collapse · `HOME_UX_CANON` · `gate:ai-impl` **34/34** · engine **0** |
+
+**Implemented:** Progressive disclosure — Fold1 status+next · Fold2 money open · Fold3 collapsed · Fold4 missions≤3 · Fold5 navigate-only
+
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
+
+## Digital Aurora W2 GATE (`da-w2-gate-shell-elevation` · §34.10–34.11 · YAML #189) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w2-shell-elevation-infra` **`[x]`** · **후행:** `da-w3-ia-progressive-bundle` (#190) **`[x]`**
+
+| Todo                             | 상태           | 완료일         | 증거                                                                                                                                                                                             |
+| -------------------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **`da-w2-gate-shell-elevation`** | **`[x]` DONE** | **2026-07-09** | `check:ui-architecture --strict` green · `gate:ai-impl` shell **42/42** · 390/768/1024 smoke · 5탭 IA unchanged · `typecheck` · `check:i18n` · `check:release` · §82 NEXT=`da-w3` · engine **0** |
+
+**Implemented:** Shell elevation GATE — aurora · floating BottomNav · Orbit Grid verified
+
+**다음 todo:** **`p10-sports-slip-advanced-wire`** (#200) — Sports#1 **`[x]`**
+
+## Digital Aurora W2 Shell Elevation (`da-w2-shell-elevation-infra` · §34.10–34.11 · YAML #188) — `[x]` DONE · 재착수 금지
+
+> **선행:** `da-w1-gate-ds-2` **`[x]`** · **후행:** `da-w2-gate-shell-elevation` (#189)
+
+| Todo                              | 상태           | 완료일         | 증거                                                                                                                                                                                                     |
+| --------------------------------- | -------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`da-w2-shell-elevation-infra`** | **`[x]` DONE** | **2026-07-09** | `aurora-background.tsx+css` · floating BottomNav (blur+shadow-2) · layout.css 12-col + col-span-8/4 · Earn lg+ side rails · reduced-motion static · `gate:ai-impl` shell+tokens **47/47** · engine **0** |
+
+**Implemented:** Aurora Mesh (Earn/Wallet low · Trade off) · floating BottomNav · Orbit Grid 12-col · Earn side rails · `check:design-tokens` aurora/orbit hard checks
+
+**다음 todo:** **`da-w2-gate-shell-elevation`** (#189)
+
 ## Digital Aurora W1 GATE (`da-w1-gate-ds-2` · §34.6–34.9 · YAML #187) — `[x]` DONE · 재착수 금지
 
-> **선행:** `da-w1-ds-foundation-bundle` **`[x]`** · **후행:** `da-w2-shell-elevation-infra` (#188)
+> **선행:** `da-w1-ds-foundation-bundle` **`[x]`** · **후행:** `da-w2-shell-elevation-infra` (#188) **`[x]`**
 
 | Todo                  | 상태           | 완료일         | 증거                                                                                                                                      |
 | --------------------- | -------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
@@ -241,7 +1117,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** DS 2.0 bundle gate green — Text · elevation · Card CVA · spacing ratchet verified · engine touch **0**
 
-**다음 todo:** **`da-w2-shell-elevation-infra`** (#188)
+**다음 todo:** **`da-w2-gate-shell-elevation`** (#189) — DA W2 **`[x]`**
 
 ## Digital Aurora W1 DS Foundation (`da-w1-ds-foundation-bundle` · §34.6–34.9 · YAML #186) — `[x]` DONE · 재착수 금지
 
@@ -253,7 +1129,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** `product/primitives/text.tsx` (display…money-mono) · `tokens/elevation.css` (`--ds-shadow-1`–`4` · `--ds-z-chrome|overlay|toast`) · `cardVariants` · MissionCard `variant="mission"` · theme bridges · advisory `gap-6` warn
 
-**다음 todo:** **`da-w2-shell-elevation-infra`** (#188) — DA W1 GATE **`[x]`**
+**다음 todo:** **`da-w2-gate-shell-elevation`** (#189) — DA W2 **`[x]`**
 
 ## Digital Aurora W0 Foundation (`da-w0-foundation-ssot-bundle` · §34 · YAML #185) — `[x]` DONE · 재착수 금지
 
@@ -265,7 +1141,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 
 **Implemented:** Brand DNA 5문법 · Emotion Map · Brand Memory · Accessibility Elevation · elevation ladder · motion L0/L1/L2 · PC 12-col Orbit Grid · Tech Stack SSOT · **UI/engine code 0** (DOC only)
 
-**다음 todo:** **`da-w2-shell-elevation-infra`** (#188) — DA W1 GATE **`[x]`**
+**다음 todo:** **`da-w2-gate-shell-elevation`** (#189) — DA W2 **`[x]`**
 
 ## Forensic Remediation Gate (`r0-gate-forensic-remediation` · §35 · YAML #184) — `[x]` DONE · 재착수 금지
 
@@ -279,9 +1155,9 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 | `r0-staking-domain-sot-sync`       | **`[x]` DONE** | 2026-07-09     | `/staking` boundary=`earn` · rule `97`                                                                                                            |
 | **`r0-gate-forensic-remediation`** | **`[x]` DONE** | **2026-07-09** | `check:plan-yaml --track-a-only` · `check:plan-doc-sync` · `check:phase-r-guards --strict` · `typecheck` · R0 vitest **26/26** · §82 NEXT=`da-w0` |
 
-**Implemented:** R0 #180–184 전건 green · YAML completed **187**/278 · pending **84** · first pending = `da-w2-shell-elevation-infra`
+**Implemented:** R0 #180–184 전건 green · YAML completed **188**/278 · pending **83** · first pending = `da-w2-gate-shell-elevation`
 
-**다음 todo:** **`da-w2-shell-elevation-infra`** (#188) — DA W1 GATE **`[x]`**
+**다음 todo:** **`da-w2-gate-shell-elevation`** (#189) — DA W2 **`[x]`**
 
 ## Settings Fiat Hint Toggle (`p5-page-settings-fiat-reference` · §13.1.4.3 · §20.13.2 Fiat#9 · YAML #166) — `[x]` DONE · 재착수 금지
 
@@ -330,7 +1206,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 5. dead control 0 · axe critical 0 (브라우저 DevTools)
 6. 채팅 **`VISUAL APPROVED: p9-operator-visual-signoff`** → Plan YAML `completed` + §82 doc sync
 
-**다음 todo:** `da-w2-shell-elevation-infra` (#188 · §34) · (이력: DA W1 GATE / DA W1 DS / DA W0 / R0 forensic / staking SOT / admin RBAC / sports launch / R0 DOC / Fiat / P10 page `[x]`)
+**다음 todo:** `da-w2-gate-shell-elevation` (#189 · §34) · (이력: DA W2 shell / DA W1 GATE / DA W1 DS / DA W0 / R0 forensic / staking SOT / admin RBAC / sports launch / R0 DOC / Fiat / P10 page `[x]`)
 
 ## Wallet/Ledger Fiat Hint (`p4-page-wallet-fiat-hint` · §13.1.4.4 · §20.13.2 Fiat#6 · YAML #163) — `[x]` DONE · 재착수 금지
 
@@ -435,7 +1311,7 @@ bun run gate:ai-impl -- --test apps/web/src/product/surfaces/trade
 
 ## Fiat Reference 큐 (§20.13.2 · YAML #158–167 · Launch E1–E4 **끝난 뒤** 순차)
 
-**착수:** **`p10-page-sports` `[x]`** · **NEXT `p10-sports-fiat-hint-wire` (#169)** · To-do 순서대로 1개씩
+**착수:** **`p13-ops-prod-preflight` `[x]`** · **`p13-admin-ops-push` `[x]`** · **`p13-prep-admin-team-desk` `[x]`** · **`p13-prep-admin-canonical-docs` `[x]`** · **`da-w8-gate-signature-experience` `[x]`** · **`da-w8-sound-design-spec-defer` `[x]`** · **`da-w8-signature-surfaces-bundle` `[x]`** · **`p12-gate-marketing` `[x]`** · **`p12-legal-pages` `[x]`** · **`p12-community-support-hub` `[x]`** · **`p12-trust-marketing-hub` `[x]`** · **`p11-gate-side-income` `[x]`** · **`p11-page-wallet-redeem` `[x]`** · **`p11-earn-side-surfaces` `[x]`** · **`p4-operator-visual-signoff` agent impl `[x]`** · **`da-w6-gate-brand-elevation` `[x]`** · **`da-w6-brand-elevation-bundle` `[x]`** · **`p10-operator-visual-signoff` agent impl `[x]`** · **`p10-gate-betting` `[x]`** · **`p10-first-bet-education` `[x]`** · **`p10-page-casino-fairness` `[x]`** · **`p10-games-batch-d` `[x]`** · **`p10-games-batch-c` `[x]`** · **`p10-games-batch-b` `[x]`** · **`p10-games-batch-a` `[x]`** · **`p2-gate-admin-table-dedup` `[x]`** · **`p2-admin-table-primitive` `[x]`** · Fiat#11 **`[x]`** · CasinoR#1 **`[x]`** · Casino lobby **`[x]`** · Sports#4/3/2/1/0 **`[x]`** · Fiat#10 **`[x]`** · PIR **`[x]` DONE** · **전역 NEXT `p13-soft-launch-bundle` (#233)** · T0-A `#232` **`[x]`** · To-do 순서대로 1개씩
 
 ```text
 #158  p4-fiat-reference-preflight          [x]
@@ -449,7 +1325,7 @@ bun run gate:ai-impl -- --test apps/web/src/product/surfaces/trade
 #166  p5-page-settings-fiat-reference          [x]
 #167  p4-gate-fiat-reference-world-class          [x]
 #168  p10-page-sports                    [x]
-#169+ P10 (NEXT `p10-sports-fiat-hint-wire`)
+#169+ P10 (NEXT `p10-casino-replay-and-infra` · Casino lobby `[x]`)
 ```
 
 ## P9 Trade Base GATE (`p9-gate-trade` · §20.13) — `[x]` DONE · 재착수 금지

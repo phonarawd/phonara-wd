@@ -34,10 +34,22 @@ vi.mock('@/features/wallet/use-phon-balance-breakdown', () => ({
   usePhonBalanceBreakdown: () => usePhonBalanceBreakdownMock(),
 }));
 
+const useGetFixtureMarketsMock = vi.hoisted(() => vi.fn());
+const useLiveFixtureStateMock = vi.hoisted(() => vi.fn());
+const useLiveFixtureStatesMock = vi.hoisted(() => vi.fn());
+const useSportsRealtimeMock = vi.hoisted(() => vi.fn());
+
 vi.mock('@/features/sports/use-sports-betting', () => ({
   useListSportsFixtures: () => useListSportsFixturesMock(),
+  useGetFixtureMarkets: (...args: unknown[]) => useGetFixtureMarketsMock(...args),
+  useLiveFixtureState: (...args: unknown[]) => useLiveFixtureStateMock(...args),
+  useLiveFixtureStates: (...args: unknown[]) => useLiveFixtureStatesMock(...args),
   useMySportsBets: () => useMySportsBetsMock(),
   usePlaceSportsBet: () => usePlaceSportsBetMock(),
+}));
+
+vi.mock('@/hooks/use-sports-realtime', () => ({
+  useSportsRealtime: (...args: unknown[]) => useSportsRealtimeMock(...args),
 }));
 
 vi.mock('@/features/sports/use-sports-bet-slip-state', () => ({
@@ -95,6 +107,27 @@ function seedSportsControllerMocks(overrides?: {
     error: null,
     refetch: vi.fn(),
   });
+  useGetFixtureMarketsMock.mockReturnValue({
+    data: [],
+    isLoading: false,
+    error: null,
+    refetch: vi.fn(),
+  });
+  useLiveFixtureStateMock.mockReturnValue({
+    data: null,
+    isLoading: false,
+    isFetching: false,
+  });
+  useLiveFixtureStatesMock.mockReturnValue({
+    byFixtureId: new Map(),
+    loading: false,
+    isFetching: false,
+    fixtureIds: [],
+  });
+  useSportsRealtimeMock.mockReturnValue({
+    status: 'disabled',
+    connected: false,
+  });
   useMySportsBetsMock.mockReturnValue({
     data: [],
     isLoading: false,
@@ -119,6 +152,9 @@ function seedSportsControllerMocks(overrides?: {
     setStake: vi.fn(),
     stakeCurrency: 'USDT' as const,
     setStakeCurrency: vi.fn(),
+    oddsAcceptance: 'accept_better' as const,
+    setOddsAcceptance: vi.fn(),
+    oddsAcceptancePolicies: ['strict', 'accept_any', 'accept_better'] as const,
     toggleSelection: vi.fn(),
     removeSelection: vi.fn(),
     clearSlip: vi.fn(),
@@ -135,23 +171,54 @@ describe('useSportsPageController · LAUNCH_GATES.sportsBetting', () => {
     seedSportsControllerMocks();
   });
 
-  it('exposes placeCtaExposure=built_disabled while LAUNCH_GATES.sportsBetting is false', () => {
-    expect(LAUNCH_GATES.sportsBetting).toBe(false);
+  it('SB-W3: exposes placeCtaExposure=live while ingest health blocks canPlaceBet', () => {
+    expect(LAUNCH_GATES.sportsBetting).toBe(true);
 
     const { result } = renderHook(() => useSportsPageController());
 
-    expect(result.current.placeCtaExposure).toBe('built_disabled');
+    expect(result.current.placeCtaExposure).toBe('live');
     expect(result.current.canPlaceBet).toBe(false);
-    expect(result.current.sportsBlocked).toBe(true);
-    expect(result.current.sportsBlockedKey).toBe('sports.gate.feature_off');
+    expect(result.current.oddsIngestHealthGreen).toBe(false);
+    expect(result.current.sportsBlocked).toBe(false);
   });
 
-  it('keeps canPlaceBet false when kill-switch sportsBlocked even if slip is ready', () => {
+  it('keeps oddsIngestHealthGreen false for audit-era stale captured_at (H-05)', () => {
+    useListSportsFixturesMock.mockReturnValue({
+      data: [
+        {
+          fixture_id: 'fx-stale',
+          league_code: 'epl',
+          home_name: 'A',
+          away_name: 'B',
+          kickoff_at: '2026-07-11T12:00:00.000Z',
+          status: 'scheduled',
+          match_1x2: {
+            home: {
+              outcome_id: 'h',
+              odds: '1.90',
+              captured_at: '2026-06-16T04:43:29.944Z',
+            },
+          },
+        },
+      ],
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    const { result } = renderHook(() => useSportsPageController());
+
+    expect(result.current.oddsIngestHealthGreen).toBe(false);
+    expect(result.current.canPlaceBet).toBe(false);
+  });
+
+  it('keeps canPlaceBet false when kill-switch sportsBlocked even if launch gate is live', () => {
     seedSportsControllerMocks({ sportsBlocked: true });
 
     const { result } = renderHook(() => useSportsPageController());
 
-    expect(result.current.placeCtaExposure).toBe('built_disabled');
+    expect(result.current.placeCtaExposure).toBe('live');
+    expect(result.current.sportsBlocked).toBe(true);
     expect(result.current.canPlaceBet).toBe(false);
   });
 
@@ -161,5 +228,33 @@ describe('useSportsPageController · LAUNCH_GATES.sportsBetting', () => {
     const { result } = renderHook(() => useSportsPageController());
 
     expect(result.current.canPlaceBet).toBe(false);
+  });
+
+  it('passes visibleFixtureIds into sports realtime for odds INSERT scope', () => {
+    useListSportsFixturesMock.mockReturnValue({
+      data: [
+        {
+          fixture_id: 'fx-board',
+          league_code: 'epl',
+          home_name: 'A',
+          away_name: 'B',
+          kickoff_at: '2026-07-11T12:00:00.000Z',
+          status: 'live',
+        },
+      ],
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    renderHook(() => useSportsPageController('fixture', 'fx-detail'));
+
+    expect(useSportsRealtimeMock).toHaveBeenCalled();
+    const opts = useSportsRealtimeMock.mock.calls.at(-1)?.[0] as {
+      enabled: boolean;
+      visibleFixtureIds: Set<string>;
+    };
+    expect(opts.enabled).toBe(true);
+    expect([...opts.visibleFixtureIds].sort()).toEqual(['fx-board', 'fx-detail']);
   });
 });

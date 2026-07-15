@@ -38,7 +38,18 @@ export function AuthEntryLayout({
     <div
       data-testid={testId}
       className={cn(
-        'mx-auto grid w-full max-w-5xl gap-8 py-6 md:py-10 lg:grid-cols-[1fr,minmax(280px,360px)] lg:items-center lg:gap-12 lg:py-12',
+        // Form owns the dominant 1fr track (UX_REFERENCE_CANON.md §Login/Auth ·
+        // AUTH_UX_CANON.md — no promo/hero content may crowd out the form) —
+        // the brand/trust <aside> stays in the narrow fixed track, never the reverse.
+        // Track separator MUST be `_` (space), not `,` — a comma produces an
+        // invalid `grid-template-columns` value (that property takes a
+        // space-separated track list, never comma-separated), so the browser
+        // drops the whole declaration and both columns silently collapse to a
+        // single stacked column at every width. Confirmed via 1024/2560
+        // screenshots showing the aside stacked above the form instead of
+        // beside it (2026-07-15 Phase 0B re-verification) — every other
+        // `grid-cols-[...]` arbitrary value in this repo already uses `_`.
+        'mx-auto grid w-full max-w-5xl gap-8 py-6 md:py-10 lg:grid-cols-[minmax(280px,360px)_1fr] lg:items-center lg:gap-12 lg:py-12',
         className,
       )}
     >
@@ -47,7 +58,7 @@ export function AuthEntryLayout({
           <p className="text-accent m-0 text-sm font-semibold tracking-wide uppercase">
             {t(PLATFORM_POSITIONING_KEYS.eyebrow)}
           </p>
-          <h1 className="text-foreground m-0 text-3xl font-semibold tracking-tight [word-break:keep-all]">
+          <h1 className="text-foreground m-0 text-3xl font-semibold tracking-tight break-keep">
             {t(PLATFORM_POSITIONING_KEYS.headline)}
           </h1>
           <p className="text-foreground-muted m-0 text-base leading-relaxed">
@@ -69,7 +80,7 @@ export function AuthEntryLayout({
       <section className="flex w-full flex-col gap-6">
         <header className="flex flex-col items-center gap-1.5 text-center lg:items-start lg:text-left">
           <div className="flex items-center gap-2">
-            <BrandMark size={24} className="text-[#7B6FE8]" testId="auth-brand-mark" />
+            <BrandMark size={24} className="text-accent" testId="auth-brand-mark" />
             <BrandWordmark className="text-foreground text-base" />
           </div>
           <p className="text-accent m-0 text-xs font-semibold tracking-wide uppercase lg:hidden">

@@ -2,6 +2,18 @@
 export { generateServerSeed, hashServerSeed } from './fairness/seed';
 export { hmacSha256 } from './fairness/hmac';
 export { floatStream, singleFloat } from './fairness/float';
+export {
+  assertPfGoldenCoverageComplete,
+  PF_BOUNDARY_FORMULA_VECTORS,
+  PF_FLOAT_HALF,
+  PF_FLOAT_MAX,
+  PF_FLOAT_MIN,
+  PF_GOLDEN_SEED,
+  PF_GOLDEN_SEED_FLOATS,
+  PF_SEED_RESULT_VECTORS,
+  pfGoldenBoundaryCoverage,
+  pfGoldenSeedCoverage,
+} from './fairness/pf-golden-vectors';
 export { quantize6, quantize6String } from './lib/quantize';
 export {
   recomputeResult,

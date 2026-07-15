@@ -114,7 +114,7 @@ export function normalizeVendorEventUpsert(
 export function expandEventWithOdds(
   upsert: Extract<IngestMessage, { type: 'event_upsert' }>,
   capturedAt: string,
-  prices: Readonly<Record<string, string | number>>,
+  prices: Readonly<Record<string, string>>,
 ): IngestMessage[] {
   const messages: IngestMessage[] = [upsert];
 
@@ -131,7 +131,7 @@ export function expandEventWithOdds(
 
 export function normalizeVendorOddsPatch(
   outcomeId: string,
-  rawOdds: string | number,
+  rawOdds: string,
   capturedAt: string,
 ): IngestMessage {
   return oddsUpsertMessage(outcomeId, parseOddsDecimal(rawOdds), capturedAt);

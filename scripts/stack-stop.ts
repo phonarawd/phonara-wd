@@ -10,8 +10,11 @@ import {
   dockerAutoQuitEnabled,
   quitDockerDesktopAndReleaseWsl,
 } from './lib/docker-desktop-lifecycle';
+import { loadRepoEnvFiles } from './lib/load-repo-env';
 import { isLocalSupabaseRunning } from './lib/supabase-local';
 import { spawnSyncSafe } from './lib/spawn-safe';
+
+loadRepoEnvFiles();
 
 const args = new Set(process.argv.slice(2));
 const quiet = args.has('--quiet') || process.env['PHONARA_STACK_QUIET'] === '1';

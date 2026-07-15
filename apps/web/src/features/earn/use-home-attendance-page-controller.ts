@@ -24,6 +24,7 @@ import {
 import { EARN_HUB_STATUS_RPC } from '@/domain/unified-tier-display-contract';
 import { formatPhonRewardDisplay } from '@/domain/viral-missions-display-contract';
 import { walletKeys } from '@/hooks/use-wallet';
+import { callRpc } from '@/lib/rpc';
 import { supabase } from '@/lib/supabase';
 import { translateError } from '@/lib/translate-error';
 import { productToast } from '@/product/primitives/toast-zone';
@@ -54,27 +55,24 @@ type HomeAttendanceSnapshot = {
 };
 
 async function fetchHomeAttendanceSnapshot(userId: string): Promise<HomeAttendanceSnapshot> {
-  const [hubRes, streakRes, repeatableRes, viralRes] = await Promise.all([
-    supabase.rpc(EARN_HUB_STATUS_RPC),
+  const [hubData, streakRes, repeatableData, viralData] = await Promise.all([
+    callRpc(EARN_HUB_STATUS_RPC),
     supabase
       .from('user_streaks')
       .select('current_streak, longest_streak, total_phon_earned, last_claimed_date')
       .eq('user_id', userId)
       .maybeSingle(),
-    supabase.rpc('rpc_get_repeatable_mission_status', { p_lane: 'all' }),
-    supabase.rpc('rpc_get_viral_mission_status'),
+    callRpc('rpc_get_repeatable_mission_status', { p_lane: 'all' }),
+    callRpc('rpc_get_viral_mission_status'),
   ]);
 
-  if (hubRes.error) throw hubRes.error;
   if (streakRes.error) throw streakRes.error;
-  if (repeatableRes.error) throw repeatableRes.error;
-  if (viralRes.error) throw viralRes.error;
 
-  const repeatablePayload = (repeatableRes.data ?? {}) as Record<string, unknown>;
-  const viralPayload = (viralRes.data ?? {}) as Record<string, unknown>;
+  const repeatablePayload = (repeatableData ?? {}) as Record<string, unknown>;
+  const viralPayload = (viralData ?? {}) as Record<string, unknown>;
 
   return {
-    hubPayload: (hubRes.data ?? {}) as Record<string, unknown>,
+    hubPayload: (hubData ?? {}) as Record<string, unknown>,
     streak: parseUserStreakRow((streakRes.data ?? null) as Record<string, unknown> | null),
     repeatableMissions: Array.isArray(repeatablePayload['missions'])
       ? (repeatablePayload['missions'] as RepeatableMissionRow[])
@@ -196,8 +194,7 @@ export function useHomeAttendancePageController(): HomeAttendancePageControllerV
     setClaiming(true);
     setActionError(null);
     try {
-      const { data, error } = await supabase.rpc(DAILY_REWARD_CLAIM_RPC);
-      if (error) throw error;
+      const data = await callRpc(DAILY_REWARD_CLAIM_RPC);
       const result = parseDailyRewardClaimResult((data ?? {}) as Record<string, unknown>);
       if (!result) throw new Error('INVALID_CLAIM_RESPONSE');
 

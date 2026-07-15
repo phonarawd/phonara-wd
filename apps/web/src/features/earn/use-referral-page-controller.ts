@@ -29,6 +29,7 @@ import {
   viralMissionKeys,
 } from '@/features/earn/use-viral-missions';
 import { PRODUCTION_SITE_ORIGIN } from '@/lib/production-site-origin';
+import { callRpc } from '@/lib/rpc';
 import { supabase } from '@/lib/supabase';
 import { translateError } from '@/lib/translate-error';
 import { productToast } from '@/product/primitives/toast-zone';
@@ -49,9 +50,9 @@ type ReferralDashboardSnapshot = {
 };
 
 async function fetchReferralDashboard(userId: string): Promise<ReferralDashboardSnapshot> {
-  const [profileRes, hubRes, referralsRes, missionsRes] = await Promise.all([
+  const [profileRes, hubData, referralsRes, missionsRes] = await Promise.all([
     supabase.from('profiles').select('username').eq('id', userId).maybeSingle(),
-    supabase.rpc('rpc_get_earn_hub_status'),
+    callRpc('rpc_get_earn_hub_status'),
     supabase
       .from('referrals')
       .select('id, referred_id, referrer_phon, created_at, rewarded_at')
@@ -66,7 +67,6 @@ async function fetchReferralDashboard(userId: string): Promise<ReferralDashboard
   ]);
 
   if (profileRes.error) throw profileRes.error;
-  if (hubRes.error) throw hubRes.error;
   if (referralsRes.error) throw referralsRes.error;
   if (missionsRes.error) throw missionsRes.error;
 
@@ -89,7 +89,7 @@ async function fetchReferralDashboard(userId: string): Promise<ReferralDashboard
     username: profileRes.data?.username ?? null,
     referralCode,
     inviteUrl: buildReferralInviteUrl(origin, referralCode),
-    hubReferral: parseEarnHubReferralSnapshot(hubRes.data as Record<string, unknown>),
+    hubReferral: parseEarnHubReferralSnapshot(hubData as Record<string, unknown>),
     totalPaidRewardsPhon: sumPaidReferralRewards(
       treeRows.map((row) => ({ state: row.state, referrerPhon: row.referrerPhon })),
     ),

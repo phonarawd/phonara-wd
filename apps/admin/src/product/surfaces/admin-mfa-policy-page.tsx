@@ -10,12 +10,12 @@ import {
   type MfaTierKey,
 } from '@/hooks/admin/useAdminMfaPolicyDesk';
 import { useT } from '@/product/i18n';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Button } from '@/product/primitives/button';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { Input } from '@/product/primitives/input';
 import { cn } from '@/product/primitives/lib/cn';
-import { Skeleton } from '@/product/primitives/skeleton';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 import { AdminQueueActionDialog } from '@/product/surfaces/admin-queue-action-dialog';
 
@@ -66,20 +66,6 @@ function policySummary(row: AdminMfaPolicyDeskRow, t: ReturnType<typeof useT>): 
     `${t('admin.access.mfa.col.grace')}: ${row.graceDays}`,
     `${t('admin.access.mfa.col.enroll')}: ${row.enrollRate}%`,
   ].join('\n');
-}
-
-function LoadingTable({ rows, cols }: { rows: number; cols: number }) {
-  return (
-    <div className="space-y-2" aria-busy="true">
-      {Array.from({ length: rows }, (_, rowIndex) => (
-        <div key={rowIndex} className="flex gap-3">
-          {Array.from({ length: cols }, (_, colIndex) => (
-            <Skeleton key={colIndex} className="h-10 flex-1" />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
 }
 
 /** Canonical admin `/mfa/policy` — team MFA tier policy desk · `rpc_admin_set_mfa_policy` (§29.2 R3). */
@@ -176,9 +162,7 @@ export function AdminMfaPolicyPage() {
           actionLabel={t('admin.overview.action.refresh')}
           onAction={() => void handleRefresh()}
         />
-      ) : loading ? (
-        <LoadingTable rows={6} cols={5} />
-      ) : policies.length === 0 ? (
+      ) : !loading && policies.length === 0 ? (
         <EmptyState
           title={t('admin.access.mfa.empty')}
           description={t('admin.mfa.policy.empty.body')}
@@ -238,110 +222,107 @@ export function AdminMfaPolicyPage() {
             </label>
           </div>
 
-          {filteredPolicies.length === 0 ? (
-            <EmptyState
-              title={t('admin.access.mfa.empty')}
-              description={t('admin.mfa.policy.filter.empty')}
-              actionLabel={t('admin.mfa.policy.filter.reset')}
-              onAction={() =>
-                setFilters({
-                  search: '',
-                  tierKey: 'all',
-                  required: 'all',
-                })
-              }
-            />
-          ) : (
-            <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-              <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-                <thead className="bg-surface-raised text-foreground-muted">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">{t('admin.access.mfa.col.tier')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.access.mfa.col.required')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.access.mfa.col.grace')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.access.mfa.col.enroll')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.access.mfa.col.updated')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.access.mfa.col.action')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredPolicies.map((row) => {
-                    const canRequire = !row.mfaRequired;
-                    const canRelax = row.mfaRequired && canRelaxTier(row.tierKey);
-
-                    return (
-                      <tr key={row.id} className="border-line border-t">
-                        <td className="text-foreground px-4 py-3">
-                          {t(TIER_LABEL_KEYS[row.tierKey])}
-                        </td>
-                        <td className="px-4 py-3">
-                          <StatusBadge
-                            state={requiredStatusState(row.mfaRequired)}
-                            label={
-                              row.mfaRequired
-                                ? t('admin.access.mfa.required.on')
-                                : t('admin.access.mfa.required.off')
-                            }
-                          />
-                        </td>
-                        <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                          {row.graceDays}
-                        </td>
-                        <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                          {row.enrollRate}%
-                        </td>
-                        <td className="text-foreground-muted px-4 py-3">
-                          {formatWhen(row.updatedAt, locale)}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex flex-wrap gap-2">
-                            {canRequire ? (
-                              <Button
-                                size="sm"
-                                variant="primary"
-                                disabled={busy}
-                                data-testid={`admin-mfa-policy-require-${row.tierKey}`}
-                                onClick={() =>
-                                  setActionTarget({
-                                    row,
-                                    nextRequired: true,
-                                    titleKey: 'admin.mfa.policy.dialog.require',
-                                    confirmKey: 'admin.access.mfa.action.require',
-                                    destructive: false,
-                                  })
-                                }
-                              >
-                                {t('admin.access.mfa.action.require')}
-                              </Button>
-                            ) : null}
-                            {canRelax ? (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                disabled={busy}
-                                data-testid={`admin-mfa-policy-relax-${row.tierKey}`}
-                                onClick={() =>
-                                  setActionTarget({
-                                    row,
-                                    nextRequired: false,
-                                    titleKey: 'admin.access.mfa.dialog.relax.title',
-                                    confirmKey: 'admin.access.mfa.action.relax',
-                                    destructive: true,
-                                  })
-                                }
-                              >
-                                {t('admin.access.mfa.action.relax')}
-                              </Button>
-                            ) : null}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <AdminTable
+            columns={[
+              {
+                id: 'tier',
+                header: t('admin.access.mfa.col.tier'),
+                cell: ({ row }) => t(TIER_LABEL_KEYS[row.tierKey]),
+              },
+              {
+                id: 'required',
+                header: t('admin.access.mfa.col.required'),
+                cell: ({ row }) => (
+                  <StatusBadge
+                    state={requiredStatusState(row.mfaRequired)}
+                    label={
+                      row.mfaRequired
+                        ? t('admin.access.mfa.required.on')
+                        : t('admin.access.mfa.required.off')
+                    }
+                  />
+                ),
+              },
+              {
+                id: 'grace',
+                header: t('admin.access.mfa.col.grace'),
+                cell: ({ row }) => row.graceDays,
+                meta: { className: 'text-foreground-muted tabular-nums' },
+              },
+              {
+                id: 'enroll',
+                header: t('admin.access.mfa.col.enroll'),
+                cell: ({ row }) => `${row.enrollRate}%`,
+                meta: { className: 'text-foreground-muted tabular-nums' },
+              },
+              {
+                id: 'updated',
+                header: t('admin.access.mfa.col.updated'),
+                cell: ({ row }) => formatWhen(row.updatedAt, locale),
+                meta: { className: 'text-foreground-muted' },
+              },
+            ]}
+            rows={filteredPolicies}
+            getRowId={(row) => row.id}
+            loading={loading}
+            loadingRowCount={6}
+            minWidth={760}
+            empty={
+              <EmptyState
+                title={t('admin.access.mfa.empty')}
+                description={t('admin.mfa.policy.filter.empty')}
+                actionLabel={t('admin.mfa.policy.filter.reset')}
+                onAction={() => setFilters({ search: '', tierKey: 'all', required: 'all' })}
+              />
+            }
+            rowActionsHeader={t('admin.access.mfa.col.action')}
+            rowActions={(row) => {
+              const canRequire = !row.mfaRequired;
+              const canRelax = row.mfaRequired && canRelaxTier(row.tierKey);
+              return (
+                <>
+                  {canRequire ? (
+                    <Button
+                      size="sm"
+                      variant="primary"
+                      disabled={busy}
+                      data-testid={`admin-mfa-policy-require-${row.tierKey}`}
+                      onClick={() =>
+                        setActionTarget({
+                          row,
+                          nextRequired: true,
+                          titleKey: 'admin.mfa.policy.dialog.require',
+                          confirmKey: 'admin.access.mfa.action.require',
+                          destructive: false,
+                        })
+                      }
+                    >
+                      {t('admin.access.mfa.action.require')}
+                    </Button>
+                  ) : null}
+                  {canRelax ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={busy}
+                      data-testid={`admin-mfa-policy-relax-${row.tierKey}`}
+                      onClick={() =>
+                        setActionTarget({
+                          row,
+                          nextRequired: false,
+                          titleKey: 'admin.access.mfa.dialog.relax.title',
+                          confirmKey: 'admin.access.mfa.action.relax',
+                          destructive: true,
+                        })
+                      }
+                    >
+                      {t('admin.access.mfa.action.relax')}
+                    </Button>
+                  ) : null}
+                </>
+              );
+            }}
+          />
 
           {auditEvents.length > 0 ? (
             <section className="space-y-3">

@@ -47,7 +47,7 @@ export function AuthCallbackPage() {
       >
         <div
           className={cn(
-            'border-line bg-surface flex flex-col gap-4 rounded-(--ds-radius-lg) border p-4 text-center md:p-6',
+            'border-line bg-surface flex flex-col gap-4 rounded-lg border p-4 text-center md:p-6',
           )}
           role="alert"
           data-testid="auth-callback-failed-panel"
@@ -58,7 +58,7 @@ export function AuthCallbackPage() {
 
           <AuthRouteLink
             href="/login"
-            className="text-primary inline-flex items-center justify-center text-sm font-medium underline-offset-4 hover:underline"
+            className="text-accent inline-flex items-center justify-center text-sm font-medium underline-offset-4 hover:underline"
           >
             {engine.t('auth.entry.signup.toLogin')}
           </AuthRouteLink>
@@ -76,7 +76,7 @@ export function AuthCallbackPage() {
     >
       <div
         className={cn(
-          'border-line bg-surface flex flex-col items-center gap-4 rounded-(--ds-radius-lg) border p-6 text-center md:p-8',
+          'border-line bg-surface flex flex-col items-center gap-4 rounded-lg border p-6 text-center md:p-8',
         )}
         aria-busy="true"
         data-testid="auth-callback-processing"

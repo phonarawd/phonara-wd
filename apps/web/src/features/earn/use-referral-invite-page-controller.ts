@@ -25,10 +25,18 @@ import {
   viralMissionKeys,
 } from '@/features/earn/use-viral-missions';
 import { PRODUCTION_SITE_ORIGIN } from '@/lib/production-site-origin';
+import { callRpc } from '@/lib/rpc';
 import { supabase } from '@/lib/supabase';
 import { translateError } from '@/lib/translate-error';
 import { productToast } from '@/product/primitives/toast-zone';
 import { useT } from '@/product/i18n';
+import {
+  KAKAO_SHARE_FAILED_KEY,
+  KAKAO_SHARE_SUCCESS_KEY,
+} from '@/domain/kakao-share-display-contract';
+import { isKakaoShareAugmentReady } from '@/domain/ew-e10-growth-ui-display-contract';
+import { BRAND_ASSETS } from '@/domain/brand-display-contract';
+import { canUseKakaoShare, shareReferralViaKakao } from '@/lib/kakao-share-sdk';
 
 export const referralInvitePageKeys = {
   snapshot: (userId: string | null) => ['referral-invite-snapshot', userId] as const,
@@ -42,22 +50,20 @@ type ReferralInviteSnapshot = {
 };
 
 async function fetchReferralInviteSnapshot(userId: string): Promise<ReferralInviteSnapshot> {
-  const [profileRes, hubRes, viralRes] = await Promise.all([
+  const [profileRes, hubData, viralData] = await Promise.all([
     supabase.from('profiles').select('username').eq('id', userId).maybeSingle(),
-    supabase.rpc('rpc_get_earn_hub_status'),
-    supabase.rpc('rpc_get_viral_mission_status'),
+    callRpc('rpc_get_earn_hub_status'),
+    callRpc('rpc_get_viral_mission_status'),
   ]);
 
   if (profileRes.error) throw profileRes.error;
-  if (hubRes.error) throw hubRes.error;
-  if (viralRes.error) throw viralRes.error;
 
   const referralCode = resolveReferralShareCode(userId, profileRes.data?.username ?? null);
   const origin =
     typeof window !== 'undefined' && window.location?.origin
       ? window.location.origin
       : PRODUCTION_SITE_ORIGIN;
-  const viralPayload = viralRes.data as {
+  const viralPayload = viralData as {
     missions?: Array<{
       mission: string;
       used: number;
@@ -70,7 +76,7 @@ async function fetchReferralInviteSnapshot(userId: string): Promise<ReferralInvi
   return {
     referralCode,
     inviteUrl: buildReferralInviteUrl(origin, referralCode),
-    hubReferral: parseEarnHubReferralSnapshot(hubRes.data as Record<string, unknown>),
+    hubReferral: parseEarnHubReferralSnapshot(hubData as Record<string, unknown>),
     shareMission: resolveReferralShareMissionSnapshot(viralPayload?.missions),
   };
 }
@@ -92,6 +98,9 @@ export type ReferralInvitePageControllerView = {
   copyInviteLink: () => Promise<void>;
   shareInvite: () => Promise<void>;
   claimShareReward: () => Promise<void>;
+  kakaoShareAvailable: boolean;
+  kakaoShareBusy: boolean;
+  shareViaKakao: () => Promise<void>;
 };
 
 export function useReferralInvitePageController(): ReferralInvitePageControllerView {
@@ -104,6 +113,7 @@ export function useReferralInvitePageController(): ReferralInvitePageControllerV
   const { claimViralMission, loading: claimLoading } = useViralMissionClaim();
   const [shareBusy, setShareBusy] = useState(false);
   const [claimBusy, setClaimBusy] = useState(false);
+  const [kakaoShareBusy, setKakaoShareBusy] = useState(false);
   const [actionError, setActionError] = useState<MessageKey | null>(null);
 
   const {
@@ -220,6 +230,39 @@ export function useReferralInvitePageController(): ReferralInvitePageControllerV
     await copyToClipboard(snapshot.inviteUrl, 'referral.toast.linkCopied');
   }, [copyToClipboard, snapshot?.inviteUrl]);
 
+  const shareViaKakao = useCallback(async () => {
+    if (!snapshot?.inviteUrl || !snapshot.referralCode || kakaoShareBusy) return;
+    if (!isKakaoShareAugmentReady() || !canUseKakaoShare()) return;
+    setKakaoShareBusy(true);
+    setActionError(null);
+    try {
+      await shareReferralViaKakao({
+        title: t('referral.share.title'),
+        description: t('referral.shareText', {
+          code: snapshot.referralCode,
+          url: snapshot.inviteUrl,
+        }),
+        inviteUrl: snapshot.inviteUrl,
+        imageUrl: BRAND_ASSETS.raster,
+      });
+      productToast.show({ zone: 'warm', key: KAKAO_SHARE_SUCCESS_KEY });
+      if (shareMission.canClaim) {
+        await claimShareReward();
+      }
+    } catch {
+      setActionError(KAKAO_SHARE_FAILED_KEY);
+    } finally {
+      setKakaoShareBusy(false);
+    }
+  }, [
+    claimShareReward,
+    kakaoShareBusy,
+    shareMission.canClaim,
+    snapshot?.inviteUrl,
+    snapshot?.referralCode,
+    t,
+  ]);
+
   const queryError = snapshotError ? translateError(snapshotError, 'error.UNKNOWN') : null;
 
   if (!authLoading && !session) {
@@ -256,5 +299,8 @@ export function useReferralInvitePageController(): ReferralInvitePageControllerV
     copyInviteLink,
     shareInvite,
     claimShareReward,
+    kakaoShareAvailable: isKakaoShareAugmentReady() && canUseKakaoShare(),
+    kakaoShareBusy,
+    shareViaKakao,
   };
 }

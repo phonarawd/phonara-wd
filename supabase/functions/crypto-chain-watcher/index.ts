@@ -5,6 +5,7 @@ import {
   mapSupabaseError,
   recordEdgeOpsEvent,
   recordProviderHealth,
+  classifyEdgeOpsOutcome,
   toStableErrorCode,
 } from '../_shared/edge-observability.ts';
 import { authorizeServiceRole, env } from '../_shared/service-auth.ts';
@@ -198,31 +199,61 @@ Deno.serve(async (req) => {
       else matched += 1;
     }
 
-    const hasProviderFailure = Boolean(tronFetchError || ercFetchError);
+    const missingConfig = (trongridKey ? 0 : 1) + (etherscanKey ? 0 : 1);
+    const providerRejected = (tronFetchError ? 1 : 0) + (ercFetchError ? 1 : 0);
+    const channelAttempts = 2;
+    const appliedChannels =
+      channelAttempts - missingConfig - providerRejected - (rpcFailures > 0 ? 0 : 0);
+    // Channel health: a channel is "applied" when configured and fetch succeeded.
+    const applied =
+      (trongridKey && !tronFetchError ? 1 : 0) + (etherscanKey && !ercFetchError ? 1 : 0);
+
+    const outcome = classifyEdgeOpsOutcome({
+      applied,
+      rejected: providerRejected,
+      circuitOpen: 0,
+      rpcFailed: rpcFailures > 0 ? rpcFailures : 0,
+      total: channelAttempts,
+      missingConfig,
+    });
+
     ctx.log('ops.crypto.watcher.completed', {
       batch_count: tronTxs.length + ercTxs.length,
       skipped_count: rpcFailures,
+      outcome_status: outcome.status,
+      applied,
+      rejected: providerRejected,
+      rpc_failed: rpcFailures,
+      missing_config: missingConfig,
     });
 
     await recordEdgeOpsEvent(supabase, ctx, {
       eventKey: 'ops.crypto.watcher_completed',
-      status: hasProviderFailure || rpcFailures > 0 ? 'error' : 'ok',
+      status: outcome.status,
       batchCount: tronTxs.length + ercTxs.length,
       skippedCount: rpcFailures,
-      errorCode: hasProviderFailure
-        ? 'provider_fetch_failed'
-        : rpcFailures > 0
-          ? 'rpc_failed'
-          : null,
-      metadata: { matched, tron_scanned: tronTxs.length, erc_scanned: ercTxs.length },
+      errorCode: outcome.errorCode,
+      metadata: {
+        applied,
+        rejected: providerRejected,
+        circuitOpen: 0,
+        rpcFailed: rpcFailures,
+        missingConfig,
+        matched,
+        tron_scanned: tronTxs.length,
+        erc_scanned: ercTxs.length,
+        appliedChannels,
+      },
     });
 
     return ctx.jsonOk({
-      ok: true,
+      ok: outcome.status === 'ok',
+      outcome: outcome.status,
       scanned_trc20: tronTxs.length,
       scanned_erc20: ercTxs.length,
       matched,
       rpc_failures: rpcFailures,
+      missing_config: missingConfig,
       confirmation_policy: {
         trc20: TRC20_CONFIRMATIONS,
         erc20: ERC20_CONFIRMATIONS,

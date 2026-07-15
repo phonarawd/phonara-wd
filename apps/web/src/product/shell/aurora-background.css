@@ -1,0 +1,73 @@
+/**
+ * Digital Aurora Mesh — §34.10 · ADR-009.
+ * Route-owned backdrop: ≤1 mount · Earn/Wallet low · Trade off.
+ */
+
+.ds-aurora-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ds-aurora-background[data-intensity='off'] {
+  display: none;
+}
+
+.ds-aurora-background__mesh {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(
+      ellipse 55% 45% at 18% 22%,
+      color-mix(in oklch, var(--ds-accent) 18%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 82% 18%,
+      color-mix(in oklch, var(--ds-accent) 10%, transparent),
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 50% 88%,
+      color-mix(in oklch, var(--ds-foreground) 4%, transparent),
+      transparent 72%
+    );
+  opacity: 0.55;
+  animation: ds-aurora-drift 28s var(--ds-ease-standard) infinite alternate;
+}
+
+.ds-aurora-background[data-intensity='low'] .ds-aurora-background__mesh {
+  opacity: 0.35;
+}
+
+.ds-aurora-background__noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  mix-blend-mode: soft-light;
+}
+
+@keyframes ds-aurora-drift {
+  from {
+    transform: translate3d(-1.5%, -1%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(1.5%, 1.5%, 0) scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-aurora-background__mesh {
+    animation: none;
+    transform: none;
+  }
+}
+
+.ds-aurora-background[data-static='true'] .ds-aurora-background__mesh {
+  animation: none;
+  transform: none;
+}

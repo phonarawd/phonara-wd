@@ -421,10 +421,10 @@ BEGIN
     'service_role must execute rpc_settle_game_bet';
 
   ASSERT has_function_privilege(
-    'authenticated', 'public.rpc_place_game_bet(uuid,text,text,jsonb,text,text,jsonb)', 'EXECUTE'),
+    'authenticated', 'public.rpc_place_game_bet(uuid,text,text,jsonb,text,text,jsonb,boolean)', 'EXECUTE'),
     'authenticated must execute rpc_place_game_bet';
   ASSERT NOT has_function_privilege(
-    'anon', 'public.rpc_place_game_bet(uuid,text,text,jsonb,text,text,jsonb)', 'EXECUTE'),
+    'anon', 'public.rpc_place_game_bet(uuid,text,text,jsonb,text,text,jsonb,boolean)', 'EXECUTE'),
     'anon must not execute rpc_place_game_bet';
 
   ASSERT has_function_privilege(

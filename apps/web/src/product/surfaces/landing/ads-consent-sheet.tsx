@@ -31,7 +31,10 @@ export function AdsConsentSheet({ open, onAccept, onDecline }: AdsConsentSheetPr
           <SheetTitle>{t('ads.consent.title')}</SheetTitle>
           <SheetDescription>{t('ads.consent.body')}</SheetDescription>
         </SheetHeader>
-        <p className="text-foreground-muted m-0 px-4 text-sm">
+        <p className="text-foreground-muted m-0 flex flex-col gap-1 px-4 text-sm">
+          <a href="/legal/cookies" className="text-accent underline-offset-4 hover:underline">
+            {t('ads.consent.cookiesLink')}
+          </a>
           <a href="/legal/privacy" className="text-accent underline-offset-4 hover:underline">
             {t('ads.consent.privacyLink')}
           </a>

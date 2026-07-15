@@ -29,6 +29,7 @@ import {
   viralMissionKeys,
 } from '@/features/earn/use-viral-missions';
 import { PRODUCTION_SITE_ORIGIN } from '@/lib/production-site-origin';
+import { callRpc } from '@/lib/rpc';
 import { supabase } from '@/lib/supabase';
 import { translateError } from '@/lib/translate-error';
 import { productToast } from '@/product/primitives/toast-zone';
@@ -45,18 +46,16 @@ type ShareEarningsSnapshot = {
 };
 
 async function fetchShareEarningsSnapshot(userId: string): Promise<ShareEarningsSnapshot> {
-  const [profileRes, hubRes, goldenEarthRes] = await Promise.all([
+  const [profileRes, hubData, goldenEarthData] = await Promise.all([
     supabase.from('profiles').select('username').eq('id', userId).maybeSingle(),
-    supabase.rpc('rpc_get_earn_hub_status'),
-    supabase.rpc('rpc_get_golden_earth_status'),
+    callRpc('rpc_get_earn_hub_status'),
+    callRpc('rpc_get_golden_earth_status'),
   ]);
 
   if (profileRes.error) throw profileRes.error;
-  if (hubRes.error) throw hubRes.error;
-  if (goldenEarthRes.error) throw goldenEarthRes.error;
 
-  const hubPayload = (hubRes.data ?? {}) as Record<string, unknown>;
-  const goldenPayload = (goldenEarthRes.data ?? {}) as Record<string, unknown>;
+  const hubPayload = (hubData ?? {}) as Record<string, unknown>;
+  const goldenPayload = (goldenEarthData ?? {}) as Record<string, unknown>;
   const card = resolveShareEarningsCardView(hubPayload, goldenPayload);
   if (!card) throw new Error('SHARE_EARNINGS_CARD_MISSING');
 

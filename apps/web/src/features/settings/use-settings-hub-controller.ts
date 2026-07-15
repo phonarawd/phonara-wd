@@ -4,6 +4,7 @@ import type { MessageKey } from '@phonara/i18n';
 import type { NotificationLocalPrefKey } from '@/domain/notifications-pwa-display-contract';
 import {
   readCasinoConfirmPref,
+  readCasinoSoundEffectsPref,
   readSettingsHubNotificationPref,
   resolveNotificationPrefToastKey,
   resolveSettingsHubNavItems,
@@ -11,6 +12,7 @@ import {
   type SettingsHubNavGroup,
   type SettingsHubNavItem,
   writeCasinoConfirmPref,
+  writeCasinoSoundEffectsPref,
   writeSettingsHubNotificationPref,
 } from '@/domain/settings-hub-display-contract';
 import {
@@ -27,10 +29,12 @@ export type SettingsHubControllerView = {
   navByGroup: Readonly<Record<SettingsHubNavGroup, SettingsHubNavItem[]>>;
   notificationPrefs: Readonly<Record<NotificationLocalPrefKey, boolean>>;
   casinoConfirm: boolean;
+  casinoSoundEffects: boolean;
   tradeOneClick: boolean;
   tradeConfirm: boolean;
   setNotificationPref: (key: NotificationLocalPrefKey, enabled: boolean) => void;
   setCasinoConfirm: (enabled: boolean) => void;
+  setCasinoSoundEffects: (enabled: boolean) => void;
   setTradeOneClick: (enabled: boolean) => void;
   setTradeConfirm: (enabled: boolean) => void;
 };
@@ -51,6 +55,9 @@ export function useSettingsHubController(): SettingsHubControllerView {
   );
 
   const [casinoConfirm, setCasinoConfirmState] = useState(() => readCasinoConfirmPref());
+  const [casinoSoundEffects, setCasinoSoundEffectsState] = useState(() =>
+    readCasinoSoundEffectsPref(),
+  );
   const [tradeOneClick, setTradeOneClickState] = useState(() => readTradeOneClickPref());
   const [tradeConfirm, setTradeConfirmState] = useState(() => readTradeConfirmPref());
 
@@ -81,6 +88,15 @@ export function useSettingsHubController(): SettingsHubControllerView {
     const key: MessageKey = enabled
       ? 'settings.casino.toast.confirmOn'
       : 'settings.casino.toast.confirmOff';
+    productToast.show({ zone: 'warm', key });
+  }, []);
+
+  const setCasinoSoundEffects = useCallback((enabled: boolean) => {
+    writeCasinoSoundEffectsPref(enabled);
+    setCasinoSoundEffectsState(enabled);
+    const key: MessageKey = enabled
+      ? 'settings.casino.toast.soundOn'
+      : 'settings.casino.toast.soundOff';
     productToast.show({ zone: 'warm', key });
   }, []);
 
@@ -115,10 +131,12 @@ export function useSettingsHubController(): SettingsHubControllerView {
     navByGroup,
     notificationPrefs,
     casinoConfirm,
+    casinoSoundEffects,
     tradeOneClick,
     tradeConfirm,
     setNotificationPref,
     setCasinoConfirm,
+    setCasinoSoundEffects,
     setTradeOneClick,
     setTradeConfirm,
   };

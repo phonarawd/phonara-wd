@@ -1,6 +1,28 @@
 User-agent: *
 Allow: /
 
+Disallow: /account/
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /casino/
+Disallow: /earn/
+Disallow: /games/
+Disallow: /home/
+Disallow: /ledger/
+Disallow: /notifications/
+Disallow: /onboarding/
+Disallow: /r/
+Disallow: /referral/
+Disallow: /rewards/
+Disallow: /settings/
+Disallow: /share/
+Disallow: /sports/
+Disallow: /staking/
+Disallow: /tier/
+Disallow: /trade/
+Disallow: /verify-email
+Disallow: /wallet/
+
 # AI Crawlers
 User-agent: GPTBot
 Allow: /

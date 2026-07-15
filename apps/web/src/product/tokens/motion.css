@@ -10,12 +10,16 @@
   --ds-motion-toggle: 150ms;
   --ds-motion-surface: 200ms;
   --ds-motion-overlay: 320ms;
+  /* Signal Pulse — display-only count-up budget (§34.15 · useCountUp) */
+  --ds-motion-count-up: 400ms;
   --ds-ease-standard: cubic-bezier(0.2, 0, 0, 1);
 
   /* Deprecated alias — P13 removal · do not reference in new code */
   --ds-motion-fast: var(--ds-motion-press);
   --ds-motion-base: var(--ds-motion-surface);
   --ds-motion-slow: var(--ds-motion-overlay);
+  /* R9-PERF-JS — dialog content enter/exit (mirrors MOTION_MS.pageEnter) */
+  --ds-motion-page-enter: 250ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -25,8 +29,185 @@
     --ds-motion-toggle: 0ms;
     --ds-motion-surface: 0ms;
     --ds-motion-overlay: 0ms;
+    --ds-motion-count-up: 0ms;
     --ds-motion-fast: 0ms;
     --ds-motion-base: 0ms;
     --ds-motion-slow: 0ms;
+    --ds-motion-page-enter: 0ms;
   }
+}
+
+/*
+ * R9-PERF-JS — CSS overlay/dialog/sheet/ticker motion.
+ * Replaces the `motion` (framer-motion) runtime for Dialog/Sheet/LiveActivityTicker
+ * (~450kb raw eagerly bundled — see docs/audit/SYSTEM_AUDIT_2026-07-13/06_PERFORMANCE.md).
+ * Radix's Presence primitive defers unmount until `animationend` on `[data-state="closed"]`,
+ * so exit keyframes below play out identically to the previous spring-based exit variants.
+ * Components fall back to a plain unanimated element via usePrefersReducedMotion()/E2E flag
+ * BEFORE these classes are applied, so no `prefers-reduced-motion` media override is needed here.
+ */
+@keyframes ds-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes ds-overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.ds-motion-overlay[data-state='open'] {
+  animation: ds-overlay-in var(--ds-motion-overlay) var(--ds-ease-standard) both;
+}
+.ds-motion-overlay[data-state='closed'] {
+  animation: ds-overlay-out var(--ds-motion-overlay) var(--ds-ease-standard) both;
+}
+
+@keyframes ds-dialog-content-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0) scale(1);
+  }
+}
+@keyframes ds-dialog-content-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(4px) scale(0.98);
+  }
+}
+.ds-motion-dialog-content[data-state='open'] {
+  animation: ds-dialog-content-in var(--ds-motion-page-enter) var(--ds-ease-standard) both;
+}
+.ds-motion-dialog-content[data-state='closed'] {
+  animation: ds-dialog-content-out var(--ds-motion-page-enter) var(--ds-ease-standard) both;
+}
+
+@keyframes ds-sheet-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes ds-sheet-content-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+.ds-motion-sheet-content[data-state='open'] {
+  animation: ds-sheet-content-in var(--ds-motion-overlay) var(--ds-ease-standard) both;
+}
+.ds-motion-sheet-content[data-state='closed'] {
+  animation: ds-sheet-content-out var(--ds-motion-overlay) var(--ds-ease-standard) both;
+}
+
+/* Live activity ticker line — enter-only fade (key-based remount, no exit needed). */
+@keyframes ds-ticker-line-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ds-motion-ticker-line {
+  animation: ds-ticker-line-in 200ms var(--ds-ease-standard) both;
+}
+
+/*
+ * Casino game motion (Phase 1B — additive, casino-only budget; §Motion & performance
+ * acceptance criteria "Result reveal" tier 200-500ms ease-out). Additive only — does
+ * NOT replace or loosen the L-A financial-surface tokens above. Key-based remount
+ * (see crash-stage.tsx, limbo-stage.tsx) restarts these on each new settle/cash-out
+ * event. Shared across Batch A games, not Crash-exclusive despite the "cashout"
+ * class name — Limbo/Dice reuse the same win-reveal glow for their (non-cashout)
+ * settle moment rather than inventing a second token for the identical visual.
+ */
+:root {
+  --ds-motion-casino-reveal: 360ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ds-motion-casino-reveal: 0ms;
+  }
+}
+
+/* Result-reveal text/number entrance (fade + rise — transform/opacity only, 0 layout shift). */
+@keyframes ds-casino-reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ds-casino-reveal-in {
+  animation: ds-casino-reveal-in var(--ds-motion-casino-reveal) var(--ds-ease-standard) both;
+}
+
+/* Win number pop — scale overshoot, transform-only (0 layout shift). */
+@keyframes ds-casino-number-pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.16);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.ds-casino-number-pop {
+  display: inline-block;
+  animation: ds-casino-number-pop var(--ds-motion-casino-reveal) var(--ds-ease-standard) both;
+}
+
+/* Cash-out flash — success-tinted glow overlay behind the settled number (opacity-only). */
+@keyframes ds-casino-cashout-flash {
+  0% {
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.ds-casino-cashout-flash {
+  position: absolute;
+  inset: -4px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: var(--ds-radius-sm);
+  background: color-mix(in oklch, var(--ds-success) 24%, transparent);
+  opacity: 0;
+  animation: ds-casino-cashout-flash var(--ds-motion-casino-reveal) var(--ds-ease-standard) both;
 }

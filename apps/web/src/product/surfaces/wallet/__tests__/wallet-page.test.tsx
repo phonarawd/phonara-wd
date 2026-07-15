@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { WalletPageControllerView } from '@/features/wallet/use-wallet-page-controller';
@@ -69,14 +69,24 @@ beforeEach(() => {
 });
 
 describe('WalletPage', () => {
-  it('renders hero MoneyDisplay with RPC phon balance', () => {
+  it('renders wallet-hero Card with RPC phon balance and collapsed breakdown', () => {
     renderPage(makeEngine());
 
     expect(screen.getByTestId('wallet-page')).toBeInTheDocument();
     const hero = screen.getByTestId('wallet-balance-hero');
     expect(hero).toBeInTheDocument();
+    expect(hero).toHaveAttribute('data-card-variant', 'wallet-hero');
+    expect(hero).toHaveAttribute('data-signature', 'living-balance');
     expect(within(hero).getByText('12,345')).toBeInTheDocument();
     expect(within(hero).getByText('PHON')).toBeInTheDocument();
+    expect(hero.querySelector('[data-count-up="true"]')).not.toBeNull();
+    expect(screen.getByTestId('wallet-hero-details')).toBeInTheDocument();
+    expect(screen.queryByTestId('wallet-hero-details-panel')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('wallet-hero-breakdown')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('wallet-hero-details-toggle'));
+    expect(screen.getByTestId('wallet-hero-details-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('wallet-hero-breakdown')).toBeInTheDocument();
   });
 
   it('links deposit, withdraw, and ledger CTAs to canonical routes', () => {

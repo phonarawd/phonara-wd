@@ -2,6 +2,7 @@
  * Edge structured logging, HTTP error redaction, and provider-health helpers.
  * Secrets, tokens, PII, and raw provider payloads must never appear in logs or responses.
  */
+import { CORS_HEADERS } from './cors.ts';
 
 export const REQUEST_ID_HEADER = 'x-request-id';
 const REQUEST_ID_PATTERN = /^[a-zA-Z0-9._-]{8,128}$/;
@@ -9,7 +10,10 @@ const REQUEST_ID_PATTERN = /^[a-zA-Z0-9._-]{8,128}$/;
 export type DurationBucket = 'lt_100ms' | 'lt_500ms' | 'lt_1s' | 'gte_1s';
 export type ProviderHealthStatus = 'healthy' | 'degraded' | 'unavailable' | 'missing_config';
 
-const jsonHeaders = { 'content-type': 'application/json' };
+// SA-05 — every edge JSON response declares explicit CORS instead of relying
+// on the gateway default, so direct-from-browser functions (siwe-auth,
+// product-analytics) work under a locked-down/custom-domain gateway too.
+const jsonHeaders = { 'content-type': 'application/json', ...CORS_HEADERS };
 
 const SENSITIVE_KEY_RE =
   /(?:password|secret|token|authorization|bearer|api[_-]?key|private[_-]?key|signature|jwt|refresh|credential|email|phone|address|wallet|iban|account|ssn|payload)$/i;
@@ -301,12 +305,77 @@ export async function recordCircuitBreakerOutcome(
   }
 }
 
+/** Provider/job outcome — HTTP 2xx must not be treated as success (H-04 / ADR-021). */
+export type EdgeOpsOutcomeStatus =
+  | 'ok'
+  | 'error'
+  | 'partial'
+  | 'circuit_open'
+  | 'rpc_failed'
+  | 'rejected'
+  | 'missing_config';
+
+export interface EdgeOpsOutcomeCounts {
+  applied: number;
+  rejected: number;
+  circuitOpen: number;
+  rpcFailed: number;
+  total: number;
+  missingConfig?: number;
+}
+
+/**
+ * Classify price-feed / watcher batch outcomes. `ok` only when every item applied
+ * with zero rejects/circuit/RPC failures — never false-green on partial success.
+ */
+export function classifyEdgeOpsOutcome(counts: EdgeOpsOutcomeCounts): {
+  status: EdgeOpsOutcomeStatus;
+  errorCode: string | null;
+} {
+  const missing = counts.missingConfig ?? 0;
+  if (counts.total <= 0 && missing > 0) {
+    return { status: 'missing_config', errorCode: 'missing_config' };
+  }
+  if (counts.total <= 0) {
+    return { status: 'error', errorCode: 'no_sources' };
+  }
+
+  const allApplied =
+    counts.applied === counts.total &&
+    counts.rejected === 0 &&
+    counts.circuitOpen === 0 &&
+    counts.rpcFailed === 0 &&
+    missing === 0;
+
+  if (allApplied) {
+    return { status: 'ok', errorCode: null };
+  }
+
+  if (counts.applied === 0) {
+    if (missing > 0 && counts.circuitOpen === 0 && counts.rpcFailed === 0) {
+      return { status: 'missing_config', errorCode: 'missing_config' };
+    }
+    if (counts.circuitOpen === counts.total) {
+      return { status: 'circuit_open', errorCode: 'circuit_open' };
+    }
+    if (counts.rpcFailed > 0 && counts.rejected === 0 && counts.circuitOpen === 0) {
+      return { status: 'rpc_failed', errorCode: 'rpc_failed' };
+    }
+    if (counts.rejected === counts.total) {
+      return { status: 'rejected', errorCode: 'all_rejected' };
+    }
+    return { status: 'error', errorCode: 'all_sources_failed' };
+  }
+
+  return { status: 'partial', errorCode: 'partial_apply' };
+}
+
 export async function recordEdgeOpsEvent(
   supabase: SupabaseRpcClient,
   ctx: EdgeContext,
   params: {
     eventKey: string;
-    status: 'ok' | 'error';
+    status: EdgeOpsOutcomeStatus;
     batchCount?: number;
     skippedCount?: number;
     errorCode?: string | null;

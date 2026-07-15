@@ -6,22 +6,50 @@ import type { MessageKey } from '@phonara/i18n';
 
 import { CASINO_HUB_ROUTE } from './tournaments-pf-admin-display-contract';
 import {
+  REFERRAL_LEADERBOARD_DEFER_BODY_KEY,
+  REFERRAL_LEADERBOARD_ENGINE_TODO,
+  REFERRAL_LEADERBOARD_ROUTE,
+  REFERRAL_LEADERBOARD_UI_UNLOCK_TODO,
+} from './referral-leaderboard-display-contract';
+import {
   SETTINGS_API_KEYS_ENGINE_TODO,
   SETTINGS_API_KEYS_ROUTE,
   SETTINGS_API_KEYS_UI_UNLOCK_TODO,
 } from './settings-api-keys-display-contract';
+import {
+  SUPPORT_TICKET_DEFER_BODY_KEY,
+  SUPPORT_TICKET_ENGINE_TODO,
+  SUPPORT_TICKET_ROUTE,
+  SUPPORT_TICKET_UI_UNLOCK_TODO,
+} from './support-hub-display-contract';
+import {
+  SYSTEM_STATUS_DEFER_BODY_KEY,
+  SYSTEM_STATUS_ENGINE_TODO,
+  SYSTEM_STATUS_ROUTE,
+  SYSTEM_STATUS_UI_UNLOCK_TODO,
+} from './system-status-display-contract';
 import { TIER_KEEP_STATUS_RPC, TIER_KEEP_STATUS_UI_ID } from './tier-me-display-contract';
+import {
+  TIER_LEADERBOARD_ENGINE_TODO,
+  TIER_LEADERBOARD_ROUTE,
+  TIER_LEADERBOARD_UI_UNLOCK_TODO,
+} from './tier-leaderboard-display-contract';
 
 export const PQA_FIX_DEAD_CONTROLS_TODO = 'pqa-fix-dead-controls' as const;
 
 export const CASINO_ROUND_HOOK_OWNER = 'apps/web/src/features/casino/use-casino-round.ts' as const;
+/** CasinoR#1 shell mounts pipeline — per-game stages remain batch todos. */
 export const CASINO_HUB_DEFER_TODO = 'p10-casino-replay-and-infra' as const;
+export const CASINO_GAME_SHELL_LIVE_TODO = 'p10-casino-replay-and-infra' as const;
+
+/** Lobby discovery is live (`p10-page-casino`) — hub stub row mitigatedBy=live. */
+export const CASINO_LOBBY_LIVE_TODO = 'p10-page-casino' as const;
 
 export const SPORTS_VIP_ROUTE = '/sports/vip' as const;
 export const SPORTS_VIP_ENGINE_TODO = 'ew-e4-gate-tier-option-b' as const;
-export const SPORTS_VIP_UI_UNLOCK_TODO = 'ew-e5-page-sports-vip' as const;
+export const SPORTS_VIP_UI_UNLOCK_TODO = 'ew-e5-gap-surfaces-wire' as const;
 
-export const TIER_KEEP_STATUS_ENGINE_TODO = 'ew-e1-engine-decay-rpc' as const;
+export const TIER_KEEP_STATUS_ENGINE_TODO = 'ew-e1-decay-wave' as const;
 
 /** Grant RPC for `user_reward_tickets` — read-only hub until operator ADR (48th audit). */
 export const REWARD_TICKETS_ISSUANCE_STATUS = 'read_only_no_grant_rpc' as const;
@@ -45,6 +73,12 @@ export const CASINO_HUB_DEFER_REASON_KEY = 'casino.hub.defer.body' as const sati
 
 export const SPORTS_VIP_DEFER_REASON_KEY = 'sports.vip.defer.body' as const satisfies MessageKey;
 
+export const REFERRAL_LEADERBOARD_DEFER_REASON_KEY = REFERRAL_LEADERBOARD_DEFER_BODY_KEY;
+
+export const SUPPORT_TICKET_DEFER_REASON_KEY = SUPPORT_TICKET_DEFER_BODY_KEY;
+
+export const SYSTEM_STATUS_DEFER_REASON_KEY = SYSTEM_STATUS_DEFER_BODY_KEY;
+
 export const SETTINGS_API_KEYS_CREATE_DISABLED_REASON_KEY =
   'settings.apiKeys.create.disabledHint' as const satisfies MessageKey;
 
@@ -55,43 +89,73 @@ export const PQA_DEAD_CONTROL_DEFER_REGISTRY: readonly DeadControlDeferRow[] = [
   {
     id: 'casino-route-hub-stub',
     route: CASINO_HUB_ROUTE,
-    mitigatedBy: 'defer_stub',
-    disabledReasonKey: CASINO_HUB_DEFER_REASON_KEY,
-    engineTodo: CASINO_HUB_DEFER_TODO,
-    note: 'DomainHub replaced — game surfaces deferred to P10 casino infra',
+    mitigatedBy: 'live',
+    engineTodo: CASINO_LOBBY_LIVE_TODO,
+    note: 'p10-page-casino lobby live — category/featured/grid · play surfaces still deferred',
   },
   {
     id: 'casino-round-hook-orphan',
-    route: CASINO_HUB_ROUTE,
-    mitigatedBy: 'defer_stub',
-    engineTodo: CASINO_HUB_DEFER_TODO,
-    note: 'useCasinoRoundPipeline exists · 0 mounted game surfaces until P10',
+    route: '/games/$gameCode',
+    mitigatedBy: 'live',
+    engineTodo: CASINO_GAME_SHELL_LIVE_TODO,
+    note: 'CasinoGameShell mounts useCasinoRoundPipeline · Batch A/B/C (crash·limbo·dice·mines·hilo·plinko·mint_reels·gold_rush·momentum) L1 live · Batch D deferred to p10-games-batch-d',
   },
   {
     id: 'settings-api-keys-stub',
     route: SETTINGS_API_KEYS_ROUTE,
-    mitigatedBy: 'disabled+key',
-    disabledReasonKey: SETTINGS_API_KEYS_CREATE_DISABLED_REASON_KEY,
+    mitigatedBy: 'live',
     engineTodo: SETTINGS_API_KEYS_ENGINE_TODO,
     uiUnlockTodo: SETTINGS_API_KEYS_UI_UNLOCK_TODO,
-    note: 'Trading bot API ENGINE:gap — hub IA built_hidden · direct URL defer stub',
+    note: 'Trading bot API E10 live — hub IA + list/create/revoke via financialConnectivityLive',
   },
   {
     id: 'sports-vip-coming-soon',
     route: SPORTS_VIP_ROUTE,
-    mitigatedBy: 'defer_stub',
+    mitigatedBy: 'live',
     disabledReasonKey: SPORTS_VIP_DEFER_REASON_KEY,
     engineTodo: SPORTS_VIP_ENGINE_TODO,
     uiUnlockTodo: SPORTS_VIP_UI_UNLOCK_TODO,
-    note: 'VIP markets gap until E4 Option B engine green',
+    note: 'E5 ew-e5-gap-surfaces-wire — VIP room browses shared fixtures · Platinum+ eligibility · stake caps Option B',
+  },
+  {
+    id: 'referral-leaderboard-stub',
+    route: REFERRAL_LEADERBOARD_ROUTE,
+    mitigatedBy: 'live',
+    disabledReasonKey: REFERRAL_LEADERBOARD_DEFER_REASON_KEY,
+    engineTodo: REFERRAL_LEADERBOARD_ENGINE_TODO,
+    uiUnlockTodo: REFERRAL_LEADERBOARD_UI_UNLOCK_TODO,
+    note: 'E5 ew-e5-gap-surfaces-wire — rpc_get_affiliate_rank_leaderboard live rank list (qualified count only)',
+  },
+  {
+    id: 'support-ticket-stub',
+    route: SUPPORT_TICKET_ROUTE,
+    mitigatedBy: 'live',
+    engineTodo: SUPPORT_TICKET_ENGINE_TODO,
+    uiUnlockTodo: SUPPORT_TICKET_UI_UNLOCK_TODO,
+    note: 'E10 ew-e10-trust-support-ui — rpc_create_support_ticket · rpc_list_support_tickets live intake',
+  },
+  {
+    id: 'system-status-stub',
+    route: SYSTEM_STATUS_ROUTE,
+    mitigatedBy: 'live',
+    engineTodo: SYSTEM_STATUS_ENGINE_TODO,
+    uiUnlockTodo: SYSTEM_STATUS_UI_UNLOCK_TODO,
+    note: 'E10 ew-e10-trust-support-ui — public /status presentation lanes + announcements CTA',
+  },
+  {
+    id: 'tier-leaderboard-stub',
+    route: TIER_LEADERBOARD_ROUTE,
+    mitigatedBy: 'live',
+    engineTodo: TIER_LEADERBOARD_ENGINE_TODO,
+    uiUnlockTodo: TIER_LEADERBOARD_UI_UNLOCK_TODO,
+    note: 'E10 ew-e10-trust-support-ui — rpc_get_tier_leaderboard live XP rank list (masked names only)',
   },
   {
     id: 'tier-keep-status-claim-blocked',
     route: '/tier/me',
-    mitigatedBy: 'disabled+key',
-    disabledReasonKey: TIER_KEEP_STATUS_UNAVAILABLE_REASON_KEY,
+    mitigatedBy: 'live',
     engineTodo: TIER_KEEP_STATUS_ENGINE_TODO,
-    note: '_repeatable_progress tier_keep_status fixed at 0 — claim blocked until E1',
+    note: 'E1 ew-e1-decay-wave — tier_keep_status progress live · claim when maintenance met',
   },
   {
     id: 'user-reward-tickets-zero-issuance',
@@ -107,9 +171,9 @@ export function isTierKeepStatusMission(uiId: string): boolean {
   return uiId === TIER_KEEP_STATUS_UI_ID;
 }
 
-/** E1 decay RPC ships before tier keep mission claim goes live. */
+/** E1 decay RPC shipped — tier keep mission claim is live when progress met. */
 export function isTierKeepStatusClaimEngineLive(): boolean {
-  return false;
+  return true;
 }
 
 export function resolveTierKeepStatusUnavailableReason(uiId: string): MessageKey | null {

@@ -2,6 +2,7 @@
 -- Sportsbook void bet refund conservation (Wave-S4 + market void)
 --
 -- Authoritative void/refund paths: `rpc_void_sports_bet`, `rpc_void_sports_market`.
+-- Currency under test: PHON. USDT sportsbook Σ=0: usdt_betting_proof_e7_test.sql (ZA-19)
 -- Cancelled fixtures block new placement (`fixture_not_open`) — see place negative test.
 -- ============================================================
 

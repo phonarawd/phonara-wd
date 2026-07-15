@@ -6,7 +6,6 @@
     "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"],
-      "@/lib/i18n": ["./src/lib/i18n.tsx"],
       "@phonara/shared-types": ["../../packages/shared-types/src"],
       "@phonara/money": ["../../packages/money/src"],
       "@phonara/i18n": ["../../packages/i18n/src"],

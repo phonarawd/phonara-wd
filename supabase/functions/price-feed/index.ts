@@ -6,6 +6,7 @@ import {
   recordProviderHealth,
   assessCircuitBreaker,
   recordCircuitBreakerOutcome,
+  classifyEdgeOpsOutcome,
   toStableErrorCode,
   type CircuitBreakerGate,
 } from '../_shared/edge-observability.ts';
@@ -397,23 +398,78 @@ Deno.serve(async (request) => {
 
     const results = await runPool(sources ?? [], MAX_CONCURRENCY, processSource);
 
-    const submitted = results.filter((result) => result.ok).length;
-    const circuitSkipped = results.filter((result) => result.reason === 'circuit_open').length;
-    const insufficientSources = results.filter((result) => {
-      if (!result.ok || !result.rpcResult || typeof result.rpcResult !== 'object') {
-        return false;
-      }
+    // H-04: separate applied / rejected / circuit-open / rpc-failed — never ok on partial.
+    let applied = 0;
+    let rejected = 0;
+    let circuitOpen = 0;
+    let rpcFailed = 0;
+    let insufficientSources = 0;
 
-      const rpcResult = result.rpcResult as Record<string, unknown>;
-      return rpcResult['reason'] === 'insufficient_sources';
-    }).length;
+    for (const result of results) {
+      if (result.reason === 'circuit_open') {
+        circuitOpen += 1;
+        continue;
+      }
+      if (!result.ok) {
+        if (
+          result.reason === 'rpc_failed' ||
+          result.reason === 'duplicate' ||
+          (result.reason?.includes('rpc') ?? false)
+        ) {
+          rpcFailed += 1;
+        } else {
+          rejected += 1;
+        }
+        continue;
+      }
+      if (result.rpcResult && typeof result.rpcResult === 'object') {
+        const rpcResult = result.rpcResult as Record<string, unknown>;
+        if (rpcResult['reason'] === 'insufficient_sources') {
+          insufficientSources += 1;
+          rejected += 1;
+          continue;
+        }
+        if (
+          rpcResult['circuit_breaker_triggered'] === true ||
+          rpcResult['market_halted'] === true
+        ) {
+          // Source stored / feed attempted but settlement rejected by circuit — count as rejected.
+          rejected += 1;
+          continue;
+        }
+      }
+      applied += 1;
+    }
+
+    const outcome = classifyEdgeOpsOutcome({
+      applied,
+      rejected,
+      circuitOpen,
+      rpcFailed,
+      total: results.length,
+    });
 
     const providerStats = new Map<string, { ok: number; fail: number; circuit: boolean }>();
     for (const result of results) {
       if (!isProvider(result.provider)) continue;
       const stats = providerStats.get(result.provider) ?? { ok: 0, fail: 0, circuit: false };
-      if (result.ok) stats.ok += 1;
-      else stats.fail += 1;
+      if (result.ok && result.reason !== 'circuit_open') {
+        const rpcResult =
+          result.rpcResult && typeof result.rpcResult === 'object'
+            ? (result.rpcResult as Record<string, unknown>)
+            : null;
+        if (
+          rpcResult?.['reason'] === 'insufficient_sources' ||
+          rpcResult?.['circuit_breaker_triggered'] === true ||
+          rpcResult?.['market_halted'] === true
+        ) {
+          stats.fail += 1;
+        } else {
+          stats.ok += 1;
+        }
+      } else {
+        stats.fail += 1;
+      }
       if (result.reason === 'circuit_open') stats.circuit = true;
       providerStats.set(result.provider, stats);
     }
@@ -441,24 +497,38 @@ Deno.serve(async (request) => {
 
     ctx.log('ops.price_feed.completed', {
       batch_count: results.length,
-      skipped_count: circuitSkipped,
+      skipped_count: circuitOpen,
+      outcome_status: outcome.status,
+      applied,
+      rejected,
+      circuit_open: circuitOpen,
+      rpc_failed: rpcFailed,
     });
 
     await recordEdgeOpsEvent(supabase, ctx, {
       eventKey: 'ops.price_feed.completed',
-      status: submitted > 0 ? 'ok' : 'error',
+      status: outcome.status,
       batchCount: results.length,
-      skippedCount: circuitSkipped,
-      errorCode: submitted > 0 ? null : 'all_sources_failed',
-      metadata: { submitted, failed: results.length - submitted, insufficientSources },
+      skippedCount: circuitOpen,
+      errorCode: outcome.errorCode,
+      metadata: {
+        applied,
+        rejected,
+        circuitOpen,
+        rpcFailed,
+        insufficientSources,
+      },
     });
 
+    // Provider outcome in body — HTTP 2xx alone must not be treated as success (ADR-021).
     return ctx.jsonOk({
-      ok: true,
+      ok: outcome.status === 'ok',
+      outcome: outcome.status,
       attempted: results.length,
-      submitted,
-      failed: results.length - submitted,
-      circuitSkipped,
+      applied,
+      rejected,
+      circuitOpen,
+      rpcFailed,
       insufficientSources,
     });
   } catch (error) {

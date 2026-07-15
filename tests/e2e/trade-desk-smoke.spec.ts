@@ -35,12 +35,14 @@ import {
   clickFuturesMarketOrderTab,
   clickSpotLimitOrderTab,
   clickSpotMarketOrderTab,
+  dismissTradeEducationIfVisible,
   gotoFuturesDesk,
   gotoSpotDesk,
   gotoStakingHub,
   prepareSpotDeskForSubmit,
   TRADE_DESK_VIEWPORTS,
   type TradeDeskE2EFixture,
+  waitForOraclePricesLoaded,
 } from './fixtures/trade-desk-money';
 
 test.describe('Phase 3 trade-desk-smoke money gate', () => {
@@ -380,7 +382,12 @@ test.describe('Phase 3 trade-desk-smoke money gate', () => {
     const admin = serviceClient();
     await setOracleStale(admin, 'PHON_USDT', '0.100000');
 
-    await gotoSpotDesk(page);
+    // beforeEach already lands on /trade — reload so oracle_prices refetch picks up stale updated_at.
+    const pricesLoaded = waitForOraclePricesLoaded(page);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await dismissTradeEducationIfVisible(page);
+    await pricesLoaded;
+    await expect(page.getByTestId('spot-desk-page')).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId('trade-chart-panel')).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId('spot-submit')).toBeDisabled({ timeout: 20_000 });
     await expect(page.getByTestId('spot-submit-blocked-reason')).toBeVisible();

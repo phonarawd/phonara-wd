@@ -41,9 +41,10 @@ export function BottomNav({ className, showEarnMissionBadge = false }: BottomNav
 
   return (
     <nav
-      className={cn('ds-shell-bottomnav fixed inset-x-0 bottom-0 z-20', className)}
+      className={cn('ds-shell-bottomnav fixed inset-x-0 bottom-0', className)}
       aria-label={t('shell.bottomnav.aria')}
       data-testid="bottom-nav"
+      data-floating="true"
     >
       {BOTTOM_NAV_ITEMS.map((item) => {
         const Icon = item.icon;

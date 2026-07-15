@@ -21,6 +21,7 @@
       "entry": [
         "vite.config.ts",
         "src/contexts/**/*.tsx",
+        "src/contracts/**/*.ts",
         "src/domain/**/*.ts",
         "src/hooks/**/*.ts",
         "src/lib/**/*.ts",

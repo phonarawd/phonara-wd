@@ -1,25 +1,19 @@
 import { Link, useRouterState } from '@tanstack/react-router';
 
+import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
 import { useT } from '@/product/i18n';
+import {
+  filterAdminNavEntries,
+  flattenAdminNavLeaves,
+  type NavEntry,
+  type NavGroup,
+  type NavLeaf,
+} from '@/product/layout/admin-nav-filter';
 import { cn } from '@/product/primitives/lib/cn';
 import type { MessageKey } from '@phonara/i18n';
 
-type NavLeaf = {
-  kind: 'leaf';
-  labelKey: MessageKey;
-  to: string;
-  end?: boolean;
-};
-
-type NavGroup = {
-  kind: 'group';
-  labelKey: MessageKey;
-  to?: string;
-  end?: boolean;
-  children: NavLeaf[];
-};
-
-type NavEntry = NavLeaf | NavGroup;
+export type { NavEntry, NavGroup, NavLeaf } from '@/product/layout/admin-nav-filter';
+export { filterAdminNavEntries, flattenAdminNavLeaves } from '@/product/layout/admin-nav-filter';
 
 /** §6.1 · §12.19 Admin chrome — operator-facing Korean labels (admin app routes omit `/admin` prefix). */
 const ADMIN_NAV: NavEntry[] = [
@@ -42,16 +36,35 @@ const ADMIN_NAV: NavEntry[] = [
       { kind: 'leaf', labelKey: 'admin.nav.referrals', to: '/earn/referrals' },
       { kind: 'leaf', labelKey: 'admin.nav.missions', to: '/earn/missions' },
       { kind: 'leaf', labelKey: 'admin.nav.rewards', to: '/earn/rewards' },
+      { kind: 'leaf', labelKey: 'admin.nav.earnActivity', to: '/earn/activity' },
       { kind: 'leaf', labelKey: 'admin.nav.viralStats', to: '/viral-stats' },
     ],
   },
   { kind: 'leaf', labelKey: 'admin.nav.users', to: '/users' },
   { kind: 'leaf', labelKey: 'admin.nav.tiers', to: '/tiers' },
+  { kind: 'leaf', labelKey: 'admin.nav.tierBenefits', to: '/tier-benefits' },
+  { kind: 'leaf', labelKey: 'admin.nav.promotions', to: '/promotions' },
+  { kind: 'leaf', labelKey: 'admin.nav.cms', to: '/cms' },
+  { kind: 'leaf', labelKey: 'admin.nav.casino', to: '/casino' },
   { kind: 'leaf', labelKey: 'admin.nav.risk', to: '/risk' },
   { kind: 'leaf', labelKey: 'admin.nav.staking', to: '/staking' },
   { kind: 'leaf', labelKey: 'admin.nav.audit', to: '/audit' },
   { kind: 'leaf', labelKey: 'admin.nav.settings', to: '/settings' },
+  { kind: 'leaf', labelKey: 'admin.nav.team', to: '/team' },
+  { kind: 'leaf', labelKey: 'admin.nav.support', to: '/support' },
   { kind: 'leaf', labelKey: 'admin.nav.mfa', to: '/mfa/policy' },
+  { kind: 'leaf', labelKey: 'admin.nav.ops', to: '/ops' },
+];
+
+/** Mobile quick subset — still filtered by the same RBAC predicate. */
+const MOBILE_QUICK_NAV: NavLeaf[] = [
+  { kind: 'leaf', labelKey: 'admin.nav.overview', to: '/', end: true },
+  { kind: 'leaf', labelKey: 'admin.nav.queues', to: '/queues' },
+  { kind: 'leaf', labelKey: 'admin.nav.deposits', to: '/deposits' },
+  { kind: 'leaf', labelKey: 'admin.nav.withdrawals', to: '/withdrawals' },
+  { kind: 'leaf', labelKey: 'admin.nav.earn', to: '/earn' },
+  { kind: 'leaf', labelKey: 'admin.nav.users', to: '/users' },
+  { kind: 'leaf', labelKey: 'admin.nav.audit', to: '/audit' },
   { kind: 'leaf', labelKey: 'admin.nav.ops', to: '/ops' },
 ];
 
@@ -91,7 +104,7 @@ function NavLinkItem({
         'block rounded-md px-3 py-2 text-sm font-medium transition-colors',
         nested && 'pl-6',
         active
-          ? 'bg-primary/10 text-primary'
+          ? 'bg-accent/10 text-accent'
           : 'text-foreground-muted hover:bg-surface-elevated hover:text-foreground',
         'whitespace-nowrap',
       )}
@@ -116,9 +129,7 @@ function NavGroupItem({ group }: { group: NavGroup }) {
           to={group.to}
           className={cn(
             'block rounded-md px-3 py-2 text-sm font-semibold transition-colors',
-            groupActive
-              ? 'bg-primary/10 text-primary'
-              : 'text-foreground hover:bg-surface-elevated',
+            groupActive ? 'bg-accent/10 text-accent' : 'text-foreground hover:bg-surface-elevated',
           )}
           aria-current={groupActive ? 'page' : undefined}
         >
@@ -138,23 +149,14 @@ function NavGroupItem({ group }: { group: NavGroup }) {
   );
 }
 
-const MOBILE_QUICK_NAV: NavLeaf[] = [
-  { kind: 'leaf', labelKey: 'admin.nav.overview', to: '/', end: true },
-  { kind: 'leaf', labelKey: 'admin.nav.queues', to: '/queues' },
-  { kind: 'leaf', labelKey: 'admin.nav.deposits', to: '/deposits' },
-  { kind: 'leaf', labelKey: 'admin.nav.withdrawals', to: '/withdrawals' },
-  { kind: 'leaf', labelKey: 'admin.nav.earn', to: '/earn' },
-  { kind: 'leaf', labelKey: 'admin.nav.users', to: '/users' },
-  { kind: 'leaf', labelKey: 'admin.nav.audit', to: '/audit' },
-  { kind: 'leaf', labelKey: 'admin.nav.ops', to: '/ops' },
-];
-
 export function AdminNav({ className }: { className?: string }) {
   const t = useT();
+  const { role } = useAdminOperatorRbac();
+  const entries = filterAdminNavEntries(ADMIN_NAV, role);
 
   return (
     <nav className={cn('space-y-4', className)} aria-label={t('admin.nav.ariaLabel')}>
-      {ADMIN_NAV.map((entry) =>
+      {entries.map((entry) =>
         entry.kind === 'leaf' ? (
           <NavLinkItem key={entry.to} {...entry} />
         ) : (
@@ -168,10 +170,13 @@ export function AdminNav({ className }: { className?: string }) {
 /** Touch-first quick links — flat list for horizontal scroll under the header. */
 export function AdminMobileNav({ className }: { className?: string }) {
   const t = useT();
+  const { role } = useAdminOperatorRbac();
+  const entries = filterAdminNavEntries(MOBILE_QUICK_NAV, role);
+  const items = flattenAdminNavLeaves(entries);
 
   return (
     <nav className={cn('flex min-w-max gap-1', className)} aria-label={t('admin.nav.ariaLabel')}>
-      {MOBILE_QUICK_NAV.map((item) => (
+      {items.map((item) => (
         <NavLinkItem key={item.to} {...item} nested={false} />
       ))}
     </nav>
@@ -188,6 +193,14 @@ export function resolveAdminNavTitleKey(pathname: string): MessageKey {
 
   if (current === '/mfa/policy') {
     return 'admin.nav.mfa';
+  }
+
+  if (current === '/team') {
+    return 'admin.nav.team';
+  }
+
+  if (current === '/support') {
+    return 'admin.nav.support';
   }
 
   for (const entry of ADMIN_NAV) {

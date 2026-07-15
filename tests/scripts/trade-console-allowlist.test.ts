@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   TRADE_CONSOLE_ALLOWLIST_PATH,
   TRADE_CONSOLE_WARN_MAX_ENTRIES,
+  isInfraConsoleNoise,
   loadTradeConsoleAllowlistFile,
   resetTradeConsoleAllowlistCacheForTests,
   validateTradeConsoleAllowlist,
@@ -58,5 +59,13 @@ describe('trade-console-allowlist.json · P1-F governance', () => {
   it('cache reset does not break validation', () => {
     resetTradeConsoleAllowlistCacheForTests();
     expect(() => validateTradeConsoleAllowlist(loadTradeConsoleAllowlistFile())).not.toThrow();
+  });
+});
+
+describe('trade-console-collector · infra noise patterns', () => {
+  it('ignores Firefox Pretendard Variable font metadata warnings', () => {
+    const sample =
+      '[JavaScript Warning: "downloadable font: name: name records are not sorted. (font-family: "Pretendard Variable" style:normal weight:45..920 stretch:100 src index:0) source: http://127.0.0.1:3000/fonts/PretendardVariable.woff2"]';
+    expect(isInfraConsoleNoise(sample)).toBe(true);
   });
 });

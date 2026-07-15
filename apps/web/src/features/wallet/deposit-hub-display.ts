@@ -1,5 +1,9 @@
 import type { MessageKey } from '@phonara/i18n';
 
+import {
+  isDepositRailCapabilityLive,
+  type WalletCapabilityRailsInput,
+} from '@/domain/wallet-capability-rails-display-contract';
 import type { MoneyStatusState } from '@/product/primitives/status-badge';
 
 import { cryptoDepositStatusLabelKey, type DepositRail } from './crypto-deposit-status';
@@ -57,6 +61,13 @@ export const DEPOSIT_HUB_RAILS: readonly DepositHubRailView[] = [
     metaKey: 'wallet.deposit.giftcard.eta',
   },
 ] as const;
+
+/** H-03 · H-11 — omit crypto/giftcard rails until capability is live. */
+export function resolveDepositHubRails(
+  input: WalletCapabilityRailsInput,
+): readonly DepositHubRailView[] {
+  return DEPOSIT_HUB_RAILS.filter((rail) => isDepositRailCapabilityLive(rail.id, input));
+}
 
 const METHOD_LABEL: Record<DepositRail, MessageKey> = {
   krw: 'wallet.tx.method.krw',

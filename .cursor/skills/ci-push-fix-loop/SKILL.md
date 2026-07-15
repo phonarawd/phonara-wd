@@ -36,10 +36,12 @@ Fix all errors in **one batch**, then rerun failed gates once.
 
 Only when operator explicitly requested commit/push (or standing grant in same session).
 
+**`main` 직접 push 금지** — `bun run wip:branch`로 feature branch 확인 후:
+
 ```powershell
 git add <relevant files>
 git commit -m "fix(scope): why not what list"
-git push origin HEAD
+bun run git:push          # feature branch only — main push auto-blocked
 ```
 
 ## Phase 3 — Watch CI

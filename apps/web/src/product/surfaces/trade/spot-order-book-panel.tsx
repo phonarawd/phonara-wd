@@ -17,6 +17,7 @@ import {
   type SyntheticBookRow,
 } from '@/features/trading/order-book-display';
 import { TradeHelpTip } from '@/features/trading/trade-beginner-help/trade-help-tip';
+import { Card } from '@/product/primitives/card';
 import { cn } from '@/product/primitives/lib/cn';
 import {
   Select,
@@ -95,12 +96,10 @@ export function SpotOrderBookPanel({
   );
 
   return (
-    <section
+    <Card
+      variant="trade-dense"
       data-testid="spot-order-book-panel"
-      className={cn(
-        'border-line bg-surface flex min-h-0 flex-col overflow-hidden rounded-(--ds-radius-lg) border',
-        className,
-      )}
+      className={cn('flex min-h-0 flex-col overflow-hidden', className)}
     >
       <header className="border-line border-b px-3 py-2">
         <div className="flex items-start justify-between gap-2">
@@ -136,12 +135,12 @@ export function SpotOrderBookPanel({
             </p>
           </div>
           <label className="flex shrink-0 flex-col items-end gap-1">
-            <span className="text-foreground-muted text-[10px] uppercase tracking-wide">
+            <span className="text-foreground-muted text-tiny uppercase tracking-wide">
               {t('trade.orderbook.grouping')}
             </span>
             <Select value={activeStep} onValueChange={setGroupingStep}>
               <SelectTrigger
-                className="border-line bg-surface h-8 min-w-[5.5rem] px-2 text-xs"
+                className="border-line bg-surface h-8 min-w-22 px-2 text-xs"
                 aria-label={t('trade.orderbook.grouping')}
                 data-testid="spot-order-book-grouping"
               >
@@ -160,7 +159,7 @@ export function SpotOrderBookPanel({
       </header>
 
       <div
-        className="bg-surface-raised mx-3 mt-2 grid grid-cols-2 gap-1 rounded-(--ds-radius-md) p-1"
+        className="bg-surface-raised mx-3 mt-2 grid grid-cols-2 gap-1 rounded-md p-1"
         role="tablist"
         aria-label={t('trade.orderbook.viewToggle')}
       >
@@ -170,7 +169,7 @@ export function SpotOrderBookPanel({
           aria-selected={viewMode === 'book'}
           data-testid="spot-order-book-view-book"
           className={cn(
-            'min-h-9 rounded-(--ds-radius-sm) px-3 py-1.5 text-sm font-medium transition-[color,background-color]',
+            'min-h-9 rounded-sm px-3 py-1.5 text-sm font-medium transition-[color,background-color]',
             viewMode === 'book'
               ? 'bg-surface text-foreground shadow-sm'
               : 'text-foreground-muted hover:text-foreground',
@@ -185,7 +184,7 @@ export function SpotOrderBookPanel({
           aria-selected={viewMode === 'depth'}
           data-testid="spot-order-book-view-depth"
           className={cn(
-            'min-h-9 rounded-(--ds-radius-sm) px-3 py-1.5 text-sm font-medium transition-[color,background-color]',
+            'min-h-9 rounded-sm px-3 py-1.5 text-sm font-medium transition-[color,background-color]',
             viewMode === 'depth'
               ? 'bg-surface text-foreground shadow-sm'
               : 'text-foreground-muted hover:text-foreground',
@@ -209,7 +208,7 @@ export function SpotOrderBookPanel({
           <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-hidden px-2 pb-2">
             <BookSide rows={paddedAsks} side="ask" maxSize={maxSize} onPriceClick={onPriceClick} />
             <div
-              className="border-line my-1 shrink-0 border-y py-1 text-center tabular-nums min-h-[2.75rem]"
+              className="border-line my-1 shrink-0 border-y py-1 text-center tabular-nums min-h-11"
               data-testid="spot-order-book-spread"
             >
               <div
@@ -220,7 +219,7 @@ export function SpotOrderBookPanel({
               </div>
               <p
                 className={cn(
-                  'text-foreground-muted m-0 mt-0.5 min-h-[1rem] text-[11px]',
+                  'text-foreground-muted m-0 mt-0.5 min-h-4 text-xs',
                   !spread && 'invisible',
                 )}
                 aria-hidden={!spread}
@@ -244,7 +243,7 @@ export function SpotOrderBookPanel({
       ) : (
         <p className="text-foreground-muted m-0 px-3 py-6 text-center text-sm">—</p>
       )}
-    </section>
+    </Card>
   );
 }
 
@@ -291,7 +290,7 @@ function BookSide({
                 type="button"
                 className={cn(
                   'relative z-1 cursor-pointer border-0 bg-transparent p-0 text-left text-xs tabular-nums',
-                  'hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-(--ds-focus)',
+                  'hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-focus',
                   side === 'ask' ? 'text-market-down' : 'text-market-up',
                 )}
                 data-testid={`spot-order-book-${side}-price`}

@@ -3,7 +3,7 @@
 > **Active SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](docs/SSOT/ACTIVE_WORK_SSOT.md)  
 > **Engine:** `[x] FULLY CLOSED` (2026-07-03) — status [`ENGINE_APEX_CLOSEOUT.md`](docs/ENGINE_APEX_CLOSEOUT.md) only · **구현 큐 0**  
 > **Demolition:** `[x] DONE` — batch 재실행 없음  
-> **Next:** Phase R — [`REBUILD_PLAN_v1.md`](docs/PRODUCT/REBUILD_PLAN_v1.md) · **`da-w2-shell-elevation-infra`** (#188) · DA W1 GATE `[x]` · DA W1 DS `[x]` · DA W0 `[x]` · R0 forensic `[x]`
+> **Next:** Phase R — [`REBUILD_PLAN_v1.md`](docs/PRODUCT/REBUILD_PLAN_v1.md) · **E10 Platform World-Class GATE `[x]` DONE** · E10 growth+trust+wallet **`[x]`** · E10 WAVE **`[x]`** · E9 GATE **`[x]`** · E8 GATE **`[x]`**
 
 Rules: `.cursor/rules/00-post-closeout-active-ssot.mdc` · denylist [`DEPRECATED_DOC_DENYLIST.md`](docs/SSOT/DEPRECATED_DOC_DENYLIST.md)
 
@@ -18,6 +18,31 @@ Rules: `.cursor/rules/00-post-closeout-active-ssot.mdc` · denylist [`DEPRECATED
 - Engine evidence phase reports — **감사 이력만** · 실행 큐 아님 ([`DEPRECATED_DOC_DENYLIST.md`](docs/SSOT/DEPRECATED_DOC_DENYLIST.md))
 - `DEMOLITION_PLAN` batch rows (DONE)
 - v2 deleted SSOT (`UI_REBUILD_WAVE` · `MASTER_TODO` · …) — Batch 11 `git rm`
+
+## Branch workflow (non-waivable)
+
+**`main`에 직접 push 금지** — 오류 시 main이 지저분해짐. feature branch → CI green → PR merge.
+
+```powershell
+# 1) main에서 작업 중이면 feature branch로 이동 (커밋·미커밋 변경 유지)
+bun run wip:branch -- "da-w2-shell-elevation"
+
+# 2) 마일스톤마다 checkpoint (미완성 OK — phase-r/* · wip/* 만)
+bun run wip:checkpoint -- "aurora backdrop policy"
+
+# 3) push는 feature branch만 (main 직접 push 자동 차단)
+bun run git:push
+
+# 4) CI green 확인 후 PR → main merge
+bun run ci:watch
+gh pr create --base main --head $(git branch --show-current)
+```
+
+| 브랜치                   | 용도                                       |
+| ------------------------ | ------------------------------------------ |
+| `main`                   | merge-ready only · 직접 작업/push **금지** |
+| `phase-r/<topic>-<date>` | Phase R 구현 큐 (정본)                     |
+| `wip/<topic>`            | 레거시 WIP (허용)                          |
 
 ## Gates
 
@@ -34,13 +59,14 @@ Rules: `.cursor/rules/00-post-closeout-active-ssot.mdc` · denylist [`DEPRECATED
 
 - `bun run test:e2e` / `test:sql` / `supabase db reset` / `check:full` / `gate:phase-r` **직접** 실행
 
-| Gate                      | 로컬 (Cursor)                              | 비고           |
-| ------------------------- | ------------------------------------------ | -------------- |
-| Implemented closeout      | `gate:ai-impl -- --test <path>`            | 가벼움         |
-| **전체 테스트**           | `gate:local-autopilot` · `@test-autopilot` | 저사양 순차    |
-| typecheck · lint · vitest | L0~L4                                      | 항상 OK        |
-| test:e2e/sql 직접         | ❌                                         | orchestrator만 |
-| CI (선택)                 | `ci:watch` after push                      | GitHub         |
+| Gate                      | 로컬 (Cursor)                                                         | 비고                                      |
+| ------------------------- | --------------------------------------------------------------------- | ----------------------------------------- |
+| Implemented closeout      | `gate:ai-impl -- --test <path> --closeout <todo-id> --evidence "..."` | L0~L4 green 후 **Plan YAML·§82 doc 자동** |
+| Plan todo only            | `closeout:todo -- <todo-id> --evidence "..."`                         | gate 이미 green일 때                      |
+| **전체 테스트**           | `gate:local-autopilot` · `@test-autopilot`                            | 저사양 순차                               |
+| typecheck · lint · vitest | L0~L4                                                                 | 항상 OK                                   |
+| test:e2e/sql 직접         | ❌                                                                    | orchestrator만                            |
+| CI (선택)                 | `ci:watch` after push                                                 | GitHub                                    |
 
 ### 로컬 전체 테스트 (operator 기본)
 
@@ -56,8 +82,8 @@ bun run gate:local-autopilot
 Operator 「푸시 전 완벽하게」 / 「CI green까지」 시 skill **`ci-push-fix-loop`** · rule **`94-ci-push-fix-loop.mdc`**:
 
 ```powershell
-# 1) Pre-push L0~L4
-bun run gate:ai-impl -- --test <owner-vitest-path>
+# 1) Pre-push L0~L4 + Plan closeout (operator 수동 체크 0)
+bun run gate:ai-impl -- --test <owner-vitest-path> --closeout <todo-id> --evidence "gate:ai-impl ... green · N/N"
 bun run format:check
 
 # 2) Commit + push (operator 명시 시)
@@ -74,7 +100,7 @@ Required jobs: **quality · sql · e2e · advisors**. 로컬 heavy gate **금지
 
 ```powershell
 bun run gate:ai-impl -- --test <owner-vitest-path>
-git push origin <branch>
+bun run git:push
 bun run ci:watch
 ```
 

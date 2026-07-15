@@ -25,15 +25,33 @@ vi.mock('@/features/landing/use-landing-live-proof', () => ({
   useLandingLiveProof: () => ({
     proofMode: 'presentation',
     proof: {
-      testimonials: 'presentation',
-      stats: 'presentation',
+      testimonials: 'hidden',
+      stats: 'hidden',
       walletPreview: 'presentation',
       withdrawalMomentum: 'hidden',
+      withdrawalProof: 'hidden',
+      ambientSocial: 'hidden',
     },
     withdrawalMomentumCount: null,
     liveMemberCount: null,
     isLoading: false,
     isLive: false,
+  }),
+}));
+
+vi.mock('@/features/earn/use-earn-fiat-hint', () => ({
+  useEarnFiatHint: () => ({
+    targetFiat: 'KRW',
+    hintFor: () => ({
+      displayOnly: true,
+      disabled: true,
+      formattedHint: '',
+      targetFiat: 'KRW',
+      asOf: '',
+      stale: false,
+      sourceCurrency: 'PHON',
+    }),
+    showDisclaimer: false,
   }),
 }));
 
@@ -116,7 +134,7 @@ describe('LandingPage', () => {
 
     expect(screen.getByTestId('landing-wallet-preview')).toBeInTheDocument();
     expect(screen.getByText('내 PHON')).toBeInTheDocument();
-    expect(screen.getByTestId('landing-cumulative-stats')).toBeInTheDocument();
+    expect(screen.queryByTestId('landing-cumulative-stats')).not.toBeInTheDocument();
   });
 
   it('renders header lockup with mono mark and lowercase wordmark', () => {
@@ -138,17 +156,18 @@ describe('LandingPage', () => {
     expect(heroBrand).toHaveAttribute('src', '/brand/logo.svg');
   });
 
-  it('shows cold-start proof without zero-state counters', () => {
+  it('hides synthetic social proof and shows catalog rewards in PHON (C-01 · M-01)', () => {
     renderLandingPage();
 
     expect(screen.getByTestId('landing-proof')).toBeInTheDocument();
-    expect(screen.getByText(/2,900 PHON/)).toBeInTheDocument();
-    expect(screen.getByTestId('landing-cumulative-stats')).toHaveTextContent(/1,0\d{2},\d{3}명/);
-    expect(screen.getByTestId('landing-signup-momentum')).toBeInTheDocument();
-    expect(screen.getByText(/가입을 진행 중/)).toBeInTheDocument();
-    expect(screen.getByTestId('landing-activity-ticker-static')).toBeInTheDocument();
+    expect(screen.getAllByText(/2,900/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.queryByTestId('landing-cumulative-stats')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('landing-signup-momentum')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('landing-activity-ticker-static')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('landing-activity-ticker')).not.toBeInTheDocument();
     expect(screen.queryByText('누적 가입자 0')).not.toBeInTheDocument();
     expect(screen.queryByText(/^0명$/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/1 PHON = 1 KRW/)).not.toBeInTheDocument();
   });
 
   it('includes working legal footer links and age notice', () => {
@@ -160,10 +179,18 @@ describe('LandingPage', () => {
       'href',
       '/legal/responsible-gaming',
     );
+    expect(screen.getByTestId('landing-footer-affiliate')).toHaveAttribute(
+      'href',
+      '/legal/affiliate',
+    );
+    expect(screen.getByTestId('landing-footer-cookies')).toHaveAttribute('href', '/legal/cookies');
+    expect(screen.getByTestId('landing-footer-faq')).toHaveAttribute('href', '/support/faq');
+    expect(screen.getByTestId('landing-footer-feedback')).toHaveAttribute('href', '/feedback');
+    expect(screen.getByTestId('landing-footer-support')).toHaveAttribute('href', '/support');
     expect(screen.getByText('만 19세 이상만 가입할 수 있습니다.')).toBeInTheDocument();
   });
 
-  it('renders side-hustle how-it-works and FAQ without casino copy in hero', () => {
+  it('renders side-hustle how-it-works and FAQ without synthetic proof or casino hero copy', () => {
     renderLandingPage();
 
     expect(screen.getByTestId('landing-how')).toBeInTheDocument();
@@ -171,8 +198,10 @@ describe('LandingPage', () => {
     expect(screen.getByTestId('landing-faq')).toBeInTheDocument();
     expect(screen.getByText('💰 정말 돈을 받을 수 있나요?')).toBeInTheDocument();
     expect(screen.queryByText('언제 출금할 수 있나요?')).not.toBeInTheDocument();
-    expect(screen.getByTestId('landing-withdrawal-proof')).toBeInTheDocument();
-    expect(screen.getByTestId('landing-testimonials')).toBeInTheDocument();
+    expect(screen.queryByTestId('landing-withdrawal-proof')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('landing-testimonials')).not.toBeInTheDocument();
+    expect(screen.getAllByText('+200 PHON').length).toBeGreaterThanOrEqual(1);
+    expect(screen.queryByText('+200P')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '💰 정말 돈을 받을 수 있나요?' }));
     expect(screen.getByText(/미션을 완료하고 조건을 충족하면 보상이 적립되며/)).toBeInTheDocument();

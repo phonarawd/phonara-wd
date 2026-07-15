@@ -19,6 +19,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitiv
 import { EmptyState } from '@/product/primitives/empty-state';
 import { Input } from '@/product/primitives/input';
 import { cn } from '@/product/primitives/lib/cn';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/product/primitives/tabs';
 import { AdminQueueActionDialog } from '@/product/surfaces/admin-queue-action-dialog';
@@ -304,121 +305,114 @@ export function AdminSportsPage() {
               onAction={() => void handleRefresh()}
             />
           ) : (
-            <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-              <table className="w-full min-w-[960px] border-collapse text-left text-sm">
-                <thead className="bg-surface-raised text-foreground-muted">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">{t('admin.sports.queue.col.fixture')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.sports.queue.col.league')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.sports.queue.col.kickoff')}</th>
-                    <th className="px-4 py-3 font-medium">
-                      {t('admin.sports.queue.col.unsettled')}
-                    </th>
-                    <th className="px-4 py-3 font-medium">
-                      {t('admin.sports.queue.col.exposure')}
-                    </th>
-                    <th className="px-4 py-3 font-medium">{t('admin.sports.queue.col.action')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredFixtures.map((row) => {
+            <AdminTable
+              columns={[
+                {
+                  id: 'fixture',
+                  header: t('admin.sports.queue.col.fixture'),
+                  cell: ({ row }) => {
                     const isSuspended = suspendedIds.has(row.id);
                     return (
-                      <tr key={row.id} className="border-line border-t align-top">
-                        <td className="px-4 py-3">
-                          <div className="text-foreground font-medium">
-                            {row.home} vs {row.away}
-                          </div>
-                          <div className="text-foreground-muted text-xs">{row.id}</div>
-                          <div className="mt-1 flex flex-wrap gap-2">
+                      <div>
+                        <div className="font-medium">
+                          {row.home} vs {row.away}
+                        </div>
+                        <div className="text-foreground-muted text-xs">{row.id}</div>
+                        <div className="mt-1 flex flex-wrap gap-2">
+                          <StatusBadge
+                            state={fixtureStatusState(row.status)}
+                            label={t(STATUS_KEYS[row.status])}
+                          />
+                          {isSuspended ? (
                             <StatusBadge
-                              state={fixtureStatusState(row.status)}
-                              label={t(STATUS_KEYS[row.status])}
+                              state="reviewing"
+                              label={t('admin.sports.queue.suspendedBadge')}
                             />
-                            {isSuspended ? (
-                              <StatusBadge
-                                state="reviewing"
-                                label={t('admin.sports.queue.suspendedBadge')}
-                              />
-                            ) : null}
-                          </div>
-                        </td>
-                        <td className="text-foreground-muted px-4 py-3">{row.league}</td>
-                        <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                          {formatWhen(row.kickoff, locale)}
-                        </td>
-                        <td className="text-foreground px-4 py-3 tabular-nums">
-                          {row.unsettledMarkets}
-                        </td>
-                        <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                          {formatKrwGrouped(row.exposure)}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex flex-wrap gap-2">
-                            <Button
-                              size="sm"
-                              variant="primary"
-                              onClick={() => setSettleTarget(row)}
-                            >
-                              {t('admin.sports.queue.action.settle')}
-                            </Button>
-                            {isSuspended ? (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  setActionTarget({
-                                    kind: 'resume',
-                                    fixtureId: row.id,
-                                    titleKey: 'admin.sports.resume.title',
-                                    confirmKey: 'admin.sports.resume.confirm',
-                                    summary: formatFixtureSummary(row),
-                                  })
-                                }
-                              >
-                                {t('admin.sports.queue.action.resume')}
-                              </Button>
-                            ) : (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  setActionTarget({
-                                    kind: 'suspend',
-                                    fixtureId: row.id,
-                                    titleKey: 'admin.sports.suspend.title',
-                                    confirmKey: 'admin.sports.suspend.confirm',
-                                    summary: formatFixtureSummary(row),
-                                  })
-                                }
-                              >
-                                {t('admin.sports.queue.action.suspend')}
-                              </Button>
-                            )}
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() =>
-                                setActionTarget({
-                                  kind: 'void',
-                                  fixtureId: row.id,
-                                  titleKey: 'admin.sports.void.title',
-                                  confirmKey: 'admin.sports.void.confirm',
-                                  destructive: true,
-                                  summary: formatFixtureSummary(row),
-                                })
-                              }
-                            >
-                              {t('admin.sports.queue.action.void')}
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
+                          ) : null}
+                        </div>
+                      </div>
                     );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                  },
+                },
+                {
+                  id: 'league',
+                  header: t('admin.sports.queue.col.league'),
+                  cell: ({ row }) => row.league,
+                  meta: { className: 'text-foreground-muted' },
+                },
+                {
+                  id: 'kickoff',
+                  header: t('admin.sports.queue.col.kickoff'),
+                  cell: ({ row }) => formatWhen(row.kickoff, locale),
+                  meta: { className: 'text-foreground-muted tabular-nums' },
+                },
+                {
+                  id: 'unsettled',
+                  header: t('admin.sports.queue.col.unsettled'),
+                  cell: ({ row }) => row.unsettledMarkets,
+                  meta: { className: 'tabular-nums' },
+                },
+                {
+                  id: 'exposure',
+                  header: t('admin.sports.queue.col.exposure'),
+                  cell: ({ row }) => formatKrwGrouped(row.exposure),
+                  meta: { className: 'text-foreground-muted tabular-nums' },
+                },
+              ]}
+              rows={filteredFixtures}
+              getRowId={(row) => row.id}
+              minWidth={960}
+              rowActionsHeader={t('admin.sports.queue.col.action')}
+              rowActions={(row) => {
+                const isSuspended = suspendedIds.has(row.id);
+                return (
+                  <>
+                    <Button size="sm" variant="primary" onClick={() => setSettleTarget(row)}>
+                      {t('admin.sports.queue.action.settle')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() =>
+                        setActionTarget({
+                          kind: isSuspended ? 'resume' : 'suspend',
+                          fixtureId: row.id,
+                          titleKey: isSuspended
+                            ? 'admin.sports.resume.title'
+                            : 'admin.sports.suspend.title',
+                          confirmKey: isSuspended
+                            ? 'admin.sports.resume.confirm'
+                            : 'admin.sports.suspend.confirm',
+                          summary: formatFixtureSummary(row),
+                        })
+                      }
+                    >
+                      {t(
+                        isSuspended
+                          ? 'admin.sports.queue.action.resume'
+                          : 'admin.sports.queue.action.suspend',
+                      )}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() =>
+                        setActionTarget({
+                          kind: 'void',
+                          fixtureId: row.id,
+                          titleKey: 'admin.sports.void.title',
+                          confirmKey: 'admin.sports.void.confirm',
+                          destructive: true,
+                          summary: formatFixtureSummary(row),
+                        })
+                      }
+                    >
+                      {t('admin.sports.queue.action.void')}
+                    </Button>
+                  </>
+                );
+              }}
+            />
           )}
         </TabsContent>
 
@@ -464,34 +458,30 @@ export function AdminSportsPage() {
               onAction={() => void handleRefresh()}
             />
           ) : (
-            <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-              <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-                <thead className="bg-surface-raised text-foreground-muted">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">{t('admin.audit.col.time')}</th>
-                    <th className="px-4 py-3 font-medium">{t('admin.sports.risk.eventsTitle')}</th>
-                    <th className="px-4 py-3 font-medium">
-                      {t('admin.sports.risk.severity.info')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {risk.map((event) => (
-                    <tr key={event.id} className="border-line border-t">
-                      <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                        {formatWhen(event.at, locale)}
-                      </td>
-                      <td className="text-foreground px-4 py-3">
-                        {t(event.labelKey as MessageKey)}
-                      </td>
-                      <td className="text-foreground-muted px-4 py-3">
-                        {t(`admin.sports.risk.severity.${event.severity}` as MessageKey)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <AdminTable
+              columns={[
+                {
+                  id: 'time',
+                  header: t('admin.audit.col.time'),
+                  cell: ({ row }) => formatWhen(row.at, locale),
+                  meta: { className: 'text-foreground-muted tabular-nums' },
+                },
+                {
+                  id: 'event',
+                  header: t('admin.sports.risk.eventsTitle'),
+                  cell: ({ row }) => t(row.labelKey as MessageKey),
+                },
+                {
+                  id: 'severity',
+                  header: t('admin.sports.risk.severity.info'),
+                  cell: ({ row }) => t(`admin.sports.risk.severity.${row.severity}` as MessageKey),
+                  meta: { className: 'text-foreground-muted' },
+                },
+              ]}
+              rows={risk}
+              getRowId={(row) => row.id}
+              minWidth={640}
+            />
           )}
         </TabsContent>
 

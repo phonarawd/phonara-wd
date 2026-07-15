@@ -12,6 +12,7 @@ import {
   FUTURES_CANCEL_ORDER_RPC,
   FUTURES_SET_MARGIN_MODE_RPC,
 } from './trade-order-states-display-contract';
+import { FUTURES_SET_POSITION_MODE_RPC } from './margin-position-mode-display-contract';
 import type { RpcName } from '@/lib/rpc';
 
 export {
@@ -30,12 +31,16 @@ export {
   SPOT_MARKET_SELL_RPC,
 } from './trade-order-states-display-contract';
 
-/** §3.1 audit inventory — 23 client-invoked trade RPCs (display + money submit). */
+export { FUTURES_SET_POSITION_MODE_RPC } from './margin-position-mode-display-contract';
+
+/** §3.1 audit inventory — client-invoked trade RPCs (display + money submit). */
 export const TRADING_CLIENT_RPC_NAMES = [
   'rpc_get_candles',
   'rpc_get_synthetic_book',
   'rpc_cancel_spot_order',
   FUTURES_SET_MARGIN_MODE_RPC,
+  FUTURES_SET_POSITION_MODE_RPC,
+  'rpc_get_position_mode',
   FUTURES_CANCEL_ORDER_RPC,
   'rpc_open_futures_position',
   'rpc_place_limit_order',
@@ -95,6 +100,11 @@ export type TradingRpcPayload = Readonly<Record<string, Json | undefined>>;
 export type MarginModeRpcResult = {
   user_id: string;
   margin_mode: 'isolated' | 'cross';
+};
+
+export type PositionModeRpcResult = {
+  user_id: string;
+  position_mode: 'one_way' | 'hedge';
 };
 
 export type OrderCancelRpcResult = {
@@ -192,6 +202,17 @@ export function parseMarginModeRpcResult(
   const marginMode = readStringField(record, 'margin_mode');
   if (!userId || (marginMode !== 'isolated' && marginMode !== 'cross')) return null;
   return { user_id: userId, margin_mode: marginMode };
+}
+
+export function parsePositionModeRpcResult(
+  payload: Json | null | undefined,
+): PositionModeRpcResult | null {
+  const record = parseTradingRpcPayload(payload);
+  if (!record) return null;
+  const userId = readStringField(record, 'user_id');
+  const positionMode = readStringField(record, 'position_mode');
+  if (!userId || (positionMode !== 'one_way' && positionMode !== 'hedge')) return null;
+  return { user_id: userId, position_mode: positionMode };
 }
 
 export function parseOrderCancelRpcResult(

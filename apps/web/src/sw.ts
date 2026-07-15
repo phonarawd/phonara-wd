@@ -2,8 +2,19 @@
 
 export {};
 
+// `self.__WB_MANIFEST` entries from `includeAssets` (e.g. offline.html) use
+// no leading slash, while the OFFLINE_URL fallback below uses `/offline.html`.
+// Both resolve to the same absolute request, but as distinct strings a plain
+// Set dedupe lets both through — `Cache.addAll()` then throws
+// "duplicate requests" because it resolves them to the same target. Compare
+// on the leading-slash-normalized key, keep the first-seen (manifest) form.
 function dedupePrecacheUrls(urls: string[]): string[] {
-  return [...new Set(urls)];
+  const seen = new Map<string, string>();
+  for (const url of urls) {
+    const key = url.startsWith('/') ? url.slice(1) : url;
+    if (!seen.has(key)) seen.set(key, url);
+  }
+  return [...seen.values()];
 }
 
 type PrecacheEntry = { url: string; revision: string | null };
@@ -24,8 +35,8 @@ const sw = globalThis as unknown as ServiceWorkerGlobalScope & {
   __WB_MANIFEST: PrecacheEntry[];
 };
 
-const PRECACHE = 'phonara-precache-v2';
-const RUNTIME_PAGES = 'phonara-pages-v1';
+const PRECACHE = 'phonara-precache-v3';
+const RUNTIME_PAGES = 'phonara-pages-v2';
 const OFFLINE_URL = '/offline.html';
 const API_PATHS = ['/rest/v1', '/auth/v1', '/realtime/v1', '/storage/v1'];
 

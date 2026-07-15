@@ -1,4 +1,5 @@
 import type { IngestMessage } from '@phonara/sportsbook-engine';
+import { vendorPriceToOddsString } from './decimal-odds';
 import {
   expandEventWithOdds,
   normalizeVendorEventUpsert,
@@ -122,7 +123,7 @@ export function mapTheOddsApiEventToMessages(
     const outcomes: VendorOutcomeRow[] = market.outcomes.map((outcome, index) => ({
       id: `${market.key}:${index}`,
       name: mapOutcomeName(outcome.name, event.home_team, event.away_team, market.key),
-      price: outcome.price,
+      price: vendorPriceToOddsString(outcome.price),
       point: outcome.point,
     }));
 
@@ -150,7 +151,7 @@ export function mapTheOddsApiEventToMessages(
     return [upsert];
   }
 
-  const prices: Record<string, string | number> = {};
+  const prices: Record<string, string> = {};
   for (const market of upsert.markets) {
     const sourceMarket = bookmaker.markets.find(
       (m) => mapMarketKey(m.key, m.outcomes[0]?.point) === market.marketType,
@@ -161,7 +162,7 @@ export function mapTheOddsApiEventToMessages(
       const outcome = market.outcomes[i];
       const sourceOutcome = sourceMarket.outcomes[i];
       if (!outcome || !sourceOutcome) continue;
-      prices[outcome.outcomeId] = sourceOutcome.price;
+      prices[outcome.outcomeId] = vendorPriceToOddsString(sourceOutcome.price);
     }
   }
 

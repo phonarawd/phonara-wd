@@ -17,6 +17,7 @@ import { ONBOARDING_COMPLETE_ROUTE } from '@/domain/onboarding-handoff-display-c
 import { formatPhonRewardDisplay } from '@/domain/viral-missions-display-contract';
 import type { ViralMissionItem } from '@/features/earn/use-viral-missions';
 import { isOnboardingComplete, markOnboardingComplete } from '@/lib/onboarding-funnel';
+import { callRpc } from '@/lib/rpc';
 import { supabase } from '@/lib/supabase';
 import { translateError } from '@/lib/translate-error';
 import { productToast } from '@/product/primitives/toast-zone';
@@ -35,7 +36,7 @@ export const onboardingMissionsKeys = {
 async function fetchOnboardingMissionStatus(
   userId: string,
 ): Promise<OnboardingMissionStatusSnapshot> {
-  const [welcomeRes, profileMissionRes, profileRes, viralRes] = await Promise.all([
+  const [welcomeRes, profileMissionRes, profileRes, viralData] = await Promise.all([
     supabase.from('welcome_bonuses').select('phon_awarded').eq('user_id', userId).maybeSingle(),
     supabase
       .from('missions')
@@ -44,15 +45,14 @@ async function fetchOnboardingMissionStatus(
       .eq('mission', 'complete_profile')
       .maybeSingle(),
     supabase.from('profiles').select('username').eq('id', userId).maybeSingle(),
-    supabase.rpc('rpc_get_viral_mission_status'),
+    callRpc('rpc_get_viral_mission_status'),
   ]);
 
   if (welcomeRes.error) throw welcomeRes.error;
   if (profileMissionRes.error) throw profileMissionRes.error;
   if (profileRes.error) throw profileRes.error;
-  if (viralRes.error) throw viralRes.error;
 
-  const viralPayload = viralRes.data as { missions?: ViralMissionItem[] } | null;
+  const viralPayload = viralData as { missions?: ViralMissionItem[] } | null;
   const shareRow = viralPayload?.missions?.find((row) => row.mission === 'share_referral_link');
 
   const profileComplete =
@@ -134,10 +134,9 @@ export function useOnboardingMissionsPageController(): OnboardingMissionsPageCon
     setClaiming(true);
     setClaimError(null);
     try {
-      const { data, error } = await supabase.rpc('rpc_claim_welcome_bonus', {
+      const data = await callRpc('rpc_claim_welcome_bonus', {
         p_idempotency_key: `welcome:${userId}`,
       });
-      if (error) throw error;
 
       const payload = data as unknown as WelcomeBonusClaimResult;
       if (!payload.already_claimed) {

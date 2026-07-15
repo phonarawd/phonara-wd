@@ -27,6 +27,7 @@ import {
   resolveSpotSellReceiveCurrency,
   canSelectSpotPhonBuyStake,
 } from '@/domain/spot-stake-display-contract';
+import { resolveSpotBaseQuantityPrecision } from '@/domain/spot-base-quantity-display-contract';
 import { useConfirmSnapshot } from '@/hooks/use-confirm-snapshot';
 import { usePlatformGates } from '@/hooks/use-platform-gates';
 import { useClientGatePrechecks } from '@/hooks/use-client-gate-prechecks';
@@ -520,6 +521,9 @@ export function useSpotDeskWire(engine: TradePageControllerView) {
     bookFeedStale,
     bookDisplaySource,
     pricePrecision: market?.price_precision ?? 4,
+    quantityPrecision: resolveSpotBaseQuantityPrecision(
+      market as { quantity_precision?: number | null } | null,
+    ),
     earnVipTier,
     houseCounterpartyAck,
     spotOpenOrders,

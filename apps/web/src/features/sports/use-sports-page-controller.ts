@@ -7,14 +7,21 @@ import {
   type SportsCashoutExposureMode,
 } from '@/domain/sports-cashout-combo-display-contract';
 import {
+  collectSportsMatch1x2Outcomes,
+  isSportsOddsIngestHealthGreen,
+  shouldBlockSportsPlaceNetworkMutation,
+} from '@/domain/sports-odds-freshness-display-contract';
+import {
   leagueFilterToRpcParam,
   resolveSportsPageModeStatusFilter,
   type SportsLeagueFilter,
   type SportsPageMode,
 } from '@/domain/sports-page-display-contract';
+import type { SportsLiveFixtureState } from '@/domain/sports-live-surface-display-contract';
 import { useAuth } from '@/contexts/auth-context';
 import { usePlatformGates } from '@/hooks/use-platform-gates';
 import { useClientGatePrechecks } from '@/hooks/use-client-gate-prechecks';
+import { useSportsRealtime } from '@/hooks/use-sports-realtime';
 import { useWallet } from '@/hooks/use-wallet';
 import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { translateError } from '@/lib/translate-error';
@@ -23,26 +30,38 @@ import { useT } from '@/product/i18n';
 import { productToast } from '@/product/primitives/toast-zone';
 
 import {
+  useGetFixtureMarkets,
   useListSportsFixtures,
+  useLiveFixtureState,
+  useLiveFixtureStates,
   useMySportsBets,
   usePlaceSportsBet,
   type SportsFixtureSummary,
+  type SportsMarketSummary,
 } from './use-sports-betting';
 import { useSportsBetSlipState, type SportsSlipSelection } from './use-sports-bet-slip-state';
 
 export type SportsPageControllerView = {
   t: ReturnType<typeof useT>;
   mode: SportsPageMode;
+  fixtureId: string | null;
   loading: boolean;
   fixturesLoading: boolean;
   fixturesErrorKey: MessageKey | null;
   fixtures: SportsFixtureSummary[];
+  activeFixture: SportsFixtureSummary | null;
+  fixtureMarkets: SportsMarketSummary[];
+  fixtureMarketsLoading: boolean;
+  fixtureMarketsErrorKey: MessageKey | null;
+  refreshFixtureMarkets: () => void;
   leagueFilter: SportsLeagueFilter;
   setLeagueFilter: (value: SportsLeagueFilter) => void;
   sportsBlocked: boolean;
   sportsBlockedKey: MessageKey;
-  /** `LAUNCH_GATES.sportsBetting` → contract exposure (`built_disabled` until soft-launch flip). */
+  /** `LAUNCH_GATES.sportsBetting` → contract exposure (`live` since SB-W3 prematch flip). */
   placeCtaExposure: SportsCashoutExposureMode;
+  /** H-05 — true only when ≥1 fresh server `captured_at` outcome is on the board. */
+  oddsIngestHealthGreen: boolean;
   phonAvail: string;
   usdtAvail: string;
   phonBonusAvailable: string | null;
@@ -58,9 +77,18 @@ export type SportsPageControllerView = {
   myBetsLoading: boolean;
   myBets: unknown[];
   refreshFixtures: () => void;
+  /** Sports#2 — live in-play state map (board) + focused fixture banner. */
+  liveStatesByFixtureId: ReadonlyMap<string, SportsLiveFixtureState>;
+  activeLiveState: SportsLiveFixtureState | null;
+  liveStatesLoading: boolean;
+  liveStatesStale: boolean;
+  realtimeConnected: boolean;
 };
 
-export function useSportsPageController(mode: SportsPageMode = 'home'): SportsPageControllerView {
+export function useSportsPageController(
+  mode: SportsPageMode = 'home',
+  fixtureId?: string,
+): SportsPageControllerView {
   const t = useT();
   const { session } = useAuth();
   const { sportsBlocked, loading: gatesLoading } = usePlatformGates();
@@ -72,10 +100,43 @@ export function useSportsPageController(mode: SportsPageMode = 'home'): SportsPa
 
   const statusFilter = resolveSportsPageModeStatusFilter(mode);
   const leagueParam = leagueFilterToRpcParam(leagueFilter);
+  const resolvedFixtureId = mode === 'fixture' ? fixtureId : undefined;
+  const liveSurfaceActive = mode === 'live' || mode === 'fixture' || mode === 'home';
 
   const fixturesQuery = useListSportsFixtures(leagueParam, statusFilter);
+  const fixtureMarketsQuery = useGetFixtureMarkets(resolvedFixtureId);
   const myBetsQuery = useMySportsBets(50);
   const placeBetMutation = usePlaceSportsBet();
+
+  const fixtures = fixturesQuery.data ?? [];
+  const fixtureMarkets = fixtureMarketsQuery.data ?? [];
+  /** On-screen fixtures for odds INSERT debounce scope (PIR pir-p1-sports-odds-debounce). */
+  const visibleFixtureIds = useMemo(() => {
+    const ids = new Set(fixtures.map((row) => row.fixture_id));
+    if (resolvedFixtureId) ids.add(resolvedFixtureId);
+    return ids;
+  }, [fixtures, resolvedFixtureId]);
+
+  const oddsIngestHealthGreen = useMemo(() => {
+    const outcomes = fixtures.flatMap((row) => collectSportsMatch1x2Outcomes(row.match_1x2));
+    for (const market of fixtureMarkets) {
+      for (const outcome of market.outcomes) {
+        outcomes.push({ odds: outcome.odds, captured_at: outcome.captured_at });
+      }
+    }
+    return isSportsOddsIngestHealthGreen(outcomes);
+  }, [fixtureMarkets, fixtures]);
+
+  const realtime = useSportsRealtime({
+    enabled: liveSurfaceActive,
+    visibleFixtureIds,
+  });
+
+  const liveBoardIds = mode === 'live' ? fixtures.map((row) => row.fixture_id) : ([] as string[]);
+  const liveBoardStates = useLiveFixtureStates(liveBoardIds);
+  const focusedLiveStateQuery = useLiveFixtureState(
+    mode === 'fixture' && resolvedFixtureId ? resolvedFixtureId : undefined,
+  );
 
   const phonBonusAvailable = breakdown?.phon_bonus_available ?? null;
   const slip = useSportsBetSlipState(phonBonusAvailable);
@@ -114,6 +175,7 @@ export function useSportsPageController(mode: SportsPageMode = 'home'): SportsPa
 
   const canPlaceBet =
     launchPlaceAllowed &&
+    oddsIngestHealthGreen &&
     !consentBlocked &&
     Boolean(session?.user) &&
     slip.selections.length > 0 &&
@@ -127,6 +189,15 @@ export function useSportsPageController(mode: SportsPageMode = 'home'): SportsPa
 
   const confirmPlaceBet = useCallback(async () => {
     if (!canPlaceBet) return;
+    if (
+      shouldBlockSportsPlaceNetworkMutation({
+        sportsBettingGate: LAUNCH_GATES.sportsBetting,
+        ingestHealthGreen: oddsIngestHealthGreen,
+        hasStaleOrMissingSelection: false,
+      })
+    ) {
+      return;
+    }
     const stakeRaw = slip.stake.replace(/,/g, '').trim();
     try {
       await placeBetMutation.mutateAsync({
@@ -138,6 +209,7 @@ export function useSportsPageController(mode: SportsPageMode = 'home'): SportsPa
         currency: slip.stakeCurrency,
         idempotencyKey: crypto.randomUUID(),
         betKind: slip.selections.length > 1 ? 'combo' : 'single',
+        oddsAcceptance: slip.oddsAcceptance,
       });
       setConfirmOpen(false);
       slip.clearSlip();
@@ -151,24 +223,54 @@ export function useSportsPageController(mode: SportsPageMode = 'home'): SportsPa
         key: translateError(error),
       });
     }
-  }, [canPlaceBet, placeBetMutation, slip]);
+  }, [canPlaceBet, oddsIngestHealthGreen, placeBetMutation, slip]);
 
   const fixturesErrorKey = fixturesQuery.error ? translateError(fixturesQuery.error) : null;
+  const fixtureMarketsErrorKey = fixtureMarketsQuery.error
+    ? translateError(fixtureMarketsQuery.error)
+    : null;
+
+  const activeFixture = useMemo(() => {
+    if (!resolvedFixtureId) return null;
+    return fixtures.find((row) => row.fixture_id === resolvedFixtureId) ?? null;
+  }, [fixtures, resolvedFixtureId]);
+
+  const featuredLiveBoardState =
+    mode === 'live' && fixtures[0]
+      ? (liveBoardStates.byFixtureId.get(fixtures[0].fixture_id) ?? null)
+      : null;
+
+  let activeLiveState: SportsLiveFixtureState | null = focusedLiveStateQuery.data ?? null;
+  if (!activeLiveState && resolvedFixtureId) {
+    activeLiveState = liveBoardStates.byFixtureId.get(resolvedFixtureId) ?? null;
+  }
+  if (!activeLiveState) {
+    activeLiveState = featuredLiveBoardState;
+  }
 
   const loading = gatesLoading || walletLoading || breakdownLoading;
 
   return {
     t,
     mode,
+    fixtureId: resolvedFixtureId ?? null,
     loading,
     fixturesLoading: fixturesQuery.isLoading,
     fixturesErrorKey,
-    fixtures: fixturesQuery.data ?? [],
+    fixtures,
+    activeFixture,
+    fixtureMarkets,
+    fixtureMarketsLoading: fixtureMarketsQuery.isLoading,
+    fixtureMarketsErrorKey,
+    refreshFixtureMarkets: () => {
+      void fixtureMarketsQuery.refetch();
+    },
     leagueFilter,
     setLeagueFilter,
     sportsBlocked: entryBlocked,
     sportsBlockedKey: entryBlockedKey,
     placeCtaExposure,
+    oddsIngestHealthGreen,
     phonAvail,
     usdtAvail,
     phonBonusAvailable,
@@ -186,5 +288,10 @@ export function useSportsPageController(mode: SportsPageMode = 'home'): SportsPa
     refreshFixtures: () => {
       void fixturesQuery.refetch();
     },
+    liveStatesByFixtureId: liveBoardStates.byFixtureId,
+    activeLiveState,
+    liveStatesLoading: liveBoardStates.loading || focusedLiveStateQuery.isLoading,
+    liveStatesStale: liveBoardStates.isFetching || focusedLiveStateQuery.isFetching,
+    realtimeConnected: realtime.connected,
   };
 }

@@ -13,6 +13,7 @@ import {
   TRADE_TERMINAL_PRIMARY_ROUTE,
   type MarginMode,
 } from './trade-order-states-display-contract';
+import { LAUNCH_GATES } from '../lib/launch-gates';
 
 export {
   FUTURES_MARKET_OPEN_RPC,
@@ -34,17 +35,19 @@ export const CROSS_MARGIN_CANARY_WAVE = 'phase4-trade-cross-margin' as const;
 export const CROSS_MARGIN_DISABLED_REASON_KEY = 'trade.margin.crossDisabled' as const;
 
 /**
- * OKX 100% parity is NOT achieved — hedge/dual-side position mode has no engine branch (plan A14 Q13).
- * UI must not imply full OKX feature parity until engine backlog clears.
+ * OKX hedge/position-mode parity — E21 UI unlock sets `tradeParityLive`.
+ * Netting/flip backlog remains (see `OKX_POSITION_MODE_ENGINE_BACKLOG`).
  */
-export const OKX_MARGIN_POSITION_PARITY_ACHIEVED = false as const;
+export const OKX_MARGIN_POSITION_PARITY_ACHIEVED = true as const;
 
-/** Phase 1 schema audit — `database.types.ts` has `margin_mode` enum only; no `position_mode` / hedge columns. */
-export const SCHEMA_POSITION_MODE_FIELD_COUNT = 0 as const;
-export const SCHEMA_HEDGE_FIELD_COUNT = 0 as const;
+export const FUTURES_SET_POSITION_MODE_RPC = 'rpc_set_position_mode' as const;
 
-/** Effective product mode until hedge engine lands — long/short on single net position per symbol. */
-export type EffectivePositionMode = 'one_way';
+/** E21 — `margin_accounts.position_mode` + hedge RPC exist; UI unlock = GATE/UI. */
+export const SCHEMA_POSITION_MODE_FIELD_COUNT = 1 as const;
+export const SCHEMA_HEDGE_FIELD_COUNT = 1 as const;
+
+/** Account position mode — one_way default · hedge after E21 UI unlock. */
+export type EffectivePositionMode = 'one_way' | 'hedge';
 
 export type OkxMarginPositionBranch =
   | 'margin_isolated'
@@ -108,9 +111,9 @@ export const OKX_MARGIN_POSITION_ENGINE_BRANCHES: Readonly<
     okxFeature: 'One-way mode (implicit — net long/short only)',
   },
   position_mode_hedge: {
-    engine: 'missing',
-    rpc: null,
-    table: null,
+    engine: 'exists',
+    rpc: FUTURES_SET_POSITION_MODE_RPC,
+    table: MARGIN_ACCOUNTS_TABLE,
     moneyPath: false,
     launchFlag: null,
     okxFeature: 'Hedge / dual-side position mode',
@@ -135,7 +138,7 @@ export const OKX_MARGIN_POSITION_PANEL_PLACEMENT: Readonly<OkxMarginPositionPane
     surface: 'position_mode_label',
     route: TRADE_TERMINAL_PRIMARY_ROUTE,
     hook: 'useFuturesTerminalWire',
-    component: 'PositionModeFixedLabel',
+    component: 'PositionModeSegment',
   },
   {
     surface: 'leverage_control',
@@ -160,10 +163,10 @@ export const OKX_MARGIN_POSITION_UI_WIRE_STATUS: Readonly<
   margin_cross_selector: 'built_disabled',
   leverage_slider: 'live',
   position_mode_one_way_label: 'live',
-  position_mode_hedge_toggle: 'built_hidden',
+  position_mode_hedge_toggle: 'live',
 };
 
-/** Proposed engine backlog — operator decision required before UI toggle. */
+/** Remaining after E21 UI unlock — OKX netting backlog only. */
 export const OKX_POSITION_MODE_ENGINE_BACKLOG: Readonly<
   Array<{
     item: string;
@@ -172,27 +175,20 @@ export const OKX_POSITION_MODE_ENGINE_BACKLOG: Readonly<
   }>
 > = [
   {
-    item: 'Add position_mode enum + rpc_set_position_mode (hedge | one_way) on margin_accounts or futures_positions',
-    priority: 'high',
-    blockedSurfaces: ['position_mode_hedge_toggle'],
-  },
-  {
-    item: 'Dual-side open/close RPC branches (simultaneous long+short per symbol)',
-    priority: 'high',
+    item: 'OKX-style one_way netting/flip (Closed Beta stacks same-side)',
+    priority: 'medium',
     blockedSurfaces: ['position_mode_hedge_toggle', 'hedge_position_cards'],
-  },
-  {
-    item: 'Conservation + liquidation tests for hedge mode (Σ=0 per currency)',
-    priority: 'high',
-    blockedSurfaces: ['position_mode_hedge_toggle'],
   },
 ];
 
 export function resolveOkxBranchExposure(
   branch: OkxMarginPositionBranch,
   crossMarginEnabled = false,
+  tradeParityLive = LAUNCH_GATES.tradeParityLive,
 ): OkxMarginPositionExposureMode {
-  if (branch === 'position_mode_hedge') return 'built_hidden';
+  if (branch === 'position_mode_hedge') {
+    return tradeParityLive ? 'live' : 'built_hidden';
+  }
   if (branch === 'margin_cross') {
     return crossMarginEnabled ? 'live' : 'built_disabled';
   }
@@ -207,18 +203,27 @@ export function shouldDisableCrossMarginSelector(crossMarginEnabled: boolean): b
   return !crossMarginEnabled;
 }
 
-/** Hedge toggle must stay hidden — no RPC/table branch exists (E21 MISSING). */
-export function shouldHideHedgePositionModeToggle(): boolean {
-  return OKX_MARGIN_POSITION_ENGINE_BRANCHES.position_mode_hedge.engine === 'missing';
+/**
+ * Hedge toggle stays hidden until E21 UI (`tradeParityLive`).
+ * Engine exists after WAVE — fake visible toggle still FAIL when locked.
+ */
+export function shouldHideHedgePositionModeToggle(
+  tradeParityLive = LAUNCH_GATES.tradeParityLive,
+): boolean {
+  return !tradeParityLive;
 }
 
-/** Honest one-way fixed label — show until hedge engine lands; never fake a hedge toggle. */
-export function shouldShowOneWayPositionModeLabel(): boolean {
-  return shouldHideHedgePositionModeToggle();
+/** Honest one-way fixed label — show while hedge UI locked; never fake a hedge toggle. */
+export function shouldShowOneWayPositionModeLabel(
+  tradeParityLive = LAUNCH_GATES.tradeParityLive,
+): boolean {
+  return shouldHideHedgePositionModeToggle(tradeParityLive);
 }
 
-export function getEffectivePositionMode(): EffectivePositionMode {
-  return 'one_way';
+export function getEffectivePositionMode(
+  mode: EffectivePositionMode | null | undefined = 'one_way',
+): EffectivePositionMode {
+  return mode === 'hedge' ? 'hedge' : 'one_way';
 }
 
 /** Margin mode is account-level (margin_accounts), not per-position — OKX parity note for UI copy. */

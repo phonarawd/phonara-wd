@@ -1,7 +1,9 @@
 import { useCallback, useMemo, useRef } from 'react';
 
+import { TRADE_CHART_GESTURE_OWNER_ATTR } from '@/domain/trade-mobile-layout-display-contract';
 import type { TradingChartCandle } from '@/features/trading/display-chart/display-feed-contract';
 import { useT } from '@/product/i18n';
+import { cn } from '@/product/primitives/lib/cn';
 
 import type {
   ChartDrawing,
@@ -78,12 +80,15 @@ export function TradeChart({
   const legend = useChartCrosshairLegend(handleRef);
 
   return (
-    <div className="relative h-full min-h-0 w-full">
+    // Host min-height is owned here — callers must NOT pass `min-h-0` via
+    // className (twMerge would drop min-h-[280px] and collapse the canvas).
+    <div className="relative flex h-full min-h-[280px] w-full flex-col">
       <TradeChartCrosshairLegend snapshot={legend} />
       <div
         ref={hostRef}
         data-testid="trade-lightweight-chart"
-        className={className ?? 'h-full min-h-[280px] w-full'}
+        {...{ [TRADE_CHART_GESTURE_OWNER_ATTR]: '' }}
+        className={cn('h-full min-h-[280px] w-full flex-1 touch-none', className)}
       />
     </div>
   );

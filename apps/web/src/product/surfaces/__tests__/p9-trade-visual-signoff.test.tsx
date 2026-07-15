@@ -378,6 +378,15 @@ function makeFuturesWire(overrides: Partial<FuturesDeskWire> = {}): FuturesDeskW
     marginMode: 'isolated',
     setMarginMode: vi.fn(),
     marginModeBusy: false,
+    positionMode: 'one_way',
+    setPositionMode: vi.fn(),
+    positionModeBusy: false,
+    reduceOnly: false,
+    setReduceOnly: vi.fn(),
+    timeInForce: 'gtc',
+    setTimeInForce: vi.fn(),
+    displayQuantity: '',
+    setDisplayQuantity: vi.fn(),
     crossMarginEnabled: false,
     t: engine.t,
     ...overrides,
@@ -688,7 +697,7 @@ describe('p9-trade visual sign-off · §20.12 · §22.2.2 G1–G7', () => {
         expect(screen.getByTestId('spot-order-ticket')).toBeInTheDocument();
       } else {
         expect(screen.getByTestId('spot-desk-mobile-tabs')).toBeInTheDocument();
-        expect(screen.getByTestId('spot-order-ticket')).toBeInTheDocument();
+        expect(screen.getByTestId('trade-mobile-ticket-fold')).toBeInTheDocument();
       }
     },
   );
@@ -706,11 +715,15 @@ describe('p9-trade visual sign-off · §20.12 · §22.2.2 G1–G7', () => {
         </I18nProvider>,
       );
       expect(screen.getByTestId('futures-desk-page')).toBeInTheDocument();
-      expect(screen.getByTestId('futures-order-ticket')).toBeInTheDocument();
+      if (viewport.isMobile) {
+        expect(screen.getByTestId('trade-mobile-ticket-fold')).toBeInTheDocument();
+      } else {
+        expect(screen.getByTestId('futures-order-ticket')).toBeInTheDocument();
+      }
     },
   );
 
-  it('SpotDeskPage has axe critical 0 and §22.2.2 G7 hedge hidden on futures ticket', async () => {
+  it('SpotDeskPage has axe critical 0 and §22.2.2 G7 hedge toggle live on futures ticket', async () => {
     useTradeDeskViewportMock.mockReturnValue(makeTradeDeskViewportFromWidth(1024));
     const { container, unmount } = render(
       <I18nProvider>
@@ -727,8 +740,7 @@ describe('p9-trade visual sign-off · §20.12 · §22.2.2 G1–G7', () => {
         <FuturesDeskPage />
       </I18nProvider>,
     );
-    expect(screen.queryByTestId('hedge-position-mode-toggle')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /hedge/i })).not.toBeInTheDocument();
+    expect(screen.getByTestId('hedge-position-mode-toggle')).toBeInTheDocument();
   });
 
   it('StakingHubPage mounts at mobile viewport with pool cards and stake form', () => {
@@ -983,7 +995,7 @@ describe('p9-trade visual sign-off · positions · orders · staking-positions r
     );
     fireEvent.click(screen.getByText('trade.order.advanced'));
     expect(screen.getByTestId('cross-margin-disabled-reason')).toBeInTheDocument();
-    expect(screen.queryByTestId('hedge-position-mode-toggle')).not.toBeInTheDocument();
+    expect(screen.getByTestId('hedge-position-mode-toggle')).toBeInTheDocument();
   });
 
   it('FuturesOrdersPage and StakingPositionsPage have axe critical 0', async () => {
@@ -1076,7 +1088,11 @@ describe('Phase 4 Launch RC · S4 · 375/390/768/1024 layout signoff', () => {
         </I18nProvider>,
       );
       expect(screen.getByTestId('spot-desk-page')).toBeInTheDocument();
-      expect(screen.getByTestId('spot-order-ticket')).toBeInTheDocument();
+      if (width < 768) {
+        expect(screen.getByTestId('trade-mobile-ticket-fold')).toBeInTheDocument();
+      } else {
+        expect(screen.getByTestId('spot-order-ticket')).toBeInTheDocument();
+      }
       if (width === 768) {
         expect(screen.getByTestId('trade-desk-tablet-main-grid')).toBeInTheDocument();
       }
@@ -1096,7 +1112,11 @@ describe('Phase 4 Launch RC · S4 · 375/390/768/1024 layout signoff', () => {
         </I18nProvider>,
       );
       expect(screen.getByTestId('futures-desk-page')).toBeInTheDocument();
-      expect(screen.getByTestId('futures-order-ticket')).toBeInTheDocument();
+      if (width < 768) {
+        expect(screen.getByTestId('trade-mobile-ticket-fold')).toBeInTheDocument();
+      } else {
+        expect(screen.getByTestId('futures-order-ticket')).toBeInTheDocument();
+      }
     },
   );
 

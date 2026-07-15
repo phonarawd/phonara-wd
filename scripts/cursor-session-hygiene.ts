@@ -2,15 +2,20 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadRepoEnvFiles } from './lib/load-repo-env';
 import { auditCursorArgv } from './lib/cursor-argv';
 import { shallowDirSizeBytes, cursorSnapshotsDir } from './lib/cursor-metadata-sizes';
 import { killOrphanRepoDevProcesses } from './lib/cursor-dev-processes';
+import { maybeRunEmptyStandby } from './lib/empty-standby-core';
 import { stopIdleDockerIfSafe } from './lib/docker-idle-stop';
 import { getBlockedE2ePorts, killE2ePortListeners } from './lib/e2e-lifecycle';
 import { spawnSyncSafe } from './lib/spawn-safe';
 import { SESSION_RESIDUE_DIRS } from './lib/workspace-artifacts';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+// tsx hook paths do not inherit Bun `.env` injection — respect PHONARA_KEEP_STACK / AUTO_QUIT.
+loadRepoEnvFiles(REPO_ROOT);
 
 type HygieneMode = 'start' | 'end' | 'work-end' | 'after-heavy' | 'before-heavy' | 'agent-stop';
 
@@ -193,6 +198,7 @@ switch (mode) {
       maybeAutoCleanCursorLogs();
       maybeRenderFix();
       run('sync-excludes', 'bun', ['run', 'cursor:sync-excludes']);
+      run('git-hooks', 'bun', ['run', 'git:hooks:install']);
       stopIdleDockerIfSafe({ quiet: true });
       break;
     }
@@ -210,6 +216,7 @@ switch (mode) {
   case 'end':
   case 'work-end':
     coreHygiene({ killOrphans: true, killPorts: true, cleanArtifacts: true });
+    maybeRunEmptyStandby();
     workEndTeardown();
     process.stdout.write('[cursor:hygiene] work-end complete — Cursor ready (low-spec idle)\n');
     break;
@@ -230,6 +237,7 @@ switch (mode) {
   }
   case 'after-heavy':
     coreHygiene({ killOrphans: true, killPorts: true, cleanArtifacts: true });
+    maybeRunEmptyStandby();
     workEndTeardown();
     break;
   case 'before-heavy':

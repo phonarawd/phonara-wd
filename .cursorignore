@@ -45,6 +45,7 @@ apps/web/public/fonts/
 _audit/
 # Auto-synced from scripts/lib/workspace-artifacts.ts (cursor:sync-excludes)
 **/.bun/
+.cursor/perf/
 .paste-intake/
 .tmp-presentation-
 archive/

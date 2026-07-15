@@ -145,6 +145,36 @@ describe('TradeDeskMobileTabs', () => {
     );
   });
 
+  it('does not switch tabs when swipe starts on chart gesture owner', () => {
+    renderTabs('chart');
+
+    const chartSlot = screen.getByTestId('mobile-chart-slot');
+    chartSlot.setAttribute('data-chart-gesture-owner', '');
+    dispatchPointer(chartSlot, 'pointerdown', 220);
+    dispatchPointer(chartSlot, 'pointermove', 80);
+    dispatchPointer(chartSlot, 'pointerup', 80);
+
+    expect(screen.getByTestId('trade-desk-mobile-tab-chart')).toHaveAttribute(
+      'data-state',
+      'active',
+    );
+    expect(screen.getByTestId('trade-desk-mobile-tab-trade')).not.toHaveAttribute(
+      'data-state',
+      'active',
+    );
+  });
+
+  it('keeps chart pointer events enabled while a non-chart swipe is active', () => {
+    renderTabs('chart');
+
+    const surface = screen.getByTestId(TRADE_DESK_MOBILE_SWIPE_SURFACE_TESTID);
+    const chartPanel = screen.getByTestId('trade-desk-mobile-panel-chart').firstElementChild;
+    dispatchPointer(surface, 'pointerdown', 220);
+    dispatchPointer(surface, 'pointermove', 180);
+
+    expect(chartPanel).not.toHaveClass('pointer-events-none');
+  });
+
   it('swipes trade to chart on horizontal pointer gesture (P2-B)', () => {
     renderTabs('trade');
 
@@ -184,6 +214,19 @@ describe('TradeDeskMobileTradeStack', () => {
     for (const subtabId of TRADE_DESK_MOBILE_TRADE_SUBTAB_IDS) {
       expect(screen.getByTestId(`trade-desk-mobile-trade-subtab-${subtabId}`)).toBeInTheDocument();
     }
+  });
+
+  it('collapses order ticket by default and expands on toggle (§34.14)', () => {
+    renderTabs('trade');
+
+    expect(screen.getByTestId('trade-mobile-ticket-fold')).toBeInTheDocument();
+    expect(screen.queryByTestId('trade-mobile-ticket-fold-panel')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-trade-slot')).not.toBeInTheDocument();
+    expect(screen.getByTestId('trade-desk-mobile-sticky-cta')).toBeVisible();
+
+    fireEvent.click(screen.getByTestId('trade-mobile-ticket-fold-toggle'));
+    expect(screen.getByTestId('trade-mobile-ticket-fold-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-trade-slot')).toBeInTheDocument();
   });
 });
 

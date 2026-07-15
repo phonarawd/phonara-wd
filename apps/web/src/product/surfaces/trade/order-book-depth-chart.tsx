@@ -17,11 +17,11 @@ export function OrderBookDepthChart({ model, midDisplay, t, className }: OrderBo
       className={cn('flex min-h-0 flex-1 flex-col gap-2 px-2 pb-2', className)}
       data-testid="order-book-depth-chart"
     >
-      <div className="text-foreground-muted flex items-center justify-between px-1 text-[10px] uppercase tracking-wide">
+      <div className="text-foreground-muted flex items-center justify-between px-1 text-tiny uppercase tracking-wide">
         <span>{t('trade.orderbook.bids')}</span>
         <span>{t('trade.orderbook.asks')}</span>
       </div>
-      <div className="border-line bg-surface-raised relative min-h-[12rem] flex-1 overflow-hidden rounded-(--ds-radius-md) border">
+      <div className="border-line bg-surface-raised relative min-h-48 flex-1 overflow-hidden rounded-md border">
         <svg
           viewBox="0 0 100 100"
           preserveAspectRatio="none"
@@ -36,13 +36,13 @@ export function OrderBookDepthChart({ model, midDisplay, t, className }: OrderBo
           ) : null}
         </svg>
         <div
-          className="border-line bg-surface/90 text-foreground absolute top-1/2 left-1/2 z-1 -translate-x-1/2 -translate-y-1/2 rounded-(--ds-radius-sm) border px-2 py-0.5 text-xs tabular-nums"
+          className="border-line bg-surface/90 text-foreground absolute top-1/2 left-1/2 z-1 -translate-x-1/2 -translate-y-1/2 rounded-sm border px-2 py-0.5 text-xs tabular-nums"
           data-testid="order-book-depth-chart-mid"
         >
           {midDisplay}
         </div>
       </div>
-      <p className="text-foreground-muted m-0 px-1 text-[11px]">
+      <p className="text-foreground-muted m-0 px-1 text-xs">
         {t('trade.orderbook.depthChartHint')}
       </p>
     </div>

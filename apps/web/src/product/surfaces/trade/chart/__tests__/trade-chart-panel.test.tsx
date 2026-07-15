@@ -6,6 +6,7 @@ import { I18nProvider } from '@/product/i18n';
 import { TradeChartPanel } from '@/product/surfaces/trade/chart/trade-chart-panel';
 
 const mockFitContent = vi.fn();
+const mockSyncLayout = vi.fn();
 const mockUseExchangeLiveCandles = vi.fn();
 
 vi.mock('@/features/trading/display-chart/use-exchange-live-candles', () => ({
@@ -20,13 +21,13 @@ vi.mock('@/product/surfaces/trade/chart/trade-chart', () => ({
     oracleMarkPrice,
     liquidationPrice,
   }: {
-    onChartReady?: (api: { fitContent: () => void }) => void;
+    onChartReady?: (api: { fitContent: () => void; syncLayout: () => void }) => void;
     seriesMode?: string;
     overlays?: { ma7: boolean; ema21: boolean; rsi: boolean; bb: boolean; vol: boolean };
     oracleMarkPrice?: string | null;
     liquidationPrice?: string | null;
   }) => {
-    onChartReady?.({ fitContent: mockFitContent });
+    onChartReady?.({ fitContent: mockFitContent, syncLayout: mockSyncLayout });
     return (
       <div
         data-testid="trade-lightweight-chart-mock"
@@ -62,6 +63,7 @@ const sampleCandles = [
 describe('TradeChartPanel', () => {
   beforeEach(() => {
     mockFitContent.mockClear();
+    mockSyncLayout.mockClear();
     mockUseExchangeLiveCandles.mockReturnValue({
       candles: sampleCandles,
       loading: false,
@@ -130,7 +132,139 @@ describe('TradeChartPanel', () => {
     expect(screen.getByText('서버 오라클 기준 현재가 라인입니다.')).toBeInTheDocument();
   });
 
-  it('calls fitContent when reset layout is clicked', () => {
+  it('ZA-12: PHON empty copy names oracle-seed-wait, not a generic feed message', () => {
+    mockUseExchangeLiveCandles.mockReturnValue({
+      candles: [],
+      loading: false,
+      error: false,
+      refetch: vi.fn(),
+      connected: false,
+    });
+
+    render(
+      <I18nProvider>
+        <TradeChartPanel marketSymbol="PHON_USDT" />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('trade-chart-empty')).toHaveAttribute(
+      'data-empty-reason',
+      'oracle-awaiting-seed',
+    );
+    expect(screen.getByText('오라클 캔들 대기 중')).toBeInTheDocument();
+  });
+
+  it('ZA-12: exchange-pair empty copy names the feed outage, distinct from PHON copy', () => {
+    mockUseExchangeLiveCandles.mockReturnValue({
+      candles: [],
+      loading: false,
+      error: false,
+      refetch: vi.fn(),
+      connected: false,
+    });
+
+    render(
+      <I18nProvider>
+        <TradeChartPanel marketSymbol="BTC_USDT" />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('trade-chart-empty')).toHaveAttribute(
+      'data-empty-reason',
+      'feed-unavailable',
+    );
+    expect(screen.getByText('시세 피드가 일시적으로 안 보여요')).toBeInTheDocument();
+  });
+
+  it('shows only the error state when error and empty both apply (error takes precedence)', () => {
+    mockUseExchangeLiveCandles.mockReturnValue({
+      candles: [],
+      loading: false,
+      error: true,
+      refetch: vi.fn(),
+      connected: false,
+    });
+
+    render(
+      <I18nProvider>
+        <TradeChartPanel marketSymbol="BTC_USDT" />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('trade-chart-error')).toBeInTheDocument();
+    expect(screen.queryByTestId('trade-chart-empty')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('trade-chart-loading')).not.toBeInTheDocument();
+  });
+
+  it('shows loading state, not empty or error, while candles are still arriving', () => {
+    mockUseExchangeLiveCandles.mockReturnValue({
+      candles: [],
+      loading: true,
+      error: true,
+      refetch: vi.fn(),
+      connected: false,
+    });
+
+    render(
+      <I18nProvider>
+        <TradeChartPanel marketSymbol="BTC_USDT" />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByTestId('trade-chart-loading')).toBeInTheDocument();
+    expect(screen.queryByTestId('trade-chart-empty')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('trade-chart-error')).not.toBeInTheDocument();
+  });
+
+  describe('stale feed badge (mounted chart)', () => {
+    it('shows the stale badge when the feed disconnects after the chart has mounted', () => {
+      mockUseExchangeLiveCandles.mockReturnValue({
+        candles: sampleCandles,
+        loading: false,
+        error: false,
+        refetch: vi.fn(),
+        connected: false,
+      });
+
+      render(
+        <I18nProvider>
+          <TradeChartPanel marketSymbol="BTCUSDT-SIM" />
+        </I18nProvider>,
+      );
+
+      expect(screen.getByTestId('trade-chart-stale-badge')).toBeInTheDocument();
+    });
+
+    it('hides the stale badge while connected', () => {
+      render(
+        <I18nProvider>
+          <TradeChartPanel marketSymbol="BTCUSDT-SIM" />
+        </I18nProvider>,
+      );
+
+      expect(screen.queryByTestId('trade-chart-stale-badge')).not.toBeInTheDocument();
+    });
+
+    it('does not show the stale badge before the chart has ever mounted (candles < 2)', () => {
+      mockUseExchangeLiveCandles.mockReturnValue({
+        candles: [],
+        loading: false,
+        error: false,
+        refetch: vi.fn(),
+        connected: false,
+      });
+
+      render(
+        <I18nProvider>
+          <TradeChartPanel marketSymbol="BTCUSDT-SIM" />
+        </I18nProvider>,
+      );
+
+      expect(screen.queryByTestId('trade-chart-stale-badge')).not.toBeInTheDocument();
+    });
+  });
+
+  it('calls syncLayout when reset layout is clicked', () => {
     render(
       <I18nProvider>
         <TradeChartPanel marketSymbol="BTCUSDT-SIM" />
@@ -138,7 +272,7 @@ describe('TradeChartPanel', () => {
     );
 
     fireEvent.click(screen.getByTestId('trade-chart-reset-layout'));
-    expect(mockFitContent).toHaveBeenCalledTimes(1);
+    expect(mockSyncLayout).toHaveBeenCalledTimes(1);
   });
 
   it('renders overlay controls and toggles candle/line mode', () => {

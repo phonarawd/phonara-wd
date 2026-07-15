@@ -1,9 +1,11 @@
 # ADR-008: DB Transaction Race Deep Audit Defer (Engine Wave)
 
-> **상태:** Proposed (defer stub) · **날짜:** 2026-07-08  
+> **상태:** Proposed (defer stub) · **날짜:** 2026-07-08 · **§PIR 부분 Accepted:** 2026-07-11  
 > **플랜:** Trade Desk Zero-Defect QA audit · todo `backlog-engine-adr` (부록 C L4 · §10 · §5 · DoD #4)  
-> **SSOT:** [`ENGINE_BOUNDARY.md`](../../SSOT/ENGINE_BOUNDARY.md) §Engine Wave defer  
-> **S0 evidence:** [`S0/security-auditor-delta.md`](../../OPERATIONS/TRADE_DESK_ZERO_DEFECT_EVIDENCE/S0/security-auditor-delta.md)
+> **PIR 형제:** Plan `platform_integrity_remediation_v1` · todo `pir-e1-system-lock-order` (C-2)  
+> **SSOT:** [`ENGINE_BOUNDARY.md`](../../SSOT/ENGINE_BOUNDARY.md) §Engine Wave defer · [`ACTIVE_WORK_SSOT.md`](../../SSOT/ACTIVE_WORK_SSOT.md) §Platform Integrity  
+> **S0 evidence:** [`S0/security-auditor-delta.md`](../../OPERATIONS/TRADE_DESK_ZERO_DEFECT_EVIDENCE/S0/security-auditor-delta.md)  
+> **PIR evidence:** [`PLATFORM_INTEGRITY_EVIDENCE/README.md`](../../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md)
 
 ## Context
 
@@ -72,8 +74,26 @@ S0는 클라이언트·RPC·멱등성 negative에 집중한다. **DB TX race dee
 | Baseline locks/caps already shipped | Multi-session race harness deferred          |
 | Idempotency + cross-user covered    | Operator "race" incident 시 manual DB review |
 
+## §PIR — 부분 Accepted (2026-07-11)
+
+> Plan `platform_integrity_remediation_v1` operator 승인 = 아래 **좁은 범위만** Engine Wave deep audit에서 **선행 Accepted**.  
+> 전체 DB TX race deep audit · SERIALIZABLE · multi-backend harness는 **여전히 defer**.
+
+| 감사 ID | PIR todo                   | Accepted 범위                                                                                           | 비목표                                                                             |
+| ------- | -------------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **C-2** | `pir-e1-system-lock-order` | `_lock_system_accounts(TEXT[])` · spot buy/sell + `_fill_house_spot_order` 선잠금 · buy∥sell 동시성 SQL | position row concurrent close/open · OI multi-session · full wallet lock inventory |
+
+**정본:** ACTIVE_WORK_SSOT §Platform Integrity · Evidence [`E1/`](../../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md) (E1 슬롯은 `pir-e1` 착수 시 채움)
+
+**잔여 Engine Wave (본 ADR §3 유지):**
+
+- 동일 position row concurrent close/open
+- OI cap boundary under parallel opens (multi-backend harness)
+- Residual close/adjust/SLTP `p_client_request_id` gap
+
 ## Links
 
 - Plan §5 Race 3분류 · §12 DoD #4 · v5 V3 · v7.1 F5
 - [`TRADE_DESK_P0_CHECKLIST_1PAGE.md`](../../OPERATIONS/TRADE_DESK_P0_CHECKLIST_1PAGE.md) — S0 범위 밖 명시
 - [`TRADE_DESK_MIGRATION_VERIFICATION.md`](../../OPERATIONS/TRADE_DESK_MIGRATION_VERIFICATION.md) — defer RED STOP
+- Plan `platform_integrity_remediation_v1` · [`PLATFORM_INTEGRITY_EVIDENCE/`](../../OPERATIONS/PLATFORM_INTEGRITY_EVIDENCE/README.md)

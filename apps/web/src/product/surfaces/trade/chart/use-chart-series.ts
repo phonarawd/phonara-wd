@@ -45,8 +45,17 @@ export function useChartSeries(
     const rsiData = overlays.rsi ? computeRsi14(candleData) : [];
 
     handle.candles.applyOptions({ visible: seriesMode === 'candles' });
-    handle.line.applyOptions({ visible: seriesMode === 'line' });
-    handle.volume.applyOptions({ visible: overlays.vol });
+    handle.line.applyOptions({
+      visible: seriesMode === 'line',
+      // Hidden close-line must not pull the right scale (same pane as candles).
+      autoscaleInfoProvider: seriesMode === 'line' ? undefined : () => null,
+    });
+    handle.volume.applyOptions({
+      visible: overlays.vol,
+      priceScaleId: '',
+      lastValueVisible: false,
+      priceLineVisible: false,
+    });
     handle.ma7.applyOptions({ visible: overlays.ma7 });
     handle.ema21.applyOptions({ visible: overlays.ema21 });
     handle.bbUpper.applyOptions({ visible: overlays.bb });
@@ -77,7 +86,12 @@ export function useChartSeries(
       prevOverlayKeyRef.current = overlayKey;
       prevLengthRef.current = candles.length;
       needsFlushRef.current = false;
+      // Only refit for a genuine new symbol/interval/data — an overlay toggle
+      // (MA/EMA/RSI/BB/volume, candles/line mode) re-populates series data but
+      // must not discard the user's existing zoom/pan.
       if (feedChanged || wasEmpty) {
+        // setAutoScale clears a stale fixed Y range left after undersized paints.
+        handle.chart.priceScale('right').setAutoScale(true);
         handle.chart.timeScale().fitContent();
       }
       return;

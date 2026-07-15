@@ -73,6 +73,11 @@ describe('resolveRouteRedirect', () => {
       pathname: '/sports/prematch',
     });
     expect(resolveRouteRedirect('/betting/vip')).toEqual({ pathname: '/sports/vip' });
+    expect(resolveRouteRedirect('/betting/rules')).toEqual({ pathname: '/sports/rules' });
+    expect(resolveRouteRedirect('/betting/fx-99')).toEqual({
+      pathname: '/sports/fixture/fx-99',
+    });
+    expect(resolveRouteRedirect('/my-bets')).toEqual({ pathname: '/sports/my-bets' });
     expect(resolveRouteRedirect('/my-tier')).toEqual({ pathname: '/tier/me' });
     expect(resolveRouteRedirect('/my-tier/benefits')).toEqual({
       pathname: '/tier/benefits',
@@ -92,6 +97,7 @@ describe('resolveRouteRedirect', () => {
       pathname: '/feedback',
       search: { type: 'bug' },
     });
+    expect(resolveRouteRedirect('/faq')).toEqual({ pathname: '/support/faq' });
     expect(resolveRouteRedirect('/admin/missions')).toEqual({
       pathname: '/admin/earn/missions',
     });
@@ -129,6 +135,8 @@ describe('resolveRouteRedirect', () => {
     expect(resolveRouteRedirect('/responsible-gambling')).toEqual({
       pathname: '/legal/responsible-gaming',
     });
+    expect(resolveRouteRedirect('/referral/terms')).toEqual({ pathname: '/legal/affiliate' });
+    expect(resolveRouteRedirect('/cookies')).toEqual({ pathname: '/legal/cookies' });
   });
 
   it('leaves canonical routes unchanged', () => {

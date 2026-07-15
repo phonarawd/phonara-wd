@@ -21,6 +21,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/product/primitiv
 import { EmptyState } from '@/product/primitives/empty-state';
 import { Input } from '@/product/primitives/input';
 import { cn } from '@/product/primitives/lib/cn';
+import { AdminTable } from '@/product/primitives/admin-table';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/product/primitives/tabs';
 import { AdminQueueActionDialog } from '@/product/surfaces/admin-queue-action-dialog';
@@ -278,61 +279,55 @@ export function AdminRiskPage() {
                   onAction={() => setRiskFilters({ search: '', status: [], flagType: [] })}
                 />
               ) : (
-                <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                  <table className="w-full min-w-[880px] border-collapse text-left text-sm">
-                    <thead className="bg-surface-raised text-foreground-muted">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.compliance.rg.col.user')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.compliance.rg.col.flagType')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.compliance.rg.col.details')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.compliance.rg.col.created')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.compliance.rg.col.action')}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredRisk.map((row) => (
-                        <tr key={row.id} className="border-line border-t align-top">
-                          <td className="text-foreground-muted px-4 py-3">{row.userId}</td>
-                          <td className="text-foreground px-4 py-3">
-                            {t(RISK_FLAG_KEYS[row.flagType])}
-                          </td>
-                          <td className="text-foreground-muted px-4 py-3">{row.detailsSummary}</td>
-                          <td className="text-foreground-muted px-4 py-3 tabular-nums">
-                            {formatWhen(row.createdAt, locale)}
-                          </td>
-                          <td className="px-4 py-3">
-                            <Button
-                              size="sm"
-                              variant="primary"
-                              onClick={() =>
-                                setActionTarget({
-                                  kind: 'clearRisk',
-                                  id: row.id,
-                                  titleKey: 'admin.queues.dialog.clearRisk',
-                                  confirmKey: 'admin.queues.action.clear',
-                                  destructive: true,
-                                  summary: formatRiskSummary(row, t),
-                                })
-                              }
-                            >
-                              {t('admin.queues.action.clear')}
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <AdminTable
+                  columns={[
+                    {
+                      id: 'user',
+                      header: t('admin.compliance.rg.col.user'),
+                      cell: ({ row }) => row.userId,
+                      meta: { className: 'text-foreground-muted' },
+                    },
+                    {
+                      id: 'flagType',
+                      header: t('admin.compliance.rg.col.flagType'),
+                      cell: ({ row }) => t(RISK_FLAG_KEYS[row.flagType]),
+                    },
+                    {
+                      id: 'details',
+                      header: t('admin.compliance.rg.col.details'),
+                      cell: ({ row }) => row.detailsSummary,
+                      meta: { className: 'text-foreground-muted' },
+                    },
+                    {
+                      id: 'created',
+                      header: t('admin.compliance.rg.col.created'),
+                      cell: ({ row }) => formatWhen(row.createdAt, locale),
+                      meta: { className: 'text-foreground-muted tabular-nums' },
+                    },
+                  ]}
+                  rows={filteredRisk}
+                  getRowId={(row) => row.id}
+                  minWidth={880}
+                  rowActionsHeader={t('admin.compliance.rg.col.action')}
+                  rowActions={(row) => (
+                    <Button
+                      size="sm"
+                      variant="primary"
+                      onClick={() =>
+                        setActionTarget({
+                          kind: 'clearRisk',
+                          id: row.id,
+                          titleKey: 'admin.queues.dialog.clearRisk',
+                          confirmKey: 'admin.queues.action.clear',
+                          destructive: true,
+                          summary: formatRiskSummary(row, t),
+                        })
+                      }
+                    >
+                      {t('admin.queues.action.clear')}
+                    </Button>
+                  )}
+                />
               )}
             </TabsContent>
 
@@ -374,98 +369,93 @@ export function AdminRiskPage() {
                   onAction={() => setStrFilters({ search: '', status: [], caseType: [] })}
                 />
               ) : (
-                <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                  <table className="w-full min-w-[960px] border-collapse text-left text-sm">
-                    <thead className="bg-surface-raised text-foreground-muted">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.compliance.str.col.user')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.compliance.str.col.caseType')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.compliance.str.col.details')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.compliance.str.col.status')}
-                        </th>
-                        <th className="px-4 py-3 font-medium">
-                          {t('admin.compliance.str.col.action')}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredStr.map((row) => (
-                        <tr key={row.id} className="border-line border-t align-top">
-                          <td className="text-foreground-muted px-4 py-3">{row.userId}</td>
-                          <td className="text-foreground px-4 py-3">
-                            {t(STR_CASE_KEYS[row.caseType])}
-                          </td>
-                          <td className="text-foreground-muted px-4 py-3">{row.detailsSummary}</td>
-                          <td className="px-4 py-3">
-                            <StatusBadge
-                              state={strStatusState(row.status)}
-                              label={t(STR_STATUS_KEYS[row.status])}
-                            />
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="flex flex-wrap gap-2">
-                              {row.status === 'open' ? (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() =>
-                                    setActionTarget({
-                                      kind: 'reviewStr',
-                                      id: row.id,
-                                      titleKey: 'admin.queues.dialog.reviewStr',
-                                      confirmKey: 'admin.queues.action.review',
-                                      summary: formatStrSummary(row, t),
-                                    })
-                                  }
-                                >
-                                  {t('admin.queues.action.review')}
-                                </Button>
-                              ) : null}
-                              <Button
-                                size="sm"
-                                variant="primary"
-                                onClick={() =>
-                                  setActionTarget({
-                                    kind: 'fileStr',
-                                    id: row.id,
-                                    titleKey: 'admin.queues.dialog.fileStr',
-                                    confirmKey: 'admin.queues.action.file',
-                                    summary: formatStrSummary(row, t),
-                                  })
-                                }
-                              >
-                                {t('admin.queues.action.file')}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  setActionTarget({
-                                    kind: 'dismissStr',
-                                    id: row.id,
-                                    titleKey: 'admin.queues.dialog.dismissStr',
-                                    confirmKey: 'admin.queues.action.dismiss',
-                                    destructive: true,
-                                    summary: formatStrSummary(row, t),
-                                  })
-                                }
-                              >
-                                {t('admin.queues.action.dismiss')}
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <AdminTable
+                  columns={[
+                    {
+                      id: 'user',
+                      header: t('admin.compliance.str.col.user'),
+                      cell: ({ row }) => row.userId,
+                      meta: { className: 'text-foreground-muted' },
+                    },
+                    {
+                      id: 'caseType',
+                      header: t('admin.compliance.str.col.caseType'),
+                      cell: ({ row }) => t(STR_CASE_KEYS[row.caseType]),
+                    },
+                    {
+                      id: 'details',
+                      header: t('admin.compliance.str.col.details'),
+                      cell: ({ row }) => row.detailsSummary,
+                      meta: { className: 'text-foreground-muted' },
+                    },
+                    {
+                      id: 'status',
+                      header: t('admin.compliance.str.col.status'),
+                      cell: ({ row }) => (
+                        <StatusBadge
+                          state={strStatusState(row.status)}
+                          label={t(STR_STATUS_KEYS[row.status])}
+                        />
+                      ),
+                    },
+                  ]}
+                  rows={filteredStr}
+                  getRowId={(row) => row.id}
+                  minWidth={960}
+                  rowActionsHeader={t('admin.compliance.str.col.action')}
+                  rowActions={(row) => (
+                    <>
+                      {row.status === 'open' ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setActionTarget({
+                              kind: 'reviewStr',
+                              id: row.id,
+                              titleKey: 'admin.queues.dialog.reviewStr',
+                              confirmKey: 'admin.queues.action.review',
+                              summary: formatStrSummary(row, t),
+                            })
+                          }
+                        >
+                          {t('admin.queues.action.review')}
+                        </Button>
+                      ) : null}
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        onClick={() =>
+                          setActionTarget({
+                            kind: 'fileStr',
+                            id: row.id,
+                            titleKey: 'admin.queues.dialog.fileStr',
+                            confirmKey: 'admin.queues.action.file',
+                            summary: formatStrSummary(row, t),
+                          })
+                        }
+                      >
+                        {t('admin.queues.action.file')}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          setActionTarget({
+                            kind: 'dismissStr',
+                            id: row.id,
+                            titleKey: 'admin.queues.dialog.dismissStr',
+                            confirmKey: 'admin.queues.action.dismiss',
+                            destructive: true,
+                            summary: formatStrSummary(row, t),
+                          })
+                        }
+                      >
+                        {t('admin.queues.action.dismiss')}
+                      </Button>
+                    </>
+                  )}
+                />
               )}
             </TabsContent>
           </Tabs>
@@ -478,30 +468,30 @@ export function AdminRiskPage() {
               >
                 {t('admin.compliance.kyc.audit.title')}
               </h3>
-              <div className="overflow-x-auto rounded-(--ds-radius-lg) border border-line">
-                <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-                  <thead className="bg-surface-raised text-foreground-muted">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">{t('admin.audit.col.time')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.audit.col.action')}</th>
-                      <th className="px-4 py-3 font-medium">{t('admin.audit.col.reason')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {audit.slice(0, 10).map((entry) => (
-                      <tr key={entry.id} className="border-line border-t">
-                        <td className="text-foreground-muted px-4 py-3">
-                          {formatWhen(entry.at, locale)}
-                        </td>
-                        <td className="text-foreground px-4 py-3">
-                          {t(entry.actionKey as MessageKey)}
-                        </td>
-                        <td className="text-foreground-muted px-4 py-3">{entry.reason || '—'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <AdminTable
+                columns={[
+                  {
+                    id: 'time',
+                    header: t('admin.audit.col.time'),
+                    cell: ({ row }) => formatWhen(row.at, locale),
+                    meta: { className: 'text-foreground-muted tabular-nums' },
+                  },
+                  {
+                    id: 'action',
+                    header: t('admin.audit.col.action'),
+                    cell: ({ row }) => t(row.actionKey as MessageKey),
+                  },
+                  {
+                    id: 'reason',
+                    header: t('admin.audit.col.reason'),
+                    cell: ({ row }) => row.reason || '—',
+                    meta: { className: 'text-foreground-muted' },
+                  },
+                ]}
+                rows={audit.slice(0, 10)}
+                getRowId={(row) => row.id}
+                minWidth={640}
+              />
             </section>
           ) : null}
         </>

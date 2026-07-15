@@ -96,7 +96,6 @@ DO $$
 DECLARE
   v_uid UUID := gen_random_uuid();
   v_market RECORD;
-  v_side TEXT;
   v_entry NUMERIC;
   v_open JSONB;
   v_expected_liq NUMERIC;
@@ -118,6 +117,16 @@ BEGIN
   SELECT v_uid, doc_type::consent_doc_type, 'test', TRUE
   FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']) AS doc_type
   ON CONFLICT DO NOTHING;
+
+  PERFORM set_config(
+    'request.jwt.claims',
+    json_build_object('sub', v_uid::TEXT, 'role', 'authenticated')::TEXT,
+    TRUE
+  );
+  SET LOCAL ROLE authenticated;
+  PERFORM rpc_set_position_mode('hedge');
+  RESET ROLE;
+  PERFORM set_config('request.jwt.claims', json_build_object('sub', v_uid::TEXT)::TEXT, true);
 
   UPDATE futures_markets
      SET is_active = TRUE,
@@ -144,30 +153,21 @@ BEGIN
   LOOP
     SELECT price::NUMERIC INTO v_entry FROM oracle_prices WHERE symbol = v_market.symbol;
 
-    FOREACH v_side IN ARRAY ARRAY['long', 'short']
-    LOOP
-      v_open := rpc_open_futures_position(
-        v_market.symbol,
-        v_side,
-        'USDT',
-        '123.456789',
-        v_market.max_leverage::TEXT,
-        NULL,
-        NULL,
-        'max-boundary-' || v_market.symbol || '-' || v_side || '-' || v_uid::TEXT
-      );
-
-      IF v_side = 'long' THEN
-        v_expected_liq := v_entry * (1 - (1 / v_market.max_leverage) + v_market.mmr);
-      ELSE
-        v_expected_liq := v_entry * (1 + (1 / v_market.max_leverage) - v_market.mmr);
-      END IF;
-      IF v_expected_liq < 0 THEN v_expected_liq := 0; END IF;
-
-      ASSERT v_open->>'liquidation_price' = _fmt6(v_expected_liq),
-        format('%s %s max leverage liquidation parity failed: got=%s expected=%s',
-          v_market.symbol, v_side, v_open->>'liquidation_price', _fmt6(v_expected_liq));
-    END LOOP;
+    v_open := rpc_open_futures_position(
+      v_market.symbol,
+      'long',
+      'USDT',
+      '123.456789',
+      v_market.max_leverage::TEXT,
+      NULL,
+      NULL,
+      'max-boundary-' || v_market.symbol || '-long-' || v_uid::TEXT
+    );
+    v_expected_liq := v_entry * (1 - (1 / v_market.max_leverage) + v_market.mmr);
+    IF v_expected_liq < 0 THEN v_expected_liq := 0; END IF;
+    ASSERT v_open->>'liquidation_price' = _fmt6(v_expected_liq),
+      format('%s long max leverage liquidation parity failed: got=%s expected=%s',
+        v_market.symbol, v_open->>'liquidation_price', _fmt6(v_expected_liq));
 
     v_max_plus := _fmt6(v_market.max_leverage + 0.000001);
     v_rejected := FALSE;
@@ -189,6 +189,22 @@ BEGIN
     ASSERT v_rejected,
       format('%s just-over-max leverage must reject with leverage_too_high, got %s',
         v_market.symbol, COALESCE(v_msg, '<none>'));
+
+    v_open := rpc_open_futures_position(
+      v_market.symbol,
+      'short',
+      'USDT',
+      '123.456789',
+      v_market.max_leverage::TEXT,
+      NULL,
+      NULL,
+      'max-boundary-' || v_market.symbol || '-short-' || v_uid::TEXT
+    );
+    v_expected_liq := v_entry * (1 + (1 / v_market.max_leverage) - v_market.mmr);
+    IF v_expected_liq < 0 THEN v_expected_liq := 0; END IF;
+    ASSERT v_open->>'liquidation_price' = _fmt6(v_expected_liq),
+      format('%s short max leverage liquidation parity failed: got=%s expected=%s',
+        v_market.symbol, v_open->>'liquidation_price', _fmt6(v_expected_liq));
   END LOOP;
 
   RAISE NOTICE 'FUTURES MAX LEVERAGE BOUNDARY OK — max parity and just-over-max rejection verified';
@@ -223,6 +239,12 @@ BEGIN
   UPDATE rpc_rate_limit_configs
      SET capacity = 100, refill_rate = 100
    WHERE rpc_name IN ('rpc_open_futures_position', 'rpc_liquidate_position');
+  -- E21 one_way mode requires closing before re-opening the opposite side (below), which
+  -- now realizes PnL on each close; keep the RG monthly loss cap out of this boundary
+  -- test's way (same pattern as supabase/tests/responsible_gambling_test.sql).
+  INSERT INTO app_config (key, value, description)
+  VALUES ('rg_operator_loss_cap_trading_usdt', '1000000.000000', 'RG operator trading cap')
+  ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
   INSERT INTO user_consents (user_id, doc_type, doc_version, accepted)
   SELECT v_uid, doc_type::consent_doc_type, 'test', TRUE
   FROM unnest(ARRAY['terms_of_service','privacy_policy','risk_disclosure','age_verification']) AS doc_type
@@ -254,6 +276,9 @@ BEGIN
     IF v_msg = 'not_liquidatable' THEN v_blocked := TRUE; END IF;
   END;
   ASSERT v_blocked, format('long one tick above liq must not liquidate, got %s', COALESCE(v_msg, '<none>'));
+
+  -- E21 one_way mode: close before opening the opposite side below (short scenarios).
+  PERFORM rpc_close_futures_position(v_pos_id);
 
   -- Long instant predicate: exact/below are breached, above is not.
   UPDATE oracle_prices SET price = '100.000000', updated_at = NOW() WHERE symbol = 'PHONUSDT-PERP';
@@ -300,6 +325,9 @@ BEGIN
     IF v_msg = 'not_liquidatable' THEN v_blocked := TRUE; END IF;
   END;
   ASSERT v_blocked, format('short one tick below liq must not liquidate, got %s', COALESCE(v_msg, '<none>'));
+
+  -- E21 one_way mode: close before the next open below re-probes the same side.
+  PERFORM rpc_close_futures_position(v_pos_id);
 
   -- Short instant predicate: exact/above are breached, below is not.
   UPDATE oracle_prices SET price = '100.000000', updated_at = NOW() WHERE symbol = 'PHONUSDT-PERP';

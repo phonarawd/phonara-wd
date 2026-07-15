@@ -49,6 +49,7 @@ vi.mock('@/hooks/admin/useAdminAuditDesk', () => ({
     auditFilters: { search: '', domains: [], datePreset: 'all' },
     setAuditFilters: vi.fn(),
     refreshAuditFeed: vi.fn(),
+    exportAuditCsv: vi.fn(),
     auditDomains: ['wallet', 'compliance', 'users', 'sports', 'system'],
     isLoading: false,
     isError: false,
@@ -77,6 +78,7 @@ describe('AdminAuditPage', () => {
 
     expect(screen.getByRole('button', { name: /최근 24시간|Last 24h/i })).toBeTruthy();
     expect(screen.getByRole('button', { name: /지갑|Wallet/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /CSV 내보내기|Export CSV/i })).toBeTruthy();
     expect(screen.getByRole('button', { name: /새로고침|Refresh/i })).toBeTruthy();
   });
 });

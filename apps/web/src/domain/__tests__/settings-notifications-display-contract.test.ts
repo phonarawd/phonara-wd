@@ -26,19 +26,20 @@ describe('settings-notifications-display-contract', () => {
     expect(isPartialEngineNotificationPref('deposit')).toBe(false);
   });
 
-  it('hides tierDecayWarning until E1 tierDecayEngine gate is true', () => {
-    expect(resolveTierDecayWarningPrefVisible()).toBe(false);
+  it('exposes tierDecayWarning when E1 tierDecayEngine gate is true', () => {
+    expect(resolveTierDecayWarningPrefVisible()).toBe(true);
     expect(resolveSettingsNotificationsPrefKeys()).toEqual([
       'deposit',
       'priceAlert',
       'mission',
       'referral',
       'tierUpgrade',
+      'tierDecayWarning',
       'marketing',
     ]);
     expect(
-      resolveSettingsNotificationsPrefKeys({ ...LAUNCH_GATES, tierDecayEngine: true }),
-    ).toContain('tierDecayWarning');
+      resolveSettingsNotificationsPrefKeys({ ...LAUNCH_GATES, tierDecayEngine: false }),
+    ).not.toContain('tierDecayWarning');
     expect(
       resolveSettingsNotificationsGroupPrefKeys('growth', {
         ...LAUNCH_GATES,

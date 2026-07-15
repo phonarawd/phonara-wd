@@ -30,6 +30,9 @@ const TRADE_TOAST_REGISTRY_I18N_KEYS = new Set<MessageKey>(
 
 export const P9_TRADE_I18N_SURFACE_AUDIT_TODO = 'p9-trade-i18n-surface-audit' as const;
 
+/** Floor after R9 lazy en split — audit counts ko trade-prefix keys only. */
+export const TRADE_I18N_MIN_CATALOG_KEYS = 250 as const;
+
 export type TradeI18nDeferTier = 'B' | 'C';
 
 export type TradeI18nWireStatus = 'wired' | 'defer';
