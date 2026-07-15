@@ -1,13 +1,13 @@
 {
-  "startedAt": "2026-07-15T04:37:15.862Z",
+  "startedAt": "2026-07-15T04:26:55.990Z",
   "finishedAt": "2026-07-15T04:38:25.111Z",
   "base": "http://127.0.0.1:3000",
   "engine": "chrome-cdp",
   "loggedIn": true,
   "note": "Logged in as local-trade-dev; auth-gated routes captured with a real session.",
   "counts": {
-    "png": 11,
-    "routes": 1,
+    "png": 18,
+    "routes": 2,
     "viewports": 4,
     "authRedirects": 0
   },
@@ -20,6 +20,168 @@
     "hover/landing-1280-dark-after-mousemove.png"
   ],
   "manifest": [
+    {
+      "file": "mobile/casino-mines-390-dark-01.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
+      "viewport": "390",
+      "folder": "mobile",
+      "theme": "dark",
+      "scroll": "01_top",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
+      "auth": "auth",
+      "redirectedToLogin": false,
+      "bottomNavDisplay": "grid",
+      "bottomNavPolicyOk": true,
+      "axeCritical": null,
+      "axeSerious": null,
+      "consoleErrorCount": 0,
+      "consoleErrors": []
+    },
+    {
+      "file": "mobile/casino-mines-390-dark-02.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
+      "viewport": "390",
+      "folder": "mobile",
+      "theme": "dark",
+      "scroll": "02_mid",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
+      "auth": "auth",
+      "redirectedToLogin": false,
+      "bottomNavDisplay": "grid",
+      "bottomNavPolicyOk": true,
+      "axeCritical": null,
+      "axeSerious": null,
+      "consoleErrorCount": 0,
+      "consoleErrors": []
+    },
+    {
+      "file": "mobile/casino-mines-390-dark-03.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
+      "viewport": "390",
+      "folder": "mobile",
+      "theme": "dark",
+      "scroll": "03_end",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
+      "auth": "auth",
+      "redirectedToLogin": false,
+      "bottomNavDisplay": "grid",
+      "bottomNavPolicyOk": true,
+      "axeCritical": null,
+      "axeSerious": null,
+      "consoleErrorCount": 0,
+      "consoleErrors": []
+    },
+    {
+      "file": "desktop/casino-mines-1024-dark-01.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
+      "viewport": "1024",
+      "folder": "desktop",
+      "theme": "dark",
+      "scroll": "01_top",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
+      "auth": "auth",
+      "redirectedToLogin": false,
+      "bottomNavDisplay": "none",
+      "bottomNavPolicyOk": true,
+      "axeCritical": 0,
+      "axeSerious": 0,
+      "consoleErrorCount": 0,
+      "consoleErrors": []
+    },
+    {
+      "file": "desktop/casino-mines-1024-dark-02.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
+      "viewport": "1024",
+      "folder": "desktop",
+      "theme": "dark",
+      "scroll": "02_mid",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
+      "auth": "auth",
+      "redirectedToLogin": false,
+      "bottomNavDisplay": "none",
+      "bottomNavPolicyOk": true,
+      "axeCritical": null,
+      "axeSerious": null,
+      "consoleErrorCount": 0,
+      "consoleErrors": []
+    },
+    {
+      "file": "desktop/casino-mines-1024-dark-03.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
+      "viewport": "1024",
+      "folder": "desktop",
+      "theme": "dark",
+      "scroll": "03_end",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
+      "auth": "auth",
+      "redirectedToLogin": false,
+      "bottomNavDisplay": "none",
+      "bottomNavPolicyOk": true,
+      "axeCritical": null,
+      "axeSerious": null,
+      "consoleErrorCount": 0,
+      "consoleErrors": []
+    },
+    {
+      "file": "desktop/casino-mines-2560-dark-01.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
+      "viewport": "2560",
+      "folder": "desktop",
+      "theme": "dark",
+      "scroll": "01_top",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
+      "auth": "auth",
+      "redirectedToLogin": false,
+      "bottomNavDisplay": "none",
+      "bottomNavPolicyOk": true,
+      "axeCritical": null,
+      "axeSerious": null,
+      "consoleErrorCount": 0,
+      "consoleErrors": []
+    },
+    {
+      "file": "desktop/casino-mines-2560-dark-02.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
+      "viewport": "2560",
+      "folder": "desktop",
+      "theme": "dark",
+      "scroll": "02_mid",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
+      "auth": "auth",
+      "redirectedToLogin": false,
+      "bottomNavDisplay": "none",
+      "bottomNavPolicyOk": true,
+      "axeCritical": null,
+      "axeSerious": null,
+      "consoleErrorCount": 0,
+      "consoleErrors": []
+    },
+    {
+      "file": "desktop/casino-mines-2560-dark-03.png",
+      "pageId": "casino-mines",
+      "path": "/games/mines",
+      "viewport": "2560",
+      "folder": "desktop",
+      "theme": "dark",
+      "scroll": "03_end",
+      "finalUrl": "http://127.0.0.1:3000/games/mines",
+      "auth": "auth",
+      "redirectedToLogin": false,
+      "bottomNavDisplay": "none",
+      "bottomNavPolicyOk": true,
+      "axeCritical": null,
+      "axeSerious": null,
+      "consoleErrorCount": 0,
+      "consoleErrors": []
+    },
     {
       "file": "mobile/casino-hilo-390-dark-01.png",
       "pageId": "casino-hilo",
@@ -184,6 +346,49 @@
     }
   ],
   "interactions": [
+    {
+      "gameCode": "mines",
+      "steps": {
+        "stakeSet": true,
+        "pickedCount": "3/22",
+        "prepareHash": {
+          "found": true,
+          "disabled": false
+        },
+        "placeBet": {
+          "found": true,
+          "disabled": false
+        },
+        "resultText": "{\"won\":\"true\",\"hitMine\":\"false\",\"phase\":\"settled\",\"mult\":\"1.47×\"}",
+        "pfHashReady": "준비 완료",
+        "errorBanner": null
+      },
+      "fpsDuringReplay": null,
+      "axe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 3,
+        "minor": 0,
+        "violations": [
+          {
+            "id": "landmark-main-is-top-level",
+            "impact": "moderate",
+            "nodes": 1
+          },
+          {
+            "id": "landmark-no-duplicate-main",
+            "impact": "moderate",
+            "nodes": 1
+          },
+          {
+            "id": "landmark-unique",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      "consoleErrors": []
+    },
     {
       "gameCode": "hilo",
       "steps": {

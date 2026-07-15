@@ -335,7 +335,9 @@ describe('MinesStage quantified motion polish — tile-flip + ladder + win-only 
     expect(mult).not.toHaveClass('ds-casino-number-pop');
     expect(screen.queryByTestId('casino-mines-win-flash')).not.toBeInTheDocument();
     for (const idx of [0, 1]) {
-      expect(screen.getByTestId(`casino-mines-cell-${idx}`)).not.toHaveClass('ds-casino-tile-reveal');
+      expect(screen.getByTestId(`casino-mines-cell-${idx}`)).not.toHaveClass(
+        'ds-casino-tile-reveal',
+      );
     }
   });
 });
@@ -387,7 +389,11 @@ describe('MinesStage perf check (phase1c-mines)', () => {
     );
 
     act(() => {
-      void handle.current?.playOutcome({ minePositions: [9, 14], hitMine: true, revealedCells: [2, 9] });
+      void handle.current?.playOutcome({
+        minePositions: [9, 14],
+        hitMine: true,
+        revealedCells: [2, 9],
+      });
     });
     unmount();
 

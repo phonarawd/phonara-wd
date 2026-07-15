@@ -101,9 +101,7 @@ describe('DiceStage functional QA — target/direction + bet result render (phas
         <DiceStage target="90.00" direction="under" />
       </I18nProvider>,
     );
-    expect(screen.getByTestId('casino-dice-win-chance')).toHaveTextContent(
-      `${expectedUnderAt90}%`,
-    );
+    expect(screen.getByTestId('casino-dice-win-chance')).toHaveTextContent(`${expectedUnderAt90}%`);
   });
 
   it('an "over" win renders the RPC roll, success tone, won=true, and a visible marker', async () => {

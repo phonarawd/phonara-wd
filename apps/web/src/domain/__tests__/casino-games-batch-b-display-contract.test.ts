@@ -52,7 +52,9 @@ describe('casino-games-batch-b-display-contract (p10-games-batch-b)', () => {
       minePositions: [4, 8],
       hitMine: false,
     });
-    expect(parseMinesOutcome({ minePositions: [4, 8], hitMine: false })?.revealedCells).toBeUndefined();
+    expect(
+      parseMinesOutcome({ minePositions: [4, 8], hitMine: false })?.revealedCells,
+    ).toBeUndefined();
     // Out-of-range/garbage revealedCells — degrade gracefully, core fields still parse.
     expect(
       parseMinesOutcome({ minePositions: [4, 8], hitMine: false, revealedCells: [99] }),
