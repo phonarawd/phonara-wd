@@ -1,0 +1,67 @@
+---
+description: PHONARA 프로젝트 DNA/그라운드 트루스 — 신규 세션 오리엔테이션 필수 참고
+alwaysApply: true
+---
+
+# Project DNA Ground Truth (필수 오리엔테이션)
+
+> **정본:** [`docs/audit/PROJECT_DNA_GROUND_TRUTH_AUDIT_2026-07-15.md`](../../docs/audit/PROJECT_DNA_GROUND_TRUTH_AUDIT_2026-07-15.md)
+> 2026-07-15 read-only 9-agent 병렬 역공학 감사. 제품 철학·아키텍처·디자인 시스템·컴포넌트·UX/UI 실태·내비게이션/IA·반응형/모션/접근성·기술 건강도를 코드 근거(file:line)로 전수 검증한 Phase 0–10 감사.
+
+## 언제 읽나
+
+- 신규 세션에서 "이 프로젝트가 뭔가" 부터 파악할 때 — 추측 대신 정본 문서를 먼저 연다.
+- 제품 철학·아키텍처·디자인 시스템·현재 UX/UI에 대해 **추측**하려는 순간.
+- `.cursorrules` · `AGENTS.md`의 "Current Focus/Next" 문구를 실제 진행 단계로 오독할 위험이 있을 때 (아래 신선도 서열 참조).
+- 새 SSOT/audit 문서를 만들기 전 — 이미 문서화된 내용과 중복 생성하지 않도록 정본 문서 §5(문서 인벤토리)를 먼저 확인한다.
+
+## 문서 신선도 서열 (2026-07-15 실측 — 추측 아님)
+
+`.cursorrules`(가장 낡음, 2026-07-04 시점 문구) < `AGENTS.md`(E8–E10 시점) < `docs/audit/SYSTEM_AUDIT_2026-07-13/00_EXECUTIVE_SCORECARD.md`(그조차 자기 하위 문서보다 1일 낡음) < **`docs/SSOT/ACTIVE_WORK_SSOT.md` 최상단**(오늘 날짜 반영, 실질 최신).
+
+**결론:** `.cursorrules`의 "Next: Phase R (P1 Foundation)" 문구를 실제 착수 지점으로 읽지 않는다 — Track A/B 대부분 `[x]` DONE, RC Freeze ACTIVE, Release Readiness 게이트는 operator 액션(24h soak·3-Owner 서명·DR 훈련·Supabase Pro+ 결제)만 대기 중이다. 상세: 정본 문서 §1·§20.
+
+## 핵심 정정 사실 (전부 코드/스키마 직접 검증 — 추측·구전 아님)
+
+| 오해하기 쉬운 지점 | 실제 사실 | 근거(정본 문서 §) |
+|---|---|---|
+| "USDT/PHON 듀얼 통화 지갑" (`README.md` 자체 문구도 이렇게 씀) | **3-통화**: PHON·USDT·KRW. `wallets` 테이블 6컬럼(3×available/locked), `currency` enum 3값 | §2, §6 |
+| "카지노 12게임 stage는 placeholder" (2026-07-11 감사 판정) | **폐기(stale)** — 12/12 전부 실구현, 일부는 2026-07-15 당일 수정됨 | §9, §11 |
+| `apps/web/src/product/tokens/viewport-contract.ts`가 "삭제됨/역사"라는 일부 rule 문구 | **틀림** — 살아있는 72줄 모듈, 실제 import·단위테스트 존재 | §8 |
+| `docs/rebuild/LOWSPEC_RULES.md` | **깨진 링크** — 파일 없음. `CI_GATE_AUTHORITY.md`·`OPERATOR_GATES.md`·`PRE_LAUNCH_CHECKLIST_BEGINNER.md`·`DOCS_INDEX.md` 4곳에서 인용하지만 실체 없음 | §5 |
+| `docs/audit/KNIP_DEADCODE_REPORT.md`의 "`controller-view-freeze.ts` 삭제" 주장 | **거짓** — 파일 여전히 존재(참조 0건이라 dead인 것은 맞음, "삭제됨" 서술만 오류) | §5, §17 |
+| `check:design-tokens` | CI 필수잡·`bun run check` 체인에 **미포함** — advisory-only(`gate:phase-r` 경유만) | §4, §8 |
+| `@phonara/wallet-ledger` 패키지 | 빌드·테스트는 되지만 `apps/web`·`apps/admin` 어디서도 import 0건 — 대기 중 스캐폴드인지 죽은 코드인지 **미확인** | §9, §19 |
+| BottomNav가 데스크톱(≥1024px)에서 숨겨지는지 | 코드 정책은 `lg:hidden`이지만, 같은 날(07-15) 실측 캡처가 Home·Wallet에서 여전히 노출을 기록 — **미해결, 상충, 미확인** | §11, §19 |
+| 루트 `package.json` 스크립트 개수 | **232개**(직접 grep 재검증) — 서브에이전트 최초 보고치 100은 오류였음, 참고용 | §6 |
+| Admin과 Web이 UI 프리미티브를 공유하는지 | **공유 없음** — `packages/ui` 부재, 두 앱 완전히 분리된 프리미티브/의존성 세트 | §7, §9 |
+
+## 현재 활성 Plan (2026-07-15 기준 — "다음 단계"는 항상 plan frontmatter로 재확인)
+
+> **Plan 파일:** `~/.cursor/plans/world-class_presentation_rebuild_bc0d5f4b.plan.md` (repo 밖, Cursor Plan 표준 경로)
+> **범위:** `apps/web/src/product/**` · `apps/web/src/features/**`(glue) · `apps/admin/src/product/**` — 프레젠테이션 전용, 엔진 미터치.
+> **진행 상태:** todo 21개 중 8개 `completed`(phase0a-bottomnav-fix ~ phase1c-hilo). **다음 pending todo는 이 rule에 하드코딩하지 않는다** — plan 파일 frontmatter가 유일한 SOT이며 세션마다 갱신되므로 항상 그 파일을 직접 열어 확인한다.
+
+`~/.cursor/plans/`에는 **63개**의 `.plan.md` 파일이 존재한다(2026-07-15 Glob 확인) — 대부분 완료·이력용(`phase_d_closeout`, `engine_apex_plan`, `ui_greenfield_rebuild`, `final_engine_plan`, `phonara_engine_audit` 등). **operator가 파일명/id를 명시적으로 지정하지 않는 한, 이 목록의 다른 62개 plan을 현재 작업 지시로 재해석하거나 재착수하지 않는다.** 알려진 활성/참조 SSOT plan은 정확히 3개다(rule `99-plan-todo-auto-closeout.mdc`와 동기 유지):
+
+| Plan id | 범위 | 상태(2026-07-15) |
+|---|---|---|
+| `world-class_presentation_rebuild_bc0d5f4b` | 프레젠테이션 폴리시(현재 작업 중) | 8/21 completed |
+| `platform-perfect-launch_6982dfdf` | Release Freeze 대응 결함 remediation | 19/19 완료 · R12 DONE |
+| `phase_r_super-app_8bdf2c10` | Phase R 전체 super-app 구현 | 273/280 완료 |
+
+**Plan 파일 본문은 직접 편집하지 않는다** — operator 지시 사항(`world-class_presentation_rebuild_bc0d5f4b`에 대해 2026-07-15 명시적으로 재확인됨). 상태 갱신은 오직 `bun run gate:ai-impl -- --closeout <todo-id>` 또는 `bun run closeout:todo -- <todo-id>` 스크립트로만 한다.
+
+**이 plan의 completed 항목을 "완료"로 그대로 신뢰하지 말고, `docs/SSOT/ACTIVE_WORK_SSOT.md`의 해당 todo 절(§"완료 체크 정직성 재감사" 포함)에서 실브라우저 Definition of Done 증거(`capture-manifest.json`의 `bottomNavViolations`/`axeCriticalFindings` 빈 배열, FPS 실측)가 실제로 첨부되어 있는지 먼저 확인한다** — 코드·타입체크·jsdom 유닛테스트 green만으로는 이 plan 자신이 요구하는 Definition of Done을 충족하지 못한다(2026-07-15 재감사에서 실제로 발견된 격차).
+
+## 교차 참조 (우선순위)
+
+1. **상태 판정 정본:** `00-post-closeout-active-ssot.mdc` > `98-platform-audit-reference.mdc` > 본 문서. 세 문서가 상충하면 `docs/SSOT/ACTIVE_WORK_SSOT.md` 최상단이 최종 근거.
+2. **결함 재작업 시:** `98-platform-audit-reference.mdc` 절차를 따르되, 본 문서 §17(기술적 건강도)·§18(제약사항)·§19(미확인)을 함께 확인한다.
+3. **중복 생성 방지:** `70-autonomy-and-delivery.mdc` §0과 함께 — 신규 SSOT/audit 문서를 만들기 전 본 문서 §5(문서 인벤토리)에 이미 존재하는지 먼저 확인한다.
+
+## 본 문서의 성격 (오독 방지)
+
+- 본 규칙과 정본 문서는 **참고용 감사 정본(discovery/ground-truth)**이며 execution queue가 아니다 — 실행 큐는 여전히 `docs/SSOT/ACTIVE_WORK_SSOT.md` 단독 정본이다.
+- 정본 문서는 코드/문서를 **수정하지 않았다** — 발견된 문제(깨진 링크, 거짓 리포트 주장, 게이트 격차 등)는 기록만 되어 있고 고쳐지지 않았다. 이를 고치려는 작업은 별도 승인된 작업으로 진행한다.
+- 정본 문서 §19의 `미확인` 항목을 실제 증거 없이 결함으로 확정하지 않는다(`30-audit-discipline.mdc`와 동일 원칙).

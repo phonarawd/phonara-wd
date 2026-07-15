@@ -47,7 +47,8 @@ bun run gate:ai-impl -- --test <owner-vitest-path> --closeout <plan-todo-id> --e
 
 - 경로: `%USERPROFILE%\.cursor\plans\*.plan.md` (repo 밖 · Cursor UI 체크박스와 동일 파일)
 - **Plan 본문 `.md`는 수정하지 않음** — frontmatter `status`만 갱신
-- 알려진 SSOT: `platform-perfect-launch_6982dfdf` · `phase_r_super-app_8bdf2c10`
+- 알려진 SSOT: `platform-perfect-launch_6982dfdf` · `phase_r_super-app_8bdf2c10` · `world-class_presentation_rebuild_bc0d5f4b`(프레젠테이션 폴리시, 2026-07-15 착수 — 상세: `98-project-dna-ground-truth.mdc` §현재 활성 Plan)
+- `~/.cursor/plans/`에는 위 3개 외 **60개 이상**의 완료·이력용 plan이 존재(2026-07-15 확인, 63개 총) — operator가 파일명/id를 명시하지 않는 한 이 목록의 다른 plan을 현재 작업 지시로 재해석하지 않는다.
 
 ## 교차 참조
 

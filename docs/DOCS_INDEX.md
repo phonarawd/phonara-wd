@@ -53,6 +53,7 @@
 | [`audit/PER_PAGE_UI_MATRIX.md`](audit/PER_PAGE_UI_MATRIX.md)                                                         | Web 79 surfaces loading/empty/error/responsive                                                               |
 | [`audit/SYSTEM_AUDIT_2026-07-13/00_EXECUTIVE_SCORECARD.md`](audit/SYSTEM_AUDIT_2026-07-13/00_EXECUTIVE_SCORECARD.md) | 7-Pillar 재점수 + SA-01~06                                                                                   |
 | [`audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)                   | Zero Assumption 감사 ZA-01~19 + 1-J 듀얼통화 · remediation Closeout 2026-07-14                               |
+| [`audit/PROJECT_DNA_GROUND_TRUTH_AUDIT_2026-07-15.md`](audit/PROJECT_DNA_GROUND_TRUTH_AUDIT_2026-07-15.md)           | **Project DNA 그라운드 트루스** — 제품 철학·아키텍처·디자인시스템·컴포넌트·UX/UI·기술건강도 Phase 0–10 전수 역공학 · 문서 신선도 서열 판정 · 신규 세션 오리엔테이션 정본(rule `98-project-dna-ground-truth.mdc`) |
 
 ## Audit reports (PQA §33 · read-only)
 

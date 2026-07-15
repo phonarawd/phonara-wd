@@ -174,7 +174,7 @@ bun run stack:stop
 
 **Plan closeout:** `phase1c-mines` → Plan YAML `status: completed` (`world-class_presentation_rebuild_bc0d5f4b.plan.md`).
 
-**다음 큐:** `phase1c-deepshaft` (Deepshaft) — 본 세션은 착수하지 않음.
+**다음 큐:** `phase1c-preflight-fullroute-verify` (전 라우트 BottomNav·axe 재검증) — Deepshaft 착수 **전** 필수.
 
 ### Phase 1C-hilo 결과 (Hilo 기능 QA + 모션 폴리시 + 퍼포먼스 체크 · 2026-07-15 · `world-class_presentation_rebuild_bc0d5f4b` plan todo `phase1c-hilo`)
 
@@ -207,7 +207,7 @@ bun run stack:stop
 
 **Plan closeout:** `gate:ai-impl --closeout phase1c-hilo` → Plan YAML `status: completed` 확인됨 (`world-class_presentation_rebuild_bc0d5f4b.plan.md`).
 
-**다음 큐:** `phase1c-deepshaft` (Deepshaft) — 본 세션은 착수하지 않음.
+**다음 큐:** `phase1c-preflight-fullroute-verify` (전 라우트 BottomNav·axe 재검증) — `PHONARA_AUDIT_ROUTES` 필터 **없이** full sweep · Home/Wallet/Trade/Sports 포함 · PASS 후 `phase1c-deepshaft`.
 
 ### P2 결과 (dead-controls 전수조사 · 2026-07-15)
 
