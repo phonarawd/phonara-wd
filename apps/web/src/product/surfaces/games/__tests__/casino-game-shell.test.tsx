@@ -118,8 +118,19 @@ vi.mock('@/features/casino/use-progressive-round', () => ({
   useProgressiveCashout: () => ({ mutateAsync: vi.fn(), isPending: false }),
 }));
 
+// vi.fn (not a plain arrow) so the phase1b-dice describe block below can
+// locally override this to `true` — DiceStage's settle path is rAF-driven
+// (like Crash's curve), and jsdom does not fire `requestAnimationFrame`
+// reliably (see crash-stage.test.tsx / dice-stage.test.tsx), so a click-through
+// test that waits for Dice to actually settle needs reduced motion to resolve
+// synchronously. Default stays `false` — byte-for-byte the same behavior as
+// the previous plain-arrow mock for every other test in this file.
+const { usePrefersReducedMotion } = vi.hoisted(() => ({
+  usePrefersReducedMotion: vi.fn(() => false),
+}));
+
 vi.mock('@/product/primitives/lib/use-prefers-reduced-motion', () => ({
-  usePrefersReducedMotion: () => false,
+  usePrefersReducedMotion,
 }));
 
 vi.mock('@/features/casino/use-casino-gpu-tier', () => ({
@@ -167,6 +178,7 @@ beforeEach(() => {
   liveCrashMock.placeMutateAsync.mockReset();
   liveCrashMock.cashoutMutateAsync.mockReset();
   casinoRoundMock.nextBet = null;
+  usePrefersReducedMotion.mockReturnValue(false);
 });
 
 describe('CasinoGameShell (p10-casino-replay-and-infra)', () => {
@@ -321,6 +333,83 @@ describe('Limbo manual bet click-through (phase1b-limbo)', () => {
     });
     expect(screen.getByTestId('casino-limbo-result')).toHaveTextContent('1.42×');
     expect(screen.getByTestId('casino-limbo-result')).toHaveClass('text-danger');
+  });
+});
+
+// phase1b-dice functional QA — end-to-end click-through: target set -> direction
+// toggle (roll-under/over) -> prepare hash -> place bet -> RPC roll result
+// renders. Proves the shell/selection-field/stage wiring, not just DiceStage in
+// isolation (see dice-stage.test.tsx for the isolated motion-polish + perf matrix).
+describe('Dice manual bet click-through (phase1b-dice)', () => {
+  beforeEach(() => {
+    // DiceStage's settle path is rAF-driven (like Crash's curve) and jsdom does
+    // not fire requestAnimationFrame reliably — reduced motion makes settle
+    // synchronous so `waitFor` below resolves against a real DOM update rather
+    // than an animation frame that never arrives.
+    usePrefersReducedMotion.mockReturnValue(true);
+  });
+
+  it('setting the target, switching direction, preparing the hash, and placing the bet renders the RPC roll result end-to-end', async () => {
+    casinoRoundMock.nextBet = {
+      bet_id: 'dice-bet-1',
+      status: 'won',
+      payout: '19.80',
+      result: { roll: 72.5, won: true },
+    };
+
+    wrap(<CasinoGameShell gameCode="dice" />);
+
+    expect(screen.getByTestId('casino-dice-stage')).toBeInTheDocument();
+    const targetInput = screen.getByTestId('casino-selection-target');
+    const directionSelect = screen.getByTestId('casino-selection-direction');
+    expect(targetInput).toHaveValue('50.00');
+    expect(directionSelect).toHaveValue('over');
+
+    // Target set + direction re-selected — controls that visibly respond, not
+    // just accept input (roll-under/over is a <select>, not a hidden field).
+    fireEvent.change(targetInput, { target: { value: '60.00' } });
+    expect(targetInput).toHaveValue('60.00');
+    fireEvent.change(directionSelect, { target: { value: 'over' } });
+    expect(screen.getByTestId('casino-dice-stage')).toHaveAttribute('data-direction', 'over');
+
+    // Place Bet stays disabled until a hash commitment exists (no dead click).
+    expect(screen.getByTestId('casino-place-bet')).toBeDisabled();
+    fireEvent.click(screen.getByTestId('casino-prepare-hash'));
+    await waitFor(() => expect(screen.getByTestId('casino-place-bet')).toBeEnabled());
+
+    fireEvent.click(screen.getByTestId('casino-place-bet'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('casino-dice-stage')).toHaveAttribute('data-won', 'true');
+    });
+    expect(screen.getByTestId('casino-dice-roll')).toHaveTextContent('72.50');
+    expect(screen.getByTestId('casino-dice-roll-marker')).toBeInTheDocument();
+  });
+
+  it('switching direction to Under and placing a losing bet still renders cleanly end-to-end (roll-under path)', async () => {
+    casinoRoundMock.nextBet = {
+      bet_id: 'dice-bet-2',
+      status: 'lost',
+      payout: '0',
+      result: { roll: 72.5, won: false },
+    };
+
+    wrap(<CasinoGameShell gameCode="dice" />);
+
+    const directionSelect = screen.getByTestId('casino-selection-direction');
+    fireEvent.change(directionSelect, { target: { value: 'under' } });
+    expect(directionSelect).toHaveValue('under');
+    expect(screen.getByTestId('casino-dice-stage')).toHaveAttribute('data-direction', 'under');
+
+    fireEvent.click(screen.getByTestId('casino-prepare-hash'));
+    await waitFor(() => expect(screen.getByTestId('casino-place-bet')).toBeEnabled());
+    fireEvent.click(screen.getByTestId('casino-place-bet'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('casino-dice-stage')).toHaveAttribute('data-won', 'false');
+    });
+    expect(screen.getByTestId('casino-dice-roll')).toHaveTextContent('72.50');
+    expect(screen.getByTestId('casino-dice-roll')).toHaveClass('text-danger');
   });
 });
 

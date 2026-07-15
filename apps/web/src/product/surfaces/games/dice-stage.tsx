@@ -1,4 +1,12 @@
-import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { diceMultiplier, diceWinProbability, type DiceDirection } from '@phonara/game-engine';
 import { toDecimal } from '@phonara/money';
 
@@ -20,6 +28,18 @@ export type DiceStageProps = {
   direction: string;
   className?: string;
 };
+
+/**
+ * Roll-settle wobble — Dice is the "instant" sub-category (with Limbo), not the
+ * "curve" sub-category (Crash's separate 1.5-4s curve-build budget). The wobble
+ * itself IS the marker's Result reveal, so it must stay inside the quantified
+ * 200-500ms band (§Motion & performance acceptance criteria) — tightened from the
+ * previous 520ms, which exceeded the 500ms ceiling. Exported (not local-only, cf.
+ * LimboStage's LIMBO_REVEAL_HOLD_MS) because — like Crash's rAF-driven curve —
+ * jsdom does not fire `requestAnimationFrame` reliably, so a real awaited-elapsed-
+ * time test would hang; asserting the constant directly is the safe equivalent.
+ */
+export const DICE_ROLL_REVEAL_MS = 480;
 
 function parseDirection(raw: string): DiceDirection {
   return raw === 'under' ? 'under' : 'over';
@@ -54,7 +74,11 @@ export const DiceStage = forwardRef<CasinoStageHandle, DiceStageProps>(function 
   const [phase, setPhase] = useState<CasinoStagePhase>('idle');
   const [outcome, setOutcome] = useState<ParsedDiceOutcome | null>(null);
   const [rollSettled, setRollSettled] = useState<string | null>(null);
+  /** Monotonic counter — key-remount restarts the CSS reveal/pop/flash on each new settle (§Motion), mirrors crash/limbo. */
+  const [revealPulse, setRevealPulse] = useState(0);
   const rollLabelRef = useRef<HTMLSpanElement | null>(null);
+  /** Full-width wrapper — its `transform: translateX(pct%)` tracks the roll, never `left` (0 layout shift, transform-only per §Motion). */
+  const markerTrackRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const resolveRef = useRef<(() => void) | null>(null);
 
@@ -76,18 +100,36 @@ export const DiceStage = forwardRef<CasinoStageHandle, DiceStageProps>(function 
     }
   }, []);
 
+  /**
+   * Marker motion (Phase 1B) — moves the roll marker via `transform` on a
+   * full-width wrapper (never `left`/`top`), so repositioning it every rAF
+   * frame never triggers reflow or contributes layout shift. `pct` is the
+   * clamped [0,100] roll value; the wrapper's own translateX(pct%) is relative
+   * to the wrapper's width (== the track's width, since it spans `w-full`),
+   * and the dot inside self-centers on that point via a separate Tailwind
+   * transform on itself — the two transforms never collide.
+   */
+  const paintMarker = useCallback((pct: number) => {
+    const el = markerTrackRef.current;
+    if (!el) return;
+    const clamped = Math.max(0, Math.min(100, pct));
+    el.style.transform = `translateX(${clamped}%)`;
+  }, []);
+
   const settle = useCallback(
     (parsed: ParsedDiceOutcome) => {
       cancelRaf();
       const text = parsed.roll.toFixed(2);
       if (rollLabelRef.current) rollLabelRef.current.textContent = text;
+      paintMarker(parsed.roll);
       setRollSettled(text);
       setOutcome(parsed);
       setPhase('settled');
+      setRevealPulse((n) => n + 1);
       resolveRef.current?.();
       resolveRef.current = null;
     },
-    [cancelRaf],
+    [cancelRaf, paintMarker],
   );
 
   const runReplay = useCallback(
@@ -96,12 +138,16 @@ export const DiceStage = forwardRef<CasinoStageHandle, DiceStageProps>(function 
       setPhase('replaying');
       setOutcome(null);
       setRollSettled(null);
+      // Matches the wobble formula's own t=0 value (sin(0)=0, so wobble===roll
+      // at the start) — paints the marker at the correct position immediately,
+      // so there is never an unpainted/stale frame before the first rAF tick.
+      paintMarker(parsed.roll);
       if (reducedMotion) {
         settle(parsed);
         return;
       }
       const start = performance.now();
-      const duration = 520;
+      const duration = DICE_ROLL_REVEAL_MS;
       const tick = (now: number) => {
         const p = Math.min(1, (now - start) / duration);
         const wobble = parsed.roll + Math.sin(p * Math.PI * 6) * (1 - p) * 8;
@@ -109,6 +155,7 @@ export const DiceStage = forwardRef<CasinoStageHandle, DiceStageProps>(function 
         if (rollLabelRef.current) {
           rollLabelRef.current.textContent = clamped.toFixed(2);
         }
+        paintMarker(clamped);
         if (p < 1) {
           rafRef.current = requestAnimationFrame(tick);
         } else {
@@ -117,7 +164,7 @@ export const DiceStage = forwardRef<CasinoStageHandle, DiceStageProps>(function 
       };
       rafRef.current = requestAnimationFrame(tick);
     },
-    [cancelRaf, reducedMotion, settle],
+    [cancelRaf, paintMarker, reducedMotion, settle],
   );
 
   useImperativeHandle(
@@ -137,15 +184,27 @@ export const DiceStage = forwardRef<CasinoStageHandle, DiceStageProps>(function 
         setPhase('idle');
         setOutcome(null);
         setRollSettled(null);
+        setRevealPulse(0);
         if (rollLabelRef.current) rollLabelRef.current.textContent = '—';
+        paintMarker(0);
       },
     }),
-    [cancelRaf, runReplay],
+    [cancelRaf, paintMarker, runReplay],
   );
 
+  // Perf (Phase 1B) — a bet placed right before navigating away must not leave
+  // a dangling rAF loop that keeps ticking and eventually calls the settle
+  // setState calls after unmount ("Can't perform a React state update on an
+  // unmounted component"). Matches CrashStage's equivalent
+  // `useEffect(() => () => cancelRaf(), ...)` cleanup — previously missing
+  // here entirely (worse than LimboStage's own pre-Phase-1B gap, since that
+  // timer's callback only touched refs; this one calls real setState).
+  useEffect(() => cancelRaf, [cancelRaf]);
+
   const markerPct = Number.isFinite(targetNum) ? Math.max(0, Math.min(100, targetNum)) : 50;
-  const rollPct = rollSettled !== null ? Math.max(0, Math.min(100, Number(rollSettled))) : null;
   const won = outcome?.won === true;
+  const settled = phase === 'settled' && outcome !== null;
+  const showMarker = phase !== 'idle';
   const winSideIsRight = dir === 'over';
 
   return (
@@ -204,25 +263,54 @@ export const DiceStage = forwardRef<CasinoStageHandle, DiceStageProps>(function 
             style={{ left: `${markerPct}%` }}
             data-testid="casino-dice-threshold"
           />
-          {rollPct !== null ? (
-            <div
-              className={cn(
-                'absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white',
-                won ? 'bg-success' : 'bg-danger',
-              )}
-              style={{ left: `${rollPct}%` }}
-              data-testid="casino-dice-roll-marker"
-            />
-          ) : null}
+          {/*
+           * Wrapper spans the full track and is the ONLY element whose position
+           * is driven every frame (via `paintMarker`'s `transform:
+           * translateX(pct%)` — never `left`, 0 layout shift). Always mounted
+           * (unlike its dot/glow children below) so `markerTrackRef` is already
+           * attached — via ref, before any React re-render — the moment the
+           * first bet's `playOutcome` calls `paintMarker` synchronously; a
+           * conditionally-mounted wrapper would leave the ref null until the
+           * next render commits, flashing the marker at 0% for one frame.
+           */}
+          <div
+            ref={markerTrackRef}
+            className="pointer-events-none absolute inset-y-0 left-0 w-full"
+            aria-hidden="true"
+          >
+            {showMarker ? (
+              <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2">
+                {settled && won && !reducedMotion ? (
+                  <span
+                    key={`marker-glow-${revealPulse}`}
+                    className="ds-casino-cashout-flash"
+                    data-testid="casino-dice-win-flash"
+                  />
+                ) : null}
+                <span
+                  key={`marker-${revealPulse}`}
+                  className={cn(
+                    'block size-4 rounded-full border-2 border-white',
+                    settled ? (won ? 'bg-success' : 'bg-danger') : 'bg-foreground',
+                    settled && won && !reducedMotion && 'ds-casino-number-pop',
+                  )}
+                  data-testid="casino-dice-roll-marker"
+                />
+              </div>
+            ) : null}
+          </div>
         </div>
 
         <div className="flex flex-col items-center gap-1">
           <span className="text-foreground-muted text-xs">{t('casino.stage.roll')}</span>
           <span
+            key={`value-${revealPulse}`}
             ref={rollLabelRef}
             className={cn(
               'text-4xl font-semibold tabular-nums',
-              outcome ? (won ? 'text-success' : 'text-danger') : 'text-foreground',
+              settled ? (won ? 'text-success' : 'text-danger') : 'text-foreground',
+              settled && !reducedMotion && 'ds-casino-reveal-in',
+              settled && won && !reducedMotion && 'ds-casino-number-pop',
             )}
             data-testid="casino-dice-roll"
           >
