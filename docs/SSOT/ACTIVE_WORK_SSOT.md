@@ -174,7 +174,38 @@ bun run stack:stop
 
 **Plan closeout:** `phase1c-mines` → Plan YAML `status: completed` (`world-class_presentation_rebuild_bc0d5f4b.plan.md`).
 
-**다음 큐:** `phase1c-hilo` (Hilo) — 본 세션은 착수하지 않음.
+**다음 큐:** `phase1c-hilo` (Hilo) — **preflight 완료 · 구현 착수 대기** (2026-07-15).
+
+### Phase 1C-hilo preflight (착수 전 감사 · 2026-07-15 · Plan todo `phase1c-hilo` **pending**)
+
+> **상태:** 정적 감사 + baseline vitest + oneshot CDP baseline **완료** — 구현(코드 수정)은 **미착수**. Mines `phase1c-mines` 패턴을 그대로 적용할 착수 체크리스트.
+
+**Plan 목표:** functional click-through QA (hi/lo/skip · live cash-out · card flip) + quantified motion polish + perf check · elevation: "Real card-flip (not instant swap)" 200–500ms band.
+
+**정적 감사 — 우선 수정 후보 (Mines/Dice RED-first 패턴 예상):**
+
+| 우선순위 | 발견 | 근거 |
+| --- | --- | --- |
+| **P0** | 라이브 mid-round guess 후 카드/스트릭이 서버 `public_state`와 불일치 | `handleLiveGuess`는 `progressiveStep`만 호출 — Mines의 `handleLiveRevealCell`처럼 `selection.guesses`/`startCard`를 `public_state`에서 동기화하지 않음 (`casino-game-shell.tsx` 428–444) |
+| **P0** | 라이브 세션 시작 시 `guesses:['higher']` 프리필 잔류 | `game-config.ts` `defaultSelection` · 서버는 `guesses:[]`로 시작(`ew_e23_casino_live.sql:814`) — Mines에서 고친 `revealedCells:[]` 리셋과 동일 클래스 · `handleLiveStart`에 hilo 분기 **없음** |
+| **P0** | 라이브 정산 시 `playOutcome(public_state)` 파싱 실패 가능 | progressive hilo `public_state` shape `{cards, guesses, multiplier, lastCorrect}` — `parseHiloOutcome`은 `{cards, rounds, won}` 필수 → settle flip 애니메이션 **무음 스킵** |
+| **P1** | unmount 타이머 누수 | `HiloStage`에 `clearTimer`만 있고 Mines/Dice처럼 `useEffect(() => clearTimer, [clearTimer])` **없음** |
+| **P1** | 카드 flip이 텍스트 인덱스 스왑만 | `visibleCardIndex` 갱신만 — `motion.css` `ds-casino-*` 미연결 · 플랜 "Real card-flip" 미충족 |
+| **P2** | 전용 테스트/shell 통합 테스트 없음 | `hilo-stage.test.tsx` **0** · `casino-game-shell` Hilo live click-through **0** (batch-b 기본 3건만) |
+
+**Oneshot baseline (양호):** `casino-games-batch-b-stages.test.tsx` flip·queue 3건 green · CDP oneshot bet→settle (아래).
+
+**착수 시 구현 순서 (Mines 복제):**
+
+1. RED-first shell 통합 테스트 (live guess sync · live start `guesses:[]` · settle `playOutcome` shape)
+2. `hilo-stage.test.tsx` (기능 QA · 모션 · perf)
+3. `parseHiloOutcome` progressive adapter 또는 shell에서 rounds/won 합성 (엔진/RPC **미변경**)
+4. `motion.css` card-flip 토큰 + `ds-casino-reveal-in` win/lose 컨벤션
+5. `gate:ai-impl` → CDP `PHONARA_AUDIT_ROUTES=casino-hilo` → ACTIVE_WORK_SSOT closeout
+
+**범위 밖 (Mines와 동일):** `resetAccumulatedSelection` hilo 분기 drift · 반복 원샷 프리필 — 버그 확정 안 함.
+
+**실브라우저 CDP baseline (2026-07-15 preflight · oneshot only):** `stack:ensure --full` → `seed:local-trade` → `PHONARA_AUDIT_ROUTES=casino-hilo` · `visual-audit-capture-cdp.ts` **green** — `loggedIn:true` · `authRedirects:0` · axe critical 0 · manifest `consoleErrorCount:0`(전 viewport). Interaction: `guessQueue:"Higher"`(프리필 확인) · `resultText` won:false · card:`A` · phase:settled · `errorBanner:null`. 스크린샷: `casino-hilo-*-dark-*.png` 9장 + `casino-hilo-1024-dark-bet-result.png`. **라이브 cash-out CDP 범위 밖** (shell vitest 예정).
 
 ### P2 결과 (dead-controls 전수조사 · 2026-07-15)
 
