@@ -8,7 +8,7 @@ export function TermsDocumentBody() {
   const t = useT();
 
   return (
-    <div className="flex flex-col gap-6" data-testid="legal-body-terms">
+    <div className="flex flex-col gap-ds-8" data-testid="legal-body-terms">
       {LEGAL_TERMS_SECTION_IDS.map((sectionId) => (
         <LegalSection
           key={sectionId}

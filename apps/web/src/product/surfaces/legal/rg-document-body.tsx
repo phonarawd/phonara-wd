@@ -8,7 +8,7 @@ export function RgDocumentBody() {
   const t = useT();
 
   return (
-    <div className="flex flex-col gap-6" data-testid="legal-body-rg">
+    <div className="flex flex-col gap-ds-8" data-testid="legal-body-rg">
       {LEGAL_RG_SECTION_IDS.map((sectionId) => (
         <LegalSection
           key={sectionId}

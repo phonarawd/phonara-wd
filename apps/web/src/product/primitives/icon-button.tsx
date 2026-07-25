@@ -16,7 +16,8 @@ export interface IconButtonProps
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ className, size = 'md', children, asChild = false, ...props }, ref) => {
-    const iconSizeClass = size === 'sm' ? 'size-9' : size === 'lg' ? 'size-12' : 'size-11';
+    // Square hit area matches Button — --ds-touch-target-min for every size.
+    const iconSizeClass = 'size-(--ds-touch-target-min)';
 
     if (asChild) {
       return (

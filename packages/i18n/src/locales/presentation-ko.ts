@@ -3608,6 +3608,7 @@ export const presentationKoMessages = {
   'sports.slip.preview_label': '표시용',
   'sports.slip.sgp_same_fixture': 'SGP는 같은 경기 안에서만 조합돼요.',
   'sports.slip.stake': '스테이크',
+  'sports.slip.openSheet': '베팅 슬립 ({count})',
   'sports.slip.title': '베팅 슬립',
   'sports.slip.debit_bucket.label': '차감 트랙',
   'sports.slip.debit_bucket.bonus_only': '보너스 PHON',

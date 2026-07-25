@@ -99,7 +99,7 @@ export function RewardsHistoryPage() {
   const showClearFilters = hasActiveRewardsHistoryFilters(filters);
 
   return (
-    <div className="flex flex-col gap-6 py-4 md:py-6" data-testid="rewards-history-page">
+    <div className="flex flex-col gap-ds-8 py-4 md:py-6" data-testid="rewards-history-page">
       <header className="space-y-3">
         <a
           href="/home"

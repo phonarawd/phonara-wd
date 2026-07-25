@@ -11,7 +11,7 @@ export function AffiliateDocumentBody() {
   const t = useT();
 
   return (
-    <div className="flex flex-col gap-6" data-testid="legal-body-affiliate">
+    <div className="flex flex-col gap-ds-8" data-testid="legal-body-affiliate">
       {LEGAL_AFFILIATE_SECTION_IDS.map((sectionId) => (
         <LegalSection
           key={sectionId}

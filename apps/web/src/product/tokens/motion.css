@@ -291,3 +291,37 @@
 .ds-casino-card-flip {
   animation: ds-casino-card-flip var(--ds-motion-casino-card-flip) var(--ds-ease-standard) both;
 }
+
+/*
+ * Phase 1E — Roulette chip-drop micro-feedback on placement.
+ * Motion DoD micro band 120–200ms; transform/opacity only (0 layout shift).
+ * Duration must stay in lockstep with `rouletteChipDropMs()` in
+ * casino-games-batch-d-display-contract.ts.
+ */
+:root {
+  --ds-motion-casino-chip-drop: 160ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ds-motion-casino-chip-drop: 0ms;
+  }
+}
+
+@keyframes ds-casino-chip-drop {
+  0% {
+    opacity: 0.45;
+    transform: translateY(-6px) scale(0.78);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(1px) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.ds-casino-chip-drop {
+  animation: ds-casino-chip-drop var(--ds-motion-casino-chip-drop) var(--ds-ease-standard) both;
+}

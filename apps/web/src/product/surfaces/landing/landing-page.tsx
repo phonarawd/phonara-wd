@@ -183,7 +183,7 @@ export function LandingPage() {
       <LandingAnalyticsSection
         event="landing.hero.viewed"
         testId="landing-hero"
-        className="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-12"
+        className="flex flex-col gap-ds-8 lg:flex-row lg:items-center lg:gap-12"
       >
         <div className="flex flex-1 flex-col gap-4">
           <p className="text-foreground-muted m-0 text-sm font-medium">
@@ -222,7 +222,7 @@ export function LandingPage() {
 
       {proof.stats !== 'hidden' ? <LandingCumulativeStats /> : null}
 
-      <section className="flex flex-col gap-6" data-testid="landing-proof">
+      <section className="flex flex-col gap-ds-8" data-testid="landing-proof">
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader className="pb-0">
@@ -266,7 +266,7 @@ export function LandingPage() {
         ) : null}
       </section>
 
-      <section className="flex flex-col gap-6" data-testid="landing-how">
+      <section className="flex flex-col gap-ds-8" data-testid="landing-how">
         <div className="flex flex-col gap-2">
           <h2 className="text-foreground m-0 text-2xl font-semibold">
             {t(PLATFORM_PILLARS_SECTION_TITLE_KEY)}
@@ -292,7 +292,7 @@ export function LandingPage() {
         </ol>
       </section>
 
-      <section className="flex flex-col gap-6" data-testid="landing-missions">
+      <section className="flex flex-col gap-ds-8" data-testid="landing-missions">
         <div className="flex flex-col gap-2">
           <h2 className="text-foreground m-0 text-2xl font-semibold">
             {t('landing.missions.title')}

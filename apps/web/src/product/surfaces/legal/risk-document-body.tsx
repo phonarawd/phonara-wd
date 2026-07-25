@@ -16,7 +16,7 @@ export function RiskDocumentBody() {
   const t = useT();
 
   return (
-    <div className="flex flex-col gap-6" data-testid="legal-body-risk">
+    <div className="flex flex-col gap-ds-8" data-testid="legal-body-risk">
       {LEGAL_RISK_CARD_IDS.map((cardId) => (
         <LegalSection
           key={cardId}

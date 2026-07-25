@@ -66,7 +66,7 @@ export function AccountResponsibleGamingPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 py-4 md:py-6" data-testid="account-rg-page">
+    <div className="flex flex-col gap-ds-8 py-4 md:py-6" data-testid="account-rg-page">
       <header className="space-y-3">
         <a
           href="/account"

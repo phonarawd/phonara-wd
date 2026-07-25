@@ -32,7 +32,7 @@ export function ApiKeysSettingsPage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-2xl flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-2xl flex-col gap-ds-8 py-4 md:py-6"
       data-testid="settings-api-keys-page"
     >
       <header className="flex flex-col gap-3">

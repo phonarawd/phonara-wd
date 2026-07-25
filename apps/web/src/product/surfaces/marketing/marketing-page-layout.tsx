@@ -33,7 +33,7 @@ export function MarketingPageLayout({
   return (
     <div
       data-testid={testId}
-      className={cn('mx-auto flex w-full max-w-3xl flex-col gap-6 py-6 md:py-10', className)}
+      className={cn('mx-auto flex w-full max-w-3xl flex-col gap-ds-8 py-6 md:py-10', className)}
     >
       <Link
         to={backTo}

@@ -3663,6 +3663,7 @@ export const presentationEnMessages = {
   'sports.slip.preview_label': 'Preview',
   'sports.slip.sgp_same_fixture': 'SGP requires legs from the same fixture.',
   'sports.slip.stake': 'Stake',
+  'sports.slip.openSheet': 'Bet slip ({count})',
   'sports.slip.title': 'Bet Slip',
   'sports.slip.debit_bucket.label': 'Debit track',
   'sports.slip.debit_bucket.bonus_only': 'Bonus PHON',

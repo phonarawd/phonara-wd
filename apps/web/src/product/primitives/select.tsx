@@ -15,7 +15,7 @@ export const SelectTrigger = forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-11 w-full items-center justify-between rounded-(--ds-radius-md) border border-line',
+      'flex h-(--ds-touch-target-min) min-h-(--ds-touch-target-min) w-full items-center justify-between rounded-(--ds-radius-md) border border-line',
       'bg-surface px-3 py-2 text-sm transition-[border-color] duration-(--ds-motion-field)',
       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
       'disabled:cursor-not-allowed disabled:opacity-50',

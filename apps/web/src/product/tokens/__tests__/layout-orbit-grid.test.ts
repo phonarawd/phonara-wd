@@ -21,4 +21,14 @@ describe('layout.css Orbit Grid (§34.10–34.11)', () => {
     const index = readFileSync(join(tokensDir, 'index.css'), 'utf8');
     expect(index).toContain('layout.css');
   });
+
+  it('.ds-shell-page uses 100vh then 100dvh progressive enhancement', () => {
+    const css = readFileSync(join(tokensDir, 'layout.css'), 'utf8');
+    const shellBlock = css.match(/\.ds-shell-page\s*\{[^}]+\}/)?.[0];
+    expect(shellBlock).toBeTruthy();
+    const vhAt = shellBlock!.indexOf('min-height: 100vh');
+    const dvhAt = shellBlock!.indexOf('min-height: 100dvh');
+    expect(vhAt).toBeGreaterThanOrEqual(0);
+    expect(dvhAt).toBeGreaterThan(vhAt);
+  });
 });

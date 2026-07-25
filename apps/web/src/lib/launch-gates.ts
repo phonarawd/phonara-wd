@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Launch exposure gates for Phase B3.
  *
  * These flags only control browser exposure. Engine/RPC paths remain intact for
@@ -13,7 +13,6 @@ export const LAUNCH_GATES = {
   /** SB-W3 — full cashout card live with prematch betting (operator-approved Wave 3). */
   sportsCashout: true,
   notificationsCenter: false,
-  tierGuide: false,
   /** E1 — tier auto-decay engine + tier_decay_warning pref exposure on `/settings/notifications`. */
   tierDecayEngine: true,
   /** E2 — mission catalog engine (list/upsert RPC). */
