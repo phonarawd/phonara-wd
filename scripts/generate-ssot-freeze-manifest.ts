@@ -69,10 +69,15 @@ function walkTsx(dir: string, out: string[] = []): string[] {
 
 function parseRoutePaths(content: string): string[] {
   const paths: string[] = [];
+  // Legacy createRoute({ path: '...' })
   for (const m of content.matchAll(/path:\s*['"]([^'"]+)['"]/g)) {
     paths.push(m[1]!);
   }
-  return paths;
+  // Phase R TanStack file routes: createFileRoute('/home')({ ... })
+  for (const m of content.matchAll(/createFileRoute\(\s*['"]([^'"]+)['"]\s*\)/g)) {
+    paths.push(m[1]!);
+  }
+  return [...new Set(paths)];
 }
 
 /** Code-derived redirect truth — paired per route export, not cross-product. */
@@ -108,6 +113,16 @@ function parseNavigateTargets(content: string, pathHint?: string): { from: strin
     if (paths.includes('/')) redirects.push({ from: '/', to: m[1]! });
   }
 
+  // Phase R: throw redirect({ to: '/login', replace: true })
+  for (const m of content.matchAll(/redirect\(\{\s*to:\s*['"]([^'"]+)['"]/g)) {
+    const to = m[1]!;
+    for (const from of paths) {
+      if (!redirects.some((r) => r.from === from && r.to === to)) {
+        redirects.push({ from, to });
+      }
+    }
+  }
+
   for (const [from, to] of Object.entries(KNOWN_REDIRECTS)) {
     if (paths.includes(from) && !redirects.some((r) => r.from === from)) {
       redirects.push({ from, to });
@@ -124,8 +139,15 @@ function parseSurfaceFromRoute(content: string): string | null {
     const primary = names.find((n) => n.endsWith('DeskSurface'));
     if (primary) return primary;
   }
-  const componentMatch = content.match(/component:\s*(\w+DeskSurface|\w+)/);
-  if (componentMatch?.[1]?.includes('DeskSurface')) return componentMatch[1];
+  // Phase R product surfaces: import { EarnHomePage } from '@/product/surfaces/...'
+  const pageImport = content.match(
+    /import\s+\{\s*([A-Za-z0-9_]+Page)\s*\}\s+from\s+['"]@\/product\/surfaces\/[^'"]+['"]/,
+  );
+  if (pageImport?.[1]) return pageImport[1];
+  const componentMatch = content.match(/component:\s*(\w+DeskSurface|\w+Page|\w+)/);
+  if (componentMatch?.[1]?.includes('DeskSurface') || componentMatch?.[1]?.endsWith('Page')) {
+    return componentMatch[1]!;
+  }
   if (content.includes('CasinoPage')) return 'CasinoDeskSurface';
   if (content.includes('LandingDeskSurface')) return 'LandingDeskSurface';
   if (content.includes('AuthCallbackPage')) return 'AuthCallbackPage';
@@ -195,18 +217,40 @@ function parseControllerFromSurface(surfaceFile: string | null): {
   }
 }
 
-function findSurfaceFile(surfaceName: string): string | null {
-  const roots = [join(repoRoot, 'apps/web/src/ui'), join(repoRoot, 'apps/web/src')];
+const surfaceFileCache = new Map<string, string | null>();
+let webTsxFilesCache: string[] | null = null;
+
+function listWebTsxFiles(): string[] {
+  if (webTsxFilesCache) return webTsxFilesCache;
+  const roots = [join(repoRoot, 'apps/web/src/product'), join(repoRoot, 'apps/web/src')];
+  const seen = new Set<string>();
+  const out: string[] = [];
   for (const root of roots) {
     try {
-      const files = walkTsx(root);
-      const hit = files.find((f) => readText(f).includes(`export function ${surfaceName}`));
-      if (hit) return hit;
+      for (const f of walkTsx(root)) {
+        if (seen.has(f)) continue;
+        seen.add(f);
+        out.push(f);
+      }
     } catch {
       /* skip */
     }
   }
-  return null;
+  webTsxFilesCache = out;
+  return out;
+}
+
+function findSurfaceFile(surfaceName: string): string | null {
+  if (surfaceFileCache.has(surfaceName)) return surfaceFileCache.get(surfaceName)!;
+  try {
+    const hit =
+      listWebTsxFiles().find((f) => readText(f).includes(`export function ${surfaceName}`)) ?? null;
+    surfaceFileCache.set(surfaceName, hit);
+    return hit;
+  } catch {
+    surfaceFileCache.set(surfaceName, null);
+    return null;
+  }
 }
 
 function inferOwner(path: string, surface: string | null): string {
@@ -292,7 +336,10 @@ function buildWebRoutes(): RouteEntry[] {
     const content = readText(full);
     const paths = parseRoutePaths(content);
     const redirects = parseNavigateTargets(content);
-    for (const r of redirects) redirectMap.set(r.from, r.to);
+    // Prefer KNOWN_REDIRECTS over auth beforeLoad gates (throw redirect → /login)
+    for (const r of redirects) {
+      if (!(r.from in KNOWN_REDIRECTS)) redirectMap.set(r.from, r.to);
+    }
 
     for (const path of paths) {
       if (seenPaths.has(path)) continue;
@@ -611,9 +658,16 @@ interface DisplayFieldAudit {
   notes: string;
 }
 
-function buildDisplayContractAudits(): DisplayFieldAudit[] {
+function readShapesSource(): { path: string; content: string; present: boolean } {
   const shapesPath = join(repoRoot, 'apps/web/src/contracts/page-controller-view-shapes.ts');
-  const shapes = readText(shapesPath);
+  if (!existsSync(shapesPath)) {
+    return { path: shapesPath, content: '', present: false };
+  }
+  return { path: shapesPath, content: readText(shapesPath), present: true };
+}
+
+function buildDisplayContractAudits(): DisplayFieldAudit[] {
+  const { content: shapes } = readShapesSource();
   const audits: DisplayFieldAudit[] = [];
 
   const add = (
@@ -1708,8 +1762,8 @@ function main(): void {
   const web = buildWebRoutes();
   const admin = buildAdminRoutes();
   const audits = buildDisplayContractAudits();
-  const shapesPath = join(repoRoot, 'apps/web/src/contracts/page-controller-view-shapes.ts');
-  const viewShapes = parseControllerViewShapes(readText(shapesPath));
+  const shapes = readShapesSource();
+  const viewShapes = parseControllerViewShapes(shapes.content);
 
   writeFileSync(join(ssotDir, 'FREEZE_MANIFEST.md'), formatFreezeManifest(web, admin));
   writeFileSync(join(ssotDir, 'UI_INVENTORY.md'), formatUiInventory(web, admin));
@@ -1724,6 +1778,11 @@ function main(): void {
   console.log(
     `  web routes: ${web.length}, admin routes: ${admin.length}, display audits: ${audits.length}, playbook surfaces: ${PLAYBOOK_REGISTRY.length}`,
   );
+  if (!shapes.present) {
+    console.log(
+      '  note: page-controller-view-shapes.ts absent (post-demolition) — display audits use field-name scan against empty freeze shapes',
+    );
+  }
 }
 
 main();

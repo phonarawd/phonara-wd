@@ -32,6 +32,7 @@ jobs:
           bun-version: latest
       - run: bun install --frozen-lockfile
       - run: bun run check:env
+      - run: bun run check:secrets-deploy-deny
       - run: bun run check:hygiene
       - run: bun run check:i18n
       - run: bun run check:release

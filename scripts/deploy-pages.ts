@@ -11,6 +11,7 @@
  * Or:
  *   tsx scripts/deploy-pages.ts --app=web --branch=preview
  */
+import { existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -90,6 +91,21 @@ function main(): void {
   run('bun', ['run', 'release:manifest', '--', `--app=${app}`, `--branch=${branch}`], 'manifest');
 
   const distDir = path.join('apps', app, 'dist');
+  if (!existsSync(path.join(REPO_ROOT, distDir))) {
+    process.stderr.write(
+      `[deploy-pages] FAIL — missing dist after build: ${distDir}\n` +
+        '  Secrets hard-stop requires a built bundle before wrangler upload.\n',
+    );
+    process.exit(1);
+  }
+
+  // Hard-stop: never upload a dist that embeds service_role / key material.
+  run(
+    'bun',
+    ['run', 'check:secrets-deploy-deny', '--', '--dist'],
+    'secrets-deploy-deny',
+  );
+
   // Pages deploy: --project-name only (wrangler rejects --config for Pages).
   const wranglerArgs = [
     'pages',

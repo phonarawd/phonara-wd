@@ -19,13 +19,13 @@ supabase db reset
 bun run test:sql
 ```
 
-5. **Remote apply (canonical — hooks deny alternatives):**
+1. **Remote apply (canonical — hooks deny alternatives):**
 
 ```powershell
 bun run stack:push-remote
 ```
 
-6. **Advisor:**
+1. **Advisor:**
 
 ```powershell
 bun run check:advisors

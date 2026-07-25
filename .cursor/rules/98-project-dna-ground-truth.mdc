@@ -36,6 +36,8 @@ alwaysApply: true
 | 루트 `package.json` 스크립트 개수 | **232개**(직접 grep 재검증) — 서브에이전트 최초 보고치 100은 오류였음, 참고용 | §6 |
 | Admin과 Web이 UI 프리미티브를 공유하는지 | **공유 없음** — `packages/ui` 부재, 두 앱 완전히 분리된 프리미티브/의존성 세트 | §7, §9 |
 
+> **Errata (2026-07-24 · `const-t5-stale-lowspec-index` — 각주만, 표 재작성 아님):** 위 `docs/rebuild/LOWSPEC_RULES.md` 행은 2026-07-15 시점 실측이며 이후 **stale**이 되었다. 2026-07-16부터 해당 경로에 얇은 redirect가 실존한다 — Shell `Test-Path`/`Get-Content`로 실체·본문 확인됨(1,819바이트). `.cursorignore` L54가 Cursor `Read` 툴 접근만 차단하므로(Read 호출 시 `Permission denied` 실측 확인, Shell 경유는 정상) Read 결과만으로 "파일 없음"이라 오판하지 않는다. 최신 포인터: [`docs/SSOT/PLATFORM_CONSTITUTION.md`](../../docs/SSOT/PLATFORM_CONSTITUTION.md) §7. 이 errata를 근거로 파일을 재창작하지 않는다.
+
 ## 현재 활성 Plan (2026-07-15 기준 — "다음 단계"는 항상 plan frontmatter로 재확인)
 
 > **Plan 파일:** `~/.cursor/plans/world-class_presentation_rebuild_bc0d5f4b.plan.md` (repo 밖, Cursor Plan 표준 경로)

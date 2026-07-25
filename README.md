@@ -1,6 +1,6 @@
 # PHONARA GB
 
-PHONARA는 카지노(12종 provably-fair 게임)·스포츠북·현물/선물 거래·스테이킹·리퍼럴 리워드를 하나의 지갑(USDT/PHON 듀얼 통화)으로 묶은 실시간 앱테크·거래 플랫폼이다. 이 저장소는 웹 앱, 운영 Admin, Supabase 백엔드, 공유 엔진 패키지를 포함하는 Bun 모노레포다.
+PHONARA는 카지노(12종 provably-fair 게임)·스포츠북·현물/선물 거래·스테이킹·리퍼럴 리워드를 하나의 지갑(PHON · USDT · KRW 3통화)으로 묶은 실시간 앱테크·거래 플랫폼이다. 이 저장소는 웹 앱, 운영 Admin, Supabase 백엔드, 공유 엔진 패키지를 포함하는 Bun 모노레포다.
 
 ## 현재 상태 · 진행 단계
 
@@ -15,7 +15,7 @@ PHONARA는 카지노(12종 provably-fair 게임)·스포츠북·현물/선물 �
 
 ## 아키텍처 개요
 
-```
+```text
 apps/web      React 19 + Vite + TanStack Router/Query — 사용자 대면 웹 앱
 apps/admin    React 19 + Vite — 운영자 Admin(1인 운영 우선, 예외 큐 중심)
 packages/*    공유 엔진·유틸 (아래 표)

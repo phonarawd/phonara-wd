@@ -39,7 +39,7 @@ export function checkShellCommandForHook(command: string): { allowed: boolean; r
     if (pattern.test(command)) {
       return {
         allowed: false,
-        reason: `Blocked prod-apply shell pattern (hook, no env bypass): ${pattern.source}`,
+        reason: `Blocked prod-apply shell pattern (hook; unset PHONARA_ALLOW_PROD_DB_PUSH — set =1 for legacy bypass): ${pattern.source}`,
       };
     }
   }
@@ -60,7 +60,7 @@ export function checkMcpToolForHook(
   if (BLOCKED_MCP_TOOLS.has(toolName)) {
     return {
       allowed: false,
-      reason: `Blocked MCP tool ${serverName}/${toolName} (hook, no env bypass)`,
+      reason: `Blocked MCP tool ${serverName}/${toolName} (hook; unset PHONARA_ALLOW_PROD_DB_PUSH — set =1 for legacy bypass)`,
     };
   }
 
@@ -72,7 +72,8 @@ export function checkMcpToolForHook(
     ) {
       return {
         allowed: false,
-        reason: 'Blocked MCP execute_sql DDL/DML without trailing ROLLBACK (hook, no env bypass)',
+        reason:
+          'Blocked MCP execute_sql DDL/DML without trailing ROLLBACK (hook; unset PHONARA_ALLOW_PROD_DB_PUSH — set =1 for legacy bypass)',
       };
     }
   }

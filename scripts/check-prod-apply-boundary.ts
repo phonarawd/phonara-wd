@@ -18,7 +18,9 @@ function main(): void {
     'supabase db reset',
     'bun run test:sql',
   ];
-  process.stdout.write('Shell probe (hook — no env bypass):\n');
+  process.stdout.write(
+    'Shell probe (hook; blocks when PHONARA_ALLOW_PROD_DB_PUSH unset):\n',
+  );
   for (const cmd of shellProbes) {
     const r = checkShellCommandForHook(cmd);
     process.stdout.write(`  ${r.allowed ? 'ALLOW' : 'DENY '}  ${cmd}\n`);
@@ -50,7 +52,7 @@ function main(): void {
   );
 
   process.stdout.write(
-    '\n[check:prod-apply-boundary] OK — Cursor hook blocks prod apply (no env bypass).\n',
+    '\n[check:prod-apply-boundary] OK — Cursor hook blocks raw prod apply when PHONARA_ALLOW_PROD_DB_PUSH unset (legacy bypass =1).\n',
   );
 }
 
