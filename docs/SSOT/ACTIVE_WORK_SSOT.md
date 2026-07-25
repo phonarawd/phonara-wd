@@ -5,10 +5,10 @@
 
 ### Deploy / Secrets 절대 잠금 (2026-07-24 · Plan `deploy_secrets_lockdown_7d9c8bf7`)
 
-| 항목 | 상태 | 증거 |
-| --- | --- | --- |
-| deny lib · CLI · CI · deploy hard-stop · ignore/hook | `[x]` DONE | `scripts/lib/secrets-deploy-deny.ts` · `check:secrets-deploy-deny` · CI `quality` · `deploy-pages --dist` · `.gitignore`/`.cursorignore`/`secrets-read-deny` |
-| tests-docs | `[x]` DONE | `gate:ai-impl -- --test tests/scripts/secrets-deploy-deny.test.ts --closeout tests-docs` green · vitest **16/16** · [`ENVIRONMENT_SETUP.md`](../ENVIRONMENT_SETUP.md) §Secrets/deploy deny |
+| 항목                                                 | 상태       | 증거                                                                                                                                                                                       |
+| ---------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| deny lib · CLI · CI · deploy hard-stop · ignore/hook | `[x]` DONE | `scripts/lib/secrets-deploy-deny.ts` · `check:secrets-deploy-deny` · CI `quality` · `deploy-pages --dist` · `.gitignore`/`.cursorignore`/`secrets-read-deny`                               |
+| tests-docs                                           | `[x]` DONE | `gate:ai-impl -- --test tests/scripts/secrets-deploy-deny.test.ts --closeout tests-docs` green · vitest **16/16** · [`ENVIRONMENT_SETUP.md`](../ENVIRONMENT_SETUP.md) §Secrets/deploy deny |
 
 **범위:** 커밋·Pages dist·Cursor 인덱스로 시크릿 유출 방지. 엔진/RPC 미터치. 로컬 `.env` 실키는 ignore 정상 — 값·회전은 Security Owner 별도 액션(채팅에 재기재 금지).
 
@@ -27,7 +27,68 @@
 | **ZA 통합 Remediation**            | **`[x]` DONE** 2026-07-14                                                              | Plan `za_통합_실행순서_c6df1c56` · ZA-01~15·17·19 **VERIFIED_FIXED**(ZA-14는 완화조치·근본 OPEN) · ZA-12/13 운영측 OPEN · ZA-18 후속 · 감사 [`ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`](../audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md)                    |
 | **Zero-Defect Critical Hardening** | Phase 0–7 **`[x]`** 2026-07-14 (AI 트랙)                                               | [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) — Phase 7 Release Gate **DONE**(17 criteria 재판정 · PASS 13 · operator soak/PPR/서명 **미실행**) · **NEXT=operator O1 soak 개시일** · 재착수 실행 큐 아님               |
 | **DNA Audit 후속 3-우선순위**      | P1 랜딩 크래시 **FIXED+재검증** · Home/Trade/Wallet/Casino **실 세션 확인** 2026-07-15 | §"DNA Audit 후속" 절 참조 — P1 순환 import 수정(`typecheck`·vitest 19/51 green) + 로컬 스택 재캡처로 전 authenticated 화면 렌더 확인 · **신규 발견**: 데스크톱 BottomNav 노출(정책 불일치, 미수정) · P2 침묵형 dead control 0건 · P3(wave debt) **보류**       |
-| **Zero-Defect 마감 Plan**          | Phase 0–6 **`[x]` DONE** 2026-07-25 | Plan `zero-defect_마감_플랜_70fca5c4` + `world-class_presentation_rebuild_bc0d5f4b` **22/22** · 증거 [`visual-ux-2026-07-25-phase6-closeout/`](../audit/visual-ux-2026-07-25-phase6-closeout/) · Docker OFF · **재착수 금지**                                                                                                                              |
+| **Zero-Defect 마감 Plan**          | Phase 0–6 **`[x]` DONE** 2026-07-25                                                    | Plan `zero-defect_마감_플랜_70fca5c4` + `world-class_presentation_rebuild_bc0d5f4b` **22/22** · 증거 [`visual-ux-2026-07-25-phase6-closeout/`](../audit/visual-ux-2026-07-25-phase6-closeout/) · Docker OFF · **재착수 금지**                                  |
+| **전수조사 결함 전체 수정**        | Phase 0–6 **`[x]` impl** · **NEXT=`phase7-engine-precision`** 2026-07-25               | Plan `전수조사_결함_전체_수정_a507aa71` · 아래 절 · Phase 6 wagering allowlist migration · SQL 회귀 파일 작성 · 로컬 `test:sql` 미실행(G13) · CI `sql` + `stack:push-remote` 대기                                                                                                                                 |
+
+### 전수조사 Phase 0–6 마감 (2026-07-25)
+
+> Plan `~/.cursor/plans/전수조사_결함_전체_수정_a507aa71.plan.md` · branch `phase-r/audit-remediation-2026-07-25`
+
+| Phase | Todo | 상태 | 증거(1줄) |
+| --- | --- | --- | --- |
+| 0 | `phase0-branch` | `[x]` | feature branch 생성 · 중복 surface/route 재확인 |
+| 1 | `phase1-ci-gates` | `[x]` | `check:secrets-deploy-deny` · `check:pwa` · `check:perf-contract` exit 0 · format=quality **blocking** 문서 정정 |
+| 2 | `phase2-ssot-generator` | `[x]` | BetHub OWNER_MAP/hub-tab/`@phonara/ui` 표 제거 · freeze manifest 재생성 · `sync-plan-doc-mirror` pending-0 null 문자열 버그 수정 |
+| 3 | `phase3-admin-alerts-rbac` | `[x]` impl | 클라이언트 `alerts.manage` RBAC · vitest home **2/2** · admin-rbac **20/20** |
+| 4 | `phase4-admin-users-cms-rtp` | `[x]` impl | C2 Outlet · C3 CMS reason+await · C4 RTP confirm (선행 세션) |
+| 5 | `phase5-admin-rbac-firefaget` | `[x]` impl | `queues.str.manage`/`queues.risk.clear` · sports fire-and-forget→await · dead stubs 제거 · admin-rbac **21/21** |
+| 6 | `phase6-db-bonus-wagering` | `[x]` impl | `20260828000001_fix_phon_wagering_bet_reason_cashout.sql` · `bonus_wagering_cashout_not_progress_test.sql` · 로컬 SQL 미실행(G13) |
+
+**한계 예외(플랜 명시 · "초록" 불가):**
+
+1. `supabase/migrations/20260732000001_pir_place_game_bet_rg_restore.sql` 파일명 "7월 32일" 오타 — 원격 적용 완료(로컬=원격 248)라 `25-postgres` Migration discipline상 **리네임/재작성 금지**. 이력만 유지.
+2. 브라우저 실측/서버 RLS 최종 차단 확인 — 저사양 G13 · CI `e2e`/operator 「gate 실행」이연.
+
+**Phase 3 서버 role migration HOLD:** RPC는 `_is_admin()`만(역할 세분화 없음). 플랜 원칙상 기본 migration은 Phase 6만 · alerts role 가드는 **operator 승인 후** 별도 착수. 클라이언트 게이트만으로 Phase 3 `[x] impl` 마감 · Phase 4 차단 아님.
+
+**Phase 5 sports desk RBAC HOLD:** owner/risk 세분화는 운영 정책 결정 필요 — 이번 세션은 fire-and-forget→`Promise<boolean>` await만 적용 · action matrix 변경 없음.
+
+**Phase 1 로컬 재검증 (2026-07-25):** `check:secrets-deploy-deny` OK · `check:perf-contract` OK · `check:pwa` OK (CSP `sha256-2HlpbiiADGxBG+ivVFAkiNuOldIL0MJdALiKgffOnh0=`).
+
+**NEXT:** `phase7-engine-precision` (roulette Decimal · dice/limbo target refine).
+
+### Phase 3 결과 (Admin alerts RBAC · 2026-07-25 · `phase3-admin-alerts-rbac`)
+
+| 항목 | 판정 | 근거 |
+| --- | --- | --- |
+| 서버 `rpc_ack_ops_alert` / `rpc_resolve_ops_alert` | `_is_admin()` (+ AAL2 inject)만 · **역할 세분화 없음** | `20260611000061_ops_alert_queue.sql`:842,900 · 후속 CREATE OR REPLACE **0** |
+| 클라이언트 게이트 | **`[x]`** `alerts.manage` → ack/resolve 버튼 disabled + submit 가드 | `admin-home-page.tsx` · `adminRbacActionProps` · matrix는 기존 `admin-rbac.ts` |
+| 서버 role migration | **HOLD** — operator 승인 후 별도 착수 | Phase 4 비차단 · `_admin_has_role` owner/risk/operator/support 후보 |
+
+**증거:** `gate:ai-impl -- --test apps/admin/src/product/surfaces/__tests__/admin-home-page.test.tsx --closeout phase3-admin-alerts-rbac` green · vitest home **2/2** · `admin-rbac` **20/20** · L0~L4 · migration/DDL **0**.
+
+### Phase 5 결과 (Admin STR/risk RBAC · sports await · 2026-07-25 · `phase5-admin-rbac-firefaget`)
+
+| 항목 | 판정 | 근거 |
+| --- | --- | --- |
+| STR / risk flag 클라이언트 RBAC | **`[x]`** `queues.str.manage` · `queues.risk.clear` (owner/risk) | `admin-rbac.ts` · `/queues` · `/risk` · `adminRbacActionProps` + submit 가드 |
+| `useAdminSports` fire-and-forget | **`[x]`** `setFeatureEnabled` / `suspendMarket` → `Promise<boolean>` await | `useAdminSports.ts` · `admin-sports-page.tsx` · types 갱신 |
+| 죽은 users desk stubs | **`[x]`** `resetMfa` · `killSession` · `manualAdjustWallet` 제거 | `useAdminUsersDesk.ts` · Mock · UI 미연결 확인 |
+| Sports desk owner/risk 세분화 | **HOLD** — 운영 정책 결정 대기 | 플랜 Phase 5 명시 · matrix 변경 없음 |
+
+**증거:** `gate:ai-impl -- --test apps/admin/src/domain/__tests__/admin-rbac.test.ts --closeout phase5-admin-rbac-firefaget` green · admin-rbac **21/21** · queues/risk/sports/users surface **4/4** · L0~L4 · migration/DDL **0**.
+
+### Phase 6 결과 (보너스 wagering cashout 오분류 · 2026-07-25 · `phase6-db-bonus-wagering`)
+
+| 항목 | 판정 | 근거 |
+| --- | --- | --- |
+| `_is_phon_wagering_bet_reason` | **`[x]`** allowlist (`game_stake_lock` · `sports_stake_lock` · trade/staking) | `20260828000001_fix_phon_wagering_bet_reason_cashout.sql` |
+| `sports_stake_cashout` | **제외** — 부분 캐시아웃 디빗은 wagering 진행 대상 아님 | 감사 `02_DATABASE.md` 결함 |
+| 죽은 `gbet_%` | **제거** — reason_code는 `game_*` · `gbet_*`는 idempotency prefix | 동일 migration |
+| SQL 회귀 | **파일 작성** · 로컬 `test:sql` **미실행**(G13) | `supabase/tests/bonus_wagering_cashout_not_progress_test.sql` |
+| Remote apply | **대기** — CI `sql` green 후 `stack:push-remote` · advisor 0 | Phase 11 / push-fix |
+
+**증거:** migration + SQL 회귀 파일 체크인 · `closeout:todo -- phase6-db-bonus-wagering` · 로컬 Docker/`test:sql` **0**(저사양 G13 · CI authoritative).
 
 ### Zero-Defect Phase 0 · `engine-search-path-pin` (2026-07-24 · SKIP·기록)
 
@@ -35,14 +96,14 @@
 > 플랜 가설: `rpc_credit_wallet` / `rpc_debit_wallet`만 `SET search_path` 핀 누락 → 신규 migration.  
 > **시그니처 대조 결과: 핀 대상 함수가 스키마에 없음 → migration 스킵(기록만).**
 
-| 항목 | 근거(파일) | 판정 |
-| --- | --- | --- |
-| 원본 생성(헤더 SET 없음) | `supabase/migrations/20260609000003_phase1_atomic_rpc.sql`:35,107 | 역사 — 이후 DROP |
-| **최종 상태 = DROP** | `supabase/migrations/20260609000044_zero_defect_sql_hardening.sql`:150–151 (`DROP FUNCTION IF EXISTS rpc_credit_wallet` / `rpc_debit_wallet`) | 라이브 스키마에 **부재** |
-| 부재 강제(SQL 테스트) | `supabase/tests/anon_lockdown_test.sql`:220–225 — `to_regprocedure(...) IS NULL` | 재생성·ALTER = **RED** · 보안 회귀 |
-| `rpc_lock_wallet` | `20260701000001_phon_bonus_real_wagering.sql`:666 — `SET search_path = public, pg_temp` 재정의 | 이미 핀됨 |
-| `rpc_unlock_wallet` | `20260713000001_p0_edge_contracts_claim_webhook.sql`:654–655 — `ALTER FUNCTION ... SET search_path` | 이미 핀됨 |
-| 제외 목록에 credit/debit 없음 | `20260609000013_p1_advisor_cleanup_anon_searchpath.sql`:67–75 | DROP 이후 핀 대상 아님(정합) |
+| 항목                          | 근거(파일)                                                                                                                                    | 판정                               |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| 원본 생성(헤더 SET 없음)      | `supabase/migrations/20260609000003_phase1_atomic_rpc.sql`:35,107                                                                             | 역사 — 이후 DROP                   |
+| **최종 상태 = DROP**          | `supabase/migrations/20260609000044_zero_defect_sql_hardening.sql`:150–151 (`DROP FUNCTION IF EXISTS rpc_credit_wallet` / `rpc_debit_wallet`) | 라이브 스키마에 **부재**           |
+| 부재 강제(SQL 테스트)         | `supabase/tests/anon_lockdown_test.sql`:220–225 — `to_regprocedure(...) IS NULL`                                                              | 재생성·ALTER = **RED** · 보안 회귀 |
+| `rpc_lock_wallet`             | `20260701000001_phon_bonus_real_wagering.sql`:666 — `SET search_path = public, pg_temp` 재정의                                                | 이미 핀됨                          |
+| `rpc_unlock_wallet`           | `20260713000001_p0_edge_contracts_claim_webhook.sql`:654–655 — `ALTER FUNCTION ... SET search_path`                                           | 이미 핀됨                          |
+| 제외 목록에 credit/debit 없음 | `20260609000013_p1_advisor_cleanup_anon_searchpath.sql`:67–75                                                                                 | DROP 이후 핀 대상 아님(정합)       |
 
 **행위:** 신규 migration **작성하지 않음** · `supabase db reset` / `test:sql` / `stack:push-remote` / advisor **실행하지 않음**(변경 DDL 0).  
 **FAIL 회피:** 부재 함수에 `ALTER FUNCTION` → apply 실패; DROP된 generic mutator 재생성 → `anon_lockdown_test` 위반 + 엔진 동결 위반.
@@ -52,11 +113,11 @@
 > **배경:** 2026-07-15 read-only DNA 감사 결과 확인 후 operator가 지시한 3개 후속 작업. 엔진/프레젠테이션 분리는 **검증 완료로 간주 · 재착수 금지**.
 > **문서 위치 안내:** operator가 지시한 `docs/rebuild/NEXT_STEP.md`는 [`DEPRECATED_DOC_DENYLIST.md`](DEPRECATED_DOC_DENYLIST.md)에 **2026-07-04 삭제·재생성 금지**로 명시된 파일이며(`00-core.mdc`: "실행 큐 = ACTIVE_WORK_SSOT"), 그 파일 대신 **본 절**을 실행 큐로 사용한다.
 
-| #      | 우선순위                                                                                                                                    | 상태                    | 비고                                                                                              |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------- |
-| **P1** | 렌더링 감사 — 390/768/1024/2560 CDP 스크린샷 캡처 · 토큰 규칙 vs 실제 화면 일치 확인 · DA W7 시각 사인오프 판정                             | **IN PROGRESS**         | `scripts/visual-audit-capture-cdp.ts` 4-tier 폭 정합 수정 후 실행 · 결과는 본 문서 하위 절에 기록 |
+| #      | 우선순위                                                                                                                                    | 상태                      | 비고                                                                                              |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------- |
+| **P1** | 렌더링 감사 — 390/768/1024/2560 CDP 스크린샷 캡처 · 토큰 규칙 vs 실제 화면 일치 확인 · DA W7 시각 사인오프 판정                             | **IN PROGRESS**           | `scripts/visual-audit-capture-cdp.ts` 4-tier 폭 정합 수정 후 실행 · 결과는 본 문서 하위 절에 기록 |
 | **P2** | `dead-controls-display-contract.ts` 전수조사 — `*_ENGINE_TODO`/`*_UI_UNLOCK_TODO` 전량 목록화 · 클릭해도 반응 없는 지점 launch blocker 승격 | **`[x]` DONE** 2026-07-25 | 침묵형 dead control 0 · orphan `tierGuide` 플래그 Phase 6 제거 · 상세는 본 문서 하위 절           |
-| **P3** | `ew-e*`/`da-w*`/`p*-gate` 명명 wave-debt 파일 정리                                                                                          | **명시적 보류 (DEFER)** | operator 지시: 출시 이후로 연기 · 유지보수 이슈일 뿐 유저 비가시 영역 · **지금 착수 금지**        |
+| **P3** | `ew-e*`/`da-w*`/`p*-gate` 명명 wave-debt 파일 정리                                                                                          | **명시적 보류 (DEFER)**   | operator 지시: 출시 이후로 연기 · 유지보수 이슈일 뿐 유저 비가시 영역 · **지금 착수 금지**        |
 
 ### P1 결과 (렌더링 감사 · 2026-07-15 · Chrome CDP · operator 승인 후 로컬 스택 포함 완결)
 
@@ -217,16 +278,16 @@ bun run stack:stop
 4. **P1 — unmount 타이머 누수.** `HiloStage`에 `clearTimer`만 있고 Mines/Limbo/Dice처럼 `useEffect(() => clearTimer, [clearTimer])` 없었음.
 5. **P1 — 카드 flip이 텍스트 인덱스 스왑만.** `visibleCardIndex` 갱신만 존재, `motion.css` `ds-casino-*` 미연결 — 플랜 "Real card-flip (not instant swap)" 미충족.
 
-| 항목 | 내용 |
-| --- | --- |
-| **기능 클릭스루 QA — hi/lo/skip** | 원샷 사전-베팅 append/undo/clear 클릭 응답(`hilo-stage.test.tsx`) + `CasinoGameShell` 실배선을 통한 라이브 mid-round guess(higher/lower/skip) 클릭→`rpc_progressive_step` mock→카드·스트릭 즉시 갱신(`casino-game-shell.test.tsx` **5건** — live skip 전용 포함) — 데드 컨트롤 0건 |
-| **기능 클릭스루 QA — live cash-out** | 라이브 세션 시작→정답 guess→캐시아웃 버튼(0 guess 시 disabled·guess 후 enabled)→`rpc_progressive_cashout` mock→정산 렌더까지 shell 레벨 통합 테스트 |
-| **기능 클릭스루 QA — card flip** | 원샷 멀티-guess 정산 리플레이(카드별 순차 flip, 실 타이머) + 라이브 세션 오답 버스트(최종 busting 카드가 정확히 렌더) — 발견 #3을 RED-first로 재현·확정 후 수정 검증 |
-| **버그 수정** | (a) 신규 `parseHiloProgressiveOutcome`(도메인 contract) — E23 라이브 shape 파싱, `won`은 `cashedOut===true`로만 도출(버스트·만료 모두 `cashedOut` 미설정이므로 오판 없음 — 만료는 `lastCorrect` stale-`true` 잔존해도 안전). `HiloStage.playOutcome`이 원샷 파서 실패 시 이 파서로 폴백. (b) `HiloStage`에 `liveCards`/`liveMultiplier` prop 추가 — `active`로 남는 정답 guess도 카드·현재 배당이 즉시 갱신(카드 히어로는 단일 슬롯이라 `playOutcome` 재생 대신 prop 동기화로 처리, Mines의 `revealedCells` prop 동기화와 동일 클래스). (c) `CasinoGameShell.handleLiveStart`(hilo 분기): 라이브 시작 시 `guesses`를 `[]`로 낙관적 리셋 + 응답 수신 후 서버가 배정한 `startCard` 포함 `cards`/`guesses`/`multiplier` 권위 동기화. (d) `handleLiveGuess`(신규): 매 스텝 응답을 `selection`에 동기화 |
-| **모션 폴리시 (신규 additive 토큰 + 기존 Phase 1B/1C 토큰 재사용)** | 신규 `--ds-motion-casino-card-flip: 280ms` + `.ds-casino-card-flip`(`motion.css`, transform/opacity-only, 0 layout shift, `hiloFlipStepMs()`와 수치 동기화 — Limbo 코드 주석이 경고한 "JS 타이머와 매칭 안 되는 CSS duration" 재발 방지) — 카드 히어로에 key-remount로 매 tick(원샷 리플레이·라이브 증분·정산 공통 경로 1개) 적용. 배당 텍스트: 기존 `ds-casino-reveal-in`/`ds-casino-number-pop`/`ds-casino-cashout-flash` 재사용, 승리 정산에만 pop+glow — Crash/Limbo/Dice/Mines와 동일 "승리 punchy·패배 calm·respectful"(CASINO_UX_CANON) 컨벤션. 신규 라이브 전용 배당 표시(`casino-hilo-live-mult`) — 정산 전 캐시아웃 판단에 필요한 현재 배당 표시(RPC 값 그대로, 재계산 없음) |
-| **퍼포먼스 수정 (타이머 누수)** | `useEffect(() => clearTimer, [clearTimer])` 추가 — Limbo/Dice/Mines와 동일 패턴. 라이브 버스트 직후 unmount 시나리오를 700ms 실대기(flip 전체 재생 시간 이상)로 통과시켜 `console.error`/`warn` 0건 확인 |
-| **테스트** | 신규 `hilo-stage.test.tsx`(23개 — live routing에 skip 추가 포함) + `casino-game-shell.test.tsx`에 Hilo 라이브 클릭스루 **5건**(라이브 시작 프리필 리셋+서버 startCard 동기화·mid-round guess 갱신·**live skip**·라이브 캐시아웃·오답 버스트) + `casino-games-batch-b-display-contract.ts`/test 확장(`parseHiloProgressiveOutcome` 6건) — 타겟 합계 **58/58** |
-| **범위 밖 관찰 (버그로 확정하지 않음)** | Mines 세션 관찰과 동일 클래스 — `resetAccumulatedSelection`의 hilo 분기(`guesses:[]` 리셋 문서화)가 `CasinoGameShell.onAccumulatedSelectionReset`에 실배선되지 않아 반복 원샷 베팅마다 `defaultSelection`(`guesses:['higher']`) 프리필로 재시작 — 반복 베팅 자체는 정상 동작이라 수정하지 않음. 별개 발견: 원샷 정산 후(승/패 색상 표시 상태) 같은 마운트에서 바로 라이브 모드로 전환하면 `handleLiveStart`가 `stageRef.reset()`을 호출하지 않아 이전 원샷의 승/패 색상이 새 라이브 세션 시작 직후 잠깐 남아있을 수 있는 latent 케이스 발견 — 이번 세션 QA 플로우(신선한 마운트 → 라이브 직행)에서는 재현되지 않고 Mines도 동일 latent 갭을 가지고 있어(공유 `handleLiveStart`/`applyProgressiveResult` 범위) 이번 단독 todo로 수정하지 않음(후속 검토 가치로 기록) |
+| 항목                                                                | 내용                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **기능 클릭스루 QA — hi/lo/skip**                                   | 원샷 사전-베팅 append/undo/clear 클릭 응답(`hilo-stage.test.tsx`) + `CasinoGameShell` 실배선을 통한 라이브 mid-round guess(higher/lower/skip) 클릭→`rpc_progressive_step` mock→카드·스트릭 즉시 갱신(`casino-game-shell.test.tsx` **5건** — live skip 전용 포함) — 데드 컨트롤 0건                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **기능 클릭스루 QA — live cash-out**                                | 라이브 세션 시작→정답 guess→캐시아웃 버튼(0 guess 시 disabled·guess 후 enabled)→`rpc_progressive_cashout` mock→정산 렌더까지 shell 레벨 통합 테스트                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| **기능 클릭스루 QA — card flip**                                    | 원샷 멀티-guess 정산 리플레이(카드별 순차 flip, 실 타이머) + 라이브 세션 오답 버스트(최종 busting 카드가 정확히 렌더) — 발견 #3을 RED-first로 재현·확정 후 수정 검증                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| **버그 수정**                                                       | (a) 신규 `parseHiloProgressiveOutcome`(도메인 contract) — E23 라이브 shape 파싱, `won`은 `cashedOut===true`로만 도출(버스트·만료 모두 `cashedOut` 미설정이므로 오판 없음 — 만료는 `lastCorrect` stale-`true` 잔존해도 안전). `HiloStage.playOutcome`이 원샷 파서 실패 시 이 파서로 폴백. (b) `HiloStage`에 `liveCards`/`liveMultiplier` prop 추가 — `active`로 남는 정답 guess도 카드·현재 배당이 즉시 갱신(카드 히어로는 단일 슬롯이라 `playOutcome` 재생 대신 prop 동기화로 처리, Mines의 `revealedCells` prop 동기화와 동일 클래스). (c) `CasinoGameShell.handleLiveStart`(hilo 분기): 라이브 시작 시 `guesses`를 `[]`로 낙관적 리셋 + 응답 수신 후 서버가 배정한 `startCard` 포함 `cards`/`guesses`/`multiplier` 권위 동기화. (d) `handleLiveGuess`(신규): 매 스텝 응답을 `selection`에 동기화 |
+| **모션 폴리시 (신규 additive 토큰 + 기존 Phase 1B/1C 토큰 재사용)** | 신규 `--ds-motion-casino-card-flip: 280ms` + `.ds-casino-card-flip`(`motion.css`, transform/opacity-only, 0 layout shift, `hiloFlipStepMs()`와 수치 동기화 — Limbo 코드 주석이 경고한 "JS 타이머와 매칭 안 되는 CSS duration" 재발 방지) — 카드 히어로에 key-remount로 매 tick(원샷 리플레이·라이브 증분·정산 공통 경로 1개) 적용. 배당 텍스트: 기존 `ds-casino-reveal-in`/`ds-casino-number-pop`/`ds-casino-cashout-flash` 재사용, 승리 정산에만 pop+glow — Crash/Limbo/Dice/Mines와 동일 "승리 punchy·패배 calm·respectful"(CASINO_UX_CANON) 컨벤션. 신규 라이브 전용 배당 표시(`casino-hilo-live-mult`) — 정산 전 캐시아웃 판단에 필요한 현재 배당 표시(RPC 값 그대로, 재계산 없음)                                                                                                             |
+| **퍼포먼스 수정 (타이머 누수)**                                     | `useEffect(() => clearTimer, [clearTimer])` 추가 — Limbo/Dice/Mines와 동일 패턴. 라이브 버스트 직후 unmount 시나리오를 700ms 실대기(flip 전체 재생 시간 이상)로 통과시켜 `console.error`/`warn` 0건 확인                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **테스트**                                                          | 신규 `hilo-stage.test.tsx`(23개 — live routing에 skip 추가 포함) + `casino-game-shell.test.tsx`에 Hilo 라이브 클릭스루 **5건**(라이브 시작 프리필 리셋+서버 startCard 동기화·mid-round guess 갱신·**live skip**·라이브 캐시아웃·오답 버스트) + `casino-games-batch-b-display-contract.ts`/test 확장(`parseHiloProgressiveOutcome` 6건) — 타겟 합계 **58/58**                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **범위 밖 관찰 (버그로 확정하지 않음)**                             | Mines 세션 관찰과 동일 클래스 — `resetAccumulatedSelection`의 hilo 분기(`guesses:[]` 리셋 문서화)가 `CasinoGameShell.onAccumulatedSelectionReset`에 실배선되지 않아 반복 원샷 베팅마다 `defaultSelection`(`guesses:['higher']`) 프리필로 재시작 — 반복 베팅 자체는 정상 동작이라 수정하지 않음. 별개 발견: 원샷 정산 후(승/패 색상 표시 상태) 같은 마운트에서 바로 라이브 모드로 전환하면 `handleLiveStart`가 `stageRef.reset()`을 호출하지 않아 이전 원샷의 승/패 색상이 새 라이브 세션 시작 직후 잠깐 남아있을 수 있는 latent 케이스 발견 — 이번 세션 QA 플로우(신선한 마운트 → 라이브 직행)에서는 재현되지 않고 Mines도 동일 latent 갭을 가지고 있어(공유 `handleLiveStart`/`applyProgressiveResult` 범위) 이번 단독 todo로 수정하지 않음(후속 검토 가치로 기록)                                |
 
 **검증 방법 및 범위:** (a) RPC 시그니처·mock shape 코드 레벨 정합성, (b) shell 레벨 `fireEvent.click` 통합 테스트, (c) 발견 #1~#3 RED-first 재현·복구, (d) **실브라우저 CDP 마감 완료**(아래 §실브라우저 Definition of Done).
 
@@ -247,15 +308,15 @@ bun run stack:stop
 
 **증거 (`docs/audit/visual-ux-2026-07-11/capture-manifest.json` · 2026-07-24T11:15–11:19Z):**
 
-| 항목 | 값 |
-| --- | --- |
-| `loggedIn` / `authRedirects` | `true` / `0` |
-| routes / png | **4** (home·trade-spot·wallet·sports) / **38** |
-| `assertions.bottomNavViolations` | `[]` |
-| `assertions.axeCriticalFindings` | `[]` |
-| BottomNav 정책(실측) | 390=`grid` · 1024/2560=`none` · 전 라우트 `bottomNavPolicyOk` |
-| axe@1024 | critical=0 · serious=0 · `consoleErrorCount` max=0 |
-| Part2 코드 수정 | **0** (위반 없음) |
+| 항목                             | 값                                                            |
+| -------------------------------- | ------------------------------------------------------------- |
+| `loggedIn` / `authRedirects`     | `true` / `0`                                                  |
+| routes / png                     | **4** (home·trade-spot·wallet·sports) / **38**                |
+| `assertions.bottomNavViolations` | `[]`                                                          |
+| `assertions.axeCriticalFindings` | `[]`                                                          |
+| BottomNav 정책(실측)             | 390=`grid` · 1024/2560=`none` · 전 라우트 `bottomNavPolicyOk` |
+| axe@1024                         | critical=0 · serious=0 · `consoleErrorCount` max=0            |
+| Part2 코드 수정                  | **0** (위반 없음)                                             |
 
 **Plan closeout (이중):** `closeout:todo -- resume-phase1c-preflight-fullroute-verify` + `closeout:todo -- phase1c-preflight-fullroute-verify`.
 
@@ -271,13 +332,13 @@ bun run stack:stop
 2. **P1 — 모션 토큰 미배선.** `ds-casino-reveal-in` / `ds-casino-number-pop` / `ds-casino-cashout-flash` grep **0건**(공유 토큰은 `motion.css`에 이미 존재) — Dice 이전 갭과 동일.
 3. **확인(버그 아님):** status ternary의 `!caveIn && !won → cavein` 폴백 — `evaluateDeepshaft`는 항상 `(won && !caveIn) | (!won && caveIn)`만 반환 → **dead branch**. 라벨을 `won ? win : cavein`으로 단순화.
 
-| 항목 | 내용 |
-| --- | --- |
-| **기능 클릭스루 QA** | 원샷 descend replay(레벨 순차 점등) → 인양 성공 / 붕괴 정산 · malformed RPC idle 유지 · reset · live dig/cash-out 컨트롤 **0**(단일샷 설계) |
+| 항목                                            | 내용                                                                                                                                                                                         |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **기능 클릭스루 QA**                            | 원샷 descend replay(레벨 순차 점등) → 인양 성공 / 붕괴 정산 · malformed RPC idle 유지 · reset · live dig/cash-out 컨트롤 **0**(단일샷 설계)                                                  |
 | **모션 폴리시 (공유 토큰 재사용, 신규 발명 0)** | 승리: `ds-casino-reveal-in`+`ds-casino-number-pop`+`ds-casino-cashout-flash` · 붕괴: reveal-in만(CASINO_UX_CANON lose calm) · `revealPulse` key-remount · reduced-motion 시 클래스 전부 스킵 |
-| **퍼포먼스** | `useEffect(() => clearTimer, [clearTimer])` — mid-descent unmount 시 clearTimeout 호출 + 500ms 실대기 후 `console.error`/`warn` 0 |
-| **테스트** | 신규 `deepshaft-stage.test.tsx` **14/14** · 회귀 `casino-games-batch-d-stages.test.tsx` 포함 **20/20** |
-| **증거** | `gate:ai-impl -- --test …/deepshaft-stage.test.tsx --closeout resume-phase1c-deepshaft` green · L0~L4 · 엔진 0 |
+| **퍼포먼스**                                    | `useEffect(() => clearTimer, [clearTimer])` — mid-descent unmount 시 clearTimeout 호출 + 500ms 실대기 후 `console.error`/`warn` 0                                                            |
+| **테스트**                                      | 신규 `deepshaft-stage.test.tsx` **14/14** · 회귀 `casino-games-batch-d-stages.test.tsx` 포함 **20/20**                                                                                       |
+| **증거**                                        | `gate:ai-impl -- --test …/deepshaft-stage.test.tsx --closeout resume-phase1c-deepshaft` green · L0~L4 · 엔진 0                                                                               |
 
 **Plan closeout (이중):** `resume-phase1c-deepshaft` + `phase1c-deepshaft` → 양쪽 Plan YAML `completed`.
 
@@ -286,13 +347,13 @@ bun run stack:stop
 > **범위:** `use-pixi-stage.ts` 공유 teardown 1회 + Batch C 4스테이지 controller를 ref-only로 정렬 · 엔진/RPC 시그니처 변경 **0**.  
 > **정직화:** 실브라우저 WebGL context 카운트·힙 스냅샷(5× game-switch)은 G13으로 에이전트 자율 미실행 — 단위/소스 ratchet으로 순서·플래그 검증. 라이브 힙은 operator 「gate 실행」 또는 CI.
 
-| 항목 | 내용 |
-| --- | --- |
-| **근본 원인** | controller `scene.root.destroy({ children: true })`(texture 플래그 없음)가 Application `destroy(..., { texture: true })` **보다 먼저** 실행 → Application 플래그가 이미 파괴된 서브트리에 도달 불가 |
-| **공유 훅 수정** | teardown을 **Application-first**로 변경 · `PIXI_APP_DESTROY_OPTIONS = { children, texture, textureSource, context }` (Pixi v8 · `textureSource`=구 `baseTexture`) · ticker stop 후 destroy |
-| **4스테이지** | plinko / mint-reels / gold-rush / momentum — `scene.root.destroy` **제거**, `sceneRef = null`만(트리 disposal는 훅 소유) |
-| **테스트** | 신규 `use-pixi-stage.test.tsx`(destroy 순서·플래그) + batch-c contract 소스 ratchet · 회귀 batch-c stages · **13/13** |
-| **증거** | `gate:ai-impl -- --test …/use-pixi-stage.test.tsx …/casino-games-batch-c-display-contract.test.ts …/casino-games-batch-c-stages.test.tsx` green · L0~L4 · 엔진 0 |
+| 항목             | 내용                                                                                                                                                                                                |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **근본 원인**    | controller `scene.root.destroy({ children: true })`(texture 플래그 없음)가 Application `destroy(..., { texture: true })` **보다 먼저** 실행 → Application 플래그가 이미 파괴된 서브트리에 도달 불가 |
+| **공유 훅 수정** | teardown을 **Application-first**로 변경 · `PIXI_APP_DESTROY_OPTIONS = { children, texture, textureSource, context }` (Pixi v8 · `textureSource`=구 `baseTexture`) · ticker stop 후 destroy          |
+| **4스테이지**    | plinko / mint-reels / gold-rush / momentum — `scene.root.destroy` **제거**, `sceneRef = null`만(트리 disposal는 훅 소유)                                                                            |
+| **테스트**       | 신규 `use-pixi-stage.test.tsx`(destroy 순서·플래그) + batch-c contract 소스 ratchet · 회귀 batch-c stages · **13/13**                                                                               |
+| **증거**         | `gate:ai-impl -- --test …/use-pixi-stage.test.tsx …/casino-games-batch-c-display-contract.test.ts …/casino-games-batch-c-stages.test.tsx` green · L0~L4 · 엔진 0                                    |
 
 **Plan closeout (이중):** `resume-phase1d-0-shared-pixi-hook-fix` + `phase1d-0-shared-pixi-hook-fix` → 양쪽 Plan YAML `completed`. 원본 plan 진행: **11/22 completed · pending 11**(다음=`phase1d-plinko`).
 
@@ -306,15 +367,15 @@ bun run stack:stop
 2. **P1 — 모션 토큰 미배선.** `ds-casino-reveal-in` / `ds-casino-number-pop` / `ds-casino-cashout-flash` grep **0건** — 공유 토큰을 bucket mult settle에 배선(>1× punchy · ≤1× calm).
 3. **확인(버그 아님 · phase1d-0):** `scene.root.destroy` **0** · controller는 `sceneRef = null`만 — Application-first disposal 유지.
 
-| 항목 | 내용 |
-| --- | --- |
-| **기능 클릭스루 QA** | path replay → bucket mult 정산 · malformed RPC idle 유지 · reset · live drop/cash-out 컨트롤 **0**(단일샷 설계) |
-| **모션 폴리시 (공유 토큰 재사용, 신규 발명 0)** | >1×: reveal-in+number-pop+cashout-flash · ≤1×: reveal-in만 · `revealPulse` key-remount · reduced-motion 시 클래스 전부 스킵 |
-| **스테이지 비중** | canvas host `min-h-72` / `md:min-h-96` (CASINO_UX_CANON §6 stage dominates) |
-| **퍼포먼스** | `useEffect(() => clearTimer, [clearTimer])` — mid-path unmount 시 clearTimeout + 1200ms 실대기 후 `console.error`/`warn` 0 |
-| **phase1d-0 확인** | 소스 ratchet: `scene.root.destroy` 부재 · `usePixiStage` + ref-only destroy |
-| **테스트** | 신규 `plinko-stage.test.tsx` **15/15** · 회귀 `casino-games-batch-c-stages.test.tsx` 포함 **22/22** |
-| **증거** | `gate:ai-impl -- --test …/plinko-stage.test.tsx …/casino-games-batch-c-stages.test.tsx --closeout resume-phase1d-plinko` green · L0~L4 · 엔진 0 |
+| 항목                                            | 내용                                                                                                                                            |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **기능 클릭스루 QA**                            | path replay → bucket mult 정산 · malformed RPC idle 유지 · reset · live drop/cash-out 컨트롤 **0**(단일샷 설계)                                 |
+| **모션 폴리시 (공유 토큰 재사용, 신규 발명 0)** | >1×: reveal-in+number-pop+cashout-flash · ≤1×: reveal-in만 · `revealPulse` key-remount · reduced-motion 시 클래스 전부 스킵                     |
+| **스테이지 비중**                               | canvas host `min-h-72` / `md:min-h-96` (CASINO_UX_CANON §6 stage dominates)                                                                     |
+| **퍼포먼스**                                    | `useEffect(() => clearTimer, [clearTimer])` — mid-path unmount 시 clearTimeout + 1200ms 실대기 후 `console.error`/`warn` 0                      |
+| **phase1d-0 확인**                              | 소스 ratchet: `scene.root.destroy` 부재 · `usePixiStage` + ref-only destroy                                                                     |
+| **테스트**                                      | 신규 `plinko-stage.test.tsx` **15/15** · 회귀 `casino-games-batch-c-stages.test.tsx` 포함 **22/22**                                             |
+| **증거**                                        | `gate:ai-impl -- --test …/plinko-stage.test.tsx …/casino-games-batch-c-stages.test.tsx --closeout resume-phase1d-plinko` green · L0~L4 · 엔진 0 |
 
 **Plan closeout (이중):** `resume-phase1d-plinko` + `phase1d-plinko` → 양쪽 Plan YAML `completed`. 원본 plan 진행: **12/22 completed · pending 10**(다음=`phase1d-mint-reels`).
 
@@ -329,15 +390,15 @@ bun run stack:stop
 3. **P2 — 스핀 직선 진행.** `tNorm * 12` 선형 — `mintReelsSpinEase`(ease-out cubic)로 감속 곡선 추가 · `mintReelsSpinMs` 900ms는 800–1200 밴드 유지(assert + 단위테스트).
 4. **확인(버그 아님 · phase1d-0):** `scene.root.destroy` **0** · controller는 `sceneRef = null`만 — Application-first disposal 유지.
 
-| 항목 | 내용 |
-| --- | --- |
-| **기능 클릭스루 QA** | spin → payline scan → totalMultiplier 정산 · malformed RPC idle 유지 · reset · live cash-out 컨트롤 **0**(단일샷 설계) · lines 표시 유지(스핀 중 숨김 금지) |
-| **모션 폴리시 (공유 토큰 재사용, 신규 발명 0)** | >0×: reveal-in+number-pop+cashout-flash · 0×: reveal-in만 · `revealPulse` key-remount · reduced-motion 시 클래스 전부 스킵 · 감속 spinEase |
-| **스테이지 비중** | canvas host `min-h-72` / `md:min-h-96` (CASINO_UX_CANON §7 cabinet/reel window) |
-| **퍼포먼스** | `useEffect(() => clearTimers, [clearTimers])` — mid-spin unmount 시 clearTimeout+cancelAnimationFrame + 1600ms 실대기 후 `console.error`/`warn` 0 |
-| **phase1d-0 확인** | 소스 ratchet: `scene.root.destroy` 부재 · `usePixiStage` + ref-only destroy |
-| **테스트** | 신규 `mint-reels-stage.test.tsx` **15/15** · 회귀 batch-c stages + display-contract 포함 **27/27** |
-| **증거** | `gate:ai-impl -- --test …/mint-reels-stage.test.tsx …/casino-games-batch-c-stages.test.tsx …/casino-games-batch-c-display-contract.test.ts --closeout resume-phase1d-mint-reels` green · L0~L4 · 엔진 0 |
+| 항목                                            | 내용                                                                                                                                                                                                    |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **기능 클릭스루 QA**                            | spin → payline scan → totalMultiplier 정산 · malformed RPC idle 유지 · reset · live cash-out 컨트롤 **0**(단일샷 설계) · lines 표시 유지(스핀 중 숨김 금지)                                             |
+| **모션 폴리시 (공유 토큰 재사용, 신규 발명 0)** | >0×: reveal-in+number-pop+cashout-flash · 0×: reveal-in만 · `revealPulse` key-remount · reduced-motion 시 클래스 전부 스킵 · 감속 spinEase                                                              |
+| **스테이지 비중**                               | canvas host `min-h-72` / `md:min-h-96` (CASINO_UX_CANON §7 cabinet/reel window)                                                                                                                         |
+| **퍼포먼스**                                    | `useEffect(() => clearTimers, [clearTimers])` — mid-spin unmount 시 clearTimeout+cancelAnimationFrame + 1600ms 실대기 후 `console.error`/`warn` 0                                                       |
+| **phase1d-0 확인**                              | 소스 ratchet: `scene.root.destroy` 부재 · `usePixiStage` + ref-only destroy                                                                                                                             |
+| **테스트**                                      | 신규 `mint-reels-stage.test.tsx` **15/15** · 회귀 batch-c stages + display-contract 포함 **27/27**                                                                                                      |
+| **증거**                                        | `gate:ai-impl -- --test …/mint-reels-stage.test.tsx …/casino-games-batch-c-stages.test.tsx …/casino-games-batch-c-display-contract.test.ts --closeout resume-phase1d-mint-reels` green · L0~L4 · 엔진 0 |
 
 **Plan closeout (이중):** `resume-phase1d-mint-reels` + `phase1d-mint-reels` → 양쪽 Plan YAML `completed`. 원본 plan 진행: **13/22 completed · pending 9**(다음=`phase1d-gold-rush`).
 
@@ -354,15 +415,15 @@ bun run stack:stop
 3. **P2 — 미터 ease 인라인.** `Math.pow(1-t, 2.4)` 인라인 → `goldRushMeterEase`로 추출 · `goldRushMeterMs` 1100ms는 800–1200 밴드 유지(assert + 단위테스트).
 4. **확인(버그 아님 · phase1d-0):** `scene.root.destroy` **0** · controller는 `sceneRef = null`만 — Application-first disposal 유지.
 
-| 항목 | 결과 |
-| --- | --- |
-| 기능 QA | idle → replaying → settled · RPC `totalMultiplier` 1:1 · malformed ignore · reset · bonus(fill≥0.55) · cash-out 컨트롤 0 |
-| 모션 | win: reveal-in+number-pop+cashout-flash · lose: reveal-in only · reduced-motion 클래스 0 · revealPulse remount |
-| 스테이지 비중 | canvas host `min-h-72` / `md:min-h-96` (CASINO_UX_CANON §7 cabinet) |
-| 퍼포먼스 | `useEffect(() => clearRaf, [clearRaf])` — mid-meter unmount 시 cancelAnimationFrame + 1600ms 실대기 후 `console.error`/`warn` 0 |
-| phase1d-0 확인 | 소스 ratchet: `scene.root.destroy` 부재 · `usePixiStage` + ref-only destroy · `goldRushMeterEase` |
-| 테스트 | 신규 `gold-rush-stage.test.tsx` **15/15** · 회귀 batch-c stages + display-contract 포함 |
-| 증거 | `gate:ai-impl -- --test …/gold-rush-stage.test.tsx …/casino-games-batch-c-stages.test.tsx …/casino-games-batch-c-display-contract.test.ts --closeout resume-phase1d-gold-rush` green · L0~L4 · 엔진 0 |
+| 항목           | 결과                                                                                                                                                                                                  |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 기능 QA        | idle → replaying → settled · RPC `totalMultiplier` 1:1 · malformed ignore · reset · bonus(fill≥0.55) · cash-out 컨트롤 0                                                                              |
+| 모션           | win: reveal-in+number-pop+cashout-flash · lose: reveal-in only · reduced-motion 클래스 0 · revealPulse remount                                                                                        |
+| 스테이지 비중  | canvas host `min-h-72` / `md:min-h-96` (CASINO_UX_CANON §7 cabinet)                                                                                                                                   |
+| 퍼포먼스       | `useEffect(() => clearRaf, [clearRaf])` — mid-meter unmount 시 cancelAnimationFrame + 1600ms 실대기 후 `console.error`/`warn` 0                                                                       |
+| phase1d-0 확인 | 소스 ratchet: `scene.root.destroy` 부재 · `usePixiStage` + ref-only destroy · `goldRushMeterEase`                                                                                                     |
+| 테스트         | 신규 `gold-rush-stage.test.tsx` **15/15** · 회귀 batch-c stages + display-contract 포함                                                                                                               |
+| 증거           | `gate:ai-impl -- --test …/gold-rush-stage.test.tsx …/casino-games-batch-c-stages.test.tsx …/casino-games-batch-c-display-contract.test.ts --closeout resume-phase1d-gold-rush` green · L0~L4 · 엔진 0 |
 
 **Plan closeout (이중):** `resume-phase1d-gold-rush` + `phase1d-gold-rush` → 양쪽 Plan YAML `completed`. 원본 plan 진행: **14/22 completed · pending 8**(다음=`phase1d-momentum`).
 
@@ -379,15 +440,15 @@ bun run stack:stop
 3. **P2 — 선형 combo + 700ms 대역 이탈.** 인라인 linear lerp · `momentumComboMs` 700 → `momentumComboEase`(ease-in escalate) + `momentumComboResetEase`(ease-out clear reset) · duration **850ms**(800–1200 밴드 · assert + 단위테스트).
 4. **확인(버그 아님 · phase1d-0):** `scene.root.destroy` **0** · controller는 `sceneRef = null`만 — Application-first disposal 유지.
 
-| 항목 | 결과 |
-| --- | --- |
-| 기능 QA | idle → replaying → settled · RPC combo/mult 1:1 · malformed ignore · reset · cash-out pre-bet · live cash-out 컨트롤 0 |
-| 모션 | win/cash-out: reveal-in+number-pop+cashout-flash · broke: reveal-in only · reduced-motion 클래스 0 · revealPulse remount |
-| 스테이지 비중 | canvas host `min-h-72` / `md:min-h-96` (CASINO_UX_CANON §7 combo meter) |
-| 퍼포먼스 | `useEffect(() => clearRaf, [clearRaf])` — mid-combo unmount 시 cancelAnimationFrame + 1200ms 실대기 후 `console.error`/`warn` 0 |
-| phase1d-0 확인 | 소스 ratchet: `scene.root.destroy` 부재 · `usePixiStage` + ref-only destroy · `momentumComboEase`/`ResetEase` |
-| 테스트 | 신규 `momentum-stage.test.tsx` **17/17** · 회귀 batch-c stages + display-contract 포함 **31/31** |
-| 증거 | `gate:ai-impl -- --test …/momentum-stage.test.tsx …/casino-games-batch-c-stages.test.tsx …/casino-games-batch-c-display-contract.test.ts --closeout resume-phase1d-momentum` green · L0~L4 · 엔진 0 |
+| 항목           | 결과                                                                                                                                                                                                |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 기능 QA        | idle → replaying → settled · RPC combo/mult 1:1 · malformed ignore · reset · cash-out pre-bet · live cash-out 컨트롤 0                                                                              |
+| 모션           | win/cash-out: reveal-in+number-pop+cashout-flash · broke: reveal-in only · reduced-motion 클래스 0 · revealPulse remount                                                                            |
+| 스테이지 비중  | canvas host `min-h-72` / `md:min-h-96` (CASINO_UX_CANON §7 combo meter)                                                                                                                             |
+| 퍼포먼스       | `useEffect(() => clearRaf, [clearRaf])` — mid-combo unmount 시 cancelAnimationFrame + 1200ms 실대기 후 `console.error`/`warn` 0                                                                     |
+| phase1d-0 확인 | 소스 ratchet: `scene.root.destroy` 부재 · `usePixiStage` + ref-only destroy · `momentumComboEase`/`ResetEase`                                                                                       |
+| 테스트         | 신규 `momentum-stage.test.tsx` **17/17** · 회귀 batch-c stages + display-contract 포함 **31/31**                                                                                                    |
+| 증거           | `gate:ai-impl -- --test …/momentum-stage.test.tsx …/casino-games-batch-c-stages.test.tsx …/casino-games-batch-c-display-contract.test.ts --closeout resume-phase1d-momentum` green · L0~L4 · 엔진 0 |
 
 **Plan closeout (이중):** `resume-phase1d-momentum` + `phase1d-momentum` → 양쪽 Plan YAML `completed`. 원본 plan 진행: **15/22 completed · pending 7**(다음=`phase1e-roulette`).
 
@@ -404,15 +465,15 @@ bun run stack:stop
 3. **P1 — 모션 토큰·칩드롭 미배선.** settle에 `ds-casino-reveal-in`/`number-pop`/`cashout-flash` **0건** · placement micro-feedback **0건** → 공유 토큰 + `ds-casino-chip-drop`(160ms).
 4. **P2 — split 베팅 UI 부재.** 엔진·i18n에 split 존재하나 stage에 모드/두 탭 완성 **0건** → straight/split 토글 + consecutive split.
 
-| 항목 | 결과 |
-| --- | --- |
-| 기능 QA | chips 1/5/25/100 · straight · outside 12종 · split 두 탭 · idle→replaying→settled · RPC 1:1 · malformed ignore · reset · repeat last · live cash-out 0 |
-| 모션 | win: reveal-in+number-pop+cashout-flash · lose: reveal-in only · chip-drop on place · reduced-motion 클래스 0 · revealPulse remount |
-| 휠/퍼포먼스 | transform-only disc+ball · `data-perf-contract=transform-opacity-only` · mid-spin unmount `cancelAnimationFrame` · console.error/warn 0 · 소스 ratchet(ease/rAF/cleanup) |
-| 대역 | `rouletteSpinMs` 1100(800–1200) · decelerating ease assert · `rouletteChipDropMs` 160(120–200) |
-| 테스트 | 신규 `roulette-stage.test.tsx` **21/21** · 회귀 batch-d stages + display-contract **31/31** |
-| 증거 | `gate:ai-impl -- --test …/roulette-stage.test.tsx …/casino-games-batch-d-stages.test.tsx …/casino-games-batch-d-display-contract.test.ts --closeout resume-phase1e-roulette` green · L0~L4 · 엔진 0 |
-| DevTools FPS | 코드 계약 green(transform/opacity only · rAF cleanup). **≥55fps Chrome 트레이스**는 G13로 operator CDP/CI advisory — 로컬 heavy 미실행(UNVERIFIED ≠ FAIL) |
+| 항목         | 결과                                                                                                                                                                                                |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 기능 QA      | chips 1/5/25/100 · straight · outside 12종 · split 두 탭 · idle→replaying→settled · RPC 1:1 · malformed ignore · reset · repeat last · live cash-out 0                                              |
+| 모션         | win: reveal-in+number-pop+cashout-flash · lose: reveal-in only · chip-drop on place · reduced-motion 클래스 0 · revealPulse remount                                                                 |
+| 휠/퍼포먼스  | transform-only disc+ball · `data-perf-contract=transform-opacity-only` · mid-spin unmount `cancelAnimationFrame` · console.error/warn 0 · 소스 ratchet(ease/rAF/cleanup)                            |
+| 대역         | `rouletteSpinMs` 1100(800–1200) · decelerating ease assert · `rouletteChipDropMs` 160(120–200)                                                                                                      |
+| 테스트       | 신규 `roulette-stage.test.tsx` **21/21** · 회귀 batch-d stages + display-contract **31/31**                                                                                                         |
+| 증거         | `gate:ai-impl -- --test …/roulette-stage.test.tsx …/casino-games-batch-d-stages.test.tsx …/casino-games-batch-d-display-contract.test.ts --closeout resume-phase1e-roulette` green · L0~L4 · 엔진 0 |
+| DevTools FPS | 코드 계약 green(transform/opacity only · rAF cleanup). **≥55fps Chrome 트레이스**는 G13로 operator CDP/CI advisory — 로컬 heavy 미실행(UNVERIFIED ≠ FAIL)                                           |
 
 **Plan closeout (이중):** `resume-phase1e-roulette` + `phase1e-roulette` → 양쪽 Plan YAML `completed`. 원본 plan 진행: **16/22 completed · pending 6**(다음=`phase1e-blackjack`).
 
@@ -429,14 +490,14 @@ bun run stack:stop
 3. **P1 — live progressive 핸드 미동기.** E23 `public_state.player/dealer`가 stage에 안 넘어감 → Hilo와 동일 sync + `parseBlackjackLiveHands`.
 4. **P1 — 모션·cleanup.** deal/flip(`blackjackDealStepMs` 280 = card-flip 토큰) · win punchy / lose calm · `useEffect(() => clearTimer)`.
 
-| 항목 | 결과 |
-| --- | --- |
-| 기능 QA | idle face-down · hit/stand queue · live mid-round hands · idle→replaying→settled · rank+suit 1:1 · malformed ignore · reset |
-| 카드 | DOM PlayingCardFace(♠♥♦♣ · A–K) · `decodeBlackjackCard` · UP/? **0** |
-| 모션 | win: reveal-in+number-pop+cashout-flash · lose: reveal-in only · dealer hole flip · reduced-motion 클래스 0 |
-| 대역 | `blackjackDealStepMs` 280(200–360) · action-queue fallback `blackjackRevealMs` 600 |
-| 테스트 | 신규 `blackjack-stage.test.tsx` **9/9** · 회귀 batch-d + display-contract + `blackjack.test.ts` **24/24** |
-| 증거 | `gate:ai-impl -- --test …/blackjack-stage.test.tsx …/casino-games-batch-d-stages.test.tsx …/casino-games-batch-d-display-contract.test.ts …/blackjack.test.ts --closeout resume-phase1e-blackjack` green · L0~L4 |
+| 항목    | 결과                                                                                                                                                                                                             |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 기능 QA | idle face-down · hit/stand queue · live mid-round hands · idle→replaying→settled · rank+suit 1:1 · malformed ignore · reset                                                                                      |
+| 카드    | DOM PlayingCardFace(♠♥♦♣ · A–K) · `decodeBlackjackCard` · UP/? **0**                                                                                                                                             |
+| 모션    | win: reveal-in+number-pop+cashout-flash · lose: reveal-in only · dealer hole flip · reduced-motion 클래스 0                                                                                                      |
+| 대역    | `blackjackDealStepMs` 280(200–360) · action-queue fallback `blackjackRevealMs` 600                                                                                                                               |
+| 테스트  | 신규 `blackjack-stage.test.tsx` **9/9** · 회귀 batch-d + display-contract + `blackjack.test.ts` **24/24**                                                                                                        |
+| 증거    | `gate:ai-impl -- --test …/blackjack-stage.test.tsx …/casino-games-batch-d-stages.test.tsx …/casino-games-batch-d-display-contract.test.ts …/blackjack.test.ts --closeout resume-phase1e-blackjack` green · L0~L4 |
 
 **Plan closeout (이중):** `resume-phase1e-blackjack` + `phase1e-blackjack` → 양쪽 Plan YAML `completed`. 원본 plan 진행: **17/22 completed · pending 5**(다음=`phase2-trade-wallet`).
 
@@ -454,14 +515,14 @@ bun run stack:stop
 4. **P0 — Wallet KYC 탈출구.** withdraw-hub가 `/wallet`로 루프 · redeem/compliance strip CTA 부재 → `/account/kyc` + `wallet.withdraw.kycCta` 3곳.
 5. **P1 — U4 인지부하.** mobile ticket fold `defaultOpen` · Spot history 단일탭 chrome 제거 · recent-trades `overscroll-contain`+IconButton · order-book Book/Depth focus+터치 · liquidation `text-market-down` · locked 요약 접힌 상태 노출 · CTA grid `col-span-2`.
 
-| 항목 | 결과 |
-| --- | --- |
-| Spot | tablet external submit · sticky token · book/recent-trades HI 폴리시 · ticket fold open |
-| Futures | 동일 tablet/sticky · TIF/checkbox 48px row · liquidation tone |
-| Wallet | KYC CTA×3 · locked summary · CTA grid |
-| HI-QA | `trade-wallet-phase2-polish-display-contract.ts` 매트릭스 8행 · chart wheel/drag·slider·scroll 소스 계약 |
-| 테스트 | 계약 8/8 · 관련 surface 58/58 · futures-desk 재실행 flake 1회 후 green |
-| 증거 | `gate:ai-impl -- --test …/trade-wallet-phase2-polish-display-contract.test.ts --closeout resume-phase2-trade-wallet` green · L0~L4 |
+| 항목    | 결과                                                                                                                               |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Spot    | tablet external submit · sticky token · book/recent-trades HI 폴리시 · ticket fold open                                            |
+| Futures | 동일 tablet/sticky · TIF/checkbox 48px row · liquidation tone                                                                      |
+| Wallet  | KYC CTA×3 · locked summary · CTA grid                                                                                              |
+| HI-QA   | `trade-wallet-phase2-polish-display-contract.ts` 매트릭스 8행 · chart wheel/drag·slider·scroll 소스 계약                           |
+| 테스트  | 계약 8/8 · 관련 surface 58/58 · futures-desk 재실행 flake 1회 후 green                                                             |
+| 증거    | `gate:ai-impl -- --test …/trade-wallet-phase2-polish-display-contract.test.ts --closeout resume-phase2-trade-wallet` green · L0~L4 |
 
 **Plan closeout (이중):** `resume-phase2-trade-wallet` + `phase2-trade-wallet` → 양쪽 Plan YAML `completed`. 원본 plan 진행: **18/22 completed · pending 4**(다음=`phase3-sports`).
 
@@ -481,14 +542,14 @@ bun run stack:stop
 4. **P1 — Slip How-To 부재.** 슬립 헤더 `HelpTip`(`sports.slip.oddsGloss`) + rules 링크.
 5. **P1 — hub overflow.** `.ds-sports-hub { overflow-x: hidden }` (`layout.css`).
 
-| 항목 | 결과 |
-| --- | --- |
-| VIP | mitigatedBy=live · eligibility/board/ineligible 계약 유지 |
-| Layout | grid collapse · left rail list-only · slip rail list/fixture/vip |
-| Mobile | league chips + slip sheet + 48px open CTA |
-| HI-QA | `sports-phase3-polish-display-contract.ts` 매트릭스 6행 |
-| 테스트 | 계약 7/7 · sports-page 15/15 |
-| 증거 | `gate:ai-impl -- --test …/sports-phase3-polish-display-contract.test.ts --closeout resume-phase3-sports` green · L0~L4 |
+| 항목   | 결과                                                                                                                   |
+| ------ | ---------------------------------------------------------------------------------------------------------------------- |
+| VIP    | mitigatedBy=live · eligibility/board/ineligible 계약 유지                                                              |
+| Layout | grid collapse · left rail list-only · slip rail list/fixture/vip                                                       |
+| Mobile | league chips + slip sheet + 48px open CTA                                                                              |
+| HI-QA  | `sports-phase3-polish-display-contract.ts` 매트릭스 6행                                                                |
+| 테스트 | 계약 7/7 · sports-page 15/15                                                                                           |
+| 증거   | `gate:ai-impl -- --test …/sports-phase3-polish-display-contract.test.ts --closeout resume-phase3-sports` green · L0~L4 |
 
 **Plan closeout (이중):** `resume-phase3-sports` + `phase3-sports` → 양쪽 Plan YAML `completed`. 원본 plan 진행: **19/22 completed · pending 3**(다음=`phase4-earn-home`).
 
@@ -508,15 +569,15 @@ bun run stack:stop
 6. **P1 — staking keyboard.** pool `role=button` + wizard steps → `focus-visible:ring` · touch min-height.
 7. **계약:** `earn-home-phase4-polish-display-contract.ts` HI-QA 8행 · touch-target earn routes에 `/share/earnings` 추가.
 
-| 항목 | 결과 |
-| --- | --- |
-| Home hub | signature-flow 48px · tier/view-all ghost · Fold4 full-card Link 유지 |
-| Missions | tabs touch floor · IconButton close · start CTA outline md |
-| Referral/Tier | SPA Link CTAs · tier progress/back ghost |
-| Staking | pool/wizard keyboard focus ring |
-| HI-QA | `earn-home-phase4-polish-display-contract.ts` 매트릭스 8행 |
-| 테스트 | 계약 8/8 · 관련 surface 45/45 |
-| 증거 | `gate:ai-impl -- --test …/earn-home-phase4-polish-display-contract.test.ts` green · L0~L4 |
+| 항목          | 결과                                                                                      |
+| ------------- | ----------------------------------------------------------------------------------------- |
+| Home hub      | signature-flow 48px · tier/view-all ghost · Fold4 full-card Link 유지                     |
+| Missions      | tabs touch floor · IconButton close · start CTA outline md                                |
+| Referral/Tier | SPA Link CTAs · tier progress/back ghost                                                  |
+| Staking       | pool/wizard keyboard focus ring                                                           |
+| HI-QA         | `earn-home-phase4-polish-display-contract.ts` 매트릭스 8행                                |
+| 테스트        | 계약 8/8 · 관련 surface 45/45                                                             |
+| 증거          | `gate:ai-impl -- --test …/earn-home-phase4-polish-display-contract.test.ts` green · L0~L4 |
 
 **Plan closeout (이중):** `resume-phase4-earn-home` + `phase4-earn-home` → 양쪽 Plan YAML `completed`. 원본 plan 진행: **20/22 completed · pending 2**(다음=`phase5-admin`).
 
@@ -537,15 +598,15 @@ bun run stack:stop
 5. **P1 — settings 탭 empty.** AdminTable `empty=` EmptyState(검색 클리어 CTA).
 6. **P1 — 그룹 헤더 타이포.** link/label 동일 `text-sm font-semibold`(uppercase 강등 제거).
 
-| 항목 | 결과 |
-| --- | --- |
-| Landing queues | canon §3 정렬(건수순 아님) |
-| Nav | surface-hover · focus ring · radius token · touch 48px |
-| Mobile nav | support/risk/team + RBAC filter |
-| RBAC | finance rewards · support withdrawals 유지 |
-| HI-QA | `admin-phase5-polish-display-contract.ts` 매트릭스 8행 |
-| 테스트 | 계약+관련 **27/27** · nav/home/settings/table **7/7** |
-| 증거 | `gate:ai-impl` L0–L2 green · 타겟 vitest green · L0~L4 |
+| 항목           | 결과                                                   |
+| -------------- | ------------------------------------------------------ |
+| Landing queues | canon §3 정렬(건수순 아님)                             |
+| Nav            | surface-hover · focus ring · radius token · touch 48px |
+| Mobile nav     | support/risk/team + RBAC filter                        |
+| RBAC           | finance rewards · support withdrawals 유지             |
+| HI-QA          | `admin-phase5-polish-display-contract.ts` 매트릭스 8행 |
+| 테스트         | 계약+관련 **27/27** · nav/home/settings/table **7/7**  |
+| 증거           | `gate:ai-impl` L0–L2 green · 타겟 vitest green · L0~L4 |
 
 **Plan closeout (이중):** `resume-phase5-admin` + `phase5-admin` → 양쪽 Plan YAML `completed`. 원본 plan 진행: **21/22 completed · pending 1**(다음=`phase6-closeout`).
 
@@ -555,12 +616,12 @@ bun run stack:stop
 
 > **범위:** 프레젠테이션 hygiene only · `LAUNCH_GATES.tierGuide` dead flag · `check:design-tokens --strict` · 4-viewport 증거 패키지 · Release Checklist · ACTIVE_WORK_SSOT · **TierGuidePage/`tier-guide-*`/`/tier` 금지** · 엔진/RPC **0**.
 
-| Part | 항목 | 결과 |
-| --- | --- | --- |
-| A | `LAUNCH_GATES.tierGuide` orphan 제거 | **PASS** — `launch-gates.ts` 키 삭제 · `/tier` 계열 미터치 |
-| B1/B2 | spacing-ratchet `gap-6`→`gap-ds-8` | **PASS** — surfaces 83파일 · **111** 치환 · `check:design-tokens --strict` advisory **0** |
-| C | 4-viewport 증거 + Release Checklist | **PASS** — [`visual-ux-2026-07-25-phase6-closeout/`](../audit/visual-ux-2026-07-25-phase6-closeout/) · 2026-07-11 팩 **superseded** |
-| D | ACTIVE_WORK_SSOT + 이중 closeout | **PASS** — 원본 14 resume + `phase6-closeout` · Plan **22/22** |
+| Part  | 항목                                 | 결과                                                                                                                                |
+| ----- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| A     | `LAUNCH_GATES.tierGuide` orphan 제거 | **PASS** — `launch-gates.ts` 키 삭제 · `/tier` 계열 미터치                                                                          |
+| B1/B2 | spacing-ratchet `gap-6`→`gap-ds-8`   | **PASS** — surfaces 83파일 · **111** 치환 · `check:design-tokens --strict` advisory **0**                                           |
+| C     | 4-viewport 증거 + Release Checklist  | **PASS** — [`visual-ux-2026-07-25-phase6-closeout/`](../audit/visual-ux-2026-07-25-phase6-closeout/) · 2026-07-11 팩 **superseded** |
+| D     | ACTIVE_WORK_SSOT + 이중 closeout     | **PASS** — 원본 14 resume + `phase6-closeout` · Plan **22/22**                                                                      |
 
 **Release Checklist:** [`RELEASE_CHECKLIST.md`](../audit/visual-ux-2026-07-25-phase6-closeout/RELEASE_CHECKLIST.md) — Visual/Functional/A11y/Perf/Responsive/Tokens/P0·P1/Engine **8/8 PASS**.  
 **Release manifest:** `bun run release:manifest` 메커니즘 유지(H-06 · clean SHA + dist) — 신규 release-notes 파일 **0**.
@@ -575,12 +636,12 @@ bun run stack:stop
 
 **방법:** `dead-controls-display-contract.ts` 중앙 레지스트리 10건 전부 + 저장소 전체 `*_ENGINE_TODO`/`*_UI_UNLOCK_TODO` grep(추가 5건) + 실제 노출을 최종 결정하는 `apps/web/src/lib/launch-gates.ts` 스위치보드(34개 플래그) 대조.
 
-| 분류                                                                                                    | 건수                                                                                                                                                                      | 판정                                                                                                                                                                                        |
-| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 중앙 레지스트리(`PQA_DEAD_CONTROL_DEFER_REGISTRY`)                                                      | 10건                                                                                                                                                                      | 전부 `live` 또는 `disabled+key` — **침묵형 no-op 0건**                                                                                                                                      |
-| 레지스트리 밖 개별 게이트 항목(app-install-mission·tier-option-b·viral-cms·wallet-transfer·kakao-share) | 5건                                                                                                                                                                       | 각자 `LAUNCH_GATES.*Live` 기반 `isXxxLive()`/`shouldExpose...()` 리졸버 보유 — **중앙 목록에는 없지만 침묵형 아님** (분산 관리 = 문서 부채로만 기록)                                        |
+| 분류                                                                                                    | 건수                                                                                                                                                          | 판정                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 중앙 레지스트리(`PQA_DEAD_CONTROL_DEFER_REGISTRY`)                                                      | 10건                                                                                                                                                          | 전부 `live` 또는 `disabled+key` — **침묵형 no-op 0건**                                                                                                                                      |
+| 레지스트리 밖 개별 게이트 항목(app-install-mission·tier-option-b·viral-cms·wallet-transfer·kakao-share) | 5건                                                                                                                                                           | 각자 `LAUNCH_GATES.*Live` 기반 `isXxxLive()`/`shouldExpose...()` 리졸버 보유 — **중앙 목록에는 없지만 침묵형 아님** (분산 관리 = 문서 부채로만 기록)                                        |
 | `LAUNCH_GATES`에서 현재 `false`인 노출 플래그                                                           | 8개 (`cryptoRails`·`sportsComboBetting`·`sportsSystemBetting`·`notificationsCenter`·`siweLoginLive`·`missionChainsLive`·`coBetLive`·`mlMissionRecommendLive`) | `cryptoRails`는 라우트 redirect+RPC invoke 차단+rail 목록 제외 3중 가드 확인. 나머지는 각 `assertXxxWaveSync()`형 vitest가 `false` 고정을 강제 — **표본 조사 결과 침묵형 dead control 0건** |
-| **버려진 플래그**                                                                                       | **0건** (2026-07-25 Phase 6)                                                                                                                                              | **`LAUNCH_GATES.tierGuide` 제거 완료** — `/tier` TierGuidePage 계열은 별개·유지 · `phase6-closeout-display-contract`로 회귀 고정                                                           |
+| **버려진 플래그**                                                                                       | **0건** (2026-07-25 Phase 6)                                                                                                                                  | **`LAUNCH_GATES.tierGuide` 제거 완료** — `/tier` TierGuidePage 계열은 별개·유지 · `phase6-closeout-display-contract`로 회귀 고정                                                            |
 
 **종합 판정:** 요청하신 "클릭했는데 반응 없는" 유형의 **순수 침묵형 dead control은 이번 조사에서 발견되지 않음** — 이 코드베이스의 PQA F3 defer 패턴(`live`/`disabled+key`/`built_hidden`)이 실제로 일관되게 적용되어 있음. P1 랜딩 크래시 **FIXED** · orphan `tierGuide` 플래그 **Phase 6 제거 완료**.
 
@@ -1151,7 +1212,7 @@ bun run check:engine-foundation-parity   # migration parity P1-002
 | -------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | Display contract     | `da-w7-operator-visual-dae-signoff-display-contract.ts` · Home+Shell+Trade · 4-tier 390/768/1024/2560 · DAE checklist |
 | Automated companions | surface **16/16** · contract **6/6** · axe critical 0 · dead control 0                                                |
-| Preview              | `deploy:pages:web:preview` → <https://preview.phonara-web.pages.dev>                                                    |
+| Preview              | `deploy:pages:web:preview` → <https://preview.phonara-web.pages.dev>                                                  |
 | Bundle gate          | `gate:ai-impl` **22/22** · `typecheck` · `check:i18n` · `check:release` · engine **0**                                |
 
 **operator 육안 체크리스트 (§20.12 · Plan YAML #235 completed 조건):**
