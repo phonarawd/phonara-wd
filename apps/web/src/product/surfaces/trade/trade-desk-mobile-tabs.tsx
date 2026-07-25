@@ -100,7 +100,7 @@ export function TradeDeskMobileTradeStack({
             {ticketExternal || !orderTicket ? null : (
               <CollapsibleSection
                 title={t('trade.mobile.ticket.title')}
-                defaultOpen={false}
+                defaultOpen
                 summary={t('trade.mobile.ticket.summary')}
                 expandLabel={t('trade.mobile.ticket.expand')}
                 collapseLabel={t('trade.mobile.ticket.collapse')}

@@ -88,7 +88,9 @@ describe('da-w3-gate-ia-progressive-display-contract §34.12–34.14 · YAML #19
       'utf8',
     );
     expect(trade).toContain('trade-mobile-ticket-fold');
-    expect(trade).toMatch(/defaultOpen=\{false\}/);
+    // Phase 2 polish U4: ticket fold stays defaultOpen (cognitive load · sticky CTA).
+    expect(trade).toMatch(/defaultOpen(?:\s|=)/);
+    expect(trade).not.toContain('defaultOpen={false}');
   });
 
   it('passes assertDaW3GateIaProgressiveSync', () => {
