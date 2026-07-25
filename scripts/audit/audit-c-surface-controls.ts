@@ -212,7 +212,7 @@ function scanControlFindings(routeRows: RouteRow[]): ControlFinding[] {
       note: 'Sparse P6 hub — title only · full surface deferred',
     },
     {
-      re: /\bSTUB\b|\bstub\b.*ENGINE:gap|coming_soon|SportsVipStubPanel|data-testid="sports-vip-stub"/,
+      re: /\bSTUB\b|\bstub\b.*ENGINE:gap|coming_soon/,
       category: 'soon_stub',
       severity: 'P3',
       id: 'soon-stub-marker',

@@ -13,6 +13,7 @@ import {
   type StrCaseType,
   type StrStatus,
 } from '@/hooks/admin/useAdminCompliance';
+import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
 import { useAdminRouteNavigate } from '@/lib/use-admin-route-navigate';
 import { useT } from '@/product/i18n';
 import { HowItWorks } from '@/product/primitives/how-it-works';
@@ -25,6 +26,7 @@ import { AdminTable } from '@/product/primitives/admin-table';
 import { StatusBadge, type MoneyStatusState } from '@/product/primitives/status-badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/product/primitives/tabs';
 import { AdminQueueActionDialog } from '@/product/surfaces/admin-queue-action-dialog';
+import { ADMIN_RBAC_DENIED_KEY, adminRbacActionProps } from '@/product/surfaces/admin-rbac-action';
 
 type RiskActionKind = 'clearRisk' | 'reviewStr' | 'fileStr' | 'dismissStr';
 
@@ -94,6 +96,10 @@ export function AdminRiskPage() {
   const t = useT();
   const goTo = useAdminRouteNavigate();
   const qc = useQueryClient();
+  const { can } = useAdminOperatorRbac();
+  const canManageStr = can('queues.str.manage');
+  const canClearRisk = can('queues.risk.clear');
+  const rbacDenied = t(ADMIN_RBAC_DENIED_KEY);
   const locale = typeof document !== 'undefined' ? document.documentElement.lang || 'ko' : 'ko';
 
   const {
@@ -143,6 +149,15 @@ export function AdminRiskPage() {
 
   const handleActionSubmit = async (reason: string): Promise<boolean> => {
     if (!actionTarget) return false;
+    if (actionTarget.kind === 'clearRisk' && !canClearRisk) return false;
+    if (
+      (actionTarget.kind === 'reviewStr' ||
+        actionTarget.kind === 'fileStr' ||
+        actionTarget.kind === 'dismissStr') &&
+      !canManageStr
+    ) {
+      return false;
+    }
     setActionLoading(true);
     try {
       if (actionTarget.kind === 'clearRisk') return clearRiskFlag(actionTarget.id, reason);
@@ -313,7 +328,9 @@ export function AdminRiskPage() {
                     <Button
                       size="sm"
                       variant="primary"
-                      onClick={() =>
+                      {...adminRbacActionProps(canClearRisk, rbacDenied)}
+                      onClick={() => {
+                        if (!canClearRisk) return;
                         setActionTarget({
                           kind: 'clearRisk',
                           id: row.id,
@@ -321,8 +338,8 @@ export function AdminRiskPage() {
                           confirmKey: 'admin.queues.action.clear',
                           destructive: true,
                           summary: formatRiskSummary(row, t),
-                        })
-                      }
+                        });
+                      }}
                     >
                       {t('admin.queues.action.clear')}
                     </Button>
@@ -409,15 +426,17 @@ export function AdminRiskPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() =>
+                          {...adminRbacActionProps(canManageStr, rbacDenied)}
+                          onClick={() => {
+                            if (!canManageStr) return;
                             setActionTarget({
                               kind: 'reviewStr',
                               id: row.id,
                               titleKey: 'admin.queues.dialog.reviewStr',
                               confirmKey: 'admin.queues.action.review',
                               summary: formatStrSummary(row, t),
-                            })
-                          }
+                            });
+                          }}
                         >
                           {t('admin.queues.action.review')}
                         </Button>
@@ -425,22 +444,26 @@ export function AdminRiskPage() {
                       <Button
                         size="sm"
                         variant="primary"
-                        onClick={() =>
+                        {...adminRbacActionProps(canManageStr, rbacDenied)}
+                        onClick={() => {
+                          if (!canManageStr) return;
                           setActionTarget({
                             kind: 'fileStr',
                             id: row.id,
                             titleKey: 'admin.queues.dialog.fileStr',
                             confirmKey: 'admin.queues.action.file',
                             summary: formatStrSummary(row, t),
-                          })
-                        }
+                          });
+                        }}
                       >
                         {t('admin.queues.action.file')}
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() =>
+                        {...adminRbacActionProps(canManageStr, rbacDenied)}
+                        onClick={() => {
+                          if (!canManageStr) return;
                           setActionTarget({
                             kind: 'dismissStr',
                             id: row.id,
@@ -448,8 +471,8 @@ export function AdminRiskPage() {
                             confirmKey: 'admin.queues.action.dismiss',
                             destructive: true,
                             summary: formatStrSummary(row, t),
-                          })
-                        }
+                          });
+                        }}
                       >
                         {t('admin.queues.action.dismiss')}
                       </Button>

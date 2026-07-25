@@ -183,6 +183,8 @@ export function AdminQueuesPage() {
   const canApproveWithdraw = can('queues.withdraw.approve');
   const canRejectWithdraw = can('queues.withdraw.reject');
   const canReviewKyc = can('queues.kyc.review');
+  const canManageStr = can('queues.str.manage');
+  const canClearRisk = can('queues.risk.clear');
   const rbacDenied = t(ADMIN_RBAC_DENIED_KEY);
 
   const locale = typeof document !== 'undefined' ? document.documentElement.lang || 'ko' : 'ko';
@@ -314,11 +316,15 @@ export function AdminQueuesPage() {
   const handleActionSubmit = async (reason: string): Promise<boolean> => {
     if (!actionTarget) return false;
 
+    const { kind, id } = actionTarget;
+    if ((kind === 'reviewStr' || kind === 'fileStr' || kind === 'dismissStr') && !canManageStr) {
+      return false;
+    }
+    if (kind === 'clearRisk' && !canClearRisk) return false;
+
     setActionLoading(true);
 
     try {
-      const { kind, id } = actionTarget;
-
       switch (kind) {
         case 'approveWithdraw':
           return await approveWithdraw(id, reason);
@@ -758,7 +764,9 @@ export function AdminQueuesPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() =>
+                          {...adminRbacActionProps(canManageStr, rbacDenied)}
+                          onClick={() => {
+                            if (!canManageStr) return;
                             openAction({
                               kind: 'reviewStr',
 
@@ -769,8 +777,8 @@ export function AdminQueuesPage() {
                               confirmKey: 'admin.queues.action.review',
 
                               summary: `${row.userId} · ${row.detailsSummary}`,
-                            })
-                          }
+                            });
+                          }}
                         >
                           {t('admin.queues.action.review')}
                         </Button>
@@ -779,7 +787,9 @@ export function AdminQueuesPage() {
                       <Button
                         variant="primary"
                         size="sm"
-                        onClick={() =>
+                        {...adminRbacActionProps(canManageStr, rbacDenied)}
+                        onClick={() => {
+                          if (!canManageStr) return;
                           openAction({
                             kind: 'fileStr',
 
@@ -790,8 +800,8 @@ export function AdminQueuesPage() {
                             confirmKey: 'admin.queues.action.file',
 
                             summary: `${row.userId} · ${row.detailsSummary}`,
-                          })
-                        }
+                          });
+                        }}
                       >
                         {t('admin.queues.action.file')}
                       </Button>
@@ -799,7 +809,9 @@ export function AdminQueuesPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() =>
+                        {...adminRbacActionProps(canManageStr, rbacDenied)}
+                        onClick={() => {
+                          if (!canManageStr) return;
                           openAction({
                             kind: 'dismissStr',
 
@@ -810,8 +822,8 @@ export function AdminQueuesPage() {
                             confirmKey: 'admin.queues.action.dismiss',
 
                             summary: `${row.userId} · ${row.detailsSummary}`,
-                          })
-                        }
+                          });
+                        }}
                       >
                         {t('admin.queues.action.dismiss')}
                       </Button>
@@ -857,7 +869,9 @@ export function AdminQueuesPage() {
                     <Button
                       variant="primary"
                       size="sm"
-                      onClick={() =>
+                      {...adminRbacActionProps(canClearRisk, rbacDenied)}
+                      onClick={() => {
+                        if (!canClearRisk) return;
                         openAction({
                           kind: 'clearRisk',
 
@@ -868,8 +882,8 @@ export function AdminQueuesPage() {
                           confirmKey: 'admin.queues.action.clear',
 
                           summary: `${row.userId} · ${row.detailsSummary}`,
-                        })
-                      }
+                        });
+                      }}
                     >
                       {t('admin.queues.action.clear')}
                     </Button>

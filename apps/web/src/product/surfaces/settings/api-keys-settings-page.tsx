@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link } from '@tanstack/react-router';
 import { KeyRound } from 'lucide-react';
 
+import { resolveSettingsApiKeysCreateDisabledReasonKey } from '@/domain/dead-controls-display-contract';
 import {
   SETTINGS_API_KEYS_SEO_DESCRIPTION_KEY,
   SETTINGS_API_KEYS_SEO_TITLE_KEY,
@@ -144,6 +145,7 @@ export function ApiKeysSettingsPage() {
             variant="primary"
             size="md"
             disabled={!canManageKeys}
+            title={!canManageKeys ? t(resolveSettingsApiKeysCreateDisabledReasonKey()) : undefined}
             onClick={engine.openCreate}
             data-testid="settings-api-keys-create"
           >

@@ -18,20 +18,35 @@ const STATUS_KEYS: Record<AdminCmsPageRow['status'], MessageKey> = {
   archived: 'admin.cms.pages.status.archived',
 };
 
+function formatWhen(iso: string, locale: string): string {
+  try {
+    return new Intl.DateTimeFormat(locale, {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    }).format(new Date(iso));
+  } catch {
+    return iso;
+  }
+}
+
 /** E6 CMS desk (`/cms`) — page publishing queue only. */
 export function AdminCmsPage() {
   const t = useT();
-  const { filteredPages, publishPage, archivePage, restorePageDraft, refresh } = useAdminCmsDesk();
+  const locale = typeof document !== 'undefined' ? document.documentElement.lang || 'ko' : 'ko';
+  const { filteredPages, publishPage, archivePage, restorePageDraft, audit, refresh } =
+    useAdminCmsDesk();
   const [target, setTarget] = useState<Target | null>(null);
+
+  const pageAudit = audit.filter((event) => event.actionKey.startsWith('admin.cms.pages.audit.'));
 
   const submit = async (reason: string) => {
     if (!target) return false;
     const success =
       target.action === 'publish'
-        ? publishPage(target.row.id)
+        ? await publishPage(target.row.id, reason)
         : target.action === 'archive'
-          ? archivePage(target.row.id, reason)
-          : restorePageDraft(target.row.id, reason);
+          ? await archivePage(target.row.id, reason)
+          : await restorePageDraft(target.row.id, reason);
     if (success) setTarget(null);
     return success;
   };
@@ -42,7 +57,7 @@ export function AdminCmsPage() {
     restore: 'admin.cms.pages.action.restore',
   };
   const titleKey: Record<PageAction, MessageKey> = {
-    publish: 'admin.cms.pages.dialog.archive.title',
+    publish: 'admin.cms.pages.dialog.publish.title',
     archive: 'admin.cms.pages.dialog.archive.title',
     restore: 'admin.cms.pages.dialog.restore.title',
   };
@@ -113,6 +128,43 @@ export function AdminCmsPage() {
           </Button>
         )}
       />
+
+      <section className="space-y-3" aria-labelledby="admin-cms-audit-heading">
+        <h3 id="admin-cms-audit-heading" className="text-foreground m-0 text-base font-semibold">
+          {t('admin.cms.audit.title')}
+        </h3>
+        <AdminTable
+          columns={[
+            {
+              id: 'time',
+              header: t('admin.audit.col.time'),
+              cell: ({ row }) => formatWhen(row.at, locale),
+              meta: { className: 'text-foreground-muted' },
+            },
+            {
+              id: 'action',
+              header: t('admin.audit.col.action'),
+              cell: ({ row }) => t(row.actionKey as MessageKey),
+            },
+            {
+              id: 'subject',
+              header: t('admin.cms.pages.col.page'),
+              cell: ({ row }) => row.subject,
+            },
+            {
+              id: 'reason',
+              header: t('admin.audit.col.reason'),
+              cell: ({ row }) => row.reason || '—',
+              meta: { className: 'text-foreground-muted' },
+            },
+          ]}
+          rows={pageAudit.slice(0, 20)}
+          getRowId={(row) => row.id}
+          minWidth={640}
+          empty={<p className="text-foreground-muted m-0 text-sm">{t('admin.cms.audit.empty')}</p>}
+        />
+      </section>
+
       <AdminQueueActionDialog
         open={target !== null}
         onOpenChange={(open) => !open && setTarget(null)}

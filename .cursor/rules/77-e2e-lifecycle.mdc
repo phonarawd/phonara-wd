@@ -17,8 +17,8 @@ See `scripts/lib/e2e-lifecycle.ts` and `scripts/run-e2e.ts`.
 | Do | Don't |
 |----|-------|
 | `bun run test:e2e` | raw `playwright test` / `bunx playwright test` |
-| `bun run test:e2e:casino` (타겟·카지노/비주얼) | admin 3001 불필요한 전체 `test:e2e`로 타겟만 돌리기 |
-| `bun run test:e2e:casino-smoke` | ad-hoc preview server + manual browser |
+| `bun run test:e2e:casino -- tests/e2e/casino-dice.spec.ts` (타겟·카지노 PF) | admin 3001 불필요한 전체 `test:e2e`로 타겟만 돌리기 |
+| `bun run test:e2e:casino -- tests/e2e/sports-betting.spec.ts` · `staking-hub.spec.ts` · `referral-hub.spec.ts` | ad-hoc preview server + manual browser · 삭제된 legacy `casino.spec.ts` 경로 |
 | `bun run e2e:kill` when ports stuck | leave 3000/3001/3002 listeners running |
 | wait for command to **fully exit** | background E2E in agent terminal without monitoring |
 | `bun run check:hygiene` after E2E session | mark task complete while `test-results/` exists |

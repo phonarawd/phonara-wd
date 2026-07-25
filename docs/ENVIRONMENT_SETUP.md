@@ -25,12 +25,12 @@ VITE_SUPPORTED_LOCALES=ko,en
 구현: [`scripts/lib/secrets-deploy-deny.ts`](../scripts/lib/secrets-deploy-deny.ts) ·
 CLI: `bun run check:secrets-deploy-deny` (`bun run check` · CI `quality` · `deploy:pages:*` 직전).
 
-| 계층 | 검사 |
-| --- | --- |
-| **A · 경로** | `.env` / `.env.*`(단 `*.example`) · `setup/.env.secrets` · `.dev.vars` · `*.pem`/`*.p12`/`*.pfx`/`*.key` · `*credentials*.json` · E2E auth · `secrets.toml` — **git tracked면 FAIL** |
-| **B · 본문** | 실형태 `sbp_…` · JWT `role=service_role` · private key header · `ghp_`/`github_pat_` · `VITE_*SERVICE_ROLE*` · 실값 `SUPABASE_SERVICE_ROLE_KEY=` |
-| **C · dist** | `bun run check:secrets-deploy-deny -- --dist` — `apps/*/dist` 동일 규칙 (`deploy-pages` 하드스톱) |
-| **D · Cursor** | `.cursorignore` + `secrets-read-deny` hook — 로컬 시크릿 파일 인덱스/읽기 차단 |
+| 계층           | 검사                                                                                                                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **A · 경로**   | `.env` / `.env.*`(단 `*.example`) · `setup/.env.secrets` · `.dev.vars` · `*.pem`/`*.p12`/`*.pfx`/`*.key` · `*credentials*.json` · E2E auth · `secrets.toml` — **git tracked면 FAIL** |
+| **B · 본문**   | 실형태 `sbp_…` · JWT `role=service_role` · private key header · `ghp_`/`github_pat_` · `VITE_*SERVICE_ROLE*` · 실값 `SUPABASE_SERVICE_ROLE_KEY=`                                     |
+| **C · dist**   | `bun run check:secrets-deploy-deny -- --dist` — `apps/*/dist` 동일 규칙 (`deploy-pages` 하드스톱)                                                                                    |
+| **D · Cursor** | `.cursorignore` + `secrets-read-deny` hook — 로컬 시크릿 파일 인덱스/읽기 차단                                                                                                       |
 
 **허용(잠그지 않음):** 공개 anon 키 · Supabase local demo anon JWT(`…CRXP1A7W…`) · placeholder(`YOUR_VALUE_HERE`, `sbp_your_…`, `your_*`).
 

@@ -2,14 +2,8 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { LAUNCH_GATES } from '../../lib/launch-gates';
-import {
-  tierGuideFaqAnswerKey,
-  tierGuideFaqQuestionKey,
-} from '../tier-guide-display-contract';
-import {
-  PHASE6_CLOSEOUT,
-  assertPhase6CloseoutSync,
-} from '../phase6-closeout-display-contract';
+import { tierGuideFaqAnswerKey, tierGuideFaqQuestionKey } from '../tier-guide-display-contract';
+import { PHASE6_CLOSEOUT, assertPhase6CloseoutSync } from '../phase6-closeout-display-contract';
 
 const repoRoot = join(import.meta.dirname, '../../../../../');
 

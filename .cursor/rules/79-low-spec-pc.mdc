@@ -73,7 +73,7 @@ bun run cursor:emergency-reset
 - **연속 gate:** `PHONARA_KEEP_STACK=1` · 다른 Docker workload: `PHONARA_DOCKER_AUTO_QUIT=0`
 - 디스크 부족: `bun run stack:docker-clean --cache` · `--images`
 - **DB 볼륨 삭제 금지 (자동):** `docker volume prune --volumes` + `PHONARA_DOCKER_PURGE_VOLUMES=1` 수동만
-- Plinko E2E: Pixi WebGL ticker는 `VITE_PHONARA_E2E_ENGINE=1`에서 **0** — casino.spec RPC 구간 중 CPU 포화 방지
+- Plinko/dice E2E: Pixi WebGL ticker는 `VITE_PHONARA_E2E_ENGINE=1`에서 **0** — `casino-dice.spec.ts` RPC 구간 중 CPU 포화 방지
 
 ## 에이전트 완료 보고 전 (저사양 checklist)
 

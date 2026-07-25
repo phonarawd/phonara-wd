@@ -171,7 +171,7 @@ function makeEngine(
       },
     ],
 
-    useAmbientTicker: true,
+    useAmbientTicker: false,
     rewardTicketsIssuanceNoteKey: 'earn.home.tickets.issuanceNote',
 
     ...overrides,
@@ -263,13 +263,13 @@ describe('EarnHomePage', () => {
     );
   });
 
-  it('expands Fold3 to show today, season, trust, and ambient ticker', () => {
-    renderPage();
+  it('expands Fold3 to show today, season, trust (ticker hidden by default)', () => {
+    renderPage(makeEngine({ useAmbientTicker: false }));
 
     fireEvent.click(screen.getByTestId('earn-home-insights-fold-toggle'));
 
     expect(screen.getByTestId('earn-home-insights-fold-panel')).toBeInTheDocument();
-    expect(screen.getByTestId('earn-home-activity-ticker')).toBeInTheDocument();
+    expect(screen.queryByTestId('earn-home-activity-ticker')).not.toBeInTheDocument();
     expect(screen.getByTestId('earn-home-today-opportunity')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-season-card')).toBeInTheDocument();
     expect(screen.getByTestId('earn-home-trust-card')).toBeInTheDocument();
@@ -279,10 +279,10 @@ describe('EarnHomePage', () => {
     expect(screen.getByText('earn.home.tickets.issuanceNote')).toBeInTheDocument();
   });
 
-  it('hides ambient ticker when live proof mode is active even after Fold3 expand', () => {
-    renderPage(makeEngine({ useAmbientTicker: false }));
+  it('shows ambient ticker when proof mode is ambient after Fold3 expand', () => {
+    renderPage(makeEngine({ useAmbientTicker: true }));
 
     fireEvent.click(screen.getByTestId('earn-home-insights-fold-toggle'));
-    expect(screen.queryByTestId('earn-home-activity-ticker')).not.toBeInTheDocument();
+    expect(screen.getByTestId('earn-home-activity-ticker')).toBeInTheDocument();
   });
 });

@@ -100,11 +100,7 @@ function main(): void {
   }
 
   // Hard-stop: never upload a dist that embeds service_role / key material.
-  run(
-    'bun',
-    ['run', 'check:secrets-deploy-deny', '--', '--dist'],
-    'secrets-deploy-deny',
-  );
+  run('bun', ['run', 'check:secrets-deploy-deny', '--', '--dist'], 'secrets-deploy-deny');
 
   // Pages deploy: --project-name only (wrangler rejects --config for Pages).
   const wranglerArgs = [

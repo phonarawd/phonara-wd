@@ -67,7 +67,7 @@ describe('ew-e5-gap-surfaces-display-contract (E5 WIRE)', () => {
     expect(page).toContain('useReferralLeaderboardController');
     expect(page).toContain('referral-leaderboard-list');
 
-    const vipPanel = readRepo('apps/web/src/product/surfaces/sports/sports-vip-stub-panel.tsx');
+    const vipPanel = readRepo('apps/web/src/product/surfaces/sports/sports-vip-panel.tsx');
     expect(vipPanel).toContain('SportsFixtureBoard');
     expect(vipPanel).toContain('canBrowseSportsVipMarkets');
 

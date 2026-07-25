@@ -30,8 +30,6 @@ for (const [key, value] of Object.entries(process.env)) {
     value.length > 0 &&
     looksLikeServiceRoleJwt(value)
   ) {
-    throw new Error(
-      `VITE_ env value must not be a service_role JWT (server-only secret): ${key}`,
-    );
+    throw new Error(`VITE_ env value must not be a service_role JWT (server-only secret): ${key}`);
   }
 }

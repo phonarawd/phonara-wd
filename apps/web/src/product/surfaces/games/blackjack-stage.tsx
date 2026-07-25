@@ -62,7 +62,13 @@ type PlayingCardProps = {
   dim?: boolean;
 };
 
-function PlayingCardFace({ cardId, faceDown = false, flip = false, testId, dim }: PlayingCardProps) {
+function PlayingCardFace({
+  cardId,
+  faceDown = false,
+  flip = false,
+  testId,
+  dim,
+}: PlayingCardProps) {
   const face = cardId != null && !faceDown ? decodeBlackjackCard(cardId) : null;
 
   return (
@@ -303,8 +309,7 @@ export const BlackjackStage = forwardRef<CasinoStageHandle, BlackjackStageProps>
     })();
 
     const playerValueLabel =
-      outcome?.playerValue ??
-      (liveCardActive && livePlayerValue != null ? livePlayerValue : null);
+      outcome?.playerValue ?? (liveCardActive && livePlayerValue != null ? livePlayerValue : null);
     const dealerValueLabel =
       phase === 'settled' ||
       (phase === 'replaying' &&

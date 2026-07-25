@@ -60,11 +60,14 @@ export const EARN_HOME_P8_CONTROLLER_OWNER =
 
 export const EARN_HOME_P8_REPLACEMENT_TODO = 'p8-page-home' as const;
 
-/** §28.7 — ambient default · live swaps to `rpc_get_earn_activity_feed` when enabled. */
+/**
+ * §28.7 / audit C-01 fail-closed — default `hidden` (landing ambientSocial parity).
+ * `ambient` = opt-in synthetic ticker · `live` = `rpc_get_earn_activity_feed`.
+ */
 
-export type EarnHomeProofMode = 'ambient' | 'live';
+export type EarnHomeProofMode = 'hidden' | 'ambient' | 'live';
 
-export const EARN_HOME_PROOF_MODE: EarnHomeProofMode = 'ambient';
+export const EARN_HOME_PROOF_MODE: EarnHomeProofMode = 'hidden';
 
 export const EARN_HOME_PROOF_ENV_KEY = 'VITE_PHONARA_EARN_HOME_PROOF_MODE' as const;
 
@@ -257,7 +260,9 @@ export function resolveEarnHomeProofModeFromEnv(
 ): EarnHomeProofMode {
   const raw = env[EARN_HOME_PROOF_ENV_KEY]?.trim().toLowerCase();
 
-  return raw === 'live' ? 'live' : 'ambient';
+  if (raw === 'live') return 'live';
+  if (raw === 'ambient') return 'ambient';
+  return 'hidden';
 }
 
 export function isEarnHomeCanonicalRoute(pathname: string): boolean {

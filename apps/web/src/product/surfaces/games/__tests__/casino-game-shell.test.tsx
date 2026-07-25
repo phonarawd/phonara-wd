@@ -27,6 +27,14 @@ vi.mock('@/contexts/auth-context', () => ({
   }),
 }));
 
+vi.mock('@/features/responsible-gaming/use-rg-gate-policy', () => ({
+  useRgGatePolicy: () => async () => null,
+  rgReasonMessageKey: (reason: string) =>
+    reason === 'self_exclusion'
+      ? 'games.shared.rg.self_exclusion.title'
+      : 'games.shared.rg.daily_loss_limit.title',
+}));
+
 type MockManualBet = {
   bet_id: string;
   status: string;

@@ -53,7 +53,10 @@ export function AuthEntryLayout({
         className,
       )}
     >
-      <aside className="hidden flex-col gap-ds-8 lg:flex" aria-label={t('auth.entry.trust.ariaLabel')}>
+      <aside
+        className="hidden flex-col gap-ds-8 lg:flex"
+        aria-label={t('auth.entry.trust.ariaLabel')}
+      >
         <div className="flex flex-col gap-2">
           <p className="text-accent m-0 text-sm font-semibold tracking-wide uppercase">
             {t(PLATFORM_POSITIONING_KEYS.eyebrow)}

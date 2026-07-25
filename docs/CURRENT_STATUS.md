@@ -4,18 +4,20 @@
 > **엔진:** `[x] FULLY CLOSED` — [`ENGINE_APEX_CLOSEOUT.md`](ENGINE_APEX_CLOSEOUT.md)  
 > **Demolition:** `[x] DONE` — [`PRODUCT/DEMOLITION_PLAN.md`](PRODUCT/DEMOLITION_PLAN.md) (이력만 · batch 재실행 아님)
 
-## Gates (2026-07-25 · 전수조사 Phase 0–6 · Phase 7 ready)
+## Gates (2026-07-25 · 전수조사 Phase 0–11 Verified)
 
-| Gate | 결과 |
-| --- | --- |
-| **Phase 1** | `check:secrets-deploy-deny` · `check:pwa` · `check:perf-contract` exit 0 · CSP hash 정합 |
-| **Phase 2** | freeze manifest 재생성 · BetHub/`@phonara/ui` 표 제거 · `sync-plan-doc-mirror` pending-0 null 문자열 수정 |
-| **`gate:ai-impl` (`phase3-admin-alerts-rbac`)** | admin-home **2/2** · L0~L4 · Plan YAML `completed` |
-| **`gate:ai-impl` (`phase5-admin-rbac-firefaget`)** | admin-rbac **21/21** · queues/risk/sports/users **4/4** · L0~L4 · Plan YAML `completed` |
-| **Phase 6 (`phase6-db-bonus-wagering`)** | migration `20260828000001_fix_phon_wagering_bet_reason_cashout` · SQL 회귀 `bonus_wagering_cashout_not_progress_test.sql` · 로컬 `test:sql` 미실행(G13) · CI `sql` + `stack:push-remote` 대기 |
-| **admin-rbac matrix** | `queues.str.manage` · `queues.risk.clear` (owner/risk) · sports await · dead stubs 제거 |
-| **서버 alerts / sports role migration** | **HOLD** (승인·정책 대기) |
-| **NEXT** | `phase7-engine-precision` |
+| Gate                                     | 결과                                                                                                                                    |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1–2**                            | `check:secrets-deploy-deny` · `check:pwa` · `check:perf-contract` · freeze manifest BetHub/`@phonara/ui` 제거 · CSP hash 정합           |
+| **Phase 3–5 admin**                      | alerts/queues/risk RBAC · CMS reason+await · users Outlet · RTP confirm · sports await · admin-rbac **21/21**                           |
+| **Phase 6 (`phase6-db-bonus-wagering`)** | migration `20260828000001_fix_phon_wagering_bet_reason_cashout` · SQL 회귀 · CI `sql` + `stack:push-remote`                             |
+| **Phase 7–8**                            | roulette Decimal · dice/limbo refine · futures/staking confirm · RG wire · Earn proof `hidden` · vitest green                           |
+| **Phase 9 (`phase9-techstack-cleanup`)** | tmp/one-off → `scripts/archive/` · vitest pin · CI `check:games`/`determinism`/`deps` · orphan cleanup                                  |
+| **Phase 10 (`phase10-e2e-coverage`)**    | `casino-dice` · `sports-betting` · `staking-hub` · `referral-hub` · 로컬 E2E 미실행(G13) · CI `e2e`                                     |
+| **Phase 11 (`phase11-verify-closeout`)** | `typecheck`·`lint`·`format:check`·`check:hygiene`·`check:i18n`·`check:release`·`gate:ai-impl` **54/54** · push → CI required 4 **대기** |
+| **서버 alerts / sports role migration**  | **HOLD** (승인·정책 대기)                                                                                                               |
+| **한계 예외**                            | migration 파일명 오타(리네임 금지) · 브라우저 실측 G13 이연 · zod v3/v4 통일 별도 트랙                                                  |
+| **NEXT**                                 | 전수조사 Plan **닫힘** · ACTIVE_WORK 상단 표 / 다른 Plan todo                                                                           |
 
 ## Gates (2026-07-10 · Cursor 8GB perf v4.4.5 · `phase0-gate`)
 

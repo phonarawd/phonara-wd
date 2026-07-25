@@ -1,10 +1,8 @@
 import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import type { MessageKey } from '@phonara/i18n';
 import { isGreaterThanOrEqual, money } from '@phonara/money';
 
-export type RGIntent = 'place_bet';
-export type RGReason = 'self_exclusion' | 'daily_loss_limit';
-export type RGPolicy = (intent: RGIntent) => Promise<RGReason | null>;
 import { useAuth } from '../../contexts/auth-context';
 import {
   effectiveRgLimit,
@@ -15,6 +13,16 @@ import {
   type RgLimitRow,
   type RgLossRow,
 } from './rg-snapshot';
+
+export type RGIntent = 'place_bet';
+export type RGReason = 'self_exclusion' | 'daily_loss_limit';
+export type RGPolicy = (intent: RGIntent) => Promise<RGReason | null>;
+
+/** Presentation key for client-side RG gate blocks (server remains authoritative). */
+export function rgReasonMessageKey(reason: RGReason): MessageKey {
+  if (reason === 'self_exclusion') return 'games.shared.rg.self_exclusion.title';
+  return 'games.shared.rg.daily_loss_limit.title';
+}
 
 function isGameLossLimitReached(
   limits: RgLimitRow[],

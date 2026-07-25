@@ -1,8 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { createAdminMockHook } from '@/hooks/admin/createAdminMockHook';
 import type { AdminAuditEvent } from '@/shared-types';
-import type { ManualAdjustInput } from './useAdminUsersDesk';
-
 // L1-15-C C1 — admin users desk mock SOT.
 // createAdminMockHook single instance + facade. mock/display-only. supabase/rpc 0.
 // Balance fields are STRINGS — never parseFloat / Number(.
@@ -226,9 +224,6 @@ export interface UseAdminUsersDesk {
   banUser: (id: string, reason: string) => void | Promise<void>;
   unsuspendUser: (id: string, reason: string) => void | Promise<void>;
   releaseSelfExclusion: (exclusionId: string, reason: string) => Promise<void>;
-  resetMfa: (id: string, reason: string) => void;
-  killSession: (id: string, reason: string) => void;
-  manualAdjustWallet: (id: string, input: ManualAdjustInput) => Promise<void>;
   loading: boolean;
   isError: boolean;
   refresh: () => Promise<void>;
@@ -300,36 +295,6 @@ export function useAdminUsersDeskMock(): UseAdminUsersDesk {
     [m, audit],
   );
 
-  const resetMfa = useCallback(
-    (id: string, reason: string) => {
-      if (!validReason(reason)) return;
-      const row = m.allRows.find((r) => r.id === id);
-      if (!row) return;
-      m.patchRow(
-        id,
-        (r) => r.id,
-        (r) => ({ ...r, mfaEnabled: false }),
-      );
-      audit(id, 'admin.users.audit.mfaReset', reason, 'mfaReset');
-    },
-    [m, audit],
-  );
-
-  const killSession = useCallback(
-    (id: string, reason: string) => {
-      if (!validReason(reason)) return;
-      const row = m.allRows.find((r) => r.id === id);
-      if (!row || row.activeSessions === 0) return;
-      m.patchRow(
-        id,
-        (r) => r.id,
-        (r) => ({ ...r, activeSessions: 0 }),
-      );
-      audit(id, 'admin.users.audit.sessionKill', reason, 'sessionKill');
-    },
-    [m, audit],
-  );
-
   const releaseSelfExclusion = useCallback(
     async (exclusionId: string, reason: string) => {
       if (!validReason(reason)) return;
@@ -359,9 +324,6 @@ export function useAdminUsersDeskMock(): UseAdminUsersDesk {
     banUser,
     unsuspendUser,
     releaseSelfExclusion,
-    resetMfa,
-    killSession,
-    manualAdjustWallet: async () => undefined,
     loading: false,
     isError: false,
     refresh: async () => undefined,

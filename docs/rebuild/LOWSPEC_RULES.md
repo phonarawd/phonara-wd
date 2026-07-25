@@ -5,12 +5,12 @@
 
 ## 정본 (읽는 순서)
 
-| 문서 | 역할 |
-| --- | --- |
-| [`docs/SSOT/CI_GATE_AUTHORITY.md`](../SSOT/CI_GATE_AUTHORITY.md) | **Heavy gate authoritative = GitHub CI** · 로컬 L0~L4만 |
-| [`docs/SSOT/OPERATOR_GATES.md`](../SSOT/OPERATOR_GATES.md) | 1페이지 게이트 entrypoint · hang 복구 · gate ladder 요약 |
-| [`docs/SSOT/CURSOR_AUTOPILOT.md`](../SSOT/CURSOR_AUTOPILOT.md) | Cursor 8GB 셋업 · 자연어 명령표 · `cursor:work-end` |
-| [`docs/OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](../OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md) | 출시 전 operator 체크리스트 |
+| 문서                                                                                                 | 역할                                                     |
+| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [`docs/SSOT/CI_GATE_AUTHORITY.md`](../SSOT/CI_GATE_AUTHORITY.md)                                     | **Heavy gate authoritative = GitHub CI** · 로컬 L0~L4만  |
+| [`docs/SSOT/OPERATOR_GATES.md`](../SSOT/OPERATOR_GATES.md)                                           | 1페이지 게이트 entrypoint · hang 복구 · gate ladder 요약 |
+| [`docs/SSOT/CURSOR_AUTOPILOT.md`](../SSOT/CURSOR_AUTOPILOT.md)                                       | Cursor 8GB 셋업 · 자연어 명령표 · `cursor:work-end`      |
+| [`docs/OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md`](../OPERATIONS/PRE_LAUNCH_CHECKLIST_BEGINNER.md) | 출시 전 operator 체크리스트                              |
 
 ## 한 줄 계약 (8GB · non-waivable)
 
@@ -22,12 +22,12 @@
 
 ## 자연어 → 행동 (요약)
 
-| operator 입력 | 행동 |
-| --- | --- |
-| `구현해줘` | 승인된 Plan 있을 때만 Implement |
-| `CI 확인해줘` | push 후 `bun run ci:status` / `ci:watch` |
+| operator 입력      | 행동                                                 |
+| ------------------ | ---------------------------------------------------- |
+| `구현해줘`         | 승인된 Plan 있을 때만 Implement                      |
+| `CI 확인해줘`      | push 후 `bun run ci:status` / `ci:watch`             |
 | `푸시 전 완벽하게` | rule `94-ci-push-fix-loop` · L0~L4 → push → CI green |
-| `렉 걸린 것 같아` | `cursor:env-doctor` · RAM <1024MB면 코드 작업 중단 |
+| `렉 걸린 것 같아`  | `cursor:env-doctor` · RAM <1024MB면 코드 작업 중단   |
 
 상세: `.cursor/rules/89-beginner-autopilot.mdc` §9
 

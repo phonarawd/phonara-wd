@@ -14,13 +14,24 @@ vi.mock('@/hooks/admin/useAdminCmsDesk', () => ({
         endsAt: '2026-07-12',
       },
     ],
-    activatePromo: vi.fn(() => true),
-    endPromoEarly: vi.fn(() => true),
+    activatePromo: vi.fn(async () => true),
+    endPromoEarly: vi.fn(async () => true),
+    audit: [
+      {
+        id: 'audit-1',
+        at: '2026-07-12T10:00:00.000Z',
+        actorKey: 'admin.primitive.audit.actor.system',
+        actionKey: 'admin.cms.promos.audit.activate',
+        subject: 'home.banner',
+        reason: 'activate weekend promo',
+      },
+    ],
+    refresh: vi.fn(async () => undefined),
   }),
 }));
 
 describe('AdminPromotionsPage', () => {
-  it('renders promotion queue and activation control', () => {
+  it('renders promotion queue, activation control, and audit trail', () => {
     render(
       <I18nProvider>
         <AdminPromotionsPage />
@@ -28,5 +39,7 @@ describe('AdminPromotionsPage', () => {
     );
     expect(screen.getByRole('heading', { level: 2 })).toBeTruthy();
     expect(screen.getByRole('button', { name: /활성|Activate/i })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: /감사|Audit/i })).toBeTruthy();
+    expect(screen.getByText('activate weekend promo')).toBeTruthy();
   });
 });

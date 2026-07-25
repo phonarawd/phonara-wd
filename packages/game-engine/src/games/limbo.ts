@@ -31,7 +31,13 @@ export function limboFromFloat(f: number): number {
 const limboDefinition: GameDefinition<LimboSelection, LimboResult> = {
   code: 'limbo',
   betSchema: z.object({
-    target: z.string(),
+    target: z
+      .string()
+      .regex(/^\d+(\.\d{1,2})?$/)
+      .refine((s) => {
+        const v = parseFloat(s);
+        return v >= 1.01 && v <= 1000000;
+      }),
   }),
   floatCount: 1,
 

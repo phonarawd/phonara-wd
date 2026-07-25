@@ -46,8 +46,8 @@ export interface AdminSportsState {
 export type SportsUserRiskTier = 'normal' | 'restricted' | 'sharp' | 'banned';
 
 export interface AdminSportsActions {
-  setFeatureEnabled: (enabled: boolean, reason: string) => void;
-  suspendMarket: (fixtureId: string, reason: string) => void;
+  setFeatureEnabled: (enabled: boolean, reason: string) => Promise<boolean>;
+  suspendMarket: (fixtureId: string, reason: string) => Promise<boolean>;
   unsuspendMarket: (fixtureId: string, reason: string) => Promise<boolean>;
   settleFixtureQuorum: (
     fixtureId: string,

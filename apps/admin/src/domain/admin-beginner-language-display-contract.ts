@@ -402,7 +402,9 @@ export function assertP13AdminCanonicalDocsSync(): void {
     throw new Error('support must include /withdrawals (queues.withdraw.*)');
   }
   if (!ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.finance.includes('/earn/rewards')) {
-    throw new Error('finance must include /earn/rewards (earn.settlement.approve · users.wallet_adjust)');
+    throw new Error(
+      'finance must include /earn/rewards (earn.settlement.approve · users.wallet_adjust)',
+    );
   }
 
   if (ADMIN_BEGINNER_STATUS_CONCEPTS.length !== 6) {

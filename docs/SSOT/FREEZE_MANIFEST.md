@@ -2,7 +2,7 @@
 
 # Freeze Manifest
 
-> **Generated:** 2026-07-24 · **Source:** codebase via `generate-ssot-freeze-manifest.ts`
+> **Generated:** 2026-07-25 · **Source:** codebase via `generate-ssot-freeze-manifest.ts`
 > **Rule:** Route → Surface → Controller → Hook → RPC → Engine → DB. Do not infer from deleted docs.
 
 ## Protected boundaries (never delete/modify behavior in UI-only work)
@@ -234,7 +234,7 @@
 ```text
 /home
 → EarnHomePage
-→ useEarnPageController (missions) · direct useWallet (home hub)
+→ (no page controller — hooks/shell only)
 → use-auth, use-wallet
 → hooks/use-auth.ts · hooks/use-wallet.ts → lib/rpc.ts
 → @phonara/wallet-ledger + @phonara/money
@@ -563,7 +563,6 @@
 → apps/web/src/lib/rpc.ts · supabase client
 → Supabase (display-only)
 → Supabase (yocjhjsdwoijfdrehzoq)
-flag: dual-sports-entry — canonical standalone /sports; /trade?section=sports = hub tab
 ```
 
 ### `/sports/`
@@ -774,48 +773,12 @@ flag: dual-sports-entry — canonical standalone /sports; /trade?section=sports 
 
 ```text
 /trade
-→ — (container: BetHubShell)
+→ —
 → (no page controller — hooks/shell only)
 → (none)
 → apps/web/src/lib/rpc.ts · supabase client
 → Supabase (display-only)
 → Supabase (yocjhjsdwoijfdrehzoq)
-```
-
-### `/trade?section=casino`
-
-```text
-/trade?section=casino
-→ CasinoSportsLiveDesk + CasinoCrashDesk (container: BetHubShell)
-→ useCasinoPageController (partial)
-→ use-wallet, use-casino
-→ apps/web/src/lib/rpc.ts · supabase client
-→ @phonara/game-engine
-→ Supabase
-```
-
-### `/trade?section=sports`
-
-```text
-/trade?section=sports
-→ ImportedSportsPage (embedded) (container: BetHubShell)
-→ useSportsPageController
-→ sports-engine-glue
-→ apps/web/src/lib/rpc.ts · supabase client
-→ @phonara/sportsbook-engine
-→ Supabase
-```
-
-### `/trade?section=trade`
-
-```text
-/trade?section=trade
-→ TradeModeShell (container: BetHubShell)
-→ useTradePageController
-→ use-wallet, use-trading, use-prices
-→ apps/web/src/lib/rpc.ts · supabase client
-→ @phonara/trading-engine
-→ Supabase
 ```
 
 ### `/trade/`

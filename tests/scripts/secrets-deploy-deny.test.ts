@@ -31,7 +31,7 @@ const LOCAL_DEMO_ANON_JWT =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
 
 /** Looks like a real sbp_ token shape (≥20 payload chars, no `your`). */
-const FAKE_SBP = 'sbp_abcdefghijklmnopqrstuvwxyz12';
+const FAKE_SBP = 'sbp_abcdefghijklmnopqrstuvwxyz12'; // secrets-deploy-allow: synthetic fixture — unit-test false positive
 
 describe('secrets-deploy-deny', () => {
   describe('placeholders / demo allowlist', () => {
@@ -67,12 +67,12 @@ describe('secrets-deploy-deny', () => {
     });
 
     it('flags private key headers', () => {
-      const hits = scanTextContent('-----BEGIN PRIVATE KEY-----', 'key.pem.txt');
+      const hits = scanTextContent('-----BEGIN PRIVATE KEY-----', 'key.pem.txt'); // secrets-deploy-allow: synthetic fixture — unit-test false positive
       expect(hits.some((v) => v.ruleId === 'private-key')).toBe(true);
     });
 
     it('flags VITE_*SERVICE_ROLE* names', () => {
-      const hits = scanTextContent('VITE_SUPABASE_SERVICE_ROLE_KEY=x', 'bad.ts');
+      const hits = scanTextContent('VITE_SUPABASE_SERVICE_ROLE_KEY=x', 'bad.ts'); // secrets-deploy-allow: synthetic fixture — unit-test false positive
       expect(hits.some((v) => v.ruleId === 'vite-service-role')).toBe(true);
     });
 
@@ -118,7 +118,7 @@ describe('secrets-deploy-deny', () => {
   describe('masking', () => {
     it('masks sbp_ / ghp_ / JWT fragments without echoing the raw secret', () => {
       expect(maskSecretFragment(FAKE_SBP)).toBe('sbp_***');
-      expect(maskSecretFragment('ghp_abcdefghijklmnopqrstuvwxyz1234')).toBe('ghp_***');
+      expect(maskSecretFragment('ghp_abcdefghijklmnopqrstuvwxyz1234')).toBe('ghp_***'); // secrets-deploy-allow: synthetic fixture — unit-test false positive
       const maskedJwt = maskSecretFragment(FAKE_SERVICE_ROLE_JWT);
       expect(maskedJwt).not.toBe(FAKE_SERVICE_ROLE_JWT);
       expect(maskedJwt).toContain('***');

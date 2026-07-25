@@ -62,7 +62,10 @@ afterEach(() => {
 describe('DeepshaftStage functional QA — descend replay + settle (phase1c-deepshaft)', () => {
   it('shows risk/target and prepare copy before any bet', () => {
     wrap(<DeepshaftStage riskTier="standard" targetDepth={5} />);
-    expect(screen.getByTestId('casino-deepshaft-stage')).toHaveAttribute('data-stage-phase', 'idle');
+    expect(screen.getByTestId('casino-deepshaft-stage')).toHaveAttribute(
+      'data-stage-phase',
+      'idle',
+    );
     expect(screen.getByTestId('casino-deepshaft-target')).toHaveTextContent('5');
     expect(screen.getByTestId('casino-deepshaft-depth-label')).toHaveTextContent('0/15');
     expect(screen.queryByTestId('casino-deepshaft-status')).not.toBeInTheDocument();
@@ -76,7 +79,10 @@ describe('DeepshaftStage functional QA — descend replay + settle (phase1c-deep
     });
     expect(screen.getByTestId('casino-deepshaft-stage')).toHaveAttribute('data-won', 'true');
     expect(screen.getByTestId('casino-deepshaft-stage')).toHaveAttribute('data-cave-in', 'false');
-    expect(screen.getByTestId('casino-deepshaft-stage')).toHaveAttribute('data-stage-phase', 'settled');
+    expect(screen.getByTestId('casino-deepshaft-stage')).toHaveAttribute(
+      'data-stage-phase',
+      'settled',
+    );
     expect(screen.getByTestId('casino-deepshaft-status')).toHaveTextContent('인양 성공');
     expect(screen.getByTestId('casino-deepshaft-mult')).toHaveTextContent('2.45×');
     expect(screen.getByTestId('casino-deepshaft-level-3')).toHaveAttribute('data-reached', 'true');
@@ -103,7 +109,10 @@ describe('DeepshaftStage functional QA — descend replay + settle (phase1c-deep
     await act(async () => {
       await handle.current?.playOutcome({ won: true, caveIn: false });
     });
-    expect(screen.getByTestId('casino-deepshaft-stage')).toHaveAttribute('data-stage-phase', 'idle');
+    expect(screen.getByTestId('casino-deepshaft-stage')).toHaveAttribute(
+      'data-stage-phase',
+      'idle',
+    );
     expect(screen.getByTestId('casino-deepshaft-stage')).not.toHaveAttribute('data-won');
     expect(screen.queryByTestId('casino-deepshaft-status')).not.toBeInTheDocument();
   });
@@ -117,7 +126,10 @@ describe('DeepshaftStage functional QA — descend replay + settle (phase1c-deep
     act(() => {
       handle.current?.reset();
     });
-    expect(screen.getByTestId('casino-deepshaft-stage')).toHaveAttribute('data-stage-phase', 'idle');
+    expect(screen.getByTestId('casino-deepshaft-stage')).toHaveAttribute(
+      'data-stage-phase',
+      'idle',
+    );
     expect(screen.getByTestId('casino-deepshaft-stage')).not.toHaveAttribute('data-won');
     expect(screen.queryByTestId('casino-deepshaft-status')).not.toBeInTheDocument();
   });
@@ -230,9 +242,7 @@ describe('DeepshaftStage perf check — descent timer leak (phase1c-deepshaft)',
   it('unmounting mid-descent clears the pending recursive timer (no leaked setTimeout past navigation)', () => {
     const clearSpy = vi.spyOn(window, 'clearTimeout');
     const handle = createRef<CasinoStageHandle>();
-    const { unmount } = wrap(
-      <DeepshaftStage ref={handle} riskTier="standard" targetDepth={3} />,
-    );
+    const { unmount } = wrap(<DeepshaftStage ref={handle} riskTier="standard" targetDepth={3} />);
 
     act(() => {
       void handle.current?.playOutcome(WIN_OUTCOME);
@@ -247,9 +257,7 @@ describe('DeepshaftStage perf check — descent timer leak (phase1c-deepshaft)',
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     const handle = createRef<CasinoStageHandle>();
-    const { unmount } = wrap(
-      <DeepshaftStage ref={handle} riskTier="standard" targetDepth={3} />,
-    );
+    const { unmount } = wrap(<DeepshaftStage ref={handle} riskTier="standard" targetDepth={3} />);
 
     act(() => {
       void handle.current?.playOutcome(WIN_OUTCOME);

@@ -135,7 +135,8 @@ describe('casino-games-batch-c-display-contract (p10-games-batch-c)', () => {
     expect(hook).toContain('textureSource: true');
     expect(hook).toContain('context: true');
     // Teardown return body only — avoid matching the early-init disposed abort path.
-    const teardownMarker = 'Application-first: texture/context flags must reach the live scene subtree';
+    const teardownMarker =
+      'Application-first: texture/context flags must reach the live scene subtree';
     const teardownIdx = hook.indexOf(teardownMarker);
     expect(teardownIdx).toBeGreaterThan(-1);
     const teardownTail = hook.slice(teardownIdx);

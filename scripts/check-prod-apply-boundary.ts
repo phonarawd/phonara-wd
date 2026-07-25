@@ -18,9 +18,7 @@ function main(): void {
     'supabase db reset',
     'bun run test:sql',
   ];
-  process.stdout.write(
-    'Shell probe (hook; blocks when PHONARA_ALLOW_PROD_DB_PUSH unset):\n',
-  );
+  process.stdout.write('Shell probe (hook; blocks when PHONARA_ALLOW_PROD_DB_PUSH unset):\n');
   for (const cmd of shellProbes) {
     const r = checkShellCommandForHook(cmd);
     process.stdout.write(`  ${r.allowed ? 'ALLOW' : 'DENY '}  ${cmd}\n`);

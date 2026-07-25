@@ -19,11 +19,7 @@
   },
   "ultrawide": {
     "enabled": false,
-    "widths": [
-      3440,
-      3840,
-      5120
-    ],
+    "widths": [3440, 3840, 5120],
     "contentMaxPx": 1680,
     "note": "Separate from VIEWPORT_SMOKE_WIDTHS (390/768/1024/2560). Opt-in: PHONARA_AUDIT_ULTRAWIDE=1."
   },

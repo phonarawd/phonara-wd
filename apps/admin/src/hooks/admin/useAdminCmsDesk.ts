@@ -1,7 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import type { Json } from '@phonara/shared-types';
 import type { AdminAuditEvent } from '@/shared-types';
 import { callRpc } from '../../lib/rpc';
+import { useAuditLogs } from '../use-audit-logs';
 import type {
   AdminCmsPageRow,
   AdminCmsPromoRow,
@@ -47,6 +49,10 @@ type CmsEngineRow = {
   ends_at: string | null;
   published_at: string | null;
 };
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
 function filterPages(rows: AdminCmsPageRow[], f: PageFilters): AdminCmsPageRow[] {
   const q = f.search.trim().toLowerCase();
@@ -109,6 +115,42 @@ function mapPromoRow(row: CmsEngineRow): AdminCmsPromoRow {
   };
 }
 
+function mapCmsAudit(log: {
+  id: string;
+  created_at: string;
+  action: string;
+  payload: Json;
+}): AdminAuditEvent | null {
+  if (log.action !== 'cms_upsert') return null;
+  const payload = isRecord(log.payload) ? log.payload : {};
+  const kind = typeof payload['kind'] === 'string' ? payload['kind'] : '';
+  const status = typeof payload['status'] === 'string' ? payload['status'] : '';
+  const contentKey =
+    typeof payload['content_key'] === 'string' ? payload['content_key'] : log.action;
+
+  let actionKey = 'admin.cms.pages.audit.publish';
+  if (kind === 'page') {
+    if (status === 'archived') actionKey = 'admin.cms.pages.audit.archive';
+    else if (status === 'draft') actionKey = 'admin.cms.pages.audit.restore';
+    else actionKey = 'admin.cms.pages.audit.publish';
+  } else if (kind === 'promo' || kind === 'banner') {
+    actionKey =
+      status === 'archived' ? 'admin.cms.promos.audit.end' : 'admin.cms.promos.audit.activate';
+  }
+
+  return {
+    id: log.id,
+    at: log.created_at,
+    actorKey: 'admin.primitive.audit.actor.system',
+    actionKey,
+    subject: contentKey,
+    reason:
+      typeof payload['reason'] === 'string' && payload['reason'].length > 0
+        ? payload['reason']
+        : undefined,
+  };
+}
+
 async function listEngineRows(): Promise<CmsEngineRow[]> {
   const data = await callRpc('rpc_admin_list_cms_content');
   return (data as Record<string, unknown>[]).map((raw) => ({
@@ -131,6 +173,7 @@ async function listEngineRows(): Promise<CmsEngineRow[]> {
 async function upsertEngineRow(
   row: CmsEngineRow,
   patch: Partial<Pick<CmsEngineRow, 'status' | 'starts_at' | 'ends_at'>>,
+  reason: string,
 ): Promise<boolean> {
   try {
     await callRpc('rpc_admin_upsert_cms_content', {
@@ -147,6 +190,7 @@ async function upsertEngineRow(
         priority: row.priority,
         starts_at: patch.starts_at ?? row.starts_at,
         ends_at: patch.ends_at ?? row.ends_at,
+        reason: reason.trim(),
       },
     });
     return true;
@@ -155,9 +199,13 @@ async function upsertEngineRow(
   }
 }
 
+const validReason = (r: string | undefined) =>
+  typeof r === 'string' && r.trim().length >= MIN_REASON;
+
 /** Engine-backed CMS desk — `rpc_admin_list_cms_content` / `rpc_admin_upsert_cms_content`. */
 export function useAdminCmsDesk(): UseAdminCmsDesk {
   const qc = useQueryClient();
+  const { data: auditLogs = [] } = useAuditLogs(50);
   const [pageFilters, setPageFilters] = useState<PageFilters>({
     search: '',
     locale: 'all',
@@ -168,7 +216,6 @@ export function useAdminCmsDesk(): UseAdminCmsDesk {
     surface: 'all',
     status: 'all',
   });
-  const [audit, setAudit] = useState<AdminAuditEvent[]>([]);
 
   const { data: engineRows = [] } = useQuery({
     queryKey: ['admin-cms-content'],
@@ -178,6 +225,7 @@ export function useAdminCmsDesk(): UseAdminCmsDesk {
 
   const invalidate = useCallback(async () => {
     await qc.invalidateQueries({ queryKey: ['admin-cms-content'] });
+    await qc.invalidateQueries({ queryKey: ['audit-logs'] });
   }, [qc]);
 
   const pages = useMemo(
@@ -197,162 +245,130 @@ export function useAdminCmsDesk(): UseAdminCmsDesk {
     [engineRows],
   );
 
-  const appendAudit = useCallback((event: AdminAuditEvent) => {
-    setAudit((prev) => [event, ...prev].slice(0, 100));
-  }, []);
+  const audit = useMemo<AdminAuditEvent[]>(() => {
+    return auditLogs
+      .map(mapCmsAudit)
+      .filter((row): row is AdminAuditEvent => row !== null)
+      .slice(0, 30);
+  }, [auditLogs]);
 
   const publishPage = useCallback(
-    (id: string): boolean => {
+    async (id: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       const row = findEngineRow(id);
       if (!row || row.kind !== 'page') return false;
-      void (async () => {
-        const ok = await upsertEngineRow(row, { status: 'published' });
-        if (!ok) return;
-        appendAudit({
-          id: `${row.content_key}-publish-${Date.now()}`,
-          at: new Date().toISOString(),
-          actorKey: 'admin.primitive.audit.actor.system',
-          actionKey: 'admin.cms.pages.audit.publish',
-          subject: row.content_key,
-          reason: '',
-        });
-        await invalidate();
-      })();
-      return true;
+      const ok = await upsertEngineRow(row, { status: 'published' }, reason);
+      if (ok) await invalidate();
+      return ok;
     },
-    [appendAudit, findEngineRow, invalidate],
+    [findEngineRow, invalidate],
   );
 
   const archivePage = useCallback(
-    (id: string, reason: string): boolean => {
-      if (reason.trim().length < MIN_REASON) return false;
+    async (id: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       const row = findEngineRow(id);
       if (!row || row.kind !== 'page') return false;
-      void (async () => {
-        const ok = await upsertEngineRow(row, { status: 'archived' });
-        if (!ok) return;
-        appendAudit({
-          id: `${row.content_key}-archive-${Date.now()}`,
-          at: new Date().toISOString(),
-          actorKey: 'admin.primitive.audit.actor.system',
-          actionKey: 'admin.cms.pages.audit.archive',
-          subject: row.content_key,
-          reason: reason.trim(),
-        });
-        await invalidate();
-      })();
-      return true;
+      const ok = await upsertEngineRow(row, { status: 'archived' }, reason);
+      if (ok) await invalidate();
+      return ok;
     },
-    [appendAudit, findEngineRow, invalidate],
+    [findEngineRow, invalidate],
   );
 
   const restorePageDraft = useCallback(
-    (id: string, reason: string): boolean => {
-      if (reason.trim().length < MIN_REASON) return false;
+    async (id: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       const row = findEngineRow(id);
       if (!row || row.kind !== 'page') return false;
-      void (async () => {
-        const ok = await upsertEngineRow(row, { status: 'draft' });
-        if (!ok) return;
-        appendAudit({
-          id: `${row.content_key}-restore-${Date.now()}`,
-          at: new Date().toISOString(),
-          actorKey: 'admin.primitive.audit.actor.system',
-          actionKey: 'admin.cms.pages.audit.restore',
-          subject: row.content_key,
-          reason: reason.trim(),
-        });
-        await invalidate();
-      })();
-      return true;
+      const ok = await upsertEngineRow(row, { status: 'draft' }, reason);
+      if (ok) await invalidate();
+      return ok;
     },
-    [appendAudit, findEngineRow, invalidate],
+    [findEngineRow, invalidate],
   );
 
   const bulkPublishPages = useCallback(
-    (ids: string[]): boolean => {
+    async (ids: string[], reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (publishPage(id)) any = true;
+      for (const id of ids) {
+        if (await publishPage(id, reason)) any = true;
+      }
       return any;
     },
     [publishPage],
   );
 
   const bulkArchivePages = useCallback(
-    (ids: string[], reason: string): boolean => {
-      if (reason.trim().length < MIN_REASON) return false;
+    async (ids: string[], reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (archivePage(id, reason)) any = true;
+      for (const id of ids) {
+        if (await archivePage(id, reason)) any = true;
+      }
       return any;
     },
     [archivePage],
   );
 
   const activatePromo = useCallback(
-    (id: string): boolean => {
+    async (id: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       const row = findEngineRow(id);
       if (!row || (row.kind !== 'promo' && row.kind !== 'banner')) return false;
-      void (async () => {
-        const ok = await upsertEngineRow(row, {
+      const ok = await upsertEngineRow(
+        row,
+        {
           status: 'published',
           starts_at: new Date().toISOString(),
-        });
-        if (!ok) return;
-        appendAudit({
-          id: `${row.content_key}-activate-${Date.now()}`,
-          at: new Date().toISOString(),
-          actorKey: 'admin.primitive.audit.actor.system',
-          actionKey: 'admin.cms.promos.audit.activate',
-          subject: row.content_key,
-          reason: '',
-        });
-        await invalidate();
-      })();
-      return true;
+        },
+        reason,
+      );
+      if (ok) await invalidate();
+      return ok;
     },
-    [appendAudit, findEngineRow, invalidate],
+    [findEngineRow, invalidate],
   );
 
   const endPromoEarly = useCallback(
-    (id: string, reason: string): boolean => {
-      if (reason.trim().length < MIN_REASON) return false;
+    async (id: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       const row = findEngineRow(id);
       if (!row || (row.kind !== 'promo' && row.kind !== 'banner')) return false;
-      void (async () => {
-        const ok = await upsertEngineRow(row, {
+      const ok = await upsertEngineRow(
+        row,
+        {
           status: 'archived',
           ends_at: new Date().toISOString(),
-        });
-        if (!ok) return;
-        appendAudit({
-          id: `${row.content_key}-end-${Date.now()}`,
-          at: new Date().toISOString(),
-          actorKey: 'admin.primitive.audit.actor.system',
-          actionKey: 'admin.cms.promos.audit.end',
-          subject: row.content_key,
-          reason: reason.trim(),
-        });
-        await invalidate();
-      })();
-      return true;
+        },
+        reason,
+      );
+      if (ok) await invalidate();
+      return ok;
     },
-    [appendAudit, findEngineRow, invalidate],
+    [findEngineRow, invalidate],
   );
 
   const bulkActivatePromos = useCallback(
-    (ids: string[]): boolean => {
+    async (ids: string[], reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (activatePromo(id)) any = true;
+      for (const id of ids) {
+        if (await activatePromo(id, reason)) any = true;
+      }
       return any;
     },
     [activatePromo],
   );
 
   const bulkEndPromos = useCallback(
-    (ids: string[], reason: string): boolean => {
-      if (reason.trim().length < MIN_REASON) return false;
+    async (ids: string[], reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (endPromoEarly(id, reason)) any = true;
+      for (const id of ids) {
+        if (await endPromoEarly(id, reason)) any = true;
+      }
       return any;
     },
     [endPromoEarly],

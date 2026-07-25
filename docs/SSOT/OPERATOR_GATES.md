@@ -200,11 +200,11 @@ supabase functions deploy pg-bank-webhook --project-ref yocjhjsdwoijfdrehzoq --n
 
 PrimeForge Engine Apex + Post-Apex P1/P2. **엔진 구현 큐 0.** 검증 정본: [`ENGINE_APEX_CLOSEOUT.md`](../ENGINE_APEX_CLOSEOUT.md).
 
-| Gate                  | 결과 (Post-Apex 정본)       |
-| --------------------- | --------------------------- |
-| Package unit (engine) | **275/275**                 |
-| `test:sql`            | **118/118**                 |
-| `stack:push-remote`   | parity OK · advisor ERROR 0 |
+| Gate                  | 결과 (Post-Apex 정본)                                                                         |
+| --------------------- | --------------------------------------------------------------------------------------------- |
+| Package unit (engine) | **275/275**                                                                                   |
+| `test:sql`            | **118/118**                                                                                   |
+| `stack:push-remote`   | parity OK · advisor ERROR 0                                                                   |
 | Migration parity      | Apex/Post-Apex 스냅샷 **211/211** · **현재 디스크 (2026-07-24) 248/248** (`check:migrations`) |
 
 Post-Apex evidence: `ENGINE_POST_APEX_P1_P2_EVIDENCE_REPORT.md` (2026-07-04 삭제 — git history)

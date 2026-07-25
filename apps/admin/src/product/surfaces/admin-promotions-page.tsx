@@ -18,18 +18,32 @@ const STATUS_KEYS: Record<AdminCmsPromoRow['status'], MessageKey> = {
   ended: 'admin.cms.promos.status.ended',
 };
 
+function formatWhen(iso: string, locale: string): string {
+  try {
+    return new Intl.DateTimeFormat(locale, {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    }).format(new Date(iso));
+  } catch {
+    return iso;
+  }
+}
+
 /** E6 promotions desk (`/promotions`) — schedule operations only. */
 export function AdminPromotionsPage() {
   const t = useT();
-  const { filteredPromos, activatePromo, endPromoEarly, refresh } = useAdminCmsDesk();
+  const locale = typeof document !== 'undefined' ? document.documentElement.lang || 'ko' : 'ko';
+  const { filteredPromos, activatePromo, endPromoEarly, audit, refresh } = useAdminCmsDesk();
   const [target, setTarget] = useState<Target | null>(null);
+
+  const promoAudit = audit.filter((event) => event.actionKey.startsWith('admin.cms.promos.audit.'));
 
   const submit = async (reason: string) => {
     if (!target) return false;
     const success =
       target.action === 'activate'
-        ? activatePromo(target.row.id)
-        : endPromoEarly(target.row.id, reason);
+        ? await activatePromo(target.row.id, reason)
+        : await endPromoEarly(target.row.id, reason);
     if (success) setTarget(null);
     return success;
   };
@@ -95,13 +109,50 @@ export function AdminPromotionsPage() {
           );
         }}
       />
+
+      <section className="space-y-3" aria-labelledby="admin-promos-audit-heading">
+        <h3 id="admin-promos-audit-heading" className="text-foreground m-0 text-base font-semibold">
+          {t('admin.cms.audit.title')}
+        </h3>
+        <AdminTable
+          columns={[
+            {
+              id: 'time',
+              header: t('admin.audit.col.time'),
+              cell: ({ row }) => formatWhen(row.at, locale),
+              meta: { className: 'text-foreground-muted' },
+            },
+            {
+              id: 'action',
+              header: t('admin.audit.col.action'),
+              cell: ({ row }) => t(row.actionKey as MessageKey),
+            },
+            {
+              id: 'subject',
+              header: t('admin.cms.promos.col.promo'),
+              cell: ({ row }) => row.subject,
+            },
+            {
+              id: 'reason',
+              header: t('admin.audit.col.reason'),
+              cell: ({ row }) => row.reason || '—',
+              meta: { className: 'text-foreground-muted' },
+            },
+          ]}
+          rows={promoAudit.slice(0, 20)}
+          getRowId={(row) => row.id}
+          minWidth={640}
+          empty={<p className="text-foreground-muted m-0 text-sm">{t('admin.cms.audit.empty')}</p>}
+        />
+      </section>
+
       <AdminQueueActionDialog
         open={target !== null}
         onOpenChange={(open) => !open && setTarget(null)}
         titleKey={
           target?.action === 'end'
             ? 'admin.cms.promos.dialog.end.title'
-            : 'admin.cms.promos.dialog.end.title'
+            : 'admin.cms.promos.dialog.activate.title'
         }
         confirmKey={
           target?.action === 'end'

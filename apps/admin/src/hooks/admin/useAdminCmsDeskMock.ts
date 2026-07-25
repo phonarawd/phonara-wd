@@ -279,11 +279,11 @@ export interface UseAdminCmsDesk {
   filteredPages: AdminCmsPageRow[];
   pageFilters: PageFilters;
   setPageFilters: (f: PageFilters | ((p: PageFilters) => PageFilters)) => void;
-  publishPage: (id: string) => boolean;
-  archivePage: (id: string, reason: string) => boolean;
-  restorePageDraft: (id: string, reason: string) => boolean;
-  bulkPublishPages: (ids: string[]) => boolean;
-  bulkArchivePages: (ids: string[], reason: string) => boolean;
+  publishPage: (id: string, reason: string) => Promise<boolean>;
+  archivePage: (id: string, reason: string) => Promise<boolean>;
+  restorePageDraft: (id: string, reason: string) => Promise<boolean>;
+  bulkPublishPages: (ids: string[], reason: string) => Promise<boolean>;
+  bulkArchivePages: (ids: string[], reason: string) => Promise<boolean>;
   pageLocales: PageLocale[];
   pageStatuses: PageStatus[];
 
@@ -292,10 +292,10 @@ export interface UseAdminCmsDesk {
   filteredPromos: AdminCmsPromoRow[];
   promoFilters: PromoFilters;
   setPromoFilters: (f: PromoFilters | ((p: PromoFilters) => PromoFilters)) => void;
-  activatePromo: (id: string) => boolean;
-  endPromoEarly: (id: string, reason: string) => boolean;
-  bulkActivatePromos: (ids: string[]) => boolean;
-  bulkEndPromos: (ids: string[], reason: string) => boolean;
+  activatePromo: (id: string, reason: string) => Promise<boolean>;
+  endPromoEarly: (id: string, reason: string) => Promise<boolean>;
+  bulkActivatePromos: (ids: string[], reason: string) => Promise<boolean>;
+  bulkEndPromos: (ids: string[], reason: string) => Promise<boolean>;
   promoSurfaces: PromoSurface[];
   promoStatuses: PromoStatus[];
 
@@ -314,7 +314,8 @@ export function useAdminCmsDeskMock(): UseAdminCmsDesk {
   const pr = usePromosMock();
 
   const publishPage = useCallback(
-    (id: string): boolean => {
+    async (id: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       const row = pg.allRows.find((r) => r.id === id);
       if (!row) return false;
       if (row.status !== 'draft') return false;
@@ -335,6 +336,7 @@ export function useAdminCmsDeskMock(): UseAdminCmsDesk {
         actorKey: 'admin.primitive.audit.actor.system',
         actionKey: 'admin.cms.pages.audit.publish',
         subject: row.pageKey,
+        reason: reason.trim(),
       });
       return true;
     },
@@ -342,10 +344,8 @@ export function useAdminCmsDeskMock(): UseAdminCmsDesk {
   );
 
   const archivePage = useCallback(
-    (id: string, reason: string): boolean => {
-      if (!validReason(reason)) {
-        throw new Error('reason<4');
-      }
+    async (id: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       const row = pg.allRows.find((r) => r.id === id);
       if (!row) return false;
       if (row.status === 'archived') return false;
@@ -374,10 +374,8 @@ export function useAdminCmsDeskMock(): UseAdminCmsDesk {
   );
 
   const restorePageDraft = useCallback(
-    (id: string, reason: string): boolean => {
-      if (!validReason(reason)) {
-        throw new Error('reason<4');
-      }
+    async (id: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       const row = pg.allRows.find((r) => r.id === id);
       if (!row) return false;
       if (row.status !== 'archived') return false;
@@ -406,28 +404,32 @@ export function useAdminCmsDeskMock(): UseAdminCmsDesk {
   );
 
   const bulkPublishPages = useCallback(
-    (ids: string[]): boolean => {
+    async (ids: string[], reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (publishPage(id)) any = true;
+      for (const id of ids) {
+        if (await publishPage(id, reason)) any = true;
+      }
       return any;
     },
     [publishPage],
   );
 
   const bulkArchivePages = useCallback(
-    (ids: string[], reason: string): boolean => {
-      if (!validReason(reason)) {
-        throw new Error('reason<4');
-      }
+    async (ids: string[], reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (archivePage(id, reason)) any = true;
+      for (const id of ids) {
+        if (await archivePage(id, reason)) any = true;
+      }
       return any;
     },
     [archivePage],
   );
 
   const activatePromo = useCallback(
-    (id: string): boolean => {
+    async (id: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       const row = pr.allRows.find((r) => r.id === id);
       if (!row) return false;
       if (row.status !== 'draft' && row.status !== 'scheduled') return false;
@@ -443,6 +445,7 @@ export function useAdminCmsDeskMock(): UseAdminCmsDesk {
         actorKey: 'admin.primitive.audit.actor.system',
         actionKey: 'admin.cms.promos.audit.activate',
         subject: row.promoKey,
+        reason: reason.trim(),
       });
       return true;
     },
@@ -450,10 +453,8 @@ export function useAdminCmsDeskMock(): UseAdminCmsDesk {
   );
 
   const endPromoEarly = useCallback(
-    (id: string, reason: string): boolean => {
-      if (!validReason(reason)) {
-        throw new Error('reason<4');
-      }
+    async (id: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       const row = pr.allRows.find((r) => r.id === id);
       if (!row) return false;
       if (row.status !== 'live') return false;
@@ -477,21 +478,24 @@ export function useAdminCmsDeskMock(): UseAdminCmsDesk {
   );
 
   const bulkActivatePromos = useCallback(
-    (ids: string[]): boolean => {
+    async (ids: string[], reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (activatePromo(id)) any = true;
+      for (const id of ids) {
+        if (await activatePromo(id, reason)) any = true;
+      }
       return any;
     },
     [activatePromo],
   );
 
   const bulkEndPromos = useCallback(
-    (ids: string[], reason: string): boolean => {
-      if (!validReason(reason)) {
-        throw new Error('reason<4');
-      }
+    async (ids: string[], reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (endPromoEarly(id, reason)) any = true;
+      for (const id of ids) {
+        if (await endPromoEarly(id, reason)) any = true;
+      }
       return any;
     },
     [endPromoEarly],

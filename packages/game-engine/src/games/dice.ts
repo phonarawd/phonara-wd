@@ -52,7 +52,13 @@ export function diceMultiplier(target: number, direction: DiceDirection): number
 const diceDefinition: GameDefinition<DiceSelection, DiceResult> = {
   code: 'dice',
   betSchema: z.object({
-    target: z.string(),
+    target: z
+      .string()
+      .regex(/^\d+(\.\d{1,2})?$/)
+      .refine((s) => {
+        const v = parseFloat(s);
+        return v >= 0 && v <= 99.99;
+      }),
     direction: z.enum(['over', 'under']),
   }),
   floatCount: 1,

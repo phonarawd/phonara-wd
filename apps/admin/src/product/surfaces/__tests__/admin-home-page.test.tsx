@@ -1,8 +1,19 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { I18nProvider } from '@/product/i18n';
 import { AdminHomePage } from '@/product/surfaces/admin-home-page';
+
+const canMock = vi.fn(() => true);
+
+vi.mock('@/hooks/admin/useAdminOperatorRbac', () => ({
+  useAdminOperatorRbac: () => ({
+    role: 'owner',
+    can: canMock,
+    setPreviewRole: vi.fn(),
+    roleLabelKey: 'admin.access.role.owner.label',
+  }),
+}));
 
 vi.mock('@/hooks/admin/useAdminOverview', () => ({
   useAdminOverview: () => ({
@@ -63,6 +74,11 @@ function renderHome() {
 }
 
 describe('AdminHomePage', () => {
+  beforeEach(() => {
+    canMock.mockReset();
+    canMock.mockImplementation(() => true);
+  });
+
   it('renders today summary and §29.2 alert action buttons', () => {
     renderHome();
 
@@ -72,5 +88,17 @@ describe('AdminHomePage', () => {
     expect(screen.getByRole('button', { name: '알림 확인' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '알림 해결' })).toBeInTheDocument();
     expect(screen.getByText('출금 보내기')).toBeInTheDocument();
+  });
+
+  it('disables alert ack/resolve when alerts.manage is denied', () => {
+    canMock.mockImplementation((action: string) => action !== 'alerts.manage');
+    renderHome();
+
+    const ack = screen.getByRole('button', { name: '알림 확인' });
+    const resolve = screen.getByRole('button', { name: '알림 해결' });
+    expect(ack).toBeDisabled();
+    expect(resolve).toBeDisabled();
+    expect(ack).toHaveAttribute('aria-disabled', 'true');
+    expect(resolve).toHaveAttribute('aria-disabled', 'true');
   });
 });

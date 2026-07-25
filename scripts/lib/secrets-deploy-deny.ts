@@ -132,9 +132,7 @@ export const FORBIDDEN_TRACKED_PATH_RULES: readonly ForbiddenTrackedPathRule[] =
   },
 ];
 
-export function matchForbiddenTrackedPath(
-  posixPath: string,
-): ForbiddenTrackedPathRule | undefined {
+export function matchForbiddenTrackedPath(posixPath: string): ForbiddenTrackedPathRule | undefined {
   const normalized = toPosixPath(posixPath).replace(/^\.\//, '');
   return FORBIDDEN_TRACKED_PATH_RULES.find((rule) => rule.match(normalized));
 }
@@ -153,7 +151,7 @@ export function maskSecretFragment(fragment: string): string {
     const tail = (parts[2] ?? '').slice(-4);
     return `${head}….***.…${tail}`;
   }
-  if (/PRIVATE KEY/i.test(f)) return '-----BEGIN PRIVATE KEY-----***';
+  if (/PRIVATE KEY/i.test(f)) return '-----BEGIN PRIVATE KEY-----***'; // secrets-deploy-allow: mask example — scanner self-reference
   if (f.length <= 8) return '***';
   return `${f.slice(0, 4)}***${f.slice(-2)}`;
 }
@@ -207,10 +205,7 @@ export function looksLikeServiceRoleJwt(token: string): boolean {
 
 function stripQuotes(value: string): string {
   const t = value.trim();
-  if (
-    (t.startsWith('"') && t.endsWith('"')) ||
-    (t.startsWith("'") && t.endsWith("'"))
-  ) {
+  if ((t.startsWith('"') && t.endsWith('"')) || (t.startsWith("'") && t.endsWith("'"))) {
     return t.slice(1, -1);
   }
   return t;
@@ -227,9 +222,8 @@ const SBP_RE = /sbp_[A-Za-z0-9]{20,}/g;
 const GHP_RE = /ghp_[A-Za-z0-9]{30,}/g;
 const GITHUB_PAT_RE = /github_pat_[A-Za-z0-9_]{20,}/g;
 const PRIVATE_KEY_RE = /-----BEGIN (?:RSA |OPENSSH |EC |DSA )?PRIVATE KEY-----/g;
-const VITE_SERVICE_ROLE_RE = /\bVITE_[A-Z0-9_]*SERVICE_ROLE[A-Z0-9_]*/g;
-const SERVICE_ROLE_KEY_ASSIGN_RE =
-  /\bSUPABASE_SERVICE_ROLE_KEY\s*=\s*([^\s#]+|"[^"]*"|'[^']*')/g;
+const VITE_SERVICE_ROLE_RE = /\bVITE_[A-Z0-9_]*SERVICE_ROLE[A-Z0-9_]*/g; // secrets-deploy-allow: pattern id — scanner self-reference
+const SERVICE_ROLE_KEY_ASSIGN_RE = /\bSUPABASE_SERVICE_ROLE_KEY\s*=\s*([^\s#]+|"[^"]*"|'[^']*')/g;
 
 export const SECRET_CONTENT_PATTERNS: readonly SecretContentRule[] = [
   {
@@ -286,7 +280,7 @@ export const SECRET_CONTENT_PATTERNS: readonly SecretContentRule[] = [
   {
     id: 'vite-service-role',
     description: 'VITE_* env name containing SERVICE_ROLE',
-    findRawMatches: (line) => [...line.matchAll(VITE_SERVICE_ROLE_RE)].map((m) => m[0]),
+    findRawMatches: (line) => [...line.matchAll(VITE_SERVICE_ROLE_RE)].map((m) => m[0]), // secrets-deploy-allow: pattern id identifier — scanner self-reference
   },
   {
     id: 'service-role-key-assign',
@@ -297,7 +291,7 @@ export const SECRET_CONTENT_PATTERNS: readonly SecretContentRule[] = [
         const value = stripQuotes(m[1] ?? '');
         if (isPlaceholderSecretValue(value)) continue;
         if (looksLikeServiceRoleJwt(value) || value.startsWith('eyJ') || value.length >= 32) {
-          out.push(`${'SUPABASE_SERVICE_ROLE_KEY='}${maskSecretFragment(value)}`);
+          out.push(`${'SUPABASE_SERVICE_ROLE_KEY='}${maskSecretFragment(value)}`); // secrets-deploy-allow: masked violation message builder — scanner self-reference
         }
       }
       return out;
@@ -327,8 +321,7 @@ export function scanTextContent(
     for (const rule of SECRET_CONTENT_PATTERNS) {
       const matches = rule.findRawMatches(line);
       for (const raw of matches) {
-        const masked =
-          rule.id === 'service-role-key-assign' ? raw : maskSecretFragment(raw);
+        const masked = rule.id === 'service-role-key-assign' ? raw : maskSecretFragment(raw);
         violations.push({
           kind,
           ruleId: rule.id,
@@ -382,9 +375,7 @@ export function assertGitignoreCoversDenyList(options?: {
   const cwd = options?.cwd ?? process.cwd();
   const text =
     options?.gitignoreText ??
-    (existsSync(join(cwd, '.gitignore'))
-      ? readFileSync(join(cwd, '.gitignore'), 'utf8')
-      : '');
+    (existsSync(join(cwd, '.gitignore')) ? readFileSync(join(cwd, '.gitignore'), 'utf8') : '');
 
   const violations: SecretViolation[] = [];
   if (!text.trim()) {
@@ -551,10 +542,7 @@ export function scanDistTree(
 /** Convenience: path + content + gitignore (no dist). */
 export function scanRepoSecretsDeny(options?: { cwd?: string }): SecretViolation[] {
   const cwd = options?.cwd ?? process.cwd();
-  return [
-    ...assertGitignoreCoversDenyList({ cwd }),
-    ...scanTrackedFiles({ cwd }),
-  ];
+  return [...assertGitignoreCoversDenyList({ cwd }), ...scanTrackedFiles({ cwd })];
 }
 
 export function formatSecretViolations(violations: SecretViolation[]): string {

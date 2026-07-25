@@ -219,10 +219,7 @@ describe('BlackjackStage — phase1e-blackjack', () => {
   it('action bar queues hit/stand when not live-locked', () => {
     const onActionsChange = vi.fn();
     wrap(
-      <BlackjackStage
-        actions={[{ seat: 0, move: 'stand' }]}
-        onActionsChange={onActionsChange}
-      />,
+      <BlackjackStage actions={[{ seat: 0, move: 'stand' }]} onActionsChange={onActionsChange} />,
     );
     fireEvent.click(screen.getByTestId('casino-blackjack-action-hit'));
     expect(onActionsChange).toHaveBeenCalledWith([
@@ -266,8 +263,8 @@ describe('BlackjackStage — phase1e-blackjack', () => {
     await act(async () => {
       await vi.runAllTimersAsync();
     });
-    const leaked = errorSpy.mock.calls.some((c) =>
-      String(c[0]).includes('unmounted') || String(c[0]).includes('not wrapped'),
+    const leaked = errorSpy.mock.calls.some(
+      (c) => String(c[0]).includes('unmounted') || String(c[0]).includes('not wrapped'),
     );
     expect(leaked).toBe(false);
     errorSpy.mockRestore();

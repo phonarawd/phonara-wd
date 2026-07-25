@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import {
   momentumComboEase,
@@ -60,7 +53,10 @@ function createMomentumScene(pixi: PixiModule): MomentumScene {
       if (broke) {
         stack.fill({ color: 0x64748b, alpha: active ? 0.55 : 0.35 });
       } else if (active) {
-        const tone = COMBO_ACTIVE[Math.min(COMBO_ACTIVE.length - 1, Math.floor((i / max) * COMBO_ACTIVE.length))];
+        const tone =
+          COMBO_ACTIVE[
+            Math.min(COMBO_ACTIVE.length - 1, Math.floor((i / max) * COMBO_ACTIVE.length))
+          ];
         stack.fill({ color: tone ?? 0x22d3ee, alpha: 0.55 + (i / max) * 0.4 });
       } else {
         stack.fill({ color: 0x1e293b, alpha: 0.45 });
@@ -278,11 +274,7 @@ export const MomentumStage = forwardRef<CasinoStageHandle, MomentumStageProps>(
                   key={`value-${revealPulse}`}
                   className={cn(
                     'text-xl font-semibold tabular-nums',
-                    settled
-                      ? punchy
-                        ? 'text-success'
-                        : 'text-danger'
-                      : 'text-foreground',
+                    settled ? (punchy ? 'text-success' : 'text-danger') : 'text-foreground',
                     settled && !reducedMotion && 'ds-casino-reveal-in',
                     punchy && !reducedMotion && 'ds-casino-number-pop',
                   )}

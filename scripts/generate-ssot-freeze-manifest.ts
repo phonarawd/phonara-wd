@@ -306,22 +306,11 @@ function inferRpcBoundary(hooks: string[]): string {
   return hooks.map((h) => `hooks/${h}.ts`).join(' · ') + ' → lib/rpc.ts';
 }
 
+/** Page-component labels only — no BetHubShell / duplicateCandidates / hub-tab flags (demolished). */
 const OWNER_MAP: Record<string, Partial<RouteEntry>> = {
   '/login': { pageComponent: 'LoginPage (via LoginDeskSurface)' },
   '/signup': { pageComponent: 'SignupPage' },
   '/wallet': { pageComponent: 'WalletPage' },
-  '/trade': {
-    container: 'BetHubShell',
-    duplicateCandidates: ['TradeDeskSurface (orphan parallel)'],
-  },
-  '/sports': {
-    duplicateCandidates: ['BetHubShell sports tab (embedded)'],
-    flag: 'dual-sports-entry — canonical standalone /sports; /trade?section=sports = hub tab',
-  },
-  '/home': {
-    controller: 'useEarnPageController (missions) · direct useWallet (home hub)',
-    duplicateCandidates: ['EarnHomeDeskSurface', 'ImportedHomePage'],
-  },
 };
 
 function buildWebRoutes(): RouteEntry[] {
@@ -430,43 +419,8 @@ function buildWebRoutes(): RouteEntry[] {
     });
   }
 
-  // BetHub tabs (not routes)
-  for (const tab of ['casino', 'sports', 'trade'] as const) {
-    entries.push({
-      path: `/trade?section=${tab}`,
-      surface:
-        tab === 'trade'
-          ? 'TradeModeShell'
-          : tab === 'sports'
-            ? 'ImportedSportsPage (embedded)'
-            : 'CasinoSportsLiveDesk + CasinoCrashDesk',
-      controller:
-        tab === 'trade'
-          ? 'useTradePageController'
-          : tab === 'sports'
-            ? 'useSportsPageController'
-            : 'useCasinoPageController (partial)',
-      hooks:
-        tab === 'trade'
-          ? ['use-wallet', 'use-trading', 'use-prices']
-          : tab === 'sports'
-            ? ['sports-engine-glue']
-            : ['use-wallet', 'use-casino'],
-      rpcBoundary: inferRpcBoundary([]),
-      enginePackage:
-        tab === 'trade'
-          ? '@phonara/trading-engine'
-          : tab === 'sports'
-            ? '@phonara/sportsbook-engine'
-            : '@phonara/game-engine',
-      dbBoundary: 'Supabase',
-      owner: tab === 'trade' ? 'Trade' : tab === 'sports' ? 'Sports' : 'Casino',
-      redirects: [],
-      legacyUrls: [],
-      status: 'hub-tab',
-      container: 'BetHubShell',
-    });
-  }
+  // Pre-demolition BetHub `/trade?section=*` synthetic hub-tab rows removed —
+  // Trade / Sports / Casino are standalone canonical routes only.
 
   return entries.sort((a, b) => a.path.localeCompare(b.path));
 }
@@ -595,14 +549,8 @@ function formatUiInventory(web: RouteEntry[], admin: RouteEntry[]): string {
     );
   }
 
-  lines.push('', '## Package ownership', '');
-  lines.push('| Package | Scope | UI reset |');
-  lines.push('|---------|-------|----------|');
-  lines.push('| `@phonara/ui` | Engine/trade/shell DS | Rebuild presentation · API compat |');
-  lines.push('| `@phonara/game-ui` | Game canvas/Pixi | Protected · in-place presentation only |');
-  lines.push(
-    '| `apps/web/src/components/ui` | Paste-zone shadcn | Rebuild · consolidate per wave |',
-  );
+  // Package ownership table removed — `@phonara/ui`, `@phonara/game-ui`, and
+  // `apps/web/src/components/ui` were deleted in v5 Demolition (do not re-emit).
 
   return lines.join('\n');
 }
@@ -628,21 +576,19 @@ function formatRouteRegistry(web: RouteEntry[], admin: RouteEntry[]): string {
 
   lines.push('', '## Canonical decisions', '');
   lines.push('- **Earn hub:** `/home` (not `/earn`) — `/earn` redirect-only');
-  lines.push(
-    '- **Sports:** standalone `/sports` = canonical sportsbook; `/trade?section=sports` = BetHub embedded entry',
-  );
-  lines.push('- **Trade:** `/trade` = BetHubShell; `/trade?section=trade` = futures/spot terminal');
+  lines.push('- **Sports:** standalone `/sports` = canonical sportsbook (no BetHub embed)');
+  lines.push('- **Trade:** `/trade` = standalone Trade surface (no `?section=` hub tabs)');
   lines.push(
     '- **Casino games:** `/casino/{game}` canonical; `/games/*` parallel catalog (inventory duplicate — converge in C-wave)',
   );
 
   lines.push('', '## Blueprint mapping flags', '');
-  lines.push('| Blueprint area | Canonical route/tab | Notes |');
-  lines.push('|----------------|---------------------|-------|');
+  lines.push('| Blueprint area | Canonical route | Notes |');
+  lines.push('|----------------|-----------------|-------|');
   lines.push('| D1 Auth | `/login`, `/signup`, `/reset-password` | OK |');
   lines.push('| D2 Wallet | `/wallet`, `/ledger`, `/staking` | OK |');
-  lines.push('| D3 Trade | `/trade?section=trade` | Hub tab |');
-  lines.push('| D4 Sports | `/sports` + hub tab | dual entry documented |');
+  lines.push('| D3 Trade | `/trade` | Standalone route |');
+  lines.push('| D4 Sports | `/sports` | Standalone route |');
   lines.push('| D5 Casino | `/casino`, `/casino/*` | OK |');
   lines.push('| D4 Earn | `/home`, `/home/missions` | `/earn` redirect |');
   lines.push('| Admin | `/admin/*` | 14 desk routes |');
@@ -1661,7 +1607,12 @@ function formatEngineIntegrationPlaybook(
     lines.push('- None');
   } else {
     for (const m of missing) {
-      lines.push(`- **${m.domain} · ${m.field}** — ${m.notes}`);
+      const note = m.notes.trim();
+      lines.push(
+        note
+          ? `- **${m.domain} · ${m.field}** — ${note}`
+          : `- **${m.domain} · ${m.field}** — (no notes)`,
+      );
     }
   }
 
@@ -1758,6 +1709,12 @@ function formatEngineIntegrationPlaybook(
   return lines.join('\n');
 }
 
+function writeGeneratedMarkdown(fileName: string, content: string): void {
+  // markdownlint MD047 — exactly one trailing newline
+  const body = `${content.replace(/\s+$/u, '')}\n`;
+  writeFileSync(join(ssotDir, fileName), body);
+}
+
 function main(): void {
   const web = buildWebRoutes();
   const admin = buildAdminRoutes();
@@ -1765,12 +1722,12 @@ function main(): void {
   const shapes = readShapesSource();
   const viewShapes = parseControllerViewShapes(shapes.content);
 
-  writeFileSync(join(ssotDir, 'FREEZE_MANIFEST.md'), formatFreezeManifest(web, admin));
-  writeFileSync(join(ssotDir, 'UI_INVENTORY.md'), formatUiInventory(web, admin));
-  writeFileSync(join(ssotDir, 'ROUTE_CANONICAL_REGISTRY.md'), formatRouteRegistry(web, admin));
-  writeFileSync(join(ssotDir, 'DISPLAY_DATA_CONTRACT.md'), formatDisplayContract(audits));
-  writeFileSync(
-    join(ssotDir, 'ENGINE_INTEGRATION_PLAYBOOK.md'),
+  writeGeneratedMarkdown('FREEZE_MANIFEST.md', formatFreezeManifest(web, admin));
+  writeGeneratedMarkdown('UI_INVENTORY.md', formatUiInventory(web, admin));
+  writeGeneratedMarkdown('ROUTE_CANONICAL_REGISTRY.md', formatRouteRegistry(web, admin));
+  writeGeneratedMarkdown('DISPLAY_DATA_CONTRACT.md', formatDisplayContract(audits));
+  writeGeneratedMarkdown(
+    'ENGINE_INTEGRATION_PLAYBOOK.md',
     formatEngineIntegrationPlaybook(viewShapes, audits),
   );
 

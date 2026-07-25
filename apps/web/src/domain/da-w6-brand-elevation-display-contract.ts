@@ -59,7 +59,7 @@ export const DA_W6_BRAND_ELEVATION_ARTIFACT_PATHS = [
   'product/surfaces/trade/futures-positions-panel.tsx',
   'product/surfaces/wallet/ledger-page.tsx',
   'product/surfaces/sports/sports-fixture-board.tsx',
-  'product/surfaces/sports/sports-vip-stub-panel.tsx',
+  'product/surfaces/sports/sports-vip-panel.tsx',
   'router.ts',
 ] as const;
 

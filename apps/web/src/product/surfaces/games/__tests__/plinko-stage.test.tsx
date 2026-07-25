@@ -73,7 +73,10 @@ describe('PlinkoStage functional QA — drop path replay + settle (phase1d-plink
       await handle.current?.playOutcome(WIN_OUTCOME);
     });
     expect(screen.getByTestId('casino-plinko-stage')).toHaveAttribute('data-won', 'true');
-    expect(screen.getByTestId('casino-plinko-stage')).toHaveAttribute('data-stage-phase', 'settled');
+    expect(screen.getByTestId('casino-plinko-stage')).toHaveAttribute(
+      'data-stage-phase',
+      'settled',
+    );
     expect(screen.getByTestId('casino-plinko-stage')).toHaveAttribute('data-bucket', '3');
     expect(screen.getByTestId('casino-plinko-bucket-mult')).toHaveTextContent('2.0×');
   });

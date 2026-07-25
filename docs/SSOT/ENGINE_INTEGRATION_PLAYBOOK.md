@@ -2,7 +2,7 @@
 
 # Engine Integration Playbook
 
-> **Generated:** 2026-07-24 · **Source:** page controllers · desk surfaces · `page-controller-view-shapes.ts`
+> **Generated:** 2026-07-25 · **Source:** page controllers · desk surfaces · `page-controller-view-shapes.ts`
 > **Rule:** UI rebuild replaces presentation only. Consume controller/hook output — never recompute money/odds/settlement.
 
 ## How to use (U-phase surface implementation)
@@ -24,11 +24,11 @@
 
 ## Missing contract summary (blockers)
 
-- **Wallet · heroBalanceDisplay** — 
-- **Wallet · phonAvailableDisplay** — 
-- **Wallet · usdtAvailableDisplay** — 
-- **Wallet · withdrawAvailableDisplay** — 
-- **Wallet · giftcardPreviewFeeDisplay** — 
+- **Wallet · heroBalanceDisplay** — (no notes)
+- **Wallet · phonAvailableDisplay** — (no notes)
+- **Wallet · usdtAvailableDisplay** — (no notes)
+- **Wallet · withdrawAvailableDisplay** — (no notes)
+- **Wallet · giftcardPreviewFeeDisplay** — (no notes)
 - **Trade · futuresPositions (incl. realized_pnl, margin_amount, liquidation_price, open_fee)** — Position rows from DB via useFuturesPositions
 - **Trade · margin input / margin mode** — useFuturesActions local state — not on TradePageControllerView; UI must not invent margin
 
@@ -370,7 +370,7 @@ Note: Presentation consumes gameSurfaceProps bundle
 Surface: CasinoLobbyDeskSurface
 Route: /casino
 Controller: (none — hooks/shell only)
-Hooks: 
+Hooks:
 RPC/lib boundary: static lobby · navigate to game routes
 Engine package: none (navigation only)
 DB boundary: none

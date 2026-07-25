@@ -1,11 +1,20 @@
 /**
  * Landing presentation member bot — §28.7 cold-start social proof (engine 0).
  * Never surfaces 0 members; live count used only above threshold.
+ *
+ * OPERATOR RISK (dormant path): `LANDING_MEMBER_BOT_BASE` hardcodes 1_000_000.
+ * This is presentation-only synthetic social proof — NOT a live member count.
+ * Do not enable ambient/landing stats UI with this bot unless operator
+ * explicitly accepts the cold-start fiction (audit fail-closed: prefer hidden).
+ * Removal vs keep = operator decision; code retained dormant for now.
  */
 
 import { LANDING_CUMULATIVE_STATS_THRESHOLD } from '@/domain/landing-display-contract';
 
-/** Million-user platform baseline — presentation only. */
+/**
+ * Million-user platform baseline — presentation fiction only.
+ * RISK: hardcoding 1M can mislead if surfaced without fail-closed gates.
+ */
 export const LANDING_MEMBER_BOT_BASE = 1_000_000;
 
 /** Slow daily drift so the count feels alive across visits. */

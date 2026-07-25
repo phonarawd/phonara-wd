@@ -18,7 +18,7 @@
   "devDependencies": {
     "fast-check": "^4.8.0",
     "typescript": "latest",
-    "vitest": "latest"
+    "vitest": "^4.1.8"
   },
   "dependencies": {
     "@phonara/money": "workspace:*",

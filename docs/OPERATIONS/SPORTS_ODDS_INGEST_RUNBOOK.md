@@ -48,6 +48,7 @@ Wave 10(ZA-13)에서 보드에 [`shouldShowSportsIngestOfflineBanner`](../../app
    ```
 
    `status`는 `healthy | degraded | stale | error | disabled | skipped` 중 하나([`ingest-orchestrator-types.ts`](../../packages/sports-ingest/src/ingest-orchestrator-types.ts)) — `healthy`가 아니면 배당이 fresh해지지 않는다.
+
 2. **UI 확인** — `/sports` 보드의 `sports-board-ingest-offline-banner`가 사라지고 배당 셀이 `data-odds-freshness="fresh"`로 바뀌는지 확인(브라우저 확인은 operator 수동 — 로컬 heavy E2E 금지).
 3. **정지된 경우** — `sports_ingest_health.last_error` 확인 → 벤더 quota/네트워크/API 스키마 변경 여부 확인 → 필요 시 `SPORTS_ODDS_VENDOR_PRIORITY`로 다음 벤더로 failover.
 

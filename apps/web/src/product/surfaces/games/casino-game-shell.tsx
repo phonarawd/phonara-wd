@@ -60,6 +60,10 @@ import {
   type ProgressiveGame,
   type ProgressiveSessionPublic,
 } from '@/features/casino/use-progressive-round';
+import {
+  rgReasonMessageKey,
+  useRgGatePolicy,
+} from '@/features/responsible-gaming/use-rg-gate-policy';
 import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { translateError } from '@/lib/translate-error';
 import { useAuth } from '@/contexts/auth-context';
@@ -152,10 +156,7 @@ function enrichBlackjackOutcomeForDisplay(
   if (!floats || floats.length < 51) return result;
   if (Array.isArray(result['player']) && Array.isArray(result['dealer'])) return result;
   try {
-    const detail = resolveBlackjackPlay(
-      { actions: normalizeBlackjackActions(actions) },
-      floats,
-    );
+    const detail = resolveBlackjackPlay({ actions: normalizeBlackjackActions(actions) }, floats);
     const primary = detail.playerHands[0];
     return {
       ...result,
@@ -199,6 +200,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
   const { session } = useAuth();
   const userId = session?.user.id ?? null;
   const { wallet } = useWallet();
+  const rgPolicy = useRgGatePolicy();
   const { lockSession, unlockSession, sessionLocked, showDisclaimer, hintFor } =
     useCasinoFiatHint();
   const config = GAME_BY_CODE[gameCode];
@@ -329,6 +331,11 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
   }, []);
 
   const handleManualBet = useCallback(async () => {
+    const rgReason = await rgPolicy('place_bet');
+    if (rgReason) {
+      productToast.show({ zone: 'strict', key: rgReasonMessageKey(rgReason) });
+      return;
+    }
     lockSession();
     const result = await pipeline.requestBet();
     if (result !== 'placed') {
@@ -336,7 +343,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
       return;
     }
     // bet state updates via pipeline; effect below presents when bet lands
-  }, [lockSession, pipeline, unlockSession]);
+  }, [lockSession, pipeline, rgPolicy, unlockSession]);
 
   const applyProgressiveResult = useCallback(
     (session: ProgressiveSessionPublic) => {
@@ -352,8 +359,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
         session.game === 'blackjack'
           ? {
               ...publicState,
-              totalMultiplier:
-                publicState['totalMultiplier'] ?? Number(session.current_multiplier),
+              totalMultiplier: publicState['totalMultiplier'] ?? Number(session.current_multiplier),
             }
           : publicState;
       void stageRef.current?.playOutcome(settlePayload);
@@ -367,6 +373,11 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     // Clear the previous round's frozen cash-out display — a fresh bet means a
     // fresh live-ticking multiplier, not the last round's locked-in result.
     setLiveCashoutFlash(null);
+    const rgReason = await rgPolicy('place_bet');
+    if (rgReason) {
+      productToast.show({ zone: 'strict', key: rgReasonMessageKey(rgReason) });
+      return;
+    }
     lockSession();
     try {
       if (gameCode === 'crash') {
@@ -466,6 +477,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     lockSession,
     presentSettle,
     progressiveStart,
+    rgPolicy,
     selection,
     unlockSession,
   ]);

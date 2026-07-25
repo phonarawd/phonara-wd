@@ -12,6 +12,7 @@ import {
   DS_TOUCH_TARGET_MIN_PX,
   DS_TOUCH_TARGET_MIN_TOKEN,
   DS_TOUCH_TARGET_SIZE_CLASS,
+  TOUCH_TARGET_DENSE_UI_RISK_PATHS,
   TOUCH_TARGET_FORBIDDEN_HEIGHT_CLASSES,
   TOUCH_TARGET_OWNER_PATHS,
   TOUCH_TARGET_REGRESSION_MATRIX,
@@ -19,9 +20,14 @@ import {
 } from '../touch-target-display-contract';
 
 const productRoot = resolve(import.meta.dirname, '../../product');
+const repoRoot = resolve(import.meta.dirname, '../../../../../');
 
 function readProduct(relativePath: string): string {
   return readFileSync(resolve(productRoot, relativePath.replace(/^product\//, '')), 'utf8');
+}
+
+function readRepo(relativePath: string): string {
+  return readFileSync(resolve(repoRoot, relativePath), 'utf8');
 }
 
 describe('touch-target-display-contract', () => {
@@ -88,9 +94,49 @@ describe('touch-target-display-contract', () => {
         expect(source.split(/\s+/).join(' ')).not.toContain(` ${forbidden} `);
         expect(source).not.toContain(`'${forbidden}`);
       }
+      // No compact size variant — 48px floor is the only height policy.
+      expect(source).not.toMatch(/\bsize:\s*\{[^}]*compact/);
+      expect(source).not.toContain("size: 'compact'");
     }
 
     expect(readProduct('primitives/help-tip.tsx')).not.toContain('size-8');
+    expect(readProduct('primitives/select.tsx')).toMatch(
+      /SelectItem[\s\S]*min-h-\(--ds-touch-target-min\)/,
+    );
+  });
+
+  it('dense-ui risk zones keep 48px floor spacing after Button uplift', () => {
+    expect(TOUCH_TARGET_DENSE_UI_RISK_PATHS).toHaveLength(10);
+    for (const relative of TOUCH_TARGET_DENSE_UI_RISK_PATHS) {
+      expect(readRepo(relative).length).toBeGreaterThan(0);
+    }
+
+    const helpTip = readRepo('apps/web/src/product/primitives/help-tip.tsx');
+    expect(helpTip).toContain('IconButton');
+    expect(helpTip).not.toContain('size-8');
+
+    const adminTable = readRepo('apps/admin/src/product/primitives/admin-table.tsx');
+    expect(adminTable).toContain('flex flex-nowrap items-center gap-2');
+    expect(adminTable).toContain(DS_TOUCH_TARGET_MIN_HEIGHT_CLASS);
+
+    const chart = readRepo('apps/web/src/product/surfaces/trade/chart/trade-chart-panel.tsx');
+    expect(chart).not.toContain('flex flex-wrap gap-1');
+    expect(chart).not.toContain('flex flex-wrap items-center gap-1');
+    expect(chart).toContain('flex flex-wrap gap-2');
+    expect(chart).toContain('flex flex-wrap items-center gap-2');
+
+    for (const relative of [
+      'apps/web/src/features/trading/order-ticket/margin-mode-segment.tsx',
+      'apps/web/src/features/trading/order-ticket/position-mode-segment.tsx',
+      'apps/web/src/features/trading/order-ticket/leverage-control.tsx',
+      'apps/web/src/product/surfaces/games/bet-mode-tabs.tsx',
+    ] as const) {
+      const source = readRepo(relative);
+      expect(source).toContain('size="sm"');
+      expect(source).not.toContain('size-8');
+      expect(source).not.toContain('h-9');
+      expect(source).not.toContain('min-h-10');
+    }
   });
 
   it('regression matrix covers five-tab hubs plus auth/shell/admin', () => {
@@ -109,5 +155,9 @@ describe('touch-target-display-contract', () => {
     const trade = TOUCH_TARGET_REGRESSION_MATRIX.find((row) => row.chapter === 'trade');
     expect(trade?.sizeImpact).toBe('sm+md+submit');
     expect(trade?.routes).toContain('/trade');
+    expect(trade?.notes).toContain('gap-2');
+
+    const admin = TOUCH_TARGET_REGRESSION_MATRIX.find((row) => row.chapter === 'admin');
+    expect(admin?.notes).toContain('nowrap');
   });
 });

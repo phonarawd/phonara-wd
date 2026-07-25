@@ -286,10 +286,7 @@ export function TierMePage() {
             </h2>
             <Link
               to={TIER_BENEFITS_ROUTE}
-              className={cn(
-                buttonVariants({ variant: 'ghost', size: 'sm' }),
-                'text-accent',
-              )}
+              className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'text-accent')}
               data-testid="tier-me-benefits-link"
             >
               {t('tier.me.benefitsLink')}

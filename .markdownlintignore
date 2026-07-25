@@ -12,6 +12,7 @@
 **/.tmp-*/**
 .tmp-*.md
 scratch-*.md
+**/*.plan.md
 **/gate-manifest/**
 **/_audit/**
 **/backups/**

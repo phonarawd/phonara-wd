@@ -39,7 +39,7 @@ export const SPORTS_RULES_AND_VIP_ROUTE_OWNERS = [
 export const SPORTS_RULES_AND_VIP_SURFACE_OWNERS = [
   SPORTS_RULES_VIP_PAGE_OWNER,
   'sports-rules-panel.tsx',
-  'sports-vip-stub-panel.tsx',
+  'sports-vip-panel.tsx',
 ] as const;
 
 export type SportsRulesVipEngineStatus = 'ui_only' | 'gap' | 'exists';

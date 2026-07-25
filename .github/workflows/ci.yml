@@ -38,8 +38,12 @@ jobs:
       - run: bun run check:release
       - run: bun run check:money-formula-citations
       - run: bun run check:migrations
+      - run: bun run check:games
+      - run: bun run check:determinism
+      - run: bun run check:deps
       - run: bun run typecheck
       - run: bun run lint
+      - run: bun run check:markdown
       - run: bun run format:check
       - uses: denoland/setup-deno@v2
         with:

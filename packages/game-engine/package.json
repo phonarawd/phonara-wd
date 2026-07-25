@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "typescript": "latest",
-    "vitest": "latest"
+    "vitest": "^4.1.8"
   },
   "dependencies": {
     "@phonara/money": "workspace:*",

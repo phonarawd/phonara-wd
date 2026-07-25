@@ -368,16 +368,16 @@ AuthProvider → PwaShell → [AppShell | MarketingShell | ContentShell] → <Ou
 
 **Types SOT:** [`packages/shared-types/src/database.types.ts`](packages/shared-types/src/database.types.ts) (generated, do not edit)
 
-| Object                   |            Count | Method                                                                                         |
-| ------------------------ | ---------------: | ---------------------------------------------------------------------------------------------- |
-| Tables (`public.Tables`) |         **~136** | Manual enumeration from types file (admin_review_queue … withdrawal_requests)                  |
-| Views                    |            **4** | `casino_game_rtp_stats`, `v_game_bets_client`, `v_game_rounds_public`, `v_user_consent_latest` |
-| Enums                    |         **~30+** | `Database["public"]["Enums"]` block (currency, game_code, admin_role, etc.)                    |
-| Client `rpc_*` in types  |          **256** | [RPC_USAGE_MATRIX.md](./RPC_USAGE_MATRIX.md)                                                   |
-| Internal `_*` helpers    |         **many** | revoked from anon per migration policy                                                         |
+| Object                   |                                 Count | Method                                                                                         |
+| ------------------------ | ------------------------------------: | ---------------------------------------------------------------------------------------------- |
+| Tables (`public.Tables`) |                              **~136** | Manual enumeration from types file (admin_review_queue … withdrawal_requests)                  |
+| Views                    |                                 **4** | `casino_game_rtp_stats`, `v_game_bets_client`, `v_game_rounds_public`, `v_user_consent_latest` |
+| Enums                    |                              **~30+** | `Database["public"]["Enums"]` block (currency, game_code, admin_role, etc.)                    |
+| Client `rpc_*` in types  |                               **256** | [RPC_USAGE_MATRIX.md](./RPC_USAGE_MATRIX.md)                                                   |
+| Internal `_*` helpers    |                              **many** | revoked from anon per migration policy                                                         |
 | Migrations               | **239** (당시) / **248** (2026-07-24) | `supabase/migrations/*.sql` · `check:migrations`                                               |
-| SQL integration tests    |          **142** | `supabase/tests/*.sql`                                                                         |
-| Seed data                | **NOT VERIFIED** | no dedicated seed dir found; tests use inline setup                                            |
+| SQL integration tests    |                               **142** | `supabase/tests/*.sql`                                                                         |
+| Seed data                |                      **NOT VERIFIED** | no dedicated seed dir found; tests use inline setup                                            |
 
 **Remote applied state / live row counts:** **NOT VERIFIED**
 
@@ -427,17 +427,17 @@ AuthProvider → PwaShell → [AppShell | MarketingShell | ContentShell] → <Ou
 
 ## 14. Security Inventory
 
-| Control                | Status                                                                |
-| ---------------------- | --------------------------------------------------------------------- |
-| JWT (Supabase)         | Implemented — `auth-context.tsx`                                      |
-| RBAC (Admin)           | `admin-rbac.ts`, `useAdminOperatorRbac.ts`, `admin_role_grants` table |
+| Control                | Status                                                                              |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| JWT (Supabase)         | Implemented — `auth-context.tsx`                                                    |
+| RBAC (Admin)           | `admin-rbac.ts`, `useAdminOperatorRbac.ts`, `admin_role_grants` table               |
 | RLS                    | 239 migrations (2026-07-13) / **248** (2026-07-24), `grants_rls_inventory_test.sql` |
-| Service role isolation | Rules forbid `VITE_*` service key                                     |
-| MFA                    | Admin `/mfa/*`, `admin_mfa_aal2_test.sql`                             |
-| SIWE                   | Edge function `siwe-auth`                                             |
-| HIBP                   | Feature flag migration `h09_r3e_*`                                    |
-| CSRF/XSS/SQLi          | **NOT VERIFIED** at runtime; SQL parameterized RPCs + RLS at DB layer |
-| Secrets                | `.env.example` template — actual secrets **NOT VERIFIED**             |
+| Service role isolation | Rules forbid `VITE_*` service key                                                   |
+| MFA                    | Admin `/mfa/*`, `admin_mfa_aal2_test.sql`                                           |
+| SIWE                   | Edge function `siwe-auth`                                                           |
+| HIBP                   | Feature flag migration `h09_r3e_*`                                                  |
+| CSRF/XSS/SQLi          | **NOT VERIFIED** at runtime; SQL parameterized RPCs + RLS at DB layer               |
+| Secrets                | `.env.example` template — actual secrets **NOT VERIFIED**                           |
 
 ---
 
@@ -556,32 +556,32 @@ Items referenced in docs/rules but not fully verifiable in code:
 
 ## 23. Project Statistics (verified counts)
 
-| Metric                        |               Count |
-| ----------------------------- | ------------------: |
-| Total tracked files (glob)    |              ~1,994 |
-| Top-level workspaces          |     12 package.json |
-| Web route files               |                  93 |
-| Web page components           |  77 + 2 shells (79) |
-| Admin route files             |                  34 |
-| Admin page surfaces           |                  32 |
-| Web surface tsx files         |                 308 |
-| Primitives files              |                  63 |
-| Feature modules (web)         |                  17 |
-| use-\* hooks (web)            |                 183 |
-| Display contracts (web)       |                 196 |
-| DB tables (types)             |                ~136 |
-| DB views (types)              |                   4 |
-| Types `rpc_*`                 | 256 (apps used 144) |
+| Metric                        |                             Count |
+| ----------------------------- | --------------------------------: |
+| Total tracked files (glob)    |                            ~1,994 |
+| Top-level workspaces          |                   12 package.json |
+| Web route files               |                                93 |
+| Web page components           |                77 + 2 shells (79) |
+| Admin route files             |                                34 |
+| Admin page surfaces           |                                32 |
+| Web surface tsx files         |                               308 |
+| Primitives files              |                                63 |
+| Feature modules (web)         |                                17 |
+| use-\* hooks (web)            |                               183 |
+| Display contracts (web)       |                               196 |
+| DB tables (types)             |                              ~136 |
+| DB views (types)              |                                 4 |
+| Types `rpc_*`                 |               256 (apps used 144) |
 | Migrations                    | 239 (당시) / **248** (2026-07-24) |
-| SQL tests                     |                 142 |
-| Edge functions                |                  11 |
-| Vitest files                  |                ~644 |
-| E2E specs                     |        5 (+1 smoke) |
-| Docs files                    |                 311 |
-| Scripts files                 |                 353 |
-| Public assets (apps)          |                  64 |
-| i18n locales                  |                   2 |
-| Tree appendix files (depth≤6) |               2,833 |
+| SQL tests                     |                               142 |
+| Edge functions                |                                11 |
+| Vitest files                  |                              ~644 |
+| E2E specs                     |                      5 (+1 smoke) |
+| Docs files                    |                               311 |
+| Scripts files                 |                               353 |
+| Public assets (apps)          |                                64 |
+| i18n locales                  |                                 2 |
+| Tree appendix files (depth≤6) |                             2,833 |
 
 ---
 

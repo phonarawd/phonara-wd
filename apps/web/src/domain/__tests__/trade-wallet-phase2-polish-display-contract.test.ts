@@ -67,9 +67,7 @@ describe('trade-wallet-phase2-polish-display-contract', () => {
     expect(readProduct('surfaces/trade/trade-recent-trades-rail.tsx')).toContain(
       'overscroll-contain',
     );
-    expect(readProduct('surfaces/trade/trade-desk-mobile-tabs.tsx')).toMatch(
-      /defaultOpen(?:\s|=)/,
-    );
+    expect(readProduct('surfaces/trade/trade-desk-mobile-tabs.tsx')).toMatch(/defaultOpen(?:\s|=)/);
     const mobileTabs = readProduct('surfaces/trade/trade-desk-mobile-tabs.tsx');
     expect(mobileTabs).not.toContain('defaultOpen={false}');
   });

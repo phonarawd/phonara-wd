@@ -28,65 +28,108 @@
 | **Zero-Defect Critical Hardening** | Phase 0–7 **`[x]`** 2026-07-14 (AI 트랙)                                               | [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) — Phase 7 Release Gate **DONE**(17 criteria 재판정 · PASS 13 · operator soak/PPR/서명 **미실행**) · **NEXT=operator O1 soak 개시일** · 재착수 실행 큐 아님               |
 | **DNA Audit 후속 3-우선순위**      | P1 랜딩 크래시 **FIXED+재검증** · Home/Trade/Wallet/Casino **실 세션 확인** 2026-07-15 | §"DNA Audit 후속" 절 참조 — P1 순환 import 수정(`typecheck`·vitest 19/51 green) + 로컬 스택 재캡처로 전 authenticated 화면 렌더 확인 · **신규 발견**: 데스크톱 BottomNav 노출(정책 불일치, 미수정) · P2 침묵형 dead control 0건 · P3(wave debt) **보류**       |
 | **Zero-Defect 마감 Plan**          | Phase 0–6 **`[x]` DONE** 2026-07-25                                                    | Plan `zero-defect_마감_플랜_70fca5c4` + `world-class_presentation_rebuild_bc0d5f4b` **22/22** · 증거 [`visual-ux-2026-07-25-phase6-closeout/`](../audit/visual-ux-2026-07-25-phase6-closeout/) · Docker OFF · **재착수 금지**                                  |
-| **전수조사 결함 전체 수정**        | Phase 0–6 **`[x]` impl** · **NEXT=`phase7-engine-precision`** 2026-07-25               | Plan `전수조사_결함_전체_수정_a507aa71` · 아래 절 · Phase 6 wagering allowlist migration · SQL 회귀 파일 작성 · 로컬 `test:sql` 미실행(G13) · CI `sql` + `stack:push-remote` 대기                                                                                                                                 |
+| **전수조사 결함 전체 수정**        | Phase 0–11 **`[x]` impl** · CI Verified **대기** 2026-07-25                            | Plan `전수조사_결함_전체_수정_a507aa71` · branch `phase-r/audit-remediation-2026-07-25` · 로컬 L0~L4 green · push 후 CI `quality`/`sql`/`e2e`/`advisors` · 한계 예외·HOLD 아래 절                                                                              |
 
-### 전수조사 Phase 0–6 마감 (2026-07-25)
+### 전수조사 Phase 0–11 마감 (2026-07-25) · **재착수 금지**
 
 > Plan `~/.cursor/plans/전수조사_결함_전체_수정_a507aa71.plan.md` · branch `phase-r/audit-remediation-2026-07-25`
 
-| Phase | Todo | 상태 | 증거(1줄) |
-| --- | --- | --- | --- |
-| 0 | `phase0-branch` | `[x]` | feature branch 생성 · 중복 surface/route 재확인 |
-| 1 | `phase1-ci-gates` | `[x]` | `check:secrets-deploy-deny` · `check:pwa` · `check:perf-contract` exit 0 · format=quality **blocking** 문서 정정 |
-| 2 | `phase2-ssot-generator` | `[x]` | BetHub OWNER_MAP/hub-tab/`@phonara/ui` 표 제거 · freeze manifest 재생성 · `sync-plan-doc-mirror` pending-0 null 문자열 버그 수정 |
-| 3 | `phase3-admin-alerts-rbac` | `[x]` impl | 클라이언트 `alerts.manage` RBAC · vitest home **2/2** · admin-rbac **20/20** |
-| 4 | `phase4-admin-users-cms-rtp` | `[x]` impl | C2 Outlet · C3 CMS reason+await · C4 RTP confirm (선행 세션) |
-| 5 | `phase5-admin-rbac-firefaget` | `[x]` impl | `queues.str.manage`/`queues.risk.clear` · sports fire-and-forget→await · dead stubs 제거 · admin-rbac **21/21** |
-| 6 | `phase6-db-bonus-wagering` | `[x]` impl | `20260828000001_fix_phon_wagering_bet_reason_cashout.sql` · `bonus_wagering_cashout_not_progress_test.sql` · 로컬 SQL 미실행(G13) |
+| Phase | Todo                          | 상태       | 증거(1줄)                                                                                                                                   |
+| ----- | ----------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0     | `phase0-branch`               | `[x]`      | feature branch 생성 · 중복 surface/route 재확인                                                                                             |
+| 1     | `phase1-ci-gates`             | `[x]`      | `check:secrets-deploy-deny` · `check:pwa` · `check:perf-contract` exit 0 · format=quality **blocking** 문서 정정                            |
+| 2     | `phase2-ssot-generator`       | `[x]`      | BetHub OWNER_MAP/hub-tab/`@phonara/ui` 표 제거 · freeze manifest 재생성 · `sync-plan-doc-mirror` pending-0 null 문자열 버그 수정            |
+| 3     | `phase3-admin-alerts-rbac`    | `[x]`      | 클라이언트 `alerts.manage` RBAC · vitest home **2/2** · admin-rbac **20/20**                                                                |
+| 4     | `phase4-admin-users-cms-rtp`  | `[x]`      | C2 Outlet · C3 CMS reason+await · C4 RTP confirm                                                                                            |
+| 5     | `phase5-admin-rbac-firefaget` | `[x]`      | `queues.str.manage`/`queues.risk.clear` · sports fire-and-forget→await · dead stubs 제거 · admin-rbac **21/21**                             |
+| 6     | `phase6-db-bonus-wagering`    | `[x]`      | `20260828000001_fix_phon_wagering_bet_reason_cashout.sql` · `bonus_wagering_cashout_not_progress_test.sql` · CI `sql` + `stack:push-remote` |
+| 7     | `phase7-engine-precision`     | `[x]`      | roulette Decimal 가중평균 · dice/limbo `target` refine · conservation uneven stakeWeight · vitest **35/35**                                 |
+| 8     | `phase8-trade-wallet-earn-ux` | `[x]`      | futures/staking ConfirmDialog · RG wire · Earn proof `hidden` · api-keys disabled `title` · vitest **70/70**                                |
+| 9     | `phase9-techstack-cleanup`    | `[x]`      | `.env.local.bak`/tmp 삭제 · `scripts/archive/` · vitest pin · CI `check:games`/`determinism`/`deps` · orphan cleanup                        |
+| 10    | `phase10-e2e-coverage`        | `[x]`      | `casino-dice` · `sports-betting` · `staking-hub` · `referral-hub` · rules `77`/`80`/`79` · 로컬 E2E 미실행(G13)                             |
+| 11    | `phase11-verify-closeout`     | `[x]` impl | `typecheck`·`lint`·`format:check`·`check:hygiene`·`gate:ai-impl` **54/54** · push → CI required 4 대기                                      |
 
 **한계 예외(플랜 명시 · "초록" 불가):**
 
 1. `supabase/migrations/20260732000001_pir_place_game_bet_rg_restore.sql` 파일명 "7월 32일" 오타 — 원격 적용 완료(로컬=원격 248)라 `25-postgres` Migration discipline상 **리네임/재작성 금지**. 이력만 유지.
 2. 브라우저 실측/서버 RLS 최종 차단 확인 — 저사양 G13 · CI `e2e`/operator 「gate 실행」이연.
 
-**Phase 3 서버 role migration HOLD:** RPC는 `_is_admin()`만(역할 세분화 없음). 플랜 원칙상 기본 migration은 Phase 6만 · alerts role 가드는 **operator 승인 후** 별도 착수. 클라이언트 게이트만으로 Phase 3 `[x] impl` 마감 · Phase 4 차단 아님.
+**플랜 제외·결정 대기(이번 큐 아님):**
 
-**Phase 5 sports desk RBAC HOLD:** owner/risk 세분화는 운영 정책 결정 필요 — 이번 세션은 fire-and-forget→`Promise<boolean>` await만 적용 · action matrix 변경 없음.
+1. Earn `/home` 활동 티커 — 기본 `hidden` 정렬 완료 · 운영자 라이브 전환은 별도 결정.
+2. `apps/admin` zod v3 vs `apps/web` zod v4 통일 — 영향 범위 넓어 **별도 트랙**.
+3. Phase 3 서버 alerts role migration HOLD · Phase 5 sports desk owner/risk RBAC HOLD.
 
 **Phase 1 로컬 재검증 (2026-07-25):** `check:secrets-deploy-deny` OK · `check:perf-contract` OK · `check:pwa` OK (CSP `sha256-2HlpbiiADGxBG+ivVFAkiNuOldIL0MJdALiKgffOnh0=`).
 
-**NEXT:** `phase7-engine-precision` (roulette Decimal · dice/limbo target refine).
+**NEXT:** 전수조사 Plan **닫힘** · 신규 큐는 ACTIVE_WORK 상단 표 / 다른 Plan todo만.
+
+### Phase 10 결과 (E2E 커버리지 신설 · 2026-07-25 · `phase10-e2e-coverage`)
+
+| 항목              | 판정                                                                                 | 근거                                                              |
+| ----------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
+| casino dice PF    | **`[x]`** shell + fairness mount · open/place/reveal/verifyRound · Σ=0 · idempotency | `tests/e2e/casino-dice.spec.ts` · `fixtures/casino-money.ts`      |
+| sports betting    | **`[x]`** prematch slip UI place+settle Σ=0 · RPC idempotency                        | `tests/e2e/sports-betting.spec.ts` · `fixtures/sports-fixture.ts` |
+| staking hub       | **`[x]`** wizard mount · PHON stake Σ=0                                              | `tests/e2e/staking-hub.spec.ts`                                   |
+| referral hub      | **`[x]`** `/referral` code · copy · invite share                                     | `tests/e2e/referral-hub.spec.ts`                                  |
+| rules 예시 파일명 | **`[x]`** `77` · `80` · `79` → 신규 spec 실명                                        | Phase 1 임시 일반화 해소                                          |
+| 로컬 E2E 실행     | **미실행**(G13)                                                                      | CI `e2e` job authoritative                                        |
+
+**증거:** files authored · `closeout:todo phase10-e2e-coverage` · 로컬 heavy gate 0 · migration/DDL **0**.
+
+### Phase 8 결과 (Trade/지갑/Earn UX · 2026-07-25 · `phase8-trade-wallet-earn-ux`)
+
+| 항목                     | 판정                                                                                             | 근거                                                       |
+| ------------------------ | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| futures 전체청산 confirm | **`[x]`** destructive `ConfirmDialog` (부분청산과 동일 패턴)                                     | `futures-positions-panel.tsx`                              |
+| staking unstake confirm  | **`[x]`** destructive `ConfirmDialog`                                                            | `staking-hub-page.tsx`                                     |
+| RG gate 배선             | **`[x]`** casino `handleManualBet`/`handleLiveStart` · sports place bet                          | `useRgGatePolicy` · `rgReasonMessageKey`                   |
+| Earn 활동 티커 정책      | **`[x]`** 기본 `hidden` (landing ambientSocial fail-closed 정합) · `ambient`/`live`는 env opt-in | `EARN_HOME_PROOF_MODE` · `resolveEarnHomeProofModeFromEnv` |
+| api-keys disabled 사유   | **`[x]`** `title={t(resolveSettingsApiKeysCreateDisabledReasonKey())}`                           | `api-keys-settings-page.tsx`                               |
+| landing member bot       | **dormant 유지** · 1M 하드코딩 리스크 주석만                                                     | `landing-member-bot.ts` · 제거=operator 결정 대기          |
+
+**증거:** `gate:ai-impl -- --test` futures/staking/earn/api-keys/sports/casino-shell · `--closeout phase8-trade-wallet-earn-ux` green · vitest **70/70** · L0~L4 · migration/DDL **0**.
+
+### Phase 7 결과 (엔진 정밀도 · 2026-07-25 · `phase7-engine-precision`)
+
+| 항목                            | 판정                                                                      | 근거                                  |
+| ------------------------------- | ------------------------------------------------------------------------- | ------------------------------------- |
+| roulette 멀티레그 가중합        | **`[x]`** `@phonara/money` Decimal 가중평균 (`weightedAverageMultiplier`) | `roulette.ts` · float `*`/`/` 제거    |
+| dice / limbo `target`           | **`[x]`** crash와 동일 regex + range refine                               | dice `0–99.99` · limbo `1.01–1000000` |
+| conservation 비균등 stakeWeight | **`[x]`** 40 seed × stake 벡터 Σ=0                                        | `conservation.test.ts`                |
+
+**증거:** `gate:ai-impl -- --test packages/game-engine/src/games/roulette.test.ts --test packages/game-engine/src/games/games.test.ts --test packages/game-engine/src/conservation.test.ts --closeout phase7-engine-precision` green · vitest **35/35** · L0~L4 · migration/DDL **0**.
 
 ### Phase 3 결과 (Admin alerts RBAC · 2026-07-25 · `phase3-admin-alerts-rbac`)
 
-| 항목 | 판정 | 근거 |
-| --- | --- | --- |
-| 서버 `rpc_ack_ops_alert` / `rpc_resolve_ops_alert` | `_is_admin()` (+ AAL2 inject)만 · **역할 세분화 없음** | `20260611000061_ops_alert_queue.sql`:842,900 · 후속 CREATE OR REPLACE **0** |
-| 클라이언트 게이트 | **`[x]`** `alerts.manage` → ack/resolve 버튼 disabled + submit 가드 | `admin-home-page.tsx` · `adminRbacActionProps` · matrix는 기존 `admin-rbac.ts` |
-| 서버 role migration | **HOLD** — operator 승인 후 별도 착수 | Phase 4 비차단 · `_admin_has_role` owner/risk/operator/support 후보 |
+| 항목                                               | 판정                                                                | 근거                                                                           |
+| -------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| 서버 `rpc_ack_ops_alert` / `rpc_resolve_ops_alert` | `_is_admin()` (+ AAL2 inject)만 · **역할 세분화 없음**              | `20260611000061_ops_alert_queue.sql`:842,900 · 후속 CREATE OR REPLACE **0**    |
+| 클라이언트 게이트                                  | **`[x]`** `alerts.manage` → ack/resolve 버튼 disabled + submit 가드 | `admin-home-page.tsx` · `adminRbacActionProps` · matrix는 기존 `admin-rbac.ts` |
+| 서버 role migration                                | **HOLD** — operator 승인 후 별도 착수                               | Phase 4 비차단 · `_admin_has_role` owner/risk/operator/support 후보            |
 
 **증거:** `gate:ai-impl -- --test apps/admin/src/product/surfaces/__tests__/admin-home-page.test.tsx --closeout phase3-admin-alerts-rbac` green · vitest home **2/2** · `admin-rbac` **20/20** · L0~L4 · migration/DDL **0**.
 
 ### Phase 5 결과 (Admin STR/risk RBAC · sports await · 2026-07-25 · `phase5-admin-rbac-firefaget`)
 
-| 항목 | 판정 | 근거 |
-| --- | --- | --- |
-| STR / risk flag 클라이언트 RBAC | **`[x]`** `queues.str.manage` · `queues.risk.clear` (owner/risk) | `admin-rbac.ts` · `/queues` · `/risk` · `adminRbacActionProps` + submit 가드 |
-| `useAdminSports` fire-and-forget | **`[x]`** `setFeatureEnabled` / `suspendMarket` → `Promise<boolean>` await | `useAdminSports.ts` · `admin-sports-page.tsx` · types 갱신 |
-| 죽은 users desk stubs | **`[x]`** `resetMfa` · `killSession` · `manualAdjustWallet` 제거 | `useAdminUsersDesk.ts` · Mock · UI 미연결 확인 |
-| Sports desk owner/risk 세분화 | **HOLD** — 운영 정책 결정 대기 | 플랜 Phase 5 명시 · matrix 변경 없음 |
+| 항목                             | 판정                                                                       | 근거                                                                         |
+| -------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| STR / risk flag 클라이언트 RBAC  | **`[x]`** `queues.str.manage` · `queues.risk.clear` (owner/risk)           | `admin-rbac.ts` · `/queues` · `/risk` · `adminRbacActionProps` + submit 가드 |
+| `useAdminSports` fire-and-forget | **`[x]`** `setFeatureEnabled` / `suspendMarket` → `Promise<boolean>` await | `useAdminSports.ts` · `admin-sports-page.tsx` · types 갱신                   |
+| 죽은 users desk stubs            | **`[x]`** `resetMfa` · `killSession` · `manualAdjustWallet` 제거           | `useAdminUsersDesk.ts` · Mock · UI 미연결 확인                               |
+| Sports desk owner/risk 세분화    | **HOLD** — 운영 정책 결정 대기                                             | 플랜 Phase 5 명시 · matrix 변경 없음                                         |
 
 **증거:** `gate:ai-impl -- --test apps/admin/src/domain/__tests__/admin-rbac.test.ts --closeout phase5-admin-rbac-firefaget` green · admin-rbac **21/21** · queues/risk/sports/users surface **4/4** · L0~L4 · migration/DDL **0**.
 
 ### Phase 6 결과 (보너스 wagering cashout 오분류 · 2026-07-25 · `phase6-db-bonus-wagering`)
 
-| 항목 | 판정 | 근거 |
-| --- | --- | --- |
-| `_is_phon_wagering_bet_reason` | **`[x]`** allowlist (`game_stake_lock` · `sports_stake_lock` · trade/staking) | `20260828000001_fix_phon_wagering_bet_reason_cashout.sql` |
-| `sports_stake_cashout` | **제외** — 부분 캐시아웃 디빗은 wagering 진행 대상 아님 | 감사 `02_DATABASE.md` 결함 |
-| 죽은 `gbet_%` | **제거** — reason_code는 `game_*` · `gbet_*`는 idempotency prefix | 동일 migration |
-| SQL 회귀 | **파일 작성** · 로컬 `test:sql` **미실행**(G13) | `supabase/tests/bonus_wagering_cashout_not_progress_test.sql` |
-| Remote apply | **대기** — CI `sql` green 후 `stack:push-remote` · advisor 0 | Phase 11 / push-fix |
+| 항목                           | 판정                                                                          | 근거                                                          |
+| ------------------------------ | ----------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `_is_phon_wagering_bet_reason` | **`[x]`** allowlist (`game_stake_lock` · `sports_stake_lock` · trade/staking) | `20260828000001_fix_phon_wagering_bet_reason_cashout.sql`     |
+| `sports_stake_cashout`         | **제외** — 부분 캐시아웃 디빗은 wagering 진행 대상 아님                       | 감사 `02_DATABASE.md` 결함                                    |
+| 죽은 `gbet_%`                  | **제거** — reason*code는 `game*\_`·`gbet\_\_`는 idempotency prefix            | 동일 migration                                                |
+| SQL 회귀                       | **파일 작성** · 로컬 `test:sql` **미실행**(G13)                               | `supabase/tests/bonus_wagering_cashout_not_progress_test.sql` |
+| Remote apply                   | **대기** — CI `sql` green 후 `stack:push-remote` · advisor 0                  | Phase 11 / push-fix                                           |
 
 **증거:** migration + SQL 회귀 파일 체크인 · `closeout:todo -- phase6-db-bonus-wagering` · 로컬 Docker/`test:sql` **0**(저사양 G13 · CI authoritative).
 

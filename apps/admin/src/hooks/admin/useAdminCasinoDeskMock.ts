@@ -357,10 +357,10 @@ export interface UseAdminCasinoDesk {
   filteredRtpReviews: AdminRtpReviewRow[];
   rtpFilters: RtpFilters;
   setRtpFilters: (f: RtpFilters | ((p: RtpFilters) => RtpFilters)) => void;
-  ackRtpReview: (id: string) => boolean;
-  resolveRtpReview: (id: string, reason: string) => boolean;
-  bulkAckRtpReview: (ids: string[]) => boolean;
-  bulkResolveRtpReview: (ids: string[], reason: string) => boolean;
+  ackRtpReview: (id: string, reason: string) => Promise<boolean>;
+  resolveRtpReview: (id: string, reason: string) => Promise<boolean>;
+  bulkAckRtpReview: (ids: string[], reason: string) => Promise<boolean>;
+  bulkResolveRtpReview: (ids: string[], reason: string) => Promise<boolean>;
   rtpSeverities: RtpSeverity[];
   rtpStatuses: RtpReviewStatus[];
 
@@ -426,7 +426,8 @@ export function useAdminCasinoDeskMock(): UseAdminCasinoDesk {
   );
 
   const ackRtpReview = useCallback(
-    (id: string): boolean => {
+    async (id: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       const row = rtp.allRows.find((r) => r.id === id);
       if (!row) return false;
       if (row.status !== 'open') return false;
@@ -442,6 +443,7 @@ export function useAdminCasinoDeskMock(): UseAdminCasinoDesk {
         actorKey: 'admin.primitive.audit.actor.system',
         actionKey: 'admin.casino.rtp.audit.ack',
         subject: row.gameKey,
+        reason: reason.trim(),
       });
       return true;
     },
@@ -449,7 +451,7 @@ export function useAdminCasinoDeskMock(): UseAdminCasinoDesk {
   );
 
   const resolveRtpReview = useCallback(
-    (id: string, reason: string): boolean => {
+    async (id: string, reason: string): Promise<boolean> => {
       if (!validReason(reason)) return false;
       const row = rtp.allRows.find((r) => r.id === id);
       if (!row) return false;
@@ -474,19 +476,24 @@ export function useAdminCasinoDeskMock(): UseAdminCasinoDesk {
   );
 
   const bulkAckRtpReview = useCallback(
-    (ids: string[]): boolean => {
+    async (ids: string[], reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (ackRtpReview(id)) any = true;
+      for (const id of ids) {
+        if (await ackRtpReview(id, reason)) any = true;
+      }
       return any;
     },
     [ackRtpReview],
   );
 
   const bulkResolveRtpReview = useCallback(
-    (ids: string[], reason: string): boolean => {
+    async (ids: string[], reason: string): Promise<boolean> => {
       if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (resolveRtpReview(id, reason)) any = true;
+      for (const id of ids) {
+        if (await resolveRtpReview(id, reason)) any = true;
+      }
       return any;
     },
     [resolveRtpReview],

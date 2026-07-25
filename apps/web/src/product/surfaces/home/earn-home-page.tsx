@@ -165,10 +165,7 @@ export function EarnHomePage() {
                   </span>
                   <Link
                     to={TIER_ME_ROUTE}
-                    className={cn(
-                      buttonVariants({ variant: 'ghost', size: 'sm' }),
-                      'text-accent',
-                    )}
+                    className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'text-accent')}
                     data-testid="earn-home-tier-link"
                   >
                     {t('tier.me.head.title')}

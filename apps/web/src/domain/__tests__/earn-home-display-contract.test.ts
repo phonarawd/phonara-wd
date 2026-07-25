@@ -24,6 +24,7 @@ import {
   isEarnHomeCanonicalRoute,
   parseEarnHubWalletSnapshot,
   resolveEarnHomeNextAction,
+  resolveEarnHomeProofModeFromEnv,
   sumEarnHomeCatalogRewardsPhon,
 } from '../earn-home-display-contract';
 
@@ -67,7 +68,7 @@ describe('earn-home-display-contract §20.13 #103', () => {
 
     expect(EARN_HOME_REDIRECT_ALIASES).toContain('/dashboard');
 
-    expect(EARN_HOME_PROOF_MODE).toBe('ambient');
+    expect(EARN_HOME_PROOF_MODE).toBe('hidden');
   });
 
   it('enforces Tab1 Strict Perfect — nav.earn → /home only', () => {
@@ -175,5 +176,15 @@ describe('earn-home-display-contract §20.13 #103', () => {
       discountTickets: 0,
       freeTradeTickets: 0,
     });
+  });
+
+  it('defaults earn home proof mode to hidden (landing ambientSocial parity)', () => {
+    expect(resolveEarnHomeProofModeFromEnv({})).toBe('hidden');
+    expect(resolveEarnHomeProofModeFromEnv({ VITE_PHONARA_EARN_HOME_PROOF_MODE: 'ambient' })).toBe(
+      'ambient',
+    );
+    expect(resolveEarnHomeProofModeFromEnv({ VITE_PHONARA_EARN_HOME_PROOF_MODE: 'live' })).toBe(
+      'live',
+    );
   });
 });

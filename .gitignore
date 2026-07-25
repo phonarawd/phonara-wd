@@ -18,6 +18,7 @@ _audit/
 .tmp-zip-extract/
 .tmp/
 .tmp-*
+scripts/tmp-*
 blob-report
 playwright-*.log
 check-full-log.txt

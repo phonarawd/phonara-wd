@@ -32,6 +32,25 @@ export const TOUCH_TARGET_OWNER_PATHS = [
   'product/surfaces/trade/spot-order-ticket.tsx',
   'product/surfaces/trade/futures-order-ticket.tsx',
   'product/surfaces/trade/trade-desk-mobile-sticky-cta.tsx',
+  'product/surfaces/trade/chart/trade-chart-panel.tsx',
+] as const;
+
+/**
+ * Dense-UI blast-radius risks after shared 48px Button/IconButton uplift
+ * (`fix-touch-target-dense-ui-risk`). Repo-relative paths — admin table lives
+ * outside `apps/web/src/product`.
+ */
+export const TOUCH_TARGET_DENSE_UI_RISK_PATHS = [
+  'apps/web/src/product/primitives/help-tip.tsx',
+  'apps/admin/src/product/primitives/admin-table.tsx',
+  'apps/web/src/product/surfaces/trade/chart/trade-chart-panel.tsx',
+  'apps/web/src/features/trading/order-ticket/margin-mode-segment.tsx',
+  'apps/web/src/features/trading/order-ticket/position-mode-segment.tsx',
+  'apps/web/src/features/trading/order-ticket/leverage-control.tsx',
+  'apps/web/src/product/surfaces/games/bet-mode-tabs.tsx',
+  'apps/web/src/product/primitives/select.tsx',
+  'apps/web/src/product/primitives/input.tsx',
+  'apps/web/src/product/primitives/tabs.tsx',
 ] as const;
 
 /**
@@ -55,7 +74,7 @@ export const TOUCH_TARGET_REGRESSION_MATRIX = [
     chapter: 'trade',
     routes: ['/trade'],
     sizeImpact: 'sm+md+submit',
-    notes: 'chart toolbar sm · spot/futures submit min-h token · sticky CTA already ≥48',
+    notes: 'chart toolbar sm gap-2 · spot/futures submit min-h token · sticky CTA already ≥48',
   },
   {
     chapter: 'sports',
@@ -85,7 +104,7 @@ export const TOUCH_TARGET_REGRESSION_MATRIX = [
     chapter: 'admin',
     routes: ['/'],
     sizeImpact: 'sm+md',
-    notes: 'Admin Vite alias → same web Button primitive',
+    notes: 'Admin Vite alias → same web Button · AdminTable rowActions nowrap + sort min-h',
   },
 ] as const;
 
@@ -127,12 +146,29 @@ export function assertTouchTargetDisplayContractSync(): void {
     throw new Error('touch-target: size class must consume token');
   }
 
+  if (TOUCH_TARGET_DENSE_UI_RISK_PATHS.length < 8) {
+    throw new Error('touch-target: dense-ui risk paths incomplete');
+  }
+
+  if (!TOUCH_TARGET_OWNER_PATHS.includes('product/surfaces/trade/chart/trade-chart-panel.tsx')) {
+    throw new Error('touch-target: chart panel must remain an owner path');
+  }
+
   const chapters = TOUCH_TARGET_REGRESSION_MATRIX.map((row) => row.chapter);
   if (new Set(chapters).size !== chapters.length) {
     throw new Error('touch-target: regression chapters must be unique');
   }
 
-  for (const required of ['earn', 'wallet', 'trade', 'sports', 'casino', 'auth', 'shell', 'admin'] as const) {
+  for (const required of [
+    'earn',
+    'wallet',
+    'trade',
+    'sports',
+    'casino',
+    'auth',
+    'shell',
+    'admin',
+  ] as const) {
     if (!chapters.includes(required)) {
       throw new Error(`touch-target: missing regression chapter ${required}`);
     }

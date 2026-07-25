@@ -1,4 +1,8 @@
 {
-  "recommendations": [],
+  "recommendations": [
+    "DavidAnson.vscode-markdownlint",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
+  ],
   "unwantedRecommendations": ["supabase.vscode-supabase-extension"]
 }

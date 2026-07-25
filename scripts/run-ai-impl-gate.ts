@@ -114,6 +114,7 @@ function main(): void {
   steps.push(
     { name: 'L1 typecheck', command: 'bun', args: ['run', 'typecheck'] },
     { name: 'L2 lint', command: 'bun', args: ['run', 'lint'] },
+    { name: 'L2 check:markdown', command: 'bun', args: ['run', 'check:markdown'] },
     { name: 'L1 check:i18n', command: 'bun', args: ['run', 'check:i18n'] },
     { name: 'L1 check:release', command: 'bun', args: ['run', 'check:release'] },
   );

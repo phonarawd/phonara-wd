@@ -130,7 +130,10 @@ export function KrwDepositPage() {
   const normalizedAmount = engine.amountKrw;
 
   return (
-    <div className="flex flex-col gap-ds-8 py-4 pb-28 md:py-6 md:pb-6" data-testid="krw-deposit-page">
+    <div
+      className="flex flex-col gap-ds-8 py-4 pb-28 md:py-6 md:pb-6"
+      data-testid="krw-deposit-page"
+    >
       <header className="space-y-3">
         <a
           href="/wallet/deposit"

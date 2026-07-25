@@ -115,10 +115,7 @@ describe('WalletPage', () => {
   it('links KYC CTA from compliance strip when withdrawal is not ready', () => {
     renderPage(makeEngine({ withdrawalReady: false, kycStatusKey: 'wallet.kyc.unverified' }));
 
-    expect(screen.getByTestId('wallet-compliance-kyc-cta')).toHaveAttribute(
-      'href',
-      '/account/kyc',
-    );
+    expect(screen.getByTestId('wallet-compliance-kyc-cta')).toHaveAttribute('href', '/account/kyc');
   });
 
   it('exposes locked amounts in collapsed hero summary', () => {

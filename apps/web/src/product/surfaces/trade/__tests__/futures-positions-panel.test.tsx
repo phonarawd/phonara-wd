@@ -81,10 +81,14 @@ function renderPanel(overrides: Partial<Parameters<typeof FuturesPositionsPanel>
 }
 
 describe('FuturesPositionsPanel', () => {
-  it('wires full close action in full variant', () => {
+  it('opens full close confirm dialog and submits close', () => {
     const { onClosePosition } = renderPanel();
 
     fireEvent.click(screen.getByTestId('futures-close-position-pos-open-1'));
+    expect(onClosePosition).not.toHaveBeenCalled();
+    expect(screen.getByText('confirm.futuresClose.title')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'confirm.proceed' }));
     expect(onClosePosition).toHaveBeenCalledWith('pos-open-1');
   });
 

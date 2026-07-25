@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { PAYOUT_TABLES } from '@phonara/game-engine';
 
 import {
@@ -327,10 +320,7 @@ export const PlinkoStage = forwardRef<CasinoStageHandle, PlinkoStageProps>(funct
                 className={cn(
                   'min-w-8 rounded px-1 py-0.5 text-center',
                   outcome?.bucket === i && 'bg-success/20 text-success font-semibold',
-                  settled &&
-                    outcome?.bucket === i &&
-                    !reducedMotion &&
-                    'ds-casino-reveal-in',
+                  settled && outcome?.bucket === i && !reducedMotion && 'ds-casino-reveal-in',
                 )}
               >
                 {m}

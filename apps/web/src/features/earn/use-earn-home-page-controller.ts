@@ -243,7 +243,7 @@ export function useEarnHomePageController(): EarnHomePageControllerView {
     nextAction,
     missionPreviews,
     entryCards: EARN_HOME_ENTRY_CARDS,
-    useAmbientTicker: proofMode !== 'live',
+    useAmbientTicker: proofMode === 'ambient',
     rewardTicketsIssuanceNoteKey: shouldEarnHomeShowRewardTicketsIssuanceNote()
       ? resolveEarnHomeRewardTicketsIssuanceNoteKey()
       : null,

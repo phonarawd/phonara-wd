@@ -91,10 +91,7 @@ afterEach(() => {
 describe('MomentumStage functional QA — combo meter settle (phase1d-momentum)', () => {
   it('shows dash result and idle phase before any bet', () => {
     wrap(<MomentumStage comboBefore={0} cashOut={false} />);
-    expect(screen.getByTestId('casino-momentum-stage')).toHaveAttribute(
-      'data-stage-phase',
-      'idle',
-    );
+    expect(screen.getByTestId('casino-momentum-stage')).toHaveAttribute('data-stage-phase', 'idle');
     expect(screen.getByTestId('casino-momentum-mult')).toHaveTextContent('—');
     expect(screen.getByTestId('casino-momentum-canvas-host')).toBeInTheDocument();
     expect(screen.getByTestId('casino-momentum-combo')).toHaveTextContent('0');
@@ -126,10 +123,7 @@ describe('MomentumStage functional QA — combo meter settle (phase1d-momentum)'
       await handle.current?.playOutcome(LOSE_OUTCOME);
     });
     expect(screen.getByTestId('casino-momentum-stage')).toHaveAttribute('data-won', 'false');
-    expect(screen.getByTestId('casino-momentum-stage')).toHaveAttribute(
-      'data-cashed-out',
-      'false',
-    );
+    expect(screen.getByTestId('casino-momentum-stage')).toHaveAttribute('data-cashed-out', 'false');
     expect(screen.getByTestId('casino-momentum-combo')).toHaveTextContent('0');
     expect(screen.queryByTestId('casino-momentum-live-cashout')).not.toBeInTheDocument();
     expect(screen.queryByTestId('casino-momentum-cashout')).not.toBeInTheDocument();
@@ -142,10 +136,7 @@ describe('MomentumStage functional QA — combo meter settle (phase1d-momentum)'
     await act(async () => {
       await handle.current?.playOutcome(CASHOUT_OUTCOME);
     });
-    expect(screen.getByTestId('casino-momentum-stage')).toHaveAttribute(
-      'data-cashed-out',
-      'true',
-    );
+    expect(screen.getByTestId('casino-momentum-stage')).toHaveAttribute('data-cashed-out', 'true');
     expect(screen.getByTestId('casino-momentum-stage')).toHaveAttribute(
       'data-prebet-cashout',
       'true',
@@ -161,10 +152,7 @@ describe('MomentumStage functional QA — combo meter settle (phase1d-momentum)'
     await act(async () => {
       await handle.current?.playOutcome({ won: true });
     });
-    expect(screen.getByTestId('casino-momentum-stage')).toHaveAttribute(
-      'data-stage-phase',
-      'idle',
-    );
+    expect(screen.getByTestId('casino-momentum-stage')).toHaveAttribute('data-stage-phase', 'idle');
     expect(screen.getByTestId('casino-momentum-stage')).not.toHaveAttribute('data-won');
     expect(screen.getByTestId('casino-momentum-mult')).toHaveTextContent('—');
   });
@@ -179,10 +167,7 @@ describe('MomentumStage functional QA — combo meter settle (phase1d-momentum)'
     act(() => {
       handle.current?.reset();
     });
-    expect(screen.getByTestId('casino-momentum-stage')).toHaveAttribute(
-      'data-stage-phase',
-      'idle',
-    );
+    expect(screen.getByTestId('casino-momentum-stage')).toHaveAttribute('data-stage-phase', 'idle');
     expect(screen.getByTestId('casino-momentum-stage')).not.toHaveAttribute('data-won');
     expect(screen.getByTestId('casino-momentum-mult')).toHaveTextContent('—');
     expect(screen.getByTestId('casino-momentum-combo')).toHaveTextContent('2');

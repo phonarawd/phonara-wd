@@ -24,12 +24,7 @@ function readProduct(relativePath: string): string {
 describe('earn-home-phase4-polish-display-contract', () => {
   it('keeps hub→missions→referral-tier→HI-QA part order and 4-tier viewports', () => {
     expect(() => assertEarnHomePhase4PolishContractSync()).not.toThrow();
-    expect(PHASE4_EARN_HOME_PART_ORDER).toEqual([
-      'home-hub',
-      'missions',
-      'referral-tier',
-      'hi-qa',
-    ]);
+    expect(PHASE4_EARN_HOME_PART_ORDER).toEqual(['home-hub', 'missions', 'referral-tier', 'hi-qa']);
     expect(PHASE4_EARN_HOME_VIEWPORT_WIDTHS).toEqual([390, 768, 1024, 2560]);
     expect(PHASE4_EARN_HOME_HI_QA_MATRIX.length).toBeGreaterThanOrEqual(6);
     expect(PHASE4_EARN_HOME_OWNER_PATHS.length).toBeGreaterThanOrEqual(6);
@@ -76,9 +71,7 @@ describe('earn-home-phase4-polish-display-contract', () => {
     expect(source).toContain('focus-visible:ring-2');
     expect(source).toContain('IconButton');
     expect(source).toContain('home-missions-detail-close');
-    expect(source).not.toMatch(
-      /home-missions-detail-close[\s\S]{0,120}className="[^"]*p-1/,
-    );
+    expect(source).not.toMatch(/home-missions-detail-close[\s\S]{0,120}className="[^"]*p-1/);
   });
 
   it('mission start CTAs use outline md buttonVariants on hub lanes', () => {

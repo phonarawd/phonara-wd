@@ -110,7 +110,9 @@ function toTanstackColumns<TData extends object>(
       header: () => rowActionsHeader ?? null,
       enableSorting: false,
       cell: ({ row }) => (
-        <div className="flex flex-wrap gap-2">{rowActions(row.original, row.index)}</div>
+        <div className="flex flex-nowrap items-center gap-2">
+          {rowActions(row.original, row.index)}
+        </div>
       ),
     });
   }
@@ -202,7 +204,7 @@ export function AdminTable<TData extends object>({
                     {header.isPlaceholder ? null : canSort ? (
                       <button
                         type="button"
-                        className="text-foreground-muted hover:text-foreground inline-flex items-center gap-1 font-medium"
+                        className="text-foreground-muted hover:text-foreground inline-flex min-h-(--ds-touch-target-min) items-center gap-1 font-medium"
                         onClick={header.column.getToggleSortingHandler()}
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}

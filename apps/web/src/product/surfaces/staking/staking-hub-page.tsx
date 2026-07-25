@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Crown, Lock } from 'lucide-react';
 
@@ -142,6 +142,13 @@ export function StakingHubPage() {
     refresh,
     selectedPool,
   } = engine;
+
+  const [unstakeTargetId, setUnstakeTargetId] = useState<string | null>(null);
+  const unstakeConfirmOpen = unstakeTargetId !== null;
+  const unstakeTarget =
+    unstakeTargetId == null
+      ? null
+      : (activePositions.find((row) => row.id === unstakeTargetId) ?? null);
 
   const locale = typeof document !== 'undefined' ? document.documentElement.lang || 'ko' : 'ko';
   const tierColorVar = resolveTierCssVar(currentTier);
@@ -686,7 +693,7 @@ export function StakingHubPage() {
                       size="sm"
                       loading={actionBusy}
                       disabled={row.locked || positionActionsDisabled}
-                      onClick={() => void unstakePosition(row.id)}
+                      onClick={() => setUnstakeTargetId(row.id)}
                       data-testid={`staking-unstake-${row.id}`}
                     >
                       {t('staking.unstake')}
@@ -721,6 +728,38 @@ export function StakingHubPage() {
         confirmLabel={t('confirm.proceed')}
         onConfirm={() => void confirmStake()}
         loading={stakeBusy}
+      />
+
+      <ConfirmDialog
+        open={unstakeConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open && !actionBusy) setUnstakeTargetId(null);
+        }}
+        title={t('confirm.unstake.title')}
+        description={t('confirm.unstakeNote')}
+        summary={
+          unstakeTarget ? (
+            <div className="flex flex-col gap-2 text-sm">
+              <p className="text-foreground m-0">
+                {unstakeTarget.poolLabel} · {t(unstakeTarget.termLabelKey)}
+              </p>
+              <MoneyDisplay
+                amount={unstakeTarget.principalDisplay}
+                currency={unstakeTarget.stakeCurrency}
+              />
+            </div>
+          ) : null
+        }
+        confirmLabel={t('confirm.proceed')}
+        onConfirm={() => {
+          if (!unstakeTargetId) return;
+          void (async () => {
+            await unstakePosition(unstakeTargetId);
+            setUnstakeTargetId(null);
+          })();
+        }}
+        loading={actionBusy}
+        destructive
       />
     </div>
   );

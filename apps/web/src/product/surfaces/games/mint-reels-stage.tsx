@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import {
   mintReelsSpinEase,
@@ -142,12 +135,7 @@ export const MintReelsStage = forwardRef<CasinoStageHandle, MintReelsStageProps>
         const scene = sceneRef.current;
         const host = hostRef.current;
         if (scene && host) {
-          scene.paint(
-            host.clientWidth || 320,
-            host.clientHeight || 240,
-            0,
-            winLine,
-          );
+          scene.paint(host.clientWidth || 320, host.clientHeight || 240, 0, winLine);
         }
         resolveRef.current?.();
         resolveRef.current = null;

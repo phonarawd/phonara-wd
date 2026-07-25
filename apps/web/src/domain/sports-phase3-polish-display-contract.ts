@@ -33,7 +33,7 @@ export type Phase3SportsPart = (typeof PHASE3_SPORTS_PART_ORDER)[number];
 export const PHASE3_SPORTS_OWNER_PATHS = [
   'product/surfaces/sports/sports-page.tsx',
   'product/surfaces/sports/sports-bet-slip-panel.tsx',
-  'product/surfaces/sports/sports-vip-stub-panel.tsx',
+  'product/surfaces/sports/sports-vip-panel.tsx',
   'product/tokens/layout.css',
 ] as const;
 

@@ -53,7 +53,7 @@ async function fetchVipTier(): Promise<string> {
  * `/sports/vip` — Platinum+ eligibility + shared fixture browse (E5).
  * No dedicated VIP markets RPC — stake caps are Option B server-side.
  */
-export function SportsVipStubPanel({
+export function SportsVipPanel({
   t,
   fixtures,
   fixturesLoading,
@@ -76,7 +76,7 @@ export function SportsVipStubPanel({
   return (
     <div
       className="flex flex-col gap-4"
-      data-testid="sports-vip-stub"
+      data-testid="sports-vip"
       data-engine-todo={SPORTS_VIP_ENGINE_TODO}
       data-ui-unlock-todo={SPORTS_VIP_UI_UNLOCK_TODO}
       data-vip-min-tier={SPORTS_VIP_MIN_TIER}

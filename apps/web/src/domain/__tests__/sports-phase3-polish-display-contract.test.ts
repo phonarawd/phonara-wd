@@ -51,7 +51,7 @@ describe('sports-phase3-polish-display-contract', () => {
     expect(vip?.mitigatedBy).toBe('live');
     expect(vip?.route).toBe('/sports/vip');
 
-    const vipPanel = readProduct('surfaces/sports/sports-vip-stub-panel.tsx');
+    const vipPanel = readProduct('surfaces/sports/sports-vip-panel.tsx');
     expect(vipPanel).toContain('sports-vip-eligibility-strip');
     expect(vipPanel).toContain('canBrowseSportsVipMarkets');
     expect(vipPanel).toContain('isSportsVipEligibleTier');
@@ -97,8 +97,6 @@ describe('sports-phase3-polish-display-contract', () => {
   it('sports hub root guards horizontal overflow', () => {
     const css = readProduct('tokens/layout.css');
     expect(css).toMatch(/\.ds-sports-hub\s*\{[^}]*overflow-x:\s*hidden/s);
-    expect(readDomain('sports-phase3-polish-display-contract.ts')).toContain(
-      'overflow-x hidden',
-    );
+    expect(readDomain('sports-phase3-polish-display-contract.ts')).toContain('overflow-x hidden');
   });
 });

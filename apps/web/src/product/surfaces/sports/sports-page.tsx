@@ -16,12 +16,7 @@ import {
 } from '@/domain/sports-rules-and-vip-display-contract';
 import { useSportsPageController } from '@/features/sports/use-sports-page-controller';
 import { Button } from '@/product/primitives/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/product/primitives/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/product/primitives/sheet';
 import { Skeleton } from '@/product/primitives/skeleton';
 import { cn } from '@/product/primitives/lib/cn';
 
@@ -31,7 +26,7 @@ import { SportsFixtureMarketsPanel } from './sports-fixture-markets-panel';
 import { SportsLiveInPlayBanner } from './sports-live-inplay-banner';
 import { SportsMyBetsPanel } from './sports-my-bets-panel';
 import { SportsRulesPanel } from './sports-rules-panel';
-import { SportsVipStubPanel } from './sports-vip-stub-panel';
+import { SportsVipPanel } from './sports-vip-panel';
 
 export type SportsPageProps = {
   mode?: SportsPageMode;
@@ -355,7 +350,7 @@ export function SportsPage({ mode = 'home', fixtureId }: SportsPageProps) {
         ) : null}
         {showRules ? <SportsRulesPanel t={t} /> : null}
         {showVip ? (
-          <SportsVipStubPanel
+          <SportsVipPanel
             t={t}
             fixtures={engine.fixtures}
             fixturesLoading={engine.fixturesLoading}

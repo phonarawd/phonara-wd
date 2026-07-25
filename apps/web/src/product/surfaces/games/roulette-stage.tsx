@@ -133,11 +133,14 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
     // that calls setWheelDeg/settle on an unmounted component.
     useEffect(() => clearRaf, [clearRaf]);
 
-    const pulseChip = useCallback((type: RouletteBetType, value: number | null) => {
-      if (reducedMotion) return;
-      const key = legKey(type, value);
-      setChipPulse((prev) => ({ ...prev, [key]: (prev[key] ?? 0) + 1 }));
-    }, [reducedMotion]);
+    const pulseChip = useCallback(
+      (type: RouletteBetType, value: number | null) => {
+        if (reducedMotion) return;
+        const key = legKey(type, value);
+        setChipPulse((prev) => ({ ...prev, [key]: (prev[key] ?? 0) + 1 }));
+      },
+      [reducedMotion],
+    );
 
     const settle = useCallback(
       (parsed: ParsedRouletteOutcome, finalWheel: number, finalBall: number) => {
@@ -167,9 +170,7 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
         const startWheel = wheelBaseRef.current;
         // Land pocket under pointer: rotate so target ends at 0 (top).
         const endWheel =
-          startWheel +
-          360 * 5 +
-          ((360 - targetPocket - (startWheel % 360) + 360) % 360);
+          startWheel + 360 * 5 + ((360 - targetPocket - (startWheel % 360) + 360) % 360);
         const startBall = ballBaseRef.current;
         const endBall = startBall - 360 * 7 - targetPocket;
 

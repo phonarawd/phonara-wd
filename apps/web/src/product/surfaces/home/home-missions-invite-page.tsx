@@ -165,10 +165,7 @@ export function HomeMissionsInvitePage() {
                   <div className="mt-2 px-1">
                     <Link
                       to={mission.ctaRoute}
-                      className={cn(
-                        buttonVariants({ variant: 'outline', size: 'md' }),
-                        'w-full',
-                      )}
+                      className={cn(buttonVariants({ variant: 'outline', size: 'md' }), 'w-full')}
                       data-testid={`home-missions-invite-link-${mission.id}`}
                     >
                       {t('common.cta.start')}

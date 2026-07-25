@@ -72,6 +72,31 @@ describe('casino conservation (12 games)', () => {
     });
   }
 
+  it('roulette non-uniform stakeWeight conserves stake = payout + houseEdgeLeg', async () => {
+    const definition = getGame('roulette');
+    const selection = {
+      bets: [
+        { type: 'straight' as const, value: 7, stakeWeight: 1 },
+        { type: 'red' as const, value: null, stakeWeight: 3 },
+        { type: 'even' as const, value: null, stakeWeight: 2 },
+      ],
+    };
+
+    for (let seedCase = 0; seedCase < 40; seedCase += 1) {
+      const serverSeed = `conservation:roulette:uneven:${seedCase}`;
+      const clientSeed = `client_${seedCase % 17}`;
+      const nonce = (seedCase % 251) + 1;
+      const floats = await floatStream(serverSeed, clientSeed, nonce, definition.floatCount);
+      const result = definition.resultFromFloats(floats, selection);
+
+      for (const stakeStr of STAKE_VECTORS) {
+        const stake = new Decimal(stakeStr);
+        const { payout, houseEdgeLeg } = definition.settle(stake, selection, result);
+        assertStakeConserved(stake, payout, houseEdgeLeg);
+      }
+    }
+  });
+
   it('high multiplier wins keep conservation with negative houseEdgeLeg', async () => {
     const highMultCases: Array<{
       code: GameCode;

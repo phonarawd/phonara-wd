@@ -6,6 +6,8 @@ export type AdminRbacAction =
   | 'queues.withdraw.approve'
   | 'queues.withdraw.reject'
   | 'queues.kyc.review'
+  | 'queues.str.manage'
+  | 'queues.risk.clear'
   | 'operations.kill_switch'
   | 'users.moderate'
   | 'users.wallet_adjust'
@@ -49,6 +51,9 @@ const PERMISSIONS: Record<AdminRbacAction, readonly AdminRbacRole[]> = {
   'queues.withdraw.approve': ['owner', 'finance', 'support'],
   'queues.withdraw.reject': ['owner', 'finance', 'support'],
   'queues.kyc.review': ['owner', 'risk', 'support'],
+  // STR / risk flags — risk desk (ADMIN_TEAM_RBAC_CANON §2: owner · risk)
+  'queues.str.manage': ['owner', 'risk'],
+  'queues.risk.clear': ['owner', 'risk'],
   'operations.kill_switch': ['owner', 'finance', 'risk', 'operator'],
   'users.moderate': ['owner', 'risk', 'support'],
   'users.wallet_adjust': ['owner', 'finance'],

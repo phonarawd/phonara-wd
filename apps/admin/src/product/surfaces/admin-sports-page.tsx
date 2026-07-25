@@ -168,8 +168,7 @@ export function AdminSportsPage() {
     setActionLoading(true);
     try {
       if (actionTarget.kind === 'suspend' && actionTarget.fixtureId) {
-        suspendMarket(actionTarget.fixtureId, reason);
-        return true;
+        return await suspendMarket(actionTarget.fixtureId, reason);
       }
       if (actionTarget.kind === 'resume' && actionTarget.fixtureId) {
         return await unsuspendMarket(actionTarget.fixtureId, reason);
@@ -178,12 +177,10 @@ export function AdminSportsPage() {
         return await voidFixtureMarket(actionTarget.fixtureId, reason);
       }
       if (actionTarget.kind === 'enableFeature') {
-        setFeatureEnabled(true, reason);
-        return true;
+        return await setFeatureEnabled(true, reason);
       }
       if (actionTarget.kind === 'disableFeature') {
-        setFeatureEnabled(false, reason);
-        return true;
+        return await setFeatureEnabled(false, reason);
       }
       if (actionTarget.kind === 'setRiskTier' && actionTarget.riskUserId && actionTarget.riskTier) {
         return await setSportsRiskTier(actionTarget.riskUserId, actionTarget.riskTier, reason);

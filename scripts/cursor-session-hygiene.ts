@@ -198,6 +198,7 @@ switch (mode) {
       maybeAutoCleanCursorLogs();
       maybeRenderFix();
       run('sync-excludes', 'bun', ['run', 'cursor:sync-excludes']);
+      run('plans-markdownlint', 'bun', ['run', 'cursor:ensure-plans-markdownlint']);
       run('git-hooks', 'bun', ['run', 'git:hooks:install']);
       stopIdleDockerIfSafe({ quiet: true });
       break;
@@ -208,6 +209,7 @@ switch (mode) {
     maybeAutoCleanCursorLogs();
     maybeRenderFix();
     run('sync-excludes', 'bun', ['run', 'cursor:sync-excludes']);
+    run('plans-markdownlint', 'bun', ['run', 'cursor:ensure-plans-markdownlint']);
     // stack:ensure는 E2E/SQL pretest에서만 — sessionStart마다 Docker 깨우면 저사양 PC 렉 유발
     // idle Docker OFF만 허용 — Supabase/E2E 포트 busy면 skip (84-docker-on-demand)
     stopIdleDockerIfSafe({ quiet: true });

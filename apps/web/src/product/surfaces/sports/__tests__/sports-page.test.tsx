@@ -386,7 +386,7 @@ describe('SportsPage', () => {
       </I18nProvider>,
     );
 
-    expect(screen.getByTestId('sports-vip-stub')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-vip')).toBeInTheDocument();
     expect(screen.getByTestId('sports-vip-eligibility-strip')).toBeInTheDocument();
     expect(screen.getByTestId('sports-vip-board')).toBeInTheDocument();
     expect(screen.queryByTestId('sports-vip-defer')).not.toBeInTheDocument();

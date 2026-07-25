@@ -7,10 +7,10 @@
 
 ## 포함
 
-| 문서 | 내용 |
-| --- | --- |
-| [SCREENSHOT_INDEX.md](./SCREENSHOT_INDEX.md) | 4-viewport(390/768/1024/2560) primary-route PNG 인벤토리 · `/screenshots` |
-| [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) | Phase 6 Release Checklist 판정 + 게이트 증거 |
+| 문서                                           | 내용                                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------------------- |
+| [SCREENSHOT_INDEX.md](./SCREENSHOT_INDEX.md)   | 4-viewport(390/768/1024/2560) primary-route PNG 인벤토리 · `/screenshots` |
+| [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) | Phase 6 Release Checklist 판정 + 게이트 증거                              |
 
 ## PNG 루트
 
@@ -21,11 +21,11 @@ Auth 라우트 768 스킵은 CDP 스크립트 의도(`vp.w===768` continue) — 
 
 ## Phase 6 코드 마감 (본 세션)
 
-| 항목 | 결과 |
-| --- | --- |
-| `LAUNCH_GATES.tierGuide` orphan 제거 | **PASS** — `TierGuidePage`/`/tier` 계열 **미터치** |
-| `check:design-tokens --strict` | **PASS** · spacing-ratchet advisory **0** (`gap-6`→`gap-ds-8` ×111) |
-| Engine / RPC 시그니처 | **0** touch |
+| 항목                                 | 결과                                                                |
+| ------------------------------------ | ------------------------------------------------------------------- |
+| `LAUNCH_GATES.tierGuide` orphan 제거 | **PASS** — `TierGuidePage`/`/tier` 계열 **미터치**                  |
+| `check:design-tokens --strict`       | **PASS** · spacing-ratchet advisory **0** (`gap-6`→`gap-ds-8` ×111) |
+| Engine / RPC 시그니처                | **0** touch                                                         |
 
 ## Operator 시각 사인오프
 

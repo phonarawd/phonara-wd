@@ -74,9 +74,7 @@ describe('RouletteStage functional QA — chips, bet types, spin settle (phase1e
     wrap(<RouletteStage bets={[]} onBetsChange={onBetsChange} />);
     fireEvent.click(screen.getByTestId('casino-roulette-chip-5'));
     fireEvent.click(screen.getByTestId('casino-roulette-pocket-17'));
-    expect(onBetsChange).toHaveBeenCalledWith([
-      { type: 'straight', value: 17, stakeWeight: 5 },
-    ]);
+    expect(onBetsChange).toHaveBeenCalledWith([{ type: 'straight', value: 17, stakeWeight: 5 }]);
   });
 
   it('places every outside bet type from the rack', () => {
@@ -85,9 +83,7 @@ describe('RouletteStage functional QA — chips, bet types, spin settle (phase1e
     for (const type of CASINO_ROULETTE_OUTSIDE_TYPES) {
       onBetsChange.mockClear();
       fireEvent.click(screen.getByTestId(`casino-roulette-outside-${type}`));
-      expect(onBetsChange).toHaveBeenCalledWith([
-        { type, value: null, stakeWeight: 1 },
-      ]);
+      expect(onBetsChange).toHaveBeenCalledWith([{ type, value: null, stakeWeight: 1 }]);
     }
   });
 
@@ -99,9 +95,7 @@ describe('RouletteStage functional QA — chips, bet types, spin settle (phase1e
     fireEvent.click(screen.getByTestId('casino-roulette-pocket-16'));
     expect(screen.getByTestId('casino-roulette-split-hint')).toBeInTheDocument();
     fireEvent.click(screen.getByTestId('casino-roulette-pocket-17'));
-    expect(onBetsChange).toHaveBeenCalledWith([
-      { type: 'split', value: 16, stakeWeight: 1 },
-    ]);
+    expect(onBetsChange).toHaveBeenCalledWith([{ type: 'split', value: 16, stakeWeight: 1 }]);
   });
 
   it('a decisive win settles winning number and multiplier from the RPC result', async () => {
@@ -213,9 +207,7 @@ describe('RouletteStage functional QA — chips, bet types, spin settle (phase1e
       </I18nProvider>,
     );
     fireEvent.click(screen.getByTestId('casino-roulette-repeat'));
-    expect(onBetsChange).toHaveBeenCalledWith([
-      { type: 'straight', value: 7, stakeWeight: 1 },
-    ]);
+    expect(onBetsChange).toHaveBeenCalledWith([{ type: 'straight', value: 7, stakeWeight: 1 }]);
   });
 });
 
@@ -388,8 +380,8 @@ describe('RouletteStage perf check — wheel rAF leak + transform contract (phas
 
   it('source ratchet: wheel disc/ball use transform; spin uses rAF + ease (no layout props)', () => {
     const src = readRepo('apps/web/src/product/surfaces/games/roulette-stage.tsx');
-    expect(src).toContain("transform: `rotate(${wheelDeg}deg)`");
-    expect(src).toContain("transform: `rotate(${ballDeg}deg)`");
+    expect(src).toContain('transform: `rotate(${wheelDeg}deg)`');
+    expect(src).toContain('transform: `rotate(${ballDeg}deg)`');
     expect(src).toContain('requestAnimationFrame(tick)');
     expect(src).toContain('rouletteSpinEase');
     expect(src).toContain('useEffect(() => clearRaf, [clearRaf])');

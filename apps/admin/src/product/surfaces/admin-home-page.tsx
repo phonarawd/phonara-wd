@@ -4,6 +4,7 @@ import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { resolveOpsAlert } from '@/domain/ops';
 import { useAdminAuditAlerts } from '@/hooks/admin/useAdminAuditAlerts';
 import type { AdminAlertRow } from '@/hooks/admin/useAdminAuditAlerts';
+import { useAdminOperatorRbac } from '@/hooks/admin/useAdminOperatorRbac';
 import { useAdminOverview } from '@/hooks/admin/useAdminOverview';
 import type { HealthStatus } from '@/hooks/admin/useAdminOverview';
 import {
@@ -24,6 +25,7 @@ import {
   healthStatusClass,
   type AdminAlertActionMode,
 } from '@/product/surfaces/admin-alert-action-dialog';
+import { ADMIN_RBAC_DENIED_KEY, adminRbacActionProps } from '@/product/surfaces/admin-rbac-action';
 
 function formatWhen(iso: string | null | undefined, locale: string): string {
   if (!iso) return '—';
@@ -53,6 +55,9 @@ function openAlerts(alerts: AdminAlertRow[]): AdminAlertRow[] {
 export function AdminHomePage() {
   const t = useT();
   const healthSectionRef = useRef<HTMLDivElement>(null);
+  const { can } = useAdminOperatorRbac();
+  const canManageAlerts = can('alerts.manage');
+  const rbacDenied = t(ADMIN_RBAC_DENIED_KEY);
   const { dashboard, health, isLoading, isFetching, unresolvedAlerts, refreshAll, error } =
     useAdminOverview();
   const { alerts, confirmAckAlert } = useAdminAuditAlerts();
@@ -78,13 +83,14 @@ export function AdminHomePage() {
   const lastUpdated = dashboard?.fetchedAt ?? health?.lastUpdatedAt;
 
   const openDialog = (mode: AdminAlertActionMode, alert: AdminAlertRow) => {
+    if (!canManageAlerts) return;
     setDialogMode(mode);
     setSelectedAlert(alert);
     setDialogOpen(true);
   };
 
   const handleAlertSubmit = async (reason: string): Promise<boolean> => {
-    if (!selectedAlert) return false;
+    if (!selectedAlert || !canManageAlerts) return false;
     setActionLoading(true);
     try {
       if (dialogMode === 'ack') {
@@ -272,11 +278,21 @@ export function AdminHomePage() {
           rowActions={(alert) => (
             <>
               {alert.status === 'open' ? (
-                <Button variant="outline" size="sm" onClick={() => openDialog('ack', alert)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  {...adminRbacActionProps(canManageAlerts, rbacDenied)}
+                  onClick={() => openDialog('ack', alert)}
+                >
                   {t('admin.overview.action.alertAck')}
                 </Button>
               ) : null}
-              <Button variant="primary" size="sm" onClick={() => openDialog('resolve', alert)}>
+              <Button
+                variant="primary"
+                size="sm"
+                {...adminRbacActionProps(canManageAlerts, rbacDenied)}
+                onClick={() => openDialog('resolve', alert)}
+              >
                 {t('admin.overview.action.alertResolve')}
               </Button>
             </>

@@ -84,6 +84,11 @@ function buildTodoSyncSection(
     return `| \`${todo.id}\` | ${statusCell(todo)} | — | ${evidence} |`;
   });
 
+  const nextLabel =
+    summary.firstPendingId != null && summary.firstPendingIndex != null
+      ? `\`${summary.firstPendingId}\` (#${summary.firstPendingIndex})`
+      : 'none (pending 0)';
+
   return [
     `## §AI Todo Sync (Phase R · YAML 정본 미러 · completed **${summary.completed}**/${summary.ids} · pending **${summary.pending}** · cancelled **${summary.cancelled}** · 48차)`,
     '',
@@ -93,7 +98,7 @@ function buildTodoSyncSection(
     '|----|------|--------|------|',
     ...lines,
     '',
-    `§AI Todo Sync · YAML canonical **${summary.completed}/${summary.ids} completed** · **NEXT:** \`${summary.firstPendingId}\` (#${summary.firstPendingIndex}) · **preflight:** [\`ACTIVE_WORK_SSOT.md\`](SSOT/ACTIVE_WORK_SSOT.md)`,
+    `§AI Todo Sync · YAML canonical **${summary.completed}/${summary.ids} completed** · **NEXT:** ${nextLabel} · **preflight:** [\`ACTIVE_WORK_SSOT.md\`](SSOT/ACTIVE_WORK_SSOT.md)`,
   ].join('\n');
 }
 
@@ -157,10 +162,15 @@ function syncPlanBodySection20(
 }
 
 function syncAppsWebAgents(text: string, summary: ReturnType<typeof summarizePlanTodos>): string {
+  // pending 0 → firstPendingId/Index are null; never stringify as `null` / (#null).
+  const nextLabel =
+    summary.firstPendingId != null && summary.firstPendingIndex != null
+      ? `\`${summary.firstPendingId}\` (#${summary.firstPendingIndex})`
+      : 'none (pending 0)';
   return text
     .replace(
       /> \*\*Phase R:\*\* Presentation rebuild in progress —[^\n]+/,
-      `> **Phase R:** Presentation rebuild in progress — [\`REBUILD_PLAN_v1.md\`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** \`${summary.firstPendingId}\` (#${summary.firstPendingIndex}) · preflight: ACTIVE_WORK_SSOT.`,
+      `> **Phase R:** Presentation rebuild in progress — [\`REBUILD_PLAN_v1.md\`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** ${nextLabel} · preflight: ACTIVE_WORK_SSOT.`,
     )
     .replace(
       /Plan \*\*\d+ ids\*\* · completed \*\*\d+\*\*( · pending \*\*\d+\*\*)? \(\d+차\)/,

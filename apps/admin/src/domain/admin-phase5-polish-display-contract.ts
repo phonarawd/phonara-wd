@@ -118,11 +118,7 @@ export const PHASE5_NAV_TOKEN_MARKERS = [
 ] as const;
 
 /** Mobile quick nav must include role-primary desks (still RBAC-filtered). */
-export const PHASE5_MOBILE_QUICK_NAV_ROUTES = [
-  '/support',
-  '/risk',
-  '/team',
-] as const;
+export const PHASE5_MOBILE_QUICK_NAV_ROUTES = ['/support', '/risk', '/team'] as const;
 
 export function assertAdminPhase5PolishContractSync(): void {
   assertP13AdminCanonicalDocsSync();
@@ -144,7 +140,10 @@ export function assertAdminPhase5PolishContractSync(): void {
     throw new Error('phase5-admin: HI-QA ids must be unique');
   }
 
-  if (!PHASE5_ADMIN_VIEWPORT_WIDTHS.includes(1024) || !PHASE5_ADMIN_VIEWPORT_WIDTHS.includes(2560)) {
+  if (
+    !PHASE5_ADMIN_VIEWPORT_WIDTHS.includes(1024) ||
+    !PHASE5_ADMIN_VIEWPORT_WIDTHS.includes(2560)
+  ) {
     throw new Error('phase5-admin: desktop 1024/2560 evidence widths required');
   }
 

@@ -112,13 +112,13 @@ export const PHASE4_EARN_HOME_THEMES = ['light', 'dark'] as const;
 export const PHASE4_SIGNATURE_FLOW_MARKERS = [
   'earn-home-signature-flow',
   'buttonVariants',
-  'variant: \'outline\'',
-  'size: \'sm\'',
+  "variant: 'outline'",
+  "size: 'sm'",
 ] as const;
 
 /** Mission start CTAs must use buttonVariants (not bare underline text). */
 export const PHASE4_MISSION_START_CTA_MARKERS = [
-  'buttonVariants({ variant: \'outline\', size: \'md\' })',
+  "buttonVariants({ variant: 'outline', size: 'md' })",
   'home-mission-link-',
 ] as const;
 

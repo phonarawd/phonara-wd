@@ -1,6 +1,6 @@
 # markdownlint-cli2 — first-party docs only (Problems panel parity)
 globs:
-  - "**/*.md"
+  - '**/*.md'
 config:
   # Shared with .markdownlint.json (VS Code Problems panel).
   # Wide Korean tables / audit TOC fragments / intentional H1 reuse → off.
@@ -13,28 +13,33 @@ config:
   MD033: false
   MD041:
     front_matter_title: "^\\s*name\\s*[:=]"
+  # Prettier markdown may normalize * vs _ / fence markers — do not fight it.
+  MD048: false
+  MD049: false
   MD051: false
   MD055: false
   MD056: false
   MD060: false
 ignores:
-  - "**/node_modules/**"
-  - "**/dist/**"
-  - "**/.git/**"
-  - "**/.bun/**"
-  - "**/coverage/**"
-  - "**/test-results/**"
-  - "**/playwright-report/**"
-  - "**/docs_archive/**"
-  - "**/archive/**"
-  - "**/docs/archive/**"
-  - "**/.tmp/**"
-  - "**/.tmp-*/**"
-  - ".tmp-*.md"
-  - "scratch-*.md"
-  - "**/gate-manifest/**"
-  - "**/_audit/**"
-  - "**/backups/**"
-  - "**/engine-dump/**"
-  - "**/screenshots/**"
-  - "**/tests/visual/**"
+  - '**/node_modules/**'
+  - '**/dist/**'
+  - '**/.git/**'
+  - '**/.bun/**'
+  - '**/coverage/**'
+  - '**/test-results/**'
+  - '**/playwright-report/**'
+  - '**/docs_archive/**'
+  - '**/archive/**'
+  - '**/docs/archive/**'
+  - '**/.tmp/**'
+  - '**/.tmp-*/**'
+  - '.tmp-*.md'
+  - 'scratch-*.md'
+  # Cursor Plan UI files (repo-local mirror or accidental open) — not product docs
+  - '**/*.plan.md'
+  - '**/gate-manifest/**'
+  - '**/_audit/**'
+  - '**/backups/**'
+  - '**/engine-dump/**'
+  - '**/screenshots/**'
+  - '**/tests/visual/**'

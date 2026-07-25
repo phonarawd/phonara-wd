@@ -10,6 +10,8 @@ import { plinkoDefinition, plinkoRtp, PAYOUT_TABLES } from './plinko';
 import { minesDefinition } from './mines';
 import { hiloDefinition, HILO_MAX_GUESSES } from './hilo';
 import { crashDefinition } from './crash';
+import { diceDefinition } from './dice';
+import { limboDefinition } from './limbo';
 
 // Register side effects
 import './crash';
@@ -166,5 +168,33 @@ describe('Crash one-shot (Phase 4)', () => {
     const stake = new Decimal('10');
     const { payout } = crashDefinition.settle(stake, { autoCashout: '2.00' }, result);
     expect(payout.toFixed(2)).toBe('20.00');
+  });
+});
+
+describe('Dice / Limbo target schema', () => {
+  it('dice rejects malformed or out-of-range targets', () => {
+    expect(diceDefinition.betSchema.safeParse({ target: '50.00', direction: 'over' }).success).toBe(
+      true,
+    );
+    expect(
+      diceDefinition.betSchema.safeParse({ target: '99.99', direction: 'under' }).success,
+    ).toBe(true);
+    expect(
+      diceDefinition.betSchema.safeParse({ target: '50.001', direction: 'over' }).success,
+    ).toBe(false);
+    expect(diceDefinition.betSchema.safeParse({ target: '100', direction: 'over' }).success).toBe(
+      false,
+    );
+    expect(diceDefinition.betSchema.safeParse({ target: '-1', direction: 'under' }).success).toBe(
+      false,
+    );
+  });
+
+  it('limbo rejects malformed or out-of-range targets', () => {
+    expect(limboDefinition.betSchema.safeParse({ target: '2.00' }).success).toBe(true);
+    expect(limboDefinition.betSchema.safeParse({ target: '1.01' }).success).toBe(true);
+    expect(limboDefinition.betSchema.safeParse({ target: '1' }).success).toBe(false);
+    expect(limboDefinition.betSchema.safeParse({ target: '1.001' }).success).toBe(false);
+    expect(limboDefinition.betSchema.safeParse({ target: '1000000.01' }).success).toBe(false);
   });
 });

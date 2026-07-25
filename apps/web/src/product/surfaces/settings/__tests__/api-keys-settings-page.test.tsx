@@ -83,6 +83,14 @@ describe('ApiKeysSettingsPage', () => {
     expect(screen.getByTestId('settings-api-keys-back')).toHaveAttribute('href', '/settings');
     expect(screen.getByTestId('settings-api-keys-empty')).toBeInTheDocument();
     expect(screen.getByTestId('settings-api-keys-create')).not.toBeDisabled();
+    expect(screen.getByTestId('settings-api-keys-create')).not.toHaveAttribute('title');
+  });
+
+  it('surfaces create disabled reason as title when manage is locked', () => {
+    renderPage(makeEngine({ canManageKeys: false }));
+    const create = screen.getByTestId('settings-api-keys-create');
+    expect(create).toBeDisabled();
+    expect(create).toHaveAttribute('title', 'settings.apiKeys.create.disabledHint');
   });
 
   it('shows secret once card after create', () => {

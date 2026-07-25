@@ -1,0 +1,12 @@
+{
+  // Cursor Plan files (%USERPROFILE%\.cursor\plans\*.plan.md) are outside the
+  // PHONARA git repo. They use YAML frontmatter + dense AI prose and must NOT
+  // be linted by vscode-markdownlint (Problems panel) or markdownlint-cli2.
+  // PHONARA first-party docs are gated by repo .markdownlint-cli2.yaml only.
+  // Synced by: bun run cursor:ensure-plans-markdownlint
+  "globs": [],
+  "ignores": ["**/*"],
+  "config": {
+    "default": false,
+  },
+}

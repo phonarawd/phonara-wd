@@ -600,7 +600,9 @@ describe('HiloStage perf check (phase1c-hilo)', () => {
   it('unmounting mid-flip clears the pending recursive timer instead of leaking it', () => {
     const clearSpy = vi.spyOn(window, 'clearTimeout');
     const handle = createRef<CasinoStageHandle>();
-    const { unmount } = wrap(<HiloStage ref={handle} startCard={7} guesses={['higher', 'higher']} />);
+    const { unmount } = wrap(
+      <HiloStage ref={handle} startCard={7} guesses={['higher', 'higher']} />,
+    );
 
     act(() => {
       void handle.current?.playOutcome({

@@ -15,12 +15,7 @@ export const PHASE2_TRADE_WALLET_TODO = 'phase2-trade-wallet' as const;
 export const RESUME_PHASE2_TRADE_WALLET_TODO = 'resume-phase2-trade-wallet' as const;
 
 /** Spot → Futures → Wallet → HI-QA execution order (non-waivable). */
-export const PHASE2_TRADE_WALLET_PART_ORDER = [
-  'spot',
-  'futures',
-  'wallet',
-  'hi-qa',
-] as const;
+export const PHASE2_TRADE_WALLET_PART_ORDER = ['spot', 'futures', 'wallet', 'hi-qa'] as const;
 
 export type Phase2TradeWalletPart = (typeof PHASE2_TRADE_WALLET_PART_ORDER)[number];
 
@@ -109,8 +104,7 @@ export const PHASE2_TRADE_WALLET_HI_QA_MATRIX = [
   },
 ] as const;
 
-export type Phase2TradeWalletHiQaId =
-  (typeof PHASE2_TRADE_WALLET_HI_QA_MATRIX)[number]['id'];
+export type Phase2TradeWalletHiQaId = (typeof PHASE2_TRADE_WALLET_HI_QA_MATRIX)[number]['id'];
 
 /** Viewport smoke widths — canonical 4-tier (do not extend with 3440+). */
 export const PHASE2_TRADE_WALLET_VIEWPORT_WIDTHS = [390, 768, 1024, 2560] as const;
