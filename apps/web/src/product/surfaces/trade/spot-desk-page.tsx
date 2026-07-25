@@ -328,7 +328,13 @@ export function SpotDeskPage() {
           testId="spot-desk-tablet-layout"
           t={t}
           chart={tradeChartPanel}
-          ticket={<SpotOrderTicket wire={wire} className={TRADE_DESK_TICKET_SLOT_CLASS} />}
+          ticket={
+            <SpotOrderTicket
+              wire={wire}
+              primarySubmit="external"
+              className={TRADE_DESK_TICKET_SLOT_CLASS}
+            />
+          }
           trade={
             <TradeDeskMobileTradeStack
               t={t}
@@ -347,7 +353,12 @@ export function SpotDeskPage() {
                     bookDisplaySource={wire.bookDisplaySource}
                     className="min-h-[280px]"
                   />
-                  <TradeRecentTradesRail symbol={marketSymbol} t={t} locale={locale} />
+                  <TradeRecentTradesRail
+                    symbol={marketSymbol}
+                    t={t}
+                    locale={locale}
+                    className="max-h-[200px]"
+                  />
                 </div>
               }
               stickyCta={<SpotMobileStickyCta wire={wire} />}
@@ -403,7 +414,12 @@ export function SpotDeskPage() {
                     bookDisplaySource={wire.bookDisplaySource}
                     className="min-h-[280px]"
                   />
-                  <TradeRecentTradesRail symbol={marketSymbol} t={t} locale={locale} />
+                  <TradeRecentTradesRail
+                    symbol={marketSymbol}
+                    t={t}
+                    locale={locale}
+                    className="max-h-[200px]"
+                  />
                 </div>
               }
               stickyCta={<SpotMobileStickyCta wire={wire} />}

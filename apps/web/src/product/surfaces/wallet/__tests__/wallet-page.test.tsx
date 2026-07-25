@@ -112,6 +112,26 @@ describe('WalletPage', () => {
     expect(screen.getByTestId('wallet-compliance-ready')).toBeInTheDocument();
   });
 
+  it('links KYC CTA from compliance strip when withdrawal is not ready', () => {
+    renderPage(makeEngine({ withdrawalReady: false, kycStatusKey: 'wallet.kyc.unverified' }));
+
+    expect(screen.getByTestId('wallet-compliance-kyc-cta')).toHaveAttribute(
+      'href',
+      '/account/kyc',
+    );
+  });
+
+  it('exposes locked amounts in collapsed hero summary', () => {
+    renderPage(
+      makeEngine({
+        phonLockedDisplay: '1.500000',
+        usdtLockedDisplay: '0',
+      }),
+    );
+
+    expect(screen.getByTestId('wallet-hero-locked-summary')).toBeInTheDocument();
+  });
+
   it('shows error state with retry', () => {
     const refresh = vi.fn();
     renderPage(makeEngine({ errorKey: 'wallet.loadError', refresh }));

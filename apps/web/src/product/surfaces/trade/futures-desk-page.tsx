@@ -229,7 +229,13 @@ export function FuturesDeskPage() {
           testId="futures-desk-tablet-layout"
           t={t}
           chart={tradeChartPanel}
-          ticket={<FuturesOrderTicket wire={wire} className={TRADE_DESK_TICKET_SLOT_CLASS} />}
+          ticket={
+            <FuturesOrderTicket
+              wire={wire}
+              primarySubmit="external"
+              className={TRADE_DESK_TICKET_SLOT_CLASS}
+            />
+          }
           trade={
             <TradeDeskMobileTradeStack
               t={t}
@@ -247,7 +253,12 @@ export function FuturesDeskPage() {
                     bookFeedStale={wire.bookFeedStale}
                     className="min-h-[280px]"
                   />
-                  <TradeRecentTradesRail symbol={marketSymbol} t={t} locale={wire.locale} />
+                  <TradeRecentTradesRail
+                    symbol={marketSymbol}
+                    t={t}
+                    locale={wire.locale}
+                    className="max-h-[200px]"
+                  />
                 </div>
               }
               stickyCta={<FuturesMobileStickyCta wire={wire} />}
@@ -322,7 +333,12 @@ export function FuturesDeskPage() {
                     bookFeedStale={wire.bookFeedStale}
                     className="min-h-[280px]"
                   />
-                  <TradeRecentTradesRail symbol={marketSymbol} t={t} locale={wire.locale} />
+                  <TradeRecentTradesRail
+                    symbol={marketSymbol}
+                    t={t}
+                    locale={wire.locale}
+                    className="max-h-[200px]"
+                  />
                 </div>
               }
               stickyCta={<FuturesMobileStickyCta wire={wire} />}

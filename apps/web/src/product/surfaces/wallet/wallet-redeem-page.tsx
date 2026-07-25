@@ -47,7 +47,7 @@ export function WalletRedeemPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 py-4 md:py-6" data-testid="wallet-redeem-page">
+    <div className="flex flex-col gap-ds-8 py-4 md:py-6" data-testid="wallet-redeem-page">
       <header className="space-y-3">
         <a
           href="/wallet"
@@ -114,6 +114,13 @@ export function WalletRedeemPage() {
           <p className="text-foreground-muted m-0 mt-1 text-sm">
             {t('wallet.withdraw.kycLockDesc')}
           </p>
+          <a
+            href="/account/kyc"
+            className={cn(buttonVariants({ variant: 'outline', size: 'md' }), 'mt-3 inline-flex')}
+            data-testid="wallet-redeem-kyc-cta"
+          >
+            {t('wallet.withdraw.kycCta')}
+          </a>
         </div>
       ) : null}
 

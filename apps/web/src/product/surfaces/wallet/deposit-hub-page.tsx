@@ -65,7 +65,7 @@ export function DepositHubPage() {
   });
 
   return (
-    <div className="flex flex-col gap-6 py-4 md:py-6" data-testid="deposit-hub-page">
+    <div className="flex flex-col gap-ds-8 py-4 md:py-6" data-testid="deposit-hub-page">
       <header className="space-y-3">
         <a
           href="/wallet"

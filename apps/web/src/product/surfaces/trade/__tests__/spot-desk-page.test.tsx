@@ -326,6 +326,9 @@ describe('SpotDeskPage', () => {
       'trade-desk-tablet-main-grid',
     );
     expect(screen.getByTestId('spot-order-ticket')).toBeInTheDocument();
+    // Phase 2: tablet ticket uses primarySubmit=external — single sticky CTA only.
+    expect(screen.queryByTestId('spot-submit')).not.toBeInTheDocument();
+    expect(screen.getByTestId('spot-mobile-sticky-submit')).toBeInTheDocument();
     expect(screen.queryByTestId('trade-desk-main-grid')).not.toBeInTheDocument();
     expect(screen.queryByTestId('spot-desk-mobile-tabs')).not.toBeInTheDocument();
     expect(screen.queryAllByTestId('trade-chart-panel-mock')).toHaveLength(1);

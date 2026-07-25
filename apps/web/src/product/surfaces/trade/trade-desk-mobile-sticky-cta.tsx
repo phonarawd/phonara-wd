@@ -76,7 +76,7 @@ export function SpotMobileStickyCta({ wire }: SpotMobileStickyCtaProps) {
         disabled={submitDisabled}
         loading={busy}
         className={cn(
-          'min-h-12 w-full',
+          'min-h-(--ds-touch-target-min) w-full',
           side === 'buy'
             ? 'bg-market-up text-black hover:bg-market-up/90'
             : 'bg-market-down hover:bg-market-down/90',
@@ -185,7 +185,7 @@ export function FuturesMobileStickyCta({ wire }: FuturesMobileStickyCtaProps) {
         disabled={submitDisabled}
         loading={busy}
         className={cn(
-          'min-h-12 w-full',
+          'min-h-(--ds-touch-target-min) w-full',
           side === 'long'
             ? 'bg-market-up text-black hover:bg-market-up/90'
             : 'bg-market-down hover:bg-market-down/90',

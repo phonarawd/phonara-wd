@@ -7,6 +7,7 @@ import { ledgerReasonLabelKey } from '@/features/wallet/ledger-labels';
 import { isPositiveAmount } from '@/lib/money-display';
 import { useI18n, useT } from '@/product/i18n';
 import { Button, buttonVariants } from '@/product/primitives/button';
+import { MoneyDisplay } from '@/product/primitives/money-display';
 import { FiatHintDisclaimer } from '@/product/primitives/money-display-with-fiat-hint';
 import { Skeleton } from '@/product/primitives/skeleton';
 import { cn } from '@/product/primitives/lib/cn';
@@ -94,7 +95,7 @@ export function WalletPage() {
   });
 
   return (
-    <div className="flex flex-col gap-6 py-4 md:py-6" data-testid="wallet-page">
+    <div className="flex flex-col gap-ds-8 py-4 md:py-6" data-testid="wallet-page">
       <header className="space-y-1">
         <h1 className="text-foreground m-0 text-2xl font-semibold md:text-3xl">
           {t('wallet.title')}
@@ -107,7 +108,36 @@ export function WalletPage() {
         amount={engine.phonAvailableDisplay}
         fiatHint={hintFor(engine.phonAvailableDisplay, 'PHON')}
         detailsTitle={t('wallet.hero.details')}
-        detailsSummary={t('wallet.hero.detailsSummary')}
+        detailsSummary={
+          <span
+            className="text-foreground-muted flex flex-wrap items-center gap-x-2 gap-y-1 text-xs"
+            data-testid="wallet-hero-locked-summary"
+          >
+            <span>{t('wallet.hero.detailsSummary')}</span>
+            {showPhonLocked ? (
+              <span className="inline-flex items-center gap-1">
+                <span>{t('wallet.lockedShort')}</span>
+                <MoneyDisplay
+                  amount={engine.phonLockedDisplay}
+                  currency="PHON"
+                  showCurrency
+                  className="text-foreground-muted text-xs tabular-nums"
+                />
+              </span>
+            ) : null}
+            {showUsdtLocked ? (
+              <span className="inline-flex items-center gap-1">
+                <span>{t('wallet.lockedShort')}</span>
+                <MoneyDisplay
+                  amount={engine.usdtLockedDisplay}
+                  currency="USDT"
+                  showCurrency
+                  className="text-foreground-muted text-xs tabular-nums"
+                />
+              </span>
+            ) : null}
+          </span>
+        }
         expandLabel={t('wallet.hero.expand')}
         collapseLabel={t('wallet.hero.collapse')}
         details={
@@ -198,6 +228,7 @@ export function WalletPage() {
           <Button
             variant="secondary"
             size="lg"
+            className="col-span-2 md:col-span-1"
             disabled
             data-testid="wallet-cta-withdraw"
             title={
@@ -212,7 +243,10 @@ export function WalletPage() {
           <a
             href="/wallet/withdraw"
             data-testid="wallet-cta-withdraw"
-            className={buttonVariants({ variant: 'secondary', size: 'lg' })}
+            className={cn(
+              buttonVariants({ variant: 'secondary', size: 'lg' }),
+              'col-span-2 md:col-span-1',
+            )}
           >
             {t('desk.wallet.bottomWithdraw')}
           </a>

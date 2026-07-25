@@ -606,7 +606,7 @@ export function FuturesPositionsPanel({
                         amount={position.liquidation_price}
                         currency="USDT"
                         showCurrency
-                        className="text-foreground text-sm tabular-nums"
+                        className="text-market-down text-sm tabular-nums"
                       />
                     </td>
 

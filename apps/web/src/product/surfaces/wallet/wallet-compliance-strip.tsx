@@ -1,6 +1,7 @@
 import type { MessageKey } from '@phonara/i18n';
 
 import { useT } from '@/product/i18n';
+import { buttonVariants } from '@/product/primitives/button';
 import { cn } from '@/product/primitives/lib/cn';
 
 export interface WalletComplianceStripProps {
@@ -41,7 +42,7 @@ export function WalletComplianceStrip({
   return (
     <div
       className={cn(
-        'border-line bg-surface rounded-(--ds-radius-md) space-y-1 border p-4',
+        'border-line bg-surface rounded-(--ds-radius-md) space-y-2 border p-4',
         className,
       )}
       data-testid="wallet-compliance-strip"
@@ -49,7 +50,16 @@ export function WalletComplianceStrip({
       <p className="text-foreground m-0 text-sm font-semibold">{t('wallet.compliance.title')}</p>
       {kycStatusKey ? <p className="text-foreground-muted m-0 text-sm">{t(kycStatusKey)}</p> : null}
       {!withdrawalReady ? (
-        <p className="text-foreground-muted m-0 text-sm">{t('wallet.compliance.intro')}</p>
+        <>
+          <p className="text-foreground-muted m-0 text-sm">{t('wallet.compliance.intro')}</p>
+          <a
+            href="/account/kyc"
+            className={cn(buttonVariants({ variant: 'outline', size: 'md' }), 'inline-flex')}
+            data-testid="wallet-compliance-kyc-cta"
+          >
+            {t('wallet.withdraw.kycCta')}
+          </a>
+        </>
       ) : null}
     </div>
   );
