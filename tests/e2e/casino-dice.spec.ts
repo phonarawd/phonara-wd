@@ -5,8 +5,8 @@
  * Target: `bun run test:e2e:casino -- tests/e2e/casino-dice.spec.ts`
  */
 import { test, expect } from '@playwright/test';
-import { verifyRound } from '@phonara/game-engine';
 
+import { verifyRound } from '../../packages/game-engine/src/fairness/verifier.ts';
 import {
   authedCasinoClient,
   currencyTotals,

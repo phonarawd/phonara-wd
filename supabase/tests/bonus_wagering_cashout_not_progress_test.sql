@@ -68,14 +68,23 @@ BEGIN
   ASSERT v_wagering_before = '100.000000',
     format('expected wagering 100 got %s', v_wagering_before);
 
-  -- Repeated partial-cashout stake debits must leave wagering_remaining unchanged
+  -- Repeated partial-cashout stake debits must leave wagering_remaining unchanged.
+  -- Pair each debit with sports_house credit (production cashout Σ=0 shape).
   PERFORM _debit_wallet_internal(
     v_uid, 'PHON', '10.000000', 'sports_stake_cashout',
     'bwr_cashout_d1:' || v_uid::TEXT
   );
+  PERFORM _credit_system_account(
+    'sports_house_phon', '10.000000', 'sports_house_cashout',
+    v_uid, 'bwr_cashout_d1:' || v_uid::TEXT, NULL
+  );
   PERFORM _debit_wallet_internal(
     v_uid, 'PHON', '10.000000', 'sports_stake_cashout',
     'bwr_cashout_d2:' || v_uid::TEXT
+  );
+  PERFORM _credit_system_account(
+    'sports_house_phon', '10.000000', 'sports_house_cashout',
+    v_uid, 'bwr_cashout_d2:' || v_uid::TEXT, NULL
   );
 
   SELECT wagering_remaining INTO v_wagering_mid
