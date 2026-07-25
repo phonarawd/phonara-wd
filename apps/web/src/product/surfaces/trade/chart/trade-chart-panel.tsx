@@ -193,7 +193,7 @@ export function TradeChartPanel({
       <header className="border-line flex flex-col gap-2 border-b px-3 py-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div
-            className="flex flex-wrap gap-1"
+            className="flex flex-wrap gap-2"
             role="group"
             aria-label={t('trade.chart.intervals')}
           >
@@ -248,7 +248,7 @@ export function TradeChartPanel({
         </div>
 
         <div
-          className="flex flex-wrap items-center gap-1"
+          className="flex flex-wrap items-center gap-2"
           role="group"
           aria-label={t('trade.chart.overlays')}
         >
@@ -295,7 +295,7 @@ export function TradeChartPanel({
 
         {advancedOverlaysOpen ? (
           <div
-            className="flex flex-wrap items-center gap-1"
+            className="flex flex-wrap items-center gap-2"
             role="group"
             aria-label={t('trade.chart.advancedIndicators')}
             data-testid="trade-chart-advanced-overlays"
@@ -340,7 +340,7 @@ export function TradeChartPanel({
         ) : null}
 
         <div
-          className="flex flex-wrap items-center gap-1"
+          className="flex flex-wrap items-center gap-2"
           role="group"
           aria-label={t('trade.chart.drawingTools')}
         >

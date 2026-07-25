@@ -112,7 +112,7 @@ describe('useEarnHomePageController', () => {
     expect(result.current.catalogRewardsLabel).toMatch(/^\+[\d,]+P$/);
     expect(result.current.nextAction.kind).toBe('attendance');
     expect(result.current.missionPreviews.length).toBe(3);
-    expect(result.current.useAmbientTicker).toBe(true);
+    expect(result.current.useAmbientTicker).toBe(false);
     expect(result.current.wallet?.phonBalanceLabel).toBe('+2,500P');
   });
 });

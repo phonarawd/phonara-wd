@@ -113,6 +113,7 @@ describe('WithdrawHubPage', () => {
     renderPage(makeEngine({ withdrawalReady: false, railsDisabled: true }));
 
     expect(screen.getByTestId('withdraw-hub-kyc-lock')).toBeInTheDocument();
+    expect(screen.getByTestId('withdraw-hub-kyc-cta')).toHaveAttribute('href', '/account/kyc');
     expect(screen.getByTestId('withdraw-rail-krw')).not.toHaveAttribute('href');
   });
 

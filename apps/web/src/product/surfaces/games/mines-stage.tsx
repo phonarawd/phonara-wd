@@ -1,4 +1,12 @@
-import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { minesMultiplier } from '@phonara/game-engine';
 import { toDecimal } from '@phonara/money';
 
@@ -54,6 +62,20 @@ function normalizeCells(cells: number[]): number[] {
 /**
  * Mines L1 — 5×5 tile grid + multiplier ladder (§23.2 · §23.8).
  * One-shot: pre-bet picks + cascade replay. E23 liveMode: progressive step/cashout.
+ *
+ * Phase 1C motion polish — reuses the shared `ds-casino-reveal-in`/
+ * `ds-casino-number-pop`/`ds-casino-cashout-flash` tokens (motion.css) for the
+ * multiplier ladder (win: reveal-in + number-pop + glow, "punchy"; loss: reveal-in
+ * only, CASINO_UX_CANON "lose: calm · respectful" — same convention Crash/Limbo/
+ * Dice already established), plus a new additive `ds-casino-tile-reveal` token
+ * for the per-tile "Micro feedback ... tile-flip start" band (120-200ms,
+ * §Motion & performance acceptance criteria) covering pre-bet picks, live
+ * mid-round reveals, and cascade-replay reveals through one mechanism.
+ *
+ * Phase 1C functional QA fix — `playOutcome` now prefers the RPC's own
+ * `revealedCells` echo (when present) over this stage's prop-derived `picked`
+ * for the cascade reveal order; see `ParsedMinesOutcome.revealedCells` doc for
+ * the exact one-tick-stale race this closes on a live mine hit.
  */
 export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(function MinesStage(
   {
@@ -76,6 +98,8 @@ export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(functio
   const [outcome, setOutcome] = useState<ParsedMinesOutcome | null>(null);
   const [revealedOrder, setRevealedOrder] = useState<number[]>([]);
   const [showAllMines, setShowAllMines] = useState(false);
+  /** Monotonic counter — key-remount restarts the CSS reveal/pop/flash on each ladder tick or settle (§Motion), mirrors crash/limbo/dice. */
+  const [revealPulse, setRevealPulse] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resolveRef = useRef<(() => void) | null>(null);
 
@@ -94,12 +118,30 @@ export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(functio
     return minesMultiplier(safeMineCount, picked.length + 1);
   }, [cashoutMult, maxSafe, picked.length, safeMineCount]);
 
+  // Multiplier ladder motion — a tick per reveal (pre-bet pick, live mid-round
+  // step, or cascade-replay step all funnel through the picked-cells count),
+  // decoupled from *who* changed it. `settle()` below bumps it again so the
+  // terminal reveal (e.g. a live cash-out, which does not itself change
+  // picked.length) still gets a fresh remount for the win-only pop/glow.
+  const pickedCountRef = useRef(picked.length);
+  useEffect(() => {
+    if (pickedCountRef.current === picked.length) return;
+    pickedCountRef.current = picked.length;
+    setRevealPulse((n) => n + 1);
+  }, [picked.length]);
+
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
   }, []);
+
+  // Perf (Phase 1C) — a live mine-hit right before navigating away must not
+  // leave the recursive cascade `setTimeout` chain running against an
+  // unmounted component (same leaked-timer class already fixed for Limbo's
+  // reveal-hold and Dice's rAF loop).
+  useEffect(() => clearTimer, [clearTimer]);
 
   const settle = useCallback(
     (parsed: ParsedMinesOutcome, order: number[]) => {
@@ -108,6 +150,7 @@ export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(functio
       setShowAllMines(true);
       setOutcome(parsed);
       setPhase('settled');
+      setRevealPulse((n) => n + 1);
       resolveRef.current?.();
       resolveRef.current = null;
     },
@@ -149,7 +192,13 @@ export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(functio
       playOutcome(result) {
         const parsed = parseMinesOutcome(result);
         if (!parsed) return Promise.resolve();
-        const order = normalizeCells(picked);
+        // Prefer the RPC's own revealedCells echo (live/progressive step or
+        // cashout) over this stage's prop-derived `picked` — see
+        // ParsedMinesOutcome.revealedCells doc for the one-tick-stale race
+        // this avoids on a live mine hit. One-shot results never carry this
+        // field, so `picked` (already correct there — settle only ever runs
+        // after the pre-bet selection has fully committed) is the fallback.
+        const order = normalizeCells(parsed.revealedCells ?? picked);
         return new Promise<void>((resolve) => {
           resolveRef.current = resolve;
           runCascade(parsed, order);
@@ -162,6 +211,7 @@ export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(functio
         setOutcome(null);
         setRevealedOrder([]);
         setShowAllMines(false);
+        setRevealPulse(0);
       },
     }),
     [clearTimer, picked, runCascade],
@@ -190,7 +240,14 @@ export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(functio
 
   const cellVisual = (index: number): CellVisual => {
     if (phase === 'idle' || (phase === 'settled' && !outcome)) {
-      return picked.includes(index) ? 'picked' : 'idle';
+      if (!picked.includes(index)) return 'idle';
+      // Live mode with an active session — the server has already confirmed
+      // this cell safe (a mine hit ends the session and takes over via the
+      // 'settled'+outcome branch below, so 'idle' + liveSessionActive here
+      // always means "revealed and safe", never "revealed and unconfirmed").
+      // Pre-bet oneshot picks (no active session) stay the plain 'picked'
+      // chip — they are a selection, not yet a server-confirmed reveal.
+      return liveMode && liveSessionActive ? 'safe' : 'picked';
     }
     if (phase === 'replaying') {
       if (revealedSet.has(index)) {
@@ -220,24 +277,48 @@ export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(functio
     >
       <CardBody className="flex min-h-[280px] flex-col gap-4 p-4 md:min-h-[360px] md:p-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
+          <div className="flex flex-col">
             <p className="text-foreground-muted m-0 text-xs">
               <HelpTip
                 label={t('games.mines.stage.currentMult')}
                 bodyKey={CASINO_MINES_CASHOUT_HELP_KEY}
               />
             </p>
-            <p
-              className="text-foreground m-0 text-2xl font-semibold tabular-nums"
-              data-testid="casino-mines-cashout-mult"
-            >
-              {formatMult(cashoutMult)}×
-            </p>
+            <span className="relative inline-flex items-baseline">
+              {phase === 'settled' && won && !reducedMotion ? (
+                <span
+                  key={`glow-${revealPulse}`}
+                  aria-hidden="true"
+                  data-testid="casino-mines-win-flash"
+                  className="ds-casino-cashout-flash"
+                />
+              ) : null}
+              <span
+                key={`mult-${revealPulse}`}
+                className={cn(
+                  'text-2xl font-semibold tabular-nums',
+                  phase === 'settled' && outcome
+                    ? won
+                      ? 'text-success'
+                      : 'text-danger'
+                    : 'text-foreground',
+                  !reducedMotion && 'ds-casino-reveal-in',
+                  phase === 'settled' && won && !reducedMotion && 'ds-casino-number-pop',
+                )}
+                data-testid="casino-mines-cashout-mult"
+              >
+                {formatMult(cashoutMult)}×
+              </span>
+            </span>
           </div>
           <div className="text-right">
             <p className="text-foreground-muted m-0 text-xs">{t('games.mines.stage.nextTile')}</p>
             <p
-              className="text-foreground m-0 text-2xl font-semibold tabular-nums"
+              key={`next-${revealPulse}`}
+              className={cn(
+                'text-foreground m-0 text-2xl font-semibold tabular-nums',
+                !reducedMotion && 'ds-casino-reveal-in',
+              )}
               data-testid="casino-mines-next-mult"
             >
               {formatMult(nextMult)}×
@@ -280,6 +361,12 @@ export const MinesStage = forwardRef<CasinoStageHandle, MinesStageProps>(functio
                   visual === 'safe' && 'border-success bg-success/25 text-success',
                   visual === 'mine' && 'border-danger bg-danger/30 text-danger',
                   visual === 'hidden-mine' && 'border-danger/50 bg-danger/10 text-danger/80',
+                  // Tile-flip micro-feedback (120-200ms band, §Motion) — fires once per
+                  // idle->revealed transition (pre-bet pick, live step, or cascade tick);
+                  // re-renders while already non-idle keep the same class string, so the
+                  // browser never restarts it mid-state (only a real idle<->revealed
+                  // attribute change retriggers, e.g. deselect-then-reselect pre-bet).
+                  visual !== 'idle' && !reducedMotion && 'ds-casino-tile-reveal',
                 )}
                 onClick={() => toggleCell(index)}
               >

@@ -238,6 +238,9 @@ test.describe('Phase 3 trade-desk-smoke money gate', () => {
       { timeout: 60_000 },
     );
     await closeButton.click();
+    await page
+      .getByRole('button', { name: /확인 후 진행|Confirm & proceed/i })
+      .click({ timeout: 15_000 });
     await closeRpc;
 
     expect(countOpenFuturesPositions(fixture.userId)).toBe(0);

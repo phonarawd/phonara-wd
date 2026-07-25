@@ -52,10 +52,10 @@ Operator 체크리스트: [`docs/SSOT/OPERATOR_GATES.md`](docs/SSOT/OPERATOR_GAT
 1. **한 터미널 · 한 무거운 gate · foreground** — exit code 확인 후 다음 단계.
 2. **E2E hang 시:** Ctrl+C 1회 → `[e2e] session finalized` 대기 → `bun run e2e:kill` → 여전히 렉이면 `bun run cursor:emergency-reset` → **그 다음에만** 재시도.
 3. **타겟 spec 먼저** (저사양 · 카지노/비주얼):
-   - `bun run test:e2e:casino -- tests/e2e/casino-wave7-closeout.spec.ts`
-   - `bun run test:e2e:casino -- tests/e2e/casino.spec.ts -g plinko`
-   - `bun run test:e2e -- tests/e2e/visual.spec.ts -g "visual smoke"`
+   - `bun run test:e2e:casino -- tests/e2e/casino-dice.spec.ts` (또는 `-g <case>`)
+   - `bun run test:e2e:casino -- tests/e2e/sports-betting.spec.ts` · `staking-hub.spec.ts` · `referral-hub.spec.ts`
    - 타겟 green 후 → `bun run test:e2e` (admin 포함 전체) **1회**
+   - (삭제된 legacy `casino.spec.ts` / `casino-wave7-closeout.spec.ts` / `visual.spec.ts` 예시 금지)
 4. **`check:full`** — E2E 전부 green(또는 skip 정당화) 후 **foreground 1회만**.
 5. **세션 clean** — `packages/*/dist`는 mid-session 유효 산출물; `clean:artifacts`가 **dist를 지우지 않음** (`workspace-artifacts.ts` `WORKSPACE_ARTIFACT_NAMES`에 dist 없음).
 6. **패키지 빌드** — E2E 전 `pretest:e2e`가 1회만 `build:packages`; webServer는 dist 확인만 (`e2e-dev-server.ts`).
@@ -79,7 +79,7 @@ gh run list --workflow=ci.yml --limit 3
 # orphan·포트·residue 있으면 (G4 방지):
 bun run cursor:emergency-reset
 # 한 줄씩 · foreground only (G1):
-bun run test:e2e:casino -- tests/e2e/<target>.spec.ts
+bun run test:e2e:casino -- tests/e2e/casino-dice.spec.ts
 bun run e2e:kill
 bun run check:hygiene
 ```

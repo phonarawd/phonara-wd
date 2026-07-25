@@ -10,6 +10,15 @@ export const VIEWPORT_SMOKE_WIDTHS = [390, 768, 1024, 2560] as const;
 
 export type ViewportSmokeWidth = (typeof VIEWPORT_SMOKE_WIDTHS)[number];
 
+/**
+ * Ultrawide evidence widths (40"+ / 3440–5120) — letterbox proof only.
+ * NEVER merge into `VIEWPORT_SMOKE_WIDTHS` (4-tier DoD + trade-ultra contract stay pinned).
+ * CDP: `PHONARA_AUDIT_ULTRAWIDE=1` → `visual-audit-capture-cdp.ts` ultrawide pass.
+ */
+export const ULTRAWIDE_SMOKE_WIDTHS = [3440, 3840, 5120] as const;
+
+export type UltrawideSmokeWidth = (typeof ULTRAWIDE_SMOKE_WIDTHS)[number];
+
 /** CSS custom property breakpoints — keep in sync with `layout.css`. */
 export const VIEWPORT_BREAKPOINTS = {
   mobileNarrow: 320,
@@ -48,6 +57,36 @@ export const PANEL_MIN_PX = 280;
 
 export function isViewportSmokeWidth(width: number): width is ViewportSmokeWidth {
   return (VIEWPORT_SMOKE_WIDTHS as readonly number[]).includes(width);
+}
+
+export function isUltrawideSmokeWidth(width: number): width is UltrawideSmokeWidth {
+  return (ULTRAWIDE_SMOKE_WIDTHS as readonly number[]).includes(width);
+}
+
+/**
+ * Letterbox engages when the viewport is wider than `--ds-content-max` (1680).
+ * Ultrawide smoke widths (3440/3840/5120) must all satisfy this.
+ */
+export function expectsContentShellLetterbox(width: number): boolean {
+  return width > CONTENT_SHELL_MAX_PX;
+}
+
+/**
+ * Pure letterbox gate for CDP/unit harnesses — content column must stay capped
+ * and leave horizontal gutters when the viewport exceeds `--ds-content-max`.
+ */
+export function isContentShellLetterboxOk(input: {
+  viewportWidth: number;
+  columnWidth: number;
+  columnLeft: number;
+  contentMaxPx?: number;
+}): boolean {
+  const contentMax = input.contentMaxPx ?? CONTENT_SHELL_MAX_PX;
+  if (input.viewportWidth <= contentMax) return false;
+  if (input.columnWidth > contentMax + 0.5) return false;
+  // Centered column: left gutter must be positive once the viewport exceeds the cap.
+  if (input.columnLeft < 1) return false;
+  return true;
 }
 
 export function resolveViewportTier(width: number): ViewportTier {

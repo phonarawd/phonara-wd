@@ -15,7 +15,7 @@ import { cn } from '@/product/primitives/lib/cn';
 function SettingsReferralLoadingShell() {
   return (
     <div
-      className="mx-auto flex w-full max-w-2xl flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-2xl flex-col gap-ds-8 py-4 md:py-6"
       data-testid="settings-referral-loading"
     >
       <Skeleton className="h-8 w-1/3" />
@@ -52,7 +52,7 @@ export function ReferralSettingsPage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-2xl flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-2xl flex-col gap-ds-8 py-4 md:py-6"
       data-testid="settings-referral-page"
     >
       <header className="flex flex-col gap-3">

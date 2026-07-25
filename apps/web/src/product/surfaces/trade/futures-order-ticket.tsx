@@ -409,7 +409,7 @@ export function FuturesOrderTicket({
                   {t('trade.order.timeInForce')}
                 </span>
                 <select
-                  className="border-line bg-surface-raised text-foreground min-h-10 rounded-md border px-2 text-sm"
+                  className="border-line bg-surface-raised text-foreground min-h-(--ds-touch-target-min) rounded-md border px-2 text-sm"
                   value={wire.timeInForce}
                   onChange={(event) =>
                     wire.setTimeInForce(event.target.value as FuturesTimeInForce)
@@ -439,7 +439,7 @@ export function FuturesOrderTicket({
             ) : null}
             {orderType !== 'market' && TRADE_FUTURES_UI_CAPABILITIES.reduceOnlyOrders ? (
               <label
-                className="flex items-center gap-2 text-sm"
+                className="flex min-h-(--ds-touch-target-min) items-center gap-2 text-sm"
                 data-testid="futures-reduce-only-toggle"
               >
                 <input
@@ -456,7 +456,7 @@ export function FuturesOrderTicket({
             ) : null}
             {supportsEntryTpSlOnOrderType(orderType) ? (
               <>
-                <label className="flex items-center gap-2 text-sm">
+                <label className="flex min-h-(--ds-touch-target-min) items-center gap-2 text-sm">
                   <input
                     type="checkbox"
                     checked={wire.tpEnabled}
@@ -472,7 +472,7 @@ export function FuturesOrderTicket({
                     aria-label={t('trade.order.tp')}
                   />
                 ) : null}
-                <label className="flex items-center gap-2 text-sm">
+                <label className="flex min-h-(--ds-touch-target-min) items-center gap-2 text-sm">
                   <input
                     type="checkbox"
                     checked={wire.slEnabled}
@@ -532,7 +532,7 @@ export function FuturesOrderTicket({
             disabled={submitDisabled}
             loading={busy}
             className={cn(
-              'min-h-11 w-full',
+              'min-h-(--ds-touch-target-min) w-full',
               side === 'long'
                 ? 'bg-market-up text-black hover:bg-market-up/90'
                 : 'bg-market-down hover:bg-market-down/90',

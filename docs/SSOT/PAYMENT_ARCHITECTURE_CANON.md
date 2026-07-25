@@ -81,7 +81,7 @@ Wallet
 | `rejected`  | 거절 · 사유 표시        |
 | `cancelled` | 사용자/시스템 취소      |
 
-각 상태는 **why + what next** copy slot 보유 ([`UX_WRITING_GUIDE.md`](UX_WRITING_GUIDE.md) financial zone).
+각 상태는 **why + what next** copy slot 보유 ([`COPYWRITING_CANON.md`](COPYWRITING_CANON.md) financial zone).
 
 ---
 

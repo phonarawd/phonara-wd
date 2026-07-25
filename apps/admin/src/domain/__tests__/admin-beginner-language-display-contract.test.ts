@@ -79,11 +79,13 @@ describe('admin-beginner-language-display-contract (§29.5 · YAML #229)', () =>
     expect(ko['admin.role.viewer']).toBe('보기만');
   });
 
-  it('pins RBAC menu allowlist — viewer no withdrawals · finance no team', () => {
+  it('pins RBAC menu allowlist — viewer no withdrawals · finance no team · rbac nav gaps closed', () => {
     expect(ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.owner).toContain('/team');
     expect(ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.viewer).not.toContain('/withdrawals');
     expect(ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.finance).not.toContain('/team');
+    expect(ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.finance).toContain('/earn/rewards');
     expect(ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.support).toContain('/support');
+    expect(ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.support).toContain('/withdrawals');
     expect(ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.risk).toContain('/risk');
   });
 

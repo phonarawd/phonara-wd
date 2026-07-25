@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import type { DeepshaftRiskTier } from '@phonara/game-engine';
 
 import {
@@ -29,6 +29,12 @@ export type DeepshaftStageProps = {
 /**
  * Deepshaft L1 — vertical shaft · depth meter · CSS descent (§23.2 · §23.8).
  * Levels replay RPC result only — no live dig/cash-out mid-round.
+ *
+ * Phase 1C motion polish — reuses shared casino reveal/pop/flash tokens
+ * (motion.css). Win: reveal-in + number-pop + glow ("punchy"). Cave-in/loss:
+ * reveal-in only — CASINO_UX_CANON "lose: calm · respectful". Engine outcomes
+ * are always (won && !caveIn) or (!won && caveIn); the status label therefore
+ * keys off `won` alone (no dead `!caveIn && !won` cavein fallback).
  */
 export const DeepshaftStage = forwardRef<CasinoStageHandle, DeepshaftStageProps>(
   function DeepshaftStage({ riskTier: riskRaw, targetDepth: depthRaw, className }, ref) {
@@ -37,6 +43,8 @@ export const DeepshaftStage = forwardRef<CasinoStageHandle, DeepshaftStageProps>
     const [phase, setPhase] = useState<CasinoStagePhase>('idle');
     const [outcome, setOutcome] = useState<ParsedDeepshaftOutcome | null>(null);
     const [visibleDepth, setVisibleDepth] = useState(0);
+    /** Monotonic counter — key-remount restarts CSS reveal/pop/flash on each settle. */
+    const [revealPulse, setRevealPulse] = useState(0);
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const resolveRef = useRef<(() => void) | null>(null);
 
@@ -50,12 +58,18 @@ export const DeepshaftStage = forwardRef<CasinoStageHandle, DeepshaftStageProps>
       }
     }, []);
 
+    // Perf (Phase 1C) — navigating away mid-descent must not leave a dangling
+    // setTimeout that calls setVisibleDepth/settle on an unmounted component.
+    // Same pattern as Limbo/Dice/Mines/Hilo.
+    useEffect(() => clearTimer, [clearTimer]);
+
     const settle = useCallback(
       (parsed: ParsedDeepshaftOutcome) => {
         clearTimer();
         setVisibleDepth(parsed.reachedDepth + (parsed.caveIn ? 1 : 0));
         setOutcome(parsed);
         setPhase('settled');
+        setRevealPulse((n) => n + 1);
         resolveRef.current?.();
         resolveRef.current = null;
       },
@@ -112,6 +126,7 @@ export const DeepshaftStage = forwardRef<CasinoStageHandle, DeepshaftStageProps>
           setPhase('idle');
           setOutcome(null);
           setVisibleDepth(0);
+          setRevealPulse(0);
         },
       }),
       [clearTimer, runDescent],
@@ -125,6 +140,7 @@ export const DeepshaftStage = forwardRef<CasinoStageHandle, DeepshaftStageProps>
           : t('games.deepshaft.standard');
 
     const won = outcome?.won === true;
+    const settled = phase === 'settled' && outcome !== null;
     const meterPct = Math.min(
       100,
       Math.round(
@@ -141,7 +157,7 @@ export const DeepshaftStage = forwardRef<CasinoStageHandle, DeepshaftStageProps>
         data-won={outcome ? (won ? 'true' : 'false') : undefined}
         data-cave-in={outcome ? (outcome.caveIn ? 'true' : 'false') : undefined}
       >
-        <CardBody className="flex min-h-[280px] flex-col items-center gap-4 p-4 md:min-h-[360px] md:p-6">
+        <CardBody className="flex min-h-70 flex-col items-center gap-4 p-4 md:min-h-90 md:p-6">
           <div className="flex w-full max-w-sm flex-wrap items-center justify-between gap-2">
             <HelpTip label={t('games.deepshaft.depth')} bodyKey={CASINO_DEEPSHAFT_DEPTH_HELP_KEY} />
             <p
@@ -213,21 +229,37 @@ export const DeepshaftStage = forwardRef<CasinoStageHandle, DeepshaftStageProps>
           {outcome ? (
             <div className="flex flex-col items-center gap-1">
               <p
-                className={cn('m-0 text-lg font-semibold', won ? 'text-success' : 'text-danger')}
+                key={`status-${revealPulse}`}
+                className={cn(
+                  'm-0 text-lg font-semibold',
+                  won ? 'text-success' : 'text-danger',
+                  settled && !reducedMotion && 'ds-casino-reveal-in',
+                )}
                 data-testid="casino-deepshaft-status"
               >
-                {outcome.caveIn
-                  ? t('games.deepshaft.cavein')
-                  : won
-                    ? t('games.deepshaft.win')
-                    : t('games.deepshaft.cavein')}
+                {won ? t('games.deepshaft.win') : t('games.deepshaft.cavein')}
               </p>
-              <p
-                className="text-foreground m-0 text-xl font-semibold tabular-nums"
-                data-testid="casino-deepshaft-mult"
-              >
-                {outcome.totalMultiplier.toFixed(2)}×
-              </p>
+              <span className="relative inline-flex items-baseline">
+                {settled && won && !reducedMotion ? (
+                  <span
+                    key={`glow-${revealPulse}`}
+                    aria-hidden="true"
+                    data-testid="casino-deepshaft-win-flash"
+                    className="ds-casino-cashout-flash"
+                  />
+                ) : null}
+                <p
+                  key={`value-${revealPulse}`}
+                  className={cn(
+                    'text-foreground m-0 text-xl font-semibold tabular-nums',
+                    settled && !reducedMotion && 'ds-casino-reveal-in',
+                    settled && won && !reducedMotion && 'ds-casino-number-pop',
+                  )}
+                  data-testid="casino-deepshaft-mult"
+                >
+                  {outcome.totalMultiplier.toFixed(2)}×
+                </p>
+              </span>
             </div>
           ) : (
             <p className="text-foreground-muted m-0 text-sm">{t('games.deepshaft.prepare')}</p>

@@ -8,7 +8,7 @@
 
 ## Supabase Dashboard에서 복사
 
-URL: https://supabase.com/dashboard/project/yocjhjsdwoijfdrehzoq/settings/api
+URL: <https://supabase.com/dashboard/project/yocjhjsdwoijfdrehzoq/settings/api>
 
 | 항목             | Dashboard 위치                                   | .env.local 변수명           |
 | ---------------- | ------------------------------------------------ | --------------------------- |
@@ -34,7 +34,7 @@ VITE_SUPPORTED_LOCALES=ko,en
 
 ## Supabase Edge Function Secrets
 
-URL: https://supabase.com/dashboard/project/yocjhjsdwoijfdrehzoq/functions
+URL: <https://supabase.com/dashboard/project/yocjhjsdwoijfdrehzoq/functions>
 
 함수: `liquidation-worker` → Secrets 탭
 
@@ -46,7 +46,7 @@ URL: https://supabase.com/dashboard/project/yocjhjsdwoijfdrehzoq/functions
 
 ## GitHub Secrets (CI/CD 구현 시)
 
-URL: https://github.com/<your-repo>/settings/secrets/actions
+URL: <https://github.com/><your-repo>/settings/secrets/actions
 
 | 이름                        | 값                                                          |
 | --------------------------- | ----------------------------------------------------------- |

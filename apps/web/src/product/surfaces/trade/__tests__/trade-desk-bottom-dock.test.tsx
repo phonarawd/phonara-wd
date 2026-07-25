@@ -129,6 +129,8 @@ describe('TradeDeskBottomDock', () => {
     expect(screen.getByTestId('trade-desk-bottom-dock')).toBeInTheDocument();
     expect(screen.getByTestId('futures-positions-panel')).toBeInTheDocument();
     fireEvent.click(screen.getByTestId('futures-close-position-pos-1'));
+    expect(onClosePosition).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'confirm.proceed' }));
     expect(onClosePosition).toHaveBeenCalledWith('pos-1');
   });
 

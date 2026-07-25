@@ -179,7 +179,7 @@ npx web-push generate-vapid-keys
 
 출력 예시:
 
-```
+```text
 Public Key:  BIu...
 Private Key: WlJ...
 ```
@@ -295,13 +295,13 @@ SELECT count(*) AS open_ops_alerts
 bun run stack:setup-ops-ntfy
 ```
 
-2. PC/폰 구독 — `.env` `OPS_NTFY_TOPIC` URL:
+1. PC/폰 구독 — `.env` `OPS_NTFY_TOPIC` URL:
 
 ```text
 https://ntfy.sh/<OPS_NTFY_TOPIC>
 ```
 
-3. 재동기화 · 테스트:
+1. 재동기화 · 테스트:
 
 ```powershell
 bun run stack:sync-ops-pager-secrets
@@ -505,7 +505,7 @@ bun run build
 
 ## 우선순위 요약
 
-```
+```text
 지금 당장 필요한 것 (개발/테스트)
   1. [ ] .env.local → VITE_SUPABASE_ANON_KEY 입력
   2. [ ] Docker Desktop 설치 (로컬 테스트용)

@@ -317,6 +317,8 @@ export function FuturesPositionsPanel({
 
   const actionBusy = closeBusy || partialCloseBusy || marginAdjustBusy || sltpEditBusy;
 
+  const [closeTarget, setCloseTarget] = useState<FuturesPosition | null>(null);
+
   const [partialCloseTarget, setPartialCloseTarget] = useState<FuturesPosition | null>(null);
 
   const [selectedRatio, setSelectedRatio] = useState<FuturesPartialCloseRatio>('0.5');
@@ -336,6 +338,10 @@ export function FuturesPositionsPanel({
   const [slPrice, setSlPrice] = useState('');
   const [tpEnabled, setTpEnabled] = useState(false);
   const [tpPrice, setTpPrice] = useState('');
+
+  const closeDialogOpen = closeTarget !== null;
+
+  const closeDialogBusy = closeBusy && closingPositionId === closeTarget?.id;
 
   const partialCloseDialogOpen = partialCloseTarget !== null;
 
@@ -364,6 +370,24 @@ export function FuturesPositionsPanel({
   const sltpEditConfirmEnabled = trailingEnabled
     ? isPositiveDecimalInput(trailingCallbackRate)
     : canSubmitSltpEdit(sltpEditTarget, slEnabled, slPrice, tpEnabled, tpPrice);
+
+  function openCloseDialog(position: FuturesPosition) {
+    setCloseTarget(position);
+  }
+
+  function closeCloseDialog() {
+    if (closeDialogBusy) return;
+
+    setCloseTarget(null);
+  }
+
+  function submitClose() {
+    if (!closeTarget || !onClosePosition || closeDialogBusy) return;
+
+    onClosePosition(closeTarget.id);
+
+    setCloseTarget(null);
+  }
 
   function openPartialCloseDialog(position: FuturesPosition) {
     setSelectedRatio('0.5');
@@ -606,7 +630,7 @@ export function FuturesPositionsPanel({
                         amount={position.liquidation_price}
                         currency="USDT"
                         showCurrency
-                        className="text-foreground text-sm tabular-nums"
+                        className="text-market-down text-sm tabular-nums"
                       />
                     </td>
 
@@ -731,7 +755,7 @@ export function FuturesPositionsPanel({
                                 data-testid={`futures-close-position-${position.id}`}
                                 disabled={actionBusy}
                                 loading={rowClosing}
-                                onClick={() => onClosePosition?.(position.id)}
+                                onClick={() => openCloseDialog(position)}
                               >
                                 {t('trade.closePositionBtn')}
                               </Button>
@@ -747,6 +771,44 @@ export function FuturesPositionsPanel({
           </table>
         </div>
       )}
+
+      <ConfirmDialog
+        open={closeDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) closeCloseDialog();
+        }}
+        title={t('confirm.futuresClose.title')}
+        description={t('confirm.serverPriceNote')}
+        summary={
+          closeTarget ? (
+            <dl className="m-0 grid gap-3">
+              <div className="flex justify-between gap-3">
+                <dt className="text-foreground-muted">{t('confirm.row.market')}</dt>
+
+                <dd className="text-foreground m-0 tabular-nums">{closeTarget.market}</dd>
+              </div>
+
+              <div className="flex justify-between gap-3">
+                <dt className="text-foreground-muted">{t('confirm.row.side')}</dt>
+
+                <dd className="text-foreground m-0">
+                  {t(closeTarget.side === 'long' ? 'trade.long' : 'trade.short')}
+                </dd>
+              </div>
+
+              <div className="flex justify-between gap-3">
+                <dt className="text-foreground-muted">{t('confirm.row.amount')}</dt>
+
+                <dd className="text-foreground m-0 tabular-nums">{closeTarget.quantity}</dd>
+              </div>
+            </dl>
+          ) : null
+        }
+        confirmLabel={t('confirm.proceed')}
+        onConfirm={submitClose}
+        loading={closeDialogBusy}
+        destructive
+      />
 
       <ConfirmDialog
         open={partialCloseDialogOpen}

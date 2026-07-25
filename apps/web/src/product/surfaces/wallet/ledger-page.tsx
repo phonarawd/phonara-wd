@@ -102,7 +102,7 @@ export function LedgerPage() {
   const showClearFilters = hasActiveLedgerFilters(filters);
 
   return (
-    <div className="flex flex-col gap-6 py-4 md:py-6" data-testid="ledger-page">
+    <div className="flex flex-col gap-ds-8 py-4 md:py-6" data-testid="ledger-page">
       <header className="space-y-3">
         <a
           href="/wallet"

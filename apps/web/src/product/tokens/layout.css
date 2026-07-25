@@ -1,6 +1,7 @@
 /**
  * Phase R design tokens — viewport breakpoints + shell geometry (§3.0).
  * TS mirror: `viewport-contract.ts` · smoke widths 390 / 768 / 1024 / 2560.
+ * Ultrawide letterbox evidence (3440 / 3840 / 5120): `ULTRAWIDE_SMOKE_WIDTHS` — not a smoke DoD tier.
  */
 
 :root {
@@ -26,10 +27,17 @@
 .ds-shell-page {
   box-sizing: border-box;
   width: 100%;
-  min-height: 100dvh;
+  /* Progressive enhancement: vh fallback, then dvh when supported */
   min-height: 100vh;
+  min-height: 100dvh;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Sports hub root — page body must not scroll horizontally (SPORTS_UX_CANON).
+   League chip / sport tab rows scroll inside their own scroller only. */
+.ds-sports-hub {
+  overflow-x: hidden;
 }
 
 /* Centered max-width content column — ultra-wide letterboxing (§3.0) */

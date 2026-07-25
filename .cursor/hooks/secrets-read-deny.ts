@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * Cursor hook: deny reading real secret files (.env, credentials).
+ * Cursor hook: deny reading real secret files (.env, credentials, key material).
  * Allows .env.example and template paths.
  */
 import { readFileSync } from 'node:fs';
@@ -30,9 +30,26 @@ function allow(): never {
   process.exit(0);
 }
 
-const BLOCKED_BASENAMES = new Set(['.env', '.env.local', '.env.production', '.env.development']);
+const BLOCKED_BASENAMES = new Set([
+  '.env',
+  '.env.local',
+  '.env.production',
+  '.env.development',
+  '.dev.vars',
+  'credentials.json',
+  '.auth.json',
+  '.admin-auth.json',
+  '.env.secrets',
+]);
+
 const BLOCKED_SUFFIXES = ['.pem', '.key', '.p12', '.pfx'];
-const ALLOWED_PATTERNS = [/\.env\.example$/i, /\.env\.template$/i, /\.env\.sample$/i];
+
+const ALLOWED_PATTERNS = [
+  /\.env\.example$/i,
+  /\.env\.template$/i,
+  /\.env\.sample$/i,
+  /\.key\.example$/i,
+];
 
 const raw = readStdin();
 let filePath = '';
@@ -67,6 +84,28 @@ if (BLOCKED_BASENAMES.has(base)) {
 
 if (base.startsWith('.env.') && !base.endsWith('.example')) {
   deny(`Reading ${base} is blocked — local env files may contain secrets`);
+}
+
+// setup/.env.secrets (basename already covered; path guard for clarity)
+if (
+  normalized.endsWith('/setup/.env.secrets') ||
+  normalized === 'setup/.env.secrets' ||
+  normalized.endsWith('setup/.env.secrets')
+) {
+  deny('Reading setup/.env.secrets is blocked — operator-managed PAT vault');
+}
+
+// *credentials*.json (e.g. .local-admin-dev.credentials.json)
+if (base.toLowerCase().endsWith('.json') && /credentials/i.test(base)) {
+  deny(`Reading ${base} is blocked — local credentials files must not be loaded by agents`);
+}
+
+// E2E ephemeral auth tokens
+if (
+  normalized.includes('/tests/e2e/') &&
+  (base === '.auth.json' || base === '.admin-auth.json' || /\.auth.*\.json$/i.test(base))
+) {
+  deny(`Reading ${base} is blocked — E2E auth tokens are ephemeral session residue`);
 }
 
 for (const suffix of BLOCKED_SUFFIXES) {

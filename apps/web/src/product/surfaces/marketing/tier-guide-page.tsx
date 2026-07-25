@@ -33,7 +33,7 @@ export function TierGuidePage() {
   if (loading) {
     return (
       <div
-        className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-6"
+        className="mx-auto flex w-full max-w-3xl flex-col gap-ds-8 py-6"
         data-testid="tier-guide-loading"
       >
         <Skeleton className="h-8 w-1/2" />

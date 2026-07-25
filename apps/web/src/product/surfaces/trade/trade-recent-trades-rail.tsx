@@ -6,6 +6,7 @@ import { toDecimal } from '@phonara/money';
 
 import { formatOraclePriceDisplay } from '@/features/trading/format-oracle-price-display';
 import { useReferencePriceTicks, type ReferencePriceTick } from '@/hooks/use-trading';
+import { IconButton } from '@/product/primitives/icon-button';
 import { cn } from '@/product/primitives/lib/cn';
 import { Skeleton } from '@/product/primitives/skeleton';
 
@@ -78,13 +79,12 @@ export function TradeRecentTradesRail({
             {t('trade.recent.referenceDisclosure')}
           </p>
         </div>
-        <button
+        <IconButton
           type="button"
+          variant="ghost"
+          size="sm"
           data-testid="trade-recent-trades-toggle"
-          className={cn(
-            'text-accent shrink-0 rounded-(--ds-radius-sm) p-1',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
-          )}
+          className="text-accent shrink-0"
           aria-expanded={expanded}
           aria-label={expanded ? t('trade.recent.collapse') : t('trade.recent.expand')}
           onClick={() => setExpanded((open) => !open)}
@@ -96,7 +96,7 @@ export function TradeRecentTradesRail({
             )}
             aria-hidden
           />
-        </button>
+        </IconButton>
       </header>
 
       {expanded ? (
@@ -106,7 +106,7 @@ export function TradeRecentTradesRail({
             <span className="text-foreground-muted text-right">{t('trade.time')}</span>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-2">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-2">
             {loading && visibleTicks.length === 0 ? (
               <div
                 className="flex flex-col gap-1 px-1 py-1"

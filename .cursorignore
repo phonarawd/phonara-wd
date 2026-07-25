@@ -40,6 +40,22 @@ e2e-log.txt
 scripts/tmp-
 **/*.woff2
 apps/web/public/fonts/
+# Secrets / key material — never index (check:secrets-deploy-deny)
+.env
+.env.*
+setup/.env.secrets
+.dev.vars
+**/.dev.vars
+*.pem
+*.p12
+*.pfx
+*.key
+credentials.json
+**/credentials.json
+.local-admin-dev.credentials.json
+.local-trade-dev.credentials.json
+secrets.toml
+**/secrets.toml
 # Design archives and audit scratch (index noise)
 **/*.zip
 _audit/
@@ -55,6 +71,7 @@ docs/rebuild/LOWSPEC_RULES.md
 docs_archive
 docs_archive/
 gate-manifest/
+screenshots
 tests/visual/m0-baselines
 tests/visual/m0-baselines/
 tests/visual/mockups

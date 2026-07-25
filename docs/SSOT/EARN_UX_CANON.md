@@ -45,7 +45,7 @@ Today Earnings · Available Reward · Recommended Missions · Mission Category T
 
 ## Tone
 
-- Warm · novice-friendly · natural Korean ([`UX_WRITING_GUIDE.md`](UX_WRITING_GUIDE.md))
+- Warm · novice-friendly · natural Korean ([`COPYWRITING_CANON.md`](COPYWRITING_CANON.md))
 - Light emoji OK in general earn copy ([`COPYWRITING_CANON.md`](COPYWRITING_CANON.md))
 - **Forbidden:** exaggerated rewards · false urgency/deadline · hidden eligibility · deceptive FOMO
 

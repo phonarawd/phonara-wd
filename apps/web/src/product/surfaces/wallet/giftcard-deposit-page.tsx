@@ -105,7 +105,7 @@ export function GiftcardDepositPage() {
   const preview = engine.submitResult ?? engine.previewSnapshot;
 
   return (
-    <div className="flex flex-col gap-6 py-4 md:py-6" data-testid="giftcard-deposit-page">
+    <div className="flex flex-col gap-ds-8 py-4 md:py-6" data-testid="giftcard-deposit-page">
       <header className="space-y-3">
         <a
           href="/wallet/deposit"

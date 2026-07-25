@@ -365,7 +365,7 @@ export function SpotOrderTicket({
             disabled={submitDisabled}
             loading={busy}
             className={cn(
-              'min-h-11 w-full',
+              'min-h-(--ds-touch-target-min) w-full',
               side === 'buy'
                 ? 'bg-market-up text-black hover:bg-market-up/90'
                 : 'bg-market-down hover:bg-market-down/90',

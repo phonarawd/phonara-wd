@@ -1,8 +1,9 @@
 # Product Principles (D4)
 
+> **상위:** [`PLATFORM_CONSTITUTION.md`](PLATFORM_CONSTITUTION.md) — Authority Charter (실행 큐 아님)  
 > **상태:** D4 narrative complete (2026-06-30)  
 > **Authority:** [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) (Phase R) · Decision 014  
-> **Copy execution:** [`UX_WRITING_GUIDE.md`](UX_WRITING_GUIDE.md) · [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md)  
+> **Copy execution:** [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md)  
 > **하위 canon:** [`PAYMENT_ARCHITECTURE_CANON.md`](PAYMENT_ARCHITECTURE_CANON.md) · [`ADMIN_UX_CANON.md`](ADMIN_UX_CANON.md) · [`GLOBAL_EXPANSION.md`](GLOBAL_EXPANSION.md) · [`UNIFIED_UX_CANON.md`](UNIFIED_UX_CANON.md)
 
 ## 한 줄
@@ -31,7 +32,7 @@ Surface reference는 [`UX_REFERENCE_CANON.md`](UX_REFERENCE_CANON.md)에서 달�
 
 ### 2.1 Financial / Betting / Admin audit
 
-**대상 surfaces**
+#### 대상 surfaces
 
 - Trade · order · position · liquidation · margin
 - Sports betting · bet slip · odds change · settlement
@@ -41,7 +42,7 @@ Surface reference는 [`UX_REFERENCE_CANON.md`](UX_REFERENCE_CANON.md)에서 달�
 - Balance · PnL · odds · fee · margin · settlement messages
 - Risk/security errors · kill switch · parity hold · KYC · RG limits
 
-**Tone rules**
+#### Tone rules
 
 | Rule                       | Detail                                                                       |
 | -------------------------- | ---------------------------------------------------------------------------- |
@@ -52,7 +53,7 @@ Surface reference는 [`UX_REFERENCE_CANON.md`](UX_REFERENCE_CANON.md)에서 달�
 | Apology-first copy         | **금지** — next action 우선 ([`COPYWRITING_CANON.md`](COPYWRITING_CANON.md)) |
 | Guaranteed profit          | **금지**                                                                     |
 
-**Examples**
+#### Examples
 
 ```text
 Bad:  🚀 주문 성공!
@@ -67,14 +68,14 @@ Good: 출금 신청을 접수했습니다. / Withdrawal request submitted.
 
 ### 2.2 General consumer
 
-**대상 surfaces**
+#### 대상 surfaces
 
 - Home · Earn hub · missions · referral · onboarding
 - General notifications · settings · profile (non-money)
 - General wallet completion feedback (non-settlement celebratory tone)
 - Auth welcome · feature discovery (not money confirmation)
 
-**Tone rules**
+#### Tone rules
 
 | Rule                | Detail                                                                                           |
 | ------------------- | ------------------------------------------------------------------------------------------------ |
@@ -84,7 +85,7 @@ Good: 출금 신청을 접수했습니다. / Withdrawal request submitted.
 | Reward copy         | **사실 기반** — 과장·false urgency·false deadline **금지**                                       |
 | FOMO / social proof | presentation display props 허용 — **기만적 claim 금지** ([`EARN_UX_CANON.md`](EARN_UX_CANON.md)) |
 
-**Examples**
+#### Examples
 
 ```text
 Good: ✨ 저장했어요.
@@ -174,7 +175,7 @@ Earn/Home (low density · reward feedback · warm tone)
 
 Navigation · hierarchy · motion · density · trust · CTA · a11y · performance · Design Token Lock — [`DESIGN_PRINCIPLES.md`](DESIGN_PRINCIPLES.md)
 
-Toast · button · empty · error copy patterns — [`UX_WRITING_GUIDE.md`](UX_WRITING_GUIDE.md)
+Toast · button · empty · error copy patterns — [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md)
 
 ---
 

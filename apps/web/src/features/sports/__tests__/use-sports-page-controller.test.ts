@@ -26,6 +26,14 @@ vi.mock('@/hooks/use-client-gate-prechecks', () => ({
   useClientGatePrechecks: () => useClientGatePrechecksMock(),
 }));
 
+vi.mock('@/features/responsible-gaming/use-rg-gate-policy', () => ({
+  useRgGatePolicy: () => async () => null,
+  rgReasonMessageKey: (reason: string) =>
+    reason === 'self_exclusion'
+      ? 'games.shared.rg.self_exclusion.title'
+      : 'games.shared.rg.daily_loss_limit.title',
+}));
+
 vi.mock('@/hooks/use-wallet', () => ({
   useWallet: () => useWalletMock(),
 }));

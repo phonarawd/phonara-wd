@@ -16,7 +16,7 @@
 | Closed Beta(제한 실전) 가능?     | **operator 체크 5개** + Admin SOP 실습 후  |
 | 정식 출시(일반 사용자)?          | **Phase R UI** + full E2E 후               |
 
-**이 문서 = 출시 전에 operator가 직접 `[ ]` → `[x]` 체크하는 종이.**
+#### 이 문서 = 출시 전에 operator가 직접 `[ ]` → `[x]` 체크하는 종이.
 
 ---
 
@@ -132,7 +132,7 @@ bun run check:advisors
 | 1E-4 | provider failure → ops alert           | [ ]  |
 | 1E-5 | rollback / system_readonly 절차 리허설 | [ ]  |
 
-**✅ L1 통과 = Closed Beta(제한 실전) GO**
+#### ✅ L1 통과 = Closed Beta(제한 실전) GO
 
 ---
 
@@ -153,7 +153,7 @@ bun run check:advisors
 | 2-9  | Auth: leaked password protection (Supabase dashboard)          | [ ]  |
 | 2-10 | 법무·KYC·AML·상품 고지 — operator/legal sign-off               | [ ]  |
 
-**✅ L2 통과 = 정식 출시 GO (product 관점)**
+#### ✅ L2 통과 = 정식 출시 GO (product 관점)
 
 ---
 

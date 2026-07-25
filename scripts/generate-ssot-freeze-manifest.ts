@@ -69,10 +69,15 @@ function walkTsx(dir: string, out: string[] = []): string[] {
 
 function parseRoutePaths(content: string): string[] {
   const paths: string[] = [];
+  // Legacy createRoute({ path: '...' })
   for (const m of content.matchAll(/path:\s*['"]([^'"]+)['"]/g)) {
     paths.push(m[1]!);
   }
-  return paths;
+  // Phase R TanStack file routes: createFileRoute('/home')({ ... })
+  for (const m of content.matchAll(/createFileRoute\(\s*['"]([^'"]+)['"]\s*\)/g)) {
+    paths.push(m[1]!);
+  }
+  return [...new Set(paths)];
 }
 
 /** Code-derived redirect truth — paired per route export, not cross-product. */
@@ -108,6 +113,16 @@ function parseNavigateTargets(content: string, pathHint?: string): { from: strin
     if (paths.includes('/')) redirects.push({ from: '/', to: m[1]! });
   }
 
+  // Phase R: throw redirect({ to: '/login', replace: true })
+  for (const m of content.matchAll(/redirect\(\{\s*to:\s*['"]([^'"]+)['"]/g)) {
+    const to = m[1]!;
+    for (const from of paths) {
+      if (!redirects.some((r) => r.from === from && r.to === to)) {
+        redirects.push({ from, to });
+      }
+    }
+  }
+
   for (const [from, to] of Object.entries(KNOWN_REDIRECTS)) {
     if (paths.includes(from) && !redirects.some((r) => r.from === from)) {
       redirects.push({ from, to });
@@ -124,8 +139,15 @@ function parseSurfaceFromRoute(content: string): string | null {
     const primary = names.find((n) => n.endsWith('DeskSurface'));
     if (primary) return primary;
   }
-  const componentMatch = content.match(/component:\s*(\w+DeskSurface|\w+)/);
-  if (componentMatch?.[1]?.includes('DeskSurface')) return componentMatch[1];
+  // Phase R product surfaces: import { EarnHomePage } from '@/product/surfaces/...'
+  const pageImport = content.match(
+    /import\s+\{\s*([A-Za-z0-9_]+Page)\s*\}\s+from\s+['"]@\/product\/surfaces\/[^'"]+['"]/,
+  );
+  if (pageImport?.[1]) return pageImport[1];
+  const componentMatch = content.match(/component:\s*(\w+DeskSurface|\w+Page|\w+)/);
+  if (componentMatch?.[1]?.includes('DeskSurface') || componentMatch?.[1]?.endsWith('Page')) {
+    return componentMatch[1]!;
+  }
   if (content.includes('CasinoPage')) return 'CasinoDeskSurface';
   if (content.includes('LandingDeskSurface')) return 'LandingDeskSurface';
   if (content.includes('AuthCallbackPage')) return 'AuthCallbackPage';
@@ -195,18 +217,40 @@ function parseControllerFromSurface(surfaceFile: string | null): {
   }
 }
 
-function findSurfaceFile(surfaceName: string): string | null {
-  const roots = [join(repoRoot, 'apps/web/src/ui'), join(repoRoot, 'apps/web/src')];
+const surfaceFileCache = new Map<string, string | null>();
+let webTsxFilesCache: string[] | null = null;
+
+function listWebTsxFiles(): string[] {
+  if (webTsxFilesCache) return webTsxFilesCache;
+  const roots = [join(repoRoot, 'apps/web/src/product'), join(repoRoot, 'apps/web/src')];
+  const seen = new Set<string>();
+  const out: string[] = [];
   for (const root of roots) {
     try {
-      const files = walkTsx(root);
-      const hit = files.find((f) => readText(f).includes(`export function ${surfaceName}`));
-      if (hit) return hit;
+      for (const f of walkTsx(root)) {
+        if (seen.has(f)) continue;
+        seen.add(f);
+        out.push(f);
+      }
     } catch {
       /* skip */
     }
   }
-  return null;
+  webTsxFilesCache = out;
+  return out;
+}
+
+function findSurfaceFile(surfaceName: string): string | null {
+  if (surfaceFileCache.has(surfaceName)) return surfaceFileCache.get(surfaceName)!;
+  try {
+    const hit =
+      listWebTsxFiles().find((f) => readText(f).includes(`export function ${surfaceName}`)) ?? null;
+    surfaceFileCache.set(surfaceName, hit);
+    return hit;
+  } catch {
+    surfaceFileCache.set(surfaceName, null);
+    return null;
+  }
 }
 
 function inferOwner(path: string, surface: string | null): string {
@@ -262,22 +306,11 @@ function inferRpcBoundary(hooks: string[]): string {
   return hooks.map((h) => `hooks/${h}.ts`).join(' · ') + ' → lib/rpc.ts';
 }
 
+/** Page-component labels only — no BetHubShell / duplicateCandidates / hub-tab flags (demolished). */
 const OWNER_MAP: Record<string, Partial<RouteEntry>> = {
   '/login': { pageComponent: 'LoginPage (via LoginDeskSurface)' },
   '/signup': { pageComponent: 'SignupPage' },
   '/wallet': { pageComponent: 'WalletPage' },
-  '/trade': {
-    container: 'BetHubShell',
-    duplicateCandidates: ['TradeDeskSurface (orphan parallel)'],
-  },
-  '/sports': {
-    duplicateCandidates: ['BetHubShell sports tab (embedded)'],
-    flag: 'dual-sports-entry — canonical standalone /sports; /trade?section=sports = hub tab',
-  },
-  '/home': {
-    controller: 'useEarnPageController (missions) · direct useWallet (home hub)',
-    duplicateCandidates: ['EarnHomeDeskSurface', 'ImportedHomePage'],
-  },
 };
 
 function buildWebRoutes(): RouteEntry[] {
@@ -292,7 +325,10 @@ function buildWebRoutes(): RouteEntry[] {
     const content = readText(full);
     const paths = parseRoutePaths(content);
     const redirects = parseNavigateTargets(content);
-    for (const r of redirects) redirectMap.set(r.from, r.to);
+    // Prefer KNOWN_REDIRECTS over auth beforeLoad gates (throw redirect → /login)
+    for (const r of redirects) {
+      if (!(r.from in KNOWN_REDIRECTS)) redirectMap.set(r.from, r.to);
+    }
 
     for (const path of paths) {
       if (seenPaths.has(path)) continue;
@@ -383,43 +419,8 @@ function buildWebRoutes(): RouteEntry[] {
     });
   }
 
-  // BetHub tabs (not routes)
-  for (const tab of ['casino', 'sports', 'trade'] as const) {
-    entries.push({
-      path: `/trade?section=${tab}`,
-      surface:
-        tab === 'trade'
-          ? 'TradeModeShell'
-          : tab === 'sports'
-            ? 'ImportedSportsPage (embedded)'
-            : 'CasinoSportsLiveDesk + CasinoCrashDesk',
-      controller:
-        tab === 'trade'
-          ? 'useTradePageController'
-          : tab === 'sports'
-            ? 'useSportsPageController'
-            : 'useCasinoPageController (partial)',
-      hooks:
-        tab === 'trade'
-          ? ['use-wallet', 'use-trading', 'use-prices']
-          : tab === 'sports'
-            ? ['sports-engine-glue']
-            : ['use-wallet', 'use-casino'],
-      rpcBoundary: inferRpcBoundary([]),
-      enginePackage:
-        tab === 'trade'
-          ? '@phonara/trading-engine'
-          : tab === 'sports'
-            ? '@phonara/sportsbook-engine'
-            : '@phonara/game-engine',
-      dbBoundary: 'Supabase',
-      owner: tab === 'trade' ? 'Trade' : tab === 'sports' ? 'Sports' : 'Casino',
-      redirects: [],
-      legacyUrls: [],
-      status: 'hub-tab',
-      container: 'BetHubShell',
-    });
-  }
+  // Pre-demolition BetHub `/trade?section=*` synthetic hub-tab rows removed —
+  // Trade / Sports / Casino are standalone canonical routes only.
 
   return entries.sort((a, b) => a.path.localeCompare(b.path));
 }
@@ -548,14 +549,8 @@ function formatUiInventory(web: RouteEntry[], admin: RouteEntry[]): string {
     );
   }
 
-  lines.push('', '## Package ownership', '');
-  lines.push('| Package | Scope | UI reset |');
-  lines.push('|---------|-------|----------|');
-  lines.push('| `@phonara/ui` | Engine/trade/shell DS | Rebuild presentation · API compat |');
-  lines.push('| `@phonara/game-ui` | Game canvas/Pixi | Protected · in-place presentation only |');
-  lines.push(
-    '| `apps/web/src/components/ui` | Paste-zone shadcn | Rebuild · consolidate per wave |',
-  );
+  // Package ownership table removed — `@phonara/ui`, `@phonara/game-ui`, and
+  // `apps/web/src/components/ui` were deleted in v5 Demolition (do not re-emit).
 
   return lines.join('\n');
 }
@@ -581,21 +576,19 @@ function formatRouteRegistry(web: RouteEntry[], admin: RouteEntry[]): string {
 
   lines.push('', '## Canonical decisions', '');
   lines.push('- **Earn hub:** `/home` (not `/earn`) — `/earn` redirect-only');
-  lines.push(
-    '- **Sports:** standalone `/sports` = canonical sportsbook; `/trade?section=sports` = BetHub embedded entry',
-  );
-  lines.push('- **Trade:** `/trade` = BetHubShell; `/trade?section=trade` = futures/spot terminal');
+  lines.push('- **Sports:** standalone `/sports` = canonical sportsbook (no BetHub embed)');
+  lines.push('- **Trade:** `/trade` = standalone Trade surface (no `?section=` hub tabs)');
   lines.push(
     '- **Casino games:** `/casino/{game}` canonical; `/games/*` parallel catalog (inventory duplicate — converge in C-wave)',
   );
 
   lines.push('', '## Blueprint mapping flags', '');
-  lines.push('| Blueprint area | Canonical route/tab | Notes |');
-  lines.push('|----------------|---------------------|-------|');
+  lines.push('| Blueprint area | Canonical route | Notes |');
+  lines.push('|----------------|-----------------|-------|');
   lines.push('| D1 Auth | `/login`, `/signup`, `/reset-password` | OK |');
   lines.push('| D2 Wallet | `/wallet`, `/ledger`, `/staking` | OK |');
-  lines.push('| D3 Trade | `/trade?section=trade` | Hub tab |');
-  lines.push('| D4 Sports | `/sports` + hub tab | dual entry documented |');
+  lines.push('| D3 Trade | `/trade` | Standalone route |');
+  lines.push('| D4 Sports | `/sports` | Standalone route |');
   lines.push('| D5 Casino | `/casino`, `/casino/*` | OK |');
   lines.push('| D4 Earn | `/home`, `/home/missions` | `/earn` redirect |');
   lines.push('| Admin | `/admin/*` | 14 desk routes |');
@@ -611,9 +604,16 @@ interface DisplayFieldAudit {
   notes: string;
 }
 
-function buildDisplayContractAudits(): DisplayFieldAudit[] {
+function readShapesSource(): { path: string; content: string; present: boolean } {
   const shapesPath = join(repoRoot, 'apps/web/src/contracts/page-controller-view-shapes.ts');
-  const shapes = readText(shapesPath);
+  if (!existsSync(shapesPath)) {
+    return { path: shapesPath, content: '', present: false };
+  }
+  return { path: shapesPath, content: readText(shapesPath), present: true };
+}
+
+function buildDisplayContractAudits(): DisplayFieldAudit[] {
+  const { content: shapes } = readShapesSource();
   const audits: DisplayFieldAudit[] = [];
 
   const add = (
@@ -1607,7 +1607,12 @@ function formatEngineIntegrationPlaybook(
     lines.push('- None');
   } else {
     for (const m of missing) {
-      lines.push(`- **${m.domain} · ${m.field}** — ${m.notes}`);
+      const note = m.notes.trim();
+      lines.push(
+        note
+          ? `- **${m.domain} · ${m.field}** — ${note}`
+          : `- **${m.domain} · ${m.field}** — (no notes)`,
+      );
     }
   }
 
@@ -1704,19 +1709,25 @@ function formatEngineIntegrationPlaybook(
   return lines.join('\n');
 }
 
+function writeGeneratedMarkdown(fileName: string, content: string): void {
+  // markdownlint MD047 — exactly one trailing newline
+  const body = `${content.replace(/\s+$/u, '')}\n`;
+  writeFileSync(join(ssotDir, fileName), body);
+}
+
 function main(): void {
   const web = buildWebRoutes();
   const admin = buildAdminRoutes();
   const audits = buildDisplayContractAudits();
-  const shapesPath = join(repoRoot, 'apps/web/src/contracts/page-controller-view-shapes.ts');
-  const viewShapes = parseControllerViewShapes(readText(shapesPath));
+  const shapes = readShapesSource();
+  const viewShapes = parseControllerViewShapes(shapes.content);
 
-  writeFileSync(join(ssotDir, 'FREEZE_MANIFEST.md'), formatFreezeManifest(web, admin));
-  writeFileSync(join(ssotDir, 'UI_INVENTORY.md'), formatUiInventory(web, admin));
-  writeFileSync(join(ssotDir, 'ROUTE_CANONICAL_REGISTRY.md'), formatRouteRegistry(web, admin));
-  writeFileSync(join(ssotDir, 'DISPLAY_DATA_CONTRACT.md'), formatDisplayContract(audits));
-  writeFileSync(
-    join(ssotDir, 'ENGINE_INTEGRATION_PLAYBOOK.md'),
+  writeGeneratedMarkdown('FREEZE_MANIFEST.md', formatFreezeManifest(web, admin));
+  writeGeneratedMarkdown('UI_INVENTORY.md', formatUiInventory(web, admin));
+  writeGeneratedMarkdown('ROUTE_CANONICAL_REGISTRY.md', formatRouteRegistry(web, admin));
+  writeGeneratedMarkdown('DISPLAY_DATA_CONTRACT.md', formatDisplayContract(audits));
+  writeGeneratedMarkdown(
+    'ENGINE_INTEGRATION_PLAYBOOK.md',
     formatEngineIntegrationPlaybook(viewShapes, audits),
   );
 
@@ -1724,6 +1735,11 @@ function main(): void {
   console.log(
     `  web routes: ${web.length}, admin routes: ${admin.length}, display audits: ${audits.length}, playbook surfaces: ${PLAYBOOK_REGISTRY.length}`,
   );
+  if (!shapes.present) {
+    console.log(
+      '  note: page-controller-view-shapes.ts absent (post-demolition) — display audits use field-name scan against empty freeze shapes',
+    );
+  }
 }
 
 main();

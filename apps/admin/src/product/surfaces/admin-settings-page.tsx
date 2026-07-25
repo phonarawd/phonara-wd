@@ -69,7 +69,7 @@ export function AdminSettingsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-ds-8">
       <section className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-2">
           <h2 className="text-foreground m-0 text-2xl font-semibold tracking-tight">
@@ -119,7 +119,7 @@ export function AdminSettingsPage() {
 
       <section
         aria-labelledby="admin-settings-push-heading"
-        className="border-border bg-surface-1 space-y-3 rounded-xl border p-4"
+        className="space-y-3 rounded-(--ds-radius-lg) border border-line bg-surface-raised p-4"
         data-testid="admin-settings-ops-push"
       >
         <div className="space-y-1">
@@ -258,6 +258,15 @@ export function AdminSettingsPage() {
                     rows={section.rows}
                     getRowId={(row) => row.key}
                     minWidth={640}
+                    empty={
+                      <EmptyState
+                        title={t('admin.overview.empty.title')}
+                        description={t('admin.settings.empty.filteredBody')}
+                        actionLabel={t('admin.settings.empty.cta')}
+                        onAction={() => setSearch('')}
+                        testId="admin-settings-section-empty"
+                      />
+                    }
                   />
                 </TabsContent>
               ))}

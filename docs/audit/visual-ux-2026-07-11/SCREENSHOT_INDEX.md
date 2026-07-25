@@ -70,7 +70,7 @@
 
 ## 1. 디렉터리 스키마
 
-```
+```text
 screenshots/
   desktop/     # ≥1024 가로
   tablet/      # 768–1023 (및 태블릿 세로) — 1차 미캡처
@@ -83,7 +83,7 @@ screenshots/
 
 ### 파일명 규칙
 
-```
+```text
 {page}_{viewport}_{nn}.png
 ```
 

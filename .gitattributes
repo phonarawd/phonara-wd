@@ -1,3 +1,6 @@
 # Migration append-only lock hashes SHA-256 raw file bytes — force LF on all platforms.
 supabase/migrations/*.sql text eol=lf
 packages/shared-types/src/database.types.ts text eol=lf
+# CSP script-src hash in apps/web/public/_headers is computed over LF script bytes.
+apps/web/index.html text eol=lf
+apps/web/public/_headers text eol=lf

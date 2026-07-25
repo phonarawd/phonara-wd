@@ -21,6 +21,39 @@ export type OpsDashboard = {
   healthChecks: OpsHealthCheck[];
 };
 
+/**
+ * ADMIN_UX_CANON §3 landing order — withdrawals first, not RPC count-desc.
+ * Unknown queue types sort after known ones (then overdue/open as tiebreak).
+ */
+export const EXCEPTION_QUEUE_CANON_ORDER = [
+  'withdrawal',
+  'deposit',
+  'deposit_exception',
+  'kyc',
+  'kyc_review',
+  'aml',
+  'sanctions',
+  'sanctions_screening',
+  'affiliate',
+] as const;
+
+function exceptionQueueCanonRank(queueType: string): number {
+  const idx = (EXCEPTION_QUEUE_CANON_ORDER as readonly string[]).indexOf(queueType);
+  return idx === -1 ? EXCEPTION_QUEUE_CANON_ORDER.length : idx;
+}
+
+/** Presentation-only sort for home exception cards (engine payload order unchanged). */
+export function sortExceptionQueuesByCanon(
+  rows: readonly OpsDashboardQueueRow[],
+): OpsDashboardQueueRow[] {
+  return [...rows].sort((a, b) => {
+    const byCanon = exceptionQueueCanonRank(a.queueType) - exceptionQueueCanonRank(b.queueType);
+    if (byCanon !== 0) return byCanon;
+    if (b.overdueCount !== a.overdueCount) return b.overdueCount - a.overdueCount;
+    return b.openCount - a.openCount;
+  });
+}
+
 function isRecord(value: Json | unknown): value is Record<string, Json | undefined> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -89,9 +122,9 @@ export function parseOpsDashboard(value: Json): OpsDashboard {
     overallStatus: parseStatus(value['overallStatus']),
     fetchedAt:
       typeof value['fetchedAt'] === 'string' ? value['fetchedAt'] : new Date().toISOString(),
-    exceptionQueues: rawQueues
-      .map(parseQueueRow)
-      .filter((row): row is OpsDashboardQueueRow => row !== null),
+    exceptionQueues: sortExceptionQueuesByCanon(
+      rawQueues.map(parseQueueRow).filter((row): row is OpsDashboardQueueRow => row !== null),
+    ),
     opsAlerts: {
       open: typeof rawAlerts['open'] === 'number' ? rawAlerts['open'] : 0,
       critical: typeof rawAlerts['critical'] === 'number' ? rawAlerts['critical'] : 0,

@@ -54,7 +54,7 @@ export function TierMePage() {
   if (loading) {
     return (
       <div
-        className="mx-auto flex w-full max-w-4xl flex-col gap-6 py-4"
+        className="mx-auto flex w-full max-w-4xl flex-col gap-ds-8 py-4"
         data-testid="tier-me-loading"
       >
         <Skeleton className="h-10 w-1/2" />
@@ -81,10 +81,10 @@ export function TierMePage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-4xl flex-col gap-6 py-4 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-start md:gap-8 md:py-6"
+      className="mx-auto flex w-full max-w-4xl flex-col gap-ds-8 py-4 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-start md:gap-8 md:py-6"
       data-testid="tier-me-page"
     >
-      <div className="flex flex-col gap-6 md:col-span-1">
+      <div className="flex flex-col gap-ds-8 md:col-span-1">
         <header className="flex flex-col gap-3">
           <p className="text-accent m-0 text-xs font-semibold tracking-wide uppercase">
             {t('tier.me.eyebrow')}
@@ -249,7 +249,7 @@ export function TierMePage() {
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-6 md:col-span-1">
+      <div className="flex flex-col gap-ds-8 md:col-span-1">
         <section aria-labelledby="tier-me-limits-heading">
           <h2
             id="tier-me-limits-heading"
@@ -286,7 +286,7 @@ export function TierMePage() {
             </h2>
             <Link
               to={TIER_BENEFITS_ROUTE}
-              className="text-accent text-sm font-medium underline-offset-4 hover:underline"
+              className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'text-accent')}
               data-testid="tier-me-benefits-link"
             >
               {t('tier.me.benefitsLink')}

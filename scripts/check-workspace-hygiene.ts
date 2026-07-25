@@ -156,12 +156,28 @@ function checkWorkspaceRoots() {
   }
 }
 
+function checkPlanMarkdownlintExclusion() {
+  requirePatternsInFile('.markdownlint-cli2.yaml', '.markdownlint-cli2.yaml', ['**/*.plan.md']);
+  requirePatternsInFile('.markdownlintignore', '.markdownlintignore', ['**/*.plan.md']);
+  if (!existsSync('scripts/templates/cursor-plans.markdownlint-cli2.jsonc')) {
+    violations.push('Missing scripts/templates/cursor-plans.markdownlint-cli2.jsonc');
+  }
+  if (!existsSync('scripts/ensure-cursor-plans-markdownlint.ts')) {
+    violations.push('Missing scripts/ensure-cursor-plans-markdownlint.ts');
+  }
+  const vscode = readText('.vscode/settings.json');
+  if (vscode && !vscode.includes('!**/*.plan.md')) {
+    violations.push('.vscode/settings.json markdownlint.lintWorkspaceGlobs missing !**/*.plan.md');
+  }
+}
+
 checkCursorignore();
 checkVscodeWatcherExclude();
 checkVscodeArchivalWatcherExclude();
 checkCleanArtifactsSync();
 checkSessionResidue();
 checkWorkspaceRoots();
+checkPlanMarkdownlintExclusion();
 
 if (violations.length > 0) {
   process.stderr.write(
@@ -173,5 +189,5 @@ if (violations.length > 0) {
 }
 
 process.stdout.write(
-  'check:hygiene OK — cursorignore, watcher excludes, and session residue clean\n',
+  'check:hygiene OK — cursorignore, watcher excludes, plan markdownlint exclude, and session residue clean\n',
 );

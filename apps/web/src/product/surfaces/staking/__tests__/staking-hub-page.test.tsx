@@ -235,6 +235,10 @@ describe('StakingHubPage', () => {
     expect(claimReward).toHaveBeenCalledWith('pos-1');
 
     fireEvent.click(screen.getByTestId('staking-unstake-pos-1'));
+    expect(unstakePosition).not.toHaveBeenCalled();
+    expect(screen.getByText('confirm.unstake.title')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'confirm.proceed' }));
     expect(unstakePosition).toHaveBeenCalledWith('pos-1');
   });
 

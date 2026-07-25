@@ -113,7 +113,7 @@ describe('da-w6-brand-elevation-display-contract §34.18–34.20 · YAML #216', 
     expect(sportsBoard).toContain('QuadStreamLoading');
 
     const sportsVip = readFileSync(
-      resolve(WEB_SRC, 'product/surfaces/sports/sports-vip-stub-panel.tsx'),
+      resolve(WEB_SRC, 'product/surfaces/sports/sports-vip-panel.tsx'),
       'utf8',
     );
     expect(sportsVip).toContain('domain="sports"');

@@ -82,6 +82,8 @@ PrimeForge Engine Apex Plan 최종 완료 판정. Phase 8 시점 검증 스냅�
 | Migration parity | 190/190     | **191/191**      |
 | `check:advisors` | 0 ERROR     | 0 ERROR          |
 
+> **현재 디스크 (2026-07-24):** migration lock parity **248/248** (`check:migrations`) — 위 190/191은 Apex 스냅샷.
+
 Evidence: `ENGINE_PHASE8_FINAL_GATES_EVIDENCE_REPORT.md` · Post-Apex `ENGINE_POST_APEX_P1_P2_EVIDENCE_REPORT.md` (2026-07-04 삭제 — git history)
 
 ## Engine Apex — `[x] FULLY CLOSED` (2026-07-03)

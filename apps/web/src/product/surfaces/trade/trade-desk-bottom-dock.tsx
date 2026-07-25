@@ -68,20 +68,18 @@ export function TradeDeskMobileHistoryStack({
         cancelBusy={cancelBusy}
         loading={ordersLoading}
       />
-      <Tabs
-        value={historySubTab}
-        onValueChange={(value) => setHistorySubTab(value as TradeDeskHistorySubTab)}
-      >
-        <TabsList
-          className={cn('grid w-full max-w-md', showFunding ? 'grid-cols-2' : 'grid-cols-1')}
+      {showFunding ? (
+        <Tabs
+          value={historySubTab}
+          onValueChange={(value) => setHistorySubTab(value as TradeDeskHistorySubTab)}
         >
-          <TabsTrigger value="tradeFills" data-testid="trade-desk-mobile-history-subtab-fills">
-            {t('trade.panel.tradeHistory')}
-            {fills.length > 0 ? (
-              <span className="text-foreground-muted tabular-nums">({fills.length})</span>
-            ) : null}
-          </TabsTrigger>
-          {showFunding ? (
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="tradeFills" data-testid="trade-desk-mobile-history-subtab-fills">
+              {t('trade.panel.tradeHistory')}
+              {fills.length > 0 ? (
+                <span className="text-foreground-muted tabular-nums">({fills.length})</span>
+              ) : null}
+            </TabsTrigger>
             <TabsTrigger value="funding" data-testid="trade-desk-mobile-history-subtab-funding">
               {t('trade.panel.fundingHistory')}
               {fundingPayments.length > 0 ? (
@@ -90,19 +88,17 @@ export function TradeDeskMobileHistoryStack({
                 </span>
               ) : null}
             </TabsTrigger>
-          ) : null}
-        </TabsList>
-        <TabsContent value="tradeFills">
-          <TradeFillsHistoryPanel
-            fills={fills}
-            t={t}
-            locale={locale}
-            variant="full"
-            showHeading={false}
-            loading={fillsLoading}
-          />
-        </TabsContent>
-        {showFunding ? (
+          </TabsList>
+          <TabsContent value="tradeFills">
+            <TradeFillsHistoryPanel
+              fills={fills}
+              t={t}
+              locale={locale}
+              variant="full"
+              showHeading={false}
+              loading={fillsLoading}
+            />
+          </TabsContent>
           <TabsContent value="funding">
             <TradeFundingHistoryPanel
               payments={fundingPayments}
@@ -113,8 +109,17 @@ export function TradeDeskMobileHistoryStack({
               loading={fundingPaymentsLoading}
             />
           </TabsContent>
-        ) : null}
-      </Tabs>
+        </Tabs>
+      ) : (
+        <TradeFillsHistoryPanel
+          fills={fills}
+          t={t}
+          locale={locale}
+          variant="full"
+          showHeading
+          loading={fillsLoading}
+        />
+      )}
     </div>
   );
 }

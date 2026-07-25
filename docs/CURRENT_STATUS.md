@@ -4,6 +4,21 @@
 > **엔진:** `[x] FULLY CLOSED` — [`ENGINE_APEX_CLOSEOUT.md`](ENGINE_APEX_CLOSEOUT.md)  
 > **Demolition:** `[x] DONE` — [`PRODUCT/DEMOLITION_PLAN.md`](PRODUCT/DEMOLITION_PLAN.md) (이력만 · batch 재실행 아님)
 
+## Gates (2026-07-25 · 전수조사 Phase 0–11 Verified)
+
+| Gate                                     | 결과                                                                                                                                    |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1–2**                            | `check:secrets-deploy-deny` · `check:pwa` · `check:perf-contract` · freeze manifest BetHub/`@phonara/ui` 제거 · CSP hash 정합           |
+| **Phase 3–5 admin**                      | alerts/queues/risk RBAC · CMS reason+await · users Outlet · RTP confirm · sports await · admin-rbac **21/21**                           |
+| **Phase 6 (`phase6-db-bonus-wagering`)** | migration `20260828000001_fix_phon_wagering_bet_reason_cashout` · SQL 회귀 · CI `sql` + `stack:push-remote`                             |
+| **Phase 7–8**                            | roulette Decimal · dice/limbo refine · futures/staking confirm · RG wire · Earn proof `hidden` · vitest green                           |
+| **Phase 9 (`phase9-techstack-cleanup`)** | tmp/one-off → `scripts/archive/` · vitest pin · CI `check:games`/`determinism`/`deps` · orphan cleanup                                  |
+| **Phase 10 (`phase10-e2e-coverage`)**    | `casino-dice` · `sports-betting` · `staking-hub` · `referral-hub` · 로컬 E2E 미실행(G13) · CI `e2e`                                     |
+| **Phase 11 (`phase11-verify-closeout`)** | **`[x]` DONE** · L0~L4 · `gate:ai-impl` **54/54** · CI [30158538228](https://github.com/phonarawd/phonara-wd/actions/runs/30158538228) quality·sql·e2e·advisors **green** |
+| **서버 alerts / sports role migration**  | **HOLD** (승인·정책 대기)                                                                                                               |
+| **한계 예외**                            | migration 파일명 오타(리네임 금지) · 브라우저 실측 G13 이연 · zod v3/v4 통일 별도 트랙                                                  |
+| **NEXT**                                 | 전수조사 Plan **닫힘** · ACTIVE_WORK 상단 표 / 다른 Plan todo                                                                           |
+
 ## Gates (2026-07-10 · Cursor 8GB perf v4.4.5 · `phase0-gate`)
 
 | Gate                                        | 결과                                                                                                                                                                                                                                          |
@@ -34,7 +49,7 @@
 | Gate                                                                     | 결과                                                                                                                                                                       |
 | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Launch E4 (`launch-engine-e4-concurrent-race-test`)                      | `concurrent_wallet_race_test.sql` **5/5** (E4-0..E4-4) · `test:sql` **118/118** · `stack:push-remote` · advisor **0 ERROR** · migration **0**                              |
-| `check:migrations`                                                       | **211/211** lock parity (incl. `20260725000001_synthetic_book_definer_fmt6_fix`)                                                                                           |
+| `check:migrations`                                                       | **248/248** lock parity (2026-07-24 실측; Launch E4 당시 표기 211은 스냅샷)                                                                                                |
 | `check:hygiene`                                                          | green                                                                                                                                                                      |
 | `check:release`                                                          | green                                                                                                                                                                      |
 | `check:ai-reference`                                                     | green                                                                                                                                                                      |
@@ -44,7 +59,7 @@
 | `gate:ai-impl` DA W7 VISUAL (`da-w7-operator-visual-dae-signoff`)        | vitest **22/22** · Home+Shell+Trade · 4-tier · preview · axe 0 · dead control 0 · §20.12 · engine **0**                                                                    |
 | `gate:ai-impl` DA W6 GATE (`da-w6-gate-brand-elevation`)                 | vitest **23/23** · BrandMark aurora · domain empty · Quad Stream · `check:design-tokens` advisory (91 notes) · VISUAL advisory · §34.18–34.20 · engine **0**               |
 | `gate:ai-impl` DA W6 Brand (`da-w6-brand-elevation-bundle`)              | vitest **55/55** · BrandMark aurora · domain empty · QuadStreamLoading · router pending · §34.18–34.20 · engine **0**                                                      |
-| `gate:ai-impl` P4 VISUAL (`p4-operator-visual-signoff`)                  | vitest surface **13/13** · contract **6/6** · §22.2 Wallet · §25.12.6 · 390/768/1024 · axe critical 0 · dead control 0 · preview https://preview.phonara-web.pages.dev     |
+| `gate:ai-impl` P4 VISUAL (`p4-operator-visual-signoff`)                  | vitest surface **13/13** · contract **6/6** · §22.2 Wallet · §25.12.6 · 390/768/1024 · axe critical 0 · dead control 0 · preview <https://preview.phonara-web.pages.dev>   |
 | `gate:ai-impl` P9 VISUAL (`p9-operator-visual-signoff`)                  | vitest trade+staking **168/168** · `p9-trade-visual-signoff` **29/29** · contract **5/5** · §13.1.1 dual-currency · dead control 0 · G7 cross-margin canary                |
 | `typecheck`                                                              | green                                                                                                                                                                      |
 | `check:design-tokens`                                                    | green (**strict** da-w7) · token SOT · text-tiny · legacy bridge 0 · spacing-ratchet advisory                                                                              |

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import type { GameCode } from '@phonara/game-engine';
+import { resolveBlackjackPlay, type GameCode } from '@phonara/game-engine';
 import { toDecimal } from '@phonara/money';
 
 import { getGameMeta, type CasinoGameId } from '@/data/casino-game-meta';
@@ -18,6 +18,7 @@ import {
 import {
   isCasinoBatchBGame,
   P10_GAMES_BATCH_B_TODO,
+  parseHiloProgressiveOutcome,
 } from '@/domain/casino-games-batch-b-display-contract';
 import {
   isCasinoBatchCGame,
@@ -25,7 +26,9 @@ import {
 } from '@/domain/casino-games-batch-c-display-contract';
 import {
   isCasinoBatchDGame,
+  normalizeBlackjackActions,
   P10_GAMES_BATCH_D_TODO,
+  parseBlackjackLiveHands,
 } from '@/domain/casino-games-batch-d-display-contract';
 import { isEwE23UiLivePlayGame } from '@/domain/ew-e23-ui-casino-live-unlocks-display-contract';
 import { EW_E23_PROGRESSIVE_GAMES } from '@/domain/ew-e23-casino-live-display-contract';
@@ -57,6 +60,10 @@ import {
   type ProgressiveGame,
   type ProgressiveSessionPublic,
 } from '@/features/casino/use-progressive-round';
+import {
+  rgReasonMessageKey,
+  useRgGatePolicy,
+} from '@/features/responsible-gaming/use-rg-gate-policy';
 import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { translateError } from '@/lib/translate-error';
 import { useAuth } from '@/contexts/auth-context';
@@ -101,6 +108,69 @@ function asLiveRevealed(publicState: Record<string, unknown>): number[] {
   return raw.filter((n): n is number => typeof n === 'number' && Number.isInteger(n));
 }
 
+/**
+ * Hilo live/progressive selection sync (Phase 1C functional QA fix) —
+ * mirrors `asLiveRevealed` above for Mines. Reuses the strict domain parser
+ * (`parseHiloProgressiveOutcome`) rather than a second lenient ad-hoc
+ * reader, so the shell and `HiloStage.playOutcome` agree on exactly one
+ * definition of "valid `public_state`" for this shape. Degrades to an empty
+ * sync (not a thrown error) on a hypothetical malformed response — this is
+ * trusted first-party RPC data in practice, but a display-sync helper
+ * should never crash the shell over it.
+ */
+function asLiveHiloSelection(publicState: Record<string, unknown>): {
+  guesses: HiLoGuess[];
+  cards: number[];
+  multiplier: number | null;
+} {
+  const parsed = parseHiloProgressiveOutcome(publicState);
+  if (!parsed) return { guesses: [], cards: [], multiplier: null };
+  return { guesses: parsed.guesses, cards: parsed.cards, multiplier: parsed.multiplier };
+}
+
+/**
+ * Blackjack live/progressive hand sync (Phase 1E) — mirrors Hilo/Mines.
+ * Keeps mid-round felt faces on the RPC `player`/`dealer` arrays so the
+ * stage never invents ranks client-side.
+ */
+function asLiveBlackjackSelection(publicState: Record<string, unknown>): {
+  player: number[];
+  dealer: number[];
+  playerValue: number | null;
+} {
+  const parsed = parseBlackjackLiveHands(publicState);
+  if (!parsed) return { player: [], dealer: [], playerValue: null };
+  return {
+    player: parsed.playerCards,
+    dealer: parsed.dealerCards,
+    playerValue: parsed.playerValue,
+  };
+}
+
+/** Enrich one-shot settle with PF-resolved hands (SQL still returns multiplier-only). */
+function enrichBlackjackOutcomeForDisplay(
+  result: Record<string, unknown>,
+  actions: unknown,
+  floats: number[] | undefined,
+): Record<string, unknown> {
+  if (!floats || floats.length < 51) return result;
+  if (Array.isArray(result['player']) && Array.isArray(result['dealer'])) return result;
+  try {
+    const detail = resolveBlackjackPlay({ actions: normalizeBlackjackActions(actions) }, floats);
+    const primary = detail.playerHands[0];
+    return {
+      ...result,
+      totalMultiplier: result['totalMultiplier'] ?? detail.totalMultiplier,
+      player: primary?.cards ?? [],
+      dealer: detail.dealerHand.cards,
+      playerValue: primary?.value ?? null,
+      dealerValue: detail.dealerHand.value,
+    };
+  } catch {
+    return result;
+  }
+}
+
 function profitDeltaFromBet(stake: string, payout: string, won: boolean): string {
   try {
     if (!won) return toDecimal(stake, 'stake').neg().toFixed();
@@ -130,6 +200,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
   const { session } = useAuth();
   const userId = session?.user.id ?? null;
   const { wallet } = useWallet();
+  const rgPolicy = useRgGatePolicy();
   const { lockSession, unlockSession, sessionLocked, showDisclaimer, hintFor } =
     useCasinoFiatHint();
   const config = GAME_BY_CODE[gameCode];
@@ -260,6 +331,11 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
   }, []);
 
   const handleManualBet = useCallback(async () => {
+    const rgReason = await rgPolicy('place_bet');
+    if (rgReason) {
+      productToast.show({ zone: 'strict', key: rgReasonMessageKey(rgReason) });
+      return;
+    }
     lockSession();
     const result = await pipeline.requestBet();
     if (result !== 'placed') {
@@ -267,7 +343,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
       return;
     }
     // bet state updates via pipeline; effect below presents when bet lands
-  }, [lockSession, pipeline, unlockSession]);
+  }, [lockSession, pipeline, rgPolicy, unlockSession]);
 
   const applyProgressiveResult = useCallback(
     (session: ProgressiveSessionPublic) => {
@@ -276,7 +352,17 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
       const payout = session.payout ?? '0';
       const status = session.status === 'cashed_out' || Number(payout) > 0 ? 'won' : 'lost';
       presentSettle(payout, status, session.stake);
-      void stageRef.current?.playOutcome(session.public_state ?? {});
+      const publicState = session.public_state ?? {};
+      // Progressive blackjack public_state has hands but not totalMultiplier —
+      // pass current_multiplier so parseBlackjackOutcome + card faces both work.
+      const settlePayload =
+        session.game === 'blackjack'
+          ? {
+              ...publicState,
+              totalMultiplier: publicState['totalMultiplier'] ?? Number(session.current_multiplier),
+            }
+          : publicState;
+      void stageRef.current?.playOutcome(settlePayload);
       unlockSession();
     },
     [presentSettle, unlockSession],
@@ -287,6 +373,11 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     // Clear the previous round's frozen cash-out display — a fresh bet means a
     // fresh live-ticking multiplier, not the last round's locked-in result.
     setLiveCashoutFlash(null);
+    const rgReason = await rgPolicy('place_bet');
+    if (rgReason) {
+      productToast.show({ zone: 'strict', key: rgReasonMessageKey(rgReason) });
+      return;
+    }
     lockSession();
     try {
       if (gameCode === 'crash') {
@@ -317,6 +408,28 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
                   typeof selection['startCard'] === 'number' ? selection['startCard'] : null,
               }
             : {};
+      if (gameCode === 'mines') {
+        // Fixed 2026-07-15 (Phase 1C functional QA) — mines' oneshot default
+        // selection pre-fills `revealedCells: [0, 1, 2]` (game-config.ts), which
+        // otherwise leaks into a fresh live session: the grid would show 3
+        // stale tiles as already picked while the server's new session truly
+        // starts at revealedCells: [] (P0 — displayed value did not match the
+        // RPC/engine value), and the live cash-out button would read as
+        // enabled (picked.length > 0) before the player had made a single real
+        // live reveal.
+        setSelection((prev) => ({ ...prev, revealedCells: [] }));
+      }
+      if (gameCode === 'hilo') {
+        // Fixed 2026-07-15 (Phase 1C functional QA, same class as mines above)
+        // — hilo's oneshot default selection pre-fills `guesses: ['higher']`
+        // (game-config.ts), which otherwise leaks into a fresh live session:
+        // the streak chip/queue would show 1 stale guess and the cash-out
+        // button would read as already enabled (guesses.length > 0) before a
+        // single real live guess. Optimistic — avoids a flash of the stale
+        // prefill while the start RPC is in flight; superseded by the
+        // authoritative sync below once the server responds.
+        setSelection((prev) => ({ ...prev, guesses: [] }));
+      }
       const started = await progressiveStart.mutateAsync({
         game: gameCode,
         currency,
@@ -326,6 +439,27 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
         idempotencyKey: crypto.randomUUID(),
       });
       setProgressiveSession(started);
+      if (gameCode === 'hilo') {
+        // Authoritative sync — also carries the server-assigned `cards[0]`
+        // (startCard) when the client passed `startCard: null` (the default),
+        // which the pre-call reset above cannot know in advance.
+        const synced = asLiveHiloSelection(started.public_state);
+        setSelection((prev) => ({
+          ...prev,
+          guesses: synced.guesses,
+          cards: synced.cards,
+          multiplier: synced.multiplier,
+        }));
+      }
+      if (gameCode === 'blackjack') {
+        const synced = asLiveBlackjackSelection(started.public_state);
+        setSelection((prev) => ({
+          ...prev,
+          player: synced.player,
+          dealer: synced.dealer,
+          playerValue: synced.playerValue,
+        }));
+      }
       if (started.status !== 'active') {
         applyProgressiveResult(started);
       }
@@ -343,6 +477,7 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     lockSession,
     presentSettle,
     progressiveStart,
+    rgPolicy,
     selection,
     unlockSession,
   ]);
@@ -424,6 +559,21 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
             action: { guess },
             idempotencyKey: crypto.randomUUID(),
           });
+          // Fixed 2026-07-15 (Phase 1C functional QA, P0) — previously this
+          // only called applyProgressiveResult, never syncing `selection`
+          // from the RPC's own echoed state (unlike handleLiveRevealCell
+          // above for mines). Since `applyProgressiveResult` only calls
+          // `stageRef.playOutcome` at genuine settle (not on a still-active
+          // correct guess), the hero card and streak chip would otherwise
+          // never move past whatever they last showed mid-session — a guess
+          // that visibly does nothing reads as a dead control.
+          const synced = asLiveHiloSelection(result.public_state);
+          setSelection((prev) => ({
+            ...prev,
+            guesses: synced.guesses,
+            cards: synced.cards,
+            multiplier: synced.multiplier,
+          }));
           applyProgressiveResult(result);
         } catch (error) {
           setLiveErrorKey(translateError(error) as MessageKey);
@@ -443,6 +593,16 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
             action: { move },
             idempotencyKey: crypto.randomUUID(),
           });
+          // Phase 1E — sync felt hands from RPC public_state on every step
+          // (same class as Hilo live guess sync). applyProgressiveResult only
+          // calls playOutcome at terminal settle.
+          const synced = asLiveBlackjackSelection(result.public_state);
+          setSelection((prev) => ({
+            ...prev,
+            player: synced.player,
+            dealer: synced.dealer,
+            playerValue: synced.playerValue,
+          }));
           applyProgressiveResult(result);
         } catch (error) {
           setLiveErrorKey(translateError(error) as MessageKey);
@@ -458,8 +618,22 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     if (lastPlayedBetIdRef.current === pipeline.bet.bet_id) return;
     lastPlayedBetIdRef.current = pipeline.bet.bet_id;
     // Replay must not block next bet / auto fire (§23.4 · §23.8).
-    void stageRef.current?.playOutcome(pipeline.bet.result);
-  }, [activeStake, pipeline.bet, presentSettle]);
+    // Blackjack one-shot SQL returns multiplier-only — enrich with PF-resolved
+    // hands from verification floats so the felt shows real card faces.
+    const floats = pipeline.verificationEvidence?.verification?.floats;
+    const outcome =
+      gameCode === 'blackjack'
+        ? enrichBlackjackOutcomeForDisplay(pipeline.bet.result, selection['actions'], floats)
+        : pipeline.bet.result;
+    void stageRef.current?.playOutcome(outcome);
+  }, [
+    activeStake,
+    gameCode,
+    pipeline.bet,
+    pipeline.verificationEvidence,
+    presentSettle,
+    selection,
+  ]);
 
   const handleAutoStart = useCallback(() => {
     const cfg = { ...autoConfig, baseStake: stake };

@@ -138,7 +138,7 @@ export function AdminEarnRewardsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-ds-8">
       <section className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-2">
           <h2 className="text-foreground m-0 text-2xl font-semibold tracking-tight">
@@ -181,7 +181,7 @@ export function AdminEarnRewardsPage() {
           onAction={() => void handleRefresh()}
         />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-ds-8 lg:grid-cols-2">
           <section className="space-y-3">
             <Card>
               <CardHeader className="gap-2">

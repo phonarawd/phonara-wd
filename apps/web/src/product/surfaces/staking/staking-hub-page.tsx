@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Crown, Lock } from 'lucide-react';
 
@@ -64,7 +64,7 @@ function StakingBalanceAmount({
 function StakingLoadingShell() {
   return (
     <div
-      className="mx-auto flex w-full max-w-4xl flex-col gap-6 py-4"
+      className="mx-auto flex w-full max-w-4xl flex-col gap-ds-8 py-4"
       data-testid="staking-hub-loading"
     >
       <Skeleton className="h-10 w-1/2" />
@@ -143,6 +143,13 @@ export function StakingHubPage() {
     selectedPool,
   } = engine;
 
+  const [unstakeTargetId, setUnstakeTargetId] = useState<string | null>(null);
+  const unstakeConfirmOpen = unstakeTargetId !== null;
+  const unstakeTarget =
+    unstakeTargetId == null
+      ? null
+      : (activePositions.find((row) => row.id === unstakeTargetId) ?? null);
+
   const locale = typeof document !== 'undefined' ? document.documentElement.lang || 'ko' : 'ko';
   const tierColorVar = resolveTierCssVar(currentTier);
 
@@ -156,7 +163,7 @@ export function StakingHubPage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-4xl flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-4xl flex-col gap-ds-8 py-4 md:py-6"
       data-testid="staking-hub-page"
     >
       <header className="flex flex-col gap-2">
@@ -324,7 +331,8 @@ export function StakingHubPage() {
                       data-testid={`staking-wizard-step-${step}`}
                       aria-current={active ? 'step' : undefined}
                       className={cn(
-                        'border-line rounded-(--ds-radius-md) border px-2 py-2 text-left text-xs transition-colors',
+                        'border-line min-h-(--ds-touch-target-min) rounded-(--ds-radius-md) border px-2 py-2 text-left text-xs transition-colors',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
                         active && 'border-accent bg-accent/10',
                         complete && !active && 'border-market-up/40',
                       )}
@@ -408,6 +416,7 @@ export function StakingHubPage() {
                           }}
                           className={cn(
                             'border-line bg-surface rounded-(--ds-radius-lg) flex cursor-pointer flex-col gap-3 border p-4 text-left transition-colors',
+                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
                             selected && 'border-accent ring-accent/30 ring-2',
                           )}
                         >
@@ -684,7 +693,7 @@ export function StakingHubPage() {
                       size="sm"
                       loading={actionBusy}
                       disabled={row.locked || positionActionsDisabled}
-                      onClick={() => void unstakePosition(row.id)}
+                      onClick={() => setUnstakeTargetId(row.id)}
                       data-testid={`staking-unstake-${row.id}`}
                     >
                       {t('staking.unstake')}
@@ -719,6 +728,38 @@ export function StakingHubPage() {
         confirmLabel={t('confirm.proceed')}
         onConfirm={() => void confirmStake()}
         loading={stakeBusy}
+      />
+
+      <ConfirmDialog
+        open={unstakeConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open && !actionBusy) setUnstakeTargetId(null);
+        }}
+        title={t('confirm.unstake.title')}
+        description={t('confirm.unstakeNote')}
+        summary={
+          unstakeTarget ? (
+            <div className="flex flex-col gap-2 text-sm">
+              <p className="text-foreground m-0">
+                {unstakeTarget.poolLabel} · {t(unstakeTarget.termLabelKey)}
+              </p>
+              <MoneyDisplay
+                amount={unstakeTarget.principalDisplay}
+                currency={unstakeTarget.stakeCurrency}
+              />
+            </div>
+          ) : null
+        }
+        confirmLabel={t('confirm.proceed')}
+        onConfirm={() => {
+          if (!unstakeTargetId) return;
+          void (async () => {
+            await unstakePosition(unstakeTargetId);
+            setUnstakeTargetId(null);
+          })();
+        }}
+        loading={actionBusy}
+        destructive
       />
     </div>
   );

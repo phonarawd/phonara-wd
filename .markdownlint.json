@@ -1,0 +1,19 @@
+{
+  "MD001": false,
+  "MD013": false,
+  "MD024": {
+    "siblings_only": true
+  },
+  "MD025": false,
+  "MD026": false,
+  "MD033": false,
+  "MD041": {
+    "front_matter_title": "^\\s*name\\s*[:=]"
+  },
+  "MD048": false,
+  "MD049": false,
+  "MD051": false,
+  "MD055": false,
+  "MD056": false,
+  "MD060": false
+}

@@ -872,7 +872,7 @@ SELECT user_id, excluded_until, reason, created_at
  LIMIT 1;
 ```
 
-4. **오탐/버그 의심**: `audit_logs`와 해당 시점 `wallet_ledger` delta만 확인. 잔액 직접 수정 금지 — Scenario 1 참조.
+1. **오탐/버그 의심**: `audit_logs`와 해당 시점 `wallet_ledger` delta만 확인. 잔액 직접 수정 금지 — Scenario 1 참조.
 
 ### 입금 한도 초과 문의
 

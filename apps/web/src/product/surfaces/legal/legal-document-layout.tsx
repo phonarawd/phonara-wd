@@ -33,7 +33,7 @@ export function LegalDocumentLayout({
   return (
     <div
       data-testid={testId}
-      className={cn('mx-auto flex w-full max-w-3xl flex-col gap-6 py-6 md:py-10', className)}
+      className={cn('mx-auto flex w-full max-w-3xl flex-col gap-ds-8 py-6 md:py-10', className)}
     >
       <Link
         to="/login"
@@ -61,7 +61,7 @@ export function LegalDocumentLayout({
         className="border-line bg-surface max-h-[min(60dvh,32rem)] overflow-y-auto rounded-(--ds-radius-lg) border p-4 md:p-6"
         data-testid="legal-document-scroll"
       >
-        <div className="flex flex-col gap-6">{children}</div>
+        <div className="flex flex-col gap-ds-8">{children}</div>
       </div>
 
       <footer className="flex flex-col gap-3">

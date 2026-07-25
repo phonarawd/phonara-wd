@@ -10,6 +10,7 @@ import { useSportsFiatHint } from '@/features/sports/use-sports-fiat-hint';
 import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { Button } from '@/product/primitives/button';
 import { ConfirmDialog } from '@/product/primitives/confirm-dialog';
+import { HelpTip } from '@/product/primitives/help-tip';
 import { Input } from '@/product/primitives/input';
 import { MoneyDisplay } from '@/product/primitives/money-display';
 import { FiatHintDisclaimer } from '@/product/primitives/money-display-with-fiat-hint';
@@ -34,6 +35,8 @@ type SportsBetSlipPanelProps = {
   t: (key: MessageKey, params?: Record<string, string | number>) => string;
   className?: string;
   sportsParityLive?: boolean;
+  /** When true, skip ConfirmDialog (host keeps a single dialog for dual rail/sheet mounts). */
+  omitConfirmDialog?: boolean;
 };
 
 function oddsAcceptanceLabelKey(policy: SportsBetSlipState['oddsAcceptance']): MessageKey {
@@ -57,6 +60,7 @@ export function SportsBetSlipPanel({
   t,
   className,
   sportsParityLive = LAUNCH_GATES.sportsParityLive,
+  omitConfirmDialog = false,
 }: SportsBetSlipPanelProps) {
   const { showDisclaimer } = useSportsFiatHint();
   const avail = slip.stakeCurrency === 'PHON' ? phonAvail : usdtAvail;
@@ -72,7 +76,14 @@ export function SportsBetSlipPanel({
         )}
       >
         <header className="border-line flex items-center justify-between gap-2 border-b px-3 py-2">
-          <h2 className="text-foreground m-0 text-sm font-semibold">{t('sports.slip.title')}</h2>
+          <div className="flex min-w-0 items-center gap-1">
+            <HelpTip
+              label={t('sports.slip.title')}
+              bodyKey="sports.slip.oddsGloss"
+              action={{ labelKey: 'sports.subnav.rules', href: '/sports/rules' }}
+              className="text-foreground text-sm font-semibold"
+            />
+          </div>
           {slip.selections.length > 0 ? (
             <Button type="button" size="sm" variant="ghost" onClick={slip.clearSlip}>
               {t('sports.slip.clear')}
@@ -289,45 +300,47 @@ export function SportsBetSlipPanel({
         </div>
       </section>
 
-      <ConfirmDialog
-        open={confirmOpen}
-        onOpenChange={onConfirmOpenChange}
-        contentTestId="sports-slip-confirm-dialog"
-        title={t('sports.slip.confirm.title')}
-        description={t('sports.slip.confirm.body')}
-        confirmLabel={t('sports.slip.confirm')}
-        summary={
-          stakeRaw ? (
-            <dl className="m-0 grid gap-2" data-testid="sports-slip-confirm-summary">
-              <div className="flex items-baseline justify-between gap-3">
-                <dt className="text-foreground-muted">{t('sports.slip.stake')}</dt>
-                <dd className="m-0" data-testid="sports-slip-confirm-stake">
-                  <MoneyDisplay
-                    amount={stakeRaw}
-                    currency={slip.stakeCurrency}
-                    showCurrency
-                    className="text-foreground text-sm font-medium tabular-nums"
-                  />
-                </dd>
-              </div>
-              <div className="flex items-baseline justify-between gap-3">
-                <dt className="text-foreground-muted">{t('sports.slip.currency')}</dt>
-                <dd
-                  className="text-foreground m-0 text-sm font-medium tabular-nums"
-                  data-testid="sports-slip-confirm-currency"
-                >
-                  {slip.stakeCurrency}
-                </dd>
-              </div>
-            </dl>
-          ) : null
-        }
-        onConfirm={() => {
-          void onConfirmPlaceBet();
-        }}
-        loading={placeBetBusy}
-        confirmDisabled={!canPlaceBet}
-      />
+      {omitConfirmDialog ? null : (
+        <ConfirmDialog
+          open={confirmOpen}
+          onOpenChange={onConfirmOpenChange}
+          contentTestId="sports-slip-confirm-dialog"
+          title={t('sports.slip.confirm.title')}
+          description={t('sports.slip.confirm.body')}
+          confirmLabel={t('sports.slip.confirm')}
+          summary={
+            stakeRaw ? (
+              <dl className="m-0 grid gap-2" data-testid="sports-slip-confirm-summary">
+                <div className="flex items-baseline justify-between gap-3">
+                  <dt className="text-foreground-muted">{t('sports.slip.stake')}</dt>
+                  <dd className="m-0" data-testid="sports-slip-confirm-stake">
+                    <MoneyDisplay
+                      amount={stakeRaw}
+                      currency={slip.stakeCurrency}
+                      showCurrency
+                      className="text-foreground text-sm font-medium tabular-nums"
+                    />
+                  </dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-3">
+                  <dt className="text-foreground-muted">{t('sports.slip.currency')}</dt>
+                  <dd
+                    className="text-foreground m-0 text-sm font-medium tabular-nums"
+                    data-testid="sports-slip-confirm-currency"
+                  >
+                    {slip.stakeCurrency}
+                  </dd>
+                </div>
+              </dl>
+            ) : null
+          }
+          onConfirm={() => {
+            void onConfirmPlaceBet();
+          }}
+          loading={placeBetBusy}
+          confirmDisabled={!canPlaceBet}
+        />
+      )}
     </>
   );
 }

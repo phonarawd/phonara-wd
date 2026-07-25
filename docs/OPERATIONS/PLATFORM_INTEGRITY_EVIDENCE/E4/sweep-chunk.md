@@ -17,7 +17,7 @@
 | `supabase/tests/pir_sweep_chunk_test.sql`                | E4-0 functiondef/grants · E4-1 liq keyset · E4-2 funding hold schedule · E4-3 affiliate drain                                |
 | `supabase/tests/grants_rls_inventory_test.sql`           | `_apply_funding_for_market` / `rpc_run_funding_accrual` 시그니처 핀                                                          |
 
-**계약**
+#### 계약
 
 | RPC                                          | 배치                   | `has_more`           | cron                                                                  |
 | -------------------------------------------- | ---------------------- | -------------------- | --------------------------------------------------------------------- |

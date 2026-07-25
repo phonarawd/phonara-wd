@@ -1,29 +1,29 @@
 project_id = "yocjhjsdwoijfdrehzoq"
 
 # Windows Hyper-V excluded TCP ranges shift after reboot (operator PC).
-# Keep local ports outside the current reservation (2026-07-13: 54398–54597).
+# 2026-07-16: reserved 54514–54613 and 54614–54713 — keep all local ports in 54400–54430 band.
 [api]
 enabled = true
-port = 54621
+port = 54421
 schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
 [db]
-port = 54600
-shadow_port = 54601
+port = 54400
+shadow_port = 54401
 # Matches the linked production project (yocjhjsdwoijfdrehzoq runs PostgreSQL 17),
 # so local `db reset` and SQL tests run on the same engine as prod.
 major_version = 17
 
 [studio]
 enabled = true
-port = 54623
+port = 54423
 
 [inbucket]
-# Catch signup/reset/magic-link emails locally in Mailpit (http://127.0.0.1:54624).
+# Catch signup/reset/magic-link emails locally in Mailpit (http://127.0.0.1:54424).
 enabled = true
-port = 54624
+port = 54424
 
 [auth]
 enabled = true

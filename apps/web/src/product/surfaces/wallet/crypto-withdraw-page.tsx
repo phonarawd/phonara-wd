@@ -97,7 +97,7 @@ export function CryptoWithdrawPage() {
   const previewNet = engine.submitResult?.estimated_net_usdt ?? engine.estimatedNetUsdt ?? '0';
 
   return (
-    <div className="flex flex-col gap-6 py-4 md:py-6" data-testid="crypto-withdraw-page">
+    <div className="flex flex-col gap-ds-8 py-4 md:py-6" data-testid="crypto-withdraw-page">
       <header className="space-y-3">
         <a
           href="/wallet/withdraw"

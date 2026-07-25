@@ -72,6 +72,7 @@ declare module '@/product/primitives/empty-state' {
     onAction: () => void;
     icon?: ReactNode;
     className?: string;
+    testId?: string;
   }
 
   export function EmptyState(props: EmptyStateProps): JSX.Element;

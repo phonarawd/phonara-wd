@@ -122,7 +122,10 @@ export function EarnHomePage() {
               ) : null}
               <Link
                 to={step.route}
-                className="border-line bg-surface text-foreground hover:border-accent hover:text-accent inline-flex min-h-10 items-center rounded-full border px-3 text-xs font-medium no-underline"
+                className={cn(
+                  buttonVariants({ variant: 'outline', size: 'sm' }),
+                  'rounded-full px-3 text-xs no-underline',
+                )}
                 data-testid={`earn-home-flow-${step.id}`}
                 data-flow-step={step.id}
               >
@@ -162,7 +165,7 @@ export function EarnHomePage() {
                   </span>
                   <Link
                     to={TIER_ME_ROUTE}
-                    className="text-accent text-xs font-medium underline-offset-4 hover:underline"
+                    className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'text-accent')}
                     data-testid="earn-home-tier-link"
                   >
                     {t('tier.me.head.title')}
@@ -219,7 +222,10 @@ export function EarnHomePage() {
             <Link
               to="/home/missions"
               search={{ tab: 'viral' }}
-              className="text-accent inline-flex items-center gap-1 text-sm font-medium underline-offset-4 hover:underline"
+              className={cn(
+                buttonVariants({ variant: 'ghost', size: 'sm' }),
+                'text-accent w-fit justify-start gap-1',
+              )}
               data-testid="earn-home-next-all"
             >
               {t('earn.home.next.all')}
@@ -388,7 +394,10 @@ export function EarnHomePage() {
           <Link
             to="/home/missions"
             search={{ tab: 'viral' }}
-            className="text-accent inline-flex items-center gap-1 text-sm font-medium underline-offset-4 hover:underline"
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'sm' }),
+              'text-accent w-fit justify-start gap-1',
+            )}
             data-testid="earn-home-missions-view-all"
           >
             {t('earn.home.fold4.viewAll')}

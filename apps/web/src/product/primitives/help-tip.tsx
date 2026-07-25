@@ -41,7 +41,7 @@ export function HelpTip({ label, bodyKey, action, className }: HelpTipProps) {
           variant="ghost"
           size="sm"
           aria-label={t('ux.helpTip.open', { term: label })}
-          className="size-8 shrink-0 text-foreground-muted"
+          className="shrink-0 text-foreground-muted"
           onClick={() => setOpen(true)}
         >
           <Info className="size-4" aria-hidden />

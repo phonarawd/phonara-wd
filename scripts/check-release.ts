@@ -33,7 +33,10 @@ const RULES: Rule[] = [
     devGuardable: true,
   },
   { name: 'debugger statement', re: /(^|[^.\w])debugger\b/ },
-  { name: 'TODO/FIXME marker', re: /\b(TODO|FIXME|HACK|XXX)\b/ },
+  // TODO is case-sensitive on purpose: lowercase `todo` is Track A / mission-status
+  // vocabulary (~200 hits). FIXME/HACK/XXX use /i so mixed-case debt markers still fail.
+  { name: 'TODO marker', re: /\bTODO\b/ },
+  { name: 'FIXME/HACK/XXX marker', re: /\b(FIXME|HACK|XXX)\b/i },
   { name: 'focused test', re: /\b(describe|it|test)\.only\s*\(/ },
   {
     name: 'placeholder copy',

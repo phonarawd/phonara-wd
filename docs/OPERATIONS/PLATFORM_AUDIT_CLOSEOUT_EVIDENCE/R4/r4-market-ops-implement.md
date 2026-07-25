@@ -41,7 +41,7 @@
 ## Gates
 
 ```text
-bun run lock:migrations → 239 total
+bun run lock:migrations → 239 total (세션 당시; 2026-07-24 현재 248 · `check:migrations`)
 bun run stack:push-remote → 3 migrations · advisor ERROR 0
 performance advisor: auth_rls_initplan 26→0 · multiple_permissive 36→2 residual
 bun run stack:ops-alert-dry-fire → opened 6/6 · resolved 6/6

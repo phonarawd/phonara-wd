@@ -47,7 +47,7 @@ export function ShareEarningsPage() {
   if (loading) {
     return (
       <div
-        className="mx-auto flex w-full max-w-lg flex-col gap-6 py-4"
+        className="mx-auto flex w-full max-w-lg flex-col gap-ds-8 py-4"
         data-testid="share-earnings-loading"
       >
         <Skeleton className="h-8 w-1/3" />
@@ -61,7 +61,7 @@ export function ShareEarningsPage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-lg flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-lg flex-col gap-ds-8 py-4 md:py-6"
       data-testid="share-earnings-page"
     >
       <header className="flex flex-col gap-3">

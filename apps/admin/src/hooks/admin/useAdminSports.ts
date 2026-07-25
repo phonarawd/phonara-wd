@@ -174,30 +174,40 @@ export function useAdminSports(): AdminSportsState & AdminSportsActions {
   }, [qc, refetch]);
 
   const setFeatureEnabledAction = useCallback(
-    async (enabled: boolean, reason: string) => {
+    async (enabled: boolean, reason: string): Promise<boolean> => {
       const trimmed = reason.trim();
-      if (trimmed.length < MIN_REASON) return;
-      await setFeatureEnabled({ feature: 'sports', enabled, reason: trimmed });
-      await invalidate();
+      if (trimmed.length < MIN_REASON) return false;
+      try {
+        await setFeatureEnabled({ feature: 'sports', enabled, reason: trimmed });
+        await invalidate();
+        return true;
+      } catch {
+        return false;
+      }
     },
     [invalidate],
   );
 
   const suspendMarket = useCallback(
-    async (fixtureId: string, reason: string) => {
-      if (reason.trim().length < MIN_REASON) return;
+    async (fixtureId: string, reason: string): Promise<boolean> => {
+      if (reason.trim().length < MIN_REASON) return false;
       const marketId = await firstMarketIdForFixture(fixtureId);
-      if (!marketId) return;
-      await callRpc('rpc_admin_suspend_sports_market', {
-        p_market_id: marketId,
-        p_duration_ms: 86_400_000,
-        p_reason: reason.trim(),
-      });
-      setSuspended((prev) => [
-        { fixtureId, reason: reason.trim(), at: new Date().toISOString() },
-        ...prev.filter((s) => s.fixtureId !== fixtureId),
-      ]);
-      await invalidate();
+      if (!marketId) return false;
+      try {
+        await callRpc('rpc_admin_suspend_sports_market', {
+          p_market_id: marketId,
+          p_duration_ms: 86_400_000,
+          p_reason: reason.trim(),
+        });
+        setSuspended((prev) => [
+          { fixtureId, reason: reason.trim(), at: new Date().toISOString() },
+          ...prev.filter((s) => s.fixtureId !== fixtureId),
+        ]);
+        await invalidate();
+        return true;
+      } catch {
+        return false;
+      }
     },
     [invalidate],
   );
@@ -296,12 +306,8 @@ export function useAdminSports(): AdminSportsState & AdminSportsActions {
     risk,
     exposure,
     tier,
-    setFeatureEnabled: (enabled: boolean, reason: string) => {
-      void setFeatureEnabledAction(enabled, reason);
-    },
-    suspendMarket: (fixtureId: string, reason: string) => {
-      void suspendMarket(fixtureId, reason);
-    },
+    setFeatureEnabled: setFeatureEnabledAction,
+    suspendMarket,
     unsuspendMarket,
     settleFixtureQuorum,
     voidFixtureMarket,

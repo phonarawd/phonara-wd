@@ -20,14 +20,14 @@ Pattern only — proprietary branding · copy · artwork clone **금지**.
 
 ## Layout canon
 
-**Desktop**
+#### Desktop
 
 - Centered form column · minimal chrome · trust cue (brand/security)
 - Clear page title · labeled inputs · primary CTA full-width in column
 - Secondary actions (signup · reset) below primary — not competing visually
 - Inline errors adjacent to fields · loading on CTA without layout jump
 
-**Mobile**
+#### Mobile
 
 - Single column · thumb-safe primary CTA (min 48px touch)
 - Recovery links visible without scroll hunt

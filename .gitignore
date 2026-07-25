@@ -18,6 +18,7 @@ _audit/
 .tmp-zip-extract/
 .tmp/
 .tmp-*
+scripts/tmp-*
 blob-report
 playwright-*.log
 check-full-log.txt
@@ -54,6 +55,19 @@ backups/
 
 # Optional one-time PAT vault (scripts/ensure-dev-stack.ts)
 setup/.env.secrets
+
+# Secrets / key material — never track (check:secrets-deploy-deny)
+.dev.vars
+**/.dev.vars
+*.pem
+*.p12
+*.pfx
+*.key
+!*.key.example
+credentials.json
+**/credentials.json
+secrets.toml
+**/secrets.toml
 
 # MCP smoke test ephemeral stderr (scripts/test-supabase-mcp-smoke.ps1)
 .cursor/mcp-smoke-stderr.txt

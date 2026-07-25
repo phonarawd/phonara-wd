@@ -140,7 +140,7 @@ export function SpotOrderBookPanel({
             </span>
             <Select value={activeStep} onValueChange={setGroupingStep}>
               <SelectTrigger
-                className="border-line bg-surface h-8 min-w-22 px-2 text-xs"
+                className="border-line bg-surface min-w-22 px-2 text-xs"
                 aria-label={t('trade.orderbook.grouping')}
                 data-testid="spot-order-book-grouping"
               >
@@ -169,7 +169,8 @@ export function SpotOrderBookPanel({
           aria-selected={viewMode === 'book'}
           data-testid="spot-order-book-view-book"
           className={cn(
-            'min-h-9 rounded-sm px-3 py-1.5 text-sm font-medium transition-[color,background-color]',
+            'min-h-(--ds-touch-target-min) rounded-sm px-3 py-1.5 text-sm font-medium transition-[color,background-color]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
             viewMode === 'book'
               ? 'bg-surface text-foreground shadow-sm'
               : 'text-foreground-muted hover:text-foreground',
@@ -184,7 +185,8 @@ export function SpotOrderBookPanel({
           aria-selected={viewMode === 'depth'}
           data-testid="spot-order-book-view-depth"
           className={cn(
-            'min-h-9 rounded-sm px-3 py-1.5 text-sm font-medium transition-[color,background-color]',
+            'min-h-(--ds-touch-target-min) rounded-sm px-3 py-1.5 text-sm font-medium transition-[color,background-color]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
             viewMode === 'depth'
               ? 'bg-surface text-foreground shadow-sm'
               : 'text-foreground-muted hover:text-foreground',

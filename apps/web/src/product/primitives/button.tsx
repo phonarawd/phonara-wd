@@ -23,9 +23,10 @@ export const buttonVariants = cva(
         bet: 'bg-bet text-bet-foreground hover:bg-bet-hover text-lg font-bold',
       },
       size: {
-        sm: 'h-9 px-3 text-sm',
-        md: 'h-11 px-4',
-        lg: 'h-12 px-5',
+        // DESIGN_PRINCIPLES §6/§7 — consume --ds-touch-target-min (48px) for all sizes.
+        sm: 'h-(--ds-touch-target-min) min-h-(--ds-touch-target-min) px-3 text-sm',
+        md: 'h-(--ds-touch-target-min) min-h-(--ds-touch-target-min) px-4',
+        lg: 'h-(--ds-touch-target-min) min-h-(--ds-touch-target-min) px-5',
       },
     },
     defaultVariants: {

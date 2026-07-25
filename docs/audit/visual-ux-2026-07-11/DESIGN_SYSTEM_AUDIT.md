@@ -7,7 +7,7 @@
 
 ## 1. 아키텍처
 
-```
+```text
 product/tokens/          ← --ds-* 유일 SOT
   fonts.css
   colors.css             ← OKLCH · light-dark()
@@ -109,7 +109,7 @@ Deprecated aliases (P13 purge): `--ds-motion-fast/base/slow`
 
 ## 5. Shell 컴포넌트 계층
 
-```
+```text
 AppShell
 ├── AuroraBackground (policy intensity)
 ├── TopBar

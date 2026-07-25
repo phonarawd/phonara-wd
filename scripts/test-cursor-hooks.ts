@@ -41,6 +41,37 @@ const cases: Array<{ name: string; script: string; stdin: string; expectCode: nu
     expectCode: 0,
   },
   {
+    name: 'secrets deny .dev.vars',
+    script: '.cursor/hooks/secrets-read-deny.ts',
+    stdin: JSON.stringify({ file_path: '.dev.vars' }),
+    expectCode: 2,
+  },
+  {
+    name: 'secrets deny credentials.json',
+    script: '.cursor/hooks/secrets-read-deny.ts',
+    stdin: JSON.stringify({ file_path: 'apps/web/credentials.json' }),
+    expectCode: 2,
+  },
+  {
+    name: 'secrets deny e2e auth',
+    script: '.cursor/hooks/secrets-read-deny.ts',
+    stdin: JSON.stringify({ file_path: 'tests/e2e/.auth.json' }),
+    expectCode: 2,
+  },
+  {
+    name: 'secrets deny setup/.env.secrets',
+    script: '.cursor/hooks/secrets-read-deny.ts',
+    stdin: JSON.stringify({ file_path: 'setup/.env.secrets' }),
+    expectCode: 2,
+  },
+  {
+    name: 'secrets deny .pfx',
+    script: '.cursor/hooks/secrets-read-deny.ts',
+    stdin: JSON.stringify({ file_path: 'certs/local.pfx' }),
+    expectCode: 2,
+  },
+
+  {
     name: 'subagent allow when idle',
     script: '.cursor/hooks/subagent-guard.ts',
     stdin: JSON.stringify({ subagent_type: 'shell' }),

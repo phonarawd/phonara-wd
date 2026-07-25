@@ -1,6 +1,6 @@
 # apps/web — Phase R scope
 
-> **Phase R:** Presentation rebuild in progress — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** `null` (#null) · preflight: ACTIVE_WORK_SSOT.
+> **Phase R:** Presentation rebuild in progress — [`REBUILD_PLAN_v1.md`](../../docs/PRODUCT/REBUILD_PLAN_v1.md) · **NEXT** none (pending 0) · preflight: ACTIVE_WORK_SSOT.
 > **SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../docs/SSOT/ACTIVE_WORK_SSOT.md) · Plan **280 ids** · completed **273** · pending **0** (48차)
 
 ## KEEP (engine glue)

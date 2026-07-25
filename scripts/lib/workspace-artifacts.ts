@@ -66,6 +66,8 @@ export const CURSOR_ARCHIVAL_DIR_PATTERNS = [
   'docs/archive',
   'tests/visual/mockups',
   'tests/visual/m0-baselines',
+  /** CDP visual-audit output — high-volume PNG churn; local evidence only (ACTIVE_WORK_SSOT). */
+  'screenshots',
 ] as const;
 
 /** Bulk LOCK globs — cleared after Presentation/paste archive purge. */
@@ -76,7 +78,8 @@ export const CURSOR_ARCHIVAL_DOC_PATHS = ['docs/rebuild/LOWSPEC_RULES.md'] as co
 
 /**
  * Patterns that MUST exist in `.cursorignore` (substring match).
- * Prevents index noise from high-volume generated paths.
+ * Prevents index noise from high-volume generated paths + secret material.
+ * Secrets rows align with deny inventory A (check:secrets-deploy-deny).
  */
 export const CURSORIGNORE_REQUIRED_PATTERNS = [
   'node_modules/',
@@ -113,6 +116,22 @@ export const CURSORIGNORE_REQUIRED_PATTERNS = [
   'tests/visual/mockups/',
   'tests/visual/m0-baselines/',
   '.cursor/perf/',
+  // Secrets / key material — never index (check:secrets-deploy-deny · ignore-cursor)
+  '.env',
+  '.env.*',
+  'setup/.env.secrets',
+  '.dev.vars',
+  '**/.dev.vars',
+  'tests/e2e/.auth.json',
+  'tests/e2e/.admin-auth.json',
+  '*.pem',
+  '*.p12',
+  '*.pfx',
+  '*.key',
+  'credentials.json',
+  '**/credentials.json',
+  'secrets.toml',
+  '**/secrets.toml',
 ] as const;
 
 /**

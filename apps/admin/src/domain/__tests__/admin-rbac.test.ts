@@ -30,6 +30,15 @@ describe('admin-rbac permission matrix', () => {
     expect(canPerformAdminAction('viewer', 'support.tickets.resolve')).toBe(false);
   });
 
+  it('alerts.manage allows owner/risk/operator/support · blocks viewer/finance', () => {
+    expect(canPerformAdminAction('owner', 'alerts.manage')).toBe(true);
+    expect(canPerformAdminAction('risk', 'alerts.manage')).toBe(true);
+    expect(canPerformAdminAction('operator', 'alerts.manage')).toBe(true);
+    expect(canPerformAdminAction('support', 'alerts.manage')).toBe(true);
+    expect(canPerformAdminAction('viewer', 'alerts.manage')).toBe(false);
+    expect(canPerformAdminAction('finance', 'alerts.manage')).toBe(false);
+  });
+
   it('support can resolve tickets · finance cannot', () => {
     expect(canPerformAdminAction('support', 'support.tickets.resolve')).toBe(true);
     expect(canPerformAdminAction('finance', 'support.tickets.resolve')).toBe(false);
@@ -50,6 +59,17 @@ describe('admin-rbac permission matrix', () => {
   it('risk can review KYC but not wallet adjustments', () => {
     expect(canPerformAdminAction('risk', 'queues.kyc.review')).toBe(true);
     expect(canPerformAdminAction('risk', 'users.wallet_adjust')).toBe(false);
+  });
+
+  it('queues.str.manage / queues.risk.clear allow owner/risk · block support/finance/viewer', () => {
+    for (const action of ['queues.str.manage', 'queues.risk.clear'] as const) {
+      expect(canPerformAdminAction('owner', action)).toBe(true);
+      expect(canPerformAdminAction('risk', action)).toBe(true);
+      expect(canPerformAdminAction('support', action)).toBe(false);
+      expect(canPerformAdminAction('finance', action)).toBe(false);
+      expect(canPerformAdminAction('viewer', action)).toBe(false);
+      expect(canPerformAdminAction('operator', action)).toBe(false);
+    }
   });
 
   it('resolvePrimaryAdminRole picks highest rank', () => {

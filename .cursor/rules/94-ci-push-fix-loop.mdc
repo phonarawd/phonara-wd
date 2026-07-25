@@ -34,7 +34,7 @@ preflight → L0~L4 local green → commit → push → ci:watch
 
 **Required CI jobs:** `quality` · `sql` · `e2e` · `advisors` (`scripts/ci-watch.ts`)
 
-**Advisory (merge 차단 아님):** `e2e-browser-matrix` · `format` advisory — red여도 required 4개 green이면 Verified OK (operator에 advisory만 보고)
+**Advisory (merge 차단 아님):** `e2e-browser-matrix` — red여도 required 4개 green이면 Verified OK (operator에 advisory만 보고). `format:check`는 **quality job 내부 blocking step** (advisory 아님).
 
 ## Pre-push (로컬 · Docker OFF)
 

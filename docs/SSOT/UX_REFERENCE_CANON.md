@@ -121,7 +121,7 @@ Reference 변경·추가 시 Decision Log에 사유·영향 surface·rollback을
 
 ### Layout canon
 
-**Desktop**
+#### Desktop
 
 - Left (~20%): market selector · symbol list · watchlist · filters
 - Center (~45%): chart · symbol header · market context
@@ -129,7 +129,7 @@ Reference 변경·추가 시 Decision Log에 사유·영향 surface·rollback을
 - Bottom (full width): positions · open orders · history · margin/risk summary
 - Optional rail: order book · recent trades
 
-**Mobile**
+#### Mobile
 
 - Top: symbol header · price · change · quick market selector
 - Main: chart first → order action tabs
@@ -283,7 +283,7 @@ novice가 **"무엇을 하면 · 얼마를 · 얼마나 걸려서 · 언제 cash
 
 ### Layout canon
 
-**첫 화면 우선순위**
+#### 첫 화면 우선순위
 
 ```text
 오늘 해야 할 일

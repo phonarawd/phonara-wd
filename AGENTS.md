@@ -1,5 +1,6 @@
 # PHONARA — Cursor Agents Entry
 
+> **Constitution:** [`docs/SSOT/PLATFORM_CONSTITUTION.md`](docs/SSOT/PLATFORM_CONSTITUTION.md)  
 > **Active SSOT:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](docs/SSOT/ACTIVE_WORK_SSOT.md)  
 > **Engine:** `[x] FULLY CLOSED` (2026-07-03) — status [`ENGINE_APEX_CLOSEOUT.md`](docs/ENGINE_APEX_CLOSEOUT.md) only · **구현 큐 0**  
 > **Demolition:** `[x] DONE` — batch 재실행 없음  

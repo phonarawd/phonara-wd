@@ -1,6 +1,10 @@
 import { useState } from 'react';
 
-import { useAdminCasinoDesk, type AdminCasinoGameRow } from '@/hooks/admin/useAdminCasinoDesk';
+import {
+  useAdminCasinoDesk,
+  type AdminCasinoGameRow,
+  type AdminRtpReviewRow,
+} from '@/hooks/admin/useAdminCasinoDesk';
 import { useT } from '@/product/i18n';
 import { AdminTable } from '@/product/primitives/admin-table';
 import { Button } from '@/product/primitives/button';
@@ -9,7 +13,8 @@ import { HowItWorks } from '@/product/primitives/how-it-works';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/product/primitives/tabs';
 import { AdminQueueActionDialog } from './admin-queue-action-dialog';
 
-type Target = { row: AdminCasinoGameRow; status: 'live' | 'maintenance' | 'disabled' };
+type CatalogTarget = { row: AdminCasinoGameRow; status: 'live' | 'maintenance' | 'disabled' };
+type RtpTarget = { row: AdminRtpReviewRow; action: 'ack' | 'resolve' };
 
 /** E6 casino desk (`/casino`) — catalog status and RTP reviews. */
 export function AdminCasinoPage() {
@@ -22,17 +27,28 @@ export function AdminCasinoPage() {
     resolveRtpReview,
     refresh,
   } = useAdminCasinoDesk();
-  const [target, setTarget] = useState<Target | null>(null);
+  const [catalogTarget, setCatalogTarget] = useState<CatalogTarget | null>(null);
+  const [rtpTarget, setRtpTarget] = useState<RtpTarget | null>(null);
 
   const submitStatus = async (reason: string) => {
-    if (!target) return false;
-    const success = setGameStatus(target.row.id, target.status, reason);
-    if (success) setTarget(null);
+    if (!catalogTarget) return false;
+    const success = setGameStatus(catalogTarget.row.id, catalogTarget.status, reason);
+    if (success) setCatalogTarget(null);
+    return success;
+  };
+
+  const submitRtp = async (reason: string) => {
+    if (!rtpTarget) return false;
+    const success =
+      rtpTarget.action === 'ack'
+        ? await ackRtpReview(rtpTarget.row.id, reason)
+        : await resolveRtpReview(rtpTarget.row.id, reason);
+    if (success) setRtpTarget(null);
     return success;
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-ds-8">
       <section className="space-y-2">
         <h2 className="text-foreground m-0 text-2xl font-semibold">{t('admin.casino.title')}</h2>
         <p className="text-foreground-muted m-0 text-sm">{t('admin.casino.subtitle')}</p>
@@ -88,7 +104,10 @@ export function AdminCasinoPage() {
                 size="sm"
                 variant={row.status === 'live' ? 'outline' : 'primary'}
                 onClick={() =>
-                  setTarget({ row, status: row.status === 'live' ? 'maintenance' : 'live' })
+                  setCatalogTarget({
+                    row,
+                    status: row.status === 'live' ? 'maintenance' : 'live',
+                  })
                 }
               >
                 {t(
@@ -136,41 +155,67 @@ export function AdminCasinoPage() {
               />
             }
             rowActionsHeader={t('admin.casino.rtp.col.action')}
-            rowActions={(row) => (
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() =>
-                  row.status === 'open'
-                    ? ackRtpReview(row.id)
-                    : resolveRtpReview(row.id, 'RTP review resolved')
-                }
-              >
-                {t(
-                  row.status === 'open'
-                    ? 'admin.casino.rtp.action.ack'
-                    : 'admin.casino.rtp.action.resolve',
-                )}
-              </Button>
-            )}
+            rowActions={(row) => {
+              if (row.status === 'resolved') {
+                return (
+                  <span className="text-foreground-muted text-sm">
+                    {t('admin.casino.rtp.status.resolved')}
+                  </span>
+                );
+              }
+              return (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() =>
+                    setRtpTarget({
+                      row,
+                      action: row.status === 'open' ? 'ack' : 'resolve',
+                    })
+                  }
+                >
+                  {t(
+                    row.status === 'open'
+                      ? 'admin.casino.rtp.action.ack'
+                      : 'admin.casino.rtp.action.resolve',
+                  )}
+                </Button>
+              );
+            }}
           />
         </TabsContent>
       </Tabs>
       <AdminQueueActionDialog
-        open={target !== null}
-        onOpenChange={(open) => !open && setTarget(null)}
+        open={catalogTarget !== null}
+        onOpenChange={(open) => !open && setCatalogTarget(null)}
         titleKey={
-          target?.status === 'live'
+          catalogTarget?.status === 'live'
             ? 'admin.casino.catalog.dialog.live.title'
             : 'admin.casino.catalog.dialog.maintenance.title'
         }
         confirmKey={
-          target?.status === 'live'
+          catalogTarget?.status === 'live'
             ? 'admin.casino.catalog.action.live'
             : 'admin.casino.catalog.action.maintenance'
         }
-        destructive={target?.status !== 'live'}
+        destructive={catalogTarget?.status !== 'live'}
         onSubmit={submitStatus}
+      />
+      <AdminQueueActionDialog
+        open={rtpTarget !== null}
+        onOpenChange={(open) => !open && setRtpTarget(null)}
+        titleKey={
+          rtpTarget?.action === 'ack'
+            ? 'admin.casino.rtp.dialog.ack.title'
+            : 'admin.casino.rtp.dialog.resolve.title'
+        }
+        confirmKey={
+          rtpTarget?.action === 'ack'
+            ? 'admin.casino.rtp.action.ack'
+            : 'admin.casino.rtp.action.resolve'
+        }
+        destructive={rtpTarget?.action === 'resolve'}
+        onSubmit={submitRtp}
       />
     </div>
   );

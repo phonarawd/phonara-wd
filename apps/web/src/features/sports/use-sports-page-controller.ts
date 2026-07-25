@@ -25,6 +25,10 @@ import { useSportsRealtime } from '@/hooks/use-sports-realtime';
 import { useWallet } from '@/hooks/use-wallet';
 import { LAUNCH_GATES } from '@/lib/launch-gates';
 import { translateError } from '@/lib/translate-error';
+import {
+  rgReasonMessageKey,
+  useRgGatePolicy,
+} from '@/features/responsible-gaming/use-rg-gate-policy';
 import { usePhonBalanceBreakdown } from '@/features/wallet/use-phon-balance-breakdown';
 import { useT } from '@/product/i18n';
 import { productToast } from '@/product/primitives/toast-zone';
@@ -93,6 +97,7 @@ export function useSportsPageController(
   const { session } = useAuth();
   const { sportsBlocked, loading: gatesLoading } = usePlatformGates();
   const { consentBlocked, consentBlockedKey } = useClientGatePrechecks();
+  const rgPolicy = useRgGatePolicy();
   const { wallet, loading: walletLoading } = useWallet();
   const { breakdown, loading: breakdownLoading } = usePhonBalanceBreakdown();
   const [leagueFilter, setLeagueFilter] = useState<SportsLeagueFilter>('all');
@@ -184,11 +189,24 @@ export function useSportsPageController(
 
   const requestPlaceBet = useCallback(() => {
     if (!canPlaceBet) return;
-    setConfirmOpen(true);
-  }, [canPlaceBet]);
+    void (async () => {
+      const rgReason = await rgPolicy('place_bet');
+      if (rgReason) {
+        productToast.show({ zone: 'strict', key: rgReasonMessageKey(rgReason) });
+        return;
+      }
+      setConfirmOpen(true);
+    })();
+  }, [canPlaceBet, rgPolicy]);
 
   const confirmPlaceBet = useCallback(async () => {
     if (!canPlaceBet) return;
+    const rgReason = await rgPolicy('place_bet');
+    if (rgReason) {
+      productToast.show({ zone: 'strict', key: rgReasonMessageKey(rgReason) });
+      setConfirmOpen(false);
+      return;
+    }
     if (
       shouldBlockSportsPlaceNetworkMutation({
         sportsBettingGate: LAUNCH_GATES.sportsBetting,
@@ -223,7 +241,7 @@ export function useSportsPageController(
         key: translateError(error),
       });
     }
-  }, [canPlaceBet, oddsIngestHealthGreen, placeBetMutation, slip]);
+  }, [canPlaceBet, oddsIngestHealthGreen, placeBetMutation, rgPolicy, slip]);
 
   const fixturesErrorKey = fixturesQuery.error ? translateError(fixturesQuery.error) : null;
   const fixtureMarketsErrorKey = fixtureMarketsQuery.error

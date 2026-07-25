@@ -119,6 +119,7 @@ describe('Casino games batch D stages (p10-games-batch-d)', () => {
     expect(screen.queryByTestId('casino-game-stage-placeholder')).not.toBeInTheDocument();
     expect(screen.getByTestId('casino-roulette-table')).toBeInTheDocument();
     expect(screen.getByTestId('casino-roulette-chip-rack')).toBeInTheDocument();
+    expect(screen.getByTestId('casino-roulette-wheel')).toBeInTheDocument();
     expect(screen.queryByTestId('casino-roulette-live-spin')).not.toBeInTheDocument();
   });
 

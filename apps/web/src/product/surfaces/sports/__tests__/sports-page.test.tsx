@@ -214,13 +214,42 @@ describe('SportsPage', () => {
     );
 
     expect(screen.getByTestId('sports-page')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-page')).toHaveAttribute('data-sports-league-rail', 'true');
+    expect(screen.getByTestId('sports-page')).toHaveAttribute('data-sports-slip', 'true');
     expect(screen.getByTestId('sports-fixture-board')).toBeInTheDocument();
     expect(screen.getByTestId('sports-kickoff-countdown-fx-1')).toHaveAttribute(
       'data-signature',
       'kickoff-countdown',
     );
+    expect(screen.getByTestId('sports-league-rail-desktop')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-league-rail-mobile')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-slip-mobile-open')).toBeInTheDocument();
     expect(screen.getByTestId('sports-bet-slip-panel')).toBeInTheDocument();
     expect(screen.getByTestId('sports-stake-currency-selector')).toBeInTheDocument();
+  });
+
+  it('collapses league rail on rules/my-bets and keeps vip slip without empty left rail', () => {
+    useSportsPageControllerMock.mockReturnValue(makeEngine({ mode: 'rules' }));
+    const { unmount } = render(
+      <I18nProvider>
+        <SportsPage mode="rules" />
+      </I18nProvider>,
+    );
+    expect(screen.getByTestId('sports-page')).toHaveAttribute('data-sports-league-rail', 'false');
+    expect(screen.getByTestId('sports-page')).toHaveAttribute('data-sports-slip', 'false');
+    expect(screen.queryByTestId('sports-left-rail')).not.toBeInTheDocument();
+    unmount();
+
+    useSportsPageControllerMock.mockReturnValue(makeEngine({ mode: 'vip' }));
+    render(
+      <I18nProvider>
+        <SportsPage mode="vip" />
+      </I18nProvider>,
+    );
+    expect(screen.getByTestId('sports-page')).toHaveAttribute('data-sports-league-rail', 'false');
+    expect(screen.getByTestId('sports-page')).toHaveAttribute('data-sports-slip', 'true');
+    expect(screen.queryByTestId('sports-left-rail')).not.toBeInTheDocument();
+    expect(screen.getByTestId('sports-slip-rail')).toBeInTheDocument();
   });
 
   it('wires USDT and PHON stake currency selectors', () => {
@@ -357,7 +386,7 @@ describe('SportsPage', () => {
       </I18nProvider>,
     );
 
-    expect(screen.getByTestId('sports-vip-stub')).toBeInTheDocument();
+    expect(screen.getByTestId('sports-vip')).toBeInTheDocument();
     expect(screen.getByTestId('sports-vip-eligibility-strip')).toBeInTheDocument();
     expect(screen.getByTestId('sports-vip-board')).toBeInTheDocument();
     expect(screen.queryByTestId('sports-vip-defer')).not.toBeInTheDocument();

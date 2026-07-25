@@ -41,7 +41,7 @@ export const EW_E5_GAP_SURFACES_WIRE_ARTIFACT_PATHS = [
   'apps/web/src/domain/sports-rules-and-vip-display-contract.ts',
   'apps/web/src/features/earn/use-referral-leaderboard-controller.ts',
   'apps/web/src/product/surfaces/referral/referral-leaderboard-page.tsx',
-  'apps/web/src/product/surfaces/sports/sports-vip-stub-panel.tsx',
+  'apps/web/src/product/surfaces/sports/sports-vip-panel.tsx',
   'apps/web/src/product/surfaces/sports/sports-page.tsx',
   'apps/web/src/domain/dead-controls-display-contract.ts',
   'docs/OPERATIONS/ENGINE_GAP_E5_GAP_SURFACES.md',

@@ -32,13 +32,19 @@ jobs:
           bun-version: latest
       - run: bun install --frozen-lockfile
       - run: bun run check:env
+      - run: bun run check:secrets-deploy-deny
       - run: bun run check:hygiene
       - run: bun run check:i18n
       - run: bun run check:release
       - run: bun run check:money-formula-citations
       - run: bun run check:migrations
+      - run: bun run build:packages
       - run: bun run typecheck
+      - run: bun run check:games
+      - run: bun run check:determinism
+      - run: bun run check:deps
       - run: bun run lint
+      - run: bun run check:markdown
       - run: bun run format:check
       - uses: denoland/setup-deno@v2
         with:

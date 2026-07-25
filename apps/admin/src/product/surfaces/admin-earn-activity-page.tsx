@@ -24,7 +24,7 @@ export function AdminEarnActivityPage() {
     useAdminEarnActivityDesk();
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-ds-8">
       <section className="flex items-start justify-between gap-3">
         <div className="space-y-2">
           <h2 className="text-foreground m-0 text-2xl font-semibold">

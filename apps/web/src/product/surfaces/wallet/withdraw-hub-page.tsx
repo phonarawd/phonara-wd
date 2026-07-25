@@ -67,7 +67,7 @@ export function WithdrawHubPage() {
   });
 
   return (
-    <div className="flex flex-col gap-6 py-4 md:py-6" data-testid="withdraw-hub-page">
+    <div className="flex flex-col gap-ds-8 py-4 md:py-6" data-testid="withdraw-hub-page">
       <header className="space-y-3">
         <a
           href="/wallet"
@@ -119,10 +119,11 @@ export function WithdrawHubPage() {
             {t('wallet.withdraw.kycLockDesc')}
           </p>
           <a
-            href="/wallet"
+            href="/account/kyc"
             className={cn(buttonVariants({ variant: 'outline', size: 'md' }), 'mt-3 inline-flex')}
+            data-testid="withdraw-hub-kyc-cta"
           >
-            {t('wallet.withdraw.hub.back')}
+            {t('wallet.withdraw.kycCta')}
           </a>
         </div>
       ) : null}

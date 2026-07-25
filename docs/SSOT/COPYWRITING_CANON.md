@@ -3,7 +3,6 @@
 > **상태:** D4 narrative complete (2026-06-30)  
 > **Authority:** [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) (Phase R) · Decision 014  
 > **Product tone zones:** [`PRODUCT_PRINCIPLES.md`](PRODUCT_PRINCIPLES.md)  
-> **Writing patterns:** [`UX_WRITING_GUIDE.md`](UX_WRITING_GUIDE.md)  
 > **Locale files:** `packages/i18n/**` · Lovable catalogs — add-only keys
 
 ## Tone matrix
@@ -18,14 +17,14 @@
 
 ## Examples
 
-**Financial (no emoji)**
+#### Financial (no emoji)
 
 ```text
 Bad:  🚀 주문 성공!
 Good: 주문이 접수되었습니다. / Order submitted.
 ```
 
-**General (emoji allowed)**
+#### General (emoji allowed)
 
 ```text
 Good: ✨ 저장했어요.

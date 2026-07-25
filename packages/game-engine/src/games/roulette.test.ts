@@ -35,6 +35,29 @@ describe('roulette RED (casino — not Earn rpc_spin_roulette)', () => {
     expect(mult).toBeCloseTo((36 + 2) / 2, 5);
   });
 
+  it('non-uniform stakeWeight uses Decimal weighted average (exact to 6dp)', () => {
+    const mult = rouletteMaxExposureMultiplier({
+      bets: [
+        { type: 'straight', value: 7, stakeWeight: 1 },
+        { type: 'red', value: null, stakeWeight: 3 },
+      ],
+    });
+    // (36*1 + 2*3) / 4 = 10.5
+    expect(mult).toBe(10.5);
+
+    const result = evaluateRoulette(
+      {
+        bets: [
+          { type: 'straight', value: 7, stakeWeight: 1 },
+          { type: 'red', value: null, stakeWeight: 3 },
+        ],
+      },
+      7,
+    );
+    // straight wins (36) + red wins if 7 is red (2) → (36*1 + 2*3) / 4 = 10.5
+    expect(result.totalMultiplier).toBe(10.5);
+  });
+
   it('theoretical RTP is 36/37 (single-zero)', () => {
     expect(rouletteDefinition.theoreticalRtp?.().toNumber()).toBeCloseTo(36 / 37, 4);
   });

@@ -8,7 +8,8 @@
 
 PHONARA funding rail(코인 · KRW 계좌이체 · 상품권)은 이미 Supabase RPC·원장·SQL 테스트로 구현되어 있다. PG 결제대행 없이도 운영 가능하며, L4 PG webhook은 **optional overlay**일 뿐 primary rail이 아니다.
 
-Engine Apex + Post-Apex(2026-07-03): `test:sql` **118/118** · migration **211/211** · advisor **0 ERROR**.
+Engine Apex + Post-Apex(2026-07-03): `test:sql` **118/118** · migration **211/211** · advisor **0 ERROR**.  
+(당시 스냅샷 — **현재 디스크 2026-07-24:** migration **248/248** · `check:migrations`)
 
 ## Decision
 

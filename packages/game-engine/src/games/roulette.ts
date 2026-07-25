@@ -113,10 +113,30 @@ function legWins(type: RouletteBetType, value: number | null, winning: number): 
   }
 }
 
-export function evaluateRoulette(selection: RouletteSelection, winning: number): RouletteResult {
-  const weightSum = selection.bets.reduce((s, b) => s + b.stakeWeight, 0);
-  if (weightSum <= 0) throw new Error('invalid_roulette_bets');
+function stakeWeightDecimal(weight: number): Decimal {
+  return new Decimal(String(weight));
+}
 
+function weightedAverageMultiplier(
+  legs: Array<{ multiplier: number; stakeWeight: number }>,
+): Decimal {
+  const weightSum = legs.reduce(
+    (sum, leg) => sum.plus(stakeWeightDecimal(leg.stakeWeight)),
+    new Decimal(0),
+  );
+  if (weightSum.lte(0)) {
+    throw new Error('invalid_roulette_bets');
+  }
+  return legs.reduce(
+    (sum, leg) =>
+      sum.plus(
+        new Decimal(String(leg.multiplier)).mul(stakeWeightDecimal(leg.stakeWeight)).div(weightSum),
+      ),
+    new Decimal(0),
+  );
+}
+
+export function evaluateRoulette(selection: RouletteSelection, winning: number): RouletteResult {
   const legs: RouletteLegResult[] = selection.bets.map((leg) => {
     const won = legWins(leg.type, leg.value, winning);
     const mult = won ? ROULETTE_LEG_MAX_MULT[leg.type] : 0;
@@ -129,21 +149,24 @@ export function evaluateRoulette(selection: RouletteSelection, winning: number):
     };
   });
 
-  const totalMultiplier = legs.reduce(
-    (sum, leg) => sum + (leg.multiplier * leg.stakeWeight) / weightSum,
-    0,
-  );
-
+  const totalMultiplier = Number(weightedAverageMultiplier(legs).toFixed(6));
   return { winningNumber: winning, totalMultiplier };
 }
 
 export function rouletteMaxExposureMultiplier(selection: RouletteSelection): number {
-  const weightSum = selection.bets.reduce((s, b) => s + b.stakeWeight, 0);
-  if (weightSum <= 0) return 0;
-  return selection.bets.reduce(
-    (sum, leg) => sum + (ROULETTE_LEG_MAX_MULT[leg.type] * leg.stakeWeight) / weightSum,
-    0,
-  );
+  if (selection.bets.length === 0) return 0;
+  try {
+    return Number(
+      weightedAverageMultiplier(
+        selection.bets.map((leg) => ({
+          multiplier: ROULETTE_LEG_MAX_MULT[leg.type],
+          stakeWeight: leg.stakeWeight,
+        })),
+      ).toFixed(6),
+    );
+  } catch {
+    return 0;
+  }
 }
 
 const legSchema = z.object({

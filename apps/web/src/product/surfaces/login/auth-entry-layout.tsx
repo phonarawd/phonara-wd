@@ -53,7 +53,10 @@ export function AuthEntryLayout({
         className,
       )}
     >
-      <aside className="hidden flex-col gap-6 lg:flex" aria-label={t('auth.entry.trust.ariaLabel')}>
+      <aside
+        className="hidden flex-col gap-ds-8 lg:flex"
+        aria-label={t('auth.entry.trust.ariaLabel')}
+      >
         <div className="flex flex-col gap-2">
           <p className="text-accent m-0 text-sm font-semibold tracking-wide uppercase">
             {t(PLATFORM_POSITIONING_KEYS.eyebrow)}
@@ -77,7 +80,7 @@ export function AuthEntryLayout({
         </ul>
       </aside>
 
-      <section className="flex w-full flex-col gap-6">
+      <section className="flex w-full flex-col gap-ds-8">
         <header className="flex flex-col items-center gap-1.5 text-center lg:items-start lg:text-left">
           <div className="flex items-center gap-2">
             <BrandMark size={24} className="text-accent" testId="auth-brand-mark" />

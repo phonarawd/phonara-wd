@@ -22,15 +22,6 @@ export type {
 export { userBalanceSummaryParts } from './useAdminUsersDeskMock';
 
 const MIN_REASON = 4;
-const MIN_ADJUST_REASON = 8;
-
-export type ManualAdjustInput = {
-  currency: 'PHON' | 'USDT' | 'KRW';
-  amount: string;
-  direction: 'credit' | 'debit';
-  reason: string;
-  clientRequestId: string;
-};
 
 function mapKycTier(raw: string): KycTier {
   if (raw === 'id_verified') return 'tier3';
@@ -161,24 +152,6 @@ export function useAdminUsersDesk() {
     [invalidate],
   );
 
-  const manualAdjustWallet = useCallback(
-    async (id: string, input: ManualAdjustInput) => {
-      if (input.reason.trim().length < MIN_ADJUST_REASON) {
-        throw new Error('reason_too_short');
-      }
-      await callRpc('rpc_admin_manual_wallet_adjust', {
-        p_user_id: id,
-        p_currency: input.currency,
-        p_amount: input.amount,
-        p_direction: input.direction,
-        p_reason: input.reason.trim(),
-        p_client_request_id: input.clientRequestId,
-      });
-      await invalidate();
-    },
-    [invalidate],
-  );
-
   const releaseSelfExclusion = useCallback(
     async (exclusionId: string, reason: string) => {
       if (reason.trim().length < MIN_REASON) {
@@ -208,17 +181,6 @@ export function useAdminUsersDesk() {
     banUser: (id: string, reason: string) => runAction(id, 'ban', reason),
     unsuspendUser: (id: string, reason: string) => runAction(id, 'unsuspend', reason),
     releaseSelfExclusion,
-    resetMfa: (id: string, reason: string) => {
-      void id;
-      void reason;
-      return undefined;
-    },
-    killSession: (id: string, reason: string) => {
-      void id;
-      void reason;
-      return undefined;
-    },
-    manualAdjustWallet,
     loading: isLoading,
     isError,
     refresh,

@@ -27,11 +27,32 @@ export interface BlackjackResult {
   totalMultiplier: number;
 }
 
+/**
+ * Full table resolution for presentation / PF hand replay.
+ * Settlement RPC / `resultFromFloats` stay `{ totalMultiplier }` only —
+ * this helper does not change the stored result shape.
+ */
+export interface BlackjackPlayDetail {
+  totalMultiplier: number;
+  playerHands: BlackjackHand[];
+  dealerHand: BlackjackHand;
+}
+
 const DECK_SIZE = 52;
 const SHUFFLE_FLOATS = 51;
 
+/** Rank index 1–13 from engine card id 1–52 (suit = floor((id-1)/13)). */
+export function cardRank(card: number): number {
+  return ((card - 1) % 13) + 1;
+}
+
+/** Suit index 0–3 (♠♥♦♣) from engine card id 1–52. */
+export function cardSuit(card: number): number {
+  return Math.floor((card - 1) / 13);
+}
+
 export function cardValue(card: number): number {
-  const rank = ((card - 1) % 13) + 1;
+  const rank = cardRank(card);
   return rank >= 10 ? 10 : rank;
 }
 
@@ -100,7 +121,15 @@ function handPayoutMultiplier(player: BlackjackHand, dealer: BlackjackHand): num
   return player.doubled ? 2 : 1;
 }
 
-export function playBlackjack(selection: BlackjackSelection, floats: number[]): BlackjackResult {
+/**
+ * Resolve full blackjack hands + multiplier from PF floats.
+ * Used by presentation to render real card faces without inventing ranks.
+ * Settlement path continues to use `playBlackjack` → `{ totalMultiplier }` only.
+ */
+export function resolveBlackjackPlay(
+  selection: BlackjackSelection,
+  floats: number[],
+): BlackjackPlayDetail {
   const deck = shuffleDeck(floats);
   let idx = 0;
   const deal = () => {
@@ -173,7 +202,14 @@ export function playBlackjack(selection: BlackjackSelection, floats: number[]): 
 
   return {
     totalMultiplier: totalMult / hands.length,
+    playerHands: hands,
+    dealerHand,
   };
+}
+
+export function playBlackjack(selection: BlackjackSelection, floats: number[]): BlackjackResult {
+  const detail = resolveBlackjackPlay(selection, floats);
+  return { totalMultiplier: detail.totalMultiplier };
 }
 
 const blackjackDefinition: GameDefinition<BlackjackSelection, BlackjackResult> = {

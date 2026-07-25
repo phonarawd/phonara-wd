@@ -78,14 +78,13 @@ GitHub: **Actions** 탭 → workflow **CI** → 아래 job 전부 green.
 **파일:** `.github/workflows/ci.yml`  
 **트리거:** `push` to `main` · 모든 `pull_request`
 
-| Job                    | 이름                                            | 실행 내용                                                                                                                                                                                          | Operator PC 대체                                                           |
-| ---------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| **quality**            | typecheck / lint / test / build                 | `check:env` · `check:hygiene` · `check:i18n` · `check:release` · `check:migrations` · `typecheck` · `lint` · `test:deno:edge-shared`(Deno `_shared`) · `test`(vitest 전체) · `build` · `check:pwa` | 로컬 `gate:ai-impl` + 선택적 `typecheck` · `bun run test:deno:edge-shared` |
-| **advisors**           | supabase security advisors                      | `check:advisors` — remote **0 ERROR** (secret 있을 때)                                                                                                                                             | migration/RPC touch 후 CI 또는 `stack:push-remote` 뒤 확인                 |
-| **advisory**           | format (advisory)                               | `format:check` — `continue-on-error: true`                                                                                                                                                         | —                                                                          |
-| **sql**                | supabase db reset + SQL tests                   | `supabase start` → `db reset` → `check:guard-coverage` → `test:sql` 103/103 · `casino-sql-parity` · Σ=0                                                                                            | **로컬 SQL 불필요** — CI가 authoritative                                   |
-| **e2e**                | playwright e2e                                  | `supabase start` → `db reset` → `playwright install chromium` → `bun run test:e2e -- --workers=1`                                                                                                  | **로컬 E2E 불필요** — CI가 authoritative                                   |
-| **e2e-browser-matrix** | playwright trade-desk browser matrix (advisory) | `firefox` + `webkit` · `trade-desk-smoke` subset E1/E8/E9 · `continue-on-error: true`                                                                                                              | **optional** — merge 차단 아님                                             |
+| Job                    | 이름                                            | 실행 내용                                                                                                                                                                                                                                                       | Operator PC 대체                                                           |
+| ---------------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| **quality**            | typecheck / lint / test / build                 | `check:env` · `check:secrets-deploy-deny` · `check:hygiene` · `check:i18n` · `check:release` · `check:migrations` · `typecheck` · `lint` · `format:check`(**blocking**) · `test:deno:edge-shared`(Deno `_shared`) · `test`(vitest 전체) · `build` · `check:pwa` | 로컬 `gate:ai-impl` + 선택적 `typecheck` · `bun run test:deno:edge-shared` |
+| **advisors**           | supabase security advisors                      | `check:advisors` — remote **0 ERROR** (secret 있을 때)                                                                                                                                                                                                          | migration/RPC touch 후 CI 또는 `stack:push-remote` 뒤 확인                 |
+| **sql**                | supabase db reset + SQL tests                   | `supabase start` → `db reset` → `check:guard-coverage` → `test:sql` 103/103 · `casino-sql-parity` · Σ=0                                                                                                                                                         | **로컬 SQL 불필요** — CI가 authoritative                                   |
+| **e2e**                | playwright e2e                                  | `supabase start` → `db reset` → `playwright install chromium` → `bun run test:e2e -- --workers=1`                                                                                                                                                               | **로컬 E2E 불필요** — CI가 authoritative                                   |
+| **e2e-browser-matrix** | playwright trade-desk browser matrix (advisory) | `firefox` + `webkit` · `trade-desk-smoke` subset E1/E8/E9 · `continue-on-error: true`                                                                                                                                                                           | **optional** — merge 차단 아님                                             |
 
 ### E2E job 상세 (CI authoritative)
 
@@ -96,8 +95,12 @@ GitHub: **Actions** 탭 → workflow **CI** → 아래 job 전부 green.
 | `tests/e2e/wallet-d3.spec.ts`        | 6         | KRW 입출금 · ledger · **DB Σ=0 conservation**                  |
 | `tests/e2e/admin.spec.ts`            | 4         | auth · MFA · forbidden · policy desk                           |
 | `tests/e2e/trade-desk-smoke.spec.ts` | 13        | spot/futures/staking money · toast · oracle stale · **DB Σ=0** |
+| `tests/e2e/casino-dice.spec.ts`      | 3         | dice shell · PF verifyRound · **DB Σ=0** · idempotency         |
+| `tests/e2e/sports-betting.spec.ts`   | 3         | prematch slip place · settle · RPC idempotency · **DB Σ=0**    |
+| `tests/e2e/staking-hub.spec.ts`      | 2         | staking wizard mount · PHON stake · **DB Σ=0**                 |
+| `tests/e2e/referral-hub.spec.ts`     | 3         | `/referral` code · copy controls · invite share card           |
 | `tests/smoke/web.spec.ts`            | 5         | boot · PWA assets · guest surface                              |
-| **합계**                             | **28**    | local Supabase + Chromium · ubuntu-latest                      |
+| **합계**                             | **39**    | local Supabase + Chromium · ubuntu-latest                      |
 
 **Browser matrix (P3-D · advisory job `e2e-browser-matrix`):**
 

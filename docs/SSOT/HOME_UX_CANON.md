@@ -21,7 +21,7 @@ Pattern only — no competitor copy · logo · asset clone.
 
 ## Layout canon
 
-**Desktop**
+#### Desktop
 
 - Account/status summary (top)
 - Balance/reward snapshot (RPC-backed display only)
@@ -29,7 +29,7 @@ Pattern only — no competitor copy · logo · asset clone.
 - Product entry cards: Earn missions · Wallet · **navigate CTAs** → Trade · Sports · Casino (각각 `/trade` · `/sports` · `/casino` — embed **금지** · [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) §12.19)
 - Activity feed · trust/restriction cues (side or below on wide)
 
-**Mobile**
+#### Mobile
 
 - Status summary compact top
 - Value-ordered feed/cards — minimal scroll to primary action

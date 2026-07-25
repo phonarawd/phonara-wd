@@ -127,7 +127,7 @@ flowchart TD
   3. 두 파일(`ew_e21`/`ew_e22`)을 **분리된 conservation 축**으로 각각 커밋(`81-efficient-gate-execution.mdc` — 한 PR에 한 conservation 축).
   4. push → `ci:watch` → required 4 job green 확인.
   5. green 확인 **후에만** `bun run stack:push-remote` → remote advisor 0 ERROR.
-  6. `check:engine-foundation-parity` 재실행 — local/remote migration count 일치 확인(SA-01 evidence: local 241 · remote 239 · missing 2).
+  6. `check:engine-foundation-parity` 재실행 — local/remote migration count 일치 확인(SA-01 evidence 당시: local 241 · remote 239 · missing 2; **현재 디스크 2026-07-24: 248** · `check:migrations`).
 - **Files:** `supabase/tests/ew_e21_hedge_reduce_only_test.sql`, `supabase/tests/ew_e22_sports_parity_test.sql`, 관련 RPC가 있으면 해당 migration(신규 additive), `docs/audit/SYSTEM_AUDIT_2026-07-13/FINDINGS.yaml`(SA-01 상태 갱신).
 - **Safety:** local `db reset` + CI가 authoritative · 에이전트 로컬 heavy gate 금지(G13) · `stack:push-remote`만 원격 apply 경로.
 - **Rollback:** SQL job이 다시 RED면 해당 migration/테스트 커밋만 revert하고 `stack:push-remote` 보류.

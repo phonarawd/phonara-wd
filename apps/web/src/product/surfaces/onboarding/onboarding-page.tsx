@@ -38,7 +38,7 @@ export function OnboardingPage() {
   if (loading || !current) {
     return (
       <div
-        className="mx-auto flex w-full max-w-lg flex-col gap-6 py-2"
+        className="mx-auto flex w-full max-w-lg flex-col gap-ds-8 py-2"
         data-testid="onboarding-loading"
       >
         <Skeleton className="mx-auto size-20 rounded-(--ds-radius-lg)" />
@@ -51,7 +51,7 @@ export function OnboardingPage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-lg flex-col gap-6 py-2 md:py-4"
+      className="mx-auto flex w-full max-w-lg flex-col gap-ds-8 py-2 md:py-4"
       data-testid="onboarding-page"
     >
       <header className="flex flex-col items-center gap-4 text-center">

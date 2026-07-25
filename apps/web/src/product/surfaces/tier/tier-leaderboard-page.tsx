@@ -16,6 +16,7 @@ import {
 } from '@/domain/tier-leaderboard-display-contract';
 import { useTierLeaderboardController } from '@/features/earn/use-tier-leaderboard-controller';
 import type { TranslateFn } from '@/product/i18n';
+import { buttonVariants } from '@/product/primitives/button';
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from '@/product/primitives/card';
 import { EmptyState } from '@/product/primitives/empty-state';
 import { Skeleton } from '@/product/primitives/skeleton';
@@ -68,7 +69,7 @@ export function TierLeaderboardPage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-lg flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-lg flex-col gap-ds-8 py-4 md:py-6"
       data-testid="tier-leaderboard-page"
       data-engine-todo={TIER_LEADERBOARD_ENGINE_TODO}
       data-ui-unlock-todo={TIER_LEADERBOARD_UI_UNLOCK_TODO}
@@ -76,7 +77,10 @@ export function TierLeaderboardPage() {
       <header className="flex flex-col gap-3">
         <Link
           to={backRoute}
-          className="text-foreground-muted hover:text-foreground inline-flex items-center gap-2 text-sm font-medium underline-offset-4 hover:underline"
+          className={cn(
+            buttonVariants({ variant: 'ghost', size: 'sm' }),
+            'text-foreground-muted hover:text-foreground w-fit justify-start gap-2',
+          )}
           data-testid="tier-leaderboard-back"
         >
           <ArrowLeft className="size-4" aria-hidden />

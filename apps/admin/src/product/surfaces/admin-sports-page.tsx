@@ -168,8 +168,7 @@ export function AdminSportsPage() {
     setActionLoading(true);
     try {
       if (actionTarget.kind === 'suspend' && actionTarget.fixtureId) {
-        suspendMarket(actionTarget.fixtureId, reason);
-        return true;
+        return await suspendMarket(actionTarget.fixtureId, reason);
       }
       if (actionTarget.kind === 'resume' && actionTarget.fixtureId) {
         return await unsuspendMarket(actionTarget.fixtureId, reason);
@@ -178,12 +177,10 @@ export function AdminSportsPage() {
         return await voidFixtureMarket(actionTarget.fixtureId, reason);
       }
       if (actionTarget.kind === 'enableFeature') {
-        setFeatureEnabled(true, reason);
-        return true;
+        return await setFeatureEnabled(true, reason);
       }
       if (actionTarget.kind === 'disableFeature') {
-        setFeatureEnabled(false, reason);
-        return true;
+        return await setFeatureEnabled(false, reason);
       }
       if (actionTarget.kind === 'setRiskTier' && actionTarget.riskUserId && actionTarget.riskTier) {
         return await setSportsRiskTier(actionTarget.riskUserId, actionTarget.riskTier, reason);
@@ -208,7 +205,7 @@ export function AdminSportsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-ds-8">
       <section className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-2">
           <h2 className="text-foreground m-0 text-2xl font-semibold tracking-tight">

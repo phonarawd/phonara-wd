@@ -1,6 +1,6 @@
 ﻿# Knip Dead Code Report
 
-> Generated: 2026-07-13T00:45:11Z (baseline) · Updated: 2026-07-13 (SA-03 cleanup)
+> Generated: 2026-07-13T00:45:11Z (baseline) · Updated: 2026-07-13 (SA-03 cleanup) · Errata: 2026-07-24 (`doc-hygiene-batch`)
 > Command: `bunx knip --no-progress`
 > Config: `knip.json`
 > Exit code: 1 (findings present — expected for inventory; remaining categories are documented false-positive/config-gap noise, not delete candidates)
@@ -9,11 +9,11 @@
 
 The three high-signal categories from the baseline scan are now resolved:
 
-| Category                  |         Baseline | After cleanup | Action                                                                                                                                                                                                                                                                                                                         |
-| ------------------------- | ---------------: | ------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Unused files              |                3 |         **0** | Deleted `apps/admin/src/contracts/admin-desk-views.ts`, `apps/admin/src/contracts/controller-view-freeze.ts` (only consumer was the first file), `apps/admin/src/lib/i18n.tsx` (deprecated shim, superseded by `@/product/i18n`)                                                                                               |
-| Unused dependency         | 1 (`decimal.js`) |         **0** | Removed root `package.json` `dependencies.decimal.js` — `packages/money` and `packages/trading-engine` already declare it as their own workspace dependency; root entry was redundant                                                                                                                                          |
-| Unresolved script imports |                3 |         **0** | Deleted `scripts/generate-web-sitemap.ts` (imported deleted `apps/web/src/lib/seo-config`, never existed post-Demolition) and `scripts/merge-presentation-i18n-wave1.ts` (imported deleted pre-demolition `apps/web/src/i18n/ko`/`en` catalogs) — removed the matching `generate:web-sitemap` script entry from `package.json` |
+| Category                  |         Baseline | After cleanup | Action                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------- | ---------------: | ------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unused files              |                3 |         **0** | Deleted `apps/admin/src/contracts/admin-desk-views.ts`, `apps/admin/src/lib/i18n.tsx` (deprecated shim, superseded by `@/product/i18n`). **`apps/admin/src/contracts/controller-view-freeze.ts`는 삭제되지 않음** — 파일 실존(참조 0 · dead 유지 · cross-app 테스트/`knip.json` entry로 unused-files 0 유지; web 쪽 copy만 `phase-c-dead-contract`에서 제거됨). |
+| Unused dependency         | 1 (`decimal.js`) |         **0** | Removed root `package.json` `dependencies.decimal.js` — `packages/money` and `packages/trading-engine` already declare it as their own workspace dependency; root entry was redundant                                                                                                                                                                           |
+| Unresolved script imports |                3 |         **0** | Deleted `scripts/generate-web-sitemap.ts` (imported deleted `apps/web/src/lib/seo-config`, never existed post-Demolition) and `scripts/merge-presentation-i18n-wave1.ts` (imported deleted pre-demolition `apps/web/src/i18n/ko`/`en` catalogs) — removed the matching `generate:web-sitemap` script entry from `package.json`                                  |
 
 ## Summary (current — post SA-03 cleanup)
 

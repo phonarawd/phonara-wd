@@ -1,5 +1,9 @@
 # Visual & UX Audit Pack — 2026-07-11
 
+> **SUPERSEDED (2026-07-25):** 시각 사인오프·4-viewport 증거 정본은  
+> [`../visual-ux-2026-07-25-phase6-closeout/`](../visual-ux-2026-07-25-phase6-closeout/)  
+> (Phase 6 closeout). 본 폴더는 **이력·Director 1차 입력**만 — 신규 판정에 쓰지 않는다.
+>
 > Phase R 정적 감사 산출물. **실행 큐 아님** — Director/재설계 입력용.  
 > Active SSOT: [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../../SSOT/ACTIVE_WORK_SSOT.md)
 

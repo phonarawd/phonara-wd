@@ -14,7 +14,7 @@ export interface WalletBalanceHeroProps {
   fiatHint?: FiatHintView;
   /** Locked / real / bonus breakdown — accordion body (§34.13). */
   detailsTitle: string;
-  detailsSummary?: string;
+  detailsSummary?: ReactNode;
   expandLabel?: string;
   collapseLabel?: string;
   details?: ReactNode;

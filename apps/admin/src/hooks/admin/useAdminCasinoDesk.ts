@@ -333,54 +333,56 @@ export function useAdminCasinoDesk(): UseAdminCasinoDesk {
   );
 
   const ackRtpReview = useCallback(
-    (id: string): boolean => {
+    async (id: string, reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       const row = rtpReviews.find((r) => r.id === id);
       if (!row || row.status !== 'open') return false;
-      void (async () => {
-        try {
-          await ackOpsAlert({ alertId: id, reason: 'RTP drift review acknowledged' });
-          await invalidate();
-        } catch {
-          // display-only — hub refetch on next interval
-        }
-      })();
-      return true;
+      try {
+        await ackOpsAlert({ alertId: id, reason: reason.trim() });
+        await invalidate();
+        return true;
+      } catch {
+        return false;
+      }
     },
     [invalidate, rtpReviews],
   );
 
   const resolveRtpReview = useCallback(
-    (id: string, reason: string): boolean => {
+    async (id: string, reason: string): Promise<boolean> => {
       if (!validReason(reason)) return false;
       const row = rtpReviews.find((r) => r.id === id);
       if (!row || row.status === 'resolved') return false;
-      void (async () => {
-        try {
-          await resolveOpsAlert({ alertId: id, reason: reason.trim() });
-          await invalidate();
-        } catch {
-          // noop
-        }
-      })();
-      return true;
+      try {
+        await resolveOpsAlert({ alertId: id, reason: reason.trim() });
+        await invalidate();
+        return true;
+      } catch {
+        return false;
+      }
     },
     [invalidate, rtpReviews],
   );
 
   const bulkAckRtpReview = useCallback(
-    (ids: string[]): boolean => {
+    async (ids: string[], reason: string): Promise<boolean> => {
+      if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (ackRtpReview(id)) any = true;
+      for (const id of ids) {
+        if (await ackRtpReview(id, reason)) any = true;
+      }
       return any;
     },
     [ackRtpReview],
   );
 
   const bulkResolveRtpReview = useCallback(
-    (ids: string[], reason: string): boolean => {
+    async (ids: string[], reason: string): Promise<boolean> => {
       if (!validReason(reason)) return false;
       let any = false;
-      for (const id of ids) if (resolveRtpReview(id, reason)) any = true;
+      for (const id of ids) {
+        if (await resolveRtpReview(id, reason)) any = true;
+      }
       return any;
     },
     [resolveRtpReview],
