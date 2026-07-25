@@ -26,7 +26,7 @@ export function EarnCashbackPage() {
   if (loading) {
     return (
       <div
-        className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-4"
+        className="mx-auto flex w-full max-w-3xl flex-col gap-ds-8 py-4"
         data-testid="earn-cashback-loading"
       >
         <Skeleton className="h-8 w-1/2" />
@@ -40,7 +40,7 @@ export function EarnCashbackPage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-3xl flex-col gap-ds-8 py-4 md:py-6"
       data-testid="earn-cashback-page"
     >
       <header className="flex flex-col gap-3">

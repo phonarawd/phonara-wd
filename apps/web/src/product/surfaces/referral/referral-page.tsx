@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Link } from '@tanstack/react-router';
 import { Copy, Share2, Trophy, Users } from 'lucide-react';
 
 import { useReferralPageController } from '@/features/earn/use-referral-page-controller';
@@ -46,7 +47,7 @@ export function ReferralPage() {
   if (loading) {
     return (
       <div
-        className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-4"
+        className="mx-auto flex w-full max-w-3xl flex-col gap-ds-8 py-4"
         data-testid="referral-page-loading"
       >
         <Skeleton className="h-10 w-2/3" />
@@ -59,7 +60,7 @@ export function ReferralPage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-3xl flex-col gap-ds-8 py-4 md:py-6"
       data-testid="referral-page"
     >
       <header className="flex flex-col gap-3">
@@ -114,13 +115,16 @@ export function ReferralPage() {
           <p className="text-foreground-muted m-0 text-xs leading-relaxed">
             {t('earn.referral.disclosure')}
           </p>
-          <a
-            href={LEGAL_AFFILIATE_ROUTE}
-            className="text-accent m-0 w-fit text-xs font-medium underline-offset-4 hover:underline"
+          <Link
+            to={LEGAL_AFFILIATE_ROUTE}
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'sm' }),
+              'text-accent m-0 w-fit justify-start px-0',
+            )}
             data-testid="referral-affiliate-terms-link"
           >
             {t('legal.nav.affiliate')}
-          </a>
+          </Link>
 
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button
@@ -149,22 +153,22 @@ export function ReferralPage() {
             </Button>
           </div>
 
-          <a
-            href={REFERRAL_INVITE_ROUTE}
+          <Link
+            to={REFERRAL_INVITE_ROUTE}
             className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
             data-testid="referral-invite-cta"
           >
             <Share2 className="size-4" aria-hidden />
             {t('referral.btn.share')}
-          </a>
-          <a
-            href={REFERRAL_LEADERBOARD_ROUTE}
+          </Link>
+          <Link
+            to={REFERRAL_LEADERBOARD_ROUTE}
             className={cn(buttonVariants({ variant: 'outline', size: 'md' }), 'w-full')}
             data-testid="referral-leaderboard-cta"
           >
             <Trophy className="size-4" aria-hidden />
             {t('referral.leaderboard.head.title')}
-          </a>
+          </Link>
         </CardBody>
       </Card>
 

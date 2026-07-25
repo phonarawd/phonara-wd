@@ -42,7 +42,7 @@ export function TierBenefitsPage() {
   if (loading) {
     return (
       <div
-        className="mx-auto flex w-full max-w-5xl flex-col gap-6 py-4"
+        className="mx-auto flex w-full max-w-5xl flex-col gap-ds-8 py-4"
         data-testid="tier-benefits-loading"
       >
         <Skeleton className="h-10 w-1/2" />

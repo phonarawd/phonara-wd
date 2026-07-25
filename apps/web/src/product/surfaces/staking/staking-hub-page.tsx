@@ -64,7 +64,7 @@ function StakingBalanceAmount({
 function StakingLoadingShell() {
   return (
     <div
-      className="mx-auto flex w-full max-w-4xl flex-col gap-6 py-4"
+      className="mx-auto flex w-full max-w-4xl flex-col gap-ds-8 py-4"
       data-testid="staking-hub-loading"
     >
       <Skeleton className="h-10 w-1/2" />
@@ -156,7 +156,7 @@ export function StakingHubPage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-4xl flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-4xl flex-col gap-ds-8 py-4 md:py-6"
       data-testid="staking-hub-page"
     >
       <header className="flex flex-col gap-2">
@@ -324,7 +324,8 @@ export function StakingHubPage() {
                       data-testid={`staking-wizard-step-${step}`}
                       aria-current={active ? 'step' : undefined}
                       className={cn(
-                        'border-line rounded-(--ds-radius-md) border px-2 py-2 text-left text-xs transition-colors',
+                        'border-line min-h-(--ds-touch-target-min) rounded-(--ds-radius-md) border px-2 py-2 text-left text-xs transition-colors',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
                         active && 'border-accent bg-accent/10',
                         complete && !active && 'border-market-up/40',
                       )}
@@ -408,6 +409,7 @@ export function StakingHubPage() {
                           }}
                           className={cn(
                             'border-line bg-surface rounded-(--ds-radius-lg) flex cursor-pointer flex-col gap-3 border p-4 text-left transition-colors',
+                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
                             selected && 'border-accent ring-accent/30 ring-2',
                           )}
                         >

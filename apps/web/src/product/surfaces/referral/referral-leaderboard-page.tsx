@@ -73,7 +73,7 @@ export function ReferralLeaderboardPage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-lg flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-lg flex-col gap-ds-8 py-4 md:py-6"
       data-testid="referral-leaderboard-page"
       data-engine-todo={REFERRAL_LEADERBOARD_ENGINE_TODO}
       data-ui-unlock-todo={REFERRAL_LEADERBOARD_UI_UNLOCK_TODO}

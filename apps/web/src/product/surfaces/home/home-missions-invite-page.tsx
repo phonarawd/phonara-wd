@@ -42,7 +42,7 @@ export function HomeMissionsInvitePage() {
   if (loading) {
     return (
       <div
-        className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-4"
+        className="mx-auto flex w-full max-w-3xl flex-col gap-ds-8 py-4"
         data-testid="home-missions-invite-loading"
       >
         <Skeleton className="h-8 w-1/3" />
@@ -55,7 +55,7 @@ export function HomeMissionsInvitePage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-3xl flex-col gap-ds-8 py-4 md:py-6"
       data-testid="home-missions-invite-page"
     >
       <header className="flex flex-col gap-3">
@@ -165,7 +165,10 @@ export function HomeMissionsInvitePage() {
                   <div className="mt-2 px-1">
                     <Link
                       to={mission.ctaRoute}
-                      className="text-accent text-sm font-medium underline-offset-4 hover:underline"
+                      className={cn(
+                        buttonVariants({ variant: 'outline', size: 'md' }),
+                        'w-full',
+                      )}
                       data-testid={`home-missions-invite-link-${mission.id}`}
                     >
                       {t('common.cta.start')}

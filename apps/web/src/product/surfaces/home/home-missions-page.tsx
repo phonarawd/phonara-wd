@@ -11,6 +11,7 @@ import { useHomeMissionsPageController } from '@/features/earn/use-home-missions
 import { useEarnFiatHint } from '@/features/earn/use-earn-fiat-hint';
 import { Button, buttonVariants } from '@/product/primitives/button';
 import { Card, CardBody } from '@/product/primitives/card';
+import { IconButton } from '@/product/primitives/icon-button';
 import { FiatHintDisclaimer } from '@/product/primitives/money-display-with-fiat-hint';
 import { MissionCard } from '@/product/primitives/mission-card';
 import { Skeleton } from '@/product/primitives/skeleton';
@@ -50,7 +51,7 @@ export function HomeMissionsPage({ search }: HomeMissionsPageProps) {
   if (loading) {
     return (
       <div
-        className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-4"
+        className="mx-auto flex w-full max-w-3xl flex-col gap-ds-8 py-4"
         data-testid="home-missions-loading"
       >
         <Skeleton className="h-10 w-2/3" />
@@ -63,7 +64,7 @@ export function HomeMissionsPage({ search }: HomeMissionsPageProps) {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-3xl flex-col gap-ds-8 py-4 md:py-6"
       data-testid="home-missions-page"
     >
       <header className="flex flex-col gap-2">
@@ -99,7 +100,8 @@ export function HomeMissionsPage({ search }: HomeMissionsPageProps) {
               aria-selected={selected}
               data-testid={`home-missions-tab-${tab}`}
               className={cn(
-                'shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+                'min-h-(--ds-touch-target-min) shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
                 selected
                   ? 'bg-accent text-accent-foreground'
                   : 'bg-surface-elevated text-foreground-muted hover:text-foreground',
@@ -119,15 +121,16 @@ export function HomeMissionsPage({ search }: HomeMissionsPageProps) {
               <h2 className="text-foreground m-0 text-lg font-semibold">
                 {t(selectedMission.titleKey)}
               </h2>
-              <button
+              <IconButton
                 type="button"
-                className="text-foreground-muted hover:text-foreground rounded-(--ds-radius-sm) p-1"
+                variant="ghost"
+                size="sm"
                 aria-label={t('common.close')}
                 data-testid="home-missions-detail-close"
                 onClick={closeMission}
               >
                 <X className="size-4" aria-hidden />
-              </button>
+              </IconButton>
             </div>
             <p className="text-accent m-0 text-base font-semibold tabular-nums">
               <EarnMissionReward
@@ -220,7 +223,10 @@ export function HomeMissionsPage({ search }: HomeMissionsPageProps) {
                   <div className="mt-2 px-1">
                     <Link
                       to={mission.ctaRoute}
-                      className="text-accent text-sm font-medium underline-offset-4 hover:underline"
+                      className={cn(
+                        buttonVariants({ variant: 'outline', size: 'md' }),
+                        'w-full',
+                      )}
                       data-testid={`home-mission-link-${mission.id}`}
                     >
                       {t('common.cta.start')}

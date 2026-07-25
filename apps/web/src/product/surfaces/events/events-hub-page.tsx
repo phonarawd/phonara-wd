@@ -36,7 +36,7 @@ export function EventsHubPage() {
   if (loading) {
     return (
       <div
-        className="mx-auto flex w-full max-w-lg flex-col gap-6 py-4"
+        className="mx-auto flex w-full max-w-lg flex-col gap-ds-8 py-4"
         data-testid="events-hub-loading"
       >
         <Skeleton className="h-8 w-1/2" />
@@ -48,7 +48,7 @@ export function EventsHubPage() {
 
   return (
     <div
-      className="mx-auto flex w-full max-w-lg flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-lg flex-col gap-ds-8 py-4 md:py-6"
       data-testid="events-hub-page"
     >
       <header className="flex flex-col gap-2">
