@@ -216,6 +216,13 @@ export const CasinoGameStage = forwardRef<CasinoStageHandle, CasinoGameStageProp
         );
       }
       if (gameCode === 'blackjack') {
+        const livePlayerCards = asNumberArray(selection['player']);
+        const liveDealerCards = asNumberArray(selection['dealer']);
+        const livePlayerValueRaw = selection['playerValue'];
+        const livePlayerValue =
+          typeof livePlayerValueRaw === 'number' && Number.isFinite(livePlayerValueRaw)
+            ? livePlayerValueRaw
+            : null;
         return (
           <BlackjackStage
             ref={ref}
@@ -224,6 +231,9 @@ export const CasinoGameStage = forwardRef<CasinoStageHandle, CasinoGameStageProp
             liveMode={live}
             liveSessionActive={liveControls?.liveSessionActive}
             onLiveMove={liveControls?.onLiveMove}
+            livePlayerCards={livePlayerCards.length > 0 ? livePlayerCards : null}
+            liveDealerCards={liveDealerCards.length > 0 ? liveDealerCards : null}
+            livePlayerValue={livePlayerValue}
             onActionsChange={
               onSelectionChange
                 ? (next) => onSelectionChange({ ...selection, actions: next })

@@ -219,16 +219,58 @@ export function plinkoPathStepMs(pathLength: number): number {
   return Math.min(120, Math.max(45, Math.round(900 / n)));
 }
 
+/** Spin duration — Phase 1D win-band 800–1200ms (CASINO_UX_CANON / plan DoD). */
 export function mintReelsSpinMs(): number {
   return 900;
 }
 
+/**
+ * Reel spin progress ease — decelerating (ease-out cubic).
+ * Early frames advance symbol offset quickly; late frames crawl into the stop.
+ * Inverse of Crash's accelerate curve: slots must feel like they wind down.
+ */
+export function mintReelsSpinEase(progress: number): number {
+  const t = Math.min(1, Math.max(0, progress));
+  const inv = 1 - t;
+  return 1 - inv * inv * inv;
+}
+
+/** Feature meter duration — Phase 1D win-band 800–1200ms (CASINO_UX_CANON / plan DoD). */
 export function goldRushMeterMs(): number {
   return 1100;
 }
 
+/**
+ * Feature meter progress ease — decelerating (ease-out power 2.4).
+ * Fast early fill, crawl into the bonus threshold — slot feature meter feel.
+ */
+export function goldRushMeterEase(progress: number): number {
+  const t = Math.min(1, Math.max(0, progress));
+  return 1 - Math.pow(1 - t, 2.4);
+}
+
+/** Combo meter duration — Phase 1D win-band 800–1200ms (high-tempo lower edge). */
 export function momentumComboMs(): number {
-  return 700;
+  return 850;
+}
+
+/**
+ * Combo build progress ease — accelerating (ease-in cubic).
+ * Early frames crawl; late frames light stacked bars quickly — escalating combo feel.
+ */
+export function momentumComboEase(progress: number): number {
+  const t = Math.min(1, Math.max(0, progress));
+  return t * t * t;
+}
+
+/**
+ * Combo reset progress ease — decelerating (ease-out cubic).
+ * Fast early collapse to zero, then settles — clear break/cash-out moment.
+ */
+export function momentumComboResetEase(progress: number): number {
+  const t = Math.min(1, Math.max(0, progress));
+  const inv = 1 - t;
+  return 1 - inv * inv * inv;
 }
 
 /** Feature meter fill 0–1 from RPC totalMultiplier (display only). */
@@ -297,6 +339,41 @@ export function assertCasinoGamesBatchCContractSync(): void {
   }
   if (goldRushMeterFill(0) !== 0 || goldRushMeterFill(80) > 1) {
     throw new Error('casino-games-batch-c: gold rush meter drift');
+  }
+  const meterMs = goldRushMeterMs();
+  if (meterMs < 800 || meterMs > 1200) {
+    throw new Error('casino-games-batch-c: gold_rush meter ms outside 800–1200 band');
+  }
+  const meterEarly = goldRushMeterEase(0.4) - goldRushMeterEase(0.1);
+  const meterLate = goldRushMeterEase(0.9) - goldRushMeterEase(0.6);
+  if (!(meterEarly > meterLate)) {
+    throw new Error('casino-games-batch-c: gold_rush meter ease must decelerate');
+  }
+  const spinMs = mintReelsSpinMs();
+  if (spinMs < 800 || spinMs > 1200) {
+    throw new Error('casino-games-batch-c: mint_reels spin ms outside 800–1200 band');
+  }
+  // Decelerating: early equal-width delta must exceed late equal-width delta.
+  const earlyDelta = mintReelsSpinEase(0.4) - mintReelsSpinEase(0.1);
+  const lateDelta = mintReelsSpinEase(0.9) - mintReelsSpinEase(0.6);
+  if (!(earlyDelta > lateDelta)) {
+    throw new Error('casino-games-batch-c: mint_reels spin ease must decelerate');
+  }
+  const comboMs = momentumComboMs();
+  if (comboMs < 800 || comboMs > 1200) {
+    throw new Error('casino-games-batch-c: momentum combo ms outside 800–1200 band');
+  }
+  // Build accelerates: late equal-width delta must exceed early (escalating stack).
+  const comboEarly = momentumComboEase(0.4) - momentumComboEase(0.1);
+  const comboLate = momentumComboEase(0.9) - momentumComboEase(0.6);
+  if (!(comboLate > comboEarly)) {
+    throw new Error('casino-games-batch-c: momentum combo ease must accelerate');
+  }
+  // Reset decelerates: early drop exceeds late crawl (clear break moment).
+  const resetEarly = momentumComboResetEase(0.4) - momentumComboResetEase(0.1);
+  const resetLate = momentumComboResetEase(0.9) - momentumComboResetEase(0.6);
+  if (!(resetEarly > resetLate)) {
+    throw new Error('casino-games-batch-c: momentum reset ease must decelerate');
   }
   if (CASINO_PIXI_VIEWPORTS.mobile !== 390 || CASINO_PIXI_VIEWPORTS.desktop !== 1024) {
     throw new Error('casino-games-batch-c: viewport budget drift');

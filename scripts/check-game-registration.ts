@@ -42,14 +42,20 @@ for (const code of GAME_CODES) {
 }
 
 const gameConfig = read('apps/web/src/features/casino/game-config.ts');
-const i18n = read('packages/i18n/src/index.ts');
+// Catalog files hold the literals; packages/i18n/src/index.ts is a re-export barrel only.
+const i18nKo = read('packages/i18n/src/catalog-ko.ts');
+const i18nEn = read('packages/i18n/src/catalog-en.ts');
 
 for (const code of GAME_CODES) {
   if (!gameConfig.includes(`code: '${code}'`)) {
     failures.push(`game-config.ts missing: ${code}`);
   }
-  if (!i18n.includes(`casino.game.${code}`)) {
-    failures.push(`i18n missing: casino.game.${code}`);
+  const key = `casino.game.${code}`;
+  if (!i18nKo.includes(key)) {
+    failures.push(`i18n catalog-ko missing: ${key}`);
+  }
+  if (!i18nEn.includes(key)) {
+    failures.push(`i18n catalog-en missing: ${key}`);
   }
 }
 

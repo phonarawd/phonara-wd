@@ -1,4 +1,11 @@
-import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import { PAYOUT_TABLES } from '@phonara/game-engine';
 
 import {
@@ -29,6 +36,12 @@ type PegScene = {
   layout: (w: number, h: number, rows: number, risk: string, glowBucket: number | null) => void;
   setBall: (x: number, y: number, visible: boolean) => void;
 };
+
+/** Display-only win tone — punchy when bucket mult beats 1× (RPC string, no client recompute). */
+function isPlinkoWinDisplay(bucketMultiplier: string): boolean {
+  const n = Number(bucketMultiplier);
+  return Number.isFinite(n) && n > 1;
+}
 
 function createPegScene(pixi: PixiModule): PegScene {
   const root = new pixi.Container();
@@ -91,8 +104,12 @@ function createPegScene(pixi: PixiModule): PegScene {
 }
 
 /**
- * Plinko L1 — Pixi peg board + path replay from RPC (§23.2 · §23.8).
- * Ball path = result.path only — no client re-roll.
+ * Plinko — Pixi peg board + path replay from RPC (§23.2 · §23.8 · CASINO_UX_CANON §6).
+ * Ball path = result.path only — no client re-roll · no live mid-round drop.
+ *
+ * Phase 1D polish — shared `ds-casino-reveal-in` / `number-pop` / `cashout-flash`
+ * on bucket mult (win >1× punchy · ≤1× calm). Pixi tree disposal is owned by
+ * usePixiStage (phase1d-0 Application-first) — controller clears JS refs only.
  */
 export const PlinkoStage = forwardRef<CasinoStageHandle, PlinkoStageProps>(function PlinkoStage(
   { rows: rowsProp, risk: riskProp, className },
@@ -105,6 +122,8 @@ export const PlinkoStage = forwardRef<CasinoStageHandle, PlinkoStageProps>(funct
   const [phase, setPhase] = useState<CasinoStagePhase>('idle');
   const [outcome, setOutcome] = useState<ParsedPlinkoOutcome | null>(null);
   const [pathIndex, setPathIndex] = useState(0);
+  /** Monotonic counter — key-remount restarts CSS reveal/pop/flash on each settle. */
+  const [revealPulse, setRevealPulse] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resolveRef = useRef<(() => void) | null>(null);
 
@@ -123,8 +142,8 @@ export const PlinkoStage = forwardRef<CasinoStageHandle, PlinkoStageProps>(funct
     paint();
     return {
       onResize: () => paint(),
+      // Pixi tree disposal is owned by usePixiStage (Application-first + texture/context flags).
       destroy: () => {
-        scene.root.destroy({ children: true });
         sceneRef.current = null;
       },
     };
@@ -136,6 +155,11 @@ export const PlinkoStage = forwardRef<CasinoStageHandle, PlinkoStageProps>(funct
       timerRef.current = null;
     }
   }, []);
+
+  // Perf (Phase 1D) — navigating away mid-path must not leave a dangling
+  // setTimeout that calls setPathIndex/settle on an unmounted component.
+  // Same pattern as Limbo/Dice/Mines/Hilo/Deepshaft.
+  useEffect(() => clearTimer, [clearTimer]);
 
   const ballAtStep = useCallback(
     (parsed: ParsedPlinkoOutcome, step: number, w: number, h: number) => {
@@ -164,6 +188,7 @@ export const PlinkoStage = forwardRef<CasinoStageHandle, PlinkoStageProps>(funct
       setPathIndex(parsed.path.length);
       setOutcome(parsed);
       setPhase('settled');
+      setRevealPulse((n) => n + 1);
       const scene = sceneRef.current;
       const host = hostRef.current;
       if (scene && host) {
@@ -232,6 +257,7 @@ export const PlinkoStage = forwardRef<CasinoStageHandle, PlinkoStageProps>(funct
         setPhase('idle');
         setOutcome(null);
         setPathIndex(0);
+        setRevealPulse(0);
         const scene = sceneRef.current;
         const host = hostRef.current;
         if (scene && host) {
@@ -243,6 +269,9 @@ export const PlinkoStage = forwardRef<CasinoStageHandle, PlinkoStageProps>(funct
     [clearTimer, risk, rows, runPath],
   );
 
+  const won = outcome !== null && isPlinkoWinDisplay(outcome.bucketMultiplier);
+  const settled = phase === 'settled' && outcome !== null;
+
   return (
     <Card
       variant="casino-play"
@@ -252,22 +281,40 @@ export const PlinkoStage = forwardRef<CasinoStageHandle, PlinkoStageProps>(funct
       data-pixi-ready={ready ? 'true' : 'false'}
       data-bucket={outcome?.bucket}
       data-path-index={pathIndex}
+      data-won={outcome ? (won ? 'true' : 'false') : undefined}
     >
       <CardBody className="flex flex-col gap-3 p-3 md:p-4">
+        {/* Stage dominates first fold (CASINO_UX_CANON §6 — not below ~50% mobile height). */}
         <div
           ref={hostRef}
-          className="bg-surface relative min-h-[240px] w-full overflow-hidden rounded-md md:min-h-[320px]"
+          className="bg-surface relative min-h-72 w-full overflow-hidden rounded-md md:min-h-96"
           data-testid="casino-plinko-canvas-host"
           aria-hidden
         />
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div className="flex flex-col gap-0.5">
             <span className="text-foreground-muted text-xs">{t('casino.stage.result')}</span>
-            <span
-              className="text-foreground text-2xl font-semibold tabular-nums"
-              data-testid="casino-plinko-bucket-mult"
-            >
-              {outcome ? `${outcome.bucketMultiplier}×` : '—'}
+            <span className="relative inline-flex items-baseline">
+              {settled && won && !reducedMotion ? (
+                <span
+                  key={`glow-${revealPulse}`}
+                  aria-hidden="true"
+                  data-testid="casino-plinko-win-flash"
+                  className="ds-casino-cashout-flash"
+                />
+              ) : null}
+              <span
+                key={`value-${revealPulse}`}
+                className={cn(
+                  'text-2xl font-semibold tabular-nums',
+                  settled ? (won ? 'text-success' : 'text-danger') : 'text-foreground',
+                  settled && !reducedMotion && 'ds-casino-reveal-in',
+                  settled && won && !reducedMotion && 'ds-casino-number-pop',
+                )}
+                data-testid="casino-plinko-bucket-mult"
+              >
+                {outcome ? `${outcome.bucketMultiplier}×` : '—'}
+              </span>
             </span>
           </div>
           <div
@@ -280,6 +327,10 @@ export const PlinkoStage = forwardRef<CasinoStageHandle, PlinkoStageProps>(funct
                 className={cn(
                   'min-w-8 rounded px-1 py-0.5 text-center',
                   outcome?.bucket === i && 'bg-success/20 text-success font-semibold',
+                  settled &&
+                    outcome?.bucket === i &&
+                    !reducedMotion &&
+                    'ds-casino-reveal-in',
                 )}
               >
                 {m}

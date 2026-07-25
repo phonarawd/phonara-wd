@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import type { GameCode } from '@phonara/game-engine';
+import { resolveBlackjackPlay, type GameCode } from '@phonara/game-engine';
 import { toDecimal } from '@phonara/money';
 
 import { getGameMeta, type CasinoGameId } from '@/data/casino-game-meta';
@@ -26,7 +26,9 @@ import {
 } from '@/domain/casino-games-batch-c-display-contract';
 import {
   isCasinoBatchDGame,
+  normalizeBlackjackActions,
   P10_GAMES_BATCH_D_TODO,
+  parseBlackjackLiveHands,
 } from '@/domain/casino-games-batch-d-display-contract';
 import { isEwE23UiLivePlayGame } from '@/domain/ew-e23-ui-casino-live-unlocks-display-contract';
 import { EW_E23_PROGRESSIVE_GAMES } from '@/domain/ew-e23-casino-live-display-contract';
@@ -120,6 +122,52 @@ function asLiveHiloSelection(publicState: Record<string, unknown>): {
   const parsed = parseHiloProgressiveOutcome(publicState);
   if (!parsed) return { guesses: [], cards: [], multiplier: null };
   return { guesses: parsed.guesses, cards: parsed.cards, multiplier: parsed.multiplier };
+}
+
+/**
+ * Blackjack live/progressive hand sync (Phase 1E) — mirrors Hilo/Mines.
+ * Keeps mid-round felt faces on the RPC `player`/`dealer` arrays so the
+ * stage never invents ranks client-side.
+ */
+function asLiveBlackjackSelection(publicState: Record<string, unknown>): {
+  player: number[];
+  dealer: number[];
+  playerValue: number | null;
+} {
+  const parsed = parseBlackjackLiveHands(publicState);
+  if (!parsed) return { player: [], dealer: [], playerValue: null };
+  return {
+    player: parsed.playerCards,
+    dealer: parsed.dealerCards,
+    playerValue: parsed.playerValue,
+  };
+}
+
+/** Enrich one-shot settle with PF-resolved hands (SQL still returns multiplier-only). */
+function enrichBlackjackOutcomeForDisplay(
+  result: Record<string, unknown>,
+  actions: unknown,
+  floats: number[] | undefined,
+): Record<string, unknown> {
+  if (!floats || floats.length < 51) return result;
+  if (Array.isArray(result['player']) && Array.isArray(result['dealer'])) return result;
+  try {
+    const detail = resolveBlackjackPlay(
+      { actions: normalizeBlackjackActions(actions) },
+      floats,
+    );
+    const primary = detail.playerHands[0];
+    return {
+      ...result,
+      totalMultiplier: result['totalMultiplier'] ?? detail.totalMultiplier,
+      player: primary?.cards ?? [],
+      dealer: detail.dealerHand.cards,
+      playerValue: primary?.value ?? null,
+      dealerValue: detail.dealerHand.value,
+    };
+  } catch {
+    return result;
+  }
 }
 
 function profitDeltaFromBet(stake: string, payout: string, won: boolean): string {
@@ -297,7 +345,18 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
       const payout = session.payout ?? '0';
       const status = session.status === 'cashed_out' || Number(payout) > 0 ? 'won' : 'lost';
       presentSettle(payout, status, session.stake);
-      void stageRef.current?.playOutcome(session.public_state ?? {});
+      const publicState = session.public_state ?? {};
+      // Progressive blackjack public_state has hands but not totalMultiplier —
+      // pass current_multiplier so parseBlackjackOutcome + card faces both work.
+      const settlePayload =
+        session.game === 'blackjack'
+          ? {
+              ...publicState,
+              totalMultiplier:
+                publicState['totalMultiplier'] ?? Number(session.current_multiplier),
+            }
+          : publicState;
+      void stageRef.current?.playOutcome(settlePayload);
       unlockSession();
     },
     [presentSettle, unlockSession],
@@ -379,6 +438,15 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
           guesses: synced.guesses,
           cards: synced.cards,
           multiplier: synced.multiplier,
+        }));
+      }
+      if (gameCode === 'blackjack') {
+        const synced = asLiveBlackjackSelection(started.public_state);
+        setSelection((prev) => ({
+          ...prev,
+          player: synced.player,
+          dealer: synced.dealer,
+          playerValue: synced.playerValue,
         }));
       }
       if (started.status !== 'active') {
@@ -513,6 +581,16 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
             action: { move },
             idempotencyKey: crypto.randomUUID(),
           });
+          // Phase 1E — sync felt hands from RPC public_state on every step
+          // (same class as Hilo live guess sync). applyProgressiveResult only
+          // calls playOutcome at terminal settle.
+          const synced = asLiveBlackjackSelection(result.public_state);
+          setSelection((prev) => ({
+            ...prev,
+            player: synced.player,
+            dealer: synced.dealer,
+            playerValue: synced.playerValue,
+          }));
           applyProgressiveResult(result);
         } catch (error) {
           setLiveErrorKey(translateError(error) as MessageKey);
@@ -528,8 +606,22 @@ export function CasinoGameShell({ gameCode }: CasinoGameShellProps) {
     if (lastPlayedBetIdRef.current === pipeline.bet.bet_id) return;
     lastPlayedBetIdRef.current = pipeline.bet.bet_id;
     // Replay must not block next bet / auto fire (§23.4 · §23.8).
-    void stageRef.current?.playOutcome(pipeline.bet.result);
-  }, [activeStake, pipeline.bet, presentSettle]);
+    // Blackjack one-shot SQL returns multiplier-only — enrich with PF-resolved
+    // hands from verification floats so the felt shows real card faces.
+    const floats = pipeline.verificationEvidence?.verification?.floats;
+    const outcome =
+      gameCode === 'blackjack'
+        ? enrichBlackjackOutcomeForDisplay(pipeline.bet.result, selection['actions'], floats)
+        : pipeline.bet.result;
+    void stageRef.current?.playOutcome(outcome);
+  }, [
+    activeStake,
+    gameCode,
+    pipeline.bet,
+    pipeline.verificationEvidence,
+    presentSettle,
+    selection,
+  ]);
 
   const handleAutoStart = useCallback(() => {
     const cfg = { ...autoConfig, baseStake: stake };

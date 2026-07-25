@@ -1,20 +1,33 @@
-import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import type { RouletteBetType } from '@phonara/game-engine';
 
 import {
   CASINO_ROULETTE_BET_MAP_HELP_KEY,
   CASINO_ROULETTE_CHIP_WEIGHTS,
+  CASINO_ROULETTE_EUROPEAN_ORDER,
   CASINO_ROULETTE_OUTSIDE_TYPES,
+  CASINO_ROULETTE_SECTOR_DEG,
   normalizeRouletteLegs,
   parseRouletteOutcome,
   roulettePocketColor,
-  rouletteSectorHighlightMs,
+  rouletteSpinEase,
+  rouletteSpinMs,
   rouletteTotalWeight,
+  rouletteWheelAngleForNumber,
   upsertRouletteLeg,
   type CasinoRouletteLeg,
   type ParsedRouletteOutcome,
 } from '@/domain/casino-games-batch-d-display-contract';
 import { useT } from '@/product/i18n';
+import { Button } from '@/product/primitives/button';
 import { usePrefersReducedMotion } from '@/product/primitives/lib/use-prefers-reduced-motion';
 import { cn } from '@/product/primitives/lib/cn';
 import { Card, CardBody } from '@/product/primitives/card';
@@ -52,9 +65,35 @@ const OUTSIDE_LABEL_KEYS: Record<(typeof CASINO_ROULETTE_OUTSIDE_TYPES)[number],
   column3: 'games.roulette.outside.column3',
 };
 
+type BetMode = 'straight' | 'split';
+
+function legKey(type: RouletteBetType, value: number | null): string {
+  return `${type}:${value ?? 'x'}`;
+}
+
+function buildWheelConic(): string {
+  const stops = CASINO_ROULETTE_EUROPEAN_ORDER.map((n, i) => {
+    const color =
+      n === 0
+        ? 'var(--ds-success)'
+        : roulettePocketColor(n) === 'red'
+          ? 'var(--ds-danger)'
+          : 'var(--ds-surface-raised)';
+    const start = i * CASINO_ROULETTE_SECTOR_DEG;
+    const end = (i + 1) * CASINO_ROULETTE_SECTOR_DEG;
+    return `${color} ${start}deg ${end}deg`;
+  });
+  // Offset so sector 0 is centered under the top pointer.
+  return `conic-gradient(from -${CASINO_ROULETTE_SECTOR_DEG / 2}deg, ${stops.join(', ')})`;
+}
+
 /**
- * Roulette L1 — SVG/DOM table · chip rack · bet map · repeat last (§23.2 · §23.8).
- * Sector highlight replays RPC winningNumber only — no fake mid-spin state.
+ * Roulette — SVG/DOM table · chip rack · bet map · wheel/ball spin (§23.2 · §23.8).
+ * Wheel/ball replay RPC winningNumber only — no fake mid-spin inventing.
+ *
+ * Phase 1E polish — decelerating rAF wheel (transform-only), chip-drop micro
+ * feedback, shared casino reveal/pop/flash on settle. Win: punchy. Lose: calm
+ * reveal-in only (CASINO_UX_CANON).
  */
 export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
   function RouletteStage({ bets: betsProp, onBetsChange, selectionDisabled, className }, ref) {
@@ -64,47 +103,97 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
     const [outcome, setOutcome] = useState<ParsedRouletteOutcome | null>(null);
     const [chipWeight, setChipWeight] = useState<(typeof CASINO_ROULETTE_CHIP_WEIGHTS)[number]>(1);
     const [highlight, setHighlight] = useState<number | null>(null);
+    const [wheelDeg, setWheelDeg] = useState(0);
+    const [ballDeg, setBallDeg] = useState(0);
+    const [betMode, setBetMode] = useState<BetMode>('straight');
+    const [splitPending, setSplitPending] = useState<number | null>(null);
+    /** Monotonic — key-remount restarts CSS reveal/pop/flash on each settle. */
+    const [revealPulse, setRevealPulse] = useState(0);
+    /** Per-pocket chip-drop remount key. */
+    const [chipPulse, setChipPulse] = useState<Record<string, number>>({});
     const lastBetsRef = useRef<CasinoRouletteLeg[]>([]);
-    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const wheelBaseRef = useRef(0);
+    const ballBaseRef = useRef(0);
+    const rafRef = useRef<number | null>(null);
     const resolveRef = useRef<(() => void) | null>(null);
 
     const bets = useMemo(() => normalizeRouletteLegs(betsProp), [betsProp]);
     const totalWeight = rouletteTotalWeight(bets);
     const locked = selectionDisabled || phase === 'replaying' || !onBetsChange;
+    const wheelConic = useMemo(() => buildWheelConic(), []);
 
-    const clearTimer = useCallback(() => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
+    const clearRaf = useCallback(() => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
       }
     }, []);
 
+    // Perf (Phase 1E) — navigating away mid-spin must not leave a dangling rAF
+    // that calls setWheelDeg/settle on an unmounted component.
+    useEffect(() => clearRaf, [clearRaf]);
+
+    const pulseChip = useCallback((type: RouletteBetType, value: number | null) => {
+      if (reducedMotion) return;
+      const key = legKey(type, value);
+      setChipPulse((prev) => ({ ...prev, [key]: (prev[key] ?? 0) + 1 }));
+    }, [reducedMotion]);
+
     const settle = useCallback(
-      (parsed: ParsedRouletteOutcome) => {
-        clearTimer();
+      (parsed: ParsedRouletteOutcome, finalWheel: number, finalBall: number) => {
+        clearRaf();
+        setWheelDeg(finalWheel);
+        setBallDeg(finalBall);
+        wheelBaseRef.current = finalWheel;
+        ballBaseRef.current = finalBall;
         setHighlight(parsed.winningNumber);
         setOutcome(parsed);
         setPhase('settled');
+        setRevealPulse((n) => n + 1);
         resolveRef.current?.();
         resolveRef.current = null;
       },
-      [clearTimer],
+      [clearRaf],
     );
 
-    const runReplay = useCallback(
+    const runSpin = useCallback(
       (parsed: ParsedRouletteOutcome) => {
-        clearTimer();
+        clearRaf();
         setPhase('replaying');
         setOutcome(null);
         setHighlight(null);
+
+        const targetPocket = rouletteWheelAngleForNumber(parsed.winningNumber);
+        const startWheel = wheelBaseRef.current;
+        // Land pocket under pointer: rotate so target ends at 0 (top).
+        const endWheel =
+          startWheel +
+          360 * 5 +
+          ((360 - targetPocket - (startWheel % 360) + 360) % 360);
+        const startBall = ballBaseRef.current;
+        const endBall = startBall - 360 * 7 - targetPocket;
+
         if (reducedMotion) {
-          settle(parsed);
+          settle(parsed, endWheel, endBall);
           return;
         }
-        setHighlight(parsed.winningNumber);
-        timerRef.current = setTimeout(() => settle(parsed), rouletteSectorHighlightMs());
+
+        const duration = rouletteSpinMs();
+        const start = performance.now();
+        const tick = (now: number) => {
+          const tNorm = Math.min(1, (now - start) / duration);
+          const eased = rouletteSpinEase(tNorm);
+          setWheelDeg(startWheel + (endWheel - startWheel) * eased);
+          setBallDeg(startBall + (endBall - startBall) * eased);
+          if (tNorm >= 1) {
+            settle(parsed, endWheel, endBall);
+            return;
+          }
+          rafRef.current = requestAnimationFrame(tick);
+        };
+        rafRef.current = requestAnimationFrame(tick);
       },
-      [clearTimer, reducedMotion, settle],
+      [clearRaf, reducedMotion, settle],
     );
 
     useImperativeHandle(
@@ -116,28 +205,57 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
           if (bets.length > 0) lastBetsRef.current = bets;
           return new Promise<void>((resolve) => {
             resolveRef.current = resolve;
-            runReplay(parsed);
+            runSpin(parsed);
           });
         },
         reset() {
-          clearTimer();
+          clearRaf();
           resolveRef.current = null;
           setPhase('idle');
           setOutcome(null);
           setHighlight(null);
+          setSplitPending(null);
+          setRevealPulse(0);
         },
       }),
-      [bets, clearTimer, runReplay],
+      [bets, clearRaf, runSpin],
     );
 
     const placeLeg = (type: RouletteBetType, value: number | null) => {
       if (locked) return;
       onBetsChange?.(upsertRouletteLeg(bets, { type, value, stakeWeight: chipWeight }));
+      pulseChip(type, value);
+    };
+
+    const placePocket = (n: number) => {
+      if (locked) return;
+      if (betMode === 'straight') {
+        placeLeg('straight', n);
+        return;
+      }
+      // Split: engine encodes consecutive integers (value, value+1).
+      if (splitPending === null) {
+        setSplitPending(n);
+        return;
+      }
+      const a = splitPending;
+      const b = n;
+      setSplitPending(null);
+      if (a === b) {
+        placeLeg('straight', a);
+        return;
+      }
+      if (Math.abs(a - b) !== 1) {
+        setSplitPending(b);
+        return;
+      }
+      placeLeg('split', Math.min(a, b));
     };
 
     const clearBets = () => {
       if (locked) return;
       onBetsChange?.([]);
+      setSplitPending(null);
     };
 
     const doubleBets = () => {
@@ -156,6 +274,7 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
         .reduce((s, l) => s + l.stakeWeight, 0);
 
     const won = outcome !== null && outcome.totalMultiplier > 0;
+    const settled = phase === 'settled' && outcome !== null;
 
     return (
       <Card
@@ -165,8 +284,10 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
         data-stage-phase={phase}
         data-won={outcome ? (won ? 'true' : 'false') : undefined}
         data-bet-count={bets.length}
+        data-bet-mode={betMode}
+        data-perf-contract="transform-opacity-only"
       >
-        <CardBody className="flex min-h-[280px] flex-col gap-3 p-3 md:min-h-[360px] md:p-5">
+        <CardBody className="flex min-h-72 flex-col gap-3 p-3 md:min-h-96 md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <HelpTip
               label={t('casino.game.roulette.bets')}
@@ -178,6 +299,43 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
             >
               {t('games.roulette.totalWeight')}: {totalWeight}
             </p>
+          </div>
+
+          {/* Wheel — single rotating disc + ball orbit (transform-only, ≥55fps contract). */}
+          <div
+            className="relative mx-auto size-36 shrink-0 md:size-44"
+            data-testid="casino-roulette-wheel"
+            aria-hidden="true"
+          >
+            <div
+              className="border-line absolute inset-0 rounded-full border-2 shadow-inner"
+              data-testid="casino-roulette-wheel-disc"
+              style={{
+                background: wheelConic,
+                transform: `rotate(${wheelDeg}deg)`,
+                willChange: phase === 'replaying' ? 'transform' : undefined,
+              }}
+            />
+            <div className="bg-surface pointer-events-none absolute inset-[18%] rounded-full border border-line" />
+            <div
+              className="pointer-events-none absolute inset-0"
+              data-testid="casino-roulette-ball"
+              style={{
+                transform: `rotate(${ballDeg}deg)`,
+                willChange: phase === 'replaying' ? 'transform' : undefined,
+              }}
+            >
+              <span className="bg-foreground absolute top-1 left-1/2 size-2.5 -translate-x-1/2 rounded-full shadow" />
+            </div>
+            <div className="bg-accent absolute top-0 left-1/2 z-10 h-3 w-0 -translate-x-1/2 border-x-4 border-t-8 border-x-transparent border-t-accent" />
+            {highlight !== null ? (
+              <p
+                className="text-foreground absolute inset-0 z-10 m-0 flex items-center justify-center text-xl font-semibold tabular-nums"
+                data-testid="casino-roulette-wheel-center"
+              >
+                {highlight}
+              </p>
+            ) : null}
           </div>
 
           <div
@@ -205,9 +363,51 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
             ))}
           </div>
 
+          <div
+            className="flex flex-wrap gap-2"
+            data-testid="casino-roulette-bet-mode"
+            role="group"
+            aria-label={t('games.roulette.board.betModeLabel')}
+          >
+            <Button
+              type="button"
+              size="sm"
+              variant={betMode === 'straight' ? 'primary' : 'outline'}
+              data-testid="casino-roulette-mode-straight"
+              disabled={locked}
+              onClick={() => {
+                setBetMode('straight');
+                setSplitPending(null);
+              }}
+            >
+              {t('games.roulette.board.betTypeStraight')}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant={betMode === 'split' ? 'primary' : 'outline'}
+              data-testid="casino-roulette-mode-split"
+              disabled={locked}
+              onClick={() => setBetMode('split')}
+            >
+              {t('games.roulette.board.betTypeSplit')}
+            </Button>
+          </div>
+          {betMode === 'split' ? (
+            <p
+              className="text-foreground-muted m-0 text-xs"
+              data-testid="casino-roulette-split-hint"
+            >
+              {splitPending === null
+                ? t('games.roulette.board.splitHint')
+                : t('games.roulette.board.splitPending')}
+            </p>
+          ) : null}
+
           <div className="overflow-x-auto" data-testid="casino-roulette-table">
             <div className="inline-flex min-w-[320px] flex-col gap-1">
               <button
+                key={`pocket-0-${chipPulse[legKey('straight', 0)] ?? 0}`}
                 type="button"
                 className={cn(
                   'min-h-12 rounded-md border text-sm font-semibold tabular-nums',
@@ -215,11 +415,15 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
                     ? 'border-accent bg-accent/20 text-accent ring-2 ring-accent'
                     : 'border-success/40 bg-success/15 text-success',
                   weightOn('straight', 0) > 0 && 'outline outline-foreground/40',
+                  (chipPulse[legKey('straight', 0)] ?? 0) > 0 &&
+                    !reducedMotion &&
+                    'ds-casino-chip-drop',
+                  splitPending === 0 && 'ring-2 ring-accent/70',
                 )}
                 data-testid="casino-roulette-pocket-0"
                 aria-label={t('games.roulette.board.pocketAria', { number: 0 })}
                 disabled={locked}
-                onClick={() => placeLeg('straight', 0)}
+                onClick={() => placePocket(0)}
               >
                 0{weightOn('straight', 0) > 0 ? ` · ${weightOn('straight', 0)}` : ''}
               </button>
@@ -229,9 +433,10 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
                   const color = roulettePocketColor(n);
                   const active = highlight === n;
                   const w = weightOn('straight', n);
+                  const pulse = chipPulse[legKey('straight', n)] ?? 0;
                   return (
                     <button
-                      key={n}
+                      key={`pocket-${n}-${pulse}`}
                       type="button"
                       className={cn(
                         'min-h-12 rounded-sm border text-xs font-semibold tabular-nums md:text-sm',
@@ -239,11 +444,13 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
                         color === 'black' && 'border-line bg-surface-raised text-foreground',
                         active && 'ring-2 ring-accent',
                         w > 0 && 'outline outline-foreground/40',
+                        pulse > 0 && !reducedMotion && 'ds-casino-chip-drop',
+                        splitPending === n && 'ring-2 ring-accent/70',
                       )}
                       data-testid={`casino-roulette-pocket-${n}`}
                       aria-label={t('games.roulette.board.pocketAria', { number: n })}
                       disabled={locked}
-                      onClick={() => placeLeg('straight', n)}
+                      onClick={() => placePocket(n)}
                     >
                       {n}
                       {w > 0 ? `·${w}` : ''}
@@ -255,13 +462,15 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
               <div className="mt-1 grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4">
                 {CASINO_ROULETTE_OUTSIDE_TYPES.map((type) => {
                   const w = weightOn(type, null);
+                  const pulse = chipPulse[legKey(type, null)] ?? 0;
                   return (
                     <button
-                      key={type}
+                      key={`${type}-${pulse}`}
                       type="button"
                       className={cn(
                         'border-line bg-surface-raised text-foreground min-h-12 rounded-md border px-2 text-xs font-semibold',
                         w > 0 && 'outline outline-accent',
+                        pulse > 0 && !reducedMotion && 'ds-casino-chip-drop',
                       )}
                       data-testid={`casino-roulette-outside-${type}`}
                       disabled={locked}
@@ -308,17 +517,35 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
 
           {outcome ? (
             <div className="flex flex-col items-center gap-1">
+              <span className="relative inline-flex items-baseline">
+                {settled && won && !reducedMotion ? (
+                  <span
+                    key={`glow-${revealPulse}`}
+                    aria-hidden="true"
+                    data-testid="casino-roulette-win-flash"
+                    className="ds-casino-cashout-flash"
+                  />
+                ) : null}
+                <p
+                  key={`num-${revealPulse}`}
+                  className={cn(
+                    'm-0 text-2xl font-semibold tabular-nums',
+                    won ? 'text-success' : 'text-danger',
+                    settled && !reducedMotion && 'ds-casino-reveal-in',
+                    settled && won && !reducedMotion && 'ds-casino-number-pop',
+                  )}
+                  data-testid="casino-roulette-winning-number"
+                >
+                  {outcome.winningNumber}
+                </p>
+              </span>
               <p
+                key={`mult-${revealPulse}`}
                 className={cn(
-                  'm-0 text-2xl font-semibold tabular-nums',
-                  won ? 'text-success' : 'text-danger',
+                  'text-foreground-muted m-0 text-sm tabular-nums',
+                  settled && !reducedMotion && 'ds-casino-reveal-in',
+                  settled && won && !reducedMotion && 'ds-casino-number-pop',
                 )}
-                data-testid="casino-roulette-winning-number"
-              >
-                {outcome.winningNumber}
-              </p>
-              <p
-                className="text-foreground-muted m-0 text-sm tabular-nums"
                 data-testid="casino-roulette-mult"
               >
                 {outcome.totalMultiplier.toFixed(2)}×
@@ -326,7 +553,11 @@ export const RouletteStage = forwardRef<CasinoStageHandle, RouletteStageProps>(
             </div>
           ) : (
             <p className="text-foreground-muted m-0 text-center text-sm">
-              {bets.length === 0 ? t('games.roulette.emptyBets') : t('casino.game.roulette.idle')}
+              {phase === 'replaying'
+                ? t('games.roulette.spin')
+                : bets.length === 0
+                  ? t('games.roulette.emptyBets')
+                  : t('casino.game.roulette.idle')}
             </p>
           )}
         </CardBody>

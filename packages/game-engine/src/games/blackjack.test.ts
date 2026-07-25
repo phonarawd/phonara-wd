@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { Decimal } from '@phonara/money';
 import { floatStream } from '../fairness/float';
-import { playBlackjack, blackjackDefinition, shuffleDeck } from './blackjack';
+import {
+  blackjackDefinition,
+  cardRank,
+  cardSuit,
+  playBlackjack,
+  resolveBlackjackPlay,
+  shuffleDeck,
+} from './blackjack';
 
 import './blackjack';
 
@@ -37,6 +44,23 @@ describe('blackjack RED', () => {
     const result = playBlackjack({ actions: [{ seat: 0, move: 'stand' }] }, floats);
     expect(result.totalMultiplier).toBeGreaterThanOrEqual(0);
     expect(result.totalMultiplier).toBeLessThanOrEqual(2.5);
+  });
+
+  it('resolveBlackjackPlay returns real hands without changing settle shape', async () => {
+    const floats = await floatStream(SERVER, CLIENT, 3, 51);
+    const selection = { actions: [{ seat: 0, move: 'stand' as const }] };
+    const detail = resolveBlackjackPlay(selection, floats);
+    const settle = playBlackjack(selection, floats);
+    expect(detail.totalMultiplier).toBe(settle.totalMultiplier);
+    expect(detail.playerHands.length).toBeGreaterThanOrEqual(1);
+    expect(detail.playerHands[0]!.cards.length).toBeGreaterThanOrEqual(2);
+    expect(detail.dealerHand.cards.length).toBeGreaterThanOrEqual(2);
+    expect(cardRank(detail.playerHands[0]!.cards[0]!)).toBeGreaterThanOrEqual(1);
+    expect(cardRank(detail.playerHands[0]!.cards[0]!)).toBeLessThanOrEqual(13);
+    expect(cardSuit(detail.dealerHand.cards[0]!)).toBeGreaterThanOrEqual(0);
+    expect(cardSuit(detail.dealerHand.cards[0]!)).toBeLessThanOrEqual(3);
+    // Settlement result stays multiplier-only (SQL parity).
+    expect(Object.keys(settle)).toEqual(['totalMultiplier']);
   });
 
   it('settle conserves stake = payout + houseEdgeLeg', () => {

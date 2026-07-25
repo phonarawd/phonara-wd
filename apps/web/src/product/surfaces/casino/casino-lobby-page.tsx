@@ -111,7 +111,7 @@ export function CasinoLobbyPage() {
 
   return (
     <section
-      className="mx-auto flex w-full max-w-5xl flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-5xl flex-col gap-ds-8 py-4 md:py-6"
       data-testid="casino-lobby-page"
       data-owner-todo={P10_PAGE_CASINO_TODO}
       data-lobby-exposure={CASINO_LOBBY_EXPOSURE}

@@ -136,7 +136,7 @@ export function CasinoFairnessPage() {
 
   return (
     <section
-      className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-4 md:py-6"
+      className="mx-auto flex w-full max-w-3xl flex-col gap-ds-8 py-4 md:py-6"
       data-testid="casino-fairness-page"
       data-owner-todo={P10_PAGE_CASINO_FAIRNESS_TODO}
       data-fairness-exposure={CASINO_FAIRNESS_EXPOSURE}

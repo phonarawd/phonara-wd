@@ -1,6 +1,14 @@
-import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 
 import {
+  mintReelsSpinEase,
   mintReelsSpinMs,
   parseMintReelsOutcome,
   type ParsedMintReelsOutcome,
@@ -24,6 +32,11 @@ type ReelScene = {
   root: InstanceType<PixiModule['Container']>;
   paint: (w: number, h: number, spinT: number, scanLine: number | null) => void;
 };
+
+/** Display-only win tone — any positive RPC totalMultiplier is a line win. */
+function isMintReelsWinDisplay(totalMultiplier: number): boolean {
+  return Number.isFinite(totalMultiplier) && totalMultiplier > 0;
+}
 
 function createReelScene(pixi: PixiModule): ReelScene {
   const root = new pixi.Container();
@@ -65,8 +78,13 @@ function createReelScene(pixi: PixiModule): ReelScene {
 }
 
 /**
- * Mint Reels L1 — Pixi reel window + payline scan (§23.2 · §23.8).
+ * Mint Reels — Pixi reel window + payline scan (§23.2 · §23.8 · CASINO_UX_CANON §7).
  * Symbols are cosmetic rhythm only — payout = RPC totalMultiplier 1:1.
+ *
+ * Phase 1D polish — decelerating spin ease · payline sweep · shared
+ * `ds-casino-reveal-in` / `number-pop` / `cashout-flash` on settle
+ * (win >0 punchy · lose calm). Pixi tree disposal is owned by usePixiStage
+ * (phase1d-0 Application-first) — controller clears JS refs only.
  */
 export const MintReelsStage = forwardRef<CasinoStageHandle, MintReelsStageProps>(
   function MintReelsStage({ lines, className }, ref) {
@@ -77,6 +95,8 @@ export const MintReelsStage = forwardRef<CasinoStageHandle, MintReelsStageProps>
     const [phase, setPhase] = useState<CasinoStagePhase>('idle');
     const [outcome, setOutcome] = useState<ParsedMintReelsOutcome | null>(null);
     const [scanLine, setScanLine] = useState<number | null>(null);
+    /** Monotonic counter — key-remount restarts CSS reveal/pop/flash on each settle. */
+    const [revealPulse, setRevealPulse] = useState(0);
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const rafRef = useRef<number | null>(null);
     const resolveRef = useRef<(() => void) | null>(null);
@@ -88,8 +108,8 @@ export const MintReelsStage = forwardRef<CasinoStageHandle, MintReelsStageProps>
       scene.paint(app.screen.width, app.screen.height, 0, null);
       return {
         onResize: (w, h) => scene.paint(w, h, 0, null),
+        // Pixi tree disposal is owned by usePixiStage (Application-first + texture/context flags).
         destroy: () => {
-          scene.root.destroy({ children: true });
           sceneRef.current = null;
         },
       };
@@ -106,12 +126,19 @@ export const MintReelsStage = forwardRef<CasinoStageHandle, MintReelsStageProps>
       }
     }, []);
 
+    // Perf (Phase 1D) — navigating away mid-spin/payline must not leave a dangling
+    // rAF or setTimeout that calls setScanLine/settle on an unmounted component.
+    // Same pattern as Plinko/Limbo/Deepshaft.
+    useEffect(() => clearTimers, [clearTimers]);
+
     const settle = useCallback(
       (parsed: ParsedMintReelsOutcome) => {
         clearTimers();
         setOutcome(parsed);
         setPhase('settled');
-        setScanLine(parsed.totalMultiplier > 0 ? 1 : null);
+        setRevealPulse((n) => n + 1);
+        const winLine = isMintReelsWinDisplay(parsed.totalMultiplier) ? 1 : null;
+        setScanLine(winLine);
         const scene = sceneRef.current;
         const host = hostRef.current;
         if (scene && host) {
@@ -119,7 +146,7 @@ export const MintReelsStage = forwardRef<CasinoStageHandle, MintReelsStageProps>
             host.clientWidth || 320,
             host.clientHeight || 240,
             0,
-            parsed.totalMultiplier > 0 ? 1 : null,
+            winLine,
           );
         }
         resolveRef.current?.();
@@ -144,13 +171,15 @@ export const MintReelsStage = forwardRef<CasinoStageHandle, MintReelsStageProps>
         const start = performance.now();
         const tick = (now: number) => {
           const tNorm = Math.min(1, (now - start) / duration);
+          // Decelerating symbol advance — wind-down into the stop (plan Phase 1D).
+          const eased = mintReelsSpinEase(tNorm);
           const scene = sceneRef.current;
           const host = hostRef.current;
           if (scene && host) {
-            scene.paint(host.clientWidth || 320, host.clientHeight || 240, tNorm * 12, null);
+            scene.paint(host.clientWidth || 320, host.clientHeight || 240, eased * 12, null);
           }
           if (tNorm >= 1) {
-            // Payline scan rows 0→2
+            // Payline scan rows 0→2 (line wins scannable — CASINO_UX_CANON §7).
             let line = 0;
             const scan = () => {
               setScanLine(line);
@@ -193,6 +222,7 @@ export const MintReelsStage = forwardRef<CasinoStageHandle, MintReelsStageProps>
           setPhase('idle');
           setOutcome(null);
           setScanLine(null);
+          setRevealPulse(0);
           const scene = sceneRef.current;
           const host = hostRef.current;
           if (scene && host) {
@@ -203,7 +233,8 @@ export const MintReelsStage = forwardRef<CasinoStageHandle, MintReelsStageProps>
       [clearTimers, runSpin],
     );
 
-    const won = outcome !== null && outcome.totalMultiplier > 0;
+    const won = outcome !== null && isMintReelsWinDisplay(outcome.totalMultiplier);
+    const settled = phase === 'settled' && outcome !== null;
 
     return (
       <Card
@@ -217,23 +248,37 @@ export const MintReelsStage = forwardRef<CasinoStageHandle, MintReelsStageProps>
         data-lines={lines}
       >
         <CardBody className="flex flex-col gap-3 p-3 md:p-4">
+          {/* Stage dominates first fold (CASINO_UX_CANON §7 — cabinet / reel window). */}
           <div
             ref={hostRef}
-            className="bg-surface relative min-h-[200px] w-full overflow-hidden rounded-md md:min-h-[280px]"
+            className="bg-surface relative min-h-72 w-full overflow-hidden rounded-md md:min-h-96"
             data-testid="casino-mint-reels-canvas-host"
             aria-hidden
           />
           <div className="flex items-end justify-between gap-2">
             <div className="flex flex-col gap-0.5">
               <span className="text-foreground-muted text-xs">{t('casino.stage.result')}</span>
-              <span
-                className={cn(
-                  'text-2xl font-semibold tabular-nums',
-                  won ? 'text-success' : 'text-foreground',
-                )}
-                data-testid="casino-mint-reels-mult"
-              >
-                {outcome ? `${outcome.totalMultiplier.toFixed(2)}×` : '—'}
+              <span className="relative inline-flex items-baseline">
+                {settled && won && !reducedMotion ? (
+                  <span
+                    key={`glow-${revealPulse}`}
+                    aria-hidden="true"
+                    data-testid="casino-mint-reels-win-flash"
+                    className="ds-casino-cashout-flash"
+                  />
+                ) : null}
+                <span
+                  key={`value-${revealPulse}`}
+                  className={cn(
+                    'text-2xl font-semibold tabular-nums',
+                    settled ? (won ? 'text-success' : 'text-danger') : 'text-foreground',
+                    settled && !reducedMotion && 'ds-casino-reveal-in',
+                    settled && won && !reducedMotion && 'ds-casino-number-pop',
+                  )}
+                  data-testid="casino-mint-reels-mult"
+                >
+                  {outcome ? `${outcome.totalMultiplier.toFixed(2)}×` : '—'}
+                </span>
               </span>
             </div>
             <span

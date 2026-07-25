@@ -1,6 +1,14 @@
-import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 
 import {
+  goldRushMeterEase,
   goldRushMeterFill,
   goldRushMeterMs,
   parseGoldRushOutcome,
@@ -25,6 +33,11 @@ type GoldScene = {
   root: InstanceType<PixiModule['Container']>;
   paint: (w: number, h: number, fill: number, bonus: boolean) => void;
 };
+
+/** Display-only win tone — any positive RPC totalMultiplier is a feature win. */
+function isGoldRushWinDisplay(totalMultiplier: number): boolean {
+  return Number.isFinite(totalMultiplier) && totalMultiplier > 0;
+}
 
 function createGoldScene(pixi: PixiModule): GoldScene {
   const root = new pixi.Container();
@@ -73,8 +86,13 @@ function createGoldScene(pixi: PixiModule): GoldScene {
 }
 
 /**
- * Gold Rush L1 — Pixi cabinet + feature meter (§23.2 · §23.8).
+ * Gold Rush — Pixi cabinet + feature meter (§23.2 · §23.8 · CASINO_UX_CANON §7).
  * Meter fill derived from RPC totalMultiplier display only.
+ *
+ * Phase 1D polish — decelerating meter ease · shared
+ * `ds-casino-reveal-in` / `number-pop` / `cashout-flash` on settle
+ * (win >0 punchy · lose calm). Pixi tree disposal is owned by usePixiStage
+ * (phase1d-0 Application-first) — controller clears JS refs only.
  */
 export const GoldRushStage = forwardRef<CasinoStageHandle, GoldRushStageProps>(
   function GoldRushStage({ lines, className }, ref) {
@@ -85,6 +103,8 @@ export const GoldRushStage = forwardRef<CasinoStageHandle, GoldRushStageProps>(
     const [phase, setPhase] = useState<CasinoStagePhase>('idle');
     const [outcome, setOutcome] = useState<ParsedGoldRushOutcome | null>(null);
     const [meter, setMeter] = useState(0);
+    /** Monotonic counter — key-remount restarts CSS reveal/pop/flash on each settle. */
+    const [revealPulse, setRevealPulse] = useState(0);
     const rafRef = useRef<number | null>(null);
     const resolveRef = useRef<(() => void) | null>(null);
 
@@ -95,8 +115,8 @@ export const GoldRushStage = forwardRef<CasinoStageHandle, GoldRushStageProps>(
       scene.paint(app.screen.width, app.screen.height, 0, false);
       return {
         onResize: (w, h) => scene.paint(w, h, 0, false),
+        // Pixi tree disposal is owned by usePixiStage (Application-first + texture/context flags).
         destroy: () => {
-          scene.root.destroy({ children: true });
           sceneRef.current = null;
         },
       };
@@ -109,12 +129,18 @@ export const GoldRushStage = forwardRef<CasinoStageHandle, GoldRushStageProps>(
       }
     }, []);
 
+    // Perf (Phase 1D) — navigating away mid-meter must not leave a dangling
+    // rAF that calls setMeter/settle on an unmounted component.
+    // Same pattern as Mint Reels / Plinko / Deepshaft.
+    useEffect(() => clearRaf, [clearRaf]);
+
     const settle = useCallback(
       (parsed: ParsedGoldRushOutcome, fill: number) => {
         clearRaf();
         setMeter(fill);
         setOutcome(parsed);
         setPhase('settled');
+        setRevealPulse((n) => n + 1);
         const bonus = fill >= 0.55;
         const scene = sceneRef.current;
         const host = hostRef.current;
@@ -144,7 +170,7 @@ export const GoldRushStage = forwardRef<CasinoStageHandle, GoldRushStageProps>(
         const start = performance.now();
         const tick = (now: number) => {
           const tNorm = Math.min(1, (now - start) / duration);
-          const eased = 1 - Math.pow(1 - tNorm, 2.4);
+          const eased = goldRushMeterEase(tNorm);
           const fill = target * eased;
           setMeter(fill);
           const scene = sceneRef.current;
@@ -180,6 +206,7 @@ export const GoldRushStage = forwardRef<CasinoStageHandle, GoldRushStageProps>(
           setPhase('idle');
           setOutcome(null);
           setMeter(0);
+          setRevealPulse(0);
           const scene = sceneRef.current;
           const host = hostRef.current;
           if (scene && host) {
@@ -190,8 +217,9 @@ export const GoldRushStage = forwardRef<CasinoStageHandle, GoldRushStageProps>(
       [clearRaf, runMeter],
     );
 
-    const won = outcome !== null && outcome.totalMultiplier > 0;
+    const won = outcome !== null && isGoldRushWinDisplay(outcome.totalMultiplier);
     const bonus = meter >= 0.55;
+    const settled = phase === 'settled' && outcome !== null;
 
     return (
       <Card
@@ -205,23 +233,37 @@ export const GoldRushStage = forwardRef<CasinoStageHandle, GoldRushStageProps>(
         data-lines={lines}
       >
         <CardBody className="flex flex-col gap-3 p-3 md:p-4">
+          {/* Stage dominates first fold (CASINO_UX_CANON §7 — cabinet / reel window). */}
           <div
             ref={hostRef}
-            className="bg-surface relative min-h-[200px] w-full overflow-hidden rounded-md md:min-h-[280px]"
+            className="bg-surface relative min-h-72 w-full overflow-hidden rounded-md md:min-h-96"
             data-testid="casino-gold-rush-canvas-host"
             aria-hidden
           />
           <div className="flex items-end justify-between gap-2">
             <div className="flex flex-col gap-0.5">
               <span className="text-foreground-muted text-xs">{t('casino.stage.result')}</span>
-              <span
-                className={cn(
-                  'text-2xl font-semibold tabular-nums',
-                  won ? 'text-success' : 'text-foreground',
-                )}
-                data-testid="casino-gold-rush-mult"
-              >
-                {outcome ? `${outcome.totalMultiplier.toFixed(2)}×` : '—'}
+              <span className="relative inline-flex items-baseline">
+                {settled && won && !reducedMotion ? (
+                  <span
+                    key={`glow-${revealPulse}`}
+                    aria-hidden="true"
+                    data-testid="casino-gold-rush-win-flash"
+                    className="ds-casino-cashout-flash"
+                  />
+                ) : null}
+                <span
+                  key={`value-${revealPulse}`}
+                  className={cn(
+                    'text-2xl font-semibold tabular-nums',
+                    settled ? (won ? 'text-success' : 'text-danger') : 'text-foreground',
+                    settled && !reducedMotion && 'ds-casino-reveal-in',
+                    settled && won && !reducedMotion && 'ds-casino-number-pop',
+                  )}
+                  data-testid="casino-gold-rush-mult"
+                >
+                  {outcome ? `${outcome.totalMultiplier.toFixed(2)}×` : '—'}
+                </span>
               </span>
             </div>
             <div

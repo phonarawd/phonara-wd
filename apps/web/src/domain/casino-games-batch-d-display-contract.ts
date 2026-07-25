@@ -53,7 +53,7 @@ export const CASINO_ROULETTE_BET_MAP_HELP_KEY =
 export const CASINO_BATCH_D_L1_SPECS = {
   roulette: {
     render: 'react_svg_dom_table',
-    l1: 'sector highlight',
+    l1: 'wheel spin + sector highlight',
     overlaySource: 'table win total',
     forbidden: 'fake mid-state before RPC result',
     touchMinPx: 48,
@@ -129,8 +129,24 @@ export type ParsedRouletteOutcome = {
   totalMultiplier: number;
 };
 
+export type BlackjackSuit = 'spades' | 'hearts' | 'diamonds' | 'clubs';
+
+export type BlackjackCardFace = {
+  id: number;
+  rank: number;
+  rankLabel: string;
+  suit: BlackjackSuit;
+  suitSymbol: string;
+  color: 'red' | 'black';
+};
+
 export type ParsedBlackjackOutcome = {
   totalMultiplier: number;
+  /** Engine card ids 1–52 when present (RPC hands or PF-resolved). */
+  playerCards: number[];
+  dealerCards: number[];
+  playerValue: number | null;
+  dealerValue: number | null;
 };
 
 export type ParsedDeepshaftLevel = {
@@ -193,12 +209,105 @@ export function parseRouletteOutcome(
   return { winningNumber, totalMultiplier };
 }
 
+const BJ_SUITS: readonly BlackjackSuit[] = ['spades', 'hearts', 'diamonds', 'clubs'];
+const BJ_SUIT_SYMBOLS = ['♠', '♥', '♦', '♣'] as const;
+
+function asCardIdArray(value: unknown): number[] | null {
+  if (!Array.isArray(value)) return null;
+  const out: number[] = [];
+  for (const item of value) {
+    const n = asFiniteNumber(item);
+    if (n === null || !Number.isInteger(n) || n < 1 || n > 52) return null;
+    out.push(n);
+  }
+  return out;
+}
+
+/** Display-only decode of engine card id 1–52 → rank/suit face (no settlement). */
+export function decodeBlackjackCard(card: number): BlackjackCardFace | null {
+  if (!Number.isInteger(card) || card < 1 || card > 52) return null;
+  const rank = ((card - 1) % 13) + 1;
+  const suitIdx = Math.floor((card - 1) / 13);
+  const suit = BJ_SUITS[suitIdx]!;
+  const rankLabel =
+    rank === 1 ? 'A' : rank === 11 ? 'J' : rank === 12 ? 'Q' : rank === 13 ? 'K' : String(rank);
+  return {
+    id: card,
+    rank,
+    rankLabel,
+    suit,
+    suitSymbol: BJ_SUIT_SYMBOLS[suitIdx]!,
+    color: suit === 'hearts' || suit === 'diamonds' ? 'red' : 'black',
+  };
+}
+
+function blackjackMultiplierFromOutcomeLabel(outcome: unknown): number | null {
+  if (typeof outcome !== 'string') return null;
+  switch (outcome) {
+    case 'blackjack':
+      return 2.5;
+    case 'won':
+      return 2;
+    case 'push':
+      return 1;
+    case 'lost':
+      return 0;
+    default:
+      return null;
+  }
+}
+
+/**
+ * Display-only parse of blackjack settle payload.
+ * Accepts one-shot `{ totalMultiplier, player?, dealer? }` and E23 progressive
+ * `public_state` `{ player, dealer, playerValue, dealerValue?, outcome? }` —
+ * never invents card ranks when arrays are absent.
+ */
 export function parseBlackjackOutcome(
   result: Record<string, unknown>,
 ): ParsedBlackjackOutcome | null {
-  const totalMultiplier = asFiniteNumber(result['totalMultiplier']);
+  const playerCards = asCardIdArray(result['player']) ?? [];
+  const dealerCards = asCardIdArray(result['dealer']) ?? [];
+  if (result['player'] !== undefined && playerCards.length === 0) return null;
+  if (result['dealer'] !== undefined && dealerCards.length === 0) return null;
+
+  let totalMultiplier = asFiniteNumber(result['totalMultiplier']);
+  if (totalMultiplier === null) {
+    totalMultiplier = blackjackMultiplierFromOutcomeLabel(result['outcome']);
+  }
   if (totalMultiplier === null || totalMultiplier < 0) return null;
-  return { totalMultiplier };
+
+  const playerValue = asFiniteNumber(result['playerValue']);
+  const dealerValue = asFiniteNumber(result['dealerValue']);
+
+  return {
+    totalMultiplier,
+    playerCards,
+    dealerCards,
+    playerValue: playerValue !== null && playerValue >= 0 ? playerValue : null,
+    dealerValue: dealerValue !== null && dealerValue >= 0 ? dealerValue : null,
+  };
+}
+
+/** Mid-round live hands from progressive `public_state` (dealer hole may be hidden). */
+export function parseBlackjackLiveHands(publicState: Record<string, unknown>): {
+  playerCards: number[];
+  dealerCards: number[];
+  playerValue: number | null;
+  dealerUp: number | null;
+} | null {
+  const playerCards = asCardIdArray(publicState['player']);
+  const dealerCards = asCardIdArray(publicState['dealer']);
+  if (!playerCards || playerCards.length === 0) return null;
+  if (!dealerCards || dealerCards.length === 0) return null;
+  const playerValue = asFiniteNumber(publicState['playerValue']);
+  const dealerUp = asFiniteNumber(publicState['dealerUp']);
+  return {
+    playerCards,
+    dealerCards,
+    playerValue: playerValue !== null && playerValue >= 0 ? playerValue : null,
+    dealerUp: dealerUp !== null && dealerUp >= 0 ? dealerUp : null,
+  };
 }
 
 export function parseDeepshaftOutcome(
@@ -314,12 +423,57 @@ export function upsertRouletteLeg(
   return [...legs, next];
 }
 
-export function rouletteSectorHighlightMs(): number {
-  return 700;
+/**
+ * European single-zero wheel order (clockwise from 0 under the fixed pointer).
+ * Display / angle mapping only — settlement always comes from RPC winningNumber.
+ */
+export const CASINO_ROULETTE_EUROPEAN_ORDER = [
+  0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24,
+  16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26,
+] as const;
+
+export const CASINO_ROULETTE_SECTOR_DEG = 360 / CASINO_ROULETTE_EUROPEAN_ORDER.length;
+
+/** Degrees to rotate the wheel so `n` sits under the top pointer. */
+export function rouletteWheelAngleForNumber(n: number): number {
+  const idx = (CASINO_ROULETTE_EUROPEAN_ORDER as readonly number[]).indexOf(n);
+  if (idx < 0) return 0;
+  return idx * CASINO_ROULETTE_SECTOR_DEG;
 }
 
+/** Wheel/ball spin duration — Phase 1E celebration band 800–1200ms. */
+export function rouletteSpinMs(): number {
+  return 1100;
+}
+
+/**
+ * Wheel spin ease — decelerating (ease-out cubic).
+ * Fast early rotation, crawl into the winning pocket — realistic ball settle.
+ */
+export function rouletteSpinEase(progress: number): number {
+  const t = Math.min(1, Math.max(0, progress));
+  const inv = 1 - t;
+  return 1 - inv * inv * inv;
+}
+
+/** Post-spin sector highlight hold — short beat before input unlock (≤ result-reveal band). */
+export function rouletteSectorHighlightMs(): number {
+  return 360;
+}
+
+/** Chip-drop micro-feedback on placement — Motion DoD 120–200ms. */
+export function rouletteChipDropMs(): number {
+  return 160;
+}
+
+/** Action-queue reveal pacing (pre-commit path) — ≤ celebration band. */
 export function blackjackRevealMs(): number {
   return 600;
+}
+
+/** Per-card deal/flip step — lockstep with `--ds-motion-casino-card-flip` (280ms). */
+export function blackjackDealStepMs(): number {
+  return 280;
 }
 
 export function deepshaftLevelStepMs(levelCount: number): number {
@@ -349,8 +503,27 @@ export function assertCasinoGamesBatchDContractSync(): void {
   if (!roulette || roulette.winningNumber !== 17) {
     throw new Error('casino-games-batch-d: roulette parse drift');
   }
-  if (!parseBlackjackOutcome({ totalMultiplier: 2.5 })) {
+  const bjBare = parseBlackjackOutcome({ totalMultiplier: 2.5 });
+  if (!bjBare || bjBare.totalMultiplier !== 2.5 || bjBare.playerCards.length !== 0) {
     throw new Error('casino-games-batch-d: blackjack parse drift');
+  }
+  const bjHands = parseBlackjackOutcome({
+    totalMultiplier: 2,
+    player: [1, 13],
+    dealer: [26, 39],
+    playerValue: 21,
+    dealerValue: 20,
+  });
+  if (!bjHands || bjHands.playerCards.length !== 2 || bjHands.dealerCards[0] !== 26) {
+    throw new Error('casino-games-batch-d: blackjack hand parse drift');
+  }
+  const face = decodeBlackjackCard(1);
+  if (!face || face.rankLabel !== 'A' || face.suit !== 'spades') {
+    throw new Error('casino-games-batch-d: blackjack card face drift');
+  }
+  const dealMs = blackjackDealStepMs();
+  if (dealMs < 200 || dealMs > 360) {
+    throw new Error('casino-games-batch-d: blackjack deal step outside 200–360 band');
   }
   const deep = parseDeepshaftOutcome({
     levels: [{ depth: 1, outcome: 'gold', levelMultiplier: 1.05 }],
@@ -364,5 +537,24 @@ export function assertCasinoGamesBatchDContractSync(): void {
   }
   if (roulettePocketColor(0) !== 'green' || roulettePocketColor(1) !== 'red') {
     throw new Error('casino-games-batch-d: pocket color drift');
+  }
+  if (CASINO_ROULETTE_EUROPEAN_ORDER.length !== 37 || CASINO_ROULETTE_EUROPEAN_ORDER[0] !== 0) {
+    throw new Error('casino-games-batch-d: european wheel order drift');
+  }
+  const spinMs = rouletteSpinMs();
+  if (spinMs < 800 || spinMs > 1200) {
+    throw new Error('casino-games-batch-d: roulette spin ms outside 800–1200 band');
+  }
+  const spinEarly = rouletteSpinEase(0.4) - rouletteSpinEase(0.1);
+  const spinLate = rouletteSpinEase(0.9) - rouletteSpinEase(0.6);
+  if (!(spinEarly > spinLate)) {
+    throw new Error('casino-games-batch-d: roulette spin ease must decelerate');
+  }
+  const chipMs = rouletteChipDropMs();
+  if (chipMs < 120 || chipMs > 200) {
+    throw new Error('casino-games-batch-d: roulette chip-drop ms outside 120–200 band');
+  }
+  if (rouletteWheelAngleForNumber(0) !== 0) {
+    throw new Error('casino-games-batch-d: wheel angle for 0 must be 0');
   }
 }
