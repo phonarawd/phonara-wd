@@ -179,6 +179,8 @@ describe('FuturesPositionsPage', () => {
     renderPage(makeEngine({ closePosition }));
 
     fireEvent.click(screen.getByTestId('futures-close-position-pos-open-1'));
+    expect(closePosition).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'confirm.proceed' }));
     expect(closePosition).toHaveBeenCalledWith('pos-open-1');
   });
 
