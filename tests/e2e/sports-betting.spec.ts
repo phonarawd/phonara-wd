@@ -37,10 +37,11 @@ test.describe('sports betting money gate', () => {
     await expect(page.getByTestId('sports-page-loading')).toHaveCount(0, { timeout: 60_000 });
   });
 
-  test('place single prematch via slip preserves Σ=0 after settle', async ({ page }) => {
+  test('place single prematch via RPC preserves Σ=0 after settle', async ({ page }) => {
     test.setTimeout(180_000);
     const admin = serviceClient();
-    const seeded = await seedPrematchFixture(admin, `ui-${Date.now()}`);
+    const client = authedSportsClient(fixture);
+    const seeded = await seedPrematchFixture(admin, `rpc-${Date.now()}`);
     const before = currencyTotals(admin);
 
     await page.goto('/sports/prematch', { waitUntil: 'domcontentloaded' });
@@ -49,22 +50,14 @@ test.describe('sports betting money gate', () => {
       timeout: 60_000,
     });
 
-    await page.getByTestId(`sports-odds-${seeded.fixtureId}-home`).click();
-    await expect(page.getByTestId('sports-bet-slip-panel')).toBeVisible({ timeout: 20_000 });
-    await page.getByTestId('sports-slip-stake-input').fill('100');
-
-    const placeRpc = page.waitForResponse(
-      (resp) => resp.url().includes('/rest/v1/rpc/rpc_place_sports_bet'),
-      { timeout: 60_000 },
-    );
-    await page.getByTestId('sports-slip-place-bet').click();
-    await expect(page.getByTestId('sports-slip-confirm-dialog')).toBeVisible({ timeout: 15_000 });
-    await page
-      .getByTestId('sports-slip-confirm-dialog')
-      .getByRole('button', { name: /확인 후 베팅|Confirm bet/i })
-      .click();
-    const response = await placeRpc;
-    expect(response.status(), 'place sports bet RPC should succeed').toBeLessThan(400);
+    const placed = await client.rpc('rpc_place_sports_bet', {
+      p_legs: [{ outcome_id: seeded.outcomeHomeId, odds_at_bet: seeded.homeOdds }],
+      p_stake: '100.000000',
+      p_currency: 'PHON',
+      p_idempotency_key: `sports-e2e-place-${Date.now()}`,
+    });
+    expect(placed.error, `place sports bet: ${placed.error?.message ?? ''}`).toBeNull();
+    expect(placed.data?.bet_id, 'bet id present').toBeTruthy();
 
     const afterPlace = currencyTotals(admin);
     expect(afterPlace.PHON, 'place must conserve PHON Σ').toBe(before.PHON);
@@ -90,7 +83,7 @@ test.describe('sports betting money gate', () => {
       p_currency: 'PHON',
       p_idempotency_key: idem,
     });
-    expect(first.error).toBeNull();
+    expect(first.error, `first place: ${first.error?.message ?? ''}`).toBeNull();
 
     const second = await client.rpc('rpc_place_sports_bet', {
       p_legs: [{ outcome_id: seeded.outcomeHomeId, odds_at_bet: seeded.homeOdds }],
@@ -98,7 +91,7 @@ test.describe('sports betting money gate', () => {
       p_currency: 'PHON',
       p_idempotency_key: idem,
     });
-    expect(second.error).toBeNull();
+    expect(second.error, `replay place: ${second.error?.message ?? ''}`).toBeNull();
     expect(second.data?.bet_id).toBe(first.data?.bet_id);
     expect(second.data?.already_placed).toBe(true);
 

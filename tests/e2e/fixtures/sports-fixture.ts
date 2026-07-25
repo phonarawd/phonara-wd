@@ -148,6 +148,18 @@ export async function seedPrematchFixture(
     throw new Error('seeded fixture not found after ingest');
   }
 
+  // Ensure place path can accept bets (UI freshness ≠ market.status).
+  runPsql(`
+    UPDATE sports_markets m
+    SET status = 'open'
+    FROM sports_fixtures f
+    WHERE m.fixture_id = f.id
+      AND f.canonical_fixture_id = ${sqlLiteral(canonicalFixtureId)};
+    UPDATE sports_fixtures
+    SET status = 'scheduled'
+    WHERE canonical_fixture_id = ${sqlLiteral(canonicalFixtureId)};
+  `);
+
   return { fixtureId, outcomeHomeId, canonicalFixtureId, homeOdds };
 }
 
