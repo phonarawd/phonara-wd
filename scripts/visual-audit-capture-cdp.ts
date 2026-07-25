@@ -16,6 +16,9 @@
  *     silently dropped — Definition of Done "Console" row).
  * Opt-in (`PHONARA_AUDIT_INTERACT=1`) casino bet-to-result interaction
  * pass + real rAF-measured FPS during the Crash replay animation.
+ * Opt-in (`PHONARA_AUDIT_ULTRAWIDE=1`) ultrawide-only pass (3440/3840/5120)
+ * — separate from canonical VIEWPORT_SMOKE_WIDTHS; asserts `--ds-content-max`
+ * letterbox (column ≤1680 · centered gutters). Never merge into the 4-tier loop.
  *
  * Usage: bun run tsx scripts/visual-audit-capture-cdp.ts
  */
@@ -25,6 +28,11 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import {
+  CONTENT_SHELL_MAX_PX,
+  isContentShellLetterboxOk,
+  ULTRAWIDE_SMOKE_WIDTHS,
+} from '../apps/web/src/product/tokens/viewport-contract';
 import { readLocalSupabaseEnv } from './lib/db-connect';
 import { killPortListeners } from './lib/e2e-lifecycle';
 
@@ -42,11 +50,21 @@ const LOGIN_LOCAL_TRADE = process.env.PHONARA_AUDIT_LOGIN === '1';
 const RUN_INTERACTION_PASS = process.env.PHONARA_AUDIT_INTERACT === '1';
 /** Opt-out: skip the hard-fail exit code on assertion violations (capture-only mode, e.g. first-run baselines). */
 const NO_ASSERT = process.env.PHONARA_AUDIT_NO_ASSERT === '1';
+/** Opt-in: ultrawide letterbox pass only — does NOT extend the canonical 4-tier VIEWPORTS loop. */
+const RUN_ULTRAWIDE_PASS = process.env.PHONARA_AUDIT_ULTRAWIDE === '1';
 
 /** Canonical Phase R 4-tier smoke widths — apps/web/src/product/tokens/viewport-contract.ts VIEWPORT_SMOKE_WIDTHS. */
 type Vp = {
   id: '390' | '768' | '1024' | '2560';
   folder: 'mobile' | 'tablet' | 'desktop';
+  w: number;
+  h: number;
+};
+
+/** Ultrawide evidence widths — apps/web/.../viewport-contract.ts ULTRAWIDE_SMOKE_WIDTHS (never merge into Vp). */
+type UltrawideVp = {
+  id: `${(typeof ULTRAWIDE_SMOKE_WIDTHS)[number]}`;
+  folder: 'ultrawide';
   w: number;
   h: number;
 };
@@ -64,6 +82,23 @@ const VIEWPORTS_FULL: Vp[] = [
 const VIEWPORTS_MIN: Vp[] = VIEWPORTS_FULL;
 
 const VIEWPORTS: Vp[] = MINIMAL ? VIEWPORTS_MIN : VIEWPORTS_FULL;
+
+/** Heights chosen for common 21:9 / 4K / 5K2K panels — width SOT is ULTRAWIDE_SMOKE_WIDTHS. */
+const ULTRAWIDE_HEIGHT_BY_WIDTH: Record<(typeof ULTRAWIDE_SMOKE_WIDTHS)[number], number> = {
+  3440: 1440,
+  3840: 2160,
+  5120: 2160,
+};
+
+const ULTRAWIDE_VIEWPORTS: UltrawideVp[] = ULTRAWIDE_SMOKE_WIDTHS.map((w) => ({
+  id: String(w) as UltrawideVp['id'],
+  folder: 'ultrawide' as const,
+  w,
+  h: ULTRAWIDE_HEIGHT_BY_WIDTH[w],
+}));
+
+/** Lean route set for ultrawide letterbox proof (RAM: top scroll · dark only). */
+const ULTRAWIDE_LETTERBOX_PAGE_IDS = new Set(['landing', 'home', 'trade-spot', 'wallet']);
 
 /** Routes whose AppShell mounts the 5-tab BottomNav — Phase 0A affected-routes matrix. */
 const BOTTOM_NAV_ROUTES = new Set([
@@ -319,6 +354,35 @@ async function readBottomNavDisplay(cdp: CdpClient): Promise<string | null> {
   );
 }
 
+type ContentShellLetterboxSample = {
+  found: boolean;
+  viewportWidth: number;
+  columnWidth: number;
+  columnLeft: number;
+  maxWidth: string | null;
+};
+
+/** Live geometry of `.ds-shell-content-column` — ultrawide letterbox proof (≤ `--ds-content-max`). */
+async function readContentShellLetterbox(cdp: CdpClient): Promise<ContentShellLetterboxSample> {
+  return evaluate<ContentShellLetterboxSample>(
+    cdp,
+    `(() => {
+      const el = document.querySelector('.ds-shell-content-column, .shell-content-column');
+      if (!el) {
+        return { found: false, viewportWidth: window.innerWidth, columnWidth: 0, columnLeft: 0, maxWidth: null };
+      }
+      const rect = el.getBoundingClientRect();
+      return {
+        found: true,
+        viewportWidth: window.innerWidth,
+        columnWidth: rect.width,
+        columnLeft: rect.left,
+        maxWidth: getComputedStyle(el).maxWidth,
+      };
+    })()`,
+  );
+}
+
 let axeSourceCache: string | null = null;
 function readAxeSource(): string {
   if (axeSourceCache) return axeSourceCache;
@@ -401,7 +465,7 @@ async function captureViewport(
   cdp: CdpClient,
   url: string,
   theme: 'light' | 'dark',
-  vp: Vp,
+  vp: { w: number; h: number },
   outPath: string,
   scroll: 'top' | 'mid' | 'end',
 ): Promise<{ finalUrl: string }> {
@@ -468,6 +532,9 @@ type ManifestRow = {
   bottomNavDisplay: string | null;
   /** Phase 0A pass/fail against the policy: hidden (`none`) at >=1024px, grid at <1024px. Null = route has no BottomNav. */
   bottomNavPolicyOk: boolean | null;
+  /** Ultrawide pass only — content column letterbox vs `--ds-content-max` (1680). Null on 4-tier captures. */
+  letterboxOk: boolean | null;
+  letterboxSample: ContentShellLetterboxSample | null;
   /** axe-core critical-impact violation count — only populated on the primary (1024/dark) capture per route to bound cost. */
   axeCritical: number | null;
   axeSerious: number | null;
@@ -981,6 +1048,7 @@ async function main(): Promise<void> {
   const interactions: InteractionResult[] = [];
   const bottomNavViolations: string[] = [];
   const axeCriticalFindings: string[] = [];
+  const letterboxViolations: string[] = [];
   const startedAt = new Date().toISOString();
   const userDataDir = join(tmpdir(), `phonara-audit-chrome-${Date.now()}`);
 
@@ -1169,6 +1237,8 @@ async function main(): Promise<void> {
               redirectedToLogin,
               bottomNavDisplay,
               bottomNavPolicyOk,
+              letterboxOk: null,
+              letterboxSample: null,
               axeCritical,
               axeSerious,
               consoleErrorCount: consoleTracker.errors.length,
@@ -1176,6 +1246,84 @@ async function main(): Promise<void> {
             });
             nn += 1;
           }
+        }
+      }
+    }
+
+    // Ultrawide-only pass — NEVER push 3440+ into VIEWPORTS (4-tier DoD immutable).
+    if (RUN_ULTRAWIDE_PASS) {
+      const ultrawideRoutes = ROUTES.filter((r) => ULTRAWIDE_LETTERBOX_PAGE_IDS.has(r.pageId));
+      console.log(
+        `[cdp-audit] ultrawide pass: ${ULTRAWIDE_VIEWPORTS.map((v) => v.w).join('/')} · routes=${ultrawideRoutes
+          .map((r) => r.pageId)
+          .join(',')}`,
+      );
+      for (const route of ultrawideRoutes) {
+        for (const vp of ULTRAWIDE_VIEWPORTS) {
+          const dir = join(OUT, vp.folder);
+          await mkdir(dir, { recursive: true });
+          const fileName = `${route.pageId}-${vp.id}-dark.png`;
+          const abs = join(dir, fileName);
+          console.log('[capture-ultrawide]', fileName);
+          consoleTracker.reset();
+          const { finalUrl } = await captureViewport(
+            cdp,
+            `${BASE}${route.path}`,
+            'dark',
+            vp,
+            abs,
+            'top',
+          );
+          const redirectedToLogin =
+            !/^\/login(?:\?|$)/.test(route.path) &&
+            /\/login(?:\?|$)/.test(new URL(finalUrl).pathname);
+
+          let letterboxOk: boolean | null = null;
+          let letterboxSample: ContentShellLetterboxSample | null = null;
+          if (!redirectedToLogin) {
+            letterboxSample = await readContentShellLetterbox(cdp);
+            if (!letterboxSample.found) {
+              letterboxOk = false;
+              letterboxViolations.push(
+                `${route.pageId}@${vp.id}px: .ds-shell-content-column not found (contentMax=${CONTENT_SHELL_MAX_PX})`,
+              );
+            } else {
+              letterboxOk = isContentShellLetterboxOk({
+                viewportWidth: letterboxSample.viewportWidth,
+                columnWidth: letterboxSample.columnWidth,
+                columnLeft: letterboxSample.columnLeft,
+                contentMaxPx: CONTENT_SHELL_MAX_PX,
+              });
+              if (!letterboxOk) {
+                letterboxViolations.push(
+                  `${route.pageId}@${vp.id}px: column=${letterboxSample.columnWidth.toFixed(1)} left=${letterboxSample.columnLeft.toFixed(
+                    1,
+                  )} viewport=${letterboxSample.viewportWidth} maxWidth=${letterboxSample.maxWidth} (expected ≤${CONTENT_SHELL_MAX_PX} centered)`,
+                );
+              }
+            }
+          }
+
+          manifest.push({
+            file: `${vp.folder}/${fileName}`,
+            pageId: route.pageId,
+            path: route.path,
+            viewport: vp.id,
+            folder: vp.folder,
+            theme: 'dark',
+            scroll: '01_top',
+            finalUrl,
+            auth: route.auth,
+            redirectedToLogin,
+            bottomNavDisplay: null,
+            bottomNavPolicyOk: null,
+            letterboxOk,
+            letterboxSample,
+            axeCritical: null,
+            axeSerious: null,
+            consoleErrorCount: consoleTracker.errors.length,
+            consoleErrors: [...consoleTracker.errors],
+          });
         }
       }
     }
@@ -1241,11 +1389,19 @@ async function main(): Promise<void> {
         png: manifest.length + 2,
         routes: ROUTES.length,
         viewports: VIEWPORTS.length,
+        ultrawideViewports: RUN_ULTRAWIDE_PASS ? ULTRAWIDE_VIEWPORTS.length : 0,
         authRedirects: manifest.filter((m) => m.redirectedToLogin).length,
       },
       assertions: {
         bottomNavViolations,
         axeCriticalFindings,
+        letterboxViolations,
+      },
+      ultrawide: {
+        enabled: RUN_ULTRAWIDE_PASS,
+        widths: [...ULTRAWIDE_SMOKE_WIDTHS],
+        contentMaxPx: CONTENT_SHELL_MAX_PX,
+        note: 'Separate from VIEWPORT_SMOKE_WIDTHS (390/768/1024/2560). Opt-in: PHONARA_AUDIT_ULTRAWIDE=1.',
       },
       hoverFiles: [`hover/${hoverFile}`, `hover/${hoverFile2}`],
       manifest,
@@ -1266,6 +1422,10 @@ async function main(): Promise<void> {
       '[cdp-audit] axeCriticalFindings:',
       axeCriticalFindings.length ? axeCriticalFindings : 'none',
     );
+    console.log(
+      '[cdp-audit] letterboxViolations:',
+      letterboxViolations.length ? letterboxViolations : 'none',
+    );
     for (const interaction of interactions) {
       console.log(
         `[cdp-audit] interaction ${interaction.gameCode}:`,
@@ -1279,7 +1439,10 @@ async function main(): Promise<void> {
       }
     }
 
-    const hardFailures = bottomNavViolations.length > 0 || axeCriticalFindings.length > 0;
+    const hardFailures =
+      bottomNavViolations.length > 0 ||
+      axeCriticalFindings.length > 0 ||
+      letterboxViolations.length > 0;
     if (hardFailures && !NO_ASSERT) {
       console.error(
         '[cdp-audit] FAIL — assertion violations found (see above). Set PHONARA_AUDIT_NO_ASSERT=1 to capture without failing.',
