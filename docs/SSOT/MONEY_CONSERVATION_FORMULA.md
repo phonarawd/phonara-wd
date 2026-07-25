@@ -66,8 +66,8 @@ GRAND_TOTAL(c) =
 | 테스트                 | 시점                                                                 | 파일:라인                           |
 | ---------------------- | -------------------------------------------------------------------- | ----------------------------------- |
 | E2E spot buy           | RPC **직전** `before` → RPC **성공 직후** `after`                    | `trade-desk-smoke.spec.ts` L128–150 |
-| E2E futures open+close | open 전 → **close 완료 후** (position 0)                             | `trade-desk-smoke.spec.ts` L190–229 |
-| E2E stake+claim        | stake 전 → **claim 완료 후**                                         | `trade-desk-smoke.spec.ts` L280–326 |
+| E2E futures open+close | open 전 → **close 완료 후** (position 0)                             | `trade-desk-smoke.spec.ts` L208–251 |
+| E2E stake+claim        | stake 전 → **claim 완료 후**                                         | `trade-desk-smoke.spec.ts` L302–351 |
 | SQL integration        | RPC 시퀀스 **전** snapshot → **전체 시퀀스 후** (futures close 포함) | `conservation_test.sql` L63–97      |
 
 ### 1.7 Invariant → Formula → SQL → E2E → DoD
@@ -130,8 +130,8 @@ citation: supabase/tests/conservation_test.sql:64-69:phon_available,phon_locked,
 citation: supabase/tests/conservation_test.sql:91-97:ASSERT,conserved
 citation: tests/e2e/fixtures/wallet-money.ts:336-360:wallets,system_accounts,currencyTotals
 citation: tests/e2e/trade-desk-smoke.spec.ts:128-150:currencyTotals,before,after
-citation: tests/e2e/trade-desk-smoke.spec.ts:206-246:currencyTotals,before,after
-citation: tests/e2e/trade-desk-smoke.spec.ts:297-346:currencyTotals,before,after
+citation: tests/e2e/trade-desk-smoke.spec.ts:208-251:currencyTotals,before,after
+citation: tests/e2e/trade-desk-smoke.spec.ts:302-351:currencyTotals,before,after
 -->
 
 | Citation ID | Path                                   | Lines   | Expected tokens                                |
@@ -140,8 +140,8 @@ citation: tests/e2e/trade-desk-smoke.spec.ts:297-346:currencyTotals,before,after
 | SQL-assert  | `supabase/tests/conservation_test.sql` | 91–97   | `ASSERT`, `conserved`                          |
 | E2E-totals  | `tests/e2e/fixtures/wallet-money.ts`   | 336–360 | `wallets`, `system_accounts`, `currencyTotals` |
 | E2E-spot    | `tests/e2e/trade-desk-smoke.spec.ts`   | 128–150 | `currencyTotals`, `before`, `after`            |
-| E2E-futures | `tests/e2e/trade-desk-smoke.spec.ts`   | 206–246 | `currencyTotals`, `before`, `after`            |
-| E2E-stake   | `tests/e2e/trade-desk-smoke.spec.ts`   | 297–346 | `currencyTotals`, `before`, `after`            |
+| E2E-futures | `tests/e2e/trade-desk-smoke.spec.ts`   | 208–251 | `currencyTotals`, `before`, `after`            |
+| E2E-stake   | `tests/e2e/trade-desk-smoke.spec.ts`   | 302–351 | `currencyTotals`, `before`, `after`            |
 
 ---
 
