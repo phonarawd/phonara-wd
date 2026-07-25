@@ -116,8 +116,10 @@ assert(
 const headersFile = read('apps/web/public/_headers');
 const inlineScriptMatch = indexHtml.match(/<script>([\s\S]*?)<\/script>/);
 assert(inlineScriptMatch, 'index.html must contain the inline theme-init <script> block');
+// Normalize CRLF→LF so Windows working trees match Linux CI / Cloudflare edge bytes.
+const inlineScriptBody = inlineScriptMatch![1].replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 const inlineScriptHash = `sha256-${createHash('sha256')
-  .update(inlineScriptMatch![1], 'utf8')
+  .update(inlineScriptBody, 'utf8')
   .digest('base64')}`;
 assert(
   headersFile.includes(`'${inlineScriptHash}'`),
