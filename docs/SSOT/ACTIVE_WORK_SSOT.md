@@ -28,7 +28,7 @@
 | **Zero-Defect Critical Hardening** | Phase 0–7 **`[x]`** 2026-07-14 (AI 트랙)                                               | [`PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md`](../PLAN-ZERO-DEFECT-CRITICAL-HARDENING.md) — Phase 7 Release Gate **DONE**(17 criteria 재판정 · PASS 13 · operator soak/PPR/서명 **미실행**) · **NEXT=operator O1 soak 개시일** · 재착수 실행 큐 아님               |
 | **DNA Audit 후속 3-우선순위**      | P1 랜딩 크래시 **FIXED+재검증** · Home/Trade/Wallet/Casino **실 세션 확인** 2026-07-15 | §"DNA Audit 후속" 절 참조 — P1 순환 import 수정(`typecheck`·vitest 19/51 green) + 로컬 스택 재캡처로 전 authenticated 화면 렌더 확인 · **신규 발견**: 데스크톱 BottomNav 노출(정책 불일치, 미수정) · P2 침묵형 dead control 0건 · P3(wave debt) **보류**       |
 | **Zero-Defect 마감 Plan**          | Phase 0–6 **`[x]` DONE** 2026-07-25                                                    | Plan `zero-defect_마감_플랜_70fca5c4` + `world-class_presentation_rebuild_bc0d5f4b` **22/22** · 증거 [`visual-ux-2026-07-25-phase6-closeout/`](../audit/visual-ux-2026-07-25-phase6-closeout/) · Docker OFF · **재착수 금지**                                  |
-| **전수조사 결함 전체 수정**        | Phase 0–11 **`[x]` impl** · CI Verified **대기** 2026-07-25                            | Plan `전수조사_결함_전체_수정_a507aa71` · branch `phase-r/audit-remediation-2026-07-25` · 로컬 L0~L4 green · push 후 CI `quality`/`sql`/`e2e`/`advisors` · 한계 예외·HOLD 아래 절                                                                              |
+| **전수조사 결함 전체 수정**        | Phase 0–11 **`[x]` DONE** · CI Verified 2026-07-25                                     | Plan `전수조사_결함_전체_수정_a507aa71` · branch `phase-r/audit-remediation-2026-07-25` · CI [run 30158538228](https://github.com/phonarawd/phonara-wd/actions/runs/30158538228) quality·sql·e2e·advisors green · 한계 예외·HOLD 아래 절 · **재착수 금지**     |
 
 ### 전수조사 Phase 0–11 마감 (2026-07-25) · **재착수 금지**
 
@@ -47,7 +47,7 @@
 | 8     | `phase8-trade-wallet-earn-ux` | `[x]`      | futures/staking ConfirmDialog · RG wire · Earn proof `hidden` · api-keys disabled `title` · vitest **70/70**                                |
 | 9     | `phase9-techstack-cleanup`    | `[x]`      | `.env.local.bak`/tmp 삭제 · `scripts/archive/` · vitest pin · CI `check:games`/`determinism`/`deps` · orphan cleanup                        |
 | 10    | `phase10-e2e-coverage`        | `[x]`      | `casino-dice` · `sports-betting` · `staking-hub` · `referral-hub` · rules `77`/`80`/`79` · 로컬 E2E 미실행(G13)                             |
-| 11    | `phase11-verify-closeout`     | `[x]` impl | `typecheck`·`lint`·`format:check`·`check:hygiene`·`gate:ai-impl` **54/54** · push → CI required 4 대기                                      |
+| 11    | `phase11-verify-closeout`     | `[x]` DONE | L0~L4 · `gate:ai-impl` **54/54** · CI [30158538228](https://github.com/phonarawd/phonara-wd/actions/runs/30158538228) quality·sql·e2e·advisors green · CSP CRLF normalize |
 
 **한계 예외(플랜 명시 · "초록" 불가):**
 
@@ -60,7 +60,7 @@
 2. `apps/admin` zod v3 vs `apps/web` zod v4 통일 — 영향 범위 넓어 **별도 트랙**.
 3. Phase 3 서버 alerts role migration HOLD · Phase 5 sports desk owner/risk RBAC HOLD.
 
-**Phase 1 로컬 재검증 (2026-07-25):** `check:secrets-deploy-deny` OK · `check:perf-contract` OK · `check:pwa` OK (CSP `sha256-2HlpbiiADGxBG+ivVFAkiNuOldIL0MJdALiKgffOnh0=`).
+**Phase 1 로컬 재검증 (2026-07-25):** `check:secrets-deploy-deny` OK · `check:perf-contract` OK · `check:pwa` OK (CSP LF token `sha256-UcJObhpHqJFJBZSe2G//M/h+GVZE+VzMsKS3SYsS13M=` · `check-pwa` CRLF→LF normalize).
 
 **NEXT:** 전수조사 Plan **닫힘** · 신규 큐는 ACTIVE_WORK 상단 표 / 다른 Plan todo만.
 

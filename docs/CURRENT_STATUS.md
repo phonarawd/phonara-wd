@@ -14,7 +14,7 @@
 | **Phase 7–8**                            | roulette Decimal · dice/limbo refine · futures/staking confirm · RG wire · Earn proof `hidden` · vitest green                           |
 | **Phase 9 (`phase9-techstack-cleanup`)** | tmp/one-off → `scripts/archive/` · vitest pin · CI `check:games`/`determinism`/`deps` · orphan cleanup                                  |
 | **Phase 10 (`phase10-e2e-coverage`)**    | `casino-dice` · `sports-betting` · `staking-hub` · `referral-hub` · 로컬 E2E 미실행(G13) · CI `e2e`                                     |
-| **Phase 11 (`phase11-verify-closeout`)** | `typecheck`·`lint`·`format:check`·`check:hygiene`·`check:i18n`·`check:release`·`gate:ai-impl` **54/54** · push → CI required 4 **대기** |
+| **Phase 11 (`phase11-verify-closeout`)** | **`[x]` DONE** · L0~L4 · `gate:ai-impl` **54/54** · CI [30158538228](https://github.com/phonarawd/phonara-wd/actions/runs/30158538228) quality·sql·e2e·advisors **green** |
 | **서버 alerts / sports role migration**  | **HOLD** (승인·정책 대기)                                                                                                               |
 | **한계 예외**                            | migration 파일명 오타(리네임 금지) · 브라우저 실측 G13 이연 · zod v3/v4 통일 별도 트랙                                                  |
 | **NEXT**                                 | 전수조사 Plan **닫힘** · ACTIVE_WORK 상단 표 / 다른 Plan todo                                                                           |
