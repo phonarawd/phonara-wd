@@ -2,6 +2,8 @@
 
 > **감사일:** 2026-07-13 · **READ-ONLY** (코드 수정 0)
 > **Baseline:** [`MASTER_INVENTORY_AUDIT_2026-07-13.md`](../MASTER_INVENTORY_AUDIT_2026-07-13.md) (Phase 1 §1–§25) — 본 문서는 해당 정본을 재사용하고 drift만 재확인한다.
+>
+> **Errata (2026-07-24):** 본문 Migrations **239→241**은 감사일 스냅샷. **현재 디스크 248** (`check:migrations`).
 
 ## 점수
 

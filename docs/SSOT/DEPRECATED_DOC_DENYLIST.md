@@ -9,6 +9,10 @@
 - [`docs/SSOT/ACTIVE_WORK_SSOT.md`](ACTIVE_WORK_SSOT.md)
 - [`docs/PRODUCT/REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) — Phase R 실행 정본 (2026-07-04 승인)
 
+## Authority Charter — Active (실행 큐 아님 · 위 목록과 별개)
+
+- [`docs/SSOT/PLATFORM_CONSTITUTION.md`](PLATFORM_CONSTITUTION.md) — 권한 서열 · non-negotiable index. **위 "Active execution SSOT" 목록에 포함되지 않는다** — Charter는 정본 지도이며, "지금 무엇을 구현할지"는 여전히 `ACTIVE_WORK_SSOT.md` 단독 정본을 따른다.
+
 ## Engine — status only (구현 큐 아님)
 
 - [`docs/ENGINE_APEX_CLOSEOUT.md`](../ENGINE_APEX_CLOSEOUT.md) — 게이트 수치 · `[x] FULLY CLOSED` 판정만

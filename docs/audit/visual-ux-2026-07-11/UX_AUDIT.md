@@ -8,7 +8,7 @@
 
 ## 1. IA — 5탭 (non-waivable)
 
-```
+```text
 Earn (/home) | Wallet | Trade | Sports | Casino
 ```
 
@@ -28,7 +28,7 @@ Earn (/home) | Wallet | Trade | Sports | Casino
 
 ### 2.1 회원가입
 
-```
+```text
 Landing CTA → /signup → (verify-email) → /home 또는 onboarding
 ```
 
@@ -37,7 +37,7 @@ Landing CTA → /signup → (verify-email) → /home 또는 onboarding
 
 ### 2.2 로그인
 
-```
+```text
 /login → session → 직전 도메인 또는 /home
 ```
 
@@ -46,7 +46,7 @@ Landing CTA → /signup → (verify-email) → /home 또는 onboarding
 
 ### 2.3 입금
 
-```
+```text
 BottomNav Wallet → /wallet → /wallet/deposit → crypto | KRW | giftcard → ConfirmDialog
 ```
 
@@ -55,7 +55,7 @@ BottomNav Wallet → /wallet → /wallet/deposit → crypto | KRW | giftcard →
 
 ### 2.4 출금
 
-```
+```text
 /wallet/withdraw → crypto | KRW → tier limits card → ConfirmDialog
 ```
 
@@ -63,7 +63,7 @@ BottomNav Wallet → /wallet → /wallet/deposit → crypto | KRW | giftcard →
 
 ### 2.5 거래 (Spot / Futures)
 
-```
+```text
 /trade | /trade/futures
 → (첫 방문) education sheet
 → chart + book + ticket
@@ -76,14 +76,14 @@ BottomNav Wallet → /wallet → /wallet/deposit → crypto | KRW | giftcard →
 
 ### 2.6 스포츠
 
-```
+```text
 /sports → live | prematch | fixture → bet slip → Confirm
 /sports/rules · /sports/vip(stub) · /sports/my-bets
 ```
 
 ### 2.7 카지노
 
-```
+```text
 /casino lobby → /games/:code
 → CasinoGameShell (stake · AutoBet · PF · WinTier)
 → stage = PLACEHOLDER (deferred)
@@ -93,7 +93,7 @@ BottomNav Wallet → /wallet → /wallet/deposit → crypto | KRW | giftcard →
 
 ### 2.8 미션 · 출석 · 온보딩
 
-```
+```text
 /home/missions* · /home/attendance · /onboarding*
 ```
 
@@ -102,7 +102,7 @@ BottomNav Wallet → /wallet → /wallet/deposit → crypto | KRW | giftcard →
 
 ### 2.9 설정 · 프로필 · 보안 · KYC · RG
 
-```
+```text
 /settings* · /account/profile · kyc · responsible-gaming
 ```
 
@@ -112,7 +112,7 @@ BottomNav Wallet → /wallet → /wallet/deposit → crypto | KRW | giftcard →
 
 ### 2.10 Admin
 
-```
+```text
 Login → MFA → exception queues
 → deposits/withdrawals/risk/sports settle
 → reason + audit dialog

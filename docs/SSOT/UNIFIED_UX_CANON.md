@@ -42,7 +42,7 @@ Trade만 Binance · Wallet만 Toss · Earn만 앱테크 앱처럼 **완전 분�
 | **Confirmation**          | high-risk: amount recap · irreversible warning · confirm/cancel | trade · withdraw · admin                                         |
 | **Dark mode**             | token-based · no per-surface one-off hex                        | Phase R token SOT TBD                                            |
 | **Deposit/withdraw**      | wallet grammar extends to all money entry                       | [`PAYMENT_ARCHITECTURE_CANON.md`](PAYMENT_ARCHITECTURE_CANON.md) |
-| **Toast / notification**  | zone tone rules                                                 | [`UX_WRITING_GUIDE.md`](UX_WRITING_GUIDE.md)                     |
+| **Toast / notification**  | zone tone rules                                                 | [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md)                  |
 | **Restriction banner**    | KYC · RG · kill switch · parity hold                            | same component grammar                                           |
 
 ---

@@ -69,14 +69,14 @@
 
 ### 2.1 가격/시세 파이프라인 — 판정: **부분구현** (핵심 경로 구현 · 장애 내성 갭)
 
-**차트 kline WS — 구현됨**
+#### 차트 kline WS — 구현됨
 
 - 훅: `apps/web/src/features/trading/display-chart/use-display-kline.ts` — symbol+interval당 WS 1개를 refcount로 공유 (`:440-448, 455-478` — "One WebSocket per symbol+interval — shared across chart and header hooks")
 - Binance spot 스트림 `wss://stream.binance.com:9443/ws/<sym>@kline_<interval>` (`:291`) · REST 히스토리 `api.binance.com/api/v3/klines` (`:140`)
 - Binance 실패 시 Bybit 폴백: `onWsFailed`에서 `provider === 'binance' → 'bybit'` (`:279-287`), Bybit spot `wss://stream.bybit.com/v5/public/spot` (`:332`)
 - 메시지 타입: `BinanceKlineMsg` (`:16-26`) · `BybitKlineMsg` (`:28-38`) — 수신은 `JSON.parse as T` cast + try/catch (`:303, 314-316, 349, 360-362`)
 
-**재연결 — 부분구현**
+#### 재연결 — 부분구현
 
 - `scheduleReconnect` = `window.setTimeout(connect, 3000)` **고정** (`:271-277`) — 시도 카운터·지수 증가·jitter 없음
 - Binance→Bybit **단방향**: `provider = 'binance'` 재할당이 파일 전체에 없음 — 한번 Bybit로 넘어가면 복귀 불가 (`:209` 초기화 · `:282` 전환)
@@ -85,14 +85,14 @@
 
 - worker + kline 훅 양쪽 모두 ping/pong/keepalive `setInterval` 0건. Bybit WS에는 `op: 'subscribe'`만 전송 (`use-display-kline.ts:337-342`)
 
-**oracle 캔들 폴백 — 구현됨**
+#### oracle 캔들 폴백 — 구현됨
 
 - 클라이언트: `useCandles` → `supabase.rpc('rpc_get_candles', { p_symbol, p_interval, p_limit: 200 })` · `refetchInterval: 30_000` (`apps/web/src/hooks/use-trading.ts:335-354`)
 - SQL 최종 정의: `supabase/migrations/20260721000005_trade_t0d_candles_display_safety.sql:33-188` — `price_ticks` 버킷 집계 CTE (`:103-113`) + oracle forward-fill (`:96-100, 148-168`) · `REVOKE FROM PUBLIC, anon` + `GRANT TO authenticated, service_role` (`:190-191`) · 헤더 주석 "output must never feed settlement" (`:8`)
 - 이전 세대 2건(`20260609000040_stage2_candles.sql` · `20260609000044_zero_defect_sql_hardening.sql`)을 재정의 — timestamp상 20260721000005가 최후. candles 테이블은 없고 집계 함수만 (미구현 아님 — 의도된 설계)
 - 라이브 스트림과 oracle 폴백 병합: `display-chart/use-exchange-live-candles.ts:26-38`
 
-**oracle stale/freeze/realtime 게이트 — 구현됨**
+#### oracle stale/freeze/realtime 게이트 — 구현됨
 
 - 계약: `domain/trade-market-status-display-contract.ts:23-24, 44, 79-92` — 배너 우선순위 "kill → circuit → disconnect → freeze → stale"
 - freeze 임계 `TRADE_ORACLE_PRICE_FREEZE_SECONDS = 60` (`domain/trade-desk-failure-recovery-display-contract.ts:23`) · `resolveOraclePriceFrozen`은 `oracleStale`이면 false를 반환해 freeze(가격 무변동)와 stale(수신 지연)을 구분 (`:168-174`)
@@ -101,38 +101,38 @@
 
 **외부 피드 stale 감지 — 미구현** (H-3): oracle에만 있고 거래소 표시 피드(worker WS · kline WS)에는 마지막 수신 시각 검사 없음.
 
-**표시 전용 경계 — 구현됨**
+#### 표시 전용 경계 — 구현됨
 
 - `display-chart/display-feed-contract.ts:5` `DISPLAY_ONLY_FEED = true as const` · `:12-18` `ORACLE_DISPLAY_INTERVALS` · `:21-28` `TradingChartCandle` · 헤더 "Never pass these values to settlement, order, or PnL RPCs (ADR-0002 · rule 30/90)" (`:1-4`)
 
 ### 2.2 오더북 — 판정: **구현됨**
 
-**`rpc_get_synthetic_book` — 결정적 생성 (랜덤 0건)**
+#### `rpc_get_synthetic_book` — 결정적 생성 (랜덤 0건)
 
 - 정의: `supabase/migrations/20260609000041_stage2_synthetic_orderbook.sql:21-91` — oracle mid 조회 (`:44-49`, 없으면 `no_price` RAISE) → config 기반 bps 스프레드/레벨 (`synthetic_book_spread_bps`=8 · `level_step_bps`=6 · `base_size`=100 · `depth_levels`=10, `:57-65`, 시드 `:10-19`) → 레벨 루프 `v_price := v_mid * (1 ± ((spread + i*step)/10000))` (`:67-81`)
 - `random()` grep 0건 — 완전 결정적. anon GRANT는 `20260630000001_synthetic_book_anon_grant.sql` (display-only 공시 하)
 
-**렌더 패널 — 구현됨**
+#### 렌더 패널 — 구현됨
 
 - `product/surfaces/trade/spot-order-book-panel.tsx`는 props 수신 presentational (`:27-47`). 데이터 공급은 wire: live worker book 우선 → 비면 `rpc_get_synthetic_book` reference 폴백 (`features/trading/use-spot-desk-wire.ts:145-168` · RPC 폴링 30초 `hooks/use-trading.ts:356-375`)
 - 그루핑: `resolveBookGroupingSteps(pricePrecision)` + Select UI (`spot-order-book-panel.tsx:48-56, 101-116`) · 가시 12행 슬라이스 (`:62-66`, `BOOK_VISIBLE_ROW_LIMIT = 12` — `features/trading/order-book-display.ts:7`)
 
-**Decimal 수학 — 구현됨 (돈 경로 float 0건)**
+#### Decimal 수학 — 구현됨 (돈 경로 float 0건)
 
 - `features/trading/order-book-display.ts:2` `import { toDecimal } from '@phonara/money'` — 수량 파싱 (`:40-48`) · 누적 depth `cumulative.plus()` (`:98-117`) · 스프레드 `bestAsk.minus(bestBid)` · `div(mid).mul(100)` (`:167-195`) 전부 Decimal. 유일한 `toNumber()`는 depth bar width % 표시 전용 (`:59-66`)
 
-**선물 오더북 — spot 패널 재사용 (parallel 파일 0)**
+#### 선물 오더북 — spot 패널 재사용 (parallel 파일 0)
 
 - `futures-desk-page.tsx:46` import + `:234, 297, 368` 사용 — extend-only registry(`trade-exchange-parity-display-contract.ts:763-767` "futures-order-book-panel.tsx 생성 금지")와 일치
 
 ### 2.3 포지션/PnL — 판정: **구현됨**
 
-**TS 엔진 (`packages/trading-engine`) — Decimal 미리보기 전용**
+#### TS 엔진 (`packages/trading-engine`) — Decimal 미리보기 전용
 
 - apps에서 `@phonara/trading-engine` import는 정확히 3개 파일: `features/trading/order-ticket/order-ticket-display.ts:1-5` (`computeSpotBuy/Sell/MajorSpotBuy` — spot 미리보기) · `hooks/use-trading.ts:14` (`computeOpenPosition` — open 미리보기) · `features/trading/order-ticket/compute-position-display-metrics.ts:2` (`computePnl` — 표시 전용)
 - 즉 UI는 엔진 값을 **미리보기/표시**로만 쓰고 정산은 전부 SQL — `90-ui-ux-presentation` 경계 준수
 
-**SQL 정산 정본 — Σ=0 4-leg 분해**
+#### SQL 정산 정본 — Σ=0 4-leg 분해
 
 - `_settle_futures_position`: user·fee·insurance·dust 4-leg 분해로 Σ=0 보장 + two-tick liquidation buffer (`supabase/migrations/20260611000071_two_tick_liquidation_buffer.sql` 전체)
 - 스키마: `futures_positions` (`20260609000006_phase3_trading_schema.sql:71-96` — `entry_price` · `liquidation_price` · SL/TP · `margin_currency` CHECK PHON/USDT) · `position_ledger` append-only (no_update/no_delete RULE, `:110-128`) · `spot_trades` append-only (`:132-153`)
@@ -141,7 +141,7 @@
 
 **미구현(의도된 설계)**: entry price 평균화 없음 — 1 open = 1 포지션 설계. cross-margin 실정산은 feature flag OFF (§5 참조).
 
-**미배선(engine-only) 코드 — SQL 미러가 정본**
+#### 미배선(engine-only) 코드 — SQL 미러가 정본
 
 | 미배선 TS export                                            | 실서비스 대체 SQL 경로                                                                                            |
 | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -344,7 +344,7 @@ SpotDeskPage (spot-desk-page.tsx:210)
 
 ### 5.4 성능 parity
 
-**오더북 업데이트 = worker diff-적용 + 프레임 상한 · 렌더는 가시 12행 슬라이스 재렌더 (full re-fetch 아님)**
+#### 오더북 업데이트 = worker diff-적용 + 프레임 상한 · 렌더는 가시 12행 슬라이스 재렌더 (full re-fetch 아님)
 
 1. sequence guard + 델타 검증: `market-data.worker.ts:142-148` (`applyBookDelta`) — gap 시 REST re-seed (`:150-152, 95-113`)
 2. 델타 병합: `mergeLevels` (`:79-93`) — Map에 델타만 반영
@@ -384,7 +384,7 @@ SpotDeskPage (spot-desk-page.tsx:210)
 코드 정적 읽기만으로 확인 불가 — PASS/FAIL 판정하지 않음 (1~3은 Phase A 원격 READ-ONLY 조회로 **확정** · 2026-07-08):
 
 1. ~~**원격 DB 적용 상태**~~ → **`[x]` 부분 parity (203/204)** — MCP `list_migrations` · project `yocjhjsdwoijfdrehzoq` · name 기준 203/204 일치 · **미적용 1건:** `trade_t0b_oracle_aal2_guard` (로컬 `20260721000009`) · 원격 `rpc_update_oracle_price`에 `_assert_admin_aal2` guard **없음** (해당 migration 미적용과 일치) · 핵심 trade RPC 3종(`rpc_update_futures_position_sltp` · `rpc_run_liquidations` · `_apply_funding_for_market`) **존재 확인** · 원격 duplicate name 1건: `p1b_admin_ops_visibility` (version 2회 — 로컬은 단일 파일)
-2. ~~**Edge Function `liquidation-worker` 배포 여부**~~ → **`[x]` 미배포 · 의도적** — MCP `list_edge_functions`: ACTIVE 9종(price-feed · crypto-_ · usdt-krw-feed · notification-dispatch · pg-bank-webhook · ops-notify) · **`liquidation-worker` absent** · repo `supabase/functions/liquidation-worker` **삭제됨** (`setup/MANUAL_TASKS.md:45` S1 스케줄러 일원화) · pg_cron `phonara_auto_liquidations` `_ \* \* \* \*`ACTIVE →`\_run_liquidations_logged()`
+2. ~~**Edge Function `liquidation-worker` 배포 여부**~~ → **`[x]` 미배포 · 의도적** — MCP `list_edge_functions`: ACTIVE 9종(price-feed · crypto-_· usdt-krw-feed · notification-dispatch · pg-bank-webhook · ops-notify) · **`liquidation-worker` absent** · repo `supabase/functions/liquidation-worker` **삭제됨** (`setup/MANUAL_TASKS.md:45` S1 스케줄러 일원화) · pg_cron `phonara_auto_liquidations` `_ \* \* \* \*`ACTIVE →`\_run_liquidations_logged()`
 3. ~~**`funding_rates.rate` 실데이터 값**~~ → **`[x]` 시드 0% · 정산 0건** — MCP `execute_sql`: `funding_rates` **21행** · `rate` non-zero **0** · `updated_at` 일괄 `2026-07-07 17:05:00+00` · `funding_payments` **0건** · pg_cron `trade-funding-accrual` `5 * * * *` ACTIVE → `rpc_run_funding_accrual()` · UI 표시용 rate는 0% 고정 시드
 4. **`rpc_run_open_order_fills` 호출 주체** — 이름 상수만 존재 (`trade-order-states-display-contract.ts:22`) · cron/서버 경로 추정
 5. **fills 테이블 상류 fetch limit** — 패널에 캡 없음 · 쿼리 limit 존재 여부 미확정

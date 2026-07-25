@@ -91,7 +91,7 @@ git status
 
 Batch 11 전까지 옛 SSOT가 **디스크 + `.cursor/rules/*.mdc`** 에 동시 존재. 예: `93-uiux-full-rebuild-v2-execution.mdc` · `91-uiux-worldclass-methodology.mdc` · `00-core.mdc` · `89-beginner-autopilot.mdc` 가 `UIUX_FULL_REBUILD_EXECUTION` · `NEXT_STEP` · `UI_REBUILD_WAVE` · `CURRENT_STATUS` 를 **자동 주입**.
 
-**D0½ 조치 (코드·문서 삭제 없음 · 규칙 파일 추가/편집만):**
+#### D0½ 조치 (코드·문서 삭제 없음 · 규칙 파일 추가/편집만):
 
 ```text
 1) .cursor/rules/00-phase-d-demolition.mdc  (신규 · 필수)
@@ -100,7 +100,7 @@ Batch 11 전까지 옛 SSOT가 **디스크 + `.cursor/rules/*.mdc`** 에 동시 
 
 #### `00-phase-d-demolition.mdc` — 작성 스펙 (D0½ 필수)
 
-**frontmatter (00-core와 동급):**
+#### frontmatter (00-core와 동급):
 
 ```yaml
 ---
@@ -109,7 +109,7 @@ alwaysApply: true
 ---
 ```
 
-**본문에 반드시 포함:**
+#### 본문에 반드시 포함:
 
 - **Implementation SSOT** = `docs/PRODUCT/DEMOLITION_PLAN.md` + `docs/PRODUCT/ADR/000-v5-demolition-first.md` **only**
 - **Phase D 기간 `00-core.mdc` v2 execution read 무효화:**
@@ -140,7 +140,7 @@ apps/web/AGENTS.md · apps/admin/AGENTS.md · supabase/AGENTS.md
   · 옛 UI 가이드·v2 read 목록 제거
 ```
 
-**11½ (Batch 11 DELETE 후):**
+#### 11½ (Batch 11 DELETE 후):
 
 | 대상                                     | 조치                                                                    |
 | ---------------------------------------- | ----------------------------------------------------------------------- |
@@ -281,7 +281,7 @@ scripts/check-ai-reference-legacy.ts  # 기존 파일 편집 (package.json check
 
 `REBUILD_PLAN_v1` · `SURFACE_QUEUE` · `GOVERNANCE`
 
-**검증 (Batch 11 후):**
+#### 검증 (Batch 11 후):
 
 ```bash
 rg "UI_REBUILD_WAVE|MASTER_TODO|UIUX_FULL_REBUILD|desk-surface|DsV2" docs/ \
@@ -339,4 +339,4 @@ rg "UI_REBUILD_WAVE|MASTER_TODO|UIUX_FULL_REBUILD|desk-surface|DsV2" docs/ \
 bun run check:engine-demolition:full
 ```
 
-**PASS → Demolition DONE → STOP**
+#### PASS → Demolition DONE → STOP

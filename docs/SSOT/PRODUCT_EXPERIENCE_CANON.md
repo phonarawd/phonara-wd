@@ -1,5 +1,6 @@
 # Product Experience Canon (Digital Aurora · DA W0)
 
+> **상위:** [`PLATFORM_CONSTITUTION.md`](PLATFORM_CONSTITUTION.md) — Authority Charter (실행 큐 아님)  
 > **상태:** Active SSOT · **날짜:** 2026-07-09  
 > **플랜:** `phase_r_super-app_8bdf2c10` §34 · todo `da-w0-foundation-ssot-bundle` (#185)  
 > **ADR:** [`ADR-009`](../PRODUCT/ADR/009-digital-aurora-brand-dna.md) (Plan 문구 「ADR-004 brand DNA」= 본 결정)  

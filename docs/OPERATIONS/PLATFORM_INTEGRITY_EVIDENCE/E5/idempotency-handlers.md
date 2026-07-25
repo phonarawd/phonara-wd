@@ -17,7 +17,7 @@ place/claim 경로에서 idempotency TOCTOU 후 `unique_violation`이 raw 에러
 | `supabase/tests/pir_idempotency_handlers_test.sql`                | E5-0 functiondef/grants · E5-1 casino place · E5-2 welcome claim · E5-3 credit duplicate       |
 | `supabase/tests/grants_rls_inventory_test.sql`                    | `_pir_game_bet_already_placed` / `_pir_sports_bet_already_placed` REVOKE 핀                    |
 
-**계약**
+#### 계약
 
 | 경로                                           | 동작                                                                                |
 | ---------------------------------------------- | ----------------------------------------------------------------------------------- |

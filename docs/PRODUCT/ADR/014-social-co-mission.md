@@ -29,7 +29,7 @@ E0 Accepted · E6 GATE 후 Track B E7 = 본 ADR + 동일 PR 엔진 (51차 WAVE m
 | Reason      | `co_mission_reward` ∈ `_is_reward_issuance_reason`                      |
 | 영구 제외   | **광고·설문** · co-bet(E10) · mission chain(E10)                        |
 
-**RPCs**
+#### RPCs
 
 | RPC                         | 역할                                           |
 | --------------------------- | ---------------------------------------------- |

@@ -20,10 +20,12 @@ R9 lazy-loading(코드 스플릿)은 empty 원인이 **아니다** — 1-G.2에�
 ## PHON — `rpc_get_candles` 오라클 시드 확인 (Soft Launch 배포 직후 1회)
 
 1. Admin 또는 SQL 조회로 `PHON_USDT` 오라클 캔들 행 수 확인 — 최소 2행 필요(`TRADE_CHART_MOUNT_MIN_CANDLES`).
+
    ```sql
    select count(*) from oracle_candles where symbol = 'PHON_USDT';
    -- 또는 candles 소스 테이블/뷰가 다르면 rpc_get_candles 호출 결과 길이로 확인
    ```
+
 2. 0~1행이면 오라클 시드 크론/워커가 아직 충분히 돌지 않은 상태 — 대기 또는 운영 수동 시드 트리거(엔진 변경 없이, 기존 크론 재실행만).
 3. `/trade`에서 PHON 마켓 선택 시 empty 배지가 `data-empty-reason="oracle-awaiting-seed"`(오라클 캔들 대기 중)로 보이면 **정상 대기 상태** — "시세 피드 불가"로 오인하지 않는다.
 

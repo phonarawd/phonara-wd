@@ -1,5 +1,6 @@
 # Design Principles (D0)
 
+> **상위:** [`PLATFORM_CONSTITUTION.md`](PLATFORM_CONSTITUTION.md) — Authority Charter (실행 큐 아님)  
 > **상태:** Phase R active · DA W0 Accessibility Elevation (2026-07-09)  
 > **Authority:** [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) (Phase R) · [`ADR-009`](../PRODUCT/ADR/009-digital-aurora-brand-dna.md) · [`PRODUCT_EXPERIENCE_CANON.md`](PRODUCT_EXPERIENCE_CANON.md)  
 > **Token SOT:** `apps/web/src/product/tokens/*` (`--ds-*`) · pre-demolition `theme.css` / `@phonara/ui` **복구 금지**  

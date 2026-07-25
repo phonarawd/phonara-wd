@@ -1,13 +1,10 @@
-/\*\*
+# ENGINE_GAP E10 Wallet+Settings UI (`ew-e10-wallet-settings-ui`)
 
-- ENGINE_GAP E10 Wallet+Settings UI (`ew-e10-wallet-settings-ui`)
--
-- > **상태:** `[x]` DONE · **날짜:** 2026-07-12
-- > **플랜:** `phase_r_super-app_8bdf2c10` · todo `ew-e10-wallet-settings-ui`
-- > **선행:** E10 WAVE `ew-e10-platform-engine-wave` `[x]` · Admin KRW proof `[x]` · E8 GATE `[x]`
-- > **후행:** `ew-e10-trust-support-ui`
-- > **코드 계약:** [`ew-e10-wallet-settings-ui-display-contract.ts`](../../apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts)
-  > \*/
+> **상태:** `[x]` DONE · **날짜:** 2026-07-12  
+> **플랜:** `phase_r_super-app_8bdf2c10` · todo `ew-e10-wallet-settings-ui`  
+> **선행:** E10 WAVE `ew-e10-platform-engine-wave` `[x]` · Admin KRW proof `[x]` · E8 GATE `[x]`  
+> **후행:** `ew-e10-trust-support-ui`  
+> **코드 계약:** [`ew-e10-wallet-settings-ui-display-contract.ts`](../../apps/web/src/domain/ew-e10-wallet-settings-ui-display-contract.ts)
 
 ## 범위
 

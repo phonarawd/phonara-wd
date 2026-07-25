@@ -2,7 +2,7 @@
 
 > **상태:** D3 narrative complete (2026-06-30)  
 > **Authority:** [`REBUILD_PLAN_v1.md`](../PRODUCT/REBUILD_PLAN_v1.md) (Phase R) · Decision 013  
-> **Copy tone:** [`UX_WRITING_GUIDE.md`](UX_WRITING_GUIDE.md) · [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md)  
+> **Copy tone:** [`COPYWRITING_CANON.md`](COPYWRITING_CANON.md)  
 > **Catalog:** `packages/i18n/**` · Lovable `apps/web/src/i18n/ko.ts` · `en.ts`  
 > **Global:** [`GLOBAL_EXPANSION.md`](GLOBAL_EXPANSION.md)
 

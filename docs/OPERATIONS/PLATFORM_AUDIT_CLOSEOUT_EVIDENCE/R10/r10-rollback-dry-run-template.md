@@ -28,7 +28,7 @@
 
 ## Notes
 
-_operator notes_
+operator notes (fill in during dry-run)
 
 ## Sign-off
 

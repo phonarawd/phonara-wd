@@ -18,7 +18,7 @@
 | Security advisor ERROR                     | —                                | **0**                 | **PASS**        |
 | `system_readonly`                          | **true** (로컬)                  | **false** (prod)      | **P1 로컬만**   |
 
-**재현 스크립트 (Docker ON 후):**
+#### 재현 스크립트 (Docker ON 후):
 
 ```powershell
 bun run tsx scripts/audit/replay-grants-inventory.ts
@@ -100,14 +100,14 @@ inventory **핀** `_fmt6`, `_fill_house_spot_order`, funding helpers → auth **
 
 ## 4. 로컬 운영 상태 — `system_readonly` (P1 · 로컬 dev)
 
-**로컬 `app_config` (2026-07-07):**
+#### 로컬 `app_config` (2026-07-07):
 
-```
+```text
 system_halt=false
 system_readonly=true
 ```
 
-**`reconciliation_log` 최근 (로컬):**
+#### `reconciliation_log` 최근 (로컬):
 
 | check_type  | currency | is_match | delta        | triggered_halt |
 | ----------- | -------- | -------- | ------------ | -------------- |

@@ -7,7 +7,7 @@
 범위: 돈 · 원장 · 정산 · 권한 · Edge orchestration · 운영 관측성 (UI/프레젠테이션 제외)
 
 > **§35.4 Apex / Migration 정직 (52차 · 소급 금지):** 본 문서 수치(**191**/192 · **99**/99) = **Apex CLOSEOUT 스냅샷 (2026-07-03)**.  
-> **Current disk (2026-07-09):** migrations **211** · SQL tests **117** (Launch E1–E5 · Trade T0–T3 · Phase E · PQA E5 포함).  
+> **Current disk (2026-07-24):** migrations **248** (`bun run check:migrations` lock parity OK). 이전 안내(2026-07-09 **211**)는 당시 스냅샷.  
 > closeout 수치를 현재 gate로 쓰지 말 것 — 정본 표는 Plan §35.4.
 
 **엔진 구현 큐 0** — 이 문서 이후 엔진 코드/RPC/migration 신규 작업 없음. 다음은 Phase D(삭제) · operator gate · Phase R UI만.

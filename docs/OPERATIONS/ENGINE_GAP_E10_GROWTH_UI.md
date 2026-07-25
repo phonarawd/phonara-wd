@@ -1,13 +1,10 @@
-/\*\*
+# ENGINE_GAP E10 Growth UI (`ew-e10-growth-ui`)
 
-- ENGINE_GAP E10 Growth UI (`ew-e10-growth-ui`)
--
-- > **상태:** `[x]` DONE · **날짜:** 2026-07-12
-- > **플랜:** `phase_r_super-app_8bdf2c10` · todo `ew-e10-growth-ui`
-- > **선행:** `ew-e10-trust-support-ui` `[x]` · E9 engine + GATE `[x]`
-- > **후행:** `ew-e10-gate-platform-world-class`
-- > **코드 계약:** [`ew-e10-growth-ui-display-contract.ts`](../../apps/web/src/domain/ew-e10-growth-ui-display-contract.ts)
-  > \*/
+> **상태:** `[x]` DONE · **날짜:** 2026-07-12  
+> **플랜:** `phase_r_super-app_8bdf2c10` · todo `ew-e10-growth-ui`  
+> **선행:** `ew-e10-trust-support-ui` `[x]` · E9 engine + GATE `[x]`  
+> **후행:** `ew-e10-gate-platform-world-class`  
+> **코드 계약:** [`ew-e10-growth-ui-display-contract.ts`](../../apps/web/src/domain/ew-e10-growth-ui-display-contract.ts)
 
 ## 범위
 

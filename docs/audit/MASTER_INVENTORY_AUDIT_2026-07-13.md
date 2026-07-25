@@ -1,10 +1,10 @@
-﻿<!-- Generated from Master Project Inventory Audit plan · 2026-07-13 · do not treat as Plan YAML -->
+﻿# PHONARA Audit Program
+
+<!-- Generated from Master Project Inventory Audit plan · 2026-07-13 · do not treat as Plan YAML -->
 
 > **정본:** Phase 1 Repository Inventory · 감사 기준일 2026-07-13  
 > **부록:** [REPO_TREE_APPENDIX.txt](./REPO_TREE_APPENDIX.txt) · [KNIP_DEADCODE_REPORT.md](./KNIP_DEADCODE_REPORT.md) · [RPC_USAGE_MATRIX.md](./RPC_USAGE_MATRIX.md) · [PER_PAGE_UI_MATRIX.md](./PER_PAGE_UI_MATRIX.md)  
 > **재생성:** `bun run scripts/audit/generate-repo-tree-appendix.ts` · `generate-rpc-usage-matrix.ts` · `generate-per-page-ui-matrix.ts` · `bunx knip`
-
-# PHONARA Audit Program
 
 **Phase 1:** Master Project Inventory Audit (본 문서)  
 **Phase 2:** World-Class Quality Audit — Plan 문서 하단 (본 export는 §1–§25 Inventory만)
@@ -12,6 +12,10 @@
 **감사 기준일:** 2026-07-13  
 **증거 범위:** 로컬 git 워킹트리 (`c:\Users\PC\Desktop\phonara-gb`)  
 **제외:** `node_modules/`, `dist/`, 원격 Supabase 적용 상태, 프로덕션 런타임 동작
+
+> **Errata (2026-07-24 · `doc-hygiene-batch`):** 본문 migration 수치(**239** 등)는 2026-07-13 감사 스냅샷.  
+> **현재 디스크:** `supabase/migrations/*.sql` **248** · `bun run check:migrations` lock parity OK.  
+> 아래 표의 239를 “현재 개수”로 읽지 말 것.
 
 ---
 
@@ -36,7 +40,7 @@ PHONARA는 **Bun workspaces 모노레포**로, **React 19 + Vite 8 + TanStack Ro
 | 배포                | Cloudflare Pages (`wrangler.toml`, `wrangler.admin.toml`)                                                                                     |
 | Knip unused files   | **3** — [KNIP_DEADCODE_REPORT.md](./KNIP_DEADCODE_REPORT.md)                                                                                  |
 
-**핵심 아키텍처:**
+#### 핵심 아키텍처:
 
 ```mermaid
 flowchart TB
@@ -81,7 +85,7 @@ flowchart TB
 
 ### 2.2 Workspace 의존 그래프
 
-```
+```text
 phonara-gb (root)
 ├── apps/web (@phonara/web)
 │   └── depends: @phonara/* packages, @supabase/supabase-js, tanstack, zustand, pixi.js, lightweight-charts
@@ -116,7 +120,7 @@ phonara-gb (root)
 
 **Verified appendix:** 전체 폴더 트리(maxDepth 6) — [REPO_TREE_APPENDIX.txt](./REPO_TREE_APPENDIX.txt) · machine-readable [REPO_TREE_APPENDIX.json](./REPO_TREE_APPENDIX.json) (dirs=310 · files=2,833). 아래는 핵심 2~4 depth 요약 트리입니다.
 
-```
+```text
 phonara-gb/
 ├── apps/
 │   ├── web/src/
@@ -139,7 +143,7 @@ phonara-gb/
 │       └── domain/          [20 admin contracts]
 ├── packages/ [9 workspaces]
 ├── supabase/
-│   ├── migrations/ [239]
+│   ├── migrations/ [239 → 현재 248, 상단 Errata]
 │   ├── tests/ [142]
 │   └── functions/ [11 edge functions]
 ├── scripts/ [lib/, pentest/, sports-*, audit/, check/]
@@ -190,7 +194,7 @@ phonara-gb/
 
 **Shell hierarchy** — [`apps/web/src/routes/__root.tsx`](apps/web/src/routes/__root.tsx):
 
-```
+```text
 AuthProvider → PwaShell → [AppShell | MarketingShell | ContentShell] → <Outlet/>
 ```
 
@@ -202,7 +206,7 @@ AuthProvider → PwaShell → [AppShell | MarketingShell | ContentShell] → <Ou
 
 **Nested layouts (Outlet 있음):** `/wallet`, `/wallet/deposit`, `/wallet/withdraw`, `/trade`, `/sports`, `/casino`, `/onboarding`
 
-**Dynamic routes:**
+#### Dynamic routes:
 
 - `/games/$gameCode` — 12 casino slugs (surface-domain-boundary.ts)
 - `/sports/fixture/$fixtureId`
@@ -371,7 +375,7 @@ AuthProvider → PwaShell → [AppShell | MarketingShell | ContentShell] → <Ou
 | Enums                    |         **~30+** | `Database["public"]["Enums"]` block (currency, game_code, admin_role, etc.)                    |
 | Client `rpc_*` in types  |          **256** | [RPC_USAGE_MATRIX.md](./RPC_USAGE_MATRIX.md)                                                   |
 | Internal `_*` helpers    |         **many** | revoked from anon per migration policy                                                         |
-| Migrations               |          **239** | `supabase/migrations/*.sql`                                                                    |
+| Migrations               | **239** (당시) / **248** (2026-07-24) | `supabase/migrations/*.sql` · `check:migrations`                                               |
 | SQL integration tests    |          **142** | `supabase/tests/*.sql`                                                                         |
 | Seed data                | **NOT VERIFIED** | no dedicated seed dir found; tests use inline setup                                            |
 
@@ -427,7 +431,7 @@ AuthProvider → PwaShell → [AppShell | MarketingShell | ContentShell] → <Ou
 | ---------------------- | --------------------------------------------------------------------- |
 | JWT (Supabase)         | Implemented — `auth-context.tsx`                                      |
 | RBAC (Admin)           | `admin-rbac.ts`, `useAdminOperatorRbac.ts`, `admin_role_grants` table |
-| RLS                    | 239 migrations, `grants_rls_inventory_test.sql`                       |
+| RLS                    | 239 migrations (2026-07-13) / **248** (2026-07-24), `grants_rls_inventory_test.sql` |
 | Service role isolation | Rules forbid `VITE_*` service key                                     |
 | MFA                    | Admin `/mfa/*`, `admin_mfa_aal2_test.sql`                             |
 | SIWE                   | Edge function `siwe-auth`                                             |
@@ -568,7 +572,7 @@ Items referenced in docs/rules but not fully verifiable in code:
 | DB tables (types)             |                ~136 |
 | DB views (types)              |                   4 |
 | Types `rpc_*`                 | 256 (apps used 144) |
-| Migrations                    |                 239 |
+| Migrations                    | 239 (당시) / **248** (2026-07-24) |
 | SQL tests                     |                 142 |
 | Edge functions                |                  11 |
 | Vitest files                  |                ~644 |
@@ -608,7 +612,7 @@ Generators: `scripts/audit/generate-repo-tree-appendix.ts` · `generate-rpc-usag
 - `node_modules` 및 gitignored `dist/` 내부
 - Operator 브라우저 수동 증거 (PLATFORM_AUDIT R\* templates)
 
-**재현 명령:**
+#### 재현 명령:
 
 ```powershell
 bun run scripts/audit/generate-repo-tree-appendix.ts

@@ -1,11 +1,10 @@
 # PHONARA 프로젝트 DNA 그라운드 트루스 감사
 
-> **감사일:** 2026-07-15 · **모드:** READ-ONLY (파일 수정·테스트 실행 없음)
-> **Branch:** `phase-r/world-class-presentation-2026-07-15` · **HEAD:** `06450b6e`
-
-> **방법론:** 9개 read-only 병렬 서브에이전트 역공학 조사 + 직접 검증(스크립트 카운트 재확인 · `git status` 재확인 · RPC 카운트 재확인). 파일 수정·테스트 실행·마이그레이션 적용 **0건**.
-> **인용 규칙:** 모든 판정은 실제 파일 경로(가능하면 file:line) 근거. 확인 불가 항목은 추측하지 않고 명시적으로 **미확인(NOT VERIFIED)** 표기.
-> **범위:** operator 요청 "PHONARA PROJECT DNA DISCOVERY AUDIT" Phase 0(그라운드 트루스) ~ Phase 10(기술적 건강도) 전 영역.
+> **감사일:** 2026-07-15 · **모드:** READ-ONLY (파일 수정·테스트 실행 없음)  
+> **Branch:** `phase-r/world-class-presentation-2026-07-15` · **HEAD:** `06450b6e`  
+> **방법론:** 9개 read-only 병렬 서브에이전트 역공학 조사 + 직접 검증(스크립트 카운트 재확인 · `git status` 재확인 · RPC 카운트 재확인). 파일 수정·테스트 실행·마이그레이션 적용 **0건**.  
+> **인용 규칙:** 모든 판정은 실제 파일 경로(가능하면 file:line) 근거. 확인 불가 항목은 추측하지 않고 명시적으로 **미확인(NOT VERIFIED)** 표기.  
+> **범위:** operator 요청 "PHONARA PROJECT DNA DISCOVERY AUDIT" Phase 0(그라운드 트루스) ~ Phase 10(기술적 건강도) 전 영역.  
 > **선행 감사와의 관계:** 본 문서는 `docs/audit/SYSTEM_AUDIT_2026-07-13/`, `docs/audit/ZERO_ASSUMPTION_FULL_AUDIT_2026-07-13.md`, `docs/audit/visual-ux-2026-07-11/`, `docs/audit/MASTER_INVENTORY_AUDIT_2026-07-13.md`를 **1차 근거로 재활용**하고, 코드 직접 확인으로 재검증한 뒤 통합한 결과다. 기존 audit을 대체하지 않으며, 각 절에서 상충/노후화 지점을 명시한다.
 
 ## 목차
@@ -110,7 +109,7 @@ CREATE TRIGGER on_auth_user_created
 아래 표의 모든 항목은 canon/ADR/rule 파일에 명시적으로 진술되어 있고, 가능한 경우 코드로 대조 검증했다.
 
 | 원칙 | 근거 문서 | 코드 강제 여부 |
-|---|---|---|
+| --- | --- | --- |
 | **UI는 금액을 재계산하지 않는다.** 페이오프·PnL·오즈·수수료·강제청산·정산은 RPC/SQL 전용이며 UI는 값을 표시만 한다. | `docs/SSOT/ENGINE_BOUNDARY.md` | `packages/game-engine/src/lib/quantize.ts`의 `quantize6()`는 JS `number`가 들어오면 런타임에 throw; `trading-engine`/`sportsbook-engine` 패키지는 "preview/validation only"라는 doc-comment를 명시적으로 보유. |
 | **금액은 Decimal, float 금지; 원장은 append-only.** | `docs/SSOT/MONEY_CONSERVATION_FORMULA.md`, ADR-0006(`wallet-sigma-rule`) | `wallet_ledger` 테이블에 `UPDATE`/`DELETE`에 대한 `CREATE RULE ... DO INSTEAD NOTHING`이 문자 그대로 존재 — 앱 컨벤션이 아니라 DB 강제. |
 | **보존 불변식: 통화별 Σ=0, 범위 한정.** | `docs/SSOT/MONEY_CONSERVATION_FORMULA.md`: `GRAND_TOTAL(c) = Σ wallets(available+locked) + Σ system_accounts.balance`, 불변식은 `c ∈ {PHON, USDT}`에만 적용 — **KRW, 미결제 선물 PnL, 미체결 주문, 미정산 스테이킹은 정산 전까지 명시적으로 제외.** | `supabase/tests/`의 142개 SQL 통합 테스트 중 다수가 `*_conservation_test.sql`. |
@@ -152,7 +151,7 @@ CREATE TRIGGER on_auth_user_created
 저장소는 `docs/` 아래 **550개 이상**의 마크다운/yaml 파일을 보유한 이례적으로 큰 문서 집합을 갖고 있으며, 5개 계층으로 조직되어 있다.
 
 | 계층 | 위치 | 개수(검증됨) | 역할 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **정본(SSOT)** | `docs/SSOT/*.md` | 31개 | 도메인별 UX 법 + 크로스컷팅 canon(머니 공식, 엔진 경계, 디자인 원칙, i18n, CI 게이트 정본, deprecated-doc denylist). |
 | **제품 계획 + ADR** | `docs/PRODUCT/*.md`, `docs/PRODUCT/ADR/*.md`, `docs/ADR/*.md` | 10 + 23 + 6 = 39개 | 재구축 계획, demolition 계획, 디자인 헌장, 랜딩 스펙, 총 29개 아키텍처 결정 기록. |
 | **Operations** | `docs/OPERATIONS/**` | md 약 77개 + yaml 8개 + 증거 서브폴더 약 89개 ≈ **170개 이상** | 런북, release-freeze/SLO/RACI/KPI 거버넌스, 그리고 3개의 독립된 증거 트레일(Platform Audit R0–R12, Platform Integrity Remediation, Trade Desk Zero-Defect). |
@@ -173,7 +172,7 @@ CREATE TRIGGER on_auth_user_created
 ## 6. 기술 스택
 
 | 계층 | 기술 | 검증된 세부사항 |
-|---|---|---|
+| --- | --- | --- |
 | **모노레포/패키지 매니저** | Bun workspaces | `apps/*`, `packages/*`; 패키지 9개, 앱 2개; TS project references(`tsc -b`); 루트 `package.json` 스크립트 **232개**(직접 grep 카운트로 검증 — 서브에이전트 최초 보고치 100은 오류). |
 | **프론트엔드 프레임워크** | React 19.2.7 + Vite 8.0.16 + TypeScript 6.0.3 | 두 앱 모두 동일 버전. |
 | **라우팅** | TanStack Router(파일 기반, `autoCodeSplitting: true`) | 92개 등록 라우트 ID(`apps/web/src/routeTree.gen.ts`, 자동생성). |
@@ -244,7 +243,7 @@ apps/admin  → i18n, money, shared-types
 `apps/web/src/product/tokens/` 아래 실제로 규율 있는 토큰 우선 디자인 시스템이 존재한다 — **13개 파일**, Tailwind config 파일은 전혀 없음(순수 CSS-first Tailwind v4, `@theme inline` 경유).
 
 | 시스템 | 검증된 세부사항 |
-|---|---|
+| --- | --- |
 | **토큰** | `colors.css`, `spacing.css`, `elevation.css`, `layout.css`, `motion.css`, `fonts.css`, `theme.css`(Tailwind 브릿지), `domain-card-personalities.css`, `brand-elevation.css`, `signature-surfaces.css`, `viewport-contract.ts`/`motion.ts`/`index.ts`. **`--ds-*` 고유 커스텀 속성 약 112개.** |
 | **색상** | CSS `light-dark()`를 통한 전면 OKLCH — SOT에는 hex/RGB가 없으며, 예외는 4개의 고정 브랜드축 hex 값뿐(명시적 예외, Quad Stream 로더 전용). |
 | **타이포그래피** | 자체 호스팅 가변 폰트 3종 — Pretendard Variable(sans/한국어 인지), Space Grotesk Variable(display), JetBrains Mono Variable(money) — 전부 커밋된 `.woff2` 파일로 실존 확인. 9단계 fluid `clamp()` 스케일; 한국어는 더 느슨한 line-height(1.625 vs 1.5)와 더 가벼운 heading weight(600 vs 700). |
@@ -270,7 +269,7 @@ apps/admin  → i18n, money, shared-types
 ## 9. 컴포넌트 시스템
 
 | 계층 | 개수(검증됨) | 성격 |
-|---|---|---|
+| --- | --- | --- |
 | `apps/web/src/product/surfaces/` | 27개 도메인 폴더, **약 191개 non-test 파일**(약 79개가 `docs/audit/PER_PAGE_UI_MATRIX.md`의 좁은 정의 기준 라우트-마운트 "page"; 나머지는 같은 폴더 안의 panel/form/banner) | 도메인 우선 조직: account, auth, casino, earn, events, games, home, install, landing, legal, login, marketing, notifications, onboarding, referral, reset-password, rewards, settings, share, signup, sports, staking, tier, trade, verify-email, wallet. |
 | `apps/web/src/product/primitives/` | **약 33–35개 컴포넌트** | shadcn/ui 스타일 세트(Button, Card, Dialog, Sheet, Input, Select, Slider, Switch, Tabs, Tooltip, Popover, DropdownMenu, Skeleton, ToastZone, EmptyState, ZeroBalanceState, ErrorPanel, ConfirmDialog, ProgressRing, MissionCard, RoutineCard, Text, HelpTip, CollapsibleSection, SpendCurrencySelector, MoneyDisplay(+fiat-hint), StatusBadge, IconButton, BrandMark, DomainEmptyMark, QuadStreamLoading, HowItWorks, TradeConfirmSettingsLink). **범용 Table 프리미티브 없음** — web에는 `@tanstack/react-table` 의존성 자체가 없음. |
 | `apps/web/src/domain/` | **410개 파일**(약 204개 root, 그중 약 192개가 `*-display-contract.ts` 패턴; 206개가 `__tests__/`) | "display contract"란 typed 라우트/상태 상수 + i18n-key 전용 빌더 함수 + self-check assertion 함수의 조합이며, 데이터 페칭/RPC 계층이 아님 — 금액 관련 카피/구조를 선언적이고 test-locked 상태로 유지하며, 실데이터를 다루는 `features/*` 컨트롤러와 분리된다. |
@@ -282,6 +281,7 @@ apps/admin  → i18n, money, shared-types
 **내비게이션/셸(§12에서 상세):** `AppShell`은 `TopBar` + 선택적 데스크톱 사이드레일(Earn/Trade만) + `DomainSubnav`(모바일 전용, trade/sports/casino/wallet) + content + `BottomNav`(모바일 전용, 5탭)로 구성. `NovaMobileAppBar`는 코드에 **존재하지 않는다**(rule 파일 안의 역사적 언급뿐). Admin은 완전히 별도의 셸(`admin-shell.tsx` + RBAC-필터링 사이드바 `admin-nav.tsx`)을 가짐 — web의 `AppShell`과 구조적으로 무관.
 
 **재사용/결합/중복:**
+
 - **두 앱 사이에 공유 UI 패키지가 전혀 없다** — 프리미티브, 다이얼로그, 시트, 카드가 앱마다 완전히 중복되거나 부재하며 공유되지 않는다. 결합은 `@phonara/*` 엔진/타입/i18n 계층으로만 한정.
 - **역사적으로 확인된 중복 1건, 이미 수정됨**: admin은 이전에 여러 데스크에 걸쳐 로컬 table/`LoadingTable` 구현을 중복 보유했으나, 단일 `AdminTable` 프리미티브로 통합됨(2026-07-11, 자체 domain contract `admin-table-dedup-display-contract.ts`로 추적).
 - **버전 drift 1건**: `zod` `4.4.3`(web) vs `3.25.67`(admin) — 동일 라이브러리, 다른 major 버전.
@@ -388,7 +388,7 @@ apps/admin  → i18n, money, shared-types
 실제로 코드 또는 CI에 의해 **강제되는**(단순히 문서화된 것이 아니라) 제약사항.
 
 | 제약 | 강제 메커니즘 |
-|---|---|
+| --- | --- |
 | 단일 Supabase 프로젝트(`yocjhjsdwoijfdrehzoq`) — 다른 프로젝트는 절대 접근 금지 | `prod-apply-deny.ts` hook이 `project_id`가 불일치하는 모든 MCP 호출을 차단; `scripts/push-pending-remote-migrations.ts`가 ref를 하드코딩. |
 | 엔진 freeze — 신규 마이그레이션/RPC 기능 금지, 회귀 수정만 | `scripts/check-ai-reference-legacy.ts`가 삭제된 실행 문서 참조를 차단; 신규 마이그레이션 *파일* 자체를 막는 하드 코드 게이트는 발견되지 않음 — PR 리뷰 레벨의 사람/에이전트 규율에 의존(하드 블록 아님). |
 | 금액은 Decimal-only; 원장은 append-only; Σ=0 보존(PHON/USDT 범위) | `wallet_ledger`의 UPDATE/DELETE에 대한 DB 레벨 `CREATE RULE ... DO INSTEAD NOTHING`; `game-engine`의 `quantize6()` 런타임 타입 가드; SQL 보존 테스트 142개. |
@@ -432,4 +432,3 @@ apps/admin  → i18n, money, shared-types
 PHONARA는 초기 발견 단계의 프로젝트가 아니다 — **기능적으로 완성되어 있고, 스스로를 감사하는 습관을 가진, 출시 직전 단계의 플랫폼**이며, 엔진은 의도적으로 동결되었고 프레젠테이션 계층은 이미 한 번 완전히 철거된 뒤 상당 부분 재구축되었다. 이 코드베이스를 파악하는 누구에게든 가장 중요한 사실은, **"우리가 지금 어디에 있는가"를 서술하는 3개 문서가 정도의 차이로 낡아 있을 뿐 사실의 모순은 아니라는 점**이다: `.cursorrules`는 2026-07-04 시점의 마일스톤을 서술하고, `AGENTS.md`는 그보다 며칠 뒤의 시점을, 심지어 가장 최신이자 가장 엄격한 감사(2026-07-13)조차 자신의 하위 형제 파일보다 하루 낡았다. 저장소 안에서 실질적으로 가장 신선한 진실의 원천은 `docs/SSOT/ACTIVE_WORK_SSOT.md`의 *최상단*을 실제 git 상태와 함께 읽는 것이며, 둘 다 이 감사 시점에 진행 중인 같은 날짜의 카지노 UX 정비 작업을 보여준다.
 
 문서 신선도라는 잡음 아래, 실제 엔지니어링은 일관되게 엄격하다: Decimal-only 금액이 타입 시스템과 데이터베이스 양쪽 레벨에서 동시에 강제되고, append-only 원장은 관례가 아니라 데이터베이스 규칙으로 강제되며, 도메인 격리는 코드로 검사되고, 실제 실행 가능한(단순 문서화가 아닌) permission/hook 계층이 존재하며, 디자인 시스템은 진짜 토큰 규율을 갖는다. 제품의 실제 현재 launch 장애물은 **operator가 소유한 프로세스와 일정 단계**다(소크 기간, 서명, 한 번도 실행된 적 없는 DR 훈련, 유료 Supabase 티어 업그레이드) — **미해결된 코드 결함이 아니다.** 코드 레벨 격차가 존재하는 곳은 좁고 구체적이며, 이미 저장소 자체의 이전 감사들이 대부분 스스로 식별해 놓았다(release 게이트의 대소문자 구분 격차, CI에 연결되지 않은 design-token 게이트, dead-code 리포트의 거짓 remediation 주장 1건, 데스크톱 하단내비에 대한 미해결 live-render 불일치). 이것이 그라운드 트루스다: 출시까지 마지막 한 걸음이 대부분 operator 게이트로 막혀 있는, 근본이 의문시되는 시스템이 아니라 성숙하고 잘 계측된 플랫폼이라는 것.
-

@@ -1,5 +1,6 @@
 # PHONARA Product Operating System (POS)
 
+> **상위:** [`PLATFORM_CONSTITUTION.md`](../SSOT/PLATFORM_CONSTITUTION.md) — Authority Charter (실행 큐 아님)  
 > **상태:** Phase 0 skeleton · **동결:** 2026-07-05  
 > **범위:** 랜딩 CVR pass · Product OS 문서 계층 정본  
 > **실행 큐:** [`docs/SSOT/ACTIVE_WORK_SSOT.md`](../SSOT/ACTIVE_WORK_SSOT.md) · [`REBUILD_PLAN_v1.md`](REBUILD_PLAN_v1.md)  

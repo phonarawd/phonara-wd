@@ -3,6 +3,12 @@
 > **Active execution:** [`SSOT/ACTIVE_WORK_SSOT.md`](SSOT/ACTIVE_WORK_SSOT.md) only  
 > **Frozen / denylist:** [`SSOT/DEPRECATED_DOC_DENYLIST.md`](SSOT/DEPRECATED_DOC_DENYLIST.md)
 
+## Authority Charter (권한 서열 · 실행 큐 아님)
+
+| Doc                                                              | Role                                                                                                       |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| [`SSOT/PLATFORM_CONSTITUTION.md`](SSOT/PLATFORM_CONSTITUTION.md) | 권한 서열 · non-negotiable index · Authority map — **실행 큐 아님**, `ACTIVE_WORK_SSOT.md`를 대체하지 않음 |
+
 ## Active (AI implementation read)
 
 | Doc                                                        | Role                                     |
@@ -64,7 +70,8 @@
 | [`audit/PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md`](audit/PLATFORM_AUDIT_C_SURFACE_CONTROLS_2026-07-08.md) | Section C — surface/dead control             |
 | [`audit/PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md`](audit/PLATFORM_AUDIT_D_CONFIG_STATE_2026-07-08.md)         | Section D — app_config/ops                   |
 | [`audit/PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md`](audit/PLATFORM_AUDIT_E_SEVERITY_REPORT_2026-07-08.md)   | **Section E — P0–P3 결함 대장**              |
-| [`audit/visual-ux-2026-07-11/README.md`](audit/visual-ux-2026-07-11/README.md)                                   | Visual/UX Director 입력 팩 · 스크린샷 스키마 |
+| [`audit/visual-ux-2026-07-25-phase6-closeout/README.md`](audit/visual-ux-2026-07-25-phase6-closeout/README.md) | **Phase 6 closeout** 4-viewport 증거 · Release Checklist (시각 사인오프 정본) |
+| [`audit/visual-ux-2026-07-11/README.md`](audit/visual-ux-2026-07-11/README.md)                                   | Visual/UX Director 1차 입력 팩 · **superseded** by 2026-07-25 Phase 6 pack |
 
 재현: `bun run audit:pqa-c` · `bun run audit:pqa-d` · `bun run check:engine-foundation-parity`
 

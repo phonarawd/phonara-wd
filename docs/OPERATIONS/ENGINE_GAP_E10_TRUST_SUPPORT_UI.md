@@ -1,13 +1,10 @@
-/\*\*
+# ENGINE_GAP E10 Trust+Support UI (`ew-e10-trust-support-ui`)
 
-- ENGINE_GAP E10 Trust+Support UI (`ew-e10-trust-support-ui`)
--
-- > **상태:** `[x]` DONE · **날짜:** 2026-07-12
-- > **플랜:** `phase_r_super-app_8bdf2c10` · todo `ew-e10-trust-support-ui`
-- > **선행:** `ew-e10-wallet-settings-ui` `[x]` · E9 GATE `[x]` · E9 Admin support `[x]`
-- > **후행:** `ew-e10-growth-ui`
-- > **코드 계약:** [`ew-e10-trust-support-ui-display-contract.ts`](../../apps/web/src/domain/ew-e10-trust-support-ui-display-contract.ts)
-  > \*/
+> **상태:** `[x]` DONE · **날짜:** 2026-07-12  
+> **플랜:** `phase_r_super-app_8bdf2c10` · todo `ew-e10-trust-support-ui`  
+> **선행:** `ew-e10-wallet-settings-ui` `[x]` · E9 GATE `[x]` · E9 Admin support `[x]`  
+> **후행:** `ew-e10-growth-ui`  
+> **코드 계약:** [`ew-e10-trust-support-ui-display-contract.ts`](../../apps/web/src/domain/ew-e10-trust-support-ui-display-contract.ts)
 
 ## 범위
 

@@ -71,8 +71,8 @@ bun run gate:phase-r
 # artifact: gate-manifest/phase-r-manifest.json
 ```
 
-3. `test:e2e` full suite green (master plan: ~171 spec · pwa-install/push 포함)
-4. CI artifact로 manifest + playwright-report 보존 (repo 커밋 금지)
+1. `test:e2e` full suite green (master plan: ~171 spec · pwa-install/push 포함)
+2. CI artifact로 manifest + playwright-report 보존 (repo 커밋 금지)
 
 완료 후:
 

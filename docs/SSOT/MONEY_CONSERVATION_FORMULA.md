@@ -41,6 +41,10 @@ GRAND_TOTAL(c) =
 | staking principal                  | stake RPC가 wallet→staking ledger로 이동 · **grand total 불변**             |
 | funding 미정산 accrual             | 정산 전 internal ledger · settlement RPC 시 grand total 불변                |
 
+### 1.3-A KRW 범위 (의도적 제외 · Σ 확장 아님)
+
+현재 Wallet Conservation SSOT assert 통화 = {PHON, USDT}. KRW는 스키마 1급이나 본 Σ 문서·conservation_test 범위 밖. KRW Σ 확장은 별도 엔진 트랙+operator RED STOP. (ADR-0006 [`docs/ADR/0006-wallet-sigma-rule.md`](../ADR/0006-wallet-sigma-rule.md) 교차 참조)
+
 ### 1.4 Σ assert 유효 시점 (non-waivable)
 
 | 상태                                           | Σ=0 assert                                                  |
