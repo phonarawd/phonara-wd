@@ -20,12 +20,14 @@ const SAMPLE_NAV: NavEntry[] = [
     labelKey: 'admin.nav.earn',
     to: '/earn',
     children: [
+      { kind: 'leaf', labelKey: 'admin.nav.rewards', to: '/earn/rewards' },
       { kind: 'leaf', labelKey: 'admin.nav.earnActivity', to: '/earn/activity' },
       { kind: 'leaf', labelKey: 'admin.nav.referrals', to: '/earn/referrals' },
     ],
   },
   { kind: 'leaf', labelKey: 'admin.nav.team', to: '/team' },
   { kind: 'leaf', labelKey: 'admin.nav.ops', to: '/ops' },
+  { kind: 'leaf', labelKey: 'admin.nav.support', to: '/support' },
   { kind: 'leaf', labelKey: 'admin.nav.mfa', to: '/mfa/policy' },
 ];
 
@@ -59,8 +61,18 @@ describe('filterAdminNavEntries (H-07)', () => {
     expect(hrefs).toContain('/deposits');
     expect(hrefs).toContain('/withdrawals');
     expect(hrefs).toContain('/earn/activity');
+    expect(hrefs).toContain('/earn/rewards');
     expect(hrefs).not.toContain('/team');
     expect(hrefs).not.toContain('/earn/referrals');
+  });
+
+  it('keeps support withdrawals desk · drops team', () => {
+    const hrefs = leafHrefs('support');
+    expect(hrefs).toContain('/support');
+    expect(hrefs).toContain('/withdrawals');
+    expect(hrefs).toContain('/queues');
+    expect(hrefs).not.toContain('/team');
+    expect(hrefs).not.toContain('/deposits');
   });
 
   it('owner sees team and mfa policy', () => {

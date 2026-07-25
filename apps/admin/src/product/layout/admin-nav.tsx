@@ -56,17 +56,27 @@ const ADMIN_NAV: NavEntry[] = [
   { kind: 'leaf', labelKey: 'admin.nav.ops', to: '/ops' },
 ];
 
-/** Mobile quick subset — still filtered by the same RBAC predicate. */
+/**
+ * Mobile quick subset — still filtered by the same RBAC predicate.
+ * Includes role-primary desks (/support · /risk · /team) so support/risk/owner
+ * can reach their primary work below the lg breakpoint (ADMIN_UX_CANON §6).
+ */
 const MOBILE_QUICK_NAV: NavLeaf[] = [
   { kind: 'leaf', labelKey: 'admin.nav.overview', to: '/', end: true },
   { kind: 'leaf', labelKey: 'admin.nav.queues', to: '/queues' },
   { kind: 'leaf', labelKey: 'admin.nav.deposits', to: '/deposits' },
   { kind: 'leaf', labelKey: 'admin.nav.withdrawals', to: '/withdrawals' },
+  { kind: 'leaf', labelKey: 'admin.nav.support', to: '/support' },
+  { kind: 'leaf', labelKey: 'admin.nav.risk', to: '/risk' },
   { kind: 'leaf', labelKey: 'admin.nav.earn', to: '/earn' },
   { kind: 'leaf', labelKey: 'admin.nav.users', to: '/users' },
+  { kind: 'leaf', labelKey: 'admin.nav.team', to: '/team' },
   { kind: 'leaf', labelKey: 'admin.nav.audit', to: '/audit' },
   { kind: 'leaf', labelKey: 'admin.nav.ops', to: '/ops' },
 ];
+
+const NAV_LINK_BASE =
+  'block min-h-(--ds-touch-target-min) rounded-(--ds-radius-md) px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus) whitespace-nowrap';
 
 function normalizePath(pathname: string): string {
   if (pathname.length > 1 && pathname.endsWith('/')) {
@@ -101,12 +111,11 @@ function NavLinkItem({
     <Link
       to={to}
       className={cn(
-        'block rounded-md px-3 py-2 text-sm font-medium transition-colors',
+        NAV_LINK_BASE,
         nested && 'pl-6',
         active
           ? 'bg-accent/10 text-accent'
-          : 'text-foreground-muted hover:bg-surface-elevated hover:text-foreground',
-        'whitespace-nowrap',
+          : 'text-foreground-muted hover:bg-surface-hover hover:text-foreground',
       )}
       aria-current={active ? 'page' : undefined}
     >
@@ -122,23 +131,26 @@ function NavGroupItem({ group }: { group: NavGroup }) {
     (group.to ? isPathActive(pathname, group.to, group.end) : false) ||
     group.children.some((child) => isPathActive(pathname, child.to, child.end));
 
+  const headerClass = cn(
+    'block min-h-(--ds-touch-target-min) rounded-(--ds-radius-md) px-3 py-2 text-sm font-semibold transition-colors',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ds-focus)',
+  );
+
   return (
     <div className="space-y-1">
       {group.to ? (
         <Link
           to={group.to}
           className={cn(
-            'block rounded-md px-3 py-2 text-sm font-semibold transition-colors',
-            groupActive ? 'bg-accent/10 text-accent' : 'text-foreground hover:bg-surface-elevated',
+            headerClass,
+            groupActive ? 'bg-accent/10 text-accent' : 'text-foreground hover:bg-surface-hover',
           )}
           aria-current={groupActive ? 'page' : undefined}
         >
           {t(group.labelKey)}
         </Link>
       ) : (
-        <p className="text-foreground-muted px-3 py-1 text-xs font-semibold tracking-wide uppercase">
-          {t(group.labelKey)}
-        </p>
+        <p className={cn(headerClass, 'text-foreground-muted')}>{t(group.labelKey)}</p>
       )}
       <div className="space-y-0.5">
         {group.children.map((child) => (

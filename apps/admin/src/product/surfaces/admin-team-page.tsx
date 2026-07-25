@@ -156,7 +156,7 @@ export function AdminTeamPage() {
 
   if (!allowed) {
     return (
-      <div className="flex flex-col gap-6" data-testid="admin-team-page-forbidden">
+      <div className="flex flex-col gap-ds-8" data-testid="admin-team-page-forbidden">
         <EmptyState
           title={t('admin.team.forbidden.title')}
           description={t('admin.team.forbidden.body')}
@@ -170,7 +170,7 @@ export function AdminTeamPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6" data-testid="admin-team-page">
+    <div className="flex flex-col gap-ds-8" data-testid="admin-team-page">
       <section className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-2">
           <h2 className="text-foreground m-0 text-2xl font-semibold tracking-tight">

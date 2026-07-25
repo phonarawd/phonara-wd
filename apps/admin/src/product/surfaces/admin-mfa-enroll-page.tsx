@@ -99,7 +99,7 @@ export function AdminMfaEnrollPage() {
               <img
                 src={engine.enroll.qrCode}
                 alt={t('admin.mfa.enroll.qrAlt')}
-                className="border-border mx-auto h-48 w-48 rounded-md border bg-white p-2"
+                className="mx-auto h-48 w-48 rounded-(--ds-radius-md) border border-line bg-white p-2"
                 data-testid="admin-mfa-enroll-qr"
               />
             </div>

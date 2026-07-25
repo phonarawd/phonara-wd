@@ -196,7 +196,16 @@ export const ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST: Readonly<
     '/team',
     '/support',
   ],
-  finance: ['/', '/queues', '/deposits', '/withdrawals', '/audit', '/ops', '/earn/activity'],
+  finance: [
+    '/',
+    '/queues',
+    '/deposits',
+    '/withdrawals',
+    '/audit',
+    '/ops',
+    '/earn/activity',
+    '/earn/rewards',
+  ],
   risk: [
     '/',
     '/queues',
@@ -208,7 +217,7 @@ export const ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST: Readonly<
     '/casino',
     '/ops',
   ],
-  support: ['/', '/queues', '/users', '/support', '/cms'],
+  support: ['/', '/queues', '/users', '/support', '/cms', '/withdrawals'],
   viewer: ['/', '/ops', '/earn/activity'],
 };
 
@@ -387,6 +396,13 @@ export function assertP13AdminCanonicalDocsSync(): void {
   }
   if (ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.finance.includes('/team')) {
     throw new Error('finance must not see /team');
+  }
+  // Align menu with admin-rbac permissions: support withdraw approve/reject · finance earn.settlement / wallet_adjust
+  if (!ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.support.includes('/withdrawals')) {
+    throw new Error('support must include /withdrawals (queues.withdraw.*)');
+  }
+  if (!ADMIN_TEAM_ROLE_MENU_ROUTE_ALLOWLIST.finance.includes('/earn/rewards')) {
+    throw new Error('finance must include /earn/rewards (earn.settlement.approve · users.wallet_adjust)');
   }
 
   if (ADMIN_BEGINNER_STATUS_CONCEPTS.length !== 6) {
