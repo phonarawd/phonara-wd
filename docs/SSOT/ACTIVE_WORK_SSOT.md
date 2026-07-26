@@ -737,7 +737,7 @@ bun run stack:stop
 
 > **상태:** **`[x]` DONE** 2026-07-14 — Wave 0~10 + Wave 0.5(ZA-14/15) + Wave 4.5(1-J) + Closeout  
 > **대체된 원본 플랜:** `듀얼_통화_자금_안전성_감사_za-14_e30fb04f` · `zero_assumption_11결함_해소_52756742`  
-> **후속(별도 승인):** ZA-14 오라클 notional 근본수정 · ZA-12/13 Soft Launch 운영 · ZA-18 통화 상태 공유 리팩터  
+> **후속:** ZA-14 오라클 notional 근본수정 **`[x]` DONE** 2026-07-26 (`20260829000001`) · 잔여 ZA-12/13 Soft Launch 운영 · ZA-18 통화 상태 공유 리팩터 · PHON 마진 kill switch 재활성은 **별도 운영자 결정**  
 > **후속(에이전트 완료 2026-07-14):** ZA-17 확인모달 스테이크·통화 · ZA-19 conservation 교차 주석
 
 | Todo                             | 상태           | 완료일     | 증거                                                       |
