@@ -6,18 +6,18 @@
 
 ## Gates (2026-07-25 · 전수조사 Phase 0–11 Verified)
 
-| Gate                                     | 결과                                                                                                                                    |
-| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| **Phase 1–2**                            | `check:secrets-deploy-deny` · `check:pwa` · `check:perf-contract` · freeze manifest BetHub/`@phonara/ui` 제거 · CSP hash 정합           |
-| **Phase 3–5 admin**                      | alerts/queues/risk RBAC · CMS reason+await · users Outlet · RTP confirm · sports await · admin-rbac **21/21**                           |
-| **Phase 6 (`phase6-db-bonus-wagering`)** | migration `20260828000001_fix_phon_wagering_bet_reason_cashout` · SQL 회귀 · CI `sql` + `stack:push-remote`                             |
-| **Phase 7–8**                            | roulette Decimal · dice/limbo refine · futures/staking confirm · RG wire · Earn proof `hidden` · vitest green                           |
-| **Phase 9 (`phase9-techstack-cleanup`)** | tmp/one-off → `scripts/archive/` · vitest pin · CI `check:games`/`determinism`/`deps` · orphan cleanup                                  |
-| **Phase 10 (`phase10-e2e-coverage`)**    | `casino-dice` · `sports-betting` · `staking-hub` · `referral-hub` · 로컬 E2E 미실행(G13) · CI `e2e`                                     |
+| Gate                                     | 결과                                                                                                                                                                      |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1–2**                            | `check:secrets-deploy-deny` · `check:pwa` · `check:perf-contract` · freeze manifest BetHub/`@phonara/ui` 제거 · CSP hash 정합                                             |
+| **Phase 3–5 admin**                      | alerts/queues/risk RBAC · CMS reason+await · users Outlet · RTP confirm · sports await · admin-rbac **21/21**                                                             |
+| **Phase 6 (`phase6-db-bonus-wagering`)** | migration `20260828000001_fix_phon_wagering_bet_reason_cashout` · SQL 회귀 · CI `sql` + `stack:push-remote`                                                               |
+| **Phase 7–8**                            | roulette Decimal · dice/limbo refine · futures/staking confirm · RG wire · Earn proof `hidden` · vitest green                                                             |
+| **Phase 9 (`phase9-techstack-cleanup`)** | tmp/one-off → `scripts/archive/` · vitest pin · CI `check:games`/`determinism`/`deps` · orphan cleanup                                                                    |
+| **Phase 10 (`phase10-e2e-coverage`)**    | `casino-dice` · `sports-betting` · `staking-hub` · `referral-hub` · 로컬 E2E 미실행(G13) · CI `e2e`                                                                       |
 | **Phase 11 (`phase11-verify-closeout`)** | **`[x]` DONE** · L0~L4 · `gate:ai-impl` **54/54** · CI [30158538228](https://github.com/phonarawd/phonara-wd/actions/runs/30158538228) quality·sql·e2e·advisors **green** |
-| **서버 alerts / sports role migration**  | **HOLD** (승인·정책 대기)                                                                                                               |
-| **한계 예외**                            | migration 파일명 오타(리네임 금지) · 브라우저 실측 G13 이연 · zod v3/v4 통일 별도 트랙                                                  |
-| **NEXT**                                 | 전수조사 Plan **닫힘** · ACTIVE_WORK 상단 표 / 다른 Plan todo                                                                           |
+| **서버 alerts / sports role migration**  | **HOLD** (승인·정책 대기)                                                                                                                                                 |
+| **한계 예외**                            | migration 파일명 오타(리네임 금지) · 브라우저 실측 G13 이연 · zod v3/v4 통일 별도 트랙                                                                                    |
+| **NEXT**                                 | 전수조사 Plan **닫힘** · ACTIVE_WORK 상단 표 / 다른 Plan todo                                                                                                             |
 
 ## Gates (2026-07-10 · Cursor 8GB perf v4.4.5 · `phase0-gate`)
 
