@@ -68,7 +68,7 @@
 | 오라클 재사용       | **OK**               | `_assert_price_fresh('PHON_USDT')` (신규 오라클 컴포넌트 0)                                                                    |
 | Part2 migration     | **`[x]`**            | `20260829000001_za14_futures_phon_margin_oracle_notional.sql` — 동적 패치 · open notional USD + fee 마진통화 + settle USD→PHON |
 | SQL 회귀            | **`[x]`**            | `za14_futures_phon_margin_oracle_test.sql` — CI `sql` green                                                                    |
-| kill switch 재활성  | **별도 운영자 결정** | `feature_futures_phon_margin_enabled` 유지 `false`                                                                             |
+| kill switch 재활성  | **별도 운영자 결정** | 플래그 `false` 유지 · Admin UI는 Plan Phase26 `wc-admin-futures-phon-margin-toggle`(**pending**) — `/ops` 토글 아직 없음       |
 | remote + advisor    | **`[x]`**            | `stack:push-remote` OK · advisor **0 ERROR** · 라이브 `za14_phon_oracle_notional`/`za14_phon_settle_fx`/RG 게이트 확인         |
 | CI Verified         | **green**            | [run 30186095656](https://github.com/phonarawd/phonara-wd/actions/runs/30186095656) quality·sql·e2e·advisors success           |
 | Plan closeout       | `[x]`                | `closeout:todo wc-money-futures-margin-oracle-fix` → `completed` · firstPending=`wc-wallet-krw-balance`                        |
