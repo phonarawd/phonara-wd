@@ -17,7 +17,7 @@
 | **Phase 11 (`phase11-verify-closeout`)** | **`[x]` DONE** · L0~L4 · `gate:ai-impl` **54/54** · CI [30158538228](https://github.com/phonarawd/phonara-wd/actions/runs/30158538228) quality·sql·e2e·advisors **green** |
 | **서버 alerts / sports role migration**  | **HOLD** (승인·정책 대기)                                                                                                                                                 |
 | **한계 예외**                            | migration 파일명 오타(리네임 금지) · 브라우저 실측 G13 이연 · zod v3/v4 통일 별도 트랙                                                                                    |
-| **NEXT**                                 | 월드클래스 Plan · Phase15 `[x]` · Phase16 `[x]` impl (`20260829000001` ZA-14 오라클) · **NEXT** `wc-wallet-krw-balance` · ACTIVE_WORK 상단 표                             |
+| **NEXT**                                 | 월드클래스 Plan · Phase15 `[x]` · Phase16 `[x]` DONE (ZA-14 오라클 · CI 30186095656) · **NEXT** `wc-wallet-krw-balance` · ACTIVE_WORK 상단 표                             |
 
 ## Gates (2026-07-10 · Cursor 8GB perf v4.4.5 · `phase0-gate`)
 
