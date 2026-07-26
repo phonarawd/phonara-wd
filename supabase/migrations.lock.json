@@ -249,6 +249,7 @@
     "20260827000002_sb_w1_ingest_health_freshness_recompute.sql": "9f5b7729027ab4e7bfb2d76f39f8c63d0588d39f09d037254631c3826845edd5",
     "20260827000003_sb_w4_casino_exposure_cap_ceiling.sql": "618a48d03d5475304094699ddbe3b7ff96f459151352e71b04b346e57f9f5cb5",
     "20260827000004_sb_w4_sports_exposure_aal2_guard.sql": "65e91511587ccf49706aa03ca5937383065b1fe420d9f9cd2b9004e9fccd407a",
-    "20260828000001_fix_phon_wagering_bet_reason_cashout.sql": "ad95d54f0937bdca5255c2cdbbc7f7b8324b18d4a88f5dda5e82c80064909bf1"
+    "20260828000001_fix_phon_wagering_bet_reason_cashout.sql": "ad95d54f0937bdca5255c2cdbbc7f7b8324b18d4a88f5dda5e82c80064909bf1",
+    "20260829000001_za14_futures_phon_margin_oracle_notional.sql": "555e64bb2d7a3eddf20e61a4b7fa52824f6b28eedd268eaf8c32dbc3028b45e7"
   }
 }
